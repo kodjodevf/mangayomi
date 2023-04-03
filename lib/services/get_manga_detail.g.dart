@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'f8a4047fc7d1661b6abdfcfa0786e0d78a20c8ed';
+String _$getMangaDetailHash() => r'17d72a984e6428e71778ade3650b56062ee779d7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,14 +42,14 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
 
   /// See also [getMangaDetail].
   GetMangaDetailProvider call({
-    required String image,
+    required String imageUrl,
     required String url,
     required String name,
-    String lang = '',
+    required String lang,
     required String source,
   }) {
     return GetMangaDetailProvider(
-      image: image,
+      imageUrl: imageUrl,
       url: url,
       name: name,
       lang: lang,
@@ -62,7 +62,7 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
     covariant GetMangaDetailProvider provider,
   ) {
     return call(
-      image: provider.image,
+      imageUrl: provider.imageUrl,
       url: provider.url,
       name: provider.name,
       lang: provider.lang,
@@ -90,15 +90,15 @@ class GetMangaDetailProvider
     extends AutoDisposeFutureProvider<GetMangaDetailModel> {
   /// See also [getMangaDetail].
   GetMangaDetailProvider({
-    required this.image,
+    required this.imageUrl,
     required this.url,
     required this.name,
-    this.lang = '',
+    required this.lang,
     required this.source,
   }) : super.internal(
           (ref) => getMangaDetail(
             ref,
-            image: image,
+            imageUrl: imageUrl,
             url: url,
             name: name,
             lang: lang,
@@ -115,7 +115,7 @@ class GetMangaDetailProvider
               GetMangaDetailFamily._allTransitiveDependencies,
         );
 
-  final String image;
+  final String imageUrl;
   final String url;
   final String name;
   final String lang;
@@ -124,7 +124,7 @@ class GetMangaDetailProvider
   @override
   bool operator ==(Object other) {
     return other is GetMangaDetailProvider &&
-        other.image == image &&
+        other.imageUrl == imageUrl &&
         other.url == url &&
         other.name == name &&
         other.lang == lang &&
@@ -134,7 +134,7 @@ class GetMangaDetailProvider
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, image.hashCode);
+    hash = _SystemHash.combine(hash, imageUrl.hashCode);
     hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, name.hashCode);
     hash = _SystemHash.combine(hash, lang.hashCode);

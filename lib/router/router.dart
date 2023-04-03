@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
+import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/general/general_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
+import 'package:mangayomi/views/manga/detail/manga_reader_detail.dart';
 import 'package:mangayomi/views/manga/home/home.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
 import 'package:mangayomi/views/updates/updates_screen.dart';
@@ -89,6 +91,28 @@ class AsyncRouterNotifier extends ChangeNotifier {
                   mangaType: mangaType!,
                 ),
               );
+            }),
+        GoRoute(
+            path: '/manga-reader/detail',
+            builder: (context, state) {
+              ModelManga? model;
+
+              model = state.extra as ModelManga;
+
+              return MangaReaderDetail(
+                modelManga: model,
+              );
+            },
+            pageBuilder: (context, state) {
+              ModelManga? model;
+
+              model = state.extra as ModelManga;
+
+              return CustomTransition(
+                  key: state.pageKey,
+                  child: MangaReaderDetail(
+                    modelManga: model,
+                  ));
             }),
       ];
 }

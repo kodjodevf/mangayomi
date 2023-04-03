@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/constant.dart';
+import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(ModelMangaAdapter());
+  await Hive.openBox<ModelManga>(
+    HiveConstant.hiveBoxManga,
+  ); await Hive.openBox(
+    HiveConstant.hiveBoxMangaInfo,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 

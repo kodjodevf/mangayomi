@@ -20,10 +20,11 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
   List<String?> url = [];
   List<String?> name = [];
   List<String?> image = [];
-
+  source = source.toLowerCase();
   //mangahere
   if (source == "mangahere") {
-    final dom = await httpResToDom(url: 'https://www.mangahere.cc/ranking/');
+    final dom = await httpResToDom(
+        url: 'https://www.mangahere.cc/ranking/', headers: {});
     if (dom
         .querySelectorAll(
             'body > div.container.weekrank.ranking > div > div > ul > li > a')

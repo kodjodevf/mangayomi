@@ -150,11 +150,11 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
   Widget build(BuildContext context) {
     super.build(context);
     final getMangaDetail = ref.watch(getMangaDetailProvider(
-      source: widget.source,
-      image: widget.image,
-      name: widget.name,
-      url: widget.url,
-    ));
+        source: widget.source,
+        imageUrl: widget.image,
+        name: widget.name,
+        url: widget.url,
+        lang: widget.lang));
 
     return getMangaDetail.when(
       data: (data) {

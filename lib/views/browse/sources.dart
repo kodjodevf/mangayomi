@@ -18,7 +18,7 @@ class _SourcesScreenState extends State<SourcesScreen> {
           onTap: () {
             context.push('/mangaHome',
                 extra: MangaType(
-                    isFullData: true, lang: 'en', source: 'mangahere'));
+                    isFullData: true, lang: 'en', source: 'MangaHere'));
           },
           leading: Container(
             height: 37,

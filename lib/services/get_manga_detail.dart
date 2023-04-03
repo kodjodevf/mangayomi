@@ -1,28 +1,30 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:html/dom.dart' as dom;
+import 'dart:developer';
+import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
 
 class GetMangaDetailModel {
   List<String> genre = [];
-  List<String> detail = [];
   List<String> chapterTitle = [];
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
+  String? author;
+  String? status;
   String? source;
   String? url;
   String? name;
-  String? image;
-  String? synopsys;
+  String? imageUrl;
+  String? description;
   GetMangaDetailModel({
     required this.genre,
-    required this.detail,
+    required this.author,
+    required this.status,
     required this.chapterDate,
     required this.chapterTitle,
     required this.chapterUrl,
-    required this.image,
-    required this.synopsys,
+    required this.imageUrl,
+    required this.description,
     required this.url,
     required this.name,
     required this.source,
@@ -31,69 +33,71 @@ class GetMangaDetailModel {
 
 @riverpod
 Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
-    {required String image,
+    {required String imageUrl,
     required String url,
     required String name,
-    String lang = '',
+    required String lang,
     required String source}) async {
   List<String> genre = [];
-  List<String> detail = [];
+  String? author;
+  String? status;
   List<String> chapterTitle = [];
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
-  String? synopsys;
+  source = source.toLowerCase();
+  String? description;
   if (source == "mangahere") {
-    final response = await http.get(Uri.parse("http://www.mangahere.cc$url"),
+    final dom = await httpResToDom(
+        url: "http://www.mangahere.cc$url",
         headers: {
           "Referer": "https://www.mangahere.cc/",
           "Cookie": "isAdult=1"
         });
-    dom.Document htmll = dom.Document.html(response.body);
 
-    if (htmll
+    if (dom
         .querySelectorAll(
             ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
         .isNotEmpty) {
-      final tt = htmll
+      final tt = dom
           .querySelectorAll(
               ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
           .map((e) => e.text.trim())
           .toList();
 
-      detail.add(tt[0]);
+      status = tt[0];
     } else {
-      detail.add("");
+      status = "";
     }
-    if (htmll
+    if (dom
         .querySelectorAll(
             ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
         .isNotEmpty) {
-      final tt = htmll
+      final tt = dom
           .querySelectorAll(
               ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
           .map((e) => e.text.trim())
           .toList();
 
-      detail.add(tt[0]);
+      author = tt[0];
     } else {
-      detail.add("");
+      author = "";
     }
 
-    if (htmll
+    if (dom
         .querySelectorAll(
             'body > div > div > div.detail-info-right > p.detail-info-right-content')
         .isNotEmpty) {
-      final tt = htmll
+      final tt = dom
           .querySelectorAll(
               'body > div > div > div.detail-info-right > p.detail-info-right-content')
           .map((e) => e.text.trim())
           .toList();
 
-      synopsys = tt.first;
+      description = tt.first;
     }
 
-    if (htmll.querySelectorAll('ul > li > a').isNotEmpty) {
-      final udl = htmll
+    if (dom.querySelectorAll('ul > li > a').isNotEmpty) {
+      final udl = dom
           .querySelectorAll('ul > li > a ')
           .where((e) => e.attributes.containsKey('href'))
           .map((e) => e.attributes['href'])
@@ -103,8 +107,8 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         chapterUrl.add(ok!);
       }
     }
-    if (htmll.querySelectorAll('ul > li > a > div > p.title3').isNotEmpty) {
-      final tt = htmll
+    if (dom.querySelectorAll('ul > li > a > div > p.title3').isNotEmpty) {
+      final tt = dom
           .querySelectorAll('ul > li > a > div > p.title3')
           .map((e) => e.text.trim())
           .toList();
@@ -112,8 +116,8 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         chapterTitle.add(ok);
       }
     }
-    if (htmll.querySelectorAll('ul > li > a > div > p.title2').isNotEmpty) {
-      final tt = htmll
+    if (dom.querySelectorAll('ul > li > a > div > p.title2').isNotEmpty) {
+      final tt = dom
           .querySelectorAll('ul > li > a > div > p.title2')
           .map((e) => e.text.trim())
           .toList();
@@ -121,11 +125,11 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         chapterDate.add(ok);
       }
     }
-    if (htmll
+    if (dom
         .querySelectorAll(
             ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
         .isNotEmpty) {
-      final tt = htmll
+      final tt = dom
           .querySelectorAll(
               ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
           .map((e) => e.text.trim())
@@ -136,15 +140,18 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
       }
     }
   }
+
   return GetMangaDetailModel(
-      chapterDate: chapterDate,
-      chapterTitle: chapterTitle,
-      chapterUrl: chapterUrl,
-      detail: detail,
-      genre: genre,
-      image: image,
-      synopsys: synopsys,
-      name: name,
-      url: url,
-      source: source);
+    chapterDate: chapterDate,
+    chapterTitle: chapterTitle,
+    chapterUrl: chapterUrl,
+    status: status,
+    genre: genre,
+    author: author,
+    description: description,
+    name: name,
+    url: url,
+    source: source,
+    imageUrl: imageUrl,
+  );
 }

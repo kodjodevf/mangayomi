@@ -41,6 +41,10 @@ dependencies:
   riverpod_annotation: ^2.0.2
   html: ^0.15.2
   flutter_js: ^0.6.0
+  font_awesome_flutter: ^10.1.0
+  blur: ^3.1.0
+  draggable_home: ^1.0.4
+  expandable_text: ^2.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
