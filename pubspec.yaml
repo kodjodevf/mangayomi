@@ -33,6 +33,7 @@ dependencies:
   go_router: ^6.5.2
   flutter_riverpod: ^2.3.2
   hidable: ^1.0.3
+  cached_network_image: ^3.2.3
 
 
   # The following adds the Cupertino Icons font to your application.

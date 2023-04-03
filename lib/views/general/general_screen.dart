@@ -48,7 +48,7 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
               labelTextStyle: MaterialStateProperty.all(
                   const TextStyle(fontWeight: FontWeight.w500)),
               indicatorShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(15)),
               height: 20,
               labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             ),

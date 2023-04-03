@@ -5,6 +5,21 @@ class UpdatesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'Updates',
+          style: TextStyle(color: Theme.of(context).hintColor),
+        ),
+        actions: [
+          IconButton(
+              splashRadius: 20,
+              onPressed: () {},
+              icon: Icon(Icons.refresh, color: Theme.of(context).hintColor)),
+        ],
+      ),
+    );
   }
 }
