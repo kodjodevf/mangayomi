@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mangayomi">
+    package="com.kodjodevf.mangayomi">
    <application
         android:label="mangayomi"
         android:name="${applicationName}"
