@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/readmore.dart';
@@ -114,7 +115,12 @@ class _CardSliverAppBarState extends ConsumerState<CardSliverAppBar> {
         itemBuilder: (context, index) {
           return ListTile(
             key: ObjectKey(widget.modelManga!.chapterUrl),
-            onTap: () {},
+            onTap: () {
+              pushMangaReaderView(
+                  context: context,
+                  modelManga: widget.modelManga!,
+                  index: index);
+            },
             trailing: const Icon(FontAwesomeIcons.circleDown),
             subtitle: widget.isManga == true
                 ? Text(
