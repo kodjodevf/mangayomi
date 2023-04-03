@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mangayomi/models/manga_type.dart';
 
 class SourcesScreen extends StatefulWidget {
   const SourcesScreen({super.key});
@@ -13,7 +15,11 @@ class _SourcesScreenState extends State<SourcesScreen> {
     return Column(
       children: [
         ListTile(
-          onTap: () {},
+          onTap: () {
+            context.push('/mangaHome',
+                extra: MangaType(
+                    isFullData: true, lang: 'en', source: 'mangahere'));
+          },
           leading: Container(
             height: 37,
             width: 37,
@@ -24,7 +30,8 @@ class _SourcesScreenState extends State<SourcesScreen> {
           title: const Text('MangaHere'),
           trailing: SizedBox(
               width: 110,
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
                   Text(
                     "Latest",

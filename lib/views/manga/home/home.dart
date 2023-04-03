@@ -1,0 +1,183 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/manga_type.dart';
+import 'package:mangayomi/services/get_manga_detail.dart';
+import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
+import 'package:mangayomi/views/widgets/cover_view_widget.dart';
+import 'package:mangayomi/views/widgets/gridview_widget.dart';
+import 'package:mangayomi/views/widgets/manga_image_card_widget.dart';
+
+class MangaHomeScreen extends ConsumerStatefulWidget {
+  final MangaType mangaType;
+  const MangaHomeScreen({required this.mangaType, super.key});
+
+  @override
+  ConsumerState<MangaHomeScreen> createState() => _MangaHomeScreenState();
+}
+
+class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
+  bool _isLoading = false;
+  final ScrollController _scrollController = ScrollController();
+  int _length = 10;
+  int _page = 1;
+  @override
+  Widget build(BuildContext context) {
+    final getManga = ref.watch(
+        getPopularMangaProvider(source: widget.mangaType.source!, page: _page));
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('${widget.mangaType.source}'),
+          actions: [],
+        ),
+        body: getManga.when(
+          data: (data) {
+            _scrollController.addListener(() {
+              if (_scrollController.position.pixels ==
+                  _scrollController.position.maxScrollExtent) {
+                if (!_isLoading) {
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                  }
+
+                  if (widget.mangaType.isFullData!) {
+                    Future.delayed(const Duration(seconds: 1)).then((value) {
+                      _length = _length + 10;
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    });
+                  } else {
+                    if (mounted) {
+                      setState(() {
+                        _page = _page + 1;
+                      });
+                    }
+
+                    ref
+                        .watch(getPopularMangaProvider(
+                                source: widget.mangaType.source!, page: _page)
+                            .future)
+                        .then(
+                      (value) {
+                        if (mounted) {
+                          setState(() {
+                            data.url.addAll(value.url);
+                            data.name.addAll(value.name);
+                            data.image.addAll(value.image);
+                            _isLoading = false;
+                          });
+                        }
+                      },
+                    );
+                  }
+                }
+              }
+            });
+
+            return Column(
+              children: [
+                Flexible(
+                    child: GridViewWidget(
+                  controller: _scrollController,
+                  itemCount:
+                      widget.mangaType.isFullData! ? _length : data.url.length,
+                  itemBuilder: (context, index) {
+                    if (index == data.url.length - 1) {
+                      return _buildProgressIndicator();
+                    }
+                    return MangaHomeImageCard(
+                      url: data.url[index]!,
+                      name: data.name[index]!,
+                      image: data.image[index]!,
+                      source: widget.mangaType.source!,
+                      lang: widget.mangaType.lang!,
+                    );
+                  },
+                )),
+              ],
+            );
+          },
+          error: (error, stackTrace) => const Center(child: Text("Error")),
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ));
+  }
+
+  Widget _buildProgressIndicator() {
+    return _isLoading
+        ? const Center(
+            child: SizedBox(
+              height: 100,
+              width: 200,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          )
+        : Container();
+  }
+}
+
+class MangaHomeImageCard extends ConsumerStatefulWidget {
+  final String image;
+  final String url;
+  final String name;
+  final String source;
+  final String lang;
+  const MangaHomeImageCard({
+    super.key,
+    required this.url,
+    required this.name,
+    required this.image,
+    required this.source,
+    required this.lang,
+  });
+
+  @override
+  ConsumerState<MangaHomeImageCard> createState() => _MangaHomeImageCardState();
+}
+
+class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
+    with AutomaticKeepAliveClientMixin<MangaHomeImageCard> {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final getMangaDetail = ref.watch(getMangaDetailProvider(
+      source: widget.source,
+      image: widget.image,
+      name: widget.name,
+      url: widget.url,
+    ));
+
+    return getMangaDetail.when(
+      data: (data) {
+        return MangaImageCardWidget(
+          getMangaDetailModel: data,
+          lang: widget.lang,
+        );
+      },
+      loading: () => CoverViewWidget(children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Container(
+            color: Theme.of(context).cardColor,
+            width: 200,
+            height: 270,
+          ),
+        ),
+        BottomTextWidget(text: widget.name)
+      ]),
+      error: (error, stackTrace) => const Center(child: Text("Error")),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
