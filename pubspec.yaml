@@ -45,6 +45,7 @@ dependencies:
   blur: ^3.1.0
   draggable_home: ^1.0.4
   expandable_text: ^2.3.0
+  flex_color_scheme: ^7.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -10,7 +11,8 @@ void main() async {
   Hive.registerAdapter(ModelMangaAdapter());
   await Hive.openBox<ModelManga>(
     HiveConstant.hiveBoxManga,
-  ); await Hive.openBox(
+  );
+  await Hive.openBox(
     HiveConstant.hiveBoxMangaInfo,
   );
   runApp(const ProviderScope(child: MyApp()));
@@ -24,7 +26,23 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      theme: ThemeData(useMaterial3: true),
+      theme: FlexThemeData.light(
+        colors: ThemeAA.schemes[6].light,
+        surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
+        blendLevel: 24,
+        appBarOpacity: 0.00,
+        subThemesData: const FlexSubThemesData(
+          blendOnLevel: 24,
+          thinBorderWidth: 2.0,
+          unselectedToggleIsColored: true,
+          inputDecoratorRadius: 24.0,
+          chipRadius: 24.0,
+          dialogBackgroundSchemeColor: SchemeColor.background,
+        ),
+        useMaterial3ErrorColors: true,
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
@@ -32,4 +50,10 @@ class MyApp extends ConsumerWidget {
       title: 'MangaYomi',
     );
   }
+}
+
+class ThemeAA {
+  static const List<FlexSchemeData> schemes = <FlexSchemeData>[
+    ...FlexColor.schemesList,
+  ];
 }
