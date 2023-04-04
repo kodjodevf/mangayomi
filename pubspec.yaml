@@ -32,7 +32,6 @@ dependencies:
     sdk: flutter
   go_router: ^6.5.2
   flutter_riverpod: ^2.3.2
-  hidable: ^1.0.3
   cached_network_image: ^3.2.3
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.0
