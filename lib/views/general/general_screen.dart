@@ -17,7 +17,6 @@ class GeneralScreen extends ConsumerStatefulWidget {
 class _GeneralScreenState extends ConsumerState<GeneralScreen> {
   @override
   Widget build(BuildContext context) {
-    final scrollController = ref.watch(scrollControllerProvider);
     final route = GoRouter.of(context);
     int currentIndex = route.location == '/library'
         ? 0
@@ -39,90 +38,76 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
                 route.location != '/browse' &&
                 route.location != '/more'
             ? 0
-            : null,
-        child: Hidable(
-          controller: scrollController,
-          wOpacity: true,
-          child: NavigationBarTheme(
-            data: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.all(
-                  const TextStyle(fontWeight: FontWeight.w500)),
-              indicatorShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              height: 20,
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            ),
-            child: ClipRRect(
-              child: NavigationBar(
-                animationDuration: const Duration(seconds: 1),
-                selectedIndex: currentIndex,
-                destinations: const [
-                  NavigationDestination(
-                      selectedIcon: Icon(
-                        Icons.collections_bookmark,
-                        color: Colors.white,
-                      ),
-                      icon: Icon(
-                        Icons.collections_bookmark_outlined,
-                      ),
-                      label: 'Library'),
-                  NavigationDestination(
-                      selectedIcon: Icon(
-                        Icons.new_releases,
-                        color: Colors.white,
-                      ),
-                      icon: Icon(
-                        Icons.new_releases_outlined,
-                      ),
-                      label: 'Updates'),
-                  NavigationDestination(
-                      selectedIcon: Icon(
-                        Icons.history,
-                        color: Colors.white,
-                      ),
-                      icon: Icon(
-                        Icons.history_outlined,
-                      ),
-                      label: "History"),
-                  NavigationDestination(
-                      selectedIcon: Icon(
-                        Icons.explore,
-                        color: Colors.white,
-                      ),
-                      icon: Icon(
-                        Icons.explore_outlined,
-                      ),
-                      label: "Browse"),
-                  NavigationDestination(
-                      selectedIcon: Icon(
-                        Icons.more_horiz,
-                        color: Colors.white,
-                      ),
-                      icon: Icon(
-                        Icons.more_horiz_outlined,
-                      ),
-                      label: "More"),
-                ],
-                onDestinationSelected: (int newIndex) {
-                  if (mounted) {
-                    setState(() {
-                      currentIndex = newIndex;
-                    });
-                  }
-                  if (newIndex == 0) {
-                    route.go('/library');
-                  } else if (newIndex == 1) {
-                    route.go('/updates');
-                  } else if (newIndex == 2) {
-                    route.go('/history');
-                  } else if (newIndex == 3) {
-                    route.go('/browse');
-                  } else if (newIndex == 4) {
-                    route.go('/more');
-                  }
-                },
-              ),
-            ),
+            : 80,
+        child: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            indicatorShape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            height: 20,
+          ),
+          child: NavigationBar(
+            animationDuration: const Duration(seconds: 1),
+            selectedIndex: currentIndex,
+            destinations: const [
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.collections_bookmark,
+                  ),
+                  icon: Icon(
+                    Icons.collections_bookmark_outlined,
+                  ),
+                  label: 'Library'),
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.new_releases,
+                  ),
+                  icon: Icon(
+                    Icons.new_releases_outlined,
+                  ),
+                  label: 'Updates'),
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.history,
+                  ),
+                  icon: Icon(
+                    Icons.history_outlined,
+                  ),
+                  label: "History"),
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.explore,
+                  ),
+                  icon: Icon(
+                    Icons.explore_outlined,
+                  ),
+                  label: "Browse"),
+              NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.more_horiz,
+                  ),
+                  icon: Icon(
+                    Icons.more_horiz_outlined,
+                  ),
+                  label: "More"),
+            ],
+            onDestinationSelected: (int newIndex) {
+              if (mounted) {
+                setState(() {
+                  currentIndex = newIndex;
+                });
+              }
+              if (newIndex == 0) {
+                route.go('/library');
+              } else if (newIndex == 1) {
+                route.go('/updates');
+              } else if (newIndex == 2) {
+                route.go('/history');
+              } else if (newIndex == 3) {
+                route.go('/browse');
+              } else if (newIndex == 4) {
+                route.go('/more');
+              }
+            },
           ),
         ),
       ),
