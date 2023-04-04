@@ -18,49 +18,39 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ExpandableText(
-          animationDuration: const Duration(milliseconds: 500),
-          onExpandedChanged: (ok) {
-            setState(() => expanded = ok);
-          },
-          expandOnTextTap: true,
-          widget.text,
-          expandText: '',
-          maxLines: 3,
-          expanded: false,
-          onPrefixTap: () {
-            setState(() => expanded = !expanded);
-          },
-          linkColor: Theme.of(context).scaffoldBackgroundColor,
-          animation: true,
-          collapseOnTextTap: true,
-          prefixText: '',
+        Stack(
+          children: [
+            ExpandableText(
+              animationDuration: const Duration(milliseconds: 500),
+              onExpandedChanged: (ok) {
+                setState(() => expanded = ok);
+              },
+              expandOnTextTap: true,
+              widget.text,
+              expandText: '',
+              maxLines: 3,
+              expanded: false,
+              onPrefixTap: () {
+                setState(() => expanded = !expanded);
+              },
+              linkColor: Theme.of(context).scaffoldBackgroundColor,
+              animation: true,
+              collapseOnTextTap: true,
+              prefixText: '',
+            ),
+            Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: expanded
+                    ? const Icon(Icons.keyboard_arrow_up_sharp)
+                    : const Icon(Icons.keyboard_arrow_down_sharp))
+          ],
         ),
         Container(
-            color: Theme.of(context).cardColor.withOpacity(0.15),
-            width: mediaWidth(context, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                expanded
-                    ? Row(
-                        children: const [
-                          Text(
-                            "Show less",
-                          ),
-                          Icon(Icons.keyboard_arrow_up_sharp)
-                        ],
-                      )
-                    : Row(
-                        children: const [
-                          Text(
-                            "Show more",
-                          ),
-                          Icon(Icons.keyboard_arrow_down_sharp)
-                        ],
-                      ),
-              ],
-            ))
+          color: Theme.of(context).cardColor.withOpacity(0.15),
+          width: mediaWidth(context, 1),
+        )
       ],
     );
   }

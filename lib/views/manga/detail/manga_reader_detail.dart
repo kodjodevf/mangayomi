@@ -90,7 +90,6 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     _isFavorite = value;
                   });
                 },
-                isManga: true,
               );
             }
             return MangaDetailsView(
@@ -100,7 +99,6 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                   _isFavorite = value;
                 });
               },
-              isManga: true,
             );
           },
         ),
