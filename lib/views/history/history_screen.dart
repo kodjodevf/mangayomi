@@ -1,11 +1,21 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:grouped_list/grouped_list.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/manga_history.dart';
+import 'package:mangayomi/models/manga_reader.dart';
+import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/date.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -27,122 +37,194 @@ class HistoryScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text('12-12-2023'),
-              ],
-            ),
-            SizedBox(
-              height: 105,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(7),
-                        child: CachedNetworkImage(
-                            imageUrl:
-                                'https://static.fnac-static.com/multimedia/Images/FR/NR/21/db/c2/12770081/1540-1/tsp20230314072112/Blue-Lock.jpg',
-                            width: 60,
-                            height: 100,
-                            fit: BoxFit.cover),
-                      ),
-                    ),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ValueListenableBuilder<Box<MangaHistoryModel>>(
+          valueListenable: ref.watch(hiveBoxMangaHistory).listenable(),
+          builder: (context, value, child) {
+            final entries = value.values.toList();
+            if (entries.isNotEmpty) {
+              return GroupedListView<MangaHistoryModel, String>(
+                elements: entries,
+                groupBy: (element) => element.date.substring(0, 10),
+                groupSeparatorBuilder: (String groupByValue) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Text(dateFormat(DateTime.parse(groupByValue))),
+                    ],
                   ),
-                  Flexible(
+                ),
+                itemBuilder: (context, MangaHistoryModel element) {
+                  return SizedBox(
+                    height: 105,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Flexible(
+                        SizedBox(
                           child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Blue Lock',
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      'Chap 01',
-                                      style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '22:02',
-                                          style: const TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            onTap: () {
+                              final model = ModelManga(
+                                  status: element.modelManga.status,
+                                  imageUrl: element.modelManga.imageUrl,
+                                  name: element.modelManga.name,
+                                  genre: element.modelManga.genre,
+                                  author: element.modelManga.author,
+                                  chapterDate: element.modelManga.chapterDate,
+                                  chapterTitle: element.modelManga.chapterTitle,
+                                  chapterUrl: element.modelManga.chapterUrl,
+                                  description: element.modelManga.description,
+                                  favorite: element.modelManga.favorite,
+                                  link: element.modelManga.link,
+                                  source: element.modelManga.source,
+                                  lang: element.modelManga.lang);
+
+                              context.push('/manga-reader/detail',
+                                  extra: model);
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(7),
+                              child: cachedNetworkImage(
+                                  imageUrl: element.modelManga.imageUrl!,
+                                  width: 60,
+                                  height: 100,
+                                  fit: BoxFit.cover),
                             ),
                           ),
                         ),
-                        IconButton(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        'Delete',
+                        Flexible(
+                          child: ValueListenableBuilder<Box>(
+                            valueListenable:
+                                ref.watch(hiveBoxMangaInfo).listenable(),
+                            builder: (context, value, child) {
+                              final values = value.get(
+                                  "${element.modelManga.source}/${element.modelManga.name}-chapter_index",
+                                  defaultValue: '');
+                              if (values.isNotEmpty) {
+                                return Row(
+                                  children: [
+                                    Flexible(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          pushMangaReaderView(
+                                              context: context,
+                                              modelManga: element.modelManga,
+                                              index:
+                                                  int.parse(values.toString()));
+                                        },
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  element.modelManga.name!,
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      element.modelManga
+                                                              .chapterTitle![
+                                                          int.parse(values
+                                                              .toString())],
+                                                      style: const TextStyle(
+                                                        fontSize: 11,
+                                                      ),
+                                                    ),
+                                                    const Text(' - '),
+                                                    Text(
+                                                      DateFormat.Hm().format(
+                                                          DateTime.parse(
+                                                              element.date)),
+                                                      style: const TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                      actions: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('No')),
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Text('Yes')),
-                                          ],
-                                        )
-                                      ],
-                                    );
-                                  });
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    "Delete",
+                                                  ),
+                                                  actions: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: [
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                "No")),
+                                                        TextButton(
+                                                            onPressed: () {
+                                                              ref
+                                                                  .watch(
+                                                                      hiveBoxMangaHistory)
+                                                                  .delete(element
+                                                                      .modelManga
+                                                                      .link);
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: const Text(
+                                                                "Yes")),
+                                                      ],
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        },
+                                        icon: const Icon(
+                                          Icons.delete_outline,
+                                          size: 25,
+                                        )),
+                                  ],
+                                );
+                              }
+                              return Container();
                             },
-                            icon: const Icon(
-                              Icons.delete,
-                              size: 25,
-                            )),
+                          ),
+                        )
                       ],
                     ),
-                  )
-                ],
-              ),
-            )
-          ],
+                  );
+                },
+                itemComparator: (item1, item2) =>
+                    item1.date.compareTo(item2.date),
+                order: GroupedListOrder.DESC,
+              );
+            }
+            return const Center(child: Text(""));
+          },
         ),
       ),
     );

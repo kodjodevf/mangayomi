@@ -41,14 +41,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
-  blur:
-    dependency: "direct main"
-    description:
-      name: blur
-      sha256: fd23f1247faee4a7d1a3efb6b7c3cea134f3b939d72e5f8d45233deb0776259f
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -249,14 +241,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
-  draggable_home:
-    dependency: "direct main"
-    description:
-      name: draggable_home
-      sha256: "4fa3c71f7784bb9a0ab722bb6245e071c261dcf2a3e1e004ee681bda60cfbbbb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.4"
   draggable_scrollbar:
     dependency: "direct main"
     description:
@@ -440,6 +424,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  grouped_list:
+    dependency: "direct main"
+    description:
+      name: grouped_list
+      sha256: fef106470186081c32636aa055492eee7fc7fe8bf0921a48d31ded24821af19f
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.2"
   hidable:
     dependency: "direct main"
     description:
@@ -512,6 +504,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      sha256: a3715e3bc90294e971cb7dc063fbf3cd9ee0ebf8604ffeafabd9e6f16abbdbe6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.18.0"
   io:
     dependency: transitive
     description:
