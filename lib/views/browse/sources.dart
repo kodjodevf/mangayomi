@@ -108,7 +108,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                       borderRadius: BorderRadius.circular(5)),
                   child: const Icon(Icons.source_outlined),
                 ),
-                subtitle: Text(completeLang(source.lang)),
+                subtitle: Text(completeLang(source.lang.toLowerCase())),
                 title: Text(source.sourceName),
                 trailing: SizedBox(
                     width: 110,
