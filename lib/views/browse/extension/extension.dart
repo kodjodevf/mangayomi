@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -17,16 +19,33 @@ class ExtensionScreen extends ConsumerStatefulWidget {
 
 class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   _init() {
-    for (var element in sourcesList) {
-      if (!ref
-          .watch(hiveBoxMangaSourceProvider)
-          .containsKey("${element.sourceName}${element.lang}")) {
-        ref
-            .watch(hiveBoxMangaSourceProvider)
-            .put("${element.sourceName}${element.lang}", element);
+    if (_isLoading) {
+      final ss = ref
+          .watch(hiveBoxMangaFilterProvider)
+          .get("language_filter", defaultValue: []);
+      if (ss.isEmpty) {
+        for (var element in sourcesList) {
+          if (!ref
+              .watch(hiveBoxMangaSourceProvider)
+              .containsKey("${element.sourceName}${element.lang}")) {
+            ref
+                .watch(hiveBoxMangaSourceProvider)
+                .put("${element.sourceName}${element.lang}", element);
+          }
+        }
+      } else {
+        for (var element in sourcesList) {
+          for (var lang in ss) {
+            if (element.lang == lang) {
+              ref
+                  .watch(hiveBoxMangaSourceProvider)
+                  .delete("${element.sourceName}${element.lang}");
+            }
+          }
+        }
       }
+      _isLoading = false;
     }
-    _isLoading = false;
   }
 
   bool _isLoading = true;
