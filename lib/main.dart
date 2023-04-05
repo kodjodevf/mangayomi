@@ -6,16 +6,19 @@ import 'package:mangayomi/constant.dart';
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/source/source_model.dart';
 
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ModelMangaAdapter());
   Hive.registerAdapter(MangaHistoryModelAdapter());
-  await Hive.openBox<ModelManga>(
-    HiveConstant.hiveBoxManga,
-  );
+  Hive.registerAdapter(SourceModelAdapter());
+  Hive.registerAdapter(TypeSourceAdapter());
+  await Hive.openBox<ModelManga>(HiveConstant.hiveBoxManga);
   await Hive.openBox<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
+  await Hive.openBox<SourceModel>(HiveConstant.hiveBoxMangaSource);
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
+  await Hive.openBox(HiveConstant.hiveBoxMangaFilter);
   runApp(const ProviderScope(child: MyApp()));
 }
 

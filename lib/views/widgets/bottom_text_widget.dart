@@ -12,12 +12,13 @@ class BottomTextWidget extends StatelessWidget {
       right: 0,
       child: Container(
         decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.3), //New
-                offset: const Offset(0.5, 0.9),
-                blurRadius: 3.0)
-          ],
+          color: Theme.of(context).scaffoldBackgroundColor,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
+            stops: const [0, 1],
+          ),
         ),
         child: Text(
           text,

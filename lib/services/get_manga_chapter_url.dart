@@ -38,8 +38,9 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   if (hiveUrl.isNotEmpty) {
     urll = hiveUrl;
   }
-
-  //mangahere
+  /***********/
+  /*mangahere*/
+  /***********/
   else if (source == 'mangahere') {
     JavascriptRuntime? flutterJs;
     flutterJs = getJavascriptRuntime();

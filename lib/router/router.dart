@@ -5,6 +5,7 @@ import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
+import 'package:mangayomi/views/browse/extension/extension_lang.dart';
 import 'package:mangayomi/views/general/general_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
@@ -132,6 +133,19 @@ class AsyncRouterNotifier extends ChangeNotifier {
               child: MangaReaderView(
                 mangaReaderModel: mangaReaderModel,
               ),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/extensionLang",
+          name: "extensionLang",
+          builder: (context, state) {
+            return const ExtensionsLang();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const ExtensionsLang(),
             );
           },
         ),

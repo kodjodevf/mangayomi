@@ -116,6 +116,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView> {
 
   _listView() {
     return DraggableScrollbar.rrect(
+        alwaysVisibleScrollThumb: true,
         controller: _scrollController,
         child: ListView.builder(
             controller: _scrollController,
@@ -135,14 +136,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView> {
                       modelManga: widget.modelManga!,
                       index: finalIndex);
                 },
-                trailing: const Icon(FontAwesomeIcons.circleDown),
+                trailing: const Icon(
+                  FontAwesomeIcons.circleDown,
+                  size: 20,
+                ),
                 subtitle: Text(
                   widget.modelManga!.chapterDate![finalIndex],
-                  style: const TextStyle(fontSize: 13),
+                  style: const TextStyle(fontSize: 12),
                 ),
                 title: Text(
                   widget.modelManga!.chapterTitle![finalIndex],
-                  style: const TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 13),
                 ),
               );
             }));
@@ -170,7 +174,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView> {
         Column(
           children: [
             SizedBox(
-              height: AppBar().preferredSize.height,
+              height: AppBar().preferredSize.height * 1.5,
             ),
             SizedBox(
               height: 180,
@@ -236,7 +240,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
-                                '${widget.modelManga!.chapterTitle!.length.toString()} chapter(s)',
+                                '${widget.modelManga!.chapterTitle!.length.toString()} chapters',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),

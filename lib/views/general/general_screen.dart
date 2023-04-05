@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hidable/hidable.dart';
-import 'package:mangayomi/views/general/scroll_controller_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {

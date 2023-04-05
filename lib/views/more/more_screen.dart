@@ -14,9 +14,10 @@ class MoreScreen extends StatelessWidget {
             flex: 3,
             child: Column(
               children: [
-                const Divider(),
+                const Divider(
+                  color: Colors.grey,
+                ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading:
                       const SizedBox(height: 40, child: Icon(Icons.cloud_off)),
@@ -28,7 +29,6 @@ class MoreScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40, child: Icon(CupertinoIcons.eyeglasses)),
@@ -39,16 +39,16 @@ class MoreScreen extends StatelessWidget {
                     onChanged: (value) {},
                   ),
                 ),
-                const Divider(),
+                const Divider(
+                  color: Colors.grey,
+                ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40, child: Icon(Icons.download_outlined)),
                   title: const Text('Donwload queue'),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: Container(
                     height: 20,
@@ -58,7 +58,6 @@ class MoreScreen extends StatelessWidget {
                   title: const Text('Categories'),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: Container(
                     height: 20,
@@ -68,30 +67,28 @@ class MoreScreen extends StatelessWidget {
                   title: const Text('Statistics'),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40,
                       child: Icon(Icons.settings_backup_restore_sharp)),
                   title: const Text('Backup and restore'),
                 ),
-                const Divider(),
+                const Divider(
+                  color: Colors.grey,
+                ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40, child: Icon(Icons.settings_outlined)),
                   title: const Text('Backup and restore'),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40, child: Icon(Icons.info_outline)),
                   title: const Text('About'),
                 ),
                 ListTile(
-                  dense: true,
                   onTap: () {},
                   leading: const SizedBox(
                       height: 40, child: Icon(Icons.help_outline)),
