@@ -5,10 +5,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/views/library/providers/state_providers.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -17,13 +20,16 @@ class LibraryScreen extends ConsumerStatefulWidget {
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
 }
 
-class _LibraryScreenState extends ConsumerState<LibraryScreen> {
+class _LibraryScreenState extends ConsumerState<LibraryScreen>
+    with TickerProviderStateMixin {
+  bool isOk = false;
   bool isSearch = false;
   List<ModelManga> entries = [];
   List<ModelManga> entriesFilter = [];
   final _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final reverse = ref.watch(reverseStateProvider);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -49,7 +55,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     setState(() {
                       isSearch = false;
                     });
-                  }, controller: _textEditingController,
+                  },
+                  controller: _textEditingController,
                 )
               : IconButton(
                   splashRadius: 20,
@@ -57,11 +64,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                     setState(() {
                       isSearch = true;
                     });
+                    _textEditingController.clear();
                   },
                   icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
           IconButton(
               splashRadius: 20,
-              onPressed: () {},
+              onPressed: () {
+                _showModalSort();
+              },
               icon: Icon(Icons.filter_list_sharp,
                   color: Theme.of(context).hintColor)),
           PopupMenuButton(
@@ -90,8 +100,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         valueListenable: ref.watch(hiveBoxManga).listenable(),
         builder: (context, value, child) {
           entries = value.values.where((element) => element.favorite).toList();
-          final entriesManga =
-              _textEditingController.text.isNotEmpty ? entriesFilter : entries;
+          final entriesManga = _textEditingController.text.isNotEmpty
+              ? entriesFilter
+              : reverse
+                  ? entries.reversed.toList()
+                  : entries;
           if (entries.isNotEmpty || entriesFilter.isNotEmpty) {
             return GridViewWidget(
               itemCount: entriesManga.length,
@@ -117,11 +130,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
                   },
                   child: CoverViewWidget(
                     children: [
-                      cachedNetworkImage(
-                          imageUrl: entriesManga[index].imageUrl!,
-                          width: 200,
-                          height: 270,
-                          fit: BoxFit.cover),
+                      Stack(
+                        children: [
+                          cachedNetworkImage(
+                              imageUrl: entriesManga[index].imageUrl!,
+                              width: 200,
+                              height: 270,
+                              fit: BoxFit.cover),
+                          Positioned(
+                              top: 0,
+                              left: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3),
+                                      color: Theme.of(context).cardColor),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: Text(entriesManga[index]
+                                        .chapterDate!
+                                        .length
+                                        .toString()),
+                                  ),
+                                ),
+                              ))
+                        ],
+                      ),
                       BottomTextWidget(text: entriesManga[index].name!)
                     ],
                   ),
@@ -133,5 +168,88 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
         },
       ),
     );
+  }
+
+  _showModalSort() {
+    List<String> sortList = [
+      "Alphabetically",
+      "Total chapters",
+      "Latest chapter",
+      "Date added"
+    ];
+    late TabController tabBarController;
+    showMaterialModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5), topRight: Radius.circular(5))),
+        enableDrag: true,
+        expand: false,
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          if (!isOk) {
+            tabBarController = TabController(length: 3, vsync: this);
+            tabBarController.animateTo(0);
+          }
+          return SizedBox(
+              height: mediaHeight(context, 0.4),
+              child: DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    body: Column(
+                      children: [
+                        TabBar(
+                          controller: tabBarController,
+                          tabs: const [
+                            Tab(text: "Filter"),
+                            Tab(text: "Sort"),
+                            Tab(text: "Display"),
+                          ],
+                        ),
+                        Flexible(
+                          child: TabBarView(
+                              controller: tabBarController,
+                              children: [
+                                const Center(child: Text("soon")),
+                                Consumer(builder: (context, ref, chil) {
+                                  final reverse =
+                                      ref.watch(reverseStateProvider);
+                                  final sortedValue =
+                                      ref.watch(sortedValueStateProvider);
+                                  return Column(
+                                    children: [
+                                      for (var i = 0; i < sortList.length; i++)
+                                        ListTile(
+                                          onTap: () {
+                                            ref
+                                                .read(reverseStateProvider
+                                                    .notifier)
+                                                .state = !reverse;
+                                            ref
+                                                .read(sortedValueStateProvider
+                                                    .notifier)
+                                                .state = sortList[i];
+                                          },
+                                          dense: true,
+                                          leading: sortedValue == sortList[i]
+                                              ? Icon(reverse
+                                                  ? Icons.arrow_downward_sharp
+                                                  : Icons.arrow_upward_sharp)
+                                              : const Icon(
+                                                  Icons.arrow_upward_sharp,
+                                                  color: Colors.transparent,
+                                                ),
+                                          title: Text(sortList[i]),
+                                        ),
+                                    ],
+                                  );
+                                }),
+                                const Center(child: Text("soon"))
+                              ]),
+                        ),
+                      ],
+                    ),
+                  )));
+        });
   }
 }

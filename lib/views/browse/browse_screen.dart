@@ -62,6 +62,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                       setState(() {
                         _isSearch = false;
                       });
+                      _textEditingController.clear();
                     },
                     controller: _textEditingController,
                   )

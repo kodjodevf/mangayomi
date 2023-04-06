@@ -161,6 +161,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
             ),
             Row(
               children: [
+                const Icon(
+                  FontAwesomeIcons.clock,
+                  size: 12,
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
                 Text(widget.modelManga.status!),
                 const Text(' • '),
                 Text(widget.modelManga.source!)

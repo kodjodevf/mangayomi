@@ -44,7 +44,7 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
             height: 20,
           ),
           child: NavigationBar(
-            animationDuration: const Duration(seconds: 1),
+            animationDuration: const Duration(milliseconds: 500),
             selectedIndex: currentIndex,
             destinations: const [
               NavigationDestination(
@@ -68,7 +68,7 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
                     Icons.history,
                   ),
                   icon: Icon(
-                    Icons.history_outlined,
+                    Icons.history_sharp,
                   ),
                   label: "History"),
               NavigationDestination(

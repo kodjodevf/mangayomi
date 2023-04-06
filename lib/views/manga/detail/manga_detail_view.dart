@@ -299,14 +299,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView> {
       child: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 100),
-        width: MediaQuery.of(context).size.width,
-        height: 70,
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(widget.modelManga!.name!,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: const TextStyle(
+                  fontSize: 18,
+                )),
             widget.titleDescription!,
           ],
         ),

@@ -55,6 +55,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     setState(() {
                       _isSearch = false;
                     });
+                    _textEditingController.clear();
                   },
                   controller: _textEditingController,
                 )
@@ -79,10 +80,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           valueListenable: ref.watch(hiveBoxMangaHistory).listenable(),
           builder: (context, value, child) {
             final entries = value.values.toList();
-            entriesData = entries;
+            final entriesHistory = _textEditingController.text.isNotEmpty
+                ? entriesFilter
+                : entries;
             if (entries.isNotEmpty) {
               return GroupedListView<MangaHistoryModel, String>(
-                elements: entriesFilter.isNotEmpty ? entriesFilter : entries,
+                elements: entriesHistory,
                 groupBy: (element) => element.date.substring(0, 10),
                 groupSeparatorBuilder: (String groupByValue) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),

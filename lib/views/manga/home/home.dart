@@ -175,7 +175,10 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
             height: 270,
           ),
         ),
-        BottomTextWidget(text: widget.name)
+        BottomTextWidget(
+          text: widget.name,
+          isLoading: true,
+        )
       ]),
       error: (error, stackTrace) => const Center(child: Text("Error")),
     );
