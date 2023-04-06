@@ -29,9 +29,9 @@ lang(String lang) {
     return 'tr';
   } else if (lang == 'Polski') {
     return 'pl';
-  } else if (lang == '中文') {
+  } else if (lang == '中文(Zhōngwén)') {
     return 'zh';
-  } else if (lang == '(Hong Kong) 繁體中文') {
+  } else if (lang == '繁體中文(Hong Kong)') {
     return 'zh-hk';
   }
 }
@@ -68,9 +68,9 @@ completeLang(String lang) {
   } else if (lang == 'pl') {
     return 'Polski';
   } else if (lang == 'zh') {
-    return '中文';
+    return '中文(Zhōngwén)';
   } else if (lang == 'zh-hk') {
-    return '(Hong Kong) 繁體中文';
+    return '繁體中文(Hong Kong)';
   }
 }
 
@@ -90,6 +90,6 @@ final List<String> language = [
   'Polski',
   'Türkçe',
   'Deutsch',
-  '中文',
-  '(Hong Kong) 繁體中文'
+  '中文(Zhōngwén)',
+  '繁體中文(Hong Kong)'
 ];

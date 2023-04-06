@@ -33,6 +33,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         ),
         body: getManga.when(
           data: (data) {
+            if (data.url.isEmpty) {
+              return const Center(child: Text("No result"));
+            }
             _scrollController.addListener(() {
               if (_scrollController.position.pixels ==
                   _scrollController.position.maxScrollExtent) {

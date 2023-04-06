@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kodjodevf.mangayomi">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="mangayomi"
         android:name="${applicationName}"

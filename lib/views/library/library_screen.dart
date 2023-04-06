@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/views/library/search_text_form_field.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
@@ -35,41 +36,20 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               ),
         actions: [
           isSearch
-              ? Flexible(
-                  child: TextFormField(
-                    style: const TextStyle(fontFamily: 'Lato'),
-                    controller: _textEditingController,
-                    keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() {
-                        entriesFilter = entries
-                            .where((element) =>
-                                element.name!.toLowerCase().contains(value))
-                            .toList();
-                      });
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'Seach...',
-                        filled: true,
-                        fillColor: Colors.transparent,
-                        prefixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                isSearch = false;
-                              });
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back,
-                            )),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                        border: const OutlineInputBorder(
-                            borderSide: BorderSide.none)),
-                  ),
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    setState(() {
+                      entriesFilter = entries
+                          .where((element) =>
+                              element.name!.toLowerCase().contains(value))
+                          .toList();
+                    });
+                  },
+                  onPressed: () {
+                    setState(() {
+                      isSearch = false;
+                    });
+                  }, controller: _textEditingController,
                 )
               : IconButton(
                   splashRadius: 20,

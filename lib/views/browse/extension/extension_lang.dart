@@ -12,6 +12,7 @@ class ExtensionsLang extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    language.sort((a, b) => a.compareTo(b));
     return Scaffold(
       appBar: AppBar(
         title: const Text("Extensions"),

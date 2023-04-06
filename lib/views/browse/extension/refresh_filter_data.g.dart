@@ -6,11 +6,11 @@ part of 'refresh_filter_data.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$refreshFilterDataHash() => r'0a4c4949efbe333131bef6b2e52ee94d81f06036';
+String _$refreshFilterDataHash() => r'78e543cb9e5bffa4a5960abeb9d7b2dd4cb23e30';
 
 /// See also [refreshFilterData].
 @ProviderFor(refreshFilterData)
-final refreshFilterDataProvider = AutoDisposeFutureProvider<bool>.internal(
+final refreshFilterDataProvider = AutoDisposeProvider<dynamic>.internal(
   refreshFilterData,
   name: r'refreshFilterDataProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -20,5 +20,5 @@ final refreshFilterDataProvider = AutoDisposeFutureProvider<bool>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef RefreshFilterDataRef = AutoDisposeFutureProviderRef<bool>;
+typedef RefreshFilterDataRef = AutoDisposeProviderRef<dynamic>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

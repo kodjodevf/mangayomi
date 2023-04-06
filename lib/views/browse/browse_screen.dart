@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/views/browse/extension/extension_screen.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
 import 'package:mangayomi/views/browse/sources_screen.dart';
+import 'package:mangayomi/views/library/search_text_form_field.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -25,6 +29,10 @@ class _BrowseScreenState extends State<BrowseScreen>
     super.initState();
   }
 
+  List<SourceModel> entries = [];
+  List<SourceModel> entriesFilter = [];
+  final _textEditingController = TextEditingController();
+  bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -39,15 +47,40 @@ class _BrowseScreenState extends State<BrowseScreen>
             style: TextStyle(color: Theme.of(context).hintColor),
           ),
           actions: [
-            if (_tabBarController.index != 2)
-              IconButton(
-                  splashRadius: 20,
-                  onPressed: () {},
-                  icon: Icon(
-                      _tabBarController.index == 0
-                          ? Icons.travel_explore_rounded
-                          : Icons.search_rounded,
-                      color: Theme.of(context).hintColor)),
+            _isSearch
+                ? SeachFormTextField(
+                    onChanged: (value) {
+                      setState(() {
+                        entriesFilter = entries
+                            .where((element) => element.sourceName
+                                .toLowerCase()
+                                .contains(value.toLowerCase()))
+                            .toList();
+                      });
+                    },
+                    onPressed: () {
+                      setState(() {
+                        _isSearch = false;
+                      });
+                    },
+                    controller: _textEditingController,
+                  )
+                : _tabBarController.index != 2
+                    ? IconButton(
+                        splashRadius: 20,
+                        onPressed: () {
+                          if (_tabBarController.index == 1) {
+                            setState(() {
+                              _isSearch = true;
+                            });
+                          }
+                        },
+                        icon: Icon(
+                            _tabBarController.index == 0
+                                ? Icons.travel_explore_rounded
+                                : Icons.search_rounded,
+                            color: Theme.of(context).hintColor))
+                    : Container(),
             IconButton(
                 splashRadius: 20,
                 onPressed: () {
@@ -74,10 +107,15 @@ class _BrowseScreenState extends State<BrowseScreen>
             ],
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children: const [
-          SourcesScreen(),
-          ExtensionScreen(),
-          MigrateScreen()
+        body: TabBarView(controller: _tabBarController, children: [
+          const SourcesScreen(),
+          ExtensionScreen(
+            entriesData: (val) {
+              entries = val as List<SourceModel>;
+            },
+            entriesFilter: entriesFilter,
+          ),
+          const MigrateScreen()
         ]),
       ),
     );

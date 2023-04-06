@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,25 +12,60 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/views/library/search_text_form_field.dart';
 
-class HistoryScreen extends ConsumerWidget {
+class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends ConsumerState<HistoryScreen> {
+  final _textEditingController = TextEditingController();
+  bool _isSearch = false;
+  List<MangaHistoryModel> entriesData = [];
+  List<MangaHistoryModel> entriesFilter = [];
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: Text(
-          'History',
-          style: TextStyle(color: Theme.of(context).hintColor),
-        ),
+        title: _isSearch
+            ? null
+            : Text(
+                'History',
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
         actions: [
-          IconButton(
-              splashRadius: 20,
-              onPressed: () {},
-              icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
+          _isSearch
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    log(value.toString());
+                    setState(() {
+                      entriesFilter = entriesData
+                          .where((element) => element.modelManga.name!
+                              .toLowerCase()
+                              .contains(value.toLowerCase()))
+                          .toList();
+                    });
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
           IconButton(
               splashRadius: 20,
               onPressed: () {},
@@ -42,9 +79,10 @@ class HistoryScreen extends ConsumerWidget {
           valueListenable: ref.watch(hiveBoxMangaHistory).listenable(),
           builder: (context, value, child) {
             final entries = value.values.toList();
+            entriesData = entries;
             if (entries.isNotEmpty) {
               return GroupedListView<MangaHistoryModel, String>(
-                elements: entries,
+                elements: entriesFilter.isNotEmpty ? entriesFilter : entries,
                 groupBy: (element) => element.date.substring(0, 10),
                 groupSeparatorBuilder: (String groupByValue) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),

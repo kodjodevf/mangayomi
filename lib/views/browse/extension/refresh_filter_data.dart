@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'refresh_filter_data.g.dart';
 
 @riverpod
-Future<bool> refreshFilterData(RefreshFilterDataRef ref) async {
+refreshFilterData(RefreshFilterDataRef ref) async {
   final lf = ref
       .watch(hiveBoxMangaFilterProvider)
       .get("language_filter", defaultValue: []);
@@ -69,5 +69,4 @@ Future<bool> refreshFilterData(RefreshFilterDataRef ref) async {
       }
     }
   }
-  return true;
 }

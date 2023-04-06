@@ -69,7 +69,6 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
           "Referer": "https://www.mangahere.cc/",
           "Cookie": "isAdult=1"
         });
-    log("message");
     var link = "http://www.mangahere.cc${modelManga.chapterUrl![index]}";
     dom.Document htmll = dom.Document.html(response.body);
     int? pagesNumber = -1;
