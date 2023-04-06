@@ -74,20 +74,22 @@ completeLang(String lang) {
   }
 }
 
- final List<String> language = [
-    "Français",
-    "English",
-    "العربية",
-    'Português',
-    'Português do brasil',
-    'Italiano',
-    'Pусский язык',
-    'Español',
-    'Español latinoamericano',
-    'Bahasa Indonesia',
-    'हिन्दी, हिंदी',
-    '日本語',
-    'Deutsch',
-    '中文',
-    '(Hong Kong) 繁體中文'
-  ];
+final List<String> language = [
+  "Français",
+  "English",
+  "العربية",
+  'Português',
+  'Português do brasil',
+  'Italiano',
+  'Pусский язык',
+  'Español',
+  'Español latinoamericano',
+  'Bahasa Indonesia',
+  'हिन्दी, हिंदी',
+  '日本語',
+  'Polski',
+  'Türkçe',
+  'Deutsch',
+  '中文',
+  '(Hong Kong) 繁體中文'
+];

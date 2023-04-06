@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/views/browse/extension/extension.dart';
-import 'package:mangayomi/views/browse/migrate.dart';
-import 'package:mangayomi/views/browse/sources.dart';
+import 'package:mangayomi/views/browse/extension/extension_screen.dart';
+import 'package:mangayomi/views/browse/migrate_screen.dart';
+import 'package:mangayomi/views/browse/sources_screen.dart';
 
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
@@ -28,6 +28,7 @@ class _BrowseScreenState extends State<BrowseScreen>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      animationDuration: Duration.zero,
       length: 3,
       child: Scaffold(
         appBar: AppBar(
@@ -64,8 +65,8 @@ class _BrowseScreenState extends State<BrowseScreen>
                     color: Theme.of(context).hintColor)),
           ],
           bottom: TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
-            isScrollable: true,
             tabs: const [
               Tab(text: "Sources"),
               Tab(text: "Extension"),
@@ -73,7 +74,7 @@ class _BrowseScreenState extends State<BrowseScreen>
             ],
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children:  [
+        body: TabBarView(controller: _tabBarController, children: const [
           SourcesScreen(),
           ExtensionScreen(),
           MigrateScreen()

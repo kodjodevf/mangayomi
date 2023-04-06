@@ -17,15 +17,21 @@ class SourceModel extends HiveObject {
   final bool isNsfw;
   @HiveField(6)
   final TypeSource typeSource;
-  SourceModel({
-    required this.sourceName,
-    required this.url,
-    required this.lang,
-    required this.typeSource,
-    this.isActive = true,
-    this.isAdded = false,
-    this.isNsfw = false,
-  });
+  @HiveField(7)
+  final String logoUrl;
+  @HiveField(8, defaultValue: false)
+  final bool isFullData;
+
+  SourceModel(
+      {required this.sourceName,
+      required this.url,
+      required this.lang,
+      required this.typeSource,
+      required this.logoUrl,
+      this.isActive = true,
+      this.isAdded = false,
+      this.isNsfw = false,
+      this.isFullData = false});
 }
 
 @HiveType(typeId: 4)

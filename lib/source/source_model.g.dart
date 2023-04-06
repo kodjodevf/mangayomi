@@ -21,16 +21,18 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       url: fields[1] as String,
       lang: fields[2] as String,
       typeSource: fields[6] as TypeSource,
+      logoUrl: fields[7] as String,
       isActive: fields[3] == null ? true : fields[3] as bool,
       isAdded: fields[4] == null ? false : fields[4] as bool,
       isNsfw: fields[5] == null ? false : fields[5] as bool,
+      isFullData: fields[8] == null ? false : fields[8] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SourceModel obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.sourceName)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       ..writeByte(5)
       ..write(obj.isNsfw)
       ..writeByte(6)
-      ..write(obj.typeSource);
+      ..write(obj.typeSource)
+      ..writeByte(7)
+      ..write(obj.logoUrl)
+      ..writeByte(8)
+      ..write(obj.isFullData);
   }
 
   @override
