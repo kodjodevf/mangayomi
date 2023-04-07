@@ -13,6 +13,8 @@ import 'package:mangayomi/views/manga/detail/manga_reader_detail.dart';
 import 'package:mangayomi/views/manga/home/home.dart';
 import 'package:mangayomi/views/manga/reader/manga_reader_view.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
+import 'package:mangayomi/views/more/settings/appearance/appearance_screen.dart';
+import 'package:mangayomi/views/more/settings/settings_screen.dart';
 import 'package:mangayomi/views/updates/updates_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -146,6 +148,32 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const ExtensionsLang(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/settings",
+          name: "settings",
+          builder: (context, state) {
+            return const SettingsScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const SettingsScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/appearance",
+          name: "appearance",
+          builder: (context, state) {
+            return const AppearanceScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const AppearanceScreen(),
             );
           },
         ),

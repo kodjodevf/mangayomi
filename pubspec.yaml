@@ -50,6 +50,8 @@ dependencies:
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
   intl: ^0.18.0
+  rive: ^0.10.3
+  google_fonts: ^4.0.3
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -81,7 +83,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

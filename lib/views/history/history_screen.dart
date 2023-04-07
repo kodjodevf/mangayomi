@@ -102,6 +102,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
+                          width: 60,
+                          height: 90,
                           child: GestureDetector(
                             onTap: () {
                               final model = ModelManga(
@@ -127,7 +129,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               child: cachedNetworkImage(
                                   imageUrl: element.modelManga.imageUrl!,
                                   width: 60,
-                                  height: 100,
+                                  height: 90,
                                   fit: BoxFit.cover),
                             ),
                           ),
@@ -168,7 +170,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.bold),
-                                                  textAlign: TextAlign.center,
+                                                  textAlign: TextAlign.start,
                                                 ),
                                                 Row(
                                                   crossAxisAlignment:

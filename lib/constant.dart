@@ -4,4 +4,5 @@ class HiveConstant {
   static String get hiveBoxMangaHistory => "_manga_box_history_";
   static String get hiveBoxMangaSource => "_manga_box_source_";
   static String get hiveBoxMangaFilter => "_manga_box_filter_";
+  static String get hiveBoxAppSettings => "_app_box_settings_";
 }

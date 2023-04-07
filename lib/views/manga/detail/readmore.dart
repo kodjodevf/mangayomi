@@ -21,25 +21,28 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
       children: [
         Stack(
           children: [
-            ExpandableText(
-              animationDuration: const Duration(milliseconds: 500),
-              onExpandedChanged: (ok) {
-                setState(() => expanded = ok);
-                widget.onChanged(ok);
-              },
-              expandOnTextTap: true,
-              widget.text,
-              expandText: '',
-              maxLines: 3,
-              expanded: false,
-              onPrefixTap: () {
-                setState(() => expanded = !expanded);
-                widget.onChanged(expanded);
-              },
-              linkColor: Theme.of(context).scaffoldBackgroundColor,
-              animation: true,
-              collapseOnTextTap: true,
-              prefixText: '',
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: ExpandableText(
+                animationDuration: const Duration(milliseconds: 500),
+                onExpandedChanged: (ok) {
+                  setState(() => expanded = ok);
+                  widget.onChanged(ok);
+                },
+                expandOnTextTap: true,
+                widget.text.trim(),
+                expandText: '',
+                maxLines: 3,
+                expanded: false,
+                onPrefixTap: () {
+                  setState(() => expanded = !expanded);
+                  widget.onChanged(expanded);
+                },
+                linkColor: Theme.of(context).scaffoldBackgroundColor,
+                animation: true,
+                collapseOnTextTap: true,
+                prefixText: '',
+              ),
             ),
             if (!expanded)
               Positioned(

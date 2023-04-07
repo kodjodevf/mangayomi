@@ -266,6 +266,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           : SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   for (var i = 0;
                                       i < widget.modelManga!.genre!.length;
@@ -402,7 +403,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 child: Column(
                   children: const [
                     Icon(
-                      Icons.travel_explore,
+                      FontAwesomeIcons.earthAfrica,
                       size: 25,
                     ),
                     SizedBox(

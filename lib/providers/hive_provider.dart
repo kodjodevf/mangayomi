@@ -23,3 +23,6 @@ final hiveBoxMangaFilterProvider = Provider<Box>((ref) {
 final hiveBoxMangaSourceProvider = Provider<Box<SourceModel>>((ref) {
   return Hive.box<SourceModel>(HiveConstant.hiveBoxMangaSource);
 });
+final hiveBoxSettings = Provider<Box>((ref) {
+  return Hive.box(HiveConstant.hiveBoxAppSettings);
+});
