@@ -34,7 +34,7 @@ class LibraryListViewWidget extends StatelessWidget {
             context.push('/manga-reader/detail', extra: model);
           },
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             child: Container(
               height: 45,
               decoration: BoxDecoration(
