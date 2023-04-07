@@ -113,7 +113,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         width: !ref.watch(isExtended)
                             ? 60
                             : mediaWidth(context, 0.25),
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -126,7 +126,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               AnimatedContainer(
                                 curve: Curves.easeIn,
                                 width: !ref.watch(isExtended) ? 0 : 30,
-                                duration: const Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 300),
                                 child: const Text(
                                   "Read",
                                   overflow: TextOverflow.ellipsis,
@@ -136,7 +136,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               AnimatedContainer(
                                 curve: Curves.easeIn,
                                 width: !ref.watch(isExtended) ? 0 : 10,
-                                duration: const Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 300),
                               ),
                               const Icon(
                                 Icons.play_arrow,

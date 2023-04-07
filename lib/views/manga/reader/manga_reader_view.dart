@@ -216,13 +216,16 @@ class _MangaChapterPageGalleryState
         widget.modelManga.link,
         MangaHistoryModel(
             date: DateTime.now().toString(), modelManga: widget.modelManga));
-    setState(() {
-      _currentIndex = index;
-      if (_imageDetailY != 0) {
-        _imageDetailY = 0;
-        _rebuildDetail.sink.add(_imageDetailY);
-      }
-    });
+    if (mounted) {
+      setState(() {
+        _currentIndex = index;
+        if (_imageDetailY != 0) {
+          _imageDetailY = 0;
+          _rebuildDetail.sink.add(_imageDetailY);
+        }
+      });
+    }
+
     ref.watch(hiveBoxMangaInfo).put(
         "${widget.source}/${widget.titleManga}/${widget.chapter}-page_index",
         index);

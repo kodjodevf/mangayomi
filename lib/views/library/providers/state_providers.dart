@@ -4,6 +4,6 @@ final reverseStateProvider = StateProvider.autoDispose<bool>(
   (ref) => false,
 );
 
-final sortedValueStateProvider = StateProvider.autoDispose<String>(
-  (ref) => 'Alphabetically',
+final displayValueStateProvider = StateProvider.autoDispose<String>(
+  (ref) => 'Compact grid',
 );
