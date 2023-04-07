@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -77,7 +78,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15))),
-                            onPressed: () {},
+                            onPressed: () {
+                              pushMangaReaderView(
+                                  context: context,
+                                  modelManga: widget.modelManga,
+                                  index: int.parse(entries.toString()));
+                            },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -119,7 +125,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15))),
-                          onPressed: () {},
+                          onPressed: () {
+                            pushMangaReaderView(
+                                context: context,
+                                modelManga: widget.modelManga,
+                                index:
+                                    widget.modelManga.chapterTitle!.length - 1);
+                          },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

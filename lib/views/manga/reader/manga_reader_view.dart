@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_string_escapes, depend_on_referenced_packages
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:io';
 
@@ -231,7 +232,7 @@ class _MangaChapterPageGalleryState
         index);
   }
 
-  void _onAddButtonTapped(int ok, bool isPrev) {
+  void _onAddButtonTapped(int ok, bool isPrev, {bool isSlide = false}) {
     if (isPrev) {
       if (_selectedValue == 'Vertical continue' ||
           _selectedValue == 'Webtoon') {
@@ -239,13 +240,13 @@ class _MangaChapterPageGalleryState
           _itemScrollController.scrollTo(
               curve: Curves.ease,
               index: ok,
-              duration: const Duration(milliseconds: 150));
+              duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
         if (ok != -1) {
           if (_extendedController.hasClients) {
             _extendedController.animateToPage(ok.toInt(),
-                duration: const Duration(milliseconds: 150),
+                duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
           }
         }
@@ -257,13 +258,13 @@ class _MangaChapterPageGalleryState
           _itemScrollController.scrollTo(
               curve: Curves.ease,
               index: ok,
-              duration: const Duration(milliseconds: 150));
+              duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
         if (widget.pageLength != ok) {
           if (_extendedController.hasClients) {
             _extendedController.animateToPage(ok.toInt(),
-                duration: const Duration(milliseconds: 150),
+                duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
           }
         }
@@ -330,7 +331,7 @@ class _MangaChapterPageGalleryState
   }
 
   Color colorsBlack(BuildContext context) =>
-      Theme.of(context).scaffoldBackgroundColor.withOpacity(0.6);
+      Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
 
   Widget _showMore() {
     return Consumer(
@@ -375,8 +376,7 @@ class _MangaChapterPageGalleryState
                   ),
                   actions: [
                     IconButton(
-                        onPressed: () {},
-                        icon: const Icon(CupertinoIcons.globe)),
+                        onPressed: () {}, icon: const Icon(Icons.public)),
                   ],
                   backgroundColor: colorsBlack(context),
                 ),
@@ -384,157 +384,168 @@ class _MangaChapterPageGalleryState
             ),
             AnimatedContainer(
               curve: Curves.ease,
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300),
               width: mediaWidth(context, 1),
-              height: _isView ? 75 : 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                color: colorsBlack(context),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        _showModalSettings();
-                      },
-                      icon: const Icon(
-                        FontAwesomeIcons.gear,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: colorsBlack(context),
-                              borderRadius: BorderRadius.circular(25)),
-                          child: SizedBox(
-                            height: 40,
-                            child: Row(
-                              children: [
-                                if (!_isReversHorizontal)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Text(
-                                      "${_currentIndex + 1} ",
-                                      style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ),
-                                if (_isReversHorizontal)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Text(
-                                      "${widget.pageLength}",
-                                      style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  ),
-                                Flexible(
-                                  child: Transform.scale(
-                                    scaleX: !_isReversHorizontal ? 1 : -1,
-                                    child: Slider(
-                                      activeColor: Colors.white,
-                                      inactiveColor: Colors.grey,
-                                      onChanged: (newValue) {
-                                        _onAddButtonTapped(
-                                            newValue.toInt(), true);
-                                      },
-                                      value: _currentIndex.toDouble(),
-                                      min: 0,
-                                      max: (widget.pageLength - 1).toDouble(),
-                                      // onChangeEnd: (value) {
-                                      //   _onAddButtonTapped(value.toInt(), true);
-                                      // },
-                                    ),
-                                  ),
+              height: _isView ? 108 : 0,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CircleAvatar(
+                          backgroundColor: colorsBlack(context),
+                          child: IconButton(
+                              onPressed: () {
+                                pushReplacementMangaReaderView(
+                                    context: context,
+                                    modelManga: widget.modelManga,
+                                    index: widget.index + 1);
+                              },
+                              icon: Transform.scale(
+                                scaleX: 1,
+                                child: Icon(
+                                  Icons.skip_previous_rounded,
+                                  color: widget.index + 1 !=
+                                          widget.modelManga.chapterTitle!.length
+                                      ? Colors.white
+                                      : Colors.grey,
+                                  // size: 17,
                                 ),
-                                if (_isReversHorizontal)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Text(
-                                      "${_currentIndex + 1} ",
-                                      style: const TextStyle(
+                              )),
+                        ),
+                      ),
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: colorsBlack(context),
+                                borderRadius: BorderRadius.circular(25)),
+                            child: SizedBox(
+                              height: 40,
+                              child: Row(
+                                children: [
+                                  if (!_isReversHorizontal)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 12),
+                                      child: Text(
+                                        "${_currentIndex + 1} ",
+                                        style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                if (!_isReversHorizontal)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Text(
-                                      "${widget.pageLength}",
-                                      style: const TextStyle(
+                                  if (_isReversHorizontal)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 12),
+                                      child: Text(
+                                        "${widget.pageLength}",
+                                        style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  Flexible(
+                                    child: Transform.scale(
+                                      scaleX: !_isReversHorizontal ? 1 : -1,
+                                      child: Slider(
+                                        onChanged: (newValue) {
+                                          _onAddButtonTapped(
+                                              newValue.toInt(), true,
+                                              isSlide: true);
+                                        },
+                                        divisions:
+                                            max(widget.pageLength - 1, 1),
+                                        value: _currentIndex.toDouble(),
+                                        min: 0,
+                                        max: (widget.pageLength - 1).toDouble(),
+                                      ),
                                     ),
                                   ),
-                              ],
+                                  if (_isReversHorizontal)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Text(
+                                        "${_currentIndex + 1} ",
+                                        style: const TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  if (!_isReversHorizontal)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Text(
+                                        "${widget.pageLength}",
+                                        style: const TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          pushReplacementMangaReaderView(
-                              context: context,
-                              modelManga: widget.modelManga,
-                              index: widget.index + 1);
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: CircleAvatar(
-                          // radius: 17,
                           backgroundColor: colorsBlack(context),
-                          child: Transform.scale(
-                            scaleX: 1,
-                            child: Icon(
-                              FontAwesomeIcons.chevronLeft,
-                              color: widget.index + 1 !=
-                                      widget.modelManga.chapterTitle!.length
-                                  ? Colors.white
-                                  : Colors.grey,
-                              // size: 17,
+                          child: IconButton(
+                            onPressed: () {
+                              pushReplacementMangaReaderView(
+                                  context: context,
+                                  modelManga: widget.modelManga,
+                                  index: widget.index - 1);
+                            },
+                            icon: Transform.scale(
+                              scaleX: 1,
+                              child: Icon(
+                                Icons.skip_next_rounded,
+                                color: widget.index != 0
+                                    ? Colors.white
+                                    : Colors.grey,
+                                // size: 17,
+                              ),
                             ),
                           ),
-                        )),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          pushReplacementMangaReaderView(
-                              context: context,
-                              modelManga: widget.modelManga,
-                              index: widget.index - 1);
-                        },
-                        child: CircleAvatar(
-                          // radius: 17,
-                          backgroundColor: colorsBlack(context),
-                          child: Transform.scale(
-                            scaleX: 1,
-                            child: Icon(
-                              FontAwesomeIcons.chevronRight,
-                              color: widget.index != 0
-                                  ? Colors.white
-                                  : Colors.grey,
-                              // size: 17,
-                            ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    color: colorsBlack(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            _showModalSettings();
+                          },
+                          icon: const Icon(
+                            Icons.app_settings_alt_outlined,
+                            color: Colors.white,
                           ),
-                        ))
-                  ],
-                ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            _showModalSettings();
+                          },
+                          icon: const Icon(
+                            Icons.settings_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

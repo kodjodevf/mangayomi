@@ -403,7 +403,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 child: Column(
                   children: const [
                     Icon(
-                      FontAwesomeIcons.earthAfrica,
+                      Icons.public,
                       size: 25,
                     ),
                     SizedBox(
