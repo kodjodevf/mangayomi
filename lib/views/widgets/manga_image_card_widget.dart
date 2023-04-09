@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 
@@ -50,10 +51,7 @@ class _MangaImageCardWidgetState extends ConsumerState<MangaImageCardWidget> {
       },
       child: CoverViewWidget(children: [
         cachedNetworkImage(
-            headers: {
-              "Referer": "https://www.mangahere.cc/",
-              "Cookie": "isAdult=1"
-            },
+            headers: headers(widget.getMangaDetailModel!.source!),
             imageUrl: widget.getMangaDetailModel!.imageUrl!,
             width: 200,
             height: 270,

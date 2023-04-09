@@ -77,6 +77,8 @@ class TypeSourceAdapter extends TypeAdapter<TypeSource> {
         return TypeSource.mangathemesia;
       case 3:
         return TypeSource.comick;
+      case 4:
+        return TypeSource.mmrcms;
       default:
         return TypeSource.single;
     }
@@ -93,6 +95,9 @@ class TypeSourceAdapter extends TypeAdapter<TypeSource> {
         break;
       case TypeSource.comick:
         writer.writeByte(3);
+        break;
+      case TypeSource.mmrcms:
+        writer.writeByte(4);
         break;
     }
   }

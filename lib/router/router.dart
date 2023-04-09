@@ -10,7 +10,7 @@ import 'package:mangayomi/views/general/general_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
 import 'package:mangayomi/views/manga/detail/manga_reader_detail.dart';
-import 'package:mangayomi/views/manga/home/home.dart';
+import 'package:mangayomi/views/manga/home/mang_home_screen.dart';
 import 'package:mangayomi/views/manga/reader/manga_reader_view.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
 import 'package:mangayomi/views/more/settings/appearance/appearance_screen.dart';

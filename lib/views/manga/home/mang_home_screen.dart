@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
@@ -29,7 +30,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('${widget.mangaType.source}'),
-          actions: [],
+          actions: [
+            MangaSearchButton(
+                source: widget.mangaType.source!, lang: widget.mangaType.lang!)
+          ],
         ),
         body: getManga.when(
           data: (data) {

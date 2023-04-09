@@ -6,6 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/services/http_res_to_dom_html.dart';
+import 'package:mangayomi/source/source_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_js/flutter_js.dart';
@@ -37,6 +40,52 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       "${pathh!.path}/${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}/");
   if (hiveUrl.isNotEmpty) {
     urll = hiveUrl;
+  } else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
+    final htmll =
+        await httpResToDom(url: modelManga.chapterUrl![index], headers: {});
+
+    if (htmll.querySelectorAll('#readerarea').isNotEmpty) {
+      final ta = htmll
+          .querySelectorAll('#readerarea')
+          .map((e) => e.outerHtml)
+          .toList();
+      final RegExp regex = RegExp(r'<img[^>]+src="([^"]+)"');
+      final Iterable<Match> matches = regex.allMatches(ta.first);
+
+      final List<String?> urls = matches.map((m) => m.group(1)).toList();
+      Iterable<Match> matchess = [];
+      if (htmll.querySelectorAll(' #select-paged ').isNotEmpty) {
+        final ee = htmll
+            .querySelectorAll(' #select-paged ')
+            .map((e) => e.outerHtml)
+            .toList();
+        final RegExp regexx = RegExp(r'value="([^"]+)"');
+        matchess = regexx.allMatches(ee.first);
+      }
+
+      final List<String?> urlss = matchess.map((m) => m.group(1)).toList();
+      if (urls.length == 1 && urls.isNotEmpty) {
+        for (var i = 0; i < urlss.length; i++) {
+          if (urlss[i]!.length == 1) {
+            urll.add(
+                urls.first!.replaceAll("001", '00${int.parse(urlss[i]!) + 1}'));
+          } else if (urlss[i]!.length == 2) {
+            urll.add(
+                urls.first!.replaceAll("001", '0${int.parse(urlss[i]!) + 1}'));
+          } else if (urlss[i]!.length == 3) {
+            urll.add(
+                urls.first!.replaceAll("001", '${int.parse(urlss[i]!) + 1}'));
+          }
+        }
+      } else if (urls.length > 1 && urls.isNotEmpty) {
+        for (var tt in urls) {
+          urll.add(tt);
+        }
+      }
+      ref.watch(hiveBoxMangaInfo).put(
+          "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+          urll);
+    }
   }
   /***********/
   /*mangahere*/

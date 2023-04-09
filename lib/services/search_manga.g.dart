@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_popular_manga.dart';
+part of 'search_manga.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'5addb8826c01045b532a53de957c6470294833ad';
+String _$searchMangaHash() => r'18866e3523f085404fecaa91fa3bc1a7149724e6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,35 @@ class _SystemHash {
   }
 }
 
-typedef GetPopularMangaRef = AutoDisposeFutureProviderRef<GetMangaModel>;
+typedef SearchMangaRef = AutoDisposeFutureProviderRef<SearchMangaModel>;
 
-/// See also [getPopularManga].
-@ProviderFor(getPopularManga)
-const getPopularMangaProvider = GetPopularMangaFamily();
+/// See also [searchManga].
+@ProviderFor(searchManga)
+const searchMangaProvider = SearchMangaFamily();
 
-/// See also [getPopularManga].
-class GetPopularMangaFamily extends Family<AsyncValue<GetMangaModel>> {
-  /// See also [getPopularManga].
-  const GetPopularMangaFamily();
+/// See also [searchManga].
+class SearchMangaFamily extends Family<AsyncValue<SearchMangaModel>> {
+  /// See also [searchManga].
+  const SearchMangaFamily();
 
-  /// See also [getPopularManga].
-  GetPopularMangaProvider call({
+  /// See also [searchManga].
+  SearchMangaProvider call({
     required String source,
-    required int page,
+    required String query,
   }) {
-    return GetPopularMangaProvider(
+    return SearchMangaProvider(
       source: source,
-      page: page,
+      query: query,
     );
   }
 
   @override
-  GetPopularMangaProvider getProviderOverride(
-    covariant GetPopularMangaProvider provider,
+  SearchMangaProvider getProviderOverride(
+    covariant SearchMangaProvider provider,
   ) {
     return call(
       source: provider.source,
-      page: provider.page,
+      query: provider.query,
     );
   }
 
@@ -73,47 +73,47 @@ class GetPopularMangaFamily extends Family<AsyncValue<GetMangaModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getPopularMangaProvider';
+  String? get name => r'searchMangaProvider';
 }
 
-/// See also [getPopularManga].
-class GetPopularMangaProvider extends AutoDisposeFutureProvider<GetMangaModel> {
-  /// See also [getPopularManga].
-  GetPopularMangaProvider({
+/// See also [searchManga].
+class SearchMangaProvider extends AutoDisposeFutureProvider<SearchMangaModel> {
+  /// See also [searchManga].
+  SearchMangaProvider({
     required this.source,
-    required this.page,
+    required this.query,
   }) : super.internal(
-          (ref) => getPopularManga(
+          (ref) => searchManga(
             ref,
             source: source,
-            page: page,
+            query: query,
           ),
-          from: getPopularMangaProvider,
-          name: r'getPopularMangaProvider',
+          from: searchMangaProvider,
+          name: r'searchMangaProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getPopularMangaHash,
-          dependencies: GetPopularMangaFamily._dependencies,
+                  : _$searchMangaHash,
+          dependencies: SearchMangaFamily._dependencies,
           allTransitiveDependencies:
-              GetPopularMangaFamily._allTransitiveDependencies,
+              SearchMangaFamily._allTransitiveDependencies,
         );
 
   final String source;
-  final int page;
+  final String query;
 
   @override
   bool operator ==(Object other) {
-    return other is GetPopularMangaProvider &&
+    return other is SearchMangaProvider &&
         other.source == source &&
-        other.page == page;
+        other.query == query;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
+    hash = _SystemHash.combine(hash, query.hashCode);
 
     return _SystemHash.finish(hash);
   }

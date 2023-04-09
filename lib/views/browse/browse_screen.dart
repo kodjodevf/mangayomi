@@ -63,6 +63,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                         _isSearch = false;
                       });
                       _textEditingController.clear();
+                      entriesFilter = entries;
                     },
                     controller: _textEditingController,
                   )

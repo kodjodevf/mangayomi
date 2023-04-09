@@ -55,6 +55,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     setState(() {
                       isSearch = false;
                     });
+                    _textEditingController.clear();
+                   
                   },
                   controller: _textEditingController,
                 )

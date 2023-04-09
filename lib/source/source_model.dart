@@ -41,7 +41,9 @@ enum TypeSource {
   @HiveField(2)
   mangathemesia,
   @HiveField(3)
-  comick
+  comick,
+  @HiveField(4)
+  mmrcms
 }
 
 // @HiveType(typeId: 3)

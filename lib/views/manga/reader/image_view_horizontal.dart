@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/headers.dart';
 
 class ImageViewHorizontal extends StatefulWidget {
   final int length;
@@ -43,10 +44,7 @@ class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
       clearMemoryCacheWhenDispose: true,
       enableMemoryCache: false,
       cacheMaxAge: const Duration(days: 7),
-      headers: const {
-        "Referer": "https://www.mangahere.cc/",
-        "Cookie": "isAdult=1"
-      },
+      headers: headers(widget.source),
       mode: ExtendedImageMode.gesture,
       initGestureConfigHandler: widget.initGestureConfigHandler,
       onDoubleTap: widget.onDoubleTap,

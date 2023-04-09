@@ -378,4 +378,53 @@ List<SourceModel> sourcesList = [
       typeSource: TypeSource.mangathemesia,
       logoUrl:
           'https://xcalibrscans.com/wp-content/uploads/2021/06/xcalibr-dark-v3.png'),
+
+  SourceModel(
+      sourceName: "Fallen Angels",
+      url: "https://manga.fascans.com",
+      lang: "en",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "Scan FR",
+      url: "https://www.scan-fr.org",
+      lang: "fr",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "Scan VF",
+      url: "https://www.scan-vf.net",
+      lang: "fr",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''), //
+  SourceModel(
+      sourceName: "Komikid",
+      url: "https://www.komikid.com",
+      lang: "id",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "MangaHanta",
+      url: "http://mangahanta.com",
+      lang: "tr",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "MangaID",
+      url: "https://mangaid.click",
+      lang: "id",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "Jpmangas",
+      url: "https://jpmangas.cc",
+      lang: "fr",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
+  SourceModel(
+      sourceName: "FR Scan",
+      url: "https://frscan.ws",
+      lang: "fr",
+      typeSource: TypeSource.mmrcms,
+      logoUrl: ''),
 ];

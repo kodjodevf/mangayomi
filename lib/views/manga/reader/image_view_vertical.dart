@@ -3,6 +3,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class ImageViewVertical extends ConsumerStatefulWidget {
@@ -44,10 +45,7 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
               height: MediaQuery.of(context).padding.top,
             ),
           ExtendedImage.network(widget.url,
-              headers: const {
-                "Referer": "https://www.mangahere.cc/",
-                "Cookie": "isAdult=1"
-              },
+              headers: headers(widget.source),
               handleLoadingProgress: true,
               fit: BoxFit.contain,
               cacheMaxAge: const Duration(days: 7),
