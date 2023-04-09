@@ -1,5 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
+import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -33,6 +36,44 @@ class GetMangaDetailModel {
   });
 }
 
+_parseStatut(int i) {
+  if (i == 1) {
+    return 'Ongoing';
+  } else if (i == 2) {
+    return 'Completed';
+  } else if (i == 3) {
+    return 'Canceled';
+  } else if (i == 4) {
+    return '';
+  } else {
+    return 'Unknown';
+  }
+}
+
+Future findCurrentSlug(String oldSlug) async {
+  var headers = {
+    'Referer': 'https://comick.app/',
+    'User-Agent':
+        'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
+  };
+  var request = http.Request('GET',
+      Uri.parse('https://api.comick.fun/tachiyomi/mapping?slugs=$oldSlug'));
+
+  request.headers.addAll(headers);
+
+  http.StreamedResponse response = await request.send();
+
+  if (response.statusCode == 200) {
+    return await response.stream.bytesToString();
+  } else {
+    return response.reasonPhrase;
+  }
+}
+
+beautifyChapterName(String? vol, String? chap, String? title, String? lang) {
+  return "${vol!.isNotEmpty ? chap!.isEmpty ? "Volume $vol " : "Vol. $vol " : ""}${chap!.isNotEmpty ? vol.isEmpty ? lang == "fr" ? "Chapitre $chap" : "Chapter $chap" : "Ch. $chap " : ""}${title!.isNotEmpty ? chap.isEmpty ? title : " : $title" : ""}";
+}
+
 @riverpod
 Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     {required String imageUrl,
@@ -48,6 +89,85 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterDate = [];
   source = source.toLowerCase();
   String? description;
+
+  /********/
+  /*comick*/
+  /********/
+  if (getWpMangTypeSource(source) == TypeSource.comick) {
+    var headers = {
+      'Referer': 'https://comick.app/',
+      'User-Agent':
+          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
+    };
+    var request = http.Request(
+        'GET', Uri.parse('https://api.comick.fun$url?tachiyomi=true'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var mangaDetail = jsonDecode(await response.stream.bytesToString())
+          as Map<String, dynamic>;
+
+      var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
+
+      RegExp regExp = RegExp(r'name:\s*(.*?),');
+
+      String authorr =
+          regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
+              '';
+      String statuss = _parseStatut(mangaDetailLMap.comic!.status!);
+      status = statuss;
+      author = authorr;
+      RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
+      for (var ok in mangaDetailLMap.genres!) {
+        genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
+      }
+      description = mangaDetailLMap.comic!.desc;
+      String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!);
+      String mangaId = tt.split('":"').last.replaceAll('"}', '');
+      String limit = mangaDetailLMap.comic!.chapterCount.toString();
+
+      var requestt = http.Request(
+          'GET',
+          Uri.parse(
+              'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit'));
+
+      requestt.headers.addAll(headers);
+
+      http.StreamedResponse responsee = await requestt.send();
+
+      if (responsee.statusCode == 200) {
+        List<String> chapterTitles = [];
+        List<String> chapterUrls = [];
+        List<String> chapterDates = [];
+        var chapterDetail = jsonDecode(await responsee.stream.bytesToString())
+            as Map<String, dynamic>;
+        var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
+        for (var chapter in chapterDetailMap.chapters!) {
+          chapterUrls.add(
+              "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
+          chapterDates.add(chapter.createdAt!.toString().substring(0, 10));
+          chapterTitles.add(beautifyChapterName(chapter.vol ?? "",
+              chapter.chap ?? "", chapter.title ?? "", lang));
+        }
+        List<String> chapterTitless = [];
+        for (var i = 0; i < chapterTitles.length; i++) {
+          if (!chapterTitless.contains(chapterTitles[i])) {
+            chapterTitle.add(chapterTitles[i]);
+            chapterUrl.add(chapterUrls[i]);
+            chapterDate.add(chapterDates[i].replaceAll('-', "/"));
+          }
+          chapterTitless.add(chapterTitles[i]);
+        }
+      }
+    }
+  }
+  /*************/
+  /*mangathemesia*/
+  /**************/
+
   if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final dom = await httpResToDom(url: url, headers: {});
     if (dom
@@ -171,7 +291,11 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         }
       }
     }
-  } else if (source == "mangahere") {
+  }
+  /***********/
+  /*mangahere*/
+  /***********/
+  else if (source == "mangahere") {
     final dom = await httpResToDom(
         url: "http://www.mangahere.cc$url",
         headers: {

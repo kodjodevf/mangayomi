@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:mangayomi/models/comick/popular_manga_comick.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_list.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -43,6 +46,42 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
   List<String?> name = [];
   List<String?> image = [];
   source = source.toLowerCase();
+
+  /*********/
+  /*comick*/
+  /*******/
+  if (getWpMangTypeSource(source) == TypeSource.comick) {
+    var headers = {
+      'Referer': 'https://comick.app/',
+      'User-Agent':
+          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
+    };
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://api.comick.fun/v1.0/search?sort=follow&page=$page&tachiyomi=true'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var popularManga =
+          jsonDecode(await response.stream.bytesToString()) as List;
+
+      var popularMangaList =
+          popularManga.map((e) => PopularMangaModelComick.fromJson(e)).toList();
+      for (var popular in popularMangaList) {
+        url.add("/comic/${popular.slug}");
+        name.add(popular.title);
+        image.add(popular.coverUrl);
+      }
+    } else {}
+  }
+
+  /***************/
+  /*mangathemesia*/
+  /**************/
   if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final dom = await httpResToDom(
         url: '${getWpMangaUrl(source)}/manga/?title=&page=$page&order=popular',
@@ -82,9 +121,12 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
         return firstMatch;
       }).toList();
     }
-  } else
-  //mangahere
-  if (source == "mangahere") {
+  }
+
+  /***********/
+  /*mangahere*/
+  /***********/
+  else if (source == "mangahere") {
     final dom = await httpResToDom(
         url: 'https://www.mangahere.cc/ranking/', headers: {});
     if (dom

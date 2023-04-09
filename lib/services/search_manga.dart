@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
-
 import 'package:http/http.dart' as http;
-import 'package:html/dom.dart' as dom;
+import 'package:mangayomi/models/comick/search_manga_cimick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -27,8 +27,42 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   List<String?> name = [];
   List<String?> image = [];
   source = source.toLowerCase();
-  //mangathemesia
-  if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
+
+  /********/
+  /*comick*/
+  /********/
+  if (getWpMangTypeSource(source) == TypeSource.comick) {
+    var headers = {
+      'Referer': 'https://comick.app/',
+      'User-Agent':
+          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
+    };
+    var request = http.Request(
+        'GET',
+        Uri.parse(
+            'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var popularManga =
+          jsonDecode(await response.stream.bytesToString()) as List;
+      var popularMangaList =
+          popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
+      for (var popular in popularMangaList) {
+        url.add("/comic/${popular.slug}");
+        name.add(popular.title);
+        image.add(popular.coverUrl);
+      }
+    }
+  }
+
+  /***************/
+  /*mangathemesia*/
+  /***************/
+  else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final dom = await httpResToDom(
         url: '${getWpMangaUrl(source)}/?s=${query.trim()}', headers: {});
 
@@ -58,7 +92,10 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
           .toList();
     }
   }
-  //mangahere
+
+  /***********/
+  /*mangahere*/
+  /***********/
   else if (source == "mangahere") {
     log("message");
     final dom = await httpResToDom(
@@ -92,5 +129,6 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
           .toList();
     }
   }
+
   return SearchMangaModel(name: name, url: url, image: image);
 }

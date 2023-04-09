@@ -1,9 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
+import 'package:mangayomi/models/comick/chapter_page_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
@@ -40,7 +42,42 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       "${pathh!.path}/${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}/");
   if (hiveUrl.isNotEmpty) {
     urll = hiveUrl;
-  } else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
+  }
+  /*********/
+  /*comick*/
+  /********/
+  else if (getWpMangTypeSource(source) == TypeSource.comick) {
+    String mangaId =
+        modelManga.chapterUrl![index].split('/').last.split('-').first;
+    var headers = {
+      'Referer': 'https://comick.app/',
+      'User-Agent':
+          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
+    };
+    var request = http.Request('GET',
+        Uri.parse('https://api.comick.fun/chapter/$mangaId?tachiyomi=true'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(await response.stream.bytesToString())
+          as Map<String, dynamic>;
+      var page = ChapterPageComick.fromJson(data);
+      for (var url in page.chapter!.images!) {
+        urll.add(url.url);
+      }
+    }
+    ref.watch(hiveBoxMangaInfo).put(
+        "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+        urll);
+  }
+  /*************/
+  /*mangathemesia*/
+  /**************/
+
+  else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final htmll =
         await httpResToDom(url: modelManga.chapterUrl![index], headers: {});
 
