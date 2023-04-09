@@ -54,7 +54,7 @@ class MyApp extends ConsumerWidget {
     ThemeData themeDark = FlexThemeData.dark(
       colors: ref.watch(flexSchemeColorProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-      blendLevel: 24,
+      blendLevel: 10,
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 24,

@@ -50,7 +50,7 @@ dependencies:
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
   intl: ^0.18.0
-  rive: ^0.10.3
+  # rive: ^0.10.3
   google_fonts: ^4.0.3
 
 

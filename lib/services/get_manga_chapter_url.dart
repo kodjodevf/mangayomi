@@ -36,7 +36,11 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       defaultValue: []);
 
   Directory? pathh;
-  pathh = await getExternalStorageDirectory();
+  if (Platform.isWindows) {
+    pathh = await getApplicationDocumentsDirectory();
+  } else if (Platform.isAndroid) {
+    pathh = await getExternalStorageDirectory();
+  }
 
   path = Directory(
       "${pathh!.path}/${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}/");
