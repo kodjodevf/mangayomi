@@ -21,12 +21,12 @@ class MangaHomeScreen extends ConsumerStatefulWidget {
 class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  int _length = 10;
+  int _fullDataLength = 10;
   int _page = 1;
   @override
   Widget build(BuildContext context) {
     final getManga = ref.watch(
-        getPopularMangaProvider(source: widget.mangaType.source!, page: _page));
+        getPopularMangaProvider(source: widget.mangaType.source!, page: 1));
     return Scaffold(
         appBar: AppBar(
           title: Text('${widget.mangaType.source}'),
@@ -52,7 +52,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
                   if (widget.mangaType.isFullData!) {
                     Future.delayed(const Duration(seconds: 1)).then((value) {
-                      _length = _length + 10;
+                      _fullDataLength = _fullDataLength + 10;
                       if (mounted) {
                         setState(() {
                           _isLoading = false;
@@ -86,16 +86,17 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 }
               }
             });
-
+            final length = widget.mangaType.isFullData!
+                ? _fullDataLength
+                : data.url.length;
             return Column(
               children: [
                 Flexible(
                     child: GridViewWidget(
                   controller: _scrollController,
-                  itemCount:
-                      widget.mangaType.isFullData! ? _length : data.url.length,
+                  itemCount: length,
                   itemBuilder: (context, index) {
-                    if (index == data.url.length - 1) {
+                    if (index == length - 1) {
                       return _buildProgressIndicator();
                     }
                     return MangaHomeImageCard(
@@ -110,7 +111,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               ],
             );
           },
-          error: (error, stackTrace) => const Center(child: Text("Error")),
+          error: (error, stackTrace) => Center(child: Text(error.toString())),
           loading: () => const Center(
             child: CircularProgressIndicator(),
           ),
@@ -184,7 +185,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
           isLoading: true,
         )
       ]),
-      error: (error, stackTrace) => const Center(child: Text("Error")),
+      error: (error, stackTrace) => Center(child: Text(error.toString())),
     );
   }
 

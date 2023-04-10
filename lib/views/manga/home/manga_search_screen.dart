@@ -104,7 +104,7 @@ class SearchResult extends ConsumerWidget {
         loading: () => const Center(
               child: CircularProgressIndicator(),
             ),
-        error: (error, stackTrace) => const Center(child: Text("Error")),
+        error: (error, stackTrace) =>  Center(child: Text(error.toString())),
         data: (data) {
           if (data.name.isNotEmpty) {
             return GridViewWidget(
