@@ -177,9 +177,7 @@ class _MangaChapterPageGalleryState
           _itemScrollController.scrollTo(
               curve: Curves.ease,
               index: ok,
-              duration: isSlide
-                  ? Duration.zero
-                  : Duration(milliseconds: isSlide ? 2 : 150));
+              duration:  Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
         if (ok != -1) {
