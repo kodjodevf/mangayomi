@@ -7,7 +7,7 @@ part of 'get_manga_chapter_url.dart';
 // **************************************************************************
 
 String _$getMangaChapterUrlHash() =>
-    r'a41949b68549e776832151d8b3a595db72fabdd9';
+    r'5e5976514a927de8ce729de832343edd98a96e6c';
 
 /// Copied from Dart SDK
 class _SystemHash {

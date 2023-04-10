@@ -8,7 +8,7 @@ import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/source/source_model.dart';
-
+import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'views/more/settings/appearance/flex_scheme_color_provider.dart';
 import 'views/more/settings/appearance/thememode_provider.dart';
 
@@ -17,9 +17,11 @@ void main() async {
   Hive.registerAdapter(ModelMangaAdapter());
   Hive.registerAdapter(MangaHistoryModelAdapter());
   Hive.registerAdapter(SourceModelAdapter());
+  Hive.registerAdapter(ReaderModeAdapter());
   Hive.registerAdapter(TypeSourceAdapter());
   await Hive.openBox<ModelManga>(HiveConstant.hiveBoxManga);
   await Hive.openBox<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
+  await Hive.openBox<ReaderMode>(HiveConstant.hiveBoxReaderMode);
   await Hive.openBox<SourceModel>(HiveConstant.hiveBoxMangaSource);
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
   await Hive.openBox(HiveConstant.hiveBoxMangaFilter);
@@ -36,7 +38,7 @@ class MyApp extends ConsumerWidget {
     ThemeData themeLight = FlexThemeData.light(
       colors: ref.watch(flexSchemeColorProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-      blendLevel: 24,
+      blendLevel: 10,
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 24,
