@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/views/more/settings/appearance/flex_scheme_color_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 
 class ThemeSelector extends ConsumerStatefulWidget {
   const ThemeSelector({
@@ -64,11 +64,13 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               });
                               isLight
                                   ? ref
-                                      .read(flexSchemeColorProvider.notifier)
+                                      .read(
+                                          flexSchemeColorStateProvider.notifier)
                                       .setTheme(ThemeAA.schemes[selected].light,
                                           selected)
                                   : ref
-                                      .read(flexSchemeColorProvider.notifier)
+                                      .read(
+                                          flexSchemeColorStateProvider.notifier)
                                       .setTheme(ThemeAA.schemes[selected].dark,
                                           selected);
                             },

@@ -9,8 +9,8 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
-import 'views/more/settings/appearance/flex_scheme_color_provider.dart';
-import 'views/more/settings/appearance/thememode_provider.dart';
+import 'views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -36,7 +36,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ThemeData themeLight = FlexThemeData.light(
-      colors: ref.watch(flexSchemeColorProvider),
+      colors: ref.watch(flexSchemeColorStateProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
       blendLevel: 10,
       appBarOpacity: 0.00,
@@ -54,7 +54,7 @@ class MyApp extends ConsumerWidget {
       fontFamily: GoogleFonts.aBeeZee().fontFamily,
     );
     ThemeData themeDark = FlexThemeData.dark(
-      colors: ref.watch(flexSchemeColorProvider),
+      colors: ref.watch(flexSchemeColorStateProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
       blendLevel: 10,
       appBarOpacity: 0.00,
@@ -73,7 +73,7 @@ class MyApp extends ConsumerWidget {
     );
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      theme: ref.watch(themeModeProvider) ? themeLight : themeDark,
+      theme: ref.watch(themeModeStateProvider) ? themeLight : themeDark,
       debugShowCheckedModeBanner: false,
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
