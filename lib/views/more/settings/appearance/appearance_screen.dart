@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/views/more/settings/appearance/dark_mode_button.dart';
-import 'package:mangayomi/views/more/settings/appearance/theme_selector.dart';
+import 'package:mangayomi/views/more/settings/appearance/widgets/blend_level_slider.dart';
+import 'package:mangayomi/views/more/settings/appearance/widgets/dark_mode_button.dart';
+import 'package:mangayomi/views/more/settings/appearance/widgets/theme_selector.dart';
 
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
@@ -13,7 +14,7 @@ class AppearanceScreen extends ConsumerWidget {
         title: const Text("Appearance"),
       ),
       body: Column(
-        children: const [DarkModeButton(), ThemeSelector()],
+        children: const [DarkModeButton(), ThemeSelector(), BlendLevelSlider()],
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 
@@ -35,10 +36,12 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isThemeLight = ref.watch(themeModeStateProvider);
+    final blendLevel = ref.watch(blendLevelStateProvider);
     ThemeData themeLight = FlexThemeData.light(
       colors: ref.watch(flexSchemeColorStateProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-      blendLevel: 10,
+      blendLevel: blendLevel.toInt(),
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 24,
@@ -56,7 +59,7 @@ class MyApp extends ConsumerWidget {
     ThemeData themeDark = FlexThemeData.dark(
       colors: ref.watch(flexSchemeColorStateProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-      blendLevel: 10,
+      blendLevel: blendLevel.toInt(),
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 24,
@@ -73,7 +76,7 @@ class MyApp extends ConsumerWidget {
     );
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      theme: ref.watch(themeModeStateProvider) ? themeLight : themeDark,
+      theme: isThemeLight ? themeLight : themeDark,
       debugShowCheckedModeBanner: false,
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
@@ -81,10 +84,4 @@ class MyApp extends ConsumerWidget {
       title: 'MangaYomi',
     );
   }
-}
-
-class ThemeAA {
-  static const List<FlexSchemeData> schemes = <FlexSchemeData>[
-    ...FlexColor.schemesList,
-  ];
 }
