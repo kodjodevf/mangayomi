@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +16,20 @@ import 'views/more/settings/appearance/providers/flex_scheme_color_state_provide
 import 'views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 
 void main() async {
-  await Hive.initFlutter();
+  if (Platform.isAndroid || Platform.isIOS) {
+    await Hive.initFlutter();
+  } else {
+    final path = Directory("Mangayomi");
+    final path1 = Directory("${path.path}/DataBase");
+    if (!(await path.exists())) {
+      path.create();
+    }
+    if (!(await path1.exists())) {
+      path1.create();
+    }
+    await Hive.initFlutter(path1.path);
+  }
+
   Hive.registerAdapter(ModelMangaAdapter());
   Hive.registerAdapter(MangaHistoryModelAdapter());
   Hive.registerAdapter(SourceModelAdapter());

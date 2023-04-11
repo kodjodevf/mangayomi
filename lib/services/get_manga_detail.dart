@@ -6,6 +6,7 @@ import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
 
@@ -401,6 +402,98 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
             }
           }
         }
+      }
+    }
+  }
+
+  /***********/
+  /*mmrcms*/
+  /***********/
+
+  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+    final dom = await httpResToDom(url: url, headers: {});
+    description = dom
+        .querySelectorAll('.row .well p')
+        .map((e) => e.text.trim())
+        .toList()
+        .first;
+    status = dom
+        .querySelectorAll('.row .dl-horizontal dt')
+        .where((e) =>
+            e.innerHtml.toString().toLowerCase().contains("status") ||
+            e.innerHtml.toString().toLowerCase().contains("statut") ||
+            e.innerHtml.toString().toLowerCase().contains("estado") ||
+            e.innerHtml.toString().toLowerCase().contains("durum"))
+        .map((e) => e.nextElementSibling!.text.trim())
+        .toList()
+        .first;
+    if (dom.querySelectorAll(".row .dl-horizontal dt").isNotEmpty) {
+      author = dom
+          .querySelectorAll('.row .dl-horizontal dt')
+          .where((e) =>
+              e.innerHtml.toString().toLowerCase().contains("auteur(s)") ||
+              e.innerHtml.toString().toLowerCase().contains("author(s)") ||
+              e.innerHtml.toString().toLowerCase().contains("autor(es)") ||
+              e.innerHtml.toString().toLowerCase().contains("yazar(lar)") ||
+              e.innerHtml.toString().toLowerCase().contains("mangaka(lar)") ||
+              e.innerHtml
+                  .toString()
+                  .toLowerCase()
+                  .contains("pengarang/penulis") ||
+              e.innerHtml.toString().toLowerCase().contains("autor") ||
+              e.innerHtml.toString().toLowerCase().contains("penulis"))
+          .map((e) => e.nextElementSibling!.text
+              .trim()
+              .replaceAll(RegExp(r"\s+\b|\b\s"), ""))
+          .toList()
+          .first;
+      final genr = dom
+          .querySelectorAll('.row .dl-horizontal dt')
+          .where((e) =>
+              e.innerHtml.toString().toLowerCase().contains("categories") ||
+              e.innerHtml.toString().toLowerCase().contains("categorías") ||
+              e.innerHtml.toString().toLowerCase().contains("catégories") ||
+              e.innerHtml.toString().toLowerCase().contains("kategoriler") ||
+              e.innerHtml.toString().toLowerCase().contains("categorias") ||
+              e.innerHtml.toString().toLowerCase().contains("kategorie") ||
+              e.innerHtml.toString().toLowerCase().contains("kategori") ||
+              e.innerHtml.toString().toLowerCase().contains("tagi"))
+          .map((e) => e.nextElementSibling!.text.trim())
+          .toList();
+      if (genr.isNotEmpty) {
+        genre = genr.first.replaceAll(RegExp(r"\s+\b|\b\s"), "").split(',');
+      }
+    }
+    final rrr = dom.querySelectorAll(".row [class^=img-responsive]");
+    final data = rrr.map((e) => e.outerHtml).toList();
+    if (source.toLowerCase() == 'jpmangas' ||
+        source.toLowerCase() == 'fr scan') {
+      imageUrl = regSrcMatcher(data.first).replaceAll('//', 'https://');
+    } else {
+      imageUrl = regSrcMatcher(data.first);
+    }
+
+    final ttt = dom
+        .querySelectorAll("ul[class^=chapters] > li:not(.btn), table.table tr");
+    if (ttt.isNotEmpty) {
+      final data = ttt
+          .map((e) => e.querySelector("[class^=chapter-title-rtl]")!)
+          .toList();
+      var name = data;
+      for (var iaa in name) {
+        chapterTitle.add(iaa.getElementsByTagName("a").first.text);
+        chapterUrl
+            .add(regHrefMatcher(iaa.getElementsByTagName("a").first.outerHtml));
+      }
+      final date = ttt
+          .map((e) => e
+              .getElementsByClassName("date-chapter-title-rtl")
+              .map((e) => e.text.trim())
+              .first)
+          .toList();
+
+      for (var da in date) {
+        chapterDate.add(da);
       }
     }
   }

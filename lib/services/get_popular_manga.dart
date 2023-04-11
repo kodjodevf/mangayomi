@@ -139,9 +139,39 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
           .querySelectorAll('a > div > div.hot-manga__item-name')
           .map((e) => e.innerHtml)
           .toList();
+      for (var ia in name) {
+        image.add("");
+      }
     }
   }
-  
+
+  /***********/
+  /*mmrcms*/
+  /***********/
+
+  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+    final dom = await httpResToDom(
+        url:
+            '${getWpMangaUrl(source)}/filterList?page=$page&sortBy=views&asc=false',
+        headers: {});
+
+    final urlElement = dom.getElementsByClassName('chart-title');
+    for (var e in urlElement) {
+      RegExp exp = RegExp(r'href="([^"]+)"');
+      Iterable<Match> matches = exp.allMatches(e.outerHtml);
+      String? firstMatch = matches.first.group(1);
+      url.add(firstMatch);
+      name.add(e.text);
+    }
+    final imgElement = dom.getElementsByTagName('img');
+    for (var e in imgElement) {
+      RegExp exp = RegExp(r'src="([^"]+)"');
+      Iterable<Match> matches = exp.allMatches(e.outerHtml);
+      String? firstMatch = matches.first.group(1);
+      image.add(firstMatch);
+    }
+  }
+
   /***********/
   /*mangahere*/
   /***********/

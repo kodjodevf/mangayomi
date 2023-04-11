@@ -37,19 +37,17 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       defaultValue: []);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   Directory? pathh;
-  if (Platform.isWindows) {
-    pathh = await getApplicationDocumentsDirectory();
-  } else if (Platform.isAndroid) {
+  if (Platform.isAndroid || Platform.isIOS) {
     pathh = await getExternalStorageDirectory();
+  } else {
+    pathh = await getApplicationDocumentsDirectory();
   }
 
   path = Directory(
       "${pathh!.path}/${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}/");
 
-  if (!incognitoMode) {
-    if (hiveUrl.isNotEmpty) {
-      urll = hiveUrl;
-    }
+  if (hiveUrl.isNotEmpty) {
+    urll = hiveUrl;
   }
 
   /*********/
@@ -65,9 +63,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
     };
     var request = http.Request('GET',
         Uri.parse('https://api.comick.fun/chapter/$mangaId?tachiyomi=true'));
-
     request.headers.addAll(headers);
-
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
@@ -160,9 +156,47 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       urll.add(
           'https://cdn.mangakawaii.pics/uploads/manga/$mangaSlug/chapters_fr/$chapterSlug/$tt');
     }
-    ref.watch(hiveBoxMangaInfo).put(
-        "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
-        urll);
+    if (!incognitoMode) {
+      ref.watch(hiveBoxMangaInfo).put(
+          "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+          urll);
+    }
+  }
+
+  /***********/
+  /*mmrcms*/
+  /***********/
+
+  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+    final dom =
+        await httpResToDom(url: modelManga.chapterUrl![index], headers: {});
+
+    if (dom.querySelectorAll('#all > .img-responsive').isNotEmpty) {
+      urll = dom.querySelectorAll('#all > .img-responsive').map((e) {
+        log(e.outerHtml);
+        final RegExp regexx = RegExp(r'data-src="([^"]+)"');
+        if (modelManga.source!.toLowerCase() == 'jpmangas' ||
+            modelManga.source!.toLowerCase() == 'fr scan') {
+          return regexx
+              .allMatches(e.outerHtml)
+              .first
+              .group(1)!
+              .replaceAll('//', 'https://')
+              .replaceAll(RegExp(r"\s+\b|\b\s"), "");
+        }
+        return regexx
+            .allMatches(e.outerHtml)
+            .first
+            .group(1)!
+            .replaceAll(RegExp(r"\s+\b|\b\s"), "");
+      }).toList();
+      // log(message)
+      if (!incognitoMode) {
+        ref.watch(hiveBoxMangaInfo).put(
+            "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            urll);
+      }
+    }
   }
 
   /***********/
@@ -217,7 +251,6 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
           .replaceAll("eval", "");
 
       String deobfuscatedScript = flutterJs.evaluate(script).toString();
-      // log(deobfuscatedScript);
       List<String> urlss = deobfuscatedScript
           .substring(
               deobfuscatedScript.indexOf("newImgs=['") + "newImgs=['".length,

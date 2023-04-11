@@ -89,6 +89,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                 onPressed: () {
                   if (_tabBarController.index == 0) {
                   } else if (_tabBarController.index == 1) {
+                    _textEditingController.clear();
                     context.push('/extensionLang');
                   } else {}
                 },

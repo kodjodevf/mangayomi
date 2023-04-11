@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
@@ -142,9 +144,9 @@ class ReaderController extends _$ReaderController {
   int getPageLength(List incognitoPageLength) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      final page = ref.watch(hiveBoxMangaInfo).get(
+      List<dynamic> page = ref.watch(hiveBoxMangaInfo).get(
             "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-pageurl",
-          ) as List;
+          );
       return page.length;
     }
     return incognitoPageLength.length;
