@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
-import 'package:mangayomi/views/library/providers/state_providers.dart';
+import 'package:mangayomi/views/library/providers/library_state_provider.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 import 'package:mangayomi/views/library/widgets/library_gridview_widget.dart';
 import 'package:mangayomi/views/library/widgets/library_listview_widget.dart';
@@ -28,8 +28,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   final _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final reverse = ref.watch(reverseStateProvider);
-    final display = ref.watch(displayValueStateProvider);
+    final reverse = ref.watch(libraryReverseListStateProvider);
+    final displayType = ref
+        .read(libraryDisplayTypeStateProvider.notifier)
+        .getLibraryDisplayTypeValue(ref.watch(libraryDisplayTypeStateProvider));
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -56,7 +58,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       isSearch = false;
                     });
                     _textEditingController.clear();
-                   
                   },
                   controller: _textEditingController,
                 )
@@ -97,13 +98,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   ? entries.reversed.toList()
                   : entries;
           if (entries.isNotEmpty || entriesFilter.isNotEmpty) {
-            return display == 'List'
+            return displayType == DisplayType.list
                 ? LibraryListViewWidget(
                     entriesManga: entriesManga,
                   )
-                : LibraryGridViewWidget(
-                    entriesManga: entriesManga,
-                  );
+                : displayType == DisplayType.compactGrid
+                    ? LibraryGridViewWidget(
+                        entriesManga: entriesManga,
+                        isCoverOnlyGrid: false,
+                      )
+                    : LibraryGridViewWidget(
+                        entriesManga: entriesManga,
+                        isCoverOnlyGrid: true,
+                      );
           }
           return const Center(child: Text("Empty Library"));
         },
@@ -112,10 +119,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 
   _showModalSort() {
-    List<String> displayList = [
-      "Compact grid",
-      "List",
-    ];
     late TabController tabBarController;
     showMaterialModalBottomSheet(
         shape: const RoundedRectangleBorder(
@@ -151,8 +154,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               children: [
                                 const Center(child: Text("soon")),
                                 Consumer(builder: (context, ref, chil) {
-                                  final reverse =
-                                      ref.watch(reverseStateProvider);
+                                  final reverse = ref
+                                      .watch(libraryReverseListStateProvider);
 
                                   return Column(
                                     children: [
@@ -160,8 +163,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         onTap: () {
                                           ref
                                               .read(
-                                                  reverseStateProvider.notifier)
-                                              .state = !reverse;
+                                                  libraryReverseListStateProvider
+                                                      .notifier)
+                                              .setLibraryReverseList(!reverse);
                                         },
                                         dense: true,
                                         leading: Icon(reverse
@@ -173,24 +177,28 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   );
                                 }),
                                 Consumer(builder: (context, ref, chil) {
-                                  final display =
-                                      ref.watch(displayValueStateProvider);
+                                  final display = ref
+                                      .watch(libraryDisplayTypeStateProvider);
+                                  final displayV = ref.read(
+                                      libraryDisplayTypeStateProvider.notifier);
 
                                   return Column(
                                     children: [
                                       for (var i = 0;
-                                          i < displayList.length;
+                                          i < DisplayType.values.length;
                                           i++)
-                                        RadioListTile(
-                                          title: Text(displayList[i]),
-                                          value: displayList[i],
-                                          groupValue: display,
+                                        RadioListTile<DisplayType>(
+                                          title: Text(displayV
+                                              .getLibraryDisplayTypeName(
+                                                  DisplayType.values[i].name)),
+                                          value: DisplayType.values[i],
+                                          groupValue: displayV
+                                              .getLibraryDisplayTypeValue(
+                                                  display),
                                           selected: true,
                                           onChanged: (value) {
-                                            ref
-                                                .read(displayValueStateProvider
-                                                    .notifier)
-                                                .state = value.toString();
+                                            displayV
+                                                .setLibraryDisplayType(value!);
                                           },
                                         ),
                                     ],

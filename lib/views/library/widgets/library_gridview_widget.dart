@@ -8,8 +8,10 @@ import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
 
 class LibraryGridViewWidget extends StatelessWidget {
+  final bool isCoverOnlyGrid;
   final List<ModelManga> entriesManga;
-  const LibraryGridViewWidget({super.key, required this.entriesManga});
+  const LibraryGridViewWidget(
+      {super.key, required this.entriesManga, required this.isCoverOnlyGrid});
 
   @override
   Widget build(BuildContext context) {
@@ -44,27 +46,30 @@ class LibraryGridViewWidget extends StatelessWidget {
                       width: 200,
                       height: 270,
                       fit: BoxFit.cover),
-                  Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Container(
-                          decoration: BoxDecoration(
+                  if (!isCoverOnlyGrid)
+                    Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Container(
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
-                              color: generalColor(context),),
-                          child: Padding(
-                            padding: const EdgeInsets.all(1),
-                            child: Text(entriesManga[index]
-                                .chapterDate!
-                                .length
-                                .toString()),
+                              color: generalColor(context),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(1),
+                              child: Text(entriesManga[index]
+                                  .chapterDate!
+                                  .length
+                                  .toString()),
+                            ),
                           ),
-                        ),
-                      ))
+                        ))
                 ],
               ),
-              BottomTextWidget(text: entriesManga[index].name!)
+              if (!isCoverOnlyGrid)
+                BottomTextWidget(text: entriesManga[index].name!)
             ],
           ),
         );

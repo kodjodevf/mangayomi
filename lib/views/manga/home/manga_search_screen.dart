@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/services/search_manga.dart';
-import 'package:mangayomi/views/manga/home/mang_home_screen.dart';
+import 'package:mangayomi/views/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
 
 class MangaSearchButton extends StatelessWidget {

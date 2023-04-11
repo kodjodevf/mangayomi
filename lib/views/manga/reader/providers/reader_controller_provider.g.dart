@@ -64,7 +64,7 @@ class ReaderModeAdapter extends TypeAdapter<ReaderMode> {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'c7af574deb470887e689579dd1d0d8262f997ba0';
+String _$currentIndexHash() => r'7a7a8ed760ffac461ac79522531a2b6929cf2008';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -182,7 +182,7 @@ class CurrentIndexProvider
   }
 }
 
-String _$readerControllerHash() => r'2925877651f6ffa41954e95ae4c4c6499364cfaf';
+String _$readerControllerHash() => r'a2acca315e2e89858de09af86f749a3a9ee2a9b9';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final MangaReaderModel mangaReaderModel;
