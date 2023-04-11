@@ -124,6 +124,25 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
   }
 
   /***********/
+  /*mangakawaii*/
+  /***********/
+  if (source == "mangakawaii") {
+    final dom =
+        await httpResToDom(url: 'https://www.mangakawaii.io/', headers: {});
+    if (dom.querySelectorAll('a.hot-manga__item').isNotEmpty) {
+      url = dom
+          .querySelectorAll('a.hot-manga__item ')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+      name = dom
+          .querySelectorAll('a > div > div.hot-manga__item-name')
+          .map((e) => e.innerHtml)
+          .toList();
+    }
+  }
+  
+  /***********/
   /*mangahere*/
   /***********/
   else if (source == "mangahere") {

@@ -137,6 +137,34 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       }
     }
   }
+
+  /***********/
+  /*mangakawaii*/
+  /***********/
+
+  else if (modelManga.source == 'mangakawaii') {
+    final response = await http.get(Uri.parse(modelManga.chapterUrl![index]));
+    var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
+        .allMatches(response.body.toString())
+        .last
+        .group(1);
+    var mangaSlug = RegExp("""var oeuvre_slug = "([^"]*)";""")
+        .allMatches(response.body.toString())
+        .last
+        .group(1);
+    var pages = RegExp('''"page_image":"([^"]*)"''')
+        .allMatches(response.body.toString())
+        .map((e) => e.group(1));
+
+    for (var tt in pages) {
+      urll.add(
+          'https://cdn.mangakawaii.pics/uploads/manga/$mangaSlug/chapters_fr/$chapterSlug/$tt');
+    }
+    ref.watch(hiveBoxMangaInfo).put(
+        "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+        urll);
+  }
+
   /***********/
   /*mangahere*/
   /***********/

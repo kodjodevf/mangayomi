@@ -293,6 +293,119 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     }
   }
   /***********/
+  /*mangakawaii*/
+  /***********/
+  else if (source == "mangakawaii") {
+    final dom = await httpResToDom(
+        url: 'https://www.mangakawaii.io$url',
+        headers: {"Accept-Language": "fr"});
+    List detail = [];
+    imageUrl =
+        "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
+    if (dom.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('dd.text-justify.text-break')
+          .map((e) => e.text.trim())
+          .toList();
+      description = tt[0];
+    }
+    if (dom
+        .querySelectorAll('span.badge.bg-success.text-uppercase')
+        .isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('span.badge.bg-success.text-uppercase')
+          .map((e) => e.text.trim())
+          .toList();
+      detail.add(tt[0]);
+    } else {
+      detail.add("");
+    }
+
+    if (dom.querySelectorAll('a[href*=author]').isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('a[href*=author]')
+          .map((e) => e.text.trim())
+          .toList();
+      detail.add(tt[0]);
+    } else {
+      detail.add("");
+    }
+
+    if (dom.querySelectorAll('a[href*=category]').isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('a[href*=category]')
+          .map((e) => e.text.trim())
+          .toList();
+      for (var ok in tt) {
+        genre.add(ok);
+      }
+    }
+    detail = detail.toSet().toList();
+    status = detail[0];
+    author = detail[1];
+    if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
+      final url = dom.querySelectorAll("tr[class*='volume-']").map((e) {
+        RegExp exp = RegExp(r'<a href="([^"]+)"');
+        Iterable<Match> matches = exp.allMatches(e.outerHtml);
+        String? firstMatch = matches.first.group(1);
+        return firstMatch;
+      }).toList();
+      final htm = await httpResToDom(
+          url: 'https://www.mangakawaii.io${url[0]}',
+          headers: {"Accept-Language": "fr"});
+
+      if (htm
+          .querySelectorAll(
+              '#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li > a')
+          .isNotEmpty) {
+        final tt = htm
+            .querySelectorAll(
+                '#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li > a')
+            .map((e) => e.innerHtml)
+            .toList();
+        final urlz = htm
+            .querySelectorAll(
+                "#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li ")
+            .map((e) => e.innerHtml)
+            .toList();
+
+        for (var ok in urlz) {
+          chapterUrl.add(ok.split('href="')[1].split('"').first);
+        }
+        for (var ok in tt) {
+          chapterTitle.add(ok);
+        }
+        if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
+          final url = dom
+              .querySelectorAll("tr[class*='volume-']")
+              .map((e) => e
+                  .querySelectorAll('td.table__date')
+                  .map((e) => e.text.trim())
+                  .toList()[0])
+              .toList();
+          if (urlz.length > url.length) {
+            for (var _ in urlz) {
+              chapterDate.add(DateTime.now()
+                  .toString()
+                  .substring(0, 10)
+                  .replaceAll('-', "/"));
+            }
+          } else {
+            for (var ok in url) {
+              chapterDate.add(ok
+                  .split(" ")
+                  .first
+                  .toString()
+                  .substring(0, 10)
+                  .replaceAll('.', "/"));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /***********/
   /*mangahere*/
   /***********/
   else if (source == "mangahere") {

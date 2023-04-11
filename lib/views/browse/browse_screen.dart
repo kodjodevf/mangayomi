@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -24,7 +22,10 @@ class _BrowseScreenState extends State<BrowseScreen>
     _tabBarController = TabController(length: 3, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
-      setState(() {});
+      setState(() {
+        _textEditingController.clear();
+        _isSearch = false;
+      });
     });
     super.initState();
   }
