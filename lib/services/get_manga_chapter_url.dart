@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_js/flutter_js.dart';
@@ -34,7 +35,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   List hiveUrl = ref.watch(hiveBoxMangaInfo).get(
       "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
       defaultValue: []);
-
+  final incognitoMode = ref.watch(incognitoModeStateProvider);
   Directory? pathh;
   if (Platform.isWindows) {
     pathh = await getApplicationDocumentsDirectory();
@@ -44,9 +45,13 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   path = Directory(
       "${pathh!.path}/${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}/");
-  if (hiveUrl.isNotEmpty) {
-    urll = hiveUrl;
+
+  if (!incognitoMode) {
+    if (hiveUrl.isNotEmpty) {
+      urll = hiveUrl;
+    }
   }
+
   /*********/
   /*comick*/
   /********/
@@ -73,9 +78,11 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
         urll.add(url.url);
       }
     }
-    ref.watch(hiveBoxMangaInfo).put(
-        "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
-        urll);
+    if (!incognitoMode) {
+      ref.watch(hiveBoxMangaInfo).put(
+          "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+          urll);
+    }
   }
   /*************/
   /*mangathemesia*/
@@ -123,9 +130,11 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
           urll.add(tt);
         }
       }
-      ref.watch(hiveBoxMangaInfo).put(
-          "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
-          urll);
+      if (!incognitoMode) {
+        ref.watch(hiveBoxMangaInfo).put(
+            "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            urll);
+      }
     }
   }
   /***********/
@@ -238,11 +247,13 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
             deobfuscatedScript.substring(imageLinkStartPos, imageLinkEndPos);
         urll.add("https:$baseLink$imageLink");
       }
-      log(urll.toString());
+
       flutterJs.dispose();
-      ref.watch(hiveBoxMangaInfo).put(
-          "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
-          urll);
+      if (!incognitoMode) {
+        ref.watch(hiveBoxMangaInfo).put(
+            "${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            urll);
+      }
     }
   }
 

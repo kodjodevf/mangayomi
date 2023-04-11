@@ -7,6 +7,7 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
+import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 
 final isExtended = StateProvider.autoDispose<bool>((ref) {
   return true;
@@ -62,7 +63,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 final entries = value.get(
                     "${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
                     defaultValue: '');
-                if (entries.isNotEmpty) {
+                final incognitoMode = ref.watch(incognitoModeStateProvider);
+
+                if (entries.isNotEmpty && !incognitoMode) {
                   return Consumer(builder: (context, ref, child) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -118,7 +121,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         height: 50,
                         width: !ref.watch(isExtended)
                             ? 60
-                            : mediaWidth(context, 0.25),
+                            : mediaWidth(context, 0.3),
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,
                         child: ElevatedButton(
@@ -137,7 +140,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             children: [
                               AnimatedContainer(
                                 curve: Curves.easeIn,
-                                width: !ref.watch(isExtended) ? 0 : 30,
+                                width: !ref.watch(isExtended) ? 0 : 40,
                                 duration: const Duration(milliseconds: 300),
                                 child: const Text(
                                   "Read",

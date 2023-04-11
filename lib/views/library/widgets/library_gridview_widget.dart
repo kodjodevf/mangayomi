@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
@@ -51,7 +52,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
-                              color: Theme.of(context).cardColor),
+                              color: generalColor(context),),
                           child: Padding(
                             padding: const EdgeInsets.all(1),
                             child: Text(entriesManga[index]

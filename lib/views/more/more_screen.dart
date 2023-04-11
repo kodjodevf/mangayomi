@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/views/more/widgets/incognito_mode_widget.dart';
+import 'package:mangayomi/views/more/widgets/list_tile_widget.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -29,17 +31,7 @@ class MoreScreen extends StatelessWidget {
                 //     onChanged: (value) {},
                 //   ),
                 // ),
-                ListTile(
-                  onTap: () {},
-                  leading: const SizedBox(
-                      height: 40, child: Icon(CupertinoIcons.eyeglasses)),
-                  subtitle: const Text('pauses reading history'),
-                  title: const Text('Incognito mode'),
-                  trailing: Switch(
-                    value: false,
-                    onChanged: (value) {},
-                  ),
-                ),
+                const IncognitoModeWidget(),
                 const Divider(
                   color: Colors.grey,
                 ),
@@ -77,25 +69,22 @@ class MoreScreen extends StatelessWidget {
                 // const Divider(
                 //   color: Colors.grey,
                 // ),
-                ListTile(
+                ListTileWidget(
                   onTap: () {
                     context.push('/settings');
                   },
-                  leading: const SizedBox(
-                      height: 40, child: Icon(Icons.settings_outlined)),
-                  title: const Text('Settings'),
+                  icon: Icons.settings_outlined,
+                  title: 'Settings',
                 ),
-                ListTile(
+                ListTileWidget(
                   onTap: () {},
-                  leading: const SizedBox(
-                      height: 40, child: Icon(Icons.info_outline)),
-                  title: const Text('About'),
+                  icon: Icons.info_outline,
+                  title: 'About',
                 ),
-                ListTile(
+                ListTileWidget(
                   onTap: () {},
-                  leading: const SizedBox(
-                      height: 40, child: Icon(Icons.help_outline)),
-                  title: const Text('Help'),
+                  icon: Icons.help_outline,
+                  title: 'Help',
                 ),
               ],
             ),

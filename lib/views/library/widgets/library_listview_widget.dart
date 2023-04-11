@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/widgets/listview_widget.dart';
 
@@ -38,7 +39,7 @@ class LibraryListViewWidget extends StatelessWidget {
             child: Container(
               height: 45,
               decoration: BoxDecoration(
-                  color: Theme.of(context).canvasColor,
+                  color: generalColor(context),
                   borderRadius: BorderRadius.circular(5)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

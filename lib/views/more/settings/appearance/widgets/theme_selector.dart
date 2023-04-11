@@ -77,7 +77,14 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                             optionButtonPadding: EdgeInsets.zero,
                             optionButtonMargin: EdgeInsets.zero,
                           ),
-                          Text(ThemeAA.schemes[index].name)
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          Text(
+                            ThemeAA.schemes[index].name,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w300),
+                          )
                         ],
                       ),
                       if (selected == index)

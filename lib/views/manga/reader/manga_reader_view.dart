@@ -177,7 +177,7 @@ class _MangaChapterPageGalleryState
           _itemScrollController.scrollTo(
               curve: Curves.ease,
               index: ok,
-              duration:  Duration(milliseconds: isSlide ? 2 : 150));
+              duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
         if (ok != -1) {
@@ -191,14 +191,14 @@ class _MangaChapterPageGalleryState
     } else {
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
-        if (widget.readerController.getPageLength() != ok) {
+        if (widget.readerController.getPageLength(widget.url) != ok) {
           _itemScrollController.scrollTo(
               curve: Curves.ease,
               index: ok,
               duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
-        if (widget.readerController.getPageLength() != ok) {
+        if (widget.readerController.getPageLength(widget.url) != ok) {
           if (_extendedController.hasClients) {
             _extendedController.animateToPage(ok.toInt(),
                 duration: Duration(milliseconds: isSlide ? 2 : 150),
@@ -471,7 +471,7 @@ class _MangaChapterPageGalleryState
                                     Padding(
                                       padding: const EdgeInsets.only(left: 12),
                                       child: Text(
-                                        "${widget.readerController.getPageLength()}",
+                                        "${widget.readerController.getPageLength(widget.url)}",
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
@@ -489,7 +489,7 @@ class _MangaChapterPageGalleryState
                                         },
                                         divisions: max(
                                             widget.readerController
-                                                    .getPageLength() -
+                                                    .getPageLength(widget.url) -
                                                 1,
                                             1),
                                         value: ref
@@ -499,7 +499,7 @@ class _MangaChapterPageGalleryState
                                             .toDouble(),
                                         min: 0,
                                         max: (widget.readerController
-                                                    .getPageLength() -
+                                                    .getPageLength(widget.url) -
                                                 1)
                                             .toDouble(),
                                       ),
@@ -520,7 +520,7 @@ class _MangaChapterPageGalleryState
                                     Padding(
                                       padding: const EdgeInsets.only(right: 12),
                                       child: Text(
-                                        "${widget.readerController.getPageLength()}",
+                                        "${widget.readerController.getPageLength(widget.url)}",
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
@@ -647,7 +647,7 @@ class _MangaChapterPageGalleryState
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      '${ref.watch(currentIndexProvider(widget.readerController.mangaReaderModel)) + 1} / ${widget.readerController.getPageLength()}',
+                      '${ref.watch(currentIndexProvider(widget.readerController.mangaReaderModel)) + 1} / ${widget.readerController.getPageLength(widget.url)}',
                       style: const TextStyle(
                         fontSize: 12.0,
                         color: Colors.white,
@@ -887,7 +887,8 @@ class _MangaChapterPageGalleryState
                       minCacheExtent: 8 * (MediaQuery.of(context).size.height),
                       initialScrollIndex:
                           widget.readerController.getPageIndex(),
-                      itemCount: widget.readerController.getPageLength(),
+                      itemCount:
+                          widget.readerController.getPageLength(widget.url),
                       itemScrollController: _itemScrollController,
                       itemPositionsListener: _itemPositionsListener,
                       itemBuilder: (context, index) => GestureDetector(
@@ -903,7 +904,8 @@ class _MangaChapterPageGalleryState
                           url: widget.url[index],
                           path: widget.path,
                           chapter: widget.readerController.getChapterTitle(),
-                          length: widget.readerController.getPageLength(),
+                          length:
+                              widget.readerController.getPageLength(widget.url),
                         ),
                       ),
                       separatorBuilder: (_, __) => Divider(
@@ -931,7 +933,8 @@ class _MangaChapterPageGalleryState
                           url: widget.url[index],
                           path: widget.path,
                           chapter: widget.readerController.getChapterTitle(),
-                          length: widget.readerController.getPageLength(),
+                          length:
+                              widget.readerController.getPageLength(widget.url),
                           loadStateChanged: (ExtendedImageState state) {
                             if (state.extendedImageLoadState ==
                                 LoadState.loading) {
@@ -1055,7 +1058,8 @@ class _MangaChapterPageGalleryState
                           },
                         );
                       },
-                      itemCount: widget.readerController.getPageLength(),
+                      itemCount:
+                          widget.readerController.getPageLength(widget.url),
                       onPageChanged: _onPageChanged)),
           _gestureRightLeft(),
           _gestureTopBottom(),
