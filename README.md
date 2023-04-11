@@ -27,3 +27,6 @@ You can install Flutter & Dart from [Official website](https://docs.flutter.dev/
 ```
   $ flutter run
 ```
+## Disclaimer
+
+The developer of this application does not have any affiliation with the content providers available.
