@@ -9,13 +9,18 @@ import 'package:mangayomi/views/widgets/gridview_widget.dart';
 
 class LibraryGridViewWidget extends StatelessWidget {
   final bool isCoverOnlyGrid;
+  final bool isComfortableGrid;
   final List<ModelManga> entriesManga;
   const LibraryGridViewWidget(
-      {super.key, required this.entriesManga, required this.isCoverOnlyGrid});
+      {super.key,
+      required this.entriesManga,
+      required this.isCoverOnlyGrid,
+      this.isComfortableGrid = false});
 
   @override
   Widget build(BuildContext context) {
     return GridViewWidget(
+      mainAxisExtent: isComfortableGrid ? 310 : 280,
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -38,6 +43,11 @@ class LibraryGridViewWidget extends StatelessWidget {
             context.push('/manga-reader/detail', extra: model);
           },
           child: CoverViewWidget(
+            bottomTextWidget: BottomTextWidget(
+              text: entriesManga[index].name!,
+              isComfortableGrid: isComfortableGrid,
+            ),
+            isComfortableGrid: isComfortableGrid,
             children: [
               Stack(
                 children: [
@@ -46,30 +56,30 @@ class LibraryGridViewWidget extends StatelessWidget {
                       width: 200,
                       height: 270,
                       fit: BoxFit.cover),
-                  if (!isCoverOnlyGrid)
-                    Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: generalColor(context),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(1),
-                              child: Text(entriesManga[index]
-                                  .chapterDate!
-                                  .length
-                                  .toString()),
-                            ),
+                  Positioned(
+                      top: 0,
+                      left: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(3),
+                            color: generalColor(context),
                           ),
-                        ))
+                          child: Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: Text(entriesManga[index]
+                                .chapterDate!
+                                .length
+                                .toString()),
+                          ),
+                        ),
+                      ))
                 ],
               ),
-              if (!isCoverOnlyGrid)
-                BottomTextWidget(text: entriesManga[index].name!)
+              if (!isComfortableGrid)
+                if (!isCoverOnlyGrid)
+                  BottomTextWidget(text: entriesManga[index].name!)
             ],
           ),
         );

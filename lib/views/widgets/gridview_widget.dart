@@ -4,13 +4,15 @@ class GridViewWidget extends StatelessWidget {
   final ScrollController? controller;
   final int? itemCount;
   final bool reverse;
+  final double mainAxisExtent;
   final Widget? Function(BuildContext, int) itemBuilder;
   const GridViewWidget(
       {super.key,
       this.controller,
       required this.itemCount,
       required this.itemBuilder,
-      this.reverse = false});
+      this.reverse = false,
+      this.mainAxisExtent = 280});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,9 @@ class GridViewWidget extends StatelessWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: GridView.builder(
           controller: controller,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 220,
-            mainAxisExtent: 280,
+            mainAxisExtent: mainAxisExtent,
           ),
           itemCount: itemCount,
           itemBuilder: itemBuilder),

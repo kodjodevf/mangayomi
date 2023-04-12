@@ -33,19 +33,22 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
         ? DisplayType.compactGrid
         : value == DisplayType.list.name
             ? DisplayType.list
-            : DisplayType.coverOnlyGrid;
+            : value == DisplayType.comfortableGrid.name
+                ? DisplayType.comfortableGrid
+                : DisplayType.coverOnlyGrid;
   }
 
   String getLibraryDisplayTypeName(String displayType) {
     return displayType == DisplayType.compactGrid.name
-        ? 'Compact drid'
+        ? 'Compact grid'
         : displayType == DisplayType.list.name
             ? 'List'
-            : 'Cover Only Grid';
+            : displayType == DisplayType.comfortableGrid.name
+                ? 'Comfortable grid'
+                : 'Cover-only grid';
   }
 
   void setLibraryDisplayType(DisplayType displayType) {
-    log(displayType.name);
     state = displayType.name;
     ref.watch(hiveBoxSettings).put('displayType', displayType.name);
   }
@@ -53,6 +56,7 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
 
 enum DisplayType {
   compactGrid,
-  list,
+  comfortableGrid,
   coverOnlyGrid,
+  list,
 }

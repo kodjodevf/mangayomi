@@ -76,7 +76,7 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
         name.add(popular.title);
         image.add(popular.coverUrl);
       }
-    } else {}
+    }
   }
 
   /***************/

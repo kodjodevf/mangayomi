@@ -38,9 +38,7 @@ class LibraryListViewWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             child: Container(
               height: 45,
-              decoration: BoxDecoration(
-                  color: generalColor(context),
-                  borderRadius: BorderRadius.circular(5)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -52,7 +50,7 @@ class LibraryListViewWidget extends StatelessWidget {
                             bottomLeft: Radius.circular(5)),
                         child: cachedNetworkImage(
                             imageUrl: entriesManga[index].imageUrl!,
-                            width: 30,
+                            width: 40,
                             height: 40,
                             fit: BoxFit.cover),
                       ),
@@ -69,7 +67,7 @@ class LibraryListViewWidget extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(3),
-                          color: Theme.of(context).cardColor),
+                          color: generalColor(context)),
                       child: Padding(
                         padding: const EdgeInsets.all(1),
                         child: Text(

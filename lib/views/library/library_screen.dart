@@ -102,15 +102,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 ? LibraryListViewWidget(
                     entriesManga: entriesManga,
                   )
-                : displayType == DisplayType.compactGrid
-                    ? LibraryGridViewWidget(
-                        entriesManga: entriesManga,
-                        isCoverOnlyGrid: false,
-                      )
-                    : LibraryGridViewWidget(
-                        entriesManga: entriesManga,
-                        isCoverOnlyGrid: true,
-                      );
+                : LibraryGridViewWidget(
+                    entriesManga: entriesManga,
+                    isCoverOnlyGrid:
+                        displayType == DisplayType.compactGrid ? false : true,
+                    isComfortableGrid:
+                        displayType == DisplayType.comfortableGrid
+                            ? true
+                            : false,
+                  );
           }
           return const Center(child: Text("Empty Library"));
         },
@@ -134,7 +134,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             tabBarController.animateTo(0);
           }
           return SizedBox(
-              height: mediaHeight(context, 0.3),
+              height: mediaHeight(context, 0.4),
               child: DefaultTabController(
                   length: 3,
                   child: Scaffold(
