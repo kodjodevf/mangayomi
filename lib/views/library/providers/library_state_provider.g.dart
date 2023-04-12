@@ -24,7 +24,7 @@ final libraryReverseListStateProvider =
 
 typedef _$LibraryReverseListState = AutoDisposeNotifier<bool>;
 String _$libraryDisplayTypeStateHash() =>
-    r'e3c78daf9932930aa9df05a2718d087089744522';
+    r'2743481e54668fe95294194b62014f9713de2cb8';
 
 /// See also [LibraryDisplayTypeState].
 @ProviderFor(LibraryDisplayTypeState)

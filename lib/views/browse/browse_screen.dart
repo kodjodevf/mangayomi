@@ -59,6 +59,9 @@ class _BrowseScreenState extends State<BrowseScreen>
                             .toList();
                       });
                     },
+                    onSuffixPressed: () {
+                      _textEditingController.clear();
+                    },
                     onPressed: () {
                       setState(() {
                         _isSearch = false;
@@ -76,6 +79,10 @@ class _BrowseScreenState extends State<BrowseScreen>
                             setState(() {
                               _isSearch = true;
                             });
+                          } else if (_tabBarController.index == 0) {
+                            context.push(
+                              '/globalSearch',
+                            );
                           }
                         },
                         icon: Icon(

@@ -92,7 +92,59 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
           .toList();
     }
   }
+  /***********/
+  /*mangakawaii*/
+  /***********/
+  else if (source == "mangakawaii") {
+    final dom = await httpResToDom(
+        url:
+            'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga',
+        headers: {'Accept-Language': 'fr'});
 
+    if (dom
+        .querySelectorAll(
+            '#page-content > div > div > ul > li > div.section__list-group-right > div.section__list-group-header > div > h4 > a')
+        .isNotEmpty) {
+      final ur = dom
+          .querySelectorAll(
+              '#page-content > div > div > ul > li > div.section__list-group-right > div.section__list-group-header > div > h4 > a')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+      for (var a in ur) {
+        url.add(a!);
+      }
+
+      final nam = dom
+          .querySelectorAll(
+              '#page-content > div > div > ul > li > div.section__list-group-right > div.section__list-group-header > div > h4 > a')
+          .map((e) => e.text)
+          .toList();
+      for (var a in nam) {
+        name.add(a);
+        image.add('');
+      }
+    }
+  }
+  /***********/
+  /*mmrcms*/
+  /***********/
+  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+    final response = await http.get(
+        Uri.parse('${getWpMangaUrl(source)}/search?query=${query.trim()}'));
+    final rep = jsonDecode(response.body);
+    for (var ok in rep['suggestions']) {
+      if (source == 'Read Comics Online') {
+        url.add('${getWpMangaUrl(source)}/comic/${ok['data']}');
+      } else if (source == 'Scan VF') {
+        url.add('${getWpMangaUrl(source)}/${ok['data']}');
+      } else {
+        url.add('${getWpMangaUrl(source)}/manga/${ok['data']}');
+      }
+      name.add(ok["value"]);
+      image.add('');
+    }
+  }
   /***********/
   /*mangahere*/
   /***********/

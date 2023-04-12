@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/lang.dart';
@@ -20,7 +18,6 @@ class ExtensionListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // log(logoUrl);
     return ListTile(
         onTap: () {
           onChanged(!value);
@@ -59,6 +56,5 @@ class ExtensionListTileWidget extends StatelessWidget {
             onChanged: (value) {
               onChanged(value);
             }));
-    ;
   }
 }

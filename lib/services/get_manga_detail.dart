@@ -79,7 +79,7 @@ beautifyChapterName(String? vol, String? chap, String? title, String? lang) {
 Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     {required String imageUrl,
     required String url,
-    required String name,
+    required String title,
     required String lang,
     required String source}) async {
   List<String> genre = [];
@@ -604,7 +604,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     genre: genre,
     author: author,
     description: description,
-    name: name,
+    name: title,
     url: url,
     source: source,
     imageUrl: imageUrl,

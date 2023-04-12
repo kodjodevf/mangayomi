@@ -6,11 +6,13 @@ import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
+import 'package:mangayomi/views/browse/global_search_screen.dart';
 import 'package:mangayomi/views/general/general_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
 import 'package:mangayomi/views/manga/detail/manga_reader_detail.dart';
 import 'package:mangayomi/views/manga/home/manga_home_screen.dart';
+import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/views/manga/reader/manga_reader_view.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
 import 'package:mangayomi/views/more/settings/appearance/appearance_screen.dart';
@@ -174,6 +176,44 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const AppearanceScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/globalSearch",
+          name: "globalSearch",
+          builder: (context, state) {
+            return const GlobalSearchScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const GlobalSearchScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/searchResult",
+          name: "searchResult",
+          builder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            return SearchResultScreen(
+              query: data['query']!,
+              lang: data['lang']!,
+              source: data['source']!,
+              viewOnly: data['viewOnly'],
+            );
+          },
+          pageBuilder: (context, state) {
+            final data = state.extra as Map<String, dynamic>;
+            return CustomTransition(
+              key: state.pageKey,
+              child: SearchResultScreen(
+                query: data['query']!,
+                lang: data['lang']!,
+                source: data['source']!,
+                viewOnly: data['viewOnly'],
+              ),
             );
           },
         ),

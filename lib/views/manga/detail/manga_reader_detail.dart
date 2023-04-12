@@ -43,7 +43,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                 .watch(getMangaDetailProvider(
                         imageUrl: '',
                         lang: widget.modelManga.lang!,
-                        name: widget.modelManga.name!,
+                        title: widget.modelManga.name!,
                         source: widget.modelManga.source!,
                         url: widget.modelManga.link!)
                     .future)

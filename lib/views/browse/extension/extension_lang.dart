@@ -73,6 +73,5 @@ class ExtensionsLang extends ConsumerWidget {
             );
           }),
     );
-    ;
   }
 }

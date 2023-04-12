@@ -160,7 +160,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
     final getMangaDetail = ref.watch(getMangaDetailProvider(
         source: widget.source,
         imageUrl: widget.image,
-        name: widget.name,
+        title: widget.name,
         url: widget.url,
         lang: widget.lang));
 

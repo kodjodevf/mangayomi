@@ -60,6 +60,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     _textEditingController.clear();
                   },
                   controller: _textEditingController,
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                  },
                 )
               : IconButton(
                   splashRadius: 20,

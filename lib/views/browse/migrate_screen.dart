@@ -10,7 +10,7 @@ class MigrateScreen extends StatefulWidget {
 class _MigrateScreenState extends State<MigrateScreen> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text('Migrate'),
     );
   }

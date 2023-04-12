@@ -4,11 +4,13 @@ class BottomTextWidget extends StatelessWidget {
   final bool isLoading;
   final String text;
   final bool isComfortableGrid;
+  final double? fontSize;
   const BottomTextWidget(
       {super.key,
       required this.text,
       this.isLoading = false,
-      this.isComfortableGrid = false});
+      this.isComfortableGrid = false,
+      this.fontSize = 13.0});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,10 @@ class BottomTextWidget extends StatelessWidget {
                 Expanded(
                   child: Text(
                     text,
-                    style: const TextStyle(
-                      fontSize: 13.0,
+                    style: TextStyle(
+                      fontSize: fontSize,
                       color: Colors.white,
-                      shadows: <Shadow>[
+                      shadows: const [
                         Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0)
                       ],
                     ),

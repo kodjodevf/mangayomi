@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'9079556aadc0a4b027620d3c5b75280268c022f8';
+String _$getMangaDetailHash() => r'b312cc1f35a45520a827c87b7be862cf5f67ffb3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,14 +44,14 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
   GetMangaDetailProvider call({
     required String imageUrl,
     required String url,
-    required String name,
+    required String title,
     required String lang,
     required String source,
   }) {
     return GetMangaDetailProvider(
       imageUrl: imageUrl,
       url: url,
-      name: name,
+      title: title,
       lang: lang,
       source: source,
     );
@@ -64,7 +64,7 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
     return call(
       imageUrl: provider.imageUrl,
       url: provider.url,
-      name: provider.name,
+      title: provider.title,
       lang: provider.lang,
       source: provider.source,
     );
@@ -92,7 +92,7 @@ class GetMangaDetailProvider
   GetMangaDetailProvider({
     required this.imageUrl,
     required this.url,
-    required this.name,
+    required this.title,
     required this.lang,
     required this.source,
   }) : super.internal(
@@ -100,7 +100,7 @@ class GetMangaDetailProvider
             ref,
             imageUrl: imageUrl,
             url: url,
-            name: name,
+            title: title,
             lang: lang,
             source: source,
           ),
@@ -117,7 +117,7 @@ class GetMangaDetailProvider
 
   final String imageUrl;
   final String url;
-  final String name;
+  final String title;
   final String lang;
   final String source;
 
@@ -126,7 +126,7 @@ class GetMangaDetailProvider
     return other is GetMangaDetailProvider &&
         other.imageUrl == imageUrl &&
         other.url == url &&
-        other.name == name &&
+        other.title == title &&
         other.lang == lang &&
         other.source == source;
   }
@@ -136,7 +136,7 @@ class GetMangaDetailProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, imageUrl.hashCode);
     hash = _SystemHash.combine(hash, url.hashCode);
-    hash = _SystemHash.combine(hash, name.hashCode);
+    hash = _SystemHash.combine(hash, title.hashCode);
     hash = _SystemHash.combine(hash, lang.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
 

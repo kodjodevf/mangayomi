@@ -42,7 +42,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           _isSearch
               ? SeachFormTextField(
                   onChanged: (value) {
-                    log(value.toString());
                     setState(() {
                       entriesFilter = entriesData
                           .where((element) => element.modelManga.name!
@@ -50,6 +49,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               .contains(value.toLowerCase()))
                           .toList();
                     });
+                  },
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
                   },
                   onPressed: () {
                     setState(() {
@@ -69,7 +71,40 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
           IconButton(
               splashRadius: 20,
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text(
+                          "Remove everything",
+                        ),
+                        content: const Text(
+                            'Are you sure? All history will be lost.'),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Cancel")),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    ref.watch(hiveBoxMangaHistory).clear();
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Ok")),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
               icon: Icon(Icons.delete_sweep_outlined,
                   color: Theme.of(context).hintColor)),
         ],
@@ -80,6 +115,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           valueListenable: ref.watch(hiveBoxMangaHistory).listenable(),
           builder: (context, value, child) {
             final entries = value.values.toList();
+            entriesData = value.values.toList();
             final entriesHistory = _textEditingController.text.isNotEmpty
                 ? entriesFilter
                 : entries;
@@ -212,13 +248,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                               builder: (context) {
                                                 return AlertDialog(
                                                   title: const Text(
-                                                    "Delete",
+                                                    "Remove",
                                                   ),
+                                                  content: const Text(
+                                                      'This will remove the read date of this chapter. Are you sure?'),
                                                   actions: [
                                                     Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
+                                                          MainAxisAlignment.end,
                                                       children: [
                                                         TextButton(
                                                             onPressed: () {
@@ -226,7 +263,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                                   context);
                                                             },
                                                             child: const Text(
-                                                                "No")),
+                                                                "Cancel")),
+                                                        const SizedBox(
+                                                          width: 15,
+                                                        ),
                                                         TextButton(
                                                             onPressed: () {
                                                               ref
@@ -239,7 +279,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                                   context);
                                                             },
                                                             child: const Text(
-                                                                "Yes")),
+                                                                "Remove")),
                                                       ],
                                                     )
                                                   ],
@@ -266,7 +306,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 order: GroupedListOrder.DESC,
               );
             }
-            return const Center(child: Text(""));
+            return const Center(
+              child: Text('Nothing read recently'),
+            );
           },
         ),
       ),

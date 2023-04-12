@@ -85,6 +85,5 @@ class LibraryGridViewWidget extends StatelessWidget {
         );
       },
     );
-    ;
   }
 }

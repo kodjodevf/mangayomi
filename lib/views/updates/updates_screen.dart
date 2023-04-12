@@ -20,6 +20,9 @@ class UpdatesScreen extends StatelessWidget {
               icon: Icon(Icons.refresh, color: Theme.of(context).hintColor)),
         ],
       ),
+      body: const Center(
+        child: Text("No recent updates"),
+      ),
     );
   }
 }

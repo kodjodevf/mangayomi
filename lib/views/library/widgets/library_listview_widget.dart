@@ -82,6 +82,5 @@ class LibraryListViewWidget extends StatelessWidget {
         );
       },
     );
-    ;
   }
 }

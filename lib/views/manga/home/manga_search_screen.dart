@@ -52,7 +52,7 @@ class CustomSearchDelegate extends SearchDelegate {
       return const Center(child: Text("Empty"));
     }
 
-    return SearchResult(
+    return SearchResultScreen(
       query: query,
       source: source,
       lang: lang,
@@ -86,43 +86,51 @@ class CustomSearchDelegate extends SearchDelegate {
   }
 }
 
-class SearchResult extends ConsumerWidget {
+class SearchResultScreen extends ConsumerWidget {
   final String query;
   final String source;
   final String lang;
-  const SearchResult({
+  final bool viewOnly;
+  const SearchResultScreen({
     super.key,
     required this.query,
     required this.source,
     required this.lang,
+    this.viewOnly = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final search = ref.watch(searchMangaProvider(source: source, query: query));
-    return search.when(
-        loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
-        error: (error, stackTrace) =>  Center(child: Text(error.toString())),
-        data: (data) {
-          if (data.name.isNotEmpty) {
-            return GridViewWidget(
-              itemCount: data.name.length,
-              itemBuilder: (context, index) {
-                return MangaHomeImageCard(
-                  url: data.url[index]!,
-                  name: data.name[index]!,
-                  image: data.image[index]!,
-                  source: source,
-                  lang: lang,
+    return Scaffold(
+        appBar: viewOnly
+            ? AppBar(
+                title: Text(query),
+              )
+            : null,
+        body: search.when(
+            loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            error: (error, stackTrace) => Center(child: Text(error.toString())),
+            data: (data) {
+              if (data.name.isNotEmpty) {
+                return GridViewWidget(
+                  itemCount: data.name.length,
+                  itemBuilder: (context, index) {
+                    return MangaHomeImageCard(
+                      url: data.url[index]!,
+                      name: data.name[index]!,
+                      image: data.image[index]!,
+                      source: source,
+                      lang: lang,
+                    );
+                  },
                 );
-              },
-            );
-          }
-          return const Center(
-            child: Text("Empty"),
-          );
-        });
+              }
+              return const Center(
+                child: Text("Empty"),
+              );
+            }));
   }
 }
