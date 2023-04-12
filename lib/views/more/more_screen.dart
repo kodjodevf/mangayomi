@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/views/more/widgets/incognito_mode_widget.dart';
@@ -77,7 +76,9 @@ class MoreScreen extends StatelessWidget {
                   title: 'Settings',
                 ),
                 ListTileWidget(
-                  onTap: () {},
+                  onTap: () {
+                    context.push('/about');
+                  },
                   icon: Icons.info_outline,
                   title: 'About',
                 ),

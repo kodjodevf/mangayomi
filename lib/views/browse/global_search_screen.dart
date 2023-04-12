@@ -10,9 +10,7 @@ import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
-import 'package:mangayomi/views/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
-import 'package:mangayomi/views/widgets/manga_image_card_widget.dart';
 
 class GlobalSearchScreen extends ConsumerStatefulWidget {
   const GlobalSearchScreen({

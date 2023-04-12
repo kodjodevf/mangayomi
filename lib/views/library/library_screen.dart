@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -62,6 +60,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   controller: _textEditingController,
                   onSuffixPressed: () {
                     _textEditingController.clear();
+                    setState(() {});
                   },
                 )
               : IconButton(

@@ -10,14 +10,32 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
-        actions: [],
       ),
       body: Column(
         children: [
           ListTileWidget(
+              title: 'General', icon: Icons.tune_rounded, onTap: () {}),
+          ListTileWidget(
               title: 'Appearance',
               icon: Icons.color_lens_rounded,
               onTap: () => context.push('/appearance')),
+          ListTileWidget(
+              title: 'Library',
+              icon: Icons.collections_bookmark_rounded,
+              onTap: () {}),
+          ListTileWidget(
+              title: 'Reader',
+              icon: Icons.chrome_reader_mode_rounded,
+              onTap: () {}),
+          ListTileWidget(
+              title: 'Explore', icon: Icons.explore_rounded, onTap: () {}),
+          ListTileWidget(
+            onTap: () {
+              context.push('/about');
+            },
+            icon: Icons.info_outline,
+            title: 'About',
+          ),
         ],
       ),
     );

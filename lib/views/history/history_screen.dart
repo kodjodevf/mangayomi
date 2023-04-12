@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,6 +50,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   },
                   onSuffixPressed: () {
                     _textEditingController.clear();
+                    setState(() {});
                   },
                   onPressed: () {
                     setState(() {

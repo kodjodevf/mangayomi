@@ -53,6 +53,8 @@ dependencies:
   # rive: ^0.10.3
   google_fonts: ^4.0.3
   # draggable_menu: ^0.2.0
+  url_launcher: ^6.1.10
+  package_info_plus: ^3.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
