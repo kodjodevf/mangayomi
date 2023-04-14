@@ -33,6 +33,29 @@ class ImageViewVertical extends ConsumerStatefulWidget {
 class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
     with AutomaticKeepAliveClientMixin<ImageViewVertical> {
   @override
+  void initState() {
+    _localCheck();
+    super.initState();
+  }
+
+  _localCheck() async {
+    if (await File("${widget.path.path}" "${widget.index + 1}.jpg").exists()) {
+      if (mounted) {
+        setState(() {
+          _isLocale = true;
+        });
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isLocale = false;
+        });
+      }
+    }
+  }
+
+  bool _isLocale = false;
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
@@ -44,44 +67,57 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
             SizedBox(
               height: MediaQuery.of(context).padding.top,
             ),
-          ExtendedImage.network(widget.url,
-              headers: headers(widget.source),
-              handleLoadingProgress: true,
-              fit: BoxFit.contain,
-              cacheMaxAge: const Duration(days: 7),
-              clearMemoryCacheWhenDispose: true,
-              enableMemoryCache: false,
-              loadStateChanged: (ExtendedImageState state) {
-            if (state.extendedImageLoadState == LoadState.loading) {
-              final ImageChunkEvent? loadingProgress = state.loadingProgress;
-              final double? progress =
-                  loadingProgress?.expectedTotalBytes != null
-                      ? loadingProgress!.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null;
-              return SizedBox(
-                height: mediaHeight(context, 0.5),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    value: progress,
-                  ),
-                ),
-              );
-            }
-            if (state.extendedImageLoadState == LoadState.failed) {
-              return Center(
-                child: ElevatedButton(
-                    onPressed: () {
-                      state.reLoadImage();
-                    },
-                    child: const Icon(
-                      Icons.replay_outlined,
-                      size: 30,
-                    )),
-              );
-            }
-            return null;
-          }),
+          _isLocale
+              ? ExtendedImage.file(
+                  fit: BoxFit.contain,
+                  clearMemoryCacheWhenDispose: true,
+                  enableMemoryCache: false,
+                  File('${widget.path.path}${widget.index + 1}.jpg'))
+              : ExtendedImage.network(widget.url,
+                  headers: headers(widget.source),
+                  handleLoadingProgress: true,
+                  fit: BoxFit.contain,
+                  cacheMaxAge: const Duration(days: 7),
+                  clearMemoryCacheWhenDispose: true,
+                  enableMemoryCache: false,
+                  loadStateChanged: (ExtendedImageState state) {
+                  if (state.extendedImageLoadState == LoadState.loading) {
+                    final ImageChunkEvent? loadingProgress =
+                        state.loadingProgress;
+                    final double? progress =
+                        loadingProgress?.expectedTotalBytes != null
+                            ? loadingProgress!.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null;
+                    return Container(
+                      color: Colors.black,
+                      height: mediaHeight(context, 0.8),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: progress,
+                        ),
+                      ),
+                    );
+                  }
+                  if (state.extendedImageLoadState == LoadState.failed) {
+                    return Container(
+                        color: Colors.black,
+                        height: mediaHeight(context, 0.8),
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  state.reLoadImage();
+                                },
+                                child: const Icon(
+                                  Icons.replay_outlined,
+                                  size: 30,
+                                )),
+                          ],
+                        ));
+                  }
+                  return null;
+                }),
           if (widget.index + 1 == widget.length)
             Column(
               children: [

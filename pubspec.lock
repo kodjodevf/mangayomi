@@ -41,6 +41,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
+  background_downloader:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "7b778222546d53fcd41a84f6aee90b87c2593930"
+      url: "https://github.com/kodjodevf/background_downloader.git"
+    source: git
+    version: "5.4.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -544,6 +553,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  localstore:
+    dependency: transitive
+    description:
+      name: localstore
+      sha256: "42a0afb7696cfab1b4bd7d08355b4ee01f975fd364553b28d51496eccaf11cce"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.5"
   logging:
     dependency: transitive
     description:
@@ -688,6 +705,46 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      sha256: "33c6a1253d1f95fd06fa74b65b7ba907ae9811f9d5c1d3150e51417d04b8d6a8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.2.0"
+  permission_handler_android:
+    dependency: transitive
+    description:
+      name: permission_handler_android
+      sha256: "8028362b40c4a45298f1cbfccd227c8dd6caf0e27088a69f2ba2ab15464159e2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.2.0"
+  permission_handler_apple:
+    dependency: transitive
+    description:
+      name: permission_handler_apple
+      sha256: ee96ac32f5a8e6f80756e25b25b9f8e535816c8e6665a96b6d70681f8c4f7e85
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.8"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      sha256: "68abbc472002b5e6dfce47fe9898c6b7d8328d58b5d2524f75e277c07a97eb84"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.9.0"
+  permission_handler_windows:
+    dependency: transitive
+    description:
+      name: permission_handler_windows
+      sha256: f67cab14b4328574938ecea2db3475dad7af7ead6afab6338772c5f88963e38b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   photo_view:
     dependency: "direct main"
     description:

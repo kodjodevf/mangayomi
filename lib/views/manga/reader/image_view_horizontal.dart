@@ -37,20 +37,52 @@ typedef DoubleClickAnimationListener = void Function();
 
 class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
   @override
+  void initState() {
+    _localCheck();
+    super.initState();
+  }
+
+  _localCheck() async {
+    if (await File("${widget.path.path}" "${widget.index + 1}.jpg").exists()) {
+      if (mounted) {
+        setState(() {
+          _isLocale = true;
+        });
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isLocale = false;
+        });
+      }
+    }
+  }
+
+  bool _isLocale = false;
+  @override
   Widget build(BuildContext context) {
-    return ExtendedImage.network(
-      widget.url,
-      cache: true,
-      clearMemoryCacheWhenDispose: true,
-      enableMemoryCache: false,
-      cacheMaxAge: const Duration(days: 7),
-      headers: headers(widget.source),
-      mode: ExtendedImageMode.gesture,
-      initGestureConfigHandler: widget.initGestureConfigHandler,
-      onDoubleTap: widget.onDoubleTap,
-      handleLoadingProgress: true,
-      loadStateChanged: widget.loadStateChanged,
-    );
+    return _isLocale
+        ? ExtendedImage.file(
+            File("${widget.path.path}" "${widget.index + 1}.jpg"),
+            clearMemoryCacheWhenDispose: true,
+            enableMemoryCache: false,
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: widget.initGestureConfigHandler,
+            onDoubleTap: widget.onDoubleTap,
+            loadStateChanged: widget.loadStateChanged,
+          )
+        : ExtendedImage.network(
+            widget.url,
+            cache: true,
+            clearMemoryCacheWhenDispose: true,
+            enableMemoryCache: false,
+            cacheMaxAge: const Duration(days: 7),
+            headers: headers(widget.source),
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: widget.initGestureConfigHandler,
+            onDoubleTap: widget.onDoubleTap,
+            handleLoadingProgress: true,
+            loadStateChanged: widget.loadStateChanged,
+          );
   }
 }
-

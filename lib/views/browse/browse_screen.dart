@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/views/browse/extension/extension_screen.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
@@ -22,16 +23,22 @@ class _BrowseScreenState extends State<BrowseScreen>
     _tabBarController = TabController(length: 3, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
+      _chekPermission();
       setState(() {
         _textEditingController.clear();
+        _entriesFilter = [];
         _isSearch = false;
       });
     });
     super.initState();
   }
 
-  List<SourceModel> entries = [];
-  List<SourceModel> entriesFilter = [];
+  _chekPermission() async {
+    await StorageProvider().requestPermission();
+  }
+
+  List<SourceModel> _entries = [];
+  List<SourceModel> _entriesFilter = [];
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   @override
@@ -52,7 +59,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                 ? SeachFormTextField(
                     onChanged: (value) {
                       setState(() {
-                        entriesFilter = entries
+                        _entriesFilter = _entries
                             .where((element) => element.sourceName
                                 .toLowerCase()
                                 .contains(value.toLowerCase()))
@@ -67,7 +74,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                         _isSearch = false;
                       });
                       _textEditingController.clear();
-                      entriesFilter = entries;
+                      _entriesFilter = _entries;
                     },
                     controller: _textEditingController,
                   )
@@ -122,9 +129,9 @@ class _BrowseScreenState extends State<BrowseScreen>
           const SourcesScreen(),
           ExtensionScreen(
             entriesData: (val) {
-              entries = val as List<SourceModel>;
+              _entries = val as List<SourceModel>;
             },
-            entriesFilter: entriesFilter,
+            entriesFilter: _entriesFilter,
           ),
           const MigrateScreen()
         ]),

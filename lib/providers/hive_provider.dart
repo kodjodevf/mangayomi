@@ -4,6 +4,7 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/views/manga/download/download_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 
 final hiveBoxManga = Provider<Box<ModelManga>>((ref) {
@@ -27,6 +28,10 @@ final hiveBoxMangaFilterProvider = Provider<Box>((ref) {
 final hiveBoxMangaSourceProvider = Provider<Box<SourceModel>>((ref) {
   return Hive.box<SourceModel>(HiveConstant.hiveBoxMangaSource);
 });
+final hiveBoxMangaDownloads = Provider<Box<DownloadModel>>((ref) {
+  return Hive.box<DownloadModel>(HiveConstant.hiveBoxDownloads);
+});
+
 final hiveBoxSettings = Provider<Box>((ref) {
   return Hive.box(HiveConstant.hiveBoxAppSettings);
 });

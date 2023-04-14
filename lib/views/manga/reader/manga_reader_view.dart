@@ -169,20 +169,20 @@ class _MangaChapterPageGalleryState
     widget.readerController.setPageIndex(index);
   }
 
-  void _onAddButtonTapped(int ok, bool isPrev, {bool isSlide = false}) {
+  void _onAddButtonTapped(int index, bool isPrev, {bool isSlide = false}) {
     if (isPrev) {
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
-        if (ok != -1) {
+        if (index != -1) {
           _itemScrollController.scrollTo(
               curve: Curves.ease,
-              index: ok,
+              index: index,
               duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
-        if (ok != -1) {
+        if (index != -1) {
           if (_extendedController.hasClients) {
-            _extendedController.animateToPage(ok.toInt(),
+            _extendedController.animateToPage(index,
                 duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
           }
@@ -191,16 +191,16 @@ class _MangaChapterPageGalleryState
     } else {
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
-        if (widget.readerController.getPageLength(widget.url) != ok) {
+        if (widget.readerController.getPageLength(widget.url) != index) {
           _itemScrollController.scrollTo(
               curve: Curves.ease,
-              index: ok,
+              index: index,
               duration: Duration(milliseconds: isSlide ? 2 : 150));
         }
       } else {
-        if (widget.readerController.getPageLength(widget.url) != ok) {
+        if (widget.readerController.getPageLength(widget.url) != index) {
           if (_extendedController.hasClients) {
-            _extendedController.animateToPage(ok.toInt(),
+            _extendedController.animateToPage(index.toInt(),
                 duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
           }
@@ -923,7 +923,9 @@ class _MangaChapterPageGalleryState
                       reverse: _isReversHorizontal,
                       physics: const ClampingScrollPhysics(),
                       canScrollPage: (GestureDetails? gestureDetails) {
-                        return !(gestureDetails!.totalScale! > 1.0);
+                        return gestureDetails != null
+                            ? !(gestureDetails.totalScale! > 1.0)
+                            : true;
                       },
                       itemBuilder: (BuildContext context, int index) {
                         return ImageViewHorizontal(
@@ -981,16 +983,21 @@ class _MangaChapterPageGalleryState
                             }
                             if (state.extendedImageLoadState ==
                                 LoadState.failed) {
-                              return Center(
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      state.reLoadImage();
-                                    },
-                                    child: const Icon(
-                                      Icons.replay_outlined,
-                                      size: 30,
-                                    )),
-                              );
+                              return Container(
+                                  color: Colors.black,
+                                  height: mediaHeight(context, 0.8),
+                                  child: Column(
+                                    children: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            state.reLoadImage();
+                                          },
+                                          child: const Icon(
+                                            Icons.replay_outlined,
+                                            size: 30,
+                                          )),
+                                    ],
+                                  ));
                             }
                             return Container();
                           },

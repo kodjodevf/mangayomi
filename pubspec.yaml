@@ -55,6 +55,10 @@ dependencies:
   # draggable_menu: ^0.2.0
   url_launcher: ^6.1.10
   package_info_plus: ^3.0.2
+  background_downloader:
+    git:
+      url: https://github.com/kodjodevf/background_downloader.git
+  permission_handler: ^10.2.0
 
 
   # The following adds the Cupertino Icons font to your application.

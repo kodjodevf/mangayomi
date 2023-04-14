@@ -3,13 +3,13 @@ import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/detail/readmore.dart';
+import 'package:mangayomi/views/manga/download/download_page_widget.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -169,13 +169,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         modelManga: widget.modelManga!,
                         index: reverse ? reverseIndex : finalIndex);
                   },
-                  trailing: const Icon(
-                    FontAwesomeIcons.circleDown,
-                    size: 20,
-                  ),
+                  trailing: ref.watch(ChapterPageDownloadsProvider(
+                      index: reverse ? reverseIndex : finalIndex,
+                      modelManga: widget.modelManga!)),
                   subtitle: Text(
                     chapterDate[finalIndex],
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 11),
                   ),
                   title: Text(
                     chapterTitle[finalIndex],

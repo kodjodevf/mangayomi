@@ -1,4 +1,4 @@
-Map<String, String>? headers(String source) {
+Map<String, String> headers(String source) {
   return source == 'mangakawaii'
       ? {
           'Referer': 'https://www.mangakawaii.io/',
