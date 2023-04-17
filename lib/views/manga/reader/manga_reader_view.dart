@@ -998,6 +998,7 @@ class _MangaChapterPageGalleryState
                                   color: Colors.black,
                                   height: mediaHeight(context, 0.8),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
                                           onPressed: () {

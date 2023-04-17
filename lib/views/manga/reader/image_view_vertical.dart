@@ -127,6 +127,7 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
                             color: Colors.black,
                             height: mediaHeight(context, 0.8),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton(
                                     onPressed: () {

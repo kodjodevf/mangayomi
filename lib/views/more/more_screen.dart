@@ -36,7 +36,7 @@ class MoreScreen extends StatelessWidget {
                 ),
                 ListTileWidget(
                   onTap: () {
-                    context.push('/settings');
+                    context.push('/downloadQueue');
                   },
                   icon: Icons.download_outlined,
                   title: 'Donwload queue',
