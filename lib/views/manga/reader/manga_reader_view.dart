@@ -584,14 +584,14 @@ class _MangaChapterPageGalleryState
                             _axisHive(value, true);
                           },
                           itemBuilder: (context) => [
-                            for (var ok in ReaderMode.values)
+                            for (var readerMode in ReaderMode.values)
                               PopupMenuItem(
-                                  value: ok,
+                                  value: readerMode,
                                   child: Row(
                                     children: [
                                       Icon(
                                         Icons.check,
-                                        color: _selectedValue == ok
+                                        color: _selectedValue == readerMode
                                             ? Colors.white
                                             : Colors.transparent,
                                       ),
@@ -600,7 +600,7 @@ class _MangaChapterPageGalleryState
                                       ),
                                       Text(
                                         widget.readerController
-                                            .getReaderModeValue(ok),
+                                            .getReaderModeValue(readerMode),
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.white,
@@ -942,16 +942,27 @@ class _MangaChapterPageGalleryState
                                 LoadState.loading) {
                               final ImageChunkEvent? loadingProgress =
                                   state.loadingProgress;
-                              final double? progress =
+                              final double progress =
                                   loadingProgress?.expectedTotalBytes != null
                                       ? loadingProgress!.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
-                                      : null;
-                              return SizedBox(
-                                height: mediaHeight(context, 0.5),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    value: progress,
+                                      : 0;
+                              return TweenAnimationBuilder<double>(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                                tween: Tween<double>(
+                                  begin: 0,
+                                  end: progress,
+                                ),
+                                builder: (context, value, _) => Container(
+                                  color: Colors.black,
+                                  height: mediaHeight(context, 0.8),
+                                  child: Center(
+                                    child: progress == 0
+                                        ? const CircularProgressIndicator()
+                                        : CircularProgressIndicator(
+                                            value: progress,
+                                          ),
                                   ),
                                 ),
                               );

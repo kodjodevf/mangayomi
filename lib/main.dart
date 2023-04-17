@@ -20,15 +20,7 @@ void main() async {
   if (Platform.isAndroid || Platform.isIOS) {
     await Hive.initFlutter();
   } else {
-    final path = Directory("Mangayomi");
-    final path1 = Directory("${path.path}/DataBase");
-    if (!(await path.exists())) {
-      path.create();
-    }
-    if (!(await path1.exists())) {
-      path1.create();
-    }
-    await Hive.initFlutter(path1.path);
+    await Hive.initFlutter("Mangayomi/databases");
   }
 
   Hive.registerAdapter(ModelMangaAdapter());

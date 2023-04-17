@@ -264,7 +264,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                           height: 41,
                           width: 35,
                           child: PopupMenuButton(
-                            child: _downloadWidget(context, false),
+                            child: _downloadWidget(context, true),
                             onSelected: (value) {
                               if (value.toString() == 'Cancel') {
                                 setState(() {
@@ -278,7 +278,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     .cancelTasksWithIds(taskIds)
                                     .then((value) async {
                                   await Future.delayed(
-                                      const Duration(seconds: 2));
+                                      const Duration(seconds: 1));
                                   ref.watch(hiveBoxMangaDownloads).delete(
                                         widget.modelManga
                                             .chapterTitle![widget.index],
@@ -355,7 +355,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                         .cancelTasksWithIds(taskIds)
                                         .then((value) async {
                                       await Future.delayed(
-                                          const Duration(seconds: 2));
+                                          const Duration(seconds: 1));
                                       ref.watch(hiveBoxMangaDownloads).delete(
                                             widget.modelManga
                                                 .chapterTitle![widget.index],
@@ -429,7 +429,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                           FileDownloader()
                               .cancelTasksWithIds(taskIds)
                               .then((value) async {
-                            await Future.delayed(const Duration(seconds: 2));
+                            await Future.delayed(const Duration(seconds: 1));
                             ref.watch(hiveBoxMangaDownloads).delete(
                                   widget.modelManga.chapterTitle![widget.index],
                                 );

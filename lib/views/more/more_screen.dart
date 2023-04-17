@@ -34,12 +34,14 @@ class MoreScreen extends StatelessWidget {
                 const Divider(
                   color: Colors.grey,
                 ),
-                // ListTile(
-                //   onTap: () {},
-                //   leading: const SizedBox(
-                //       height: 40, child: Icon(Icons.download_outlined)),
-                //   title: const Text('Donwload queue'),
-                // ),
+                ListTileWidget(
+                  onTap: () {
+                    context.push('/settings');
+                  },
+                  icon: Icons.download_outlined,
+                  title: 'Donwload queue',
+                ),
+
                 // ListTile(
                 //   onTap: () {},
                 //   leading: Container(

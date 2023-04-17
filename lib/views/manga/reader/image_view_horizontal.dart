@@ -47,42 +47,49 @@ class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
       if (mounted) {
         setState(() {
           _isLocale = true;
+          _isLoading = false;
         });
       }
     } else {
       if (mounted) {
         setState(() {
           _isLocale = false;
+          _isLoading = false;
         });
       }
     }
   }
 
+  bool _isLoading = true;
   bool _isLocale = false;
   @override
   Widget build(BuildContext context) {
-    return _isLocale
-        ? ExtendedImage.file(
-            File("${widget.path.path}" "${widget.index + 1}.jpg"),
-            clearMemoryCacheWhenDispose: true,
-            enableMemoryCache: false,
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: widget.initGestureConfigHandler,
-            onDoubleTap: widget.onDoubleTap,
-            loadStateChanged: widget.loadStateChanged,
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
           )
-        : ExtendedImage.network(
-            widget.url,
-            cache: true,
-            clearMemoryCacheWhenDispose: true,
-            enableMemoryCache: false,
-            cacheMaxAge: const Duration(days: 7),
-            headers: headers(widget.source),
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: widget.initGestureConfigHandler,
-            onDoubleTap: widget.onDoubleTap,
-            handleLoadingProgress: true,
-            loadStateChanged: widget.loadStateChanged,
-          );
+        : _isLocale
+            ? ExtendedImage.file(
+                File("${widget.path.path}" "${widget.index + 1}.jpg"),
+                clearMemoryCacheWhenDispose: true,
+                enableMemoryCache: false,
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: widget.initGestureConfigHandler,
+                onDoubleTap: widget.onDoubleTap,
+                loadStateChanged: widget.loadStateChanged,
+              )
+            : ExtendedImage.network(
+                widget.url,
+                cache: true,
+                clearMemoryCacheWhenDispose: true,
+                enableMemoryCache: false,
+                cacheMaxAge: const Duration(days: 7),
+                headers: headers(widget.source),
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: widget.initGestureConfigHandler,
+                onDoubleTap: widget.onDoubleTap,
+                handleLoadingProgress: true,
+                loadStateChanged: widget.loadStateChanged,
+              );
   }
 }
