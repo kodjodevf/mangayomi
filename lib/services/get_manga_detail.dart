@@ -88,13 +88,12 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterTitle = [];
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
-  source = source.toLowerCase();
   String? description;
 
   /********/
   /*comick*/
   /********/
-  if (getWpMangTypeSource(source) == TypeSource.comick) {
+  if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.comick) {
     var headers = {
       'Referer': 'https://comick.app/',
       'User-Agent':
@@ -169,7 +168,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /*mangathemesia*/
   /**************/
 
-  if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
+  if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mangathemesia) {
     final dom = await httpResToDom(url: url, headers: {});
     if (dom
         .querySelectorAll(
@@ -296,7 +295,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /***********/
   /*mangakawaii*/
   /***********/
-  else if (source == "mangakawaii") {
+  else if (source.toLowerCase() == "mangakawaii") {
     final dom = await httpResToDom(
         url: 'https://www.mangakawaii.io$url',
         headers: {"Accept-Language": "fr"});
@@ -410,7 +409,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /*mmrcms*/
   /***********/
 
-  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+  else if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mmrcms) {
     final dom = await httpResToDom(url: url, headers: {});
     description = dom
         .querySelectorAll('.row .well p')
@@ -501,7 +500,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /***********/
   /*mangahere*/
   /***********/
-  else if (source == "mangahere") {
+  else if (source.toLowerCase() == "mangahere") {
     final dom = await httpResToDom(
         url: "http://www.mangahere.cc$url",
         headers: {

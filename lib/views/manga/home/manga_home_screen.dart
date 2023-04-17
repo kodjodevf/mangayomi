@@ -21,7 +21,7 @@ class MangaHomeScreen extends ConsumerStatefulWidget {
 class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  int _fullDataLength = 10;
+  int _fullDataLength = 20;
   int _page = 1;
   @override
   Widget build(BuildContext context) {

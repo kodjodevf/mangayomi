@@ -41,31 +41,39 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
             bool isOk = false;
             ref
                 .watch(getMangaDetailProvider(
-                        imageUrl: '',
+                        imageUrl: widget.modelManga.imageUrl!,
                         lang: widget.modelManga.lang!,
                         title: widget.modelManga.name!,
                         source: widget.modelManga.source!,
                         url: widget.modelManga.link!)
                     .future)
                 .then((value) {
-              final model = ModelManga(
-                  imageUrl: widget.modelManga.imageUrl,
-                  name: widget.modelManga.name,
-                  genre: widget.modelManga.genre,
-                  author: widget.modelManga.author,
-                  chapterDate: value.chapterDate,
-                  chapterTitle: value.chapterTitle,
-                  chapterUrl: value.chapterUrl,
-                  description: widget.modelManga.description,
-                  status: value.status,
-                  favorite: _isFavorite,
-                  link: widget.modelManga.link,
-                  source: widget.modelManga.source,
-                  lang: widget.modelManga.lang);
-              ref.watch(hiveBoxManga).put(widget.modelManga.link!, model);
-              setState(() {
-                isOk = true;
-              });
+              if (value.chapterDate.isNotEmpty &&
+                  value.chapterTitle.isNotEmpty &&
+                  value.chapterUrl.isNotEmpty) {
+                final model = ModelManga(
+                    imageUrl: widget.modelManga.imageUrl,
+                    name: widget.modelManga.name,
+                    genre: widget.modelManga.genre,
+                    author: widget.modelManga.author,
+                    chapterDate: value.chapterDate,
+                    chapterTitle: value.chapterTitle,
+                    chapterUrl: value.chapterUrl,
+                    description: widget.modelManga.description,
+                    status: value.status,
+                    favorite: _isFavorite,
+                    link: widget.modelManga.link,
+                    source: widget.modelManga.source,
+                    lang: widget.modelManga.lang);
+                ref.watch(hiveBoxManga).put(
+                    '${widget.modelManga.lang}-${widget.modelManga.link}',
+                    model);
+              }
+              if (mounted) {
+                setState(() {
+                  isOk = true;
+                });
+              }
             });
             await Future.doWhile(() async {
               await Future.delayed(const Duration(seconds: 1));
@@ -80,7 +88,9 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
           valueListenable: ref.watch(hiveBoxManga).listenable(),
           builder: (context, value, child) {
             final entries = value.values
-                .where((element) => element.link == widget.modelManga.link)
+                .where((element) =>
+                    '${element.lang}-${element.link}' ==
+                    '${widget.modelManga.lang}-${widget.modelManga.link}')
                 .toList();
             if (entries.isNotEmpty) {
               return MangaDetailsView(

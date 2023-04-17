@@ -71,7 +71,8 @@ class LibraryListViewWidget extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(1),
                         child: Text(
-                            entriesManga[index].chapterDate!.length.toString()),
+                            entriesManga[index].chapterDate!.length.toString(),
+                        style: const TextStyle(color: Colors.white),),
                       ),
                     ),
                   )

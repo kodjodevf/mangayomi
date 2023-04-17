@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewVertical extends ConsumerStatefulWidget {
   final int length;
@@ -39,7 +40,8 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
   }
 
   _localCheck() async {
-    if (await File("${widget.path.path}" "${widget.index + 1}.jpg").exists()) {
+    if (await File("${widget.path.path}" "${padIndex(widget.index + 1)}.jpg")
+        .exists()) {
       if (mounted) {
         setState(() {
           _isLocale = true;
@@ -85,7 +87,8 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
                       fit: BoxFit.contain,
                       clearMemoryCacheWhenDispose: true,
                       enableMemoryCache: false,
-                      File('${widget.path.path}${widget.index + 1}.jpg'))
+                      File(
+                          '${widget.path.path}${padIndex(widget.index + 1)}.jpg'))
                   : ExtendedImage.network(widget.url,
                       headers: headers(widget.source),
                       handleLoadingProgress: true,

@@ -29,7 +29,7 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
-      directory = Directory("${dir.path}/Mangayomi");
+      directory = Directory("${dir.path}/Mangayomi/");
     }
     return directory;
   }

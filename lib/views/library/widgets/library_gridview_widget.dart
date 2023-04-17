@@ -68,10 +68,13 @@ class LibraryGridViewWidget extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(1),
-                            child: Text(entriesManga[index]
-                                .chapterDate!
-                                .length
-                                .toString()),
+                            child: Text(
+                              entriesManga[index]
+                                  .chapterDate!
+                                  .length
+                                  .toString(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                       ))

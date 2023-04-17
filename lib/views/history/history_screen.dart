@@ -175,7 +175,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                 ref.watch(hiveBoxMangaInfo).listenable(),
                             builder: (context, value, child) {
                               final values = value.get(
-                                  "${element.modelManga.source}/${element.modelManga.name}-chapter_index",
+                                  "${element.modelManga.lang}-${element.modelManga.source}/${element.modelManga.name}-chapter_index",
                                   defaultValue: '');
                               if (values.isNotEmpty) {
                                 return Row(
@@ -271,9 +271,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                               ref
                                                                   .watch(
                                                                       hiveBoxMangaHistory)
-                                                                  .delete(element
-                                                                      .modelManga
-                                                                      .link);
+                                                                  .delete(
+                                                                      '${element.modelManga.lang}-${element.modelManga.link}');
                                                               Navigator.pop(
                                                                   context);
                                                             },

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewHorizontal extends StatefulWidget {
   final int length;
@@ -43,7 +44,8 @@ class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
   }
 
   _localCheck() async {
-    if (await File("${widget.path.path}" "${widget.index + 1}.jpg").exists()) {
+    if (await File("${widget.path.path}" "${padIndex(widget.index + 1)}.jpg")
+        .exists()) {
       if (mounted) {
         setState(() {
           _isLocale = true;
@@ -70,7 +72,7 @@ class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
           )
         : _isLocale
             ? ExtendedImage.file(
-                File("${widget.path.path}" "${widget.index + 1}.jpg"),
+                File("${widget.path.path}" "${padIndex(widget.index + 1)}.jpg"),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
                 mode: ExtendedImageMode.gesture,

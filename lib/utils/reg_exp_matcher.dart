@@ -11,3 +11,14 @@ String regSrcMatcher(String input) {
   String? firstMatch = matches.first.group(1);
   return firstMatch!;
 }
+
+String padIndex(int index) {
+  String idx = index.toString();
+
+  if (idx.length == 1) {
+    return '00$idx';
+  } else if (idx.length == 2) {
+    return '0$idx';
+  }
+  return idx;
+}

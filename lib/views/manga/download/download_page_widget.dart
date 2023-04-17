@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_chapter_url.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/manga/download/download_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_page_widget.g.dart';
@@ -101,15 +102,15 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
         if (!(await path5.exists())) {
           path5.create();
         }
-
         if ((await path.exists())) {
-          if (await File("${path.path}" "${index + 1}.jpg").exists()) {
+          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
+              .exists()) {
           } else {
             tasks.add(DownloadTask(
               taskId: _urll[index],
               headers: headers(widget.modelManga.source!),
               url: _urll[index],
-              filename: "${index + 1}.jpg",
+              filename: "${padIndex(index + 1)}.jpg",
               baseDirectory:
                   Platform.isWindows || Platform.isMacOS || Platform.isLinux
                       ? BaseDirectory.applicationDocuments
@@ -124,13 +125,14 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
           }
         } else {
           path.create();
-          if (await File("${path.path}" "${index + 1}.jpg").exists()) {
+          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
+              .exists()) {
           } else {
             tasks.add(DownloadTask(
               taskId: _urll[index],
               headers: headers(widget.modelManga.source!),
               url: _urll[index],
-              filename: "${index + 1}.jpg",
+              filename: "${padIndex(index + 1)}.jpg",
               baseDirectory:
                   Platform.isWindows || Platform.isMacOS || Platform.isLinux
                       ? BaseDirectory.applicationDocuments

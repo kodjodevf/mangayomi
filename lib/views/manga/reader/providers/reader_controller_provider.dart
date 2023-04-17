@@ -25,10 +25,11 @@ enum ReaderMode {
 class CurrentIndex extends _$CurrentIndex {
   @override
   int build(MangaReaderModel mangaReaderModel) {
+    final modelManga = mangaReaderModel.modelManga;
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       return ref.watch(hiveBoxMangaInfo).get(
-          "${mangaReaderModel.modelManga.source}/${mangaReaderModel.modelManga.name}/${mangaReaderModel.modelManga.chapterTitle![mangaReaderModel.index]}-page_index",
+          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![mangaReaderModel.index]}-page_index",
           defaultValue: 0);
     }
     return 0;
@@ -49,20 +50,15 @@ class ReaderController extends _$ReaderController {
   }
 
   ReaderMode getReaderMode() {
-    final incognitoMode = ref.watch(incognitoModeStateProvider);
-    if (!incognitoMode) {
-      return ref.watch(hiveBoxReaderMode).get(
-                  "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-                  defaultValue: null) !=
-              null
-          ? ref.watch(hiveBoxReaderMode).get(
+    return ref.watch(hiveBoxReaderMode).get(
                 "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-              )!
-          : ref
-              .watch(hiveBoxReaderMode)
-              .get("globalMangaReaderModeValue", defaultValue: ReaderMode.ltr)!;
-    }
-    return ReaderMode.vertical;
+                defaultValue: null) !=
+            null
+        ? ref.watch(hiveBoxReaderMode).get(
+              "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
+            )!
+        : ref.watch(hiveBoxReaderMode).get("globalMangaReaderModeValue",
+            defaultValue: ReaderMode.vertical)!;
   }
 
   String getReaderModeValue(ReaderMode readerMode) {
@@ -78,12 +74,9 @@ class ReaderController extends _$ReaderController {
   }
 
   void setReaderMode(ReaderMode newReaderMode) {
-    final incognitoMode = ref.watch(incognitoModeStateProvider);
-    if (!incognitoMode) {
-      ref.watch(hiveBoxReaderMode).put(
-          "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-          newReaderMode);
-    }
+    ref.watch(hiveBoxReaderMode).put(
+        "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
+        newReaderMode);
   }
 
   void setShowPageNumber(bool value) {
@@ -109,10 +102,9 @@ class ReaderController extends _$ReaderController {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       ref.watch(hiveBoxMangaHistory).put(
-          mangaReaderModel.modelManga.link,
+          '${getModelManga().lang}-${getModelManga().link}',
           MangaHistoryModel(
-              date: DateTime.now().toString(),
-              modelManga: mangaReaderModel.modelManga));
+              date: DateTime.now().toString(), modelManga: getModelManga()));
     }
   }
 
@@ -160,14 +152,14 @@ class ReaderController extends _$ReaderController {
   }
 
   String getMangaName() {
-    return mangaReaderModel.modelManga.name!;
+    return getModelManga().name!;
   }
 
   String getSourceName() {
-    return mangaReaderModel.modelManga.source!;
+    return '${getModelManga().lang}-${getModelManga().source!}';
   }
 
   String getChapterTitle() {
-    return mangaReaderModel.modelManga.chapterTitle![mangaReaderModel.index];
+    return getModelManga().chapterTitle![mangaReaderModel.index];
   }
 }

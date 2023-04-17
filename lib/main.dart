@@ -54,7 +54,7 @@ class MyApp extends ConsumerWidget {
       blendLevel: blendLevel.toInt(),
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
-        blendOnLevel: 24,
+        blendOnLevel: 10,
         thinBorderWidth: 2.0,
         unselectedToggleIsColored: true,
         inputDecoratorRadius: 24.0,
@@ -68,11 +68,11 @@ class MyApp extends ConsumerWidget {
     );
     ThemeData themeDark = FlexThemeData.dark(
       colors: ref.watch(flexSchemeColorStateProvider),
-      surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
+      surfaceMode: FlexSurfaceMode.level,
       blendLevel: blendLevel.toInt(),
       appBarOpacity: 0.00,
       subThemesData: const FlexSubThemesData(
-        blendOnLevel: 24,
+        blendOnLevel: 10,
         thinBorderWidth: 2.0,
         unselectedToggleIsColored: true,
         inputDecoratorRadius: 24.0,

@@ -149,7 +149,6 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*mangahere*/
   /***********/
   else if (source == "mangahere") {
-    log("message");
     final dom = await httpResToDom(
         url:
             '${getWpMangaUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',

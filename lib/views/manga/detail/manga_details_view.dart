@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,7 +63,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
               valueListenable: ref.watch(hiveBoxMangaInfo).listenable(),
               builder: (context, value, child) {
                 final entries = value.get(
-                    "${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
+                    "${widget.modelManga.lang}-${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
                     defaultValue: '');
                 final incognitoMode = ref.watch(incognitoModeStateProvider);
 
@@ -185,7 +187,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 ),
                 Text(widget.modelManga.status!),
                 const Text(' • '),
-                Text(widget.modelManga.source!)
+                Row(
+                  children: [
+                    Text(widget.modelManga.source!),
+                    Text(' (${widget.modelManga.lang!.toUpperCase()})'),
+                  ],
+                )
               ],
             )
           ],
@@ -194,7 +201,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           valueListenable: ref.watch(hiveBoxManga).listenable(),
           builder: (context, value, child) {
             final entries = value.values
-                .where((element) => element.link == widget.modelManga.link)
+                .where((element) =>
+                    '${element.lang}-${element.link}' ==
+                    '${widget.modelManga.lang}-${widget.modelManga.link}')
                 .toList();
             if (entries.isNotEmpty) {
               if (entries[0].favorite == true) {
@@ -209,7 +218,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         elevation: 0),
                     onPressed: () {
                       _setFavorite(false);
-                      manga.delete(widget.modelManga.link);
+                      manga.delete(
+                          '${widget.modelManga.lang}-${widget.modelManga.link}');
                     },
                     child: Column(
                       children: const [
@@ -250,7 +260,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           link: widget.modelManga.link,
                           source: widget.modelManga.source,
                           lang: widget.modelManga.lang);
-                      manga.put(widget.modelManga.link, model);
+                      manga.put(
+                          '${widget.modelManga.lang}-${widget.modelManga.link}',
+                          model);
                     },
                     child: Column(
                       children: const [
@@ -290,7 +302,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       link: widget.modelManga.link,
                       source: widget.modelManga.source,
                       lang: widget.modelManga.lang);
-                  manga.put(widget.modelManga.link, model);
+                  manga.put(
+                      '${widget.modelManga.lang}-${widget.modelManga.link}',
+                      model);
                 },
                 child: Column(
                   children: const [
