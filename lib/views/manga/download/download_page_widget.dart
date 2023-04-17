@@ -90,6 +90,12 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
         if (!(await path1.exists())) {
           path1.create();
         }
+        if (Platform.isAndroid) {
+          if (!(await File("${path1.path}" ".nomedia").exists())) {
+            File("${path1.path}" ".nomedia").create();
+          }
+        }
+
         if (!(await path2.exists())) {
           path2.create();
         }
