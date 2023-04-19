@@ -29,7 +29,7 @@ class CurrentIndex extends _$CurrentIndex {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       return ref.watch(hiveBoxMangaInfo).get(
-          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![mangaReaderModel.index]}-page_index",
+          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![mangaReaderModel.index].name}-page_index",
           defaultValue: 0);
     }
     return 0;
@@ -160,6 +160,6 @@ class ReaderController extends _$ReaderController {
   }
 
   String getChapterTitle() {
-    return getModelManga().chapterTitle![mangaReaderModel.index];
+    return getModelManga().chapters![mangaReaderModel.index].name!;
   }
 }

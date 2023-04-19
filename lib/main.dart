@@ -29,6 +29,7 @@ void main() async {
   Hive.registerAdapter(ReaderModeAdapter());
   Hive.registerAdapter(TypeSourceAdapter());
   Hive.registerAdapter(DownloadModelAdapter());
+  Hive.registerAdapter(ModelChaptersAdapter());
   await Hive.openBox<ModelManga>(HiveConstant.hiveBoxManga);
   await Hive.openBox<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
   await Hive.openBox<ReaderMode>(HiveConstant.hiveBoxReaderMode);

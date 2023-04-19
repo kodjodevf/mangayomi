@@ -24,6 +24,35 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   List<ModelManga> entries = [];
   List<ModelManga> entriesFilter = [];
   final _textEditingController = TextEditingController();
+
+  List<ModelManga> bookmark() {
+    List<ModelManga> mang = [];
+    for (var entry in entries) {
+      final d = entry.chapters!.where((element) => element.isBookmarked == true);
+      List<ModelChapters> chap = [];
+      for (var a in d) {
+        chap.add(a);
+      }
+      mang.add(ModelManga(
+          source: entry.source,
+          author: entry.author,
+          favorite: entry.favorite,
+          genre: entry.genre,
+          imageUrl: entry.imageUrl,
+          lang: entry.lang,
+          link: entry.link,
+          name: entry.name,
+          status: entry.status,
+          description: entry.description,
+          dateAdded: entry.dateAdded,
+          lastUpdate: entry.lastUpdate,
+          category: entry.category,
+          lastRead: entry.lastRead,
+          chapters: chap));
+    }
+    return mang;
+  }
+
   @override
   Widget build(BuildContext context) {
     final reverse = ref.watch(libraryReverseListStateProvider);
@@ -99,6 +128,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               : reverse
                   ? entries.reversed.toList()
                   : entries;
+
           if (entries.isNotEmpty || entriesFilter.isNotEmpty) {
             return displayType == DisplayType.list
                 ? LibraryListViewWidget(

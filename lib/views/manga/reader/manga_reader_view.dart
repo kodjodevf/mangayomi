@@ -436,7 +436,7 @@ class _MangaChapterPageGalleryState
                                               1 !=
                                           widget.readerController
                                               .getModelManga()
-                                              .chapterTitle!
+                                              .chapters!
                                               .length
                                       ? Colors.white
                                       : Colors.grey,

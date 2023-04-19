@@ -29,31 +29,28 @@ class ModelManga extends HiveObject {
   bool favorite;
 
   @HiveField(8)
-  List<String>? chapterTitle;
-
-  @HiveField(9)
-  List<String>? chapterUrl;
-
-  @HiveField(10)
-  List<String>? chapterDate;
-
-  @HiveField(11)
   String? source;
 
-  @HiveField(12)
+  @HiveField(9)
   String? lang;
 
-  @HiveField(13)
+  @HiveField(10)
   int? dateAdded;
 
-  @HiveField(14)
+  @HiveField(11)
   int? lastUpdate;
 
+  @HiveField(12)
+  List<ModelChapters>? chapters;
+
+  @HiveField(13)
+  String? lastRead;
+
+  @HiveField(14)
+  int? category;
+
   ModelManga(
-      {required this.chapterDate,
-      required this.source,
-      required this.chapterTitle,
-      required this.chapterUrl,
+      {required this.source,
       required this.author,
       required this.favorite,
       required this.genre,
@@ -64,5 +61,41 @@ class ModelManga extends HiveObject {
       required this.status,
       required this.description,
       required this.dateAdded,
-      required this.lastUpdate});
+      required this.lastUpdate,
+      required this.category,
+      required this.lastRead,
+      required this.chapters});
+}
+
+@HiveType(typeId: 7)
+class ModelChapters extends HiveObject {
+  @HiveField(0)
+  String? name;
+
+  @HiveField(1)
+  String? url;
+
+  @HiveField(2)
+  String? dateUpload;
+
+  @HiveField(3)
+  String? scanlator;
+
+  @HiveField(4)
+  bool isBookmarked;
+
+  @HiveField(5)
+  bool isRead;
+
+  @HiveField(6)
+  String lastPageRead;
+
+  ModelChapters(
+      {required this.name,
+      required this.url,
+      required this.dateUpload,
+      required this.isBookmarked,
+      required this.scanlator,
+      required this.isRead,
+      required this.lastPageRead});
 }

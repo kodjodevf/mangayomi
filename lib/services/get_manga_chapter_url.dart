@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -32,14 +31,14 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   Directory? path;
   List urll = [];
   String source = modelManga.source!.toLowerCase();
-  List hiveUrl = ref.watch(hiveBoxMangaInfo).get(
-      "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+  List pagesUrl = ref.watch(hiveBoxMangaInfo).get(
+      "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
       defaultValue: []);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   path = await StorageProvider().getMangaChapterDirectory(modelManga, index);
 
-  if (hiveUrl.isNotEmpty) {
-    urll = hiveUrl;
+  if (pagesUrl.isNotEmpty) {
+    urll = pagesUrl;
   }
 
   /*********/
@@ -47,7 +46,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /********/
   else if (getWpMangTypeSource(source) == TypeSource.comick) {
     String mangaId =
-        modelManga.chapterUrl![index].split('/').last.split('-').first;
+        modelManga.chapters![index].url!.split('/').last.split('-').first;
     var headers = {
       'Referer': 'https://comick.app/',
       'User-Agent':
@@ -68,7 +67,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
     }
     if (!incognitoMode) {
       ref.watch(hiveBoxMangaInfo).put(
-          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
           urll);
     }
   }
@@ -78,7 +77,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final htmll =
-        await httpResToDom(url: modelManga.chapterUrl![index], headers: {});
+        await httpResToDom(url: modelManga.chapters![index].url!, headers: {});
 
     if (htmll.querySelectorAll('#readerarea').isNotEmpty) {
       final ta = htmll
@@ -120,7 +119,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       }
       if (!incognitoMode) {
         ref.watch(hiveBoxMangaInfo).put(
-            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
             urll);
       }
     }
@@ -131,7 +130,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (modelManga.source == 'mangakawaii') {
-    final response = await http.get(Uri.parse(modelManga.chapterUrl![index]));
+    final response = await http.get(Uri.parse(modelManga.chapters![index].url!));
     var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
         .allMatches(response.body.toString())
         .last
@@ -150,7 +149,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
     }
     if (!incognitoMode) {
       ref.watch(hiveBoxMangaInfo).put(
-          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
           urll);
     }
   }
@@ -161,7 +160,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
     final dom =
-        await httpResToDom(url: modelManga.chapterUrl![index], headers: {});
+        await httpResToDom(url: modelManga.chapters![index].url!, headers: {});
 
     if (dom.querySelectorAll('#all > .img-responsive').isNotEmpty) {
       urll = dom.querySelectorAll('#all > .img-responsive').map((e) {
@@ -184,7 +183,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       // log(message)
       if (!incognitoMode) {
         ref.watch(hiveBoxMangaInfo).put(
-            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
             urll);
       }
     }
@@ -216,12 +215,12 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
     }
 
     final response = await http.get(
-        Uri.parse("http://www.mangahere.cc${modelManga.chapterUrl![index]}"),
+        Uri.parse("http://www.mangahere.cc${modelManga.chapters![index].url!}"),
         headers: {
           "Referer": "https://www.mangahere.cc/",
           "Cookie": "isAdult=1"
         });
-    var link = "http://www.mangahere.cc${modelManga.chapterUrl![index]}";
+    var link = "http://www.mangahere.cc${modelManga.chapters![index].url!}";
     dom.Document htmll = dom.Document.html(response.body);
     int? pagesNumber = -1;
     if (htmll.querySelectorAll('body > div > div > span > a:').isNotEmpty) {
@@ -303,7 +302,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       flutterJs.dispose();
       if (!incognitoMode) {
         ref.watch(hiveBoxMangaInfo).put(
-            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapterTitle![index]}-pageurl",
+            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
             urll);
       }
     }

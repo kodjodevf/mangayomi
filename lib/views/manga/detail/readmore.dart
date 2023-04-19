@@ -22,12 +22,12 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
         Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: ExpandableText(
                 animationDuration: const Duration(milliseconds: 500),
-                onExpandedChanged: (ok) {
-                  setState(() => expanded = ok);
-                  widget.onChanged(ok);
+                onExpandedChanged: (value) {
+                  setState(() => expanded = value);
+                  widget.onChanged(value);
                 },
                 expandOnTextTap: true,
                 widget.text.trim(),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
+import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -12,9 +13,7 @@ part 'get_manga_detail.g.dart';
 
 class GetMangaDetailModel {
   List<String> genre = [];
-  List<String> chapterTitle = [];
-  List<String> chapterUrl = [];
-  List<String> chapterDate = [];
+  List<ModelChapters> chapters = [];
   String? author;
   String? status;
   String? source;
@@ -26,9 +25,7 @@ class GetMangaDetailModel {
     required this.genre,
     required this.author,
     required this.status,
-    required this.chapterDate,
-    required this.chapterTitle,
-    required this.chapterUrl,
+    required this.chapters,
     required this.imageUrl,
     required this.description,
     required this.url,
@@ -89,7 +86,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
   String? description;
-
+  List<ModelChapters> chapters = [];
   /********/
   /*comick*/
   /********/
@@ -594,11 +591,22 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
       }
     }
   }
+  if (chapterDate.isNotEmpty &&
+      chapterTitle.isNotEmpty &&
+      chapterUrl.isNotEmpty) {
+    for (var i = 0; i < chapterUrl.length; i++) {
+      chapters.add(ModelChapters(
+          name: chapterTitle[i],
+          url: chapterUrl[i],
+          dateUpload: chapterDate[i],
+          isBookmarked: false,
+          scanlator: "",
+          isRead: false,
+          lastPageRead: ''));
+    }
+  }
 
   return GetMangaDetailModel(
-    chapterDate: chapterDate,
-    chapterTitle: chapterTitle,
-    chapterUrl: chapterUrl,
     status: status,
     genre: genre,
     author: author,
@@ -607,5 +615,6 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     url: url,
     source: source,
     imageUrl: imageUrl,
+    chapters: chapters,
   );
 }

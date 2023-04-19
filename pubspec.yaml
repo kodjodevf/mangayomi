@@ -59,6 +59,7 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/background_downloader.git
   permission_handler: ^10.2.0
+  material_design_icons_flutter: ^6.0.7096
 
 
   # The following adds the Cupertino Icons font to your application.

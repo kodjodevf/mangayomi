@@ -199,10 +199,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                       MainAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      element.modelManga
-                                                              .chapterTitle![
-                                                          int.parse(values
-                                                              .toString())],
+                                                      element
+                                                          .modelManga
+                                                          .chapters![int.parse(
+                                                              values
+                                                                  .toString())]
+                                                          .name!,
                                                       style: const TextStyle(
                                                         fontSize: 11,
                                                       ),

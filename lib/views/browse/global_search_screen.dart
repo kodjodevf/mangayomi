@@ -185,9 +185,6 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                 name: data.name,
                 genre: data.genre,
                 author: data.author,
-                chapterDate: data.chapterDate,
-                chapterTitle: data.chapterTitle,
-                chapterUrl: data.chapterUrl,
                 status: data.status,
                 description: data.description,
                 favorite: false,
@@ -195,7 +192,10 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                 source: data.source,
                 lang: widget.lang,
                 dateAdded: DateTime.now().microsecondsSinceEpoch,
-                lastUpdate: DateTime.now().microsecondsSinceEpoch);
+                lastUpdate: DateTime.now().microsecondsSinceEpoch,
+                chapters: data.chapters,
+                category: null,
+                lastRead: '');
             if (mounted) {
               context.push('/manga-reader/detail', extra: modelManga);
             }

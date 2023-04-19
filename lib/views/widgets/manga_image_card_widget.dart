@@ -36,9 +36,6 @@ class _MangaImageCardWidgetState extends ConsumerState<MangaImageCardWidget> {
             name: widget.getMangaDetailModel!.name,
             genre: widget.getMangaDetailModel!.genre,
             author: widget.getMangaDetailModel!.author,
-            chapterDate: widget.getMangaDetailModel!.chapterDate,
-            chapterTitle: widget.getMangaDetailModel!.chapterTitle,
-            chapterUrl: widget.getMangaDetailModel!.chapterUrl,
             status: widget.getMangaDetailModel!.status,
             description: widget.getMangaDetailModel!.description,
             favorite: false,
@@ -46,7 +43,10 @@ class _MangaImageCardWidgetState extends ConsumerState<MangaImageCardWidget> {
             source: widget.getMangaDetailModel!.source,
             lang: widget.lang,
             dateAdded: DateTime.now().microsecondsSinceEpoch,
-            lastUpdate: DateTime.now().microsecondsSinceEpoch);
+            lastUpdate: DateTime.now().microsecondsSinceEpoch,
+            chapters: widget.getMangaDetailModel!.chapters,
+            category: null,
+            lastRead: '');
         if (mounted) {
           context.push('/manga-reader/detail', extra: modelManga);
         }

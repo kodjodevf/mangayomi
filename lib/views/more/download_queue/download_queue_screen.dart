@@ -90,7 +90,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               ],
                             ),
                             Text(
-                              element.modelManga.chapterTitle![element.index],
+                              element.modelManga.chapters![element.index].name!,
                               style: const TextStyle(fontSize: 13),
                             ),
                             const SizedBox(
@@ -119,7 +119,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                     const Duration(seconds: 1));
                                 ref.watch(hiveBoxMangaDownloads).delete(
                                       element.modelManga
-                                          .chapterTitle![element.index],
+                                          .chapters![element.index].name,
                                     );
                               });
                             }

@@ -48,19 +48,13 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                         url: widget.modelManga.link!)
                     .future)
                 .then((value) {
-              if (value.chapterDate.isNotEmpty &&
-                  value.chapterTitle.isNotEmpty &&
-                  value.chapterUrl.isNotEmpty &&
-                  value.chapterDate.length >
-                      widget.modelManga.chapterDate!.length) {
+              if (value.chapters.isNotEmpty &&
+                  value.chapters.length > widget.modelManga.chapters!.length) {
                 final model = ModelManga(
                     imageUrl: widget.modelManga.imageUrl,
                     name: widget.modelManga.name,
                     genre: widget.modelManga.genre,
                     author: widget.modelManga.author,
-                    chapterDate: value.chapterDate,
-                    chapterTitle: value.chapterTitle,
-                    chapterUrl: value.chapterUrl,
                     description: widget.modelManga.description,
                     status: value.status,
                     favorite: _isFavorite,
@@ -68,7 +62,10 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     source: widget.modelManga.source,
                     lang: widget.modelManga.lang,
                     dateAdded: widget.modelManga.dateAdded,
-                    lastUpdate: DateTime.now().microsecondsSinceEpoch);
+                    lastUpdate: DateTime.now().microsecondsSinceEpoch,
+                    chapters: value.chapters,
+                    category: null,
+                    lastRead: '');
                 ref.watch(hiveBoxManga).put(
                     '${widget.modelManga.lang}-${widget.modelManga.link}',
                     model);

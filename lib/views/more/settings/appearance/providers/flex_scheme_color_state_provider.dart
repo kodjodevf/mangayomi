@@ -19,7 +19,7 @@ class FlexSchemeColorState extends _$FlexSchemeColorState {
             .schemes[ref.watch(hiveBoxSettings).get('FlexColorIndex')].dark;
       }
     }
-    return FlexColor.deepBlue.light;
+    return state;
   }
 
   void setTheme(FlexSchemeColor color, int index) {
