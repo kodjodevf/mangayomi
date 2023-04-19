@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
@@ -73,14 +72,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         AnimatedContainer(
-                          height: 50,
-                          width: !ref.watch(isExtended)
-                              ? 63
-                              : mediaWidth(context, 0.3),
-                          duration: const Duration(milliseconds: 400),
+                          height: 55,
+                          width: !ref.watch(isExtended) ? 63 : 130,
+                          duration: const Duration(milliseconds: 200),
                           curve: Curves.easeIn,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
+                                backgroundColor: generalColor(context),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15))),
                             onPressed: () {
@@ -92,21 +90,27 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Icon(
+                                  Icons.play_arrow,
+                                  color: secondaryColor(context),
+                                ),
                                 AnimatedContainer(
                                   curve: Curves.easeIn,
-                                  width: !ref.watch(isExtended)
-                                      ? 0
-                                      : mediaWidth(context, 0.15),
-                                  duration: const Duration(milliseconds: 400),
-                                  child: const Text(
+                                  width: !ref.watch(isExtended) ? 0 : 8,
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                                AnimatedContainer(
+                                  curve: Curves.easeIn,
+                                  width: !ref.watch(isExtended) ? 0 : 60,
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Text(
                                     "Continue",
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 13),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: secondaryColor(context)),
                                   ),
                                 ),
-                                const Icon(
-                                  Icons.play_arrow,
-                                )
                               ],
                             ),
                           ),
@@ -120,14 +124,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       AnimatedContainer(
-                        height: 50,
-                        width: !ref.watch(isExtended)
-                            ? 60
-                            : mediaWidth(context, 0.3),
+                        height: 55,
+                        width: !ref.watch(isExtended) ? 60 : 105,
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
+                              backgroundColor: generalColor(context),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15))),
                           onPressed: () {
@@ -138,26 +141,29 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                     widget.modelManga.chapterTitle!.length - 1);
                           },
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
+                              Icon(
+                                Icons.play_arrow,
+                                color: secondaryColor(context),
+                              ),
+                              AnimatedContainer(
+                                curve: Curves.easeIn,
+                                width: !ref.watch(isExtended) ? 0 : 5,
+                                duration: const Duration(milliseconds: 300),
+                              ),
                               AnimatedContainer(
                                 curve: Curves.easeIn,
                                 width: !ref.watch(isExtended) ? 0 : 40,
                                 duration: const Duration(milliseconds: 300),
-                                child: const Text(
+                                child: Text(
                                   "Read",
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 13),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: secondaryColor(context),
+                                  ),
                                 ),
                               ),
-                              AnimatedContainer(
-                                curve: Curves.easeIn,
-                                width: !ref.watch(isExtended) ? 0 : 10,
-                                duration: const Duration(milliseconds: 300),
-                              ),
-                              const Icon(
-                                Icons.play_arrow,
-                              )
                             ],
                           ),
                         ),
@@ -225,12 +231,15 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       children: const [
                         Icon(
                           Icons.favorite,
-                          size: 25,
+                          size: 22,
                         ),
                         SizedBox(
                           height: 4,
                         ),
-                        Text('In library')
+                        Text(
+                          'In library',
+                          style: TextStyle(fontSize: 13),
+                        )
                       ],
                     ),
                   ),
@@ -259,21 +268,28 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           favorite: true,
                           link: widget.modelManga.link,
                           source: widget.modelManga.source,
-                          lang: widget.modelManga.lang);
+                          lang: widget.modelManga.lang,
+                          dateAdded: DateTime.now().microsecondsSinceEpoch,
+                          lastUpdate: DateTime.now().microsecondsSinceEpoch);
                       manga.put(
                           '${widget.modelManga.lang}-${widget.modelManga.link}',
                           model);
                     },
                     child: Column(
-                      children: const [
+                      children: [
                         Icon(
                           Icons.favorite_border_rounded,
-                          size: 25,
+                          size: 22,
+                          color: secondaryColor(context),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
-                        Text('Add to library')
+                        Text(
+                          'Add to library',
+                          style: TextStyle(
+                              color: secondaryColor(context), fontSize: 13),
+                        )
                       ],
                     ),
                   ),
@@ -301,21 +317,28 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       favorite: true,
                       link: widget.modelManga.link,
                       source: widget.modelManga.source,
-                      lang: widget.modelManga.lang);
+                      lang: widget.modelManga.lang,
+                      dateAdded: DateTime.now().microsecondsSinceEpoch,
+                      lastUpdate: DateTime.now().microsecondsSinceEpoch);
                   manga.put(
                       '${widget.modelManga.lang}-${widget.modelManga.link}',
                       model);
                 },
                 child: Column(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.favorite_border_rounded,
-                      size: 25,
+                      size: 22,
+                      color: secondaryColor(context),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 4,
                     ),
-                    Text('Add to library')
+                    Text(
+                      'Add to library',
+                      style: TextStyle(
+                          color: secondaryColor(context), fontSize: 13),
+                    )
                   ],
                 ),
               ),

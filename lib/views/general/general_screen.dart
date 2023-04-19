@@ -36,17 +36,19 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
             final incognitoMode = ref.watch(incognitoModeStateProvider);
             return Material(
               child: AnimatedContainer(
-                height: incognitoMode ? 40 : 0,
+                height:
+                    incognitoMode ? MediaQuery.of(context).padding.top * 2 : 0,
                 curve: Curves.easeIn,
                 duration: const Duration(milliseconds: 150),
                 color: generalColor(context),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:  [
+                  children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Icongnito mode',
+                        'Incognito mode',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: GoogleFonts.aBeeZee().fontFamily,
@@ -73,7 +75,7 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
               child: NavigationBarTheme(
                 data: NavigationBarThemeData(
                   indicatorShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(30)),
                   height: 20,
                 ),
                 child: NavigationBar(
@@ -101,7 +103,7 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
                           Icons.history,
                         ),
                         icon: Icon(
-                          Icons.history_sharp,
+                          Icons.history_outlined,
                         ),
                         label: "History"),
                     NavigationDestination(

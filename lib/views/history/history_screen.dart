@@ -141,23 +141,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           height: 90,
                           child: GestureDetector(
                             onTap: () {
-                              final model = ModelManga(
-                                  status: element.modelManga.status,
-                                  imageUrl: element.modelManga.imageUrl,
-                                  name: element.modelManga.name,
-                                  genre: element.modelManga.genre,
-                                  author: element.modelManga.author,
-                                  chapterDate: element.modelManga.chapterDate,
-                                  chapterTitle: element.modelManga.chapterTitle,
-                                  chapterUrl: element.modelManga.chapterUrl,
-                                  description: element.modelManga.description,
-                                  favorite: element.modelManga.favorite,
-                                  link: element.modelManga.link,
-                                  source: element.modelManga.source,
-                                  lang: element.modelManga.lang);
-
                               context.push('/manga-reader/detail',
-                                  extra: model);
+                                  extra: element.modelManga);
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(7),

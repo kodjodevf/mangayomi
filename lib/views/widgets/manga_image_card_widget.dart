@@ -44,7 +44,9 @@ class _MangaImageCardWidgetState extends ConsumerState<MangaImageCardWidget> {
             favorite: false,
             link: widget.getMangaDetailModel!.url,
             source: widget.getMangaDetailModel!.source,
-            lang: widget.lang);
+            lang: widget.lang,
+            dateAdded: DateTime.now().microsecondsSinceEpoch,
+            lastUpdate: DateTime.now().microsecondsSinceEpoch);
         if (mounted) {
           context.push('/manga-reader/detail', extra: modelManga);
         }

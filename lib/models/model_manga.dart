@@ -14,19 +14,19 @@ class ModelManga extends HiveObject {
   String? imageUrl;
 
   @HiveField(3)
-  String? description = '';
+  String? description;
 
   @HiveField(4)
-  String? author = '';
+  String? author;
 
   @HiveField(5)
-  String? status = '';
+  String? status;
 
   @HiveField(6)
   List<String>? genre;
 
   @HiveField(7)
-  bool favorite = false;
+  bool favorite;
 
   @HiveField(8)
   List<String>? chapterTitle;
@@ -43,6 +43,12 @@ class ModelManga extends HiveObject {
   @HiveField(12)
   String? lang;
 
+  @HiveField(13)
+  int? dateAdded;
+
+  @HiveField(14)
+  int? lastUpdate;
+
   ModelManga(
       {required this.chapterDate,
       required this.source,
@@ -56,5 +62,7 @@ class ModelManga extends HiveObject {
       required this.link,
       required this.name,
       required this.status,
-      required this.description});
+      required this.description,
+      required this.dateAdded,
+      required this.lastUpdate});
 }

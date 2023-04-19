@@ -30,13 +30,15 @@ class ModelMangaAdapter extends TypeAdapter<ModelManga> {
       name: fields[0] as String?,
       status: fields[5] as String?,
       description: fields[3] as String?,
+      dateAdded: fields[13] as int?,
+      lastUpdate: fields[14] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ModelManga obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -62,7 +64,11 @@ class ModelMangaAdapter extends TypeAdapter<ModelManga> {
       ..writeByte(11)
       ..write(obj.source)
       ..writeByte(12)
-      ..write(obj.lang);
+      ..write(obj.lang)
+      ..writeByte(13)
+      ..write(obj.dateAdded)
+      ..writeByte(14)
+      ..write(obj.lastUpdate);
   }
 
   @override

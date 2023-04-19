@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/detail/readmore.dart';
@@ -133,7 +134,23 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _listView() {
     return Consumer(builder: (context, ref, child) {
       final reverse = ref.watch(reverseMangaStateProvider);
-      return DraggableScrollbar.rrect(
+      return DraggableScrollbar(
+          heightScrollThumb: 48.0,
+          backgroundColor: generalColor(context),
+          scrollThumbBuilder:
+              (backgroundColor, thumbAnimation, labelAnimation, height,
+                  {labelConstraints, labelText}) {
+            return FadeTransition(
+              opacity: thumbAnimation,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(20)),
+                height: height,
+                width: 10.0,
+              ),
+            );
+          },
           scrollbarTimeToFade: const Duration(seconds: 2),
           controller: _scrollController,
           child: ListView.builder(
@@ -188,7 +205,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _bodyContainer() {
     return Stack(
       children: [
-        Positioned(top: 0, child: _backgroundConstructor()),
+        Positioned(
+            top: 0,
+            child: cachedNetworkImage(
+                imageUrl: widget.modelManga!.imageUrl!,
+                width: mediaWidth(context, 1),
+                height: 300,
+                fit: BoxFit.cover)),
         Container(
           height: 300,
           decoration: BoxDecoration(
@@ -210,14 +233,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               height: 180,
               child: Stack(
                 children: [
-                  _titleConstructor(),
-                  _cardConstructor(),
+                  _titles(),
+                  _coverCard(),
                 ],
               ),
             ),
             _actionConstructor(),
             Container(
-              key: const Key("widget_body"),
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,13 +271,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       height: 30,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                Colors.grey.withOpacity(0.2),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(5))),
                                         onPressed: () {},
                                         child: Text(
                                           widget.modelManga!.genre![i],
-                                          style: const TextStyle(fontSize: 12),
+                                          style: const TextStyle(
+                                              fontSize: 11.5,
+                                              color: Colors.white),
                                         ),
                                       ),
                                     ),
@@ -277,6 +303,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.grey.withOpacity(0.2),
                                               shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -284,8 +312,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           onPressed: () {},
                                           child: Text(
                                             widget.modelManga!.genre![i],
-                                            style:
-                                                const TextStyle(fontSize: 12),
+                                            style: const TextStyle(
+                                                fontSize: 11.5,
+                                                color: Colors.white),
                                           ),
                                         ),
                                       ),
@@ -325,9 +354,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  Widget _cardConstructor() {
+  Widget _coverCard() {
     return Positioned(
-      key: const Key("widget_card"),
       top: 20,
       left: 20,
       child: GestureDetector(
@@ -349,17 +377,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  Widget _backgroundConstructor() {
-    return cachedNetworkImage(
-        imageUrl: widget.modelManga!.imageUrl!,
-        width: mediaWidth(context, 1),
-        height: 300,
-        fit: BoxFit.cover);
-  }
-
-  Widget _titleConstructor() {
+  Widget _titles() {
     return Positioned(
-      key: const Key("widget_title"),
       top: 60,
       left: 30,
       child: Container(
@@ -383,38 +402,40 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _actionConstructor() {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            widget.action!,
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              width: mediaWidth(context, 0.4),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    elevation: 0),
-                onPressed: () {},
-                child: Column(
-                  children: const [
-                    Icon(
-                      Icons.public,
-                      size: 25,
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text('WebView')
-                  ],
-                ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          widget.action!,
+          const SizedBox(
+            width: 5,
+          ),
+          SizedBox(
+            width: mediaWidth(context, 0.4),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  elevation: 0),
+              onPressed: () {},
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.public,
+                    size: 22,
+                    color: secondaryColor(context),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    'WebView',
+                    style:
+                        TextStyle(fontSize: 13, color: secondaryColor(context)),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

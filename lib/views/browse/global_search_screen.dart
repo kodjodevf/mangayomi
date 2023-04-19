@@ -193,7 +193,9 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                 favorite: false,
                 link: data.url,
                 source: data.source,
-                lang: widget.lang);
+                lang: widget.lang,
+                dateAdded: DateTime.now().microsecondsSinceEpoch,
+                lastUpdate: DateTime.now().microsecondsSinceEpoch);
             if (mounted) {
               context.push('/manga-reader/detail', extra: modelManga);
             }

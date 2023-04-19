@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 // import 'package:rive/rive.dart';
 
@@ -25,7 +26,10 @@ class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
           }
         },
         title: const Text("Theme mode"),
-        subtitle: Text(ref.watch(themeModeStateProvider) ? 'Light' : 'Dark'),
+        subtitle: Text(
+          ref.watch(themeModeStateProvider) ? 'Light' : 'Dark',
+          style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+        ),
         trailing: Switch(
             value: !isLight,
             onChanged: (dd) {

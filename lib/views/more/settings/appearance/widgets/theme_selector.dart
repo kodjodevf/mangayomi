@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 
 class ThemeSelector extends ConsumerStatefulWidget {
@@ -93,9 +94,9 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                           child: CircleAvatar(
                               radius: 14,
                               backgroundColor: theme.primaryColorLight,
-                              child: const Icon(
+                              child: Icon(
                                 FontAwesomeIcons.check,
-                                color: Colors.black,
+                                color: secondaryColor(context),
                                 size: 16,
                               )),
                         )

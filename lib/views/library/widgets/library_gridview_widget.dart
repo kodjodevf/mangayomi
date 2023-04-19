@@ -25,22 +25,7 @@ class LibraryGridViewWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            final model = ModelManga(
-                imageUrl: entriesManga[index].imageUrl,
-                name: entriesManga[index].name,
-                genre: entriesManga[index].genre,
-                author: entriesManga[index].author,
-                status: entriesManga[index].status,
-                chapterDate: entriesManga[index].chapterDate,
-                chapterTitle: entriesManga[index].chapterTitle,
-                chapterUrl: entriesManga[index].chapterUrl,
-                description: entriesManga[index].description,
-                favorite: entriesManga[index].favorite,
-                link: entriesManga[index].link,
-                source: entriesManga[index].source,
-                lang: entriesManga[index].lang);
-
-            context.push('/manga-reader/detail', extra: model);
+            context.push('/manga-reader/detail', extra: entriesManga[index]);
           },
           child: CoverViewWidget(
             bottomTextWidget: BottomTextWidget(
