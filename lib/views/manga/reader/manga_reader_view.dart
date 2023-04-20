@@ -20,6 +20,8 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:collection/collection.dart';
 
+typedef DoubleClickAnimationListener = void Function();
+
 class MangaReaderView extends ConsumerWidget {
   final MangaReaderModel mangaReaderModel;
   const MangaReaderView({
@@ -43,6 +45,7 @@ class MangaReaderView extends ConsumerWidget {
           path: data.path!,
           url: data.urll,
           readerController: readerController,
+          isLocaleList: data.isLocaleList,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -104,10 +107,12 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       {super.key,
       required this.path,
       required this.url,
-      required this.readerController});
+      required this.readerController,
+      required this.isLocaleList});
   final ReaderController readerController;
   final Directory path;
   final List url;
+  final List<bool> isLocaleList;
 
   @override
   ConsumerState createState() {
@@ -122,7 +127,7 @@ class _MangaChapterPageGalleryState
       ItemScrollController();
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
-
+  late int _currentIndex = widget.readerController.getPageIndex();
   @override
   void dispose() {
     _rebuildDetail.close();
@@ -157,10 +162,9 @@ class _MangaChapterPageGalleryState
   void _onPageChanged(int index) {
     widget.readerController.setMangaHistoryUpdate();
     if (mounted) {
-      ref
-          .read(currentIndexProvider(widget.readerController.mangaReaderModel)
-              .notifier)
-          .setCurrentIndex(index);
+      setState(() {
+        _currentIndex = index;
+      });
       if (_imageDetailY != 0) {
         _imageDetailY = 0;
         _rebuildDetail.sink.add(_imageDetailY);
@@ -174,10 +178,16 @@ class _MangaChapterPageGalleryState
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
         if (index != -1) {
-          _itemScrollController.scrollTo(
-              curve: Curves.ease,
+          if (isSlide) {
+            _itemScrollController.jumpTo(
               index: index,
-              duration: Duration(milliseconds: isSlide ? 2 : 150));
+            );
+          } else {
+            _itemScrollController.scrollTo(
+                curve: Curves.ease,
+                index: index,
+                duration: Duration(milliseconds: isSlide ? 2 : 150));
+          }
         }
       } else {
         if (index != -1) {
@@ -192,10 +202,16 @@ class _MangaChapterPageGalleryState
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
         if (widget.readerController.getPageLength(widget.url) != index) {
-          _itemScrollController.scrollTo(
-              curve: Curves.ease,
+          if (isSlide) {
+            _itemScrollController.jumpTo(
               index: index,
-              duration: Duration(milliseconds: isSlide ? 2 : 150));
+            );
+          } else {
+            _itemScrollController.scrollTo(
+                curve: Curves.ease,
+                index: index,
+                duration: Duration(milliseconds: isSlide ? 2 : 150));
+          }
         }
       } else {
         if (widget.readerController.getPageLength(widget.url) != index) {
@@ -235,10 +251,9 @@ class _MangaChapterPageGalleryState
   void _recordReadProgress(int index) {
     widget.readerController.setMangaHistoryUpdate();
     if (mounted) {
-      ref
-          .read(currentIndexProvider(widget.readerController.mangaReaderModel)
-              .notifier)
-          .setCurrentIndex(index);
+      setState(() {
+        _currentIndex = index;
+      });
     }
     widget.readerController.setPageIndex(index);
   }
@@ -261,7 +276,7 @@ class _MangaChapterPageGalleryState
   }
 
   late final _extendedController = ExtendedPageController(
-    initialPage: widget.readerController.getPageIndex(),
+    initialPage: _currentIndex,
     shouldIgnorePointerWhenScrolling: false,
   );
   double get pixelRatio => ui.window.devicePixelRatio;
@@ -315,8 +330,7 @@ class _MangaChapterPageGalleryState
         if (isInit) {
           await Future.delayed(const Duration(milliseconds: 30));
         }
-        _extendedController.jumpToPage(ref.watch(
-            currentIndexProvider(widget.readerController.mangaReaderModel)));
+        _extendedController.jumpToPage(_currentIndex);
       }
     } else if (value == ReaderMode.ltr || value == ReaderMode.rtl) {
       if (mounted) {
@@ -332,8 +346,7 @@ class _MangaChapterPageGalleryState
         if (isInit) {
           await Future.delayed(const Duration(milliseconds: 30));
         }
-        _extendedController.jumpToPage(ref.watch(
-            currentIndexProvider(widget.readerController.mangaReaderModel)));
+        _extendedController.jumpToPage(_currentIndex);
       }
     } else {
       if (mounted) {
@@ -345,9 +358,7 @@ class _MangaChapterPageGalleryState
           await Future.delayed(const Duration(milliseconds: 30));
         }
         _itemScrollController.scrollTo(
-            index: ref.watch(
-                currentIndexProvider(widget.readerController.mangaReaderModel)),
-            duration: const Duration(milliseconds: 1));
+            index: _currentIndex, duration: const Duration(milliseconds: 1));
       }
     }
   }
@@ -460,7 +471,7 @@ class _MangaChapterPageGalleryState
                                     Padding(
                                       padding: const EdgeInsets.only(left: 12),
                                       child: Text(
-                                        "${ref.watch(currentIndexProvider(widget.readerController.mangaReaderModel)) + 1} ",
+                                        "${_currentIndex + 1} ",
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
@@ -492,11 +503,7 @@ class _MangaChapterPageGalleryState
                                                     .getPageLength(widget.url) -
                                                 1,
                                             1),
-                                        value: ref
-                                            .watch(currentIndexProvider(widget
-                                                .readerController
-                                                .mangaReaderModel))
-                                            .toDouble(),
+                                        value: _currentIndex.toDouble(),
                                         min: 0,
                                         max: (widget.readerController
                                                     .getPageLength(widget.url) -
@@ -509,7 +516,7 @@ class _MangaChapterPageGalleryState
                                     Padding(
                                       padding: const EdgeInsets.only(right: 12),
                                       child: Text(
-                                        "${ref.watch(currentIndexProvider(widget.readerController.mangaReaderModel)) + 1} ",
+                                        "${_currentIndex + 1} ",
                                         style: const TextStyle(
                                           fontSize: 15.0,
                                           fontWeight: FontWeight.bold,
@@ -647,7 +654,7 @@ class _MangaChapterPageGalleryState
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      '${ref.watch(currentIndexProvider(widget.readerController.mangaReaderModel)) + 1} / ${widget.readerController.getPageLength(widget.url)}',
+                      '${_currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
                       style: const TextStyle(
                         fontSize: 12.0,
                         color: Colors.white,
@@ -681,8 +688,6 @@ class _MangaChapterPageGalleryState
   Widget _gestureRightLeft() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(
-            currentIndexProvider(widget.readerController.mangaReaderModel));
         return Row(
           children: [
             /// left region
@@ -693,9 +698,9 @@ class _MangaChapterPageGalleryState
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         if (_isReversHorizontal) {
-                          _onAddButtonTapped(currentIndex + 1, false);
+                          _onAddButtonTapped(_currentIndex + 1, false);
                         } else {
-                          _onAddButtonTapped(currentIndex - 1, true);
+                          _onAddButtonTapped(_currentIndex - 1, true);
                         }
                       },
                       onDoubleTapDown: (TapDownDetails details) {
@@ -710,9 +715,9 @@ class _MangaChapterPageGalleryState
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         if (_isReversHorizontal) {
-                          _onAddButtonTapped(currentIndex + 1, false);
+                          _onAddButtonTapped(_currentIndex + 1, false);
                         } else {
-                          _onAddButtonTapped(currentIndex - 1, true);
+                          _onAddButtonTapped(_currentIndex - 1, true);
                         }
                       },
                     ),
@@ -751,9 +756,9 @@ class _MangaChapterPageGalleryState
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         if (_isReversHorizontal) {
-                          _onAddButtonTapped(currentIndex - 1, true);
+                          _onAddButtonTapped(_currentIndex - 1, true);
                         } else {
-                          _onAddButtonTapped(currentIndex + 1, false);
+                          _onAddButtonTapped(_currentIndex + 1, false);
                         }
                       },
                       onDoubleTapDown: (TapDownDetails details) {
@@ -768,9 +773,9 @@ class _MangaChapterPageGalleryState
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
                         if (_isReversHorizontal) {
-                          _onAddButtonTapped(currentIndex - 1, true);
+                          _onAddButtonTapped(_currentIndex - 1, true);
                         } else {
-                          _onAddButtonTapped(currentIndex + 1, false);
+                          _onAddButtonTapped(_currentIndex + 1, false);
                         }
                       },
                     ),
@@ -784,8 +789,6 @@ class _MangaChapterPageGalleryState
   Widget _gestureTopBottom() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(
-            currentIndexProvider(widget.readerController.mangaReaderModel));
         return Column(
           children: [
             /// top region
@@ -795,7 +798,7 @@ class _MangaChapterPageGalleryState
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        _onAddButtonTapped(currentIndex - 1, true);
+                        _onAddButtonTapped(_currentIndex - 1, true);
                       },
                       onDoubleTapDown: (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -808,7 +811,7 @@ class _MangaChapterPageGalleryState
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        _onAddButtonTapped(currentIndex - 1, true);
+                        _onAddButtonTapped(_currentIndex - 1, true);
                       },
                     ),
                   ),
@@ -823,7 +826,7 @@ class _MangaChapterPageGalleryState
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        _onAddButtonTapped(currentIndex + 1, false);
+                        _onAddButtonTapped(_currentIndex + 1, false);
                       },
                       onDoubleTapDown: (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -836,7 +839,7 @@ class _MangaChapterPageGalleryState
                     child: GestureDetector(
                       behavior: HitTestBehavior.translucent,
                       onTap: () {
-                        _onAddButtonTapped(currentIndex + 1, false);
+                        _onAddButtonTapped(_currentIndex + 1, false);
                       },
                     ),
                   ),
@@ -885,8 +888,7 @@ class _MangaChapterPageGalleryState
                     child: ScrollablePositionedList.separated(
                       physics: const ClampingScrollPhysics(),
                       minCacheExtent: 8 * (MediaQuery.of(context).size.height),
-                      initialScrollIndex:
-                          widget.readerController.getPageIndex(),
+                      initialScrollIndex: _currentIndex,
                       itemCount:
                           widget.readerController.getPageLength(widget.url),
                       itemScrollController: _itemScrollController,
@@ -899,13 +901,18 @@ class _MangaChapterPageGalleryState
                         onDoubleTap: () {},
                         child: ImageViewVertical(
                           titleManga: widget.readerController.getMangaName(),
-                          source: widget.readerController.getSourceName(),
+                          source: widget.readerController
+                              .getSourceName()
+                              .replaceAll(
+                                  '${widget.readerController.mangaReaderModel.modelManga.lang}-',
+                                  ''),
                           index: index,
                           url: widget.url[index],
                           path: widget.path,
                           chapter: widget.readerController.getChapterTitle(),
                           length:
                               widget.readerController.getPageLength(widget.url),
+                          isLocale: widget.isLocaleList[index],
                         ),
                       ),
                       separatorBuilder: (_, __) => Divider(
@@ -930,7 +937,11 @@ class _MangaChapterPageGalleryState
                       itemBuilder: (BuildContext context, int index) {
                         return ImageViewHorizontal(
                           titleManga: widget.readerController.getMangaName(),
-                          source: widget.readerController.getSourceName(),
+                          source: widget.readerController
+                              .getSourceName()
+                              .replaceAll(
+                                  '${widget.readerController.mangaReaderModel.modelManga.lang}-',
+                                  ''),
                           index: index,
                           url: widget.url[index],
                           path: widget.path,
@@ -1075,6 +1086,9 @@ class _MangaChapterPageGalleryState
 
                             _doubleClickAnimationController.forward();
                           },
+                          isLocale: _isReversHorizontal
+                              ? widget.isLocaleList.reversed.toList()[index]
+                              : widget.isLocaleList[index],
                         );
                       },
                       itemCount:

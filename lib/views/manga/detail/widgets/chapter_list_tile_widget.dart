@@ -81,9 +81,12 @@ class ChapterListTileWidget extends ConsumerWidget {
                     color: generalColor(context),
                   )
                 : Container(),
-            Text(
-              chapters[finalIndex].name!,
-              style: const TextStyle(fontSize: 13),
+            Flexible(
+              child: Text(
+                chapters[finalIndex].name!,
+                style: const TextStyle(fontSize: 13),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

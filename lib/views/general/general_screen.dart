@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,16 +8,16 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 
-class GeneralScreen extends ConsumerStatefulWidget {
+class GeneralScreen extends StatefulWidget {
   const GeneralScreen({super.key, required this.child});
 
   final Widget child;
 
   @override
-  ConsumerState<GeneralScreen> createState() => _GeneralScreenState();
+  State<GeneralScreen> createState() => _GeneralScreenState();
 }
 
-class _GeneralScreenState extends ConsumerState<GeneralScreen> {
+class _GeneralScreenState extends State<GeneralScreen> {
   @override
   Widget build(BuildContext context) {
     final route = GoRouter.of(context);
@@ -36,8 +38,11 @@ class _GeneralScreenState extends ConsumerState<GeneralScreen> {
             final incognitoMode = ref.watch(incognitoModeStateProvider);
             return Material(
               child: AnimatedContainer(
-                height:
-                    incognitoMode ? MediaQuery.of(context).padding.top * 2 : 0,
+                height: incognitoMode
+                    ? Platform.isAndroid || Platform.isIOS
+                        ? MediaQuery.of(context).padding.top * 2
+                        : 50
+                    : 0,
                 curve: Curves.easeIn,
                 duration: const Duration(milliseconds: 150),
                 color: generalColor(context),

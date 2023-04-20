@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_js/flutter_js.dart';
@@ -19,7 +20,9 @@ part 'get_manga_chapter_url.g.dart';
 class GetMangaChapterUrlModel {
   Directory? path;
   List urll = [];
-  GetMangaChapterUrlModel({required this.path, required this.urll});
+  List<bool> isLocaleList = [];
+  GetMangaChapterUrlModel(
+      {required this.path, required this.urll, required this.isLocaleList});
 }
 
 @riverpod
@@ -30,6 +33,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 }) async {
   Directory? path;
   List urll = [];
+  List<bool> isLocaleList = [];
   String source = modelManga.source!.toLowerCase();
   List pagesUrl = ref.watch(hiveBoxMangaInfo).get(
       "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
@@ -130,7 +134,8 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (modelManga.source == 'mangakawaii') {
-    final response = await http.get(Uri.parse(modelManga.chapters![index].url!));
+    final response =
+        await http.get(Uri.parse(modelManga.chapters![index].url!));
     var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
         .allMatches(response.body.toString())
         .last
@@ -307,6 +312,16 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       }
     }
   }
+  if (urll.isNotEmpty) {
+    for (var i = 0; i < urll.length; i++) {
+      if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {
+        isLocaleList.add(true);
+      } else {
+        isLocaleList.add(false);
+      }
+    }
+  }
 
-  return GetMangaChapterUrlModel(path: path, urll: urll);
+  return GetMangaChapterUrlModel(
+      path: path, urll: urll, isLocaleList: isLocaleList);
 }

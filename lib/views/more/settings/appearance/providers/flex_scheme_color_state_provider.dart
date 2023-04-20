@@ -8,18 +8,17 @@ part 'flex_scheme_color_state_provider.g.dart';
 class FlexSchemeColorState extends _$FlexSchemeColorState {
   @override
   FlexSchemeColor build() {
-    if (ref.read(themeModeStateProvider)) {
-      if (ref.watch(hiveBoxSettings).get('FlexColorIndex') != null) {
-        state = ThemeAA
-            .schemes[ref.watch(hiveBoxSettings).get('FlexColorIndex')].light;
-      }
-    } else {
-      if (ref.watch(hiveBoxSettings).get('FlexColorIndex') != null) {
-        state = ThemeAA
-            .schemes[ref.watch(hiveBoxSettings).get('FlexColorIndex')].dark;
-      }
-    }
-    return state;
+    return ref.read(themeModeStateProvider)
+        ? ThemeAA
+            .schemes[ref
+                .watch(hiveBoxSettings)
+                .get('FlexColorIndex', defaultValue: 2)]
+            .light
+        : ThemeAA
+            .schemes[ref
+                .watch(hiveBoxSettings)
+                .get('FlexColorIndex', defaultValue: 2)]
+            .dark;
   }
 
   void setTheme(FlexSchemeColor color, int index) {

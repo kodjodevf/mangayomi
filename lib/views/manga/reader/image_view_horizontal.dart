@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
-class ImageViewHorizontal extends StatefulWidget {
+class ImageViewHorizontal extends StatelessWidget {
   final int length;
   final String url;
   final int index;
@@ -12,6 +12,7 @@ class ImageViewHorizontal extends StatefulWidget {
   final String source;
   final String chapter;
   final Directory path;
+  final bool isLocale;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state) onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)
@@ -28,70 +29,33 @@ class ImageViewHorizontal extends StatefulWidget {
     required this.loadStateChanged,
     required this.onDoubleTap,
     required this.initGestureConfigHandler,
+    required this.isLocale,
   });
 
   @override
-  State createState() => _ImageViewHorizontalState();
-}
-
-typedef DoubleClickAnimationListener = void Function();
-
-class _ImageViewHorizontalState extends State<ImageViewHorizontal> {
-  @override
-  void initState() {
-    _localCheck();
-    super.initState();
-  }
-
-  _localCheck() async {
-    if (await File("${widget.path.path}" "${padIndex(widget.index + 1)}.jpg")
-        .exists()) {
-      if (mounted) {
-        setState(() {
-          _isLocale = true;
-          _isLoading = false;
-        });
-      }
-    } else {
-      if (mounted) {
-        setState(() {
-          _isLocale = false;
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  bool _isLoading = true;
-  bool _isLocale = false;
-  @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
+    return isLocale
+        ? ExtendedImage.file(
+            File("${path.path}" "${padIndex(index + 1)}.jpg"),
+            clearMemoryCacheWhenDispose: true,
+            enableMemoryCache: false,
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: initGestureConfigHandler,
+            onDoubleTap: onDoubleTap,
+            loadStateChanged: loadStateChanged,
           )
-        : _isLocale
-            ? ExtendedImage.file(
-                File("${widget.path.path}" "${padIndex(widget.index + 1)}.jpg"),
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: widget.initGestureConfigHandler,
-                onDoubleTap: widget.onDoubleTap,
-                loadStateChanged: widget.loadStateChanged,
-              )
-            : ExtendedImage.network(
-                widget.url,
-                cache: true,
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                cacheMaxAge: const Duration(days: 7),
-                headers: headers(widget.source),
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: widget.initGestureConfigHandler,
-                onDoubleTap: widget.onDoubleTap,
-                handleLoadingProgress: true,
-                loadStateChanged: widget.loadStateChanged,
-              );
+        : ExtendedImage.network(
+            url,
+            cache: true,
+            clearMemoryCacheWhenDispose: true,
+            enableMemoryCache: false,
+            cacheMaxAge: const Duration(days: 7),
+            headers: headers(source),
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: initGestureConfigHandler,
+            onDoubleTap: onDoubleTap,
+            handleLoadingProgress: true,
+            loadStateChanged: loadStateChanged,
+          );
   }
 }

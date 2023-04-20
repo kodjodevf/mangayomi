@@ -196,7 +196,7 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
               ' body > div.container.weekrank.ranking > div > div > ul > li > a > img')
           .where((e) => e.attributes.containsKey('src'))
           .where((e) => e.attributes['src']!.contains("cover"))
-          .map((e) => e.attributes['src'])
+          .map((e) => e.attributes['src']!.split('?').first)
           .toList();
 
       name = dom

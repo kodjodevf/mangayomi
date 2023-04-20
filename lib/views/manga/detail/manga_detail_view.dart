@@ -211,7 +211,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       controller: _scrollController,
                       child: ListView.builder(
                           controller: _scrollController,
-                          padding: const EdgeInsets.only(top: 0),
+                          padding: const EdgeInsets.only(top: 0, bottom: 60),
                           itemCount: widget.listLength,
                           itemBuilder: (context, index) {
                             int finalIndex = index - 1;

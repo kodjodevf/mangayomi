@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 Map<String, String> headers(String source) {
+  source = source.toLowerCase();
+  log(source);
   return source == 'mangakawaii'
       ? {
           'Referer': 'https://www.mangakawaii.io/',
