@@ -1,14 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:developer';
+
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
-// final reverseMangaStateProvider = StateProvider.autoDispose<bool>(
-//   (ref) => false,
-// );
-
-// final sortedMangaValueStateProvider = StateProvider.autoDispose<String>(
-//   (ref) => 'By source',
-// );
 
 @riverpod
 class ChapterModelState extends _$ChapterModelState {
@@ -30,14 +24,46 @@ class ChapterModelState extends _$ChapterModelState {
 }
 
 @riverpod
-class ChapterIndexState extends _$ChapterIndexState {
+class ChapterIndexListState extends _$ChapterIndexListState {
   @override
-  int build() {
-    return -1;
+  List<int> build() {
+    return [];
   }
 
   void update(int value) {
-    state = value;
+    var newList = state.reversed.toList();
+    if (newList.contains(value)) {
+      newList.remove(value);
+    } else {
+      newList.add(value);
+    }
+    if (newList.isEmpty) {
+      ref.read(isLongPressedStateProvider.notifier).update(false);
+    }
+    state = newList;
+  }
+
+  void selectAll(int value) {
+    var newList = state.reversed.toList();
+    if (!newList.contains(value)) {
+      newList.add(value);
+    }
+
+    state = newList;
+  }
+
+  void selectSome(int value) {
+    var newList = state.reversed.toList();
+    if (newList.contains(value)) {
+      newList.remove(value);
+    } else {
+      newList.add(value);
+    }
+    state = newList;
+  }
+
+  void clear() {
+    state = [];
   }
 }
 

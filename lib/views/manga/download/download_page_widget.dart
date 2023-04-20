@@ -13,6 +13,7 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/manga/download/download_model.dart';
+import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_page_widget.g.dart';
 
@@ -42,170 +43,16 @@ class ChapterPageDownload extends ConsumerStatefulWidget {
 class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     with AutomaticKeepAliveClientMixin<ChapterPageDownload> {
   List _urll = [];
-  List<DownloadTask> tasks = [];
+
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload() async {
-    await _storageProvider.requestPermission();
-    Directory? path;
-    bool isOk = false;
-    final path1 = await _storageProvider.getDirectory();
-
-    final finalPath =
-        "downloads/${widget.modelManga.source} (${widget.modelManga.lang!.toUpperCase()})/${widget.modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${widget.modelManga.chapters![widget.index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}";
-    path = Directory(
-        "${path1!.path}downloads/${widget.modelManga.source} (${widget.modelManga.lang!.toUpperCase()})/${widget.modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${widget.modelManga.chapters![widget.index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
-    ref
-        .read(getMangaChapterUrlProvider(
-      modelManga: widget.modelManga,
-      index: widget.index,
-    ).future)
-        .then((value) {
-      if (value.urll.isNotEmpty) {
-        if (mounted) {
-          setState(() {
-            _urll = value.urll;
-            isOk = true;
-          });
-        }
-      }
-    });
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (isOk == true) {
-        return false;
-      }
-      return true;
-    });
-
-    if (_urll.isNotEmpty) {
-      for (var index = 0; index < _urll.length; index++) {
-        final path2 = Directory("${path1.path}downloads/");
-        final path4 = Directory(
-            "${path2.path}${widget.modelManga.source} (${widget.modelManga.lang!.toUpperCase()})/");
-        final path3 = Directory(
-            "${path2.path}${widget.modelManga.source} (${widget.modelManga.lang!.toUpperCase()})/${widget.modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
-        final path5 = Directory(
-            "${path2.path}${widget.modelManga.source} (${widget.modelManga.lang!.toUpperCase()})/${widget.modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${widget.modelManga.chapters![widget.index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}");
-
-        if (!(await path1.exists())) {
-          path1.create();
-        }
-        if (Platform.isAndroid) {
-          if (!(await File("${path1.path}" ".nomedia").exists())) {
-            File("${path1.path}" ".nomedia").create();
-          }
-        }
-
-        if (!(await path2.exists())) {
-          path2.create();
-        }
-        if (!(await path4.exists())) {
-          path4.create();
-        }
-        if (!(await path3.exists())) {
-          path3.create();
-        }
-        if (!(await path5.exists())) {
-          path5.create();
-        }
-        if ((await path.exists())) {
-          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
-              .exists()) {
-          } else {
-            tasks.add(DownloadTask(
-              taskId: _urll[index],
-              headers: headers(widget.modelManga.source!),
-              url: _urll[index],
-              filename: "${padIndex(index + 1)}.jpg",
-              baseDirectory:
-                  Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                      ? BaseDirectory.applicationDocuments
-                      : BaseDirectory.temporary,
-              directory:
-                  Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                      ? 'Mangayomi/$finalPath'
-                      : finalPath,
-              updates: Updates.statusAndProgress,
-              allowPause: true,
-            ));
-          }
-        } else {
-          path.create();
-          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
-              .exists()) {
-          } else {
-            tasks.add(DownloadTask(
-              taskId: _urll[index],
-              headers: headers(widget.modelManga.source!),
-              url: _urll[index],
-              filename: "${padIndex(index + 1)}.jpg",
-              baseDirectory:
-                  Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                      ? BaseDirectory.applicationDocuments
-                      : BaseDirectory.temporary,
-              directory:
-                  Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                      ? 'Mangayomi/$finalPath'
-                      : finalPath,
-              updates: Updates.statusAndProgress,
-              allowPause: true,
-            ));
-          }
-        }
-      }
-      if (tasks.isEmpty && _urll.isNotEmpty) {
-        final model = DownloadModel(
-            modelManga: widget.modelManga,
-            succeeded: 0,
-            failed: 0,
-            index: widget.index,
-            total: 0,
-            isDownload: true,
-            taskIds: _urll,
-            isStartDownload: false);
-
-        ref
-            .watch(hiveBoxMangaDownloads)
-            .put(widget.modelManga.chapters![widget.index].name!, model);
-      } else {
-        await FileDownloader().downloadBatch(
-          tasks,
-          batchProgressCallback: (succeeded, failed) {
-            final model = DownloadModel(
-                modelManga: widget.modelManga,
-                succeeded: succeeded,
-                failed: failed,
-                index: widget.index,
-                total: tasks.length,
-                isDownload: (succeeded == tasks.length) ? true : false,
-                taskIds: _urll,
-                isStartDownload: true);
-
-            Hive.box<DownloadModel>(HiveConstant.hiveBoxDownloads)
-                .put(widget.modelManga.chapters![widget.index].name!, model);
-          },
-          taskProgressCallback: (task, progress) async {
-            if (progress == 1.0) {
-              final downloadTask = DownloadTask(
-                creationTime: task.creationTime,
-                taskId: task.taskId,
-                headers: task.headers,
-                url: task.url,
-                filename: task.filename,
-                baseDirectory: task.baseDirectory,
-                directory: task.directory,
-                updates: task.updates,
-                allowPause: task.allowPause,
-              );
-              if (Platform.isAndroid || Platform.isIOS) {
-                await FileDownloader().moveToSharedStorage(
-                    downloadTask, SharedStorage.external,
-                    directory: finalPath);
-              }
-            }
-          },
-        );
-      }
+    final data = await ref.watch(downloadChapterProvider(
+            modelManga: widget.modelManga, index: widget.index)
+        .future);
+    if (mounted) {
+      setState(() {
+        _urll = data;
+      });
     }
   }
 
@@ -439,7 +286,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                               .then((value) async {
                             await Future.delayed(const Duration(seconds: 1));
                             ref.watch(hiveBoxMangaDownloads).delete(
-                                  widget.modelManga.chapters![widget.index].name!,
+                                  widget
+                                      .modelManga.chapters![widget.index].name!,
                                 );
                           });
                         }

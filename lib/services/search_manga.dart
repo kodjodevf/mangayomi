@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/search_manga_cimick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';

@@ -22,22 +22,23 @@ final chapterModelStateProvider =
 );
 
 typedef _$ChapterModelState = AutoDisposeNotifier<ModelChapters>;
-String _$chapterIndexStateHash() => r'db4ba6cb07f0bb8e388e518179a0b5f35b58e48b';
+String _$chapterIndexListStateHash() =>
+    r'cef615a9638df5a2a72c6087f479824cc169a70e';
 
-/// See also [ChapterIndexState].
-@ProviderFor(ChapterIndexState)
-final chapterIndexStateProvider =
-    AutoDisposeNotifierProvider<ChapterIndexState, int>.internal(
-  ChapterIndexState.new,
-  name: r'chapterIndexStateProvider',
+/// See also [ChapterIndexListState].
+@ProviderFor(ChapterIndexListState)
+final chapterIndexListStateProvider =
+    AutoDisposeNotifierProvider<ChapterIndexListState, List<int>>.internal(
+  ChapterIndexListState.new,
+  name: r'chapterIndexListStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$chapterIndexStateHash,
+      : _$chapterIndexListStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ChapterIndexState = AutoDisposeNotifier<int>;
+typedef _$ChapterIndexListState = AutoDisposeNotifier<List<int>>;
 String _$isLongPressedStateHash() =>
     r'26fe435e8381046a30e3f6c4495303946aa3aaa7';
 

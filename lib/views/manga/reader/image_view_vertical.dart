@@ -146,29 +146,30 @@ class _ImageViewVerticalState extends ConsumerState<ImageViewVertical>
                       return null;
                     }),
           if (widget.index + 1 == widget.length)
-            Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  '${widget.chapter} finished',
-                  style: const TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Icon(
-                  FontAwesomeIcons.circleCheck,
-                  color: Colors.white,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
+            SizedBox(
+              height: mediaHeight(context, 0.3),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${widget.chapter} finished',
+                    style: const TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Icon(
+                    FontAwesomeIcons.circleCheck,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
             )
         ],
       ),

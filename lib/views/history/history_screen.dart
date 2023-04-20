@@ -6,7 +6,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/date.dart';
