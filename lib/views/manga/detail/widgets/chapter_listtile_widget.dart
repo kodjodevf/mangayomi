@@ -4,7 +4,7 @@ import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/views/manga/detail/manga_details_view.dart';
+import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/download/download_page_widget.dart';
 
 class ChapterListTileWidget extends ConsumerWidget {
@@ -26,7 +26,7 @@ class ChapterListTileWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = reverse ? reverseIndex : finalIndex;
-    final chapterIndex = ref.watch(chapterIndexProvider);
+    final chapterIndex = ref.watch(chapterIndexStateProvider);
     return Container(
       color:
           chapterIndex == idx ? generalColor(context).withOpacity(0.4) : null,
@@ -41,22 +41,26 @@ class ChapterListTileWidget extends ConsumerWidget {
             : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
-            ref.read(chapterIndexProvider.notifier).state = idx;
-            ref.read(chapterModelProvider.notifier).state =
-                chapters[finalIndex];
+            ref.read(chapterIndexStateProvider.notifier).update(idx);
+            ref
+                .read(chapterModelStateProvider.notifier)
+                .update(chapters[finalIndex]);
           } else {
-            ref.read(chapterIndexProvider.notifier).state = -1;
+            ref.read(chapterIndexStateProvider.notifier).update(-1);
           }
-          ref.read(isLongPressedProvider.notifier).state = !isLongPressed;
+          ref.read(isLongPressedStateProvider.notifier).update(!isLongPressed);
         },
         onTap: () {
           if (isLongPressed) {
-            ref.read(chapterIndexProvider.notifier).state = idx;
-            ref.read(chapterModelProvider.notifier).state =
-                chapters[finalIndex];
+            ref.read(chapterIndexStateProvider.notifier).update(idx);
+            ref
+                .read(chapterModelStateProvider.notifier)
+                .update(chapters[finalIndex]);
             if (chapterIndex == idx) {
-              ref.read(chapterIndexProvider.notifier).state = -1;
-              ref.read(isLongPressedProvider.notifier).state = !isLongPressed;
+              ref.read(chapterIndexStateProvider.notifier).update(-1);
+              ref
+                  .read(isLongPressedStateProvider.notifier)
+                  .update(!isLongPressed);
             }
           } else {
             pushMangaReaderView(

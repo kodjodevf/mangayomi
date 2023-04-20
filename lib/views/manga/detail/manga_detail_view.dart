@@ -58,7 +58,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    final isLongPressed = ref.watch(isLongPressedProvider);
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -75,17 +75,20 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               preferredSize: Size.fromHeight(AppBar().preferredSize.height),
               child: Consumer(
                 builder: (context, ref, child) {
-                  final isLongPressed = ref.watch(isLongPressedProvider);
+                  final isLongPressed = ref.watch(isLongPressedStateProvider);
                   final reverse = ref.watch(reverseMangaStateProvider);
                   return isLongPressed
                       ? AppBar(
                           backgroundColor: generalColor(context),
                           leading: IconButton(
                               onPressed: () {
-                                ref.read(chapterIndexProvider.notifier).state =
-                                    -1;
-                                ref.read(isLongPressedProvider.notifier).state =
-                                    !isLongPressed;
+                                ref
+                                    .read(chapterIndexStateProvider.notifier)
+                                    .update(-1);
+
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(!isLongPressed);
                               },
                               icon: const Icon(Icons.clear)),
                         )
@@ -110,7 +113,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 onPressed: () {
                                   ref
                                       .read(reverseMangaStateProvider.notifier)
-                                      .state = !reverse;
+                                      .update(!reverse);
                                 },
                                 icon: Icon(
                                     reverse
@@ -203,8 +206,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           ),
           bottomNavigationBar: Consumer(
             builder: (context, ref, child) {
-              final idx = ref.watch(chapterIndexProvider);
-              final chapter = ref.watch(chapterModelProvider);
+              final idx = ref.watch(chapterIndexStateProvider);
+              final chapter = ref.watch(chapterModelStateProvider);
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
@@ -230,7 +233,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 dateUpload:
                                     widget.modelManga!.chapters![i].dateUpload,
                                 isBookmarked: idx == i
-                                    ? widget.modelManga!.chapters![i].isBookmarked
+                                    ? widget.modelManga!.chapters![i]
+                                            .isBookmarked
                                         ? false
                                         : true
                                     : widget
@@ -262,8 +266,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ref.watch(hiveBoxManga).put(
                               '${widget.modelManga!.lang}-${widget.modelManga!.link}',
                               model);
-                          ref.read(chapterModelProvider.notifier).state =
-                              chap[idx];
+                          ref
+                              .read(chapterModelStateProvider.notifier)
+                              .update(chap[idx]);
                         },
                         icon: Icon(chapter.isBookmarked
                             ? Icons.bookmark_remove
@@ -279,8 +284,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 url: widget.modelManga!.chapters![i].url,
                                 dateUpload:
                                     widget.modelManga!.chapters![i].dateUpload,
-                                isBookmarked:
-                                    widget.modelManga!.chapters![i].isBookmarked,
+                                isBookmarked: widget
+                                    .modelManga!.chapters![i].isBookmarked,
                                 scanlator:
                                     widget.modelManga!.chapters![i].scanlator,
                                 isRead: idx == i
@@ -311,8 +316,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ref.watch(hiveBoxManga).put(
                               '${widget.modelManga!.lang}-${widget.modelManga!.link}',
                               model);
-                          ref.read(chapterModelProvider.notifier).state =
-                              chap[idx];
+                          ref
+                              .read(chapterModelStateProvider.notifier)
+                              .update(chap[idx]);
+                          ;
                         },
                         icon: Icon(chapter.isRead
                             ? Icons.remove_done_sharp

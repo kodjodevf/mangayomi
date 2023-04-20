@@ -8,24 +8,8 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
+import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
-
-final isExtended = StateProvider.autoDispose<bool>((ref) {
-  return true;
-});
-final isLongPressedProvider = StateProvider.autoDispose<bool>((ref) {
-  return false;
-});
-final chapterIndexProvider = StateProvider.autoDispose<int>((ref) => -1);
-final chapterModelProvider = StateProvider.autoDispose<ModelChapters>((ref) =>
-    ModelChapters(
-        name: "",
-        url: "",
-        dateUpload: "",
-        isBookmarked: false,
-        scanlator: "",
-        isRead: false,
-        lastPageRead: ""));
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final ModelManga modelManga;
@@ -70,7 +54,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   Widget build(BuildContext context) {
     final manga = ref.watch(hiveBoxManga);
     return Scaffold(
-      floatingActionButton: ref.watch(isLongPressedProvider) == true
+      floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
           : widget.modelManga.chapters!.isNotEmpty
               ? ValueListenableBuilder<Box>(
@@ -83,12 +67,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
 
                     if (entries.isNotEmpty && !incognitoMode) {
                       return Consumer(builder: (context, ref, child) {
+                        final isExtended = ref.watch(isExtendedStateProvider);
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             AnimatedContainer(
                               height: 55,
-                              width: !ref.watch(isExtended) ? 63 : 130,
+                              width: !isExtended ? 63 : 130,
                               duration: const Duration(milliseconds: 200),
                               curve: Curves.easeIn,
                               child: ElevatedButton(
@@ -112,13 +97,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                     ),
                                     AnimatedContainer(
                                       curve: Curves.easeIn,
-                                      width: !ref.watch(isExtended) ? 0 : 8,
+                                      width: !isExtended ? 0 : 8,
                                       duration:
                                           const Duration(milliseconds: 500),
                                     ),
                                     AnimatedContainer(
                                       curve: Curves.easeIn,
-                                      width: !ref.watch(isExtended) ? 0 : 60,
+                                      width: !isExtended ? 0 : 60,
                                       duration:
                                           const Duration(milliseconds: 200),
                                       child: const Text(
@@ -137,12 +122,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       });
                     }
                     return Consumer(builder: (context, ref, child) {
+                      final isExtended = ref.watch(isExtendedStateProvider);
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           AnimatedContainer(
                             height: 55,
-                            width: !ref.watch(isExtended) ? 60 : 105,
+                            width: !isExtended ? 60 : 105,
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeIn,
                             child: ElevatedButton(
@@ -165,12 +151,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   ),
                                   AnimatedContainer(
                                     curve: Curves.easeIn,
-                                    width: !ref.watch(isExtended) ? 0 : 5,
+                                    width: !isExtended ? 0 : 5,
                                     duration: const Duration(milliseconds: 300),
                                   ),
                                   AnimatedContainer(
                                     curve: Curves.easeIn,
-                                    width: !ref.watch(isExtended) ? 0 : 40,
+                                    width: !isExtended ? 0 : 40,
                                     duration: const Duration(milliseconds: 300),
                                     child: const Text(
                                       "Read",
@@ -365,7 +351,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         modelManga: widget.modelManga,
         listLength: widget.modelManga.chapters!.length + 1,
         isExtended: (value) {
-          ref.read(isExtended.notifier).state = value;
+          ref.read(isExtendedStateProvider.notifier).update(value);
         },
       ),
     );
