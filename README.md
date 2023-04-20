@@ -1,4 +1,9 @@
-# Mangayomi
+<p align="center">
+ <img width=200px height=200px src="assets/mangayomi_logo.png"/>
+</p>
+
+<h1 align="center"> Mangayomi </h1>
+
 Mangayomi is free and open source manga reader inspired by Tachiyomi made with flutter. It allows users to read manga from multiple sources and is developed out of passion and the challenge of creating such an application. Currently, all content sources are directly integrated into the application.
 
 **Source languages available:**
