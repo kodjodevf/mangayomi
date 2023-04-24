@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
@@ -44,13 +46,13 @@ class ImageViewHorizontal extends StatelessWidget {
             onDoubleTap: onDoubleTap,
             loadStateChanged: loadStateChanged,
           )
-        : ExtendedImage.network(
-            url,
-            cache: true,
+        : ExtendedImage(
+            image: CachedNetworkImageProvider(url,
+                cacheManager: CacheManager(
+                    Config(url, stalePeriod: const Duration(days: 7))),
+                headers: headers(source)),
             clearMemoryCacheWhenDispose: true,
             enableMemoryCache: false,
-            cacheMaxAge: const Duration(days: 7),
-            headers: headers(source),
             mode: ExtendedImageMode.gesture,
             initGestureConfigHandler: initGestureConfigHandler,
             onDoubleTap: onDoubleTap,

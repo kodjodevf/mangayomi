@@ -360,13 +360,29 @@ packages:
     source: hosted
     version: "0.7.0"
   flutter_cache_manager:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_cache_manager
       sha256: "32cd900555219333326a2d0653aaaf8671264c29befa65bbd9856d204a4c9fb3"
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0"
+  flutter_inappwebview:
+    dependency: "direct main"
+    description:
+      name: flutter_inappwebview
+      sha256: "6d6c741ddba1dba5229d63ba75767064791a7ce845196b45e31105e93d67c949"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0-beta.22"
+  flutter_inappwebview_internal_annotations:
+    dependency: transitive
+    description:
+      name: flutter_inappwebview_internal_annotations
+      sha256: "064a8ccbc76217dcd3b0fd6c6ea6f549e69b2849a0233b5bb46af9632c3ce2ff"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter_js:
     dependency: "direct main"
     description:

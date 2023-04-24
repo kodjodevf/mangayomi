@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/services/webview.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
 import 'package:mangayomi/views/browse/global_search_screen.dart';
@@ -232,7 +233,7 @@ class AsyncRouterNotifier extends ChangeNotifier {
             );
           },
         ),
-         GoRoute(
+        GoRoute(
           path: "/downloadQueue",
           name: "downloadQueue",
           builder: (context, state) {
@@ -242,6 +243,27 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const DownloadQueueScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/mangawebview",
+          name: "mangawebview",
+          builder: (context, state) {
+            final data = state.extra as Map<String, String>;
+            return MangaWebView(
+              url: data["url"]!,
+              source: data["source"]!,
+            );
+          },
+          pageBuilder: (context, state) {
+            final data = state.extra as Map<String, String>;
+            return CustomTransition(
+              key: state.pageKey,
+              child: MangaWebView(
+                url: data["url"]!,
+                source: data["source"]!,
+              ),
             );
           },
         ),

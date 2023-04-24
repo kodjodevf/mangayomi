@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/popular_manga_comick.dart';
+import 'package:mangayomi/services/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_list.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -85,11 +86,12 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
   /*mangathemesia*/
   /**************/
   if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
-    final dom = await httpResToDom(
-        url: '${getWpMangaUrl(source)}/manga/?title=&page=$page&order=popular',
-        headers: {});
-
-    if (dom
+    final dom = await cloudflareBypassDom(
+      url: '${getWpMangaUrl(source)}/manga/?title=&page=$page&order=popular',
+      bypass: true,
+      source: source,
+    );
+    if (dom!
         .querySelectorAll(
             '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx')
         .isNotEmpty) {
@@ -205,6 +207,30 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
           .where((e) => e.attributes.containsKey('title'))
           .map((e) => e.attributes['title'])
           .toList();
+    }
+  } else if (source == "japscan") {
+    final htmll = await cloudflareBypassDom(
+      url: "https://www.japscan.lol/",
+      bypass: true,
+      source: source,
+    );
+    if (htmll!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
+      final urls = htmll
+          .querySelectorAll('#top_mangas_week > ul > li > a')
+          .where((e) => e.attributes['href'].toString().contains('manga'))
+          .map((e) => e.attributes['href'])
+          .toList();
+      for (var ok in urls) {
+        url.add("https://www.japscan.me$ok");
+      }
+      name = htmll
+          .querySelectorAll(
+              '#top_mangas_week > ul > li > a.text-dark.font-weight-bold')
+          .map((e) => e.innerHtml)
+          .toList();
+      for (var ia in name) {
+        image.add("");
+      }
     }
   }
   return GetMangaModel(

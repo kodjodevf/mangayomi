@@ -69,3 +69,13 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
+configurations {
+
+all {
+
+exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
+
+}
+
+}

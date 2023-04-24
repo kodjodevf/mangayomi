@@ -421,10 +421,11 @@ List<SourceModel> sourcesList = [
       lang: "fr",
       typeSource: TypeSource.mmrcms,
       logoUrl: ''),
-  // SourceModel(
-  //     sourceName: "FR Scan",
-  //     url: "https://frscan.ws",
-  //     lang: "fr",
-  //     typeSource: TypeSource.mmrcms,
-  //     logoUrl: ''),
+  SourceModel(
+      sourceName: "Japscan",
+      url: "https://japscan.lol",
+      lang: "fr",
+      typeSource: TypeSource.single,
+      logoUrl: ''),
+
 ];

@@ -8,6 +8,7 @@ import 'package:mangayomi/models/comick/chapter_page_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -15,6 +16,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_js/flutter_js.dart';
+import 'package:collection/collection.dart';
 part 'get_manga_chapter_url.g.dart';
 
 class GetMangaChapterUrlModel {
@@ -31,8 +33,54 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   required ModelManga modelManga,
   required int index,
 }) async {
+  bool isOk = false;
   Directory? path;
   List urll = [];
+  String? baseUrl;
+  String? zjsUrl;
+  zjs() async {
+    final html = await cloudflareBypassHtml(
+        url: zjsUrl!, source: modelManga.source!.toLowerCase());
+    dom.Document htmll = dom.Document.html(baseUrl!);
+    final strings = html
+        .replaceAll(RegExp(r'\\[(.*?)\\]'), '')
+        .split(",")
+        .map((s) => s.trim().replaceAll("'", "").split('').reversed.join());
+    final stringLookupTables = strings
+        .where((s) =>
+            s.length == 62 &&
+            s.split('').toSet().toList().sorted().join() ==
+                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+        .toList();
+
+    if (stringLookupTables.length != 2) {
+      throw Exception("Expected only two lookup tables in ZJS");
+    }
+
+    final scrambledData =
+        htmll.getElementById("data")!.attributes['data-data']!;
+
+    for (var i = 0; i <= 1; i++) {
+      final otherIndex = i == 0 ? 1 : 0;
+
+      final lookupTable = Map.fromIterables(stringLookupTables[i].split(''),
+          stringLookupTables[otherIndex].split(''));
+      try {
+        final unscrambledData = scrambledData
+            .split('')
+            .map((char) => lookupTable[char] ?? char)
+            .join();
+        final decoded = utf8.decode(base64.decode(unscrambledData));
+        final data = jsonDecode(decoded);
+        urll = data["imagesLink"].map((it) => it).toList();
+        ref.watch(hiveBoxMangaInfo).put(
+            "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
+            urll);
+      } catch (e) {}
+    }
+    isOk = true;
+  }
+
   List<bool> isLocaleList = [];
   String source = modelManga.source!.toLowerCase();
   List pagesUrl = ref.watch(hiveBoxMangaInfo).get(
@@ -80,21 +128,21 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /**************/
 
   else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
-    final htmll =
-        await httpResToDom(url: modelManga.chapters![index].url!, headers: {});
-
-    if (htmll.querySelectorAll('#readerarea').isNotEmpty) {
-      final ta = htmll
-          .querySelectorAll('#readerarea')
-          .map((e) => e.outerHtml)
-          .toList();
+    final dom = await cloudflareBypassDom(
+      url: modelManga.chapters![index].url!,
+      bypass: true,
+      source: source,
+    );
+    if (dom!.querySelectorAll('#readerarea').isNotEmpty) {
+      final ta =
+          dom.querySelectorAll('#readerarea').map((e) => e.outerHtml).toList();
       final RegExp regex = RegExp(r'<img[^>]+src="([^"]+)"');
       final Iterable<Match> matches = regex.allMatches(ta.first);
 
       final List<String?> urls = matches.map((m) => m.group(1)).toList();
       Iterable<Match> matchess = [];
-      if (htmll.querySelectorAll(' #select-paged ').isNotEmpty) {
-        final ee = htmll
+      if (dom.querySelectorAll(' #select-paged ').isNotEmpty) {
+        final ee = dom
             .querySelectorAll(' #select-paged ')
             .map((e) => e.outerHtml)
             .toList();
@@ -133,7 +181,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /*mangakawaii*/
   /***********/
 
-  else if (modelManga.source == 'mangakawaii') {
+  else if (source == 'mangakawaii') {
     final response =
         await http.get(Uri.parse(modelManga.chapters![index].url!));
     var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
@@ -311,6 +359,23 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
             urll);
       }
     }
+  } else if (source == 'japscan') {
+    final html = await cloudflareBypassHtml(
+        url: modelManga.chapters![index].url!,
+        source: modelManga.source!.toLowerCase());
+    RegExp regex = RegExp(r'<script src="/zjs/(.*?)"');
+    Match? match = regex.firstMatch(html);
+    String zjsurl = match!.group(1)!;
+    baseUrl = html;
+    zjsUrl = "https://www.japscan.lol/zjs/$zjsurl";
+    zjs();
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      if (isOk == true) {
+        return false;
+      }
+      return true;
+    });
   }
   if (urll.isNotEmpty) {
     for (var i = 0; i < urll.length; i++) {

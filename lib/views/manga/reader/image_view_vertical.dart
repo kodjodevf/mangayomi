@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -46,62 +47,64 @@ class ImageViewVertical extends StatelessWidget {
                   clearMemoryCacheWhenDispose: true,
                   enableMemoryCache: false,
                   File('${path.path}${padIndex(index + 1)}.jpg'))
-              : ExtendedImage.network(url,
-                  headers: headers(source),
+              : ExtendedImage(
+                  image: CachedNetworkImageProvider(url,
+                      cacheManager: CacheManager(
+                          Config(url, stalePeriod: const Duration(days: 7))),
+                      headers: headers(source)),
                   handleLoadingProgress: true,
                   fit: BoxFit.contain,
-                  cacheMaxAge: const Duration(days: 7),
                   clearMemoryCacheWhenDispose: true,
                   enableMemoryCache: false,
                   loadStateChanged: (ExtendedImageState state) {
-                  if (state.extendedImageLoadState == LoadState.loading) {
-                    final ImageChunkEvent? loadingProgress =
-                        state.loadingProgress;
-                    final double progress =
-                        loadingProgress?.expectedTotalBytes != null
-                            ? loadingProgress!.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : 0;
-                    return TweenAnimationBuilder<double>(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                      tween: Tween<double>(
-                        begin: 0,
-                        end: progress,
-                      ),
-                      builder: (context, value, _) => Container(
-                        color: Colors.black,
-                        height: mediaHeight(context, 0.8),
-                        child: Center(
-                          child: progress == 0
-                              ? const CircularProgressIndicator()
-                              : CircularProgressIndicator(
-                                  value: progress,
-                                ),
+                    if (state.extendedImageLoadState == LoadState.loading) {
+                      final ImageChunkEvent? loadingProgress =
+                          state.loadingProgress;
+                      final double progress =
+                          loadingProgress?.expectedTotalBytes != null
+                              ? loadingProgress!.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : 0;
+                      return TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                        tween: Tween<double>(
+                          begin: 0,
+                          end: progress,
                         ),
-                      ),
-                    );
-                  }
-                  if (state.extendedImageLoadState == LoadState.failed) {
-                    return Container(
-                        color: Colors.black,
-                        height: mediaHeight(context, 0.8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  state.reLoadImage();
-                                },
-                                child: const Icon(
-                                  Icons.replay_outlined,
-                                  size: 30,
-                                )),
-                          ],
-                        ));
-                  }
-                  return null;
-                }),
+                        builder: (context, value, _) => Container(
+                          color: Colors.black,
+                          height: mediaHeight(context, 0.8),
+                          child: Center(
+                            child: progress == 0
+                                ? const CircularProgressIndicator()
+                                : CircularProgressIndicator(
+                                    value: progress,
+                                  ),
+                          ),
+                        ),
+                      );
+                    }
+                    if (state.extendedImageLoadState == LoadState.failed) {
+                      return Container(
+                          color: Colors.black,
+                          height: mediaHeight(context, 0.8),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    state.reLoadImage();
+                                  },
+                                  child: const Icon(
+                                    Icons.replay_outlined,
+                                    size: 30,
+                                  )),
+                            ],
+                          ));
+                    }
+                    return null;
+                  }),
           if (index + 1 == length)
             SizedBox(
               height: mediaHeight(context, 0.3),
@@ -132,7 +135,4 @@ class ImageViewVertical extends StatelessWidget {
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
 
@@ -65,6 +66,7 @@ class SourcesScreen extends ConsumerWidget {
                     child: element.logoUrl.isEmpty
                         ? const Icon(Icons.source_outlined)
                         : CachedNetworkImage(
+                          httpHeaders: headers(element.sourceName),
                             imageUrl: element.logoUrl,
                             fit: BoxFit.contain,
                             width: 37,

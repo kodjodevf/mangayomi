@@ -5,6 +5,7 @@ import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -653,7 +654,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0),
-              onPressed: () {},
+              onPressed: () {
+                Map<String, String> data = {
+                  'url': widget.modelManga!.link!,
+                  'source': widget.modelManga!.source!,
+                };
+                context.push("/mangawebview", extra: data);
+              },
               child: Column(
                 children: [
                   Icon(

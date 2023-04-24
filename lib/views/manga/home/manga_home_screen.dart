@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
@@ -32,7 +34,21 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           title: Text('${widget.mangaType.source}'),
           actions: [
             MangaSearchButton(
-                source: widget.mangaType.source!, lang: widget.mangaType.lang!)
+                source: widget.mangaType.source!, lang: widget.mangaType.lang!),
+            IconButton(
+              onPressed: () {
+                Map<String, String> data = {
+                  'url': getWpMangaUrl(widget.mangaType.source!),
+                  'source': widget.mangaType.source!,
+                };
+                context.push("/mangawebview", extra: data);
+              },
+              icon: Icon(
+                Icons.public,
+                size: 22,
+                color: secondaryColor(context),
+              ),
+            )
           ],
         ),
         body: getManga.when(

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/services/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_res_to_dom_html.dart';
 import 'package:mangayomi/source/source_model.dart';
@@ -407,8 +408,12 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /***********/
 
   else if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mmrcms) {
-    final dom = await httpResToDom(url: url, headers: {});
-    description = dom
+    final dom = await cloudflareBypassDom(
+      url: url,
+      bypass: true,
+      source: source,
+    );
+    description = dom!
         .querySelectorAll('.row .well p')
         .map((e) => e.text.trim())
         .toList()
@@ -588,6 +593,89 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
 
       for (var ok in tt) {
         genre.add(ok);
+      }
+    }
+  } else if (source.toLowerCase() == "japscan") {
+    final htmll = await cloudflareBypassDom(
+      url: url,
+      bypass: true,
+      source: source,
+    );
+    if (htmll!.querySelectorAll('.col-7 > p').isNotEmpty) {
+      final images =
+          htmll.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
+      RegExp exp = RegExp(r'src="([^"]+)"');
+
+      String? srcValue = exp.firstMatch(images[0])?.group(1);
+      imageUrl = 'https://www.japscan.me$srcValue';
+
+      if (htmll.querySelectorAll('.col-7 > p').isNotEmpty) {
+        final stat = htmll
+            .querySelectorAll('.col-7 > p')
+            .where((element) => element.innerHtml.contains('Statut:'))
+            .map((e) => e.text)
+            .toList();
+        if (stat.isNotEmpty) {
+          status = stat[0].replaceAll('Statut:', '').trim();
+        }
+
+        final auth = htmll
+            .querySelectorAll('.col-7 > p')
+            .where((element) => element.innerHtml.contains('Auteur(s):'))
+            .map((e) => e.text)
+            .toList();
+        if (auth.isNotEmpty) {
+          author = auth[0].replaceAll('Auteur(s):', '').trim();
+        }
+      } else {
+        author = "";
+        status = "";
+      }
+
+      final genres = htmll
+          .querySelectorAll('.col-7 > p')
+          .where((element) => element.innerHtml.contains('Genre(s):'))
+          .map((e) => e.text.replaceAll('Genre(s):', '').trim())
+          .toList();
+      if (genres.isNotEmpty) {
+        for (var ok in genres[0].split(',')) {
+          genre.add(ok);
+        }
+      }
+
+      final synop = htmll
+          .querySelectorAll('p.list-group-item ')
+          .map((e) => e.text.trim())
+          .toList();
+      if (synop.isNotEmpty) {
+        description = synop[0];
+      }
+    }
+
+    final urls =
+        htmll.querySelectorAll('.col-8 ').map((e) => e.outerHtml).toList();
+
+    for (var ok in urls) {
+      RegExp exp = RegExp(r'href="([^"]+)"');
+
+      String? srcValue = exp.firstMatch(ok)?.group(1);
+      chapterUrl.add('https://www.japscan.me$srcValue');
+    }
+
+    final chapterTitlee =
+        htmll.querySelectorAll('.col-8').map((e) => e.text.trim()).toList();
+
+    if (chapterTitlee.isNotEmpty) {
+      for (var ok in chapterTitlee) {
+        chapterTitle.add(ok);
+      }
+    }
+
+    final chapterDatee =
+        htmll.querySelectorAll('.col-4').map((e) => e.text.trim()).toList();
+    if (chapterDatee.isNotEmpty) {
+      for (var ok in chapterDatee) {
+        chapterDate.add(ok);
       }
     }
   }
