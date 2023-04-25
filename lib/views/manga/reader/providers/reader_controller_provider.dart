@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
@@ -106,6 +108,91 @@ class ReaderController extends _$ReaderController {
           MangaHistoryModel(
               date: DateTime.now().toString(), modelManga: getModelManga()));
     }
+  }
+
+  void setChapterPageLastRead(int pageIndex) {
+    final incognitoMode = ref.watch(incognitoModeStateProvider);
+    if (!incognitoMode) {
+      List<ModelChapters> chap = [];
+      for (var i = 0; i < getModelManga().chapters!.length; i++) {
+        chap.add(ModelChapters(
+            name: getModelManga().chapters![i].name,
+            url: getModelManga().chapters![i].url,
+            dateUpload: getModelManga().chapters![i].dateUpload,
+            isBookmarked: getModelManga().chapters![i].isBookmarked,
+            scanlator: getModelManga().chapters![i].scanlator,
+            isRead: getModelManga().chapters![i].isRead,
+            lastPageRead: getChapterIndex() == i
+                ? (pageIndex + 1).toString()
+                : getModelManga().chapters![i].lastPageRead));
+      }
+      final model = ModelManga(
+          imageUrl: getModelManga().imageUrl,
+          name: getModelManga().name,
+          genre: getModelManga().genre,
+          author: getModelManga().author,
+          description: getModelManga().description,
+          status: getModelManga().status,
+          favorite: getModelManga().favorite,
+          link: getModelManga().link,
+          source: getModelManga().source,
+          lang: getModelManga().lang,
+          dateAdded: getModelManga().dateAdded,
+          lastUpdate: getModelManga().lastUpdate,
+          chapters: chap,
+          category: getModelManga().category,
+          lastRead: getModelManga().lastRead);
+      ref
+          .watch(hiveBoxManga)
+          .put('${getModelManga().lang}-${getModelManga().link}', model);
+    }
+  }
+
+  void setChapterBookmarked() {
+    final incognitoMode = ref.watch(incognitoModeStateProvider);
+    if (!incognitoMode) {
+      final isBookmarked = getChapterBookmarked();
+      List<ModelChapters> chap = [];
+      for (var i = 0; i < getModelManga().chapters!.length; i++) {
+        chap.add(ModelChapters(
+            name: getModelManga().chapters![i].name,
+            url: getModelManga().chapters![i].url,
+            dateUpload: getModelManga().chapters![i].dateUpload,
+            isBookmarked: getChapterIndex() == i
+                ? !isBookmarked
+                : getModelManga().chapters![i].isBookmarked,
+            scanlator: getModelManga().chapters![i].scanlator,
+            isRead: getModelManga().chapters![i].isRead,
+            lastPageRead: getModelManga().chapters![i].lastPageRead));
+      }
+      final model = ModelManga(
+          imageUrl: getModelManga().imageUrl,
+          name: getModelManga().name,
+          genre: getModelManga().genre,
+          author: getModelManga().author,
+          description: getModelManga().description,
+          status: getModelManga().status,
+          favorite: getModelManga().favorite,
+          link: getModelManga().link,
+          source: getModelManga().source,
+          lang: getModelManga().lang,
+          dateAdded: getModelManga().dateAdded,
+          lastUpdate: getModelManga().lastUpdate,
+          chapters: chap,
+          category: getModelManga().category,
+          lastRead: getModelManga().lastRead);
+      ref
+          .watch(hiveBoxManga)
+          .put('${getModelManga().lang}-${getModelManga().link}', model);
+    }
+  }
+
+  bool getChapterBookmarked() {
+    return ref
+        .watch(hiveBoxManga)
+        .get('${getModelManga().lang}-${getModelManga().link}')!
+        .chapters![getChapterIndex()]
+        .isBookmarked;
   }
 
   int getChapterIndex() {

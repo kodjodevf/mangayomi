@@ -128,6 +128,7 @@ class _MangaChapterPageGalleryState
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
   late int _currentIndex = widget.readerController.getPageIndex();
+  late bool _isBookmarked = widget.readerController.getChapterBookmarked();
   @override
   void dispose() {
     _rebuildDetail.close();
@@ -171,6 +172,7 @@ class _MangaChapterPageGalleryState
       }
     }
     widget.readerController.setPageIndex(index);
+    widget.readerController.setChapterPageLastRead(index);
   }
 
   void _onAddButtonTapped(int index, bool isPrev, {bool isSlide = false}) {
@@ -256,6 +258,7 @@ class _MangaChapterPageGalleryState
       });
     }
     widget.readerController.setPageIndex(index);
+    widget.readerController.setChapterPageLastRead(index);
   }
 
   ReaderMode? _selectedValue;
@@ -373,11 +376,11 @@ class _MangaChapterPageGalleryState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             AnimatedContainer(
-              height: _isView ? 90 : 0,
+              height: _isView ? 80 : 0,
               curve: Curves.ease,
               duration: const Duration(milliseconds: 200),
               child: PreferredSize(
-                preferredSize: Size.fromHeight(_isView ? 90 : 0),
+                preferredSize: Size.fromHeight(_isView ? 80 : 0),
                 child: AppBar(
                   leading: BackButton(
                     color: Colors.white,
@@ -386,6 +389,7 @@ class _MangaChapterPageGalleryState
                     },
                   ),
                   title: ListTile(
+                    dense: true,
                     title: SizedBox(
                       width: mediaWidth(context, 0.7),
                       child: Text(
@@ -408,6 +412,16 @@ class _MangaChapterPageGalleryState
                     ),
                   ),
                   actions: [
+                    IconButton(
+                        onPressed: () {
+                          widget.readerController.setChapterBookmarked();
+                          setState(() {
+                            _isBookmarked = !_isBookmarked;
+                          });
+                        },
+                        icon: Icon(_isBookmarked
+                            ? Icons.bookmark
+                            : Icons.bookmark_border_outlined)),
                     IconButton(
                         onPressed: () {}, icon: const Icon(Icons.public)),
                   ],

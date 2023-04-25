@@ -90,9 +90,28 @@ class ChapterListTileWidget extends ConsumerWidget {
             ),
           ],
         ),
-        subtitle: Text(
-          chapters[finalIndex].dateUpload!,
-          style: const TextStyle(fontSize: 11),
+        subtitle: Row(
+          children: [
+            Text(
+              chapters[finalIndex].dateUpload!,
+              style: const TextStyle(fontSize: 11),
+            ),
+            if (chapters[finalIndex].lastPageRead.isNotEmpty &&
+                chapters[finalIndex].lastPageRead != "1")
+              Row(
+                children: [
+                  const Text(' • '),
+                  Text(
+                    "Page ${chapters[finalIndex].lastPageRead}",
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: isLight(context)
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.white.withOpacity(0.3)),
+                  ),
+                ],
+              )
+          ],
         ),
         trailing: ref.watch(ChapterPageDownloadsProvider(
             index: reverse ? reverseIndex : finalIndex,
