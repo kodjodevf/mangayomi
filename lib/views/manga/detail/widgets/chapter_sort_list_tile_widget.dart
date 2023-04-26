@@ -20,7 +20,7 @@ class ListTileChapterSort extends StatelessWidget {
           color: Theme.of(context).hintColor),
       title: Text(
         label,
-        style: TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 14),
       ),
       onTap: onTap,
     );

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:html/dom.dart' as dom;
@@ -11,7 +9,7 @@ Future<dom.Document?> cloudflareBypassDom(
     required bool bypass,
     required String source,
     required bool useUserAgent}) async {
-  log(source);
+  // log(source);
   bool isOk = false;
   dom.Document? htmll;
   final ua = Hive.box(HiveConstant.hiveBoxAppSettings)

@@ -16,13 +16,13 @@ class ListTileChapterFilter extends StatelessWidget {
       iconColor: Theme.of(context).primaryColor,
       dense: true,
       leading: type == 0
-          ? SizedBox(
+          ? const SizedBox(
               height: 20, width: 20, child: Icon(Icons.check_box_outline_blank))
           : type == 1
-              ? SizedBox(height: 20, width: 20, child: Icon(Icons.check_box))
+              ? const SizedBox(height: 20, width: 20, child: Icon(Icons.check_box))
               : Stack(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                         height: 20,
                         width: 20,
                         child: Icon(Icons.check_box_outline_blank)),
@@ -36,7 +36,7 @@ class ListTileChapterFilter extends StatelessWidget {
                             borderRadius: BorderRadius.circular(2)),
                         height: 18,
                         width: 17,
-                        child: Icon(
+                        child: const Icon(
                           Icons.clear,
                           color: Colors.black,
                           size: 18,
@@ -47,7 +47,7 @@ class ListTileChapterFilter extends StatelessWidget {
                 ),
       title: Text(
         label,
-        style: TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 14),
       ),
       onTap: onTap,
     );

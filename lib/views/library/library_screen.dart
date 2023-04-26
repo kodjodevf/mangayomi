@@ -100,7 +100,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     });
                     _textEditingController.clear();
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.search,
                   )),
           IconButton(
@@ -108,7 +108,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               onPressed: () {
                 _showDraggableMenu();
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.filter_list_sharp,
               )),
           PopupMenuButton(

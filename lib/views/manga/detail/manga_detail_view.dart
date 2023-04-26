@@ -184,7 +184,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         IconButton(
                             splashRadius: 20,
                             onPressed: () {},
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.download_outlined,
                             )),
                         IconButton(
@@ -192,7 +192,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             onPressed: () {
                               _showDraggableMenu();
                             },
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.filter_list_sharp,
                             )),
                         PopupMenuButton(
@@ -601,14 +601,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         return Column(
                           children: [
                             RadioListTile(
-                              title: Text("Source title"),
+                              title: const Text("Source title"),
                               value: "e",
                               groupValue: "e",
                               selected: true,
                               onChanged: (value) {},
                             ),
                             RadioListTile(
-                              title: Text("Chapter number"),
+                              title: const Text("Chapter number"),
                               value: "ej",
                               groupValue: "e",
                               selected: false,

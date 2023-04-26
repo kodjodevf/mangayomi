@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

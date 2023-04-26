@@ -11,7 +11,6 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -80,7 +79,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
         ref.watch(hiveBoxMangaInfo).put(
             "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
             urll);
-      } catch (e) {}
+      } catch (_) {}
     }
     isOk = true;
   }

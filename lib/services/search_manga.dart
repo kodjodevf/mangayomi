@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:html/dom.dart';
-import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/search_manga_cimick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

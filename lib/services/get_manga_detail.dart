@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
-import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';

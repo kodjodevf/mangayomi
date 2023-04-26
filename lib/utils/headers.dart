@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/utils/constant.dart';
 
@@ -7,7 +5,7 @@ Map<String, String> headers(String source) {
   source = source.toLowerCase();
   final cookie = Hive.box(HiveConstant.hiveBoxAppSettings)
       .get("$source-cookie", defaultValue: "");
-  log(cookie);
+  // log(cookie);
   final userAgent = Hive.box(HiveConstant.hiveBoxAppSettings)
       .get("ua", defaultValue: defaultUserAgent);
   return source == 'mangakawaii'

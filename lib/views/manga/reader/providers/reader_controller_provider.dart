@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';

@@ -1,5 +1,4 @@
 // ignore_for_file: implementation_imports, depend_on_referenced_packages
-import 'dart:io';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +7,6 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/services/get_manga_chapter_url.dart';
-import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/manga/download/download_model.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

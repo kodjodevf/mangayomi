@@ -164,7 +164,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               if (values.isNotEmpty) {
                                 return Row(
                                   children: [
-                                    Flexible(
+                                    Expanded(
                                       child: GestureDetector(
                                         onTap: () {
                                           pushMangaReaderView(
@@ -191,11 +191,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                           FontWeight.bold),
                                                   textAlign: TextAlign.start,
                                                 ),
-                                                Row(
+                                                Wrap(
                                                   crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
+                                                      WrapCrossAlignment.end,
                                                   children: [
                                                     Text(
                                                       element

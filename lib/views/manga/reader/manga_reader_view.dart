@@ -53,7 +53,6 @@ class MangaReaderView extends ConsumerWidget {
         appBar: AppBar(
           title: const Text(''),
           leading: BackButton(
-            color: Colors.white,
             onPressed: () {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
@@ -79,7 +78,6 @@ class MangaReaderView extends ConsumerWidget {
           appBar: AppBar(
             title: const Text(''),
             leading: BackButton(
-              color: Colors.white,
               onPressed: () {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
@@ -382,8 +380,10 @@ class _MangaChapterPageGalleryState
               child: PreferredSize(
                 preferredSize: Size.fromHeight(_isView ? 80 : 0),
                 child: AppBar(
+                  centerTitle: false,
+                  automaticallyImplyLeading: false,
+                  titleSpacing: 0,
                   leading: BackButton(
-                    color: Colors.white,
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -391,22 +391,21 @@ class _MangaChapterPageGalleryState
                   title: ListTile(
                     dense: true,
                     title: SizedBox(
-                      width: mediaWidth(context, 0.7),
+                      width: mediaWidth(context, 0.8),
                       child: Text(
                         '${widget.readerController.getMangaName()} ',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     subtitle: SizedBox(
-                      width: mediaWidth(context, 0.7),
+                      width: mediaWidth(context, 0.8),
                       child: Text(
                         widget.readerController.getChapterTitle(),
                         style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -433,79 +432,79 @@ class _MangaChapterPageGalleryState
               curve: Curves.ease,
               duration: const Duration(milliseconds: 300),
               width: mediaWidth(context, 1),
-              height: _isView ? 108 : 0,
+              height: _isView ? 130 : 0,
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          backgroundColor: colorsBlack(context),
-                          child: IconButton(
-                              onPressed: () {
-                                pushReplacementMangaReaderView(
-                                    context: context,
-                                    modelManga:
-                                        widget.readerController.getModelManga(),
-                                    index: widget.readerController
-                                            .getChapterIndex() +
-                                        1);
-                              },
-                              icon: Transform.scale(
-                                scaleX: 1,
-                                child: Icon(
-                                  Icons.skip_previous_rounded,
-                                  color: widget.readerController
-                                                  .getChapterIndex() +
-                                              1 !=
+                  Flexible(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: 23,
+                            backgroundColor: colorsBlack(context),
+                            child: IconButton(
+                                onPressed: () {
+                                  pushReplacementMangaReaderView(
+                                      context: context,
+                                      modelManga: widget.readerController
+                                          .getModelManga(),
+                                      index: widget.readerController
+                                              .getChapterIndex() +
+                                          1);
+                                },
+                                icon: Transform.scale(
+                                  scaleX: 1,
+                                  child: Icon(Icons.skip_previous_rounded,
+                                      color:
                                           widget.readerController
-                                              .getModelManga()
-                                              .chapters!
-                                              .length
-                                      ? Colors.white
-                                      : Colors.grey,
-                                  // size: 17,
-                                ),
-                              )),
+                                                          .getChapterIndex() +
+                                                      1 !=
+                                                  widget.readerController
+                                                      .getModelManga()
+                                                      .chapters!
+                                                      .length
+                                              ? Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .color
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .color!
+                                                  .withOpacity(0.4)),
+                                )),
+                          ),
                         ),
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: colorsBlack(context),
-                                borderRadius: BorderRadius.circular(25)),
-                            child: SizedBox(
-                              height: 40,
-                              child: Row(
-                                children: [
-                                  if (!_isReversHorizontal)
+                        Expanded(
+                          child: Transform.scale(
+                            scaleX: !_isReversHorizontal ? 1 : -1,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Container(
+                                height: 70,
+                                decoration: BoxDecoration(
+                                    color: colorsBlack(context),
+                                    borderRadius: BorderRadius.circular(25)),
+                                child: Row(
+                                  children: [
                                     Padding(
                                       padding: const EdgeInsets.only(left: 12),
-                                      child: Text(
-                                        "${_currentIndex + 1} ",
-                                        style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
+                                      child: Transform.scale(
+                                        scaleX: !_isReversHorizontal ? 1 : -1,
+                                        child: SizedBox(
+                                          width: 25,
+                                          child: Text(
+                                            "${_currentIndex + 1} ",
+                                            style: const TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  if (_isReversHorizontal)
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 12),
-                                      child: Text(
-                                        "${widget.readerController.getPageLength(widget.url)}",
-                                        style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  Flexible(
-                                    child: Transform.scale(
-                                      scaleX: !_isReversHorizontal ? 1 : -1,
+                                    Flexible(
                                       child: Slider(
                                         onChanged: (newValue) {
                                           _onAddButtonTapped(
@@ -525,129 +524,130 @@ class _MangaChapterPageGalleryState
                                             .toDouble(),
                                       ),
                                     ),
-                                  ),
-                                  if (_isReversHorizontal)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 12),
-                                      child: Text(
-                                        "${_currentIndex + 1} ",
-                                        style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
+                                      child: Transform.scale(
+                                        scaleX: !_isReversHorizontal ? 1 : -1,
+                                        child: SizedBox(
+                                          width: 25,
+                                          child: Text(
+                                            "${widget.readerController.getPageLength(widget.url)}",
+                                            style: const TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  if (!_isReversHorizontal)
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 12),
-                                      child: Text(
-                                        "${widget.readerController.getPageLength(widget.url)}",
-                                        style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          backgroundColor: colorsBlack(context),
-                          child: IconButton(
-                            onPressed: () {
-                              pushReplacementMangaReaderView(
-                                  context: context,
-                                  modelManga:
-                                      widget.readerController.getModelManga(),
-                                  index: widget.readerController
-                                          .getChapterIndex() -
-                                      1);
-                            },
-                            icon: Transform.scale(
-                              scaleX: 1,
-                              child: Icon(
-                                Icons.skip_next_rounded,
-                                color:
-                                    widget.readerController.getChapterIndex() !=
-                                            0
-                                        ? Colors.white
-                                        : Colors.grey,
-                                // size: 17,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            radius: 23,
+                            backgroundColor: colorsBlack(context),
+                            child: IconButton(
+                              onPressed: () {
+                                pushReplacementMangaReaderView(
+                                    context: context,
+                                    modelManga:
+                                        widget.readerController.getModelManga(),
+                                    index: widget.readerController
+                                            .getChapterIndex() -
+                                        1);
+                              },
+                              icon: Transform.scale(
+                                scaleX: 1,
+                                child: Icon(
+                                  Icons.skip_next_rounded,
+                                  color: widget.readerController
+                                              .getChapterIndex() !=
+                                          0
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color!
+                                          .withOpacity(0.4),
+                                  // size: 17,
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    color: colorsBlack(context),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        PopupMenuButton(
-                          color: Colors.black,
-                          child: const Icon(
-                            Icons.app_settings_alt_outlined,
-                            color: Colors.white,
-                          ),
-                          onSelected: (value) {
-                            if (mounted) {
-                              setState(() {
-                                _selectedValue = value;
-                              });
-                            }
-                            _axisHive(value, true);
-                          },
-                          itemBuilder: (context) => [
-                            for (var readerMode in ReaderMode.values)
-                              PopupMenuItem(
-                                  value: readerMode,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.check,
-                                        color: _selectedValue == readerMode
-                                            ? Colors.white
-                                            : Colors.transparent,
-                                      ),
-                                      const SizedBox(
-                                        width: 7,
-                                      ),
-                                      Text(
-                                        widget.readerController
-                                            .getReaderModeValue(readerMode),
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                          ],
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.screen_rotation,
-                            color: Colors.white,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            _showModalSettings();
-                          },
-                          icon: const Icon(
-                            Icons.settings_rounded,
-                            color: Colors.white,
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Flexible(
+                    child: Container(
+                      height: 65,
+                      color: colorsBlack(context),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          PopupMenuButton(
+                            color: Colors.black,
+                            child: const Icon(
+                              Icons.app_settings_alt_outlined,
+                            ),
+                            onSelected: (value) {
+                              if (mounted) {
+                                setState(() {
+                                  _selectedValue = value;
+                                });
+                              }
+                              _axisHive(value, true);
+                            },
+                            itemBuilder: (context) => [
+                              for (var readerMode in ReaderMode.values)
+                                PopupMenuItem(
+                                    value: readerMode,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check,
+                                          color: _selectedValue == readerMode
+                                              ? Colors.white
+                                              : Colors.transparent,
+                                        ),
+                                        const SizedBox(
+                                          width: 7,
+                                        ),
+                                        Text(
+                                          widget.readerController
+                                              .getReaderModeValue(readerMode),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.screen_rotation,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              _showModalSettings();
+                            },
+                            icon: const Icon(
+                              Icons.settings_rounded,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -671,7 +671,6 @@ class _MangaChapterPageGalleryState
                       '${_currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
                       style: const TextStyle(
                         fontSize: 12.0,
-                        color: Colors.white,
                         shadows: <Shadow>[
                           Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0)
                         ],
@@ -973,7 +972,7 @@ class _MangaChapterPageGalleryState
                                           loadingProgress.expectedTotalBytes!
                                       : 0;
                               return TweenAnimationBuilder<double>(
-                               duration: const Duration(seconds: 900),
+                                duration: const Duration(seconds: 900),
                                 curve: Curves.elasticIn,
                                 tween: Tween<double>(
                                   begin: 0,
@@ -1121,50 +1120,53 @@ class _MangaChapterPageGalleryState
     DraggableMenu.open(
         context,
         DraggableMenu(
-          barItem: Container(),
-          uiType: DraggableMenuUiType.classic,
-          expandable: false,
-          maxHeight: mediaHeight(context, 0.4),
-          fastDrag: false,
-          minimizeBeforeFastDrag: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Settings',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Container(height: 0.1, color: Colors.white),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Text('Show Page Number'),
-                        const Spacer(),
-                        Switch(
-                          value: _showPagesNumber,
-                          onChanged: (value) {
-                            setState(() {
-                              _showPagesNumber = value;
-                            });
-                            widget.readerController.setShowPageNumber(value);
-                          },
+            barItem: Container(),
+            uiType: DraggableMenuUiType.classic,
+            expandable: false,
+            maxHeight: mediaHeight(context, 0.4),
+            fastDrag: false,
+            minimizeBeforeFastDrag: false,
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return Scaffold(
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ));
+                      ),
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            SwitchListTile(
+                              dense: true,
+                              title: const Text('Show Page Number'),
+                              value: _showPagesNumber,
+                              onChanged: (value) {
+                                setState(() {
+                                  _showPagesNumber = value;
+                                });
+                                widget.readerController
+                                    .setShowPageNumber(value);
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            )));
   }
 }
