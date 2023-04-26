@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -48,10 +49,7 @@ class ImageViewVertical extends StatelessWidget {
                   enableMemoryCache: false,
                   File('${path.path}${padIndex(index + 1)}.jpg'))
               : ExtendedImage(
-                  image: CachedNetworkImageProvider(url,
-                      cacheManager: CacheManager(
-                          Config(url, stalePeriod: const Duration(days: 7))),
-                      headers: headers(source)),
+                  image: FastCachedImageProvider(url, headers: headers(source)),
                   handleLoadingProgress: true,
                   fit: BoxFit.contain,
                   clearMemoryCacheWhenDispose: true,
@@ -66,8 +64,8 @@ class ImageViewVertical extends StatelessWidget {
                                   loadingProgress.expectedTotalBytes!
                               : 0;
                       return TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
+                        duration: const Duration(milliseconds: 900),
+                        curve: Curves.elasticIn,
                         tween: Tween<double>(
                           begin: 0,
                           end: progress,

@@ -266,6 +266,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.0"
+  dio:
+    dependency: transitive
+    description:
+      name: dio
+      sha256: "0894a098594263fe1caaba3520e3016d8a855caeb010a882273189cca10f11e9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.1"
+  draggable_menu:
+    dependency: "direct main"
+    description:
+      name: draggable_menu
+      sha256: "2d6ecebf0e7386009cb4fa2f2645e075652b59beeb05cf2dd78adad497ee751a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   draggable_scrollbar:
     dependency: "direct main"
     description:
@@ -306,6 +322,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
+  fast_cached_network_image:
+    dependency: "direct main"
+    description:
+      name: fast_cached_network_image
+      sha256: "78a2da7314008540fce494906d017adc7654edbd259dca24c0a9b5fd78cdcd5c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   ffi:
     dependency: transitive
     description:
@@ -633,14 +657,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  modal_bottom_sheet:
-    dependency: "direct main"
-    description:
-      name: modal_bottom_sheet
-      sha256: "3bba63c62d35c931bce7f8ae23a47f9a05836d8cb3c11122ada64e0b2f3d718f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0-pre"
   octo_image:
     dependency: transitive
     description:

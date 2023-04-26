@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'dart:io';
+import 'package:draggable_menu/draggable_menu.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +15,6 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/reader/image_view_horizontal.dart';
 import 'package:mangayomi/views/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -973,8 +973,8 @@ class _MangaChapterPageGalleryState
                                           loadingProgress.expectedTotalBytes!
                                       : 0;
                               return TweenAnimationBuilder<double>(
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.easeInOut,
+                               duration: const Duration(seconds: 900),
+                                curve: Curves.elasticIn,
                                 tween: Tween<double>(
                                   begin: 0,
                                   end: progress,
@@ -1118,60 +1118,53 @@ class _MangaChapterPageGalleryState
   }
 
   _showModalSettings() {
-    showMaterialModalBottomSheet(
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(5), topRight: Radius.circular(5))),
-      enableDrag: true,
-      expand: false,
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => SizedBox(
-          height: mediaHeight(context, 0.4),
-          child: StatefulBuilder(builder: (context, setState) {
-            return Scaffold(
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Settings',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Container(height: 0.1, color: Colors.white),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
+    DraggableMenu.open(
+        context,
+        DraggableMenu(
+          barItem: Container(),
+          uiType: DraggableMenuUiType.classic,
+          expandable: false,
+          maxHeight: mediaHeight(context, 0.4),
+          fastDrag: false,
+          minimizeBeforeFastDrag: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Settings',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(height: 0.1, color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            const Text('Show Page Number'),
-                            const Spacer(),
-                            Switch(
-                              value: _showPagesNumber,
-                              onChanged: (value) {
-                                setState(() {
-                                  _showPagesNumber = value;
-                                });
-                                widget.readerController
-                                    .setShowPageNumber(value);
-                              },
-                            ),
-                          ],
+                        const Text('Show Page Number'),
+                        const Spacer(),
+                        Switch(
+                          value: _showPagesNumber,
+                          onChanged: (value) {
+                            setState(() {
+                              _showPagesNumber = value;
+                            });
+                            widget.readerController.setShowPageNumber(value);
+                          },
                         ),
                       ],
                     ),
-                  )
-                ],
-              ),
-            );
-          })),
-    );
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }

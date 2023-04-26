@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:draggable_menu/draggable_menu.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,7 +17,6 @@ import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_wi
 import 'package:mangayomi/views/manga/detail/widgets/chapter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -54,7 +52,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   final offetProvider = StateProvider((ref) => 0.0);
-  bool isOk = false;
   bool _expanded = false;
   ScrollController _scrollController = ScrollController();
 
@@ -193,7 +190,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         IconButton(
                             splashRadius: 20,
                             onPressed: () {
-                              _showModalSort();
+                              _showDraggableMenu();
                             },
                             icon: Icon(
                               Icons.filter_list_sharp,
@@ -507,140 +504,127 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         ));
   }
 
-  _showModalSort() {
+  _showDraggableMenu() {
     late TabController tabBarController;
-    showMaterialModalBottomSheet(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(5), topRight: Radius.circular(5))),
-        enableDrag: true,
-        expand: false,
-        context: context,
-        backgroundColor: Colors.transparent,
-        builder: (context) {
-          if (!isOk) {
-            tabBarController = TabController(length: 3, vsync: this);
-            tabBarController.animateTo(0);
-          }
-          return SizedBox(
-              height: mediaHeight(context, 0.25),
-              child: DefaultTabController(
-                  length: 3,
-                  child: Scaffold(
-                    body: Column(
-                      children: [
-                        TabBar(
-                          controller: tabBarController,
-                          tabs: const [
-                            Tab(text: "Filter"),
-                            Tab(text: "Sort"),
-                            Tab(text: "Display"),
+    tabBarController = TabController(length: 3, vsync: this);
+    tabBarController.animateTo(0);
+    DraggableMenu.open(
+      context,
+      DraggableMenu(
+        barItem: Container(),
+        uiType: DraggableMenuUiType.classic,
+        expandable: false,
+        maxHeight: mediaHeight(context, 0.36),
+        fastDrag: false,
+        minimizeBeforeFastDrag: false,
+        child: DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              body: Column(
+                children: [
+                  TabBar(
+                    controller: tabBarController,
+                    tabs: const [
+                      Tab(text: "Filter"),
+                      Tab(text: "Sort"),
+                      Tab(text: "Display"),
+                    ],
+                  ),
+                  Flexible(
+                    child: TabBarView(controller: tabBarController, children: [
+                      Consumer(builder: (context, ref, chil) {
+                        return Column(
+                          children: [
+                            ListTileChapterFilter(
+                                label: "Downloaded",
+                                type: ref.watch(
+                                    chapterFilterDownloadedStateProvider(
+                                        modelManga: widget.modelManga!)),
+                                onTap: () {
+                                  ref
+                                      .read(
+                                          chapterFilterDownloadedStateProvider(
+                                                  modelManga:
+                                                      widget.modelManga!)
+                                              .notifier)
+                                      .update();
+                                  _refreshData();
+                                }),
+                            ListTileChapterFilter(
+                                label: "Unread",
+                                type: ref.watch(
+                                    chapterFilterUnreadStateProvider(
+                                        modelManga: widget.modelManga!)),
+                                onTap: () {
+                                  ref
+                                      .read(chapterFilterUnreadStateProvider(
+                                              modelManga: widget.modelManga!)
+                                          .notifier)
+                                      .update();
+                                  _refreshData();
+                                }),
+                            ListTileChapterFilter(
+                                label: "Bookmark",
+                                type: ref.watch(
+                                    chapterFilterBookmarkStateProvider(
+                                        modelManga: widget.modelManga!)),
+                                onTap: () {
+                                  ref
+                                      .read(chapterFilterBookmarkStateProvider(
+                                              modelManga: widget.modelManga!)
+                                          .notifier)
+                                      .update();
+                                  _refreshData();
+                                }),
                           ],
-                        ),
-                        Flexible(
-                          child: TabBarView(
-                              controller: tabBarController,
-                              children: [
-                                Consumer(builder: (context, ref, chil) {
-                                  return Column(
-                                    children: [
-                                      ListTileChapterFilter(
-                                          label: "Downloaded",
-                                          type: ref.watch(
-                                              chapterFilterDownloadedStateProvider(
-                                                  modelManga:
-                                                      widget.modelManga!)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    chapterFilterDownloadedStateProvider(
-                                                            modelManga: widget
-                                                                .modelManga!)
-                                                        .notifier)
-                                                .update();
-                                            _refreshData();
-                                          }),
-                                      ListTileChapterFilter(
-                                          label: "Unread",
-                                          type: ref.watch(
-                                              chapterFilterUnreadStateProvider(
-                                                  modelManga:
-                                                      widget.modelManga!)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    chapterFilterUnreadStateProvider(
-                                                            modelManga: widget
-                                                                .modelManga!)
-                                                        .notifier)
-                                                .update();
-                                            _refreshData();
-                                          }),
-                                      ListTileChapterFilter(
-                                          label: "Bookmark",
-                                          type: ref.watch(
-                                              chapterFilterBookmarkStateProvider(
-                                                  modelManga:
-                                                      widget.modelManga!)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    chapterFilterBookmarkStateProvider(
-                                                            modelManga: widget
-                                                                .modelManga!)
-                                                        .notifier)
-                                                .update();
-                                            _refreshData();
-                                          }),
-                                    ],
-                                  );
+                        );
+                      }),
+                      Consumer(builder: (context, ref, chil) {
+                        final reverse = ref.watch(reverseMangaStateProvider(
+                            modelManga: widget.modelManga!));
+                        return Column(
+                          children: [
+                            ListTileChapterSort(
+                                label: "By upload date",
+                                reverse: reverse,
+                                onTap: () {
+                                  ref
+                                      .read(reverseMangaStateProvider(
+                                              modelManga: widget.modelManga!)
+                                          .notifier)
+                                      .update(!reverse);
                                 }),
-                                Consumer(builder: (context, ref, chil) {
-                                  final reverse = ref.watch(
-                                      reverseMangaStateProvider(
-                                          modelManga: widget.modelManga!));
-                                  return Column(
-                                    children: [
-                                      ListTileChapterSort(
-                                          label: "By upload date",
-                                          reverse: reverse,
-                                          onTap: () {
-                                            ref
-                                                .read(reverseMangaStateProvider(
-                                                        modelManga:
-                                                            widget.modelManga!)
-                                                    .notifier)
-                                                .update(!reverse);
-                                          }),
-                                    ],
-                                  );
-                                }),
-                                Consumer(builder: (context, ref, chil) {
-                                  return Column(
-                                    children: [
-                                      RadioListTile(
-                                        title: Text("Source title"),
-                                        value: "e",
-                                        groupValue: "e",
-                                        selected: true,
-                                        onChanged: (value) {},
-                                      ),
-                                      RadioListTile(
-                                        title: Text("Chapter number"),
-                                        value: "ej",
-                                        groupValue: "e",
-                                        selected: false,
-                                        onChanged: (value) {},
-                                      ),
-                                    ],
-                                  );
-                                }),
-                              ]),
-                        ),
-                      ],
-                    ),
-                  )));
-        });
+                          ],
+                        );
+                      }),
+                      Consumer(builder: (context, ref, chil) {
+                        return Column(
+                          children: [
+                            RadioListTile(
+                              title: Text("Source title"),
+                              value: "e",
+                              groupValue: "e",
+                              selected: true,
+                              onChanged: (value) {},
+                            ),
+                            RadioListTile(
+                              title: Text("Chapter number"),
+                              value: "ej",
+                              groupValue: "e",
+                              selected: false,
+                              onChanged: (value) {},
+                            ),
+                          ],
+                        );
+                      }),
+                    ]),
+                  ),
+                ],
+              ),
+            )),
+      ),
+      barrier: true,
+    );
   }
 
   Widget _bodyContainer() {

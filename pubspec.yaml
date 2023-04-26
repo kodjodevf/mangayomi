@@ -46,7 +46,6 @@ dependencies:
   scrollable_positioned_list: ^0.3.5
   extended_image: ^7.0.2
   photo_view: ^0.14.0
-  modal_bottom_sheet: ^3.0.0-pre
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
   intl: ^0.18.0
@@ -59,6 +58,8 @@ dependencies:
   permission_handler: ^10.2.0
   flutter_inappwebview: ^6.0.0-beta.22
   flutter_cache_manager: ^3.3.0
+  draggable_menu: ^0.3.0
+  fast_cached_network_image: ^1.2.0
 
 
   # The following adds the Cupertino Icons font to your application.

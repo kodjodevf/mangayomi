@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +22,7 @@ void main() async {
   } else {
     await Hive.initFlutter("Mangayomi/databases");
   }
-
+  await FastCachedImageConfig.init();
   Hive.registerAdapter(ModelMangaAdapter());
   Hive.registerAdapter(MangaHistoryModelAdapter());
   Hive.registerAdapter(SourceModelAdapter());
