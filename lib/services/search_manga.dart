@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/search_manga_cimick.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/http_res_to_dom_html.dart';
+import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
+import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'search_manga.g.dart';
@@ -31,30 +33,18 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*comick*/
   /********/
   if (getWpMangTypeSource(source) == TypeSource.comick) {
-    var headers = {
-      'Referer': 'https://comick.app/',
-      'User-Agent':
-          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
-    };
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1'));
-
-    request.headers.addAll(headers);
-
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      var popularManga =
-          jsonDecode(await response.stream.bytesToString()) as List;
-      var popularMangaList =
-          popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
-      for (var popular in popularMangaList) {
-        url.add("/comic/${popular.slug}");
-        name.add(popular.title);
-        image.add(popular.coverUrl);
-      }
+    final response = await httpGet(
+        url:
+            'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1',
+        source: source,
+        resDom: false) as String?;
+    var popularManga = jsonDecode(response!) as List;
+    var popularMangaList =
+        popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
+    for (var popular in popularMangaList) {
+      url.add("/comic/${popular.slug}");
+      name.add(popular.title);
+      image.add(popular.coverUrl);
     }
   }
 
@@ -62,10 +52,11 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*mangathemesia*/
   /***************/
   else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
-    final dom = await httpResToDom(
-        url: '${getWpMangaUrl(source)}/?s=${query.trim()}', headers: {});
-
-    if (dom
+    final dom = await httpGet(
+        url: '${getWpMangaUrl(source)}/?s=${query.trim()}',
+        source: source,
+        resDom: true) as Document?;
+    if (dom!
         .querySelectorAll(
             '#content > div > div.postbody > div > div.listupd > div > div > a')
         .isNotEmpty) {
@@ -95,12 +86,12 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*mangakawaii*/
   /***********/
   else if (source == "mangakawaii") {
-    final dom = await httpResToDom(
+    final dom = await httpGet(
         url:
             'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga',
-        headers: {'Accept-Language': 'fr'});
-
-    if (dom
+        source: source,
+        resDom: true) as Document?;
+    if (dom!
         .querySelectorAll(
             '#page-content > div > div > ul > li > div.section__list-group-right > div.section__list-group-header > div > h4 > a')
         .isNotEmpty) {
@@ -129,9 +120,11 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*mmrcms*/
   /***********/
   else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
-    final response = await http.get(
-        Uri.parse('${getWpMangaUrl(source)}/search?query=${query.trim()}'));
-    final rep = jsonDecode(response.body);
+    final response = await httpGet(
+        url: '${getWpMangaUrl(source)}/search?query=${query.trim()}',
+        source: source,
+        resDom: false) as String?;
+    final rep = jsonDecode(response!);
     for (var ok in rep['suggestions']) {
       if (source == 'Read Comics Online') {
         url.add('${getWpMangaUrl(source)}/comic/${ok['data']}');
@@ -148,11 +141,13 @@ Future<SearchMangaModel> searchManga(SearchMangaRef ref,
   /*mangahere*/
   /***********/
   else if (source == "mangahere") {
-    final dom = await httpResToDom(
+    final dom = await httpGet(
         url:
             '${getWpMangaUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
-        headers: {});
-    if (dom
+        source: source,
+        resDom: true) as Document?;
+
+    if (dom!
         .querySelectorAll(
             'body > div.container > div > div > ul > li > p.manga-list-4-item-title > a')
         .isNotEmpty) {

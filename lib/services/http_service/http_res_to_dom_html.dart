@@ -6,3 +6,4 @@ Future<Document> httpResToDom(
   final response = await http.get(Uri.parse(url), headers: headers);
   return Document.html(response.body);
 }
+

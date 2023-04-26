@@ -28,7 +28,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   List<ModelManga> bookmark() {
     List<ModelManga> mang = [];
     for (var entry in entries) {
-      final d = entry.chapters!.where((element) => element.isBookmarked == true);
+      final d =
+          entry.chapters!.where((element) => element.isBookmarked == true);
       List<ModelChapters> chap = [];
       for (var a in d) {
         chap.add(a);
@@ -100,23 +101,25 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     });
                     _textEditingController.clear();
                   },
-                  icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
+                  icon: Icon(
+                    Icons.search,
+                  )),
           IconButton(
               splashRadius: 20,
               onPressed: () {
                 _showModalSort();
               },
-              icon: Icon(Icons.filter_list_sharp,
-                  color: Theme.of(context).hintColor)),
-          // PopupMenuButton(
-          //     color: Theme.of(context).hintColor,
-          //     itemBuilder: (context) {
-          //       return [
-          //         const PopupMenuItem<int>(
-          //             value: 0, child: Text("Open random entry")),
-          //       ];
-          //     },
-          //     onSelected: (value) {}),
+              icon: Icon(
+                Icons.filter_list_sharp,
+              )),
+          PopupMenuButton(
+              itemBuilder: (context) {
+                return [
+                  const PopupMenuItem<int>(
+                      value: 0, child: Text("Open random entry")),
+                ];
+              },
+              onSelected: (value) {}),
         ],
       ),
       body: ValueListenableBuilder<Box<ModelManga>>(

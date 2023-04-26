@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/services/cloudflare/cookie.dart';
+import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -142,7 +141,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                     userAgent: Hive.box(HiveConstant.hiveBoxAppSettings).get(
                         "ua",
                         defaultValue:
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0")),
+                            defaultUserAgent)),
                 initialUrlRequest:
                     URLRequest(url: WebUri.uri(Uri.parse(widget.url))),
               ),

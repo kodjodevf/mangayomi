@@ -21,17 +21,21 @@ class SourceModel extends HiveObject {
   final String logoUrl;
   @HiveField(8, defaultValue: false)
   final bool isFullData;
+  @HiveField(9, defaultValue: false)
+  final bool isCloudflare;
 
-  SourceModel(
-      {required this.sourceName,
-      required this.url,
-      required this.lang,
-      required this.typeSource,
-      required this.logoUrl,
-      this.isActive = true,
-      this.isAdded = false,
-      this.isNsfw = false,
-      this.isFullData = false});
+  SourceModel({
+    required this.sourceName,
+    required this.url,
+    required this.lang,
+    required this.typeSource,
+    required this.logoUrl,
+    this.isActive = true,
+    this.isAdded = false,
+    this.isNsfw = false,
+    this.isFullData = false,
+    this.isCloudflare = false,
+  });
 }
 
 @HiveType(typeId: 4)

@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
-import 'package:mangayomi/services/cloudflare/cloudflare_bypass.dart';
+import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/http_res_to_dom_html.dart';
+import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
+import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/source/source_model.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -92,74 +94,56 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /*comick*/
   /********/
   if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.comick) {
-    var headers = {
-      'Referer': 'https://comick.app/',
-      'User-Agent':
-          'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
-    };
-    var request = http.Request(
-        'GET', Uri.parse('https://api.comick.fun$url?tachiyomi=true'));
+    final response = await httpGet(
+        url: 'https://api.comick.fun$url?tachiyomi=true',
+        source: source,
+        resDom: false) as String?;
+    var mangaDetail = jsonDecode(response!) as Map<String, dynamic>;
 
-    request.headers.addAll(headers);
+    var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
 
-    http.StreamedResponse response = await request.send();
+    RegExp regExp = RegExp(r'name:\s*(.*?),');
 
-    if (response.statusCode == 200) {
-      var mangaDetail = jsonDecode(await response.stream.bytesToString())
-          as Map<String, dynamic>;
+    String authorr =
+        regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
+            '';
+    String statuss = _parseStatut(mangaDetailLMap.comic!.status!);
+    status = statuss;
+    author = authorr;
+    RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
+    for (var ok in mangaDetailLMap.genres!) {
+      genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
+    }
+    description = mangaDetailLMap.comic!.desc;
+    String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!);
+    String mangaId = tt.split('":"').last.replaceAll('"}', '');
+    String limit = mangaDetailLMap.comic!.chapterCount.toString();
 
-      var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
-
-      RegExp regExp = RegExp(r'name:\s*(.*?),');
-
-      String authorr =
-          regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
-              '';
-      String statuss = _parseStatut(mangaDetailLMap.comic!.status!);
-      status = statuss;
-      author = authorr;
-      RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
-      for (var ok in mangaDetailLMap.genres!) {
-        genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
+    final responsee = await httpGet(
+        url:
+            'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
+        source: source,
+        resDom: false) as String?;
+    List<String> chapterTitles = [];
+    List<String> chapterUrls = [];
+    List<String> chapterDates = [];
+    var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
+    var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
+    for (var chapter in chapterDetailMap.chapters!) {
+      chapterUrls.add(
+          "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
+      chapterDates.add(chapter.createdAt!.toString().substring(0, 10));
+      chapterTitles.add(beautifyChapterName(
+          chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
+    }
+    List<String> chapterTitless = [];
+    for (var i = 0; i < chapterTitles.length; i++) {
+      if (!chapterTitless.contains(chapterTitles[i])) {
+        chapterTitle.add(chapterTitles[i]);
+        chapterUrl.add(chapterUrls[i]);
+        chapterDate.add(chapterDates[i].replaceAll('-', "/"));
       }
-      description = mangaDetailLMap.comic!.desc;
-      String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!);
-      String mangaId = tt.split('":"').last.replaceAll('"}', '');
-      String limit = mangaDetailLMap.comic!.chapterCount.toString();
-
-      var requestt = http.Request(
-          'GET',
-          Uri.parse(
-              'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit'));
-
-      requestt.headers.addAll(headers);
-
-      http.StreamedResponse responsee = await requestt.send();
-
-      if (responsee.statusCode == 200) {
-        List<String> chapterTitles = [];
-        List<String> chapterUrls = [];
-        List<String> chapterDates = [];
-        var chapterDetail = jsonDecode(await responsee.stream.bytesToString())
-            as Map<String, dynamic>;
-        var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
-        for (var chapter in chapterDetailMap.chapters!) {
-          chapterUrls.add(
-              "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
-          chapterDates.add(chapter.createdAt!.toString().substring(0, 10));
-          chapterTitles.add(beautifyChapterName(chapter.vol ?? "",
-              chapter.chap ?? "", chapter.title ?? "", lang));
-        }
-        List<String> chapterTitless = [];
-        for (var i = 0; i < chapterTitles.length; i++) {
-          if (!chapterTitless.contains(chapterTitles[i])) {
-            chapterTitle.add(chapterTitles[i]);
-            chapterUrl.add(chapterUrls[i]);
-            chapterDate.add(chapterDates[i].replaceAll('-', "/"));
-          }
-          chapterTitless.add(chapterTitles[i]);
-        }
-      }
+      chapterTitless.add(chapterTitles[i]);
     }
   }
   /*************/
@@ -167,8 +151,12 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /**************/
 
   if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mangathemesia) {
-    final dom = await httpResToDom(url: url, headers: {});
-    if (dom
+    final dom = await httpGet(
+        url: url,
+        source: source,
+        resDom: true,
+        useUserAgent: true) as Document?;
+    if (dom!
         .querySelectorAll(
             'div.bigcontent, div.animefull, div.main-info, div.postbody')
         .isNotEmpty) {
@@ -294,13 +282,14 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /*mangakawaii*/
   /***********/
   else if (source.toLowerCase() == "mangakawaii") {
-    final dom = await httpResToDom(
+    final dom = await httpGet(
         url: 'https://www.mangakawaii.io$url',
-        headers: {"Accept-Language": "fr"});
+        source: source,
+        resDom: true) as Document?;
     List detail = [];
     imageUrl =
         "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
-    if (dom.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
+    if (dom!.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
       final tt = dom
           .querySelectorAll('dd.text-justify.text-break')
           .map((e) => e.text.trim())
@@ -408,11 +397,8 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /***********/
 
   else if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mmrcms) {
-    final dom = await cloudflareBypassDom(
-      url: url,
-      bypass: true,
-      source: source,
-    );
+    final dom =
+        await httpGet(url: url, source: source, resDom: true) as Document?;
     description = dom!
         .querySelectorAll('.row .well p')
         .map((e) => e.text.trim())
@@ -503,14 +489,11 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /*mangahere*/
   /***********/
   else if (source.toLowerCase() == "mangahere") {
-    final dom = await httpResToDom(
+    final dom = await httpGet(
         url: "http://www.mangahere.cc$url",
-        headers: {
-          "Referer": "https://www.mangahere.cc/",
-          "Cookie": "isAdult=1"
-        });
-
-    if (dom
+        source: source,
+        resDom: true) as Document?;
+    if (dom!
         .querySelectorAll(
             ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
         .isNotEmpty) {
@@ -596,21 +579,18 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
       }
     }
   } else if (source.toLowerCase() == "japscan") {
-    final htmll = await cloudflareBypassDom(
-      url: url,
-      bypass: true,
-      source: source,
-    );
-    if (htmll!.querySelectorAll('.col-7 > p').isNotEmpty) {
+    final dom =
+        await httpGet(url: url, source: source, resDom: true) as Document?;
+    if (dom!.querySelectorAll('.col-7 > p').isNotEmpty) {
       final images =
-          htmll.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
+          dom.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
       RegExp exp = RegExp(r'src="([^"]+)"');
 
       String? srcValue = exp.firstMatch(images[0])?.group(1);
-      imageUrl = 'https://www.japscan.me$srcValue';
+      imageUrl = 'https://www.japscan.lol$srcValue';
 
-      if (htmll.querySelectorAll('.col-7 > p').isNotEmpty) {
-        final stat = htmll
+      if (dom.querySelectorAll('.col-7 > p').isNotEmpty) {
+        final stat = dom
             .querySelectorAll('.col-7 > p')
             .where((element) => element.innerHtml.contains('Statut:'))
             .map((e) => e.text)
@@ -619,7 +599,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
           status = stat[0].replaceAll('Statut:', '').trim();
         }
 
-        final auth = htmll
+        final auth = dom
             .querySelectorAll('.col-7 > p')
             .where((element) => element.innerHtml.contains('Auteur(s):'))
             .map((e) => e.text)
@@ -632,7 +612,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         status = "";
       }
 
-      final genres = htmll
+      final genres = dom
           .querySelectorAll('.col-7 > p')
           .where((element) => element.innerHtml.contains('Genre(s):'))
           .map((e) => e.text.replaceAll('Genre(s):', '').trim())
@@ -643,7 +623,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         }
       }
 
-      final synop = htmll
+      final synop = dom
           .querySelectorAll('p.list-group-item ')
           .map((e) => e.text.trim())
           .toList();
@@ -653,17 +633,17 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     }
 
     final urls =
-        htmll.querySelectorAll('.col-8 ').map((e) => e.outerHtml).toList();
+        dom.querySelectorAll('.col-8 ').map((e) => e.outerHtml).toList();
 
     for (var ok in urls) {
       RegExp exp = RegExp(r'href="([^"]+)"');
 
       String? srcValue = exp.firstMatch(ok)?.group(1);
-      chapterUrl.add('https://www.japscan.me$srcValue');
+      chapterUrl.add('https://www.japscan.lol$srcValue');
     }
 
     final chapterTitlee =
-        htmll.querySelectorAll('.col-8').map((e) => e.text.trim()).toList();
+        dom.querySelectorAll('.col-8').map((e) => e.text.trim()).toList();
 
     if (chapterTitlee.isNotEmpty) {
       for (var ok in chapterTitlee) {
@@ -672,7 +652,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     }
 
     final chapterDatee =
-        htmll.querySelectorAll('.col-4').map((e) => e.text.trim()).toList();
+        dom.querySelectorAll('.col-4').map((e) => e.text.trim()).toList();
     if (chapterDatee.isNotEmpty) {
       for (var ok in chapterDatee) {
         chapterDate.add(ok);

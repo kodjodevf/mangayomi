@@ -157,7 +157,8 @@ List<SourceModel> sourcesList = [
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
-          'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png'),
+          'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
+      isCloudflare: true),
   SourceModel(
       sourceName: "AzureScans",
       url: "https://azuremanga.com",
@@ -214,7 +215,7 @@ List<SourceModel> sourcesList = [
       url: "https://void-scans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
-      logoUrl: ''),
+      logoUrl: '',isCloudflare: true),
   SourceModel(
       sourceName: "Kiryuu",
       url: "https://kiryuu.id",
@@ -349,7 +350,8 @@ List<SourceModel> sourcesList = [
       url: "https://sushiscan.net",
       lang: "fr",
       typeSource: TypeSource.mangathemesia,
-      logoUrl: 'https://sushiscan.net/wp-content/uploads/SushiScanNewLogo.png'),
+      logoUrl: 'https://sushiscan.net/wp-content/uploads/SushiScanNewLogo.png',
+      isCloudflare: true),
   SourceModel(
       sourceName: "TsundokuTraduções",
       url: "https://tsundoku.com.br",
@@ -426,6 +428,6 @@ List<SourceModel> sourcesList = [
       url: "https://japscan.lol",
       lang: "fr",
       typeSource: TypeSource.single,
-      logoUrl: ''),
-
+      logoUrl: '',
+      isCloudflare: true),
 ];

@@ -28,10 +28,10 @@ class ChapterListTileWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = reverse ? reverseIndex : finalIndex;
-    final chapterIndexList = ref.watch(chapterIndexListStateProvider);
-
+    final chapterNameList = ref.watch(chapterNameListStateProvider);
+    final chapterName = modelManga.chapters![idx].name;
     return Container(
-      color: chapterIndexList.contains(idx)
+      color: chapterNameList.contains(chapterName)
           ? generalColor(context).withOpacity(0.4)
           : null,
       child: ListTile(
@@ -45,7 +45,9 @@ class ChapterListTileWidget extends ConsumerWidget {
             : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
-            ref.read(chapterIndexListStateProvider.notifier).update(idx);
+            ref
+                .read(chapterNameListStateProvider.notifier)
+                .update(chapterName!);
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);
@@ -53,7 +55,9 @@ class ChapterListTileWidget extends ConsumerWidget {
                 .read(isLongPressedStateProvider.notifier)
                 .update(!isLongPressed);
           } else {
-            ref.read(chapterIndexListStateProvider.notifier).update(idx);
+            ref
+                .read(chapterNameListStateProvider.notifier)
+                .update(chapterName!);
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);
@@ -61,7 +65,9 @@ class ChapterListTileWidget extends ConsumerWidget {
         },
         onTap: () async {
           if (isLongPressed) {
-            ref.read(chapterIndexListStateProvider.notifier).update(idx);
+            ref
+                .read(chapterNameListStateProvider.notifier)
+                .update(chapterName!);
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);

@@ -26,13 +26,14 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       isAdded: fields[4] == null ? false : fields[4] as bool,
       isNsfw: fields[5] == null ? false : fields[5] as bool,
       isFullData: fields[8] == null ? false : fields[8] as bool,
+      isCloudflare: fields[9] == null ? false : fields[9] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, SourceModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.sourceName)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       ..writeByte(7)
       ..write(obj.logoUrl)
       ..writeByte(8)
-      ..write(obj.isFullData);
+      ..write(obj.isFullData)
+      ..writeByte(9)
+      ..write(obj.isCloudflare);
   }
 
   @override

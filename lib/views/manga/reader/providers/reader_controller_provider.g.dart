@@ -182,7 +182,7 @@ class CurrentIndexProvider
   }
 }
 
-String _$readerControllerHash() => r'01306848356204f0716ab763839d6c9e66051dd1';
+String _$readerControllerHash() => r'2528e56dfbf71a996ceeada7075eff571b621080';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final MangaReaderModel mangaReaderModel;
