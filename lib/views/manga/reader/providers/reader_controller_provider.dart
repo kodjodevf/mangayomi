@@ -188,7 +188,8 @@ class ReaderController extends _$ReaderController {
   bool getChapterBookmarked() {
     return ref
         .watch(hiveBoxManga)
-        .get('${getModelManga().lang}-${getModelManga().link}')!
+        .get('${getModelManga().lang}-${getModelManga().link}',
+            defaultValue: getModelManga())!
         .chapters![getChapterIndex()]
         .isBookmarked;
   }
