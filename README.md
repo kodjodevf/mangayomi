@@ -4,30 +4,15 @@
 
 <h1 align="center"> Mangayomi </h1>
 
-Mangayomi is free and open source manga reader inspired by Tachiyomi made with flutter. It allows users to read manga from multiple sources and is developed out of passion and the challenge of creating such an application. Currently, all content sources are directly integrated into the application.
+Mangayomi is free and open source manga reader cross-plateforme app inspired by Tachiyomi made with flutter. It allows users to read manga from a variety of sources and is developed out of passion and the challenge of creating such an application. Currently, all content sources are directly integrated into the application.
 
-**Source languages available:**
+## Features
 
-|   LANG                      |
-|:---------------------------:|
-|   Bahasa Indonesia          |
-|   Deutsch                   |
-|   English                   |
-|   Español                   |
-|   Español latinoamericano   |
-|   Français                  |
-|   Italiano                  |
-|   Polski                    | 
-|   Português                 |
-|   Português do brasil       |
-|   Pусский язык              |
-|   Türkçe                    |
-|   العربية                  |
-|   हिन्दी, हिंदी                 |
-|   中文(Zhōngwén)             |
-|   日本語                     |
-|   繁體中文(Hong Kong)        |
-
+Features include:
+* Online reading from a variety of sources
+* Local reading of downloaded content
+* A configurable reader with multiple viewers, reading directions.
+* Light and dark themes
 ### Prerequisites
 
 You can install Flutter & Dart from [Official website](https://docs.flutter.dev/get-started/install)
