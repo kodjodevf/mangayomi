@@ -625,6 +625,7 @@ class _MangaChapterPageGalleryState
                                           widget.readerController
                                               .getReaderModeValue(readerMode),
                                           style: const TextStyle(
+                                            color: Colors.white,
                                             fontSize: 12,
                                           ),
                                         ),
@@ -670,6 +671,7 @@ class _MangaChapterPageGalleryState
                     child: Text(
                       '${_currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
                       style: const TextStyle(
+                        color: Colors.white,
                         fontSize: 12.0,
                         shadows: <Shadow>[
                           Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0)

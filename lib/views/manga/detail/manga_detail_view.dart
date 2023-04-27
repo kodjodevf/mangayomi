@@ -56,33 +56,27 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   ScrollController _scrollController = ScrollController();
 
   late int _pageLength = ref
-          .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
-              .notifier)
-          .getData()
+          .watch(
+              chapterFilterResultStateProvider(modelManga: widget.modelManga!))
           .chapters!
           .length +
       1;
   late List<ModelChapters>? _chapters = ref
-      .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
-          .notifier)
-      .getData()
+      .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!))
       .chapters;
   late ModelManga? _modelManga = ref
-      .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
-          .notifier)
-      .getData();
+      .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!));
 
   _refreshData() {
-    final modelManga = ref
-        .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
-            .notifier)
-        .getData();
-
-    setState(() {
-      _pageLength = modelManga.chapters!.length + 1;
-      _chapters = modelManga.chapters;
-      _modelManga = modelManga;
-    });
+    final modelManga = ref.watch(
+        chapterFilterResultStateProvider(modelManga: widget.modelManga!));
+    if (mounted) {
+      setState(() {
+        _pageLength = modelManga.chapters!.length + 1;
+        _chapters = modelManga.chapters;
+        _modelManga = modelManga;
+      });
+    }
   }
 
   bool isRefresh = false;
@@ -93,6 +87,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final reverse =
         ref.watch(reverseMangaStateProvider(modelManga: widget.modelManga!));
     final chapter = ref.watch(chapterModelStateProvider);
+    final isNotFiltering = ref
+        .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
+            .notifier)
+        .isNotFiltering();
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -192,8 +190,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             onPressed: () {
                               _showDraggableMenu();
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.filter_list_sharp,
+                              color: isNotFiltering ? null : Colors.yellow,
                             )),
                         PopupMenuButton(
                             itemBuilder: (context) {
@@ -265,11 +264,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               return _bodyContainer();
                             }
                             if (isRefresh) {
-                              final modelManga = ref
-                                  .read(chapterFilterResultStateProvider(
-                                          modelManga: widget.modelManga!)
-                                      .notifier)
-                                  .getData();
+                              final modelManga = ref.watch(
+                                  chapterFilterResultStateProvider(
+                                      modelManga: widget.modelManga!));
 
                               _pageLength = modelManga.chapters!.length + 1;
                               _chapters = modelManga.chapters;
@@ -346,22 +343,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             }
 
                             // print(chapterNameList);
-                            final model = ModelManga(
-                                imageUrl: widget.modelManga!.imageUrl,
-                                name: widget.modelManga!.name,
-                                genre: widget.modelManga!.genre,
-                                author: widget.modelManga!.author,
-                                description: widget.modelManga!.description,
-                                status: widget.modelManga!.status,
-                                favorite: widget.modelManga!.favorite,
-                                link: widget.modelManga!.link,
-                                source: widget.modelManga!.source,
-                                lang: widget.modelManga!.lang,
-                                dateAdded: widget.modelManga!.dateAdded,
-                                lastUpdate: widget.modelManga!.lastUpdate,
-                                chapters: chap,
-                                category: widget.modelManga!.category,
-                                lastRead: widget.modelManga!.lastRead);
+                            final model = modelMangaWithNewChapValue(
+                                modelManga: widget.modelManga!, chapters: chap);
                             ref.watch(hiveBoxManga).put(
                                 '${widget.modelManga!.lang}-${widget.modelManga!.link}',
                                 model);
@@ -416,22 +399,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       entries.chapters![i].lastPageRead));
                             }
 
-                            final model = ModelManga(
-                                imageUrl: widget.modelManga!.imageUrl,
-                                name: widget.modelManga!.name,
-                                genre: widget.modelManga!.genre,
-                                author: widget.modelManga!.author,
-                                description: widget.modelManga!.description,
-                                status: widget.modelManga!.status,
-                                favorite: widget.modelManga!.favorite,
-                                link: widget.modelManga!.link,
-                                source: widget.modelManga!.source,
-                                lang: widget.modelManga!.lang,
-                                dateAdded: widget.modelManga!.dateAdded,
-                                lastUpdate: widget.modelManga!.lastUpdate,
-                                chapters: chap,
-                                category: widget.modelManga!.category,
-                                lastRead: widget.modelManga!.lastRead);
+                            final model = modelMangaWithNewChapValue(
+                                modelManga: widget.modelManga!, chapters: chap);
                             ref.watch(hiveBoxManga).put(
                                 '${widget.modelManga!.lang}-${widget.modelManga!.link}',
                                 model);
@@ -564,15 +533,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   _refreshData();
                                 }),
                             ListTileChapterFilter(
-                                label: "Bookmark",
+                                label: "Bookmarked",
                                 type: ref.watch(
-                                    chapterFilterBookmarkStateProvider(
+                                    chapterFilterBookmarkedStateProvider(
                                         modelManga: widget.modelManga!)),
                                 onTap: () {
                                   ref
-                                      .read(chapterFilterBookmarkStateProvider(
-                                              modelManga: widget.modelManga!)
-                                          .notifier)
+                                      .read(
+                                          chapterFilterBookmarkedStateProvider(
+                                                  modelManga:
+                                                      widget.modelManga!)
+                                              .notifier)
                                       .update();
                                   _refreshData();
                                 }),

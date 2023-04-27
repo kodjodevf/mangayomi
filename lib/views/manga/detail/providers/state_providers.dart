@@ -95,14 +95,14 @@ class ReverseMangaState extends _$ReverseMangaState {
   @override
   bool build({required ModelManga modelManga}) {
     return ref.watch(hiveBoxSettings).get(
-        "${modelManga.source}/${modelManga.name}-reverseManga",
+        "${modelManga.source}/${modelManga.name}-reverseChapter",
         defaultValue: false);
   }
 
   void update(bool value) {
     ref
         .watch(hiveBoxSettings)
-        .put("${modelManga.source}/${modelManga.name}-reverseManga", value);
+        .put("${modelManga.source}/${modelManga.name}-reverseChapter", value);
     state = value;
   }
 }
@@ -117,13 +117,13 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
 
   int getType() {
     return ref.watch(hiveBoxSettings).get(
-        "${modelManga.source}/${modelManga.name}-sortChapterDownload",
+        "${modelManga.source}/${modelManga.name}-filterChapterDownload",
         defaultValue: 0);
   }
 
   void setType(int type) {
     ref.watch(hiveBoxSettings).put(
-        "${modelManga.source}/${modelManga.name}-sortChapterDownload", type);
+        "${modelManga.source}/${modelManga.name}-filterChapterDownload", type);
     state = type;
   }
 
@@ -146,22 +146,8 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
@@ -183,22 +169,8 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else {
@@ -225,22 +197,8 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
@@ -262,22 +220,8 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
       return model;
     } else {
@@ -297,14 +241,13 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
 
   int getType() {
     return ref.watch(hiveBoxSettings).get(
-        "${modelManga.source}/${modelManga.name}-sortChapterUnread",
+        "${modelManga.source}/${modelManga.name}-filterChapterUnread",
         defaultValue: 0);
   }
 
   void setType(int type) {
-    ref
-        .watch(hiveBoxSettings)
-        .put("${modelManga.source}/${modelManga.name}-sortChapterUnread", type);
+    ref.watch(hiveBoxSettings).put(
+        "${modelManga.source}/${modelManga.name}-filterChapterUnread", type);
     state = type;
   }
 
@@ -324,22 +267,8 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
@@ -357,22 +286,8 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else {
@@ -396,22 +311,8 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
@@ -429,22 +330,8 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
       return model;
     } else {
@@ -455,7 +342,7 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
 }
 
 @riverpod
-class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
+class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   @override
   int build({required ModelManga modelManga}) {
     state = getType();
@@ -464,13 +351,13 @@ class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
 
   int getType() {
     return ref.watch(hiveBoxSettings).get(
-        "${modelManga.source}/${modelManga.name}-sortChapterBookMark",
+        "${modelManga.source}/${modelManga.name}-filterChapterBookMark",
         defaultValue: 0);
   }
 
   void setType(int type) {
     ref.watch(hiveBoxSettings).put(
-        "${modelManga.source}/${modelManga.name}-sortChapterBookMark", type);
+        "${modelManga.source}/${modelManga.name}-filterChapterBookMark", type);
     state = type;
   }
 
@@ -490,22 +377,8 @@ class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
@@ -523,22 +396,8 @@ class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else {
@@ -562,22 +421,8 @@ class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
@@ -595,22 +440,8 @@ class ChapterFilterBookmarkState extends _$ChapterFilterBookmarkState {
               lastPageRead: chapters[i].lastPageRead));
         }
       }
-      final model = ModelManga(
-          imageUrl: modelManga.imageUrl,
-          name: modelManga.name,
-          genre: modelManga.genre,
-          author: modelManga.author,
-          description: modelManga.description,
-          status: modelManga.status,
-          favorite: modelManga.favorite,
-          link: modelManga.link,
-          source: modelManga.source,
-          lang: modelManga.lang,
-          dateAdded: modelManga.dateAdded,
-          lastUpdate: modelManga.lastUpdate,
-          chapters: chap,
-          category: modelManga.category,
-          lastRead: modelManga.lastRead);
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
       return model;
     } else {
@@ -625,8 +456,8 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
   @override
   ModelManga build({required ModelManga modelManga}) {
     final data1 = ref
-        .read(
-            chapterFilterDownloadedStateProvider(modelManga: modelManga).notifier)
+        .read(chapterFilterDownloadedStateProvider(modelManga: modelManga)
+            .notifier)
         .getData();
 
     final data2 = ref
@@ -634,26 +465,47 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
         .getData();
 
     final data3 = ref
-        .read(chapterFilterBookmarkStateProvider(modelManga: data2).notifier)
+        .read(chapterFilterBookmarkedStateProvider(modelManga: data2).notifier)
         .getData();
 
     return data3;
   }
 
-  ModelManga getData() {
-    final data1 = ref
-        .read(
-            chapterFilterDownloadedStateProvider(modelManga: modelManga).notifier)
-        .getData();
+  bool isNotFiltering() {
+    final downloadFilterType = ref
+        .read(chapterFilterDownloadedStateProvider(modelManga: modelManga)
+            .notifier)
+        .getType();
+    final unreadFilterType = ref
+        .read(chapterFilterUnreadStateProvider(modelManga: modelManga).notifier)
+        .getType();
 
-    final data2 = ref
-        .read(chapterFilterUnreadStateProvider(modelManga: data1).notifier)
-        .getData();
-
-    final data3 = ref
-        .read(chapterFilterBookmarkStateProvider(modelManga: data2).notifier)
-        .getData();
-
-    return data3;
+    final bookmarkedFilterType = ref
+        .read(chapterFilterBookmarkedStateProvider(modelManga: modelManga)
+            .notifier)
+        .getType();
+    return downloadFilterType == 0 &&
+        unreadFilterType == 0 &&
+        bookmarkedFilterType == 0;
   }
+}
+
+ModelManga modelMangaWithNewChapValue(
+    {required ModelManga modelManga, required List<ModelChapters>? chapters}) {
+  return ModelManga(
+      imageUrl: modelManga.imageUrl,
+      name: modelManga.name,
+      genre: modelManga.genre,
+      author: modelManga.author,
+      description: modelManga.description,
+      status: modelManga.status,
+      favorite: modelManga.favorite,
+      link: modelManga.link,
+      source: modelManga.source,
+      lang: modelManga.lang,
+      dateAdded: modelManga.dateAdded,
+      lastUpdate: modelManga.lastUpdate,
+      chapters: chapters,
+      category: modelManga.category,
+      lastRead: modelManga.lastRead);
 }

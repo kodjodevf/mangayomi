@@ -190,7 +190,7 @@ class ReverseMangaStateProvider
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'9c0937b3deaa6982ec7a8c9ab5d55a99a059cd80';
+    r'46dca943e064d5f70968c711812091783e0a4039';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -290,7 +290,7 @@ class ChapterFilterDownloadedStateProvider
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'98e86b05fdcb874b551329ffdf322681f46fb6ce';
+    r'48076800725c22f04493653deec4e946cb71d195';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -388,10 +388,10 @@ class ChapterFilterUnreadStateProvider
   }
 }
 
-String _$chapterFilterBookmarkStateHash() =>
-    r'6fb5d0d506bc209bb6d6fea8e665f511b8ef0e8f';
+String _$chapterFilterBookmarkedStateHash() =>
+    r'4772ce2506d0c939b549c8661cd3b62cae853e20';
 
-abstract class _$ChapterFilterBookmarkState
+abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final ModelManga modelManga;
 
@@ -400,27 +400,28 @@ abstract class _$ChapterFilterBookmarkState
   });
 }
 
-/// See also [ChapterFilterBookmarkState].
-@ProviderFor(ChapterFilterBookmarkState)
-const chapterFilterBookmarkStateProvider = ChapterFilterBookmarkStateFamily();
+/// See also [ChapterFilterBookmarkedState].
+@ProviderFor(ChapterFilterBookmarkedState)
+const chapterFilterBookmarkedStateProvider =
+    ChapterFilterBookmarkedStateFamily();
 
-/// See also [ChapterFilterBookmarkState].
-class ChapterFilterBookmarkStateFamily extends Family<int> {
-  /// See also [ChapterFilterBookmarkState].
-  const ChapterFilterBookmarkStateFamily();
+/// See also [ChapterFilterBookmarkedState].
+class ChapterFilterBookmarkedStateFamily extends Family<int> {
+  /// See also [ChapterFilterBookmarkedState].
+  const ChapterFilterBookmarkedStateFamily();
 
-  /// See also [ChapterFilterBookmarkState].
-  ChapterFilterBookmarkStateProvider call({
+  /// See also [ChapterFilterBookmarkedState].
+  ChapterFilterBookmarkedStateProvider call({
     required ModelManga modelManga,
   }) {
-    return ChapterFilterBookmarkStateProvider(
+    return ChapterFilterBookmarkedStateProvider(
       modelManga: modelManga,
     );
   }
 
   @override
-  ChapterFilterBookmarkStateProvider getProviderOverride(
-    covariant ChapterFilterBookmarkStateProvider provider,
+  ChapterFilterBookmarkedStateProvider getProviderOverride(
+    covariant ChapterFilterBookmarkedStateProvider provider,
   ) {
     return call(
       modelManga: provider.modelManga,
@@ -439,33 +440,33 @@ class ChapterFilterBookmarkStateFamily extends Family<int> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'chapterFilterBookmarkStateProvider';
+  String? get name => r'chapterFilterBookmarkedStateProvider';
 }
 
-/// See also [ChapterFilterBookmarkState].
-class ChapterFilterBookmarkStateProvider
-    extends AutoDisposeNotifierProviderImpl<ChapterFilterBookmarkState, int> {
-  /// See also [ChapterFilterBookmarkState].
-  ChapterFilterBookmarkStateProvider({
+/// See also [ChapterFilterBookmarkedState].
+class ChapterFilterBookmarkedStateProvider
+    extends AutoDisposeNotifierProviderImpl<ChapterFilterBookmarkedState, int> {
+  /// See also [ChapterFilterBookmarkedState].
+  ChapterFilterBookmarkedStateProvider({
     required this.modelManga,
   }) : super.internal(
-          () => ChapterFilterBookmarkState()..modelManga = modelManga,
-          from: chapterFilterBookmarkStateProvider,
-          name: r'chapterFilterBookmarkStateProvider',
+          () => ChapterFilterBookmarkedState()..modelManga = modelManga,
+          from: chapterFilterBookmarkedStateProvider,
+          name: r'chapterFilterBookmarkedStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$chapterFilterBookmarkStateHash,
-          dependencies: ChapterFilterBookmarkStateFamily._dependencies,
+                  : _$chapterFilterBookmarkedStateHash,
+          dependencies: ChapterFilterBookmarkedStateFamily._dependencies,
           allTransitiveDependencies:
-              ChapterFilterBookmarkStateFamily._allTransitiveDependencies,
+              ChapterFilterBookmarkedStateFamily._allTransitiveDependencies,
         );
 
   final ModelManga modelManga;
 
   @override
   bool operator ==(Object other) {
-    return other is ChapterFilterBookmarkStateProvider &&
+    return other is ChapterFilterBookmarkedStateProvider &&
         other.modelManga == modelManga;
   }
 
@@ -479,7 +480,7 @@ class ChapterFilterBookmarkStateProvider
 
   @override
   int runNotifierBuild(
-    covariant ChapterFilterBookmarkState notifier,
+    covariant ChapterFilterBookmarkedState notifier,
   ) {
     return notifier.build(
       modelManga: modelManga,
@@ -488,7 +489,7 @@ class ChapterFilterBookmarkStateProvider
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'ddb83c55bbbbd00178f582875a9b72fcec0eae5a';
+    r'4701e32ae755fc2c60ef7fe6c64e3073f6329a06';
 
 abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<ModelManga> {
