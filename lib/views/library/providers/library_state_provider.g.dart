@@ -458,7 +458,7 @@ class MangaFilterBookmarkedStateProvider
 }
 
 String _$mangaFilterResultStateHash() =>
-    r'de16f80b0521bd1b8ac3232f2c5f71a554dc94e4';
+    r'5ec8cf6917ccc72d5eef7f2e7b308725563e4831';
 
 abstract class _$MangaFilterResultState
     extends BuildlessAutoDisposeNotifier<List<ModelManga>> {

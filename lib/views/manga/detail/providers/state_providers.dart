@@ -1,5 +1,6 @@
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
 
@@ -508,4 +509,117 @@ ModelManga modelMangaWithNewChapValue(
       chapters: chapters,
       category: modelManga.category,
       lastRead: modelManga.lastRead);
+}
+
+@riverpod
+class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
+  @override
+  build({required ModelManga modelManga}) {}
+
+  set() {
+    for (var name in ref.watch(chapterNameListStateProvider)) {
+      List<ModelChapters> chap = [];
+      for (var i = 0; i < modelManga.chapters!.length; i++) {
+        final entries = ref
+            .watch(hiveBoxManga)
+            .values
+            .where((element) =>
+                '${element.lang}-${element.link}' ==
+                '${modelManga.lang}-${modelManga.link}')
+            .toList()
+            .first;
+        chap.add(ModelChapters(
+            name: entries.chapters![i].name,
+            url: entries.chapters![i].url,
+            dateUpload: entries.chapters![i].dateUpload,
+            isBookmarked: name == entries.chapters![i].name
+                ? entries.chapters![i].isBookmarked
+                    ? false
+                    : true
+                : entries.chapters![i].isBookmarked,
+            scanlator: entries.chapters![i].scanlator,
+            isRead: entries.chapters![i].isRead,
+            lastPageRead: entries.chapters![i].lastPageRead));
+      }
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
+      ref
+          .watch(hiveBoxManga)
+          .put('${modelManga.lang}-${modelManga.link}', model);
+    }
+  }
+}
+
+@riverpod
+class ChapterSetIsReadState extends _$ChapterSetIsReadState {
+  @override
+  build({required ModelManga modelManga}) {}
+
+  set() {
+    for (var name in ref.watch(chapterNameListStateProvider)) {
+      List<ModelChapters> chap = [];
+      for (var i = 0; i < modelManga.chapters!.length; i++) {
+        final entries = ref
+            .watch(hiveBoxManga)
+            .values
+            .where((element) =>
+                '${element.lang}-${element.link}' ==
+                '${modelManga.lang}-${modelManga.link}')
+            .toList()
+            .first;
+        chap.add(ModelChapters(
+            name: entries.chapters![i].name,
+            url: entries.chapters![i].url,
+            dateUpload: entries.chapters![i].dateUpload,
+            isBookmarked: entries.chapters![i].isBookmarked,
+            scanlator: entries.chapters![i].scanlator,
+            isRead: name == entries.chapters![i].name
+                ? entries.chapters![i].isRead
+                    ? false
+                    : true
+                : entries.chapters![i].isRead,
+            lastPageRead: entries.chapters![i].lastPageRead));
+      }
+
+      final model =
+          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
+      ref
+          .watch(hiveBoxManga)
+          .put('${modelManga.lang}-${modelManga.link}', model);
+    }
+  }
+}
+
+@riverpod
+class ChapterSetDownloadState extends _$ChapterSetDownloadState {
+  @override
+  build({required ModelManga modelManga}) {}
+
+  set() {
+    List<int> indexList = [];
+    for (var name in ref.watch(chapterNameListStateProvider)) {
+      for (var i = 0; i < modelManga.chapters!.length; i++) {
+        if (modelManga.chapters![i].name == name) {
+          indexList.add(i);
+        }
+      }
+    }
+    for (var idx in indexList) {
+      final entries = ref
+          .watch(hiveBoxMangaDownloads)
+          .values
+          .where((element) =>
+              element.modelManga.chapters![element.index].name ==
+              modelManga.chapters![idx].name)
+          .toList();
+      if (entries.isEmpty) {
+        ref.watch(downloadChapterProvider(modelManga: modelManga, index: idx));
+      } else {
+        if (!entries.first.isDownload) {
+          ref.watch(
+              downloadChapterProvider(modelManga: modelManga, index: idx));
+        }
+      }
+    }
+  }
 }

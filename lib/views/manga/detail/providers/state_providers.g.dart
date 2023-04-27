@@ -72,7 +72,7 @@ final isExtendedStateProvider =
 );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
-String _$reverseMangaStateHash() => r'f00b2dac8e461bd1f1a32fbf1ce4994ac4d96529';
+String _$reverseMangaStateHash() => r'ba21cdabf4a5e60e9c31b09a93080ccae84e3bd4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -489,7 +489,7 @@ class ChapterFilterBookmarkedStateProvider
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'4701e32ae755fc2c60ef7fe6c64e3073f6329a06';
+    r'85ab18048c228f674211c8254d7efedb92152b8f';
 
 abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<ModelManga> {
@@ -580,6 +580,303 @@ class ChapterFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
   @override
   ModelManga runNotifierBuild(
     covariant ChapterFilterResultState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$chapterSetIsBookmarkStateHash() =>
+    r'a53f9acaea333287e229c391ba01c9da22a59b0f';
+
+abstract class _$ChapterSetIsBookmarkState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final ModelManga modelManga;
+
+  dynamic build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [ChapterSetIsBookmarkState].
+@ProviderFor(ChapterSetIsBookmarkState)
+const chapterSetIsBookmarkStateProvider = ChapterSetIsBookmarkStateFamily();
+
+/// See also [ChapterSetIsBookmarkState].
+class ChapterSetIsBookmarkStateFamily extends Family<dynamic> {
+  /// See also [ChapterSetIsBookmarkState].
+  const ChapterSetIsBookmarkStateFamily();
+
+  /// See also [ChapterSetIsBookmarkState].
+  ChapterSetIsBookmarkStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return ChapterSetIsBookmarkStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  ChapterSetIsBookmarkStateProvider getProviderOverride(
+    covariant ChapterSetIsBookmarkStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'chapterSetIsBookmarkStateProvider';
+}
+
+/// See also [ChapterSetIsBookmarkState].
+class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
+    ChapterSetIsBookmarkState, dynamic> {
+  /// See also [ChapterSetIsBookmarkState].
+  ChapterSetIsBookmarkStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => ChapterSetIsBookmarkState()..modelManga = modelManga,
+          from: chapterSetIsBookmarkStateProvider,
+          name: r'chapterSetIsBookmarkStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$chapterSetIsBookmarkStateHash,
+          dependencies: ChapterSetIsBookmarkStateFamily._dependencies,
+          allTransitiveDependencies:
+              ChapterSetIsBookmarkStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ChapterSetIsBookmarkStateProvider &&
+        other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetIsBookmarkState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$chapterSetIsReadStateHash() =>
+    r'432210665b22f1ff141d906135a381f88f3ccec5';
+
+abstract class _$ChapterSetIsReadState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final ModelManga modelManga;
+
+  dynamic build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [ChapterSetIsReadState].
+@ProviderFor(ChapterSetIsReadState)
+const chapterSetIsReadStateProvider = ChapterSetIsReadStateFamily();
+
+/// See also [ChapterSetIsReadState].
+class ChapterSetIsReadStateFamily extends Family<dynamic> {
+  /// See also [ChapterSetIsReadState].
+  const ChapterSetIsReadStateFamily();
+
+  /// See also [ChapterSetIsReadState].
+  ChapterSetIsReadStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return ChapterSetIsReadStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  ChapterSetIsReadStateProvider getProviderOverride(
+    covariant ChapterSetIsReadStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'chapterSetIsReadStateProvider';
+}
+
+/// See also [ChapterSetIsReadState].
+class ChapterSetIsReadStateProvider
+    extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, dynamic> {
+  /// See also [ChapterSetIsReadState].
+  ChapterSetIsReadStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => ChapterSetIsReadState()..modelManga = modelManga,
+          from: chapterSetIsReadStateProvider,
+          name: r'chapterSetIsReadStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$chapterSetIsReadStateHash,
+          dependencies: ChapterSetIsReadStateFamily._dependencies,
+          allTransitiveDependencies:
+              ChapterSetIsReadStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ChapterSetIsReadStateProvider &&
+        other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetIsReadState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$chapterSetDownloadStateHash() =>
+    r'88cb112fa193aab93e07cd8dca7d7bc54337cb3a';
+
+abstract class _$ChapterSetDownloadState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final ModelManga modelManga;
+
+  dynamic build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [ChapterSetDownloadState].
+@ProviderFor(ChapterSetDownloadState)
+const chapterSetDownloadStateProvider = ChapterSetDownloadStateFamily();
+
+/// See also [ChapterSetDownloadState].
+class ChapterSetDownloadStateFamily extends Family<dynamic> {
+  /// See also [ChapterSetDownloadState].
+  const ChapterSetDownloadStateFamily();
+
+  /// See also [ChapterSetDownloadState].
+  ChapterSetDownloadStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return ChapterSetDownloadStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  ChapterSetDownloadStateProvider getProviderOverride(
+    covariant ChapterSetDownloadStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'chapterSetDownloadStateProvider';
+}
+
+/// See also [ChapterSetDownloadState].
+class ChapterSetDownloadStateProvider
+    extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, dynamic> {
+  /// See also [ChapterSetDownloadState].
+  ChapterSetDownloadStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => ChapterSetDownloadState()..modelManga = modelManga,
+          from: chapterSetDownloadStateProvider,
+          name: r'chapterSetDownloadStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$chapterSetDownloadStateHash,
+          dependencies: ChapterSetDownloadStateFamily._dependencies,
+          allTransitiveDependencies:
+              ChapterSetDownloadStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ChapterSetDownloadStateProvider &&
+        other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetDownloadState notifier,
   ) {
     return notifier.build(
       modelManga: modelManga,

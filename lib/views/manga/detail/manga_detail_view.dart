@@ -55,33 +55,24 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   bool _expanded = false;
   ScrollController _scrollController = ScrollController();
 
-  late int _pageLength = ref
-          .watch(
-              chapterFilterResultStateProvider(modelManga: widget.modelManga!))
-          .chapters!
-          .length +
-      1;
-  late List<ModelChapters>? _chapters = ref
-      .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!))
-      .chapters;
-  late ModelManga? _modelManga = ref
-      .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!));
+  List<ModelChapters>? _chapters;
+  ModelManga? _modelManga;
+  int? _pageLength;
 
-  _refreshData() {
-    final modelManga = ref.watch(
-        chapterFilterResultStateProvider(modelManga: widget.modelManga!));
-    if (mounted) {
-      setState(() {
-        _pageLength = modelManga.chapters!.length + 1;
-        _chapters = modelManga.chapters;
-        _modelManga = modelManga;
-      });
-    }
-  }
-
-  bool isRefresh = false;
   @override
   Widget build(BuildContext context) {
+    _chapters = ref
+        .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!))
+        .chapters;
+    _modelManga = ref.watch(
+        chapterFilterResultStateProvider(modelManga: widget.modelManga!));
+
+    _pageLength = ref
+            .watch(chapterFilterResultStateProvider(
+                modelManga: widget.modelManga!))
+            .chapters!
+            .length +
+        1;
     final chapterNameList = ref.watch(chapterNameListStateProvider);
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final reverse =
@@ -263,17 +254,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             if (index == 0) {
                               return _bodyContainer();
                             }
-                            if (isRefresh) {
-                              final modelManga = ref.watch(
-                                  chapterFilterResultStateProvider(
-                                      modelManga: widget.modelManga!));
-
-                              _pageLength = modelManga.chapters!.length + 1;
-                              _chapters = modelManga.chapters;
-                              _modelManga = modelManga;
-                              isRefresh = false;
-                            }
-
                             int reverseIndex = _chapters!.length -
                                 _chapters!.reversed.toList().indexOf(
                                     _chapters!.reversed.toList()[finalIndex]) -
@@ -311,52 +291,20 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     height: 70,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent),
+                            elevation: 0, backgroundColor: Colors.transparent),
                         onPressed: () async {
-                          for (var name in chapterNameList) {
-                            List<ModelChapters> chap = [];
-                            for (var i = 0;
-                                i < widget.modelManga!.chapters!.length;
-                                i++) {
-                              final entries = ref
-                                  .watch(hiveBoxManga)
-                                  .values
-                                  .where((element) =>
-                                      '${element.lang}-${element.link}' ==
-                                      '${widget.modelManga!.lang}-${widget.modelManga!.link}')
-                                  .toList()
-                                  .first;
-                              chap.add(ModelChapters(
-                                  name: entries.chapters![i].name,
-                                  url: entries.chapters![i].url,
-                                  dateUpload: entries.chapters![i].dateUpload,
-                                  isBookmarked:
-                                      name == entries.chapters![i].name
-                                          ? entries.chapters![i].isBookmarked
-                                              ? false
-                                              : true
-                                          : entries.chapters![i].isBookmarked,
-                                  scanlator: entries.chapters![i].scanlator,
-                                  isRead: entries.chapters![i].isRead,
-                                  lastPageRead:
-                                      entries.chapters![i].lastPageRead));
-                            }
+                          ref
+                              .read(chapterSetIsBookmarkStateProvider(
+                                      modelManga: widget.modelManga!)
+                                  .notifier)
+                              .set();
+                          ref
+                              .read(chapterNameListStateProvider.notifier)
+                              .clear();
 
-                            // print(chapterNameList);
-                            final model = modelMangaWithNewChapValue(
-                                modelManga: widget.modelManga!, chapters: chap);
-                            ref.watch(hiveBoxManga).put(
-                                '${widget.modelManga!.lang}-${widget.modelManga!.link}',
-                                model);
-                            ref
-                                .read(chapterNameListStateProvider.notifier)
-                                .clear();
-
-                            ref
-                                .read(isLongPressedStateProvider.notifier)
-                                .update(false);
-                            isRefresh = true;
-                          }
+                          ref
+                              .read(isLongPressedStateProvider.notifier)
+                              .update(false);
                         },
                         child: Icon(chapter.isBookmarked
                             ? Icons.bookmark_remove
@@ -368,50 +316,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     height: 70,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent),
+                            elevation: 0, backgroundColor: Colors.transparent),
                         onPressed: () {
-                          for (var name in chapterNameList) {
-                            List<ModelChapters> chap = [];
-                            for (var i = 0;
-                                i < widget.modelManga!.chapters!.length;
-                                i++) {
-                              final entries = ref
-                                  .watch(hiveBoxManga)
-                                  .values
-                                  .where((element) =>
-                                      '${element.lang}-${element.link}' ==
-                                      '${widget.modelManga!.lang}-${widget.modelManga!.link}')
-                                  .toList()
-                                  .first;
-                              chap.add(ModelChapters(
-                                  name: entries.chapters![i].name,
-                                  url: entries.chapters![i].url,
-                                  dateUpload: entries.chapters![i].dateUpload,
-                                  isBookmarked:
-                                      entries.chapters![i].isBookmarked,
-                                  scanlator: entries.chapters![i].scanlator,
-                                  isRead: name == entries.chapters![i].name
-                                      ? entries.chapters![i].isRead
-                                          ? false
-                                          : true
-                                      : entries.chapters![i].isRead,
-                                  lastPageRead:
-                                      entries.chapters![i].lastPageRead));
-                            }
-
-                            final model = modelMangaWithNewChapValue(
-                                modelManga: widget.modelManga!, chapters: chap);
-                            ref.watch(hiveBoxManga).put(
-                                '${widget.modelManga!.lang}-${widget.modelManga!.link}',
-                                model);
-                            ref
-                                .read(chapterNameListStateProvider.notifier)
-                                .clear();
-                            ref
-                                .read(isLongPressedStateProvider.notifier)
-                                .update(false);
-                            isRefresh = true;
-                          }
+                          ref
+                              .read(chapterSetIsReadStateProvider(
+                                      modelManga: widget.modelManga!)
+                                  .notifier)
+                              .set();
+                          ref
+                              .read(chapterNameListStateProvider.notifier)
+                              .clear();
+                          ref
+                              .read(isLongPressedStateProvider.notifier)
+                              .update(false);
                         },
                         child: Icon(chapter.isRead
                             ? Icons.remove_done_sharp
@@ -423,40 +340,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     height: 70,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent),
+                            elevation: 0, backgroundColor: Colors.transparent),
                         onPressed: () {
-                          List<int> indexList = [];
-                          for (var name in chapterNameList) {
-                            for (var i = 0;
-                                i < widget.modelManga!.chapters!.length;
-                                i++) {
-                              if (widget.modelManga!.chapters![i].name ==
-                                  name) {
-                                indexList.add(i);
-                              }
-                            }
-                          }
-
-                          for (var idx in indexList) {
-                            final entries = ref
-                                .watch(hiveBoxMangaDownloads)
-                                .values
-                                .where((element) =>
-                                    element.modelManga.chapters![element.index]
-                                        .name ==
-                                    widget.modelManga!.chapters![idx].name)
-                                .toList();
-                            if (entries.isEmpty) {
-                              ref.watch(downloadChapterProvider(
-                                  modelManga: widget.modelManga!, index: idx));
-                            } else {
-                              if (!entries.first.isDownload) {
-                                ref.watch(downloadChapterProvider(
-                                    modelManga: widget.modelManga!,
-                                    index: idx));
-                              }
-                            }
-                          }
+                          ref
+                              .read(chapterSetDownloadStateProvider(
+                                      modelManga: widget.modelManga!)
+                                  .notifier)
+                              .set();
                           ref
                               .read(isLongPressedStateProvider.notifier)
                               .update(false);
@@ -517,7 +407,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       widget.modelManga!)
                                               .notifier)
                                       .update();
-                                  _refreshData();
                                 }),
                             ListTileChapterFilter(
                                 label: "Unread",
@@ -530,7 +419,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               modelManga: widget.modelManga!)
                                           .notifier)
                                       .update();
-                                  _refreshData();
                                 }),
                             ListTileChapterFilter(
                                 label: "Bookmarked",
@@ -545,7 +433,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       widget.modelManga!)
                                               .notifier)
                                       .update();
-                                  _refreshData();
                                 }),
                           ],
                         );
@@ -737,7 +624,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
-                                '${(_pageLength - 1)} chapters',
+                                '${(_pageLength! - 1)} chapters',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),

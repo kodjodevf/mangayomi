@@ -16,9 +16,7 @@ class MoreScreen extends StatelessWidget {
             flex: 3,
             child: Column(
               children: [
-                const Divider(
-                  color: Colors.grey,
-                ),
+                const Divider(),
                 // ListTile(
                 //   onTap: () {},
                 //   leading:
@@ -31,9 +29,7 @@ class MoreScreen extends StatelessWidget {
                 //   ),
                 // ),
                 const IncognitoModeWidget(),
-                const Divider(
-                  color: Colors.grey,
-                ),
+                const Divider(),
                 ListTileWidget(
                   onTap: () {
                     context.push('/downloadQueue');
@@ -41,16 +37,14 @@ class MoreScreen extends StatelessWidget {
                   icon: Icons.download_outlined,
                   title: 'Donwload queue',
                 ),
-
-                // ListTile(
-                //   onTap: () {},
-                //   leading: Container(
-                //     height: 20,
-                //     width: 20,
-                //     color: Colors.grey,
-                //   ),
-                //   title: const Text('Categories'),
-                // ),
+                ListTileWidget(
+                  onTap: () {
+                    context.push('/settings');
+                  },
+                  icon: Icons.label_rounded,
+                  title: 'Categories',
+                ),
+                const Divider(),
                 // ListTile(
                 //   onTap: () {},
                 //   leading: Container(

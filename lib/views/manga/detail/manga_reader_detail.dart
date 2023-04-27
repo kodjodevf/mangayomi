@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,6 +52,15 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                 .then((value) {
               if (value.chapters.isNotEmpty &&
                   value.chapters.length > widget.modelManga.chapters!.length) {
+                List<ModelChapters>? chapters = [];
+                for (var chap in widget.modelManga.chapters!) {
+                  chapters.add(chap);
+                }
+                int newChapsSize =
+                    value.chapters.length - widget.modelManga.chapters!.length;
+                for (var i = 0; i < newChapsSize; i++) {
+                  chapters.insert(i, value.chapters[i]);
+                }
                 final model = ModelManga(
                     imageUrl: widget.modelManga.imageUrl,
                     name: widget.modelManga.name,
@@ -63,7 +74,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     lang: widget.modelManga.lang,
                     dateAdded: widget.modelManga.dateAdded,
                     lastUpdate: DateTime.now().microsecondsSinceEpoch,
-                    chapters: value.chapters,
+                    chapters: chapters,
                     category: widget.modelManga.category,
                     lastRead: widget.modelManga.lastRead);
                 ref.watch(hiveBoxManga).put(
