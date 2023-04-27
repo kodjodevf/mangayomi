@@ -93,7 +93,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               ),
                               TextButton(
                                   onPressed: () {
-                                    ref.watch(hiveBoxMangaHistory).clear();
+                                    ref.watch(hiveBoxMangaHistoryProvider).clear();
                                     Navigator.pop(context);
                                   },
                                   child: const Text("Ok")),
@@ -110,7 +110,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: ValueListenableBuilder<Box<MangaHistoryModel>>(
-          valueListenable: ref.watch(hiveBoxMangaHistory).listenable(),
+          valueListenable: ref.watch(hiveBoxMangaHistoryProvider).listenable(),
           builder: (context, value, child) {
             final entries = value.values.toList();
             entriesData = value.values.toList();
@@ -156,7 +156,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         Flexible(
                           child: ValueListenableBuilder<Box>(
                             valueListenable:
-                                ref.watch(hiveBoxMangaInfo).listenable(),
+                                ref.watch(hiveBoxMangaInfoProvider).listenable(),
                             builder: (context, value, child) {
                               final values = value.get(
                                   "${element.modelManga.lang}-${element.modelManga.source}/${element.modelManga.name}-chapter_index",
@@ -254,7 +254,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                             onPressed: () {
                                                               ref
                                                                   .watch(
-                                                                      hiveBoxMangaHistory)
+                                                                      hiveBoxMangaHistoryProvider)
                                                                   .delete(
                                                                       '${element.modelManga.lang}-${element.modelManga.link}');
                                                               Navigator.pop(

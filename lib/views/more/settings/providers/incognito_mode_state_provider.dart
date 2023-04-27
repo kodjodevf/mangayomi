@@ -7,12 +7,12 @@ class IncognitoModeState extends _$IncognitoModeState {
   @override
   bool build() {
     return ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .get('incognitoMode', defaultValue: false)!;
   }
 
   void setIncognitoMode(bool value) {
     state = value;
-    ref.watch(hiveBoxSettings).put('incognitoMode', state);
+    ref.watch(hiveBoxSettingsProvider).put('incognitoMode', state);
   }
 }

@@ -93,7 +93,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         ],
       ),
       body: ValueListenableBuilder<Box<ModelManga>>(
-        valueListenable: ref.watch(hiveBoxManga).listenable(),
+        valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
         builder: (context, value, child) {
           entries = value.values.where((element) => element.favorite).toList();
           final data =

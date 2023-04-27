@@ -39,7 +39,7 @@ class MoreScreen extends StatelessWidget {
                 ),
                 ListTileWidget(
                   onTap: () {
-                    context.push('/settings');
+                    context.push('/categories');
                   },
                   icon: Icons.label_rounded,
                   title: 'Categories',

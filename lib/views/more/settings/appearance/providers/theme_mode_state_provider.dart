@@ -7,16 +7,16 @@ part 'theme_mode_state_provider.g.dart';
 class ThemeModeState extends _$ThemeModeState {
   @override
   bool build() {
-    return ref.watch(hiveBoxSettings).get('isLight', defaultValue: true)!;
+    return ref.watch(hiveBoxSettingsProvider).get('isLight', defaultValue: true)!;
   }
 
   void setLightTheme() {
     state = true;
-    ref.watch(hiveBoxSettings).put('isLight', state);
+    ref.watch(hiveBoxSettingsProvider).put('isLight', state);
   }
 
   void setDarkTheme() {
     state = false;
-    ref.watch(hiveBoxSettings).put('isLight', state);
+    ref.watch(hiveBoxSettingsProvider).put('isLight', state);
   }
 }

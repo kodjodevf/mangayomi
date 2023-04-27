@@ -12,7 +12,7 @@ class DownloadQueueScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ValueListenableBuilder<Box<DownloadModel>>(
-      valueListenable: ref.watch(hiveBoxMangaDownloads).listenable(),
+      valueListenable: ref.watch(hiveBoxMangaDownloadsProvider).listenable(),
       builder: (context, val, child) {
         final entries = val.values
             .where(
@@ -117,7 +117,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                   .then((value) async {
                                 await Future.delayed(
                                     const Duration(seconds: 1));
-                                ref.watch(hiveBoxMangaDownloads).delete(
+                                ref.watch(hiveBoxMangaDownloadsProvider).delete(
                                       element.modelManga
                                           .chapters![element.index].name,
                                     );

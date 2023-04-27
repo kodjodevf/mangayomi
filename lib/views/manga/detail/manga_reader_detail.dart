@@ -77,7 +77,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     chapters: chapters,
                     category: widget.modelManga.category,
                     lastRead: widget.modelManga.lastRead);
-                ref.watch(hiveBoxManga).put(
+                ref.watch(hiveBoxMangaProvider).put(
                     '${widget.modelManga.lang}-${widget.modelManga.link}',
                     model);
               }
@@ -97,7 +97,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
           }
         },
         child: ValueListenableBuilder<Box<ModelManga>>(
-          valueListenable: ref.watch(hiveBoxManga).listenable(),
+          valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
           builder: (context, value, child) {
             final entries = value.values
                 .where((element) =>

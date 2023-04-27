@@ -8,6 +8,7 @@ class HiveConstant {
   static String get hiveBoxDownloads => "_manga_box_downloads_";
   static String get hiveBoxReaderSettings => "_reader_box_settings_";
   static String get hiveBoxReaderMode => "_readerMode_box_settings_";
+  static String get hiveBoxCategories => "_manga_box_categorie_";
 }
 
 const defaultUserAgent =

@@ -21,7 +21,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
   @override
   Widget build(BuildContext context) {
     int selected =
-        ref.watch(hiveBoxSettings).get('FlexColorIndex', defaultValue: 7);
+        ref.watch(hiveBoxSettingsProvider).get('FlexColorIndex', defaultValue: 7);
     const double height = 45;
     const double width = height * 1.5;
     final ThemeData theme = Theme.of(context);

@@ -28,7 +28,7 @@ class CurrentIndex extends _$CurrentIndex {
     final modelManga = mangaReaderModel.modelManga;
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaInfo).get(
+      return ref.watch(hiveBoxMangaInfoProvider).get(
           "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![mangaReaderModel.index].name}-page_index",
           defaultValue: 0);
     }
@@ -50,14 +50,14 @@ class ReaderController extends _$ReaderController {
   }
 
   ReaderMode getReaderMode() {
-    return ref.watch(hiveBoxReaderMode).get(
+    return ref.watch(hiveBoxReaderModeProvider).get(
                 "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
                 defaultValue: null) !=
             null
-        ? ref.watch(hiveBoxReaderMode).get(
+        ? ref.watch(hiveBoxReaderModeProvider).get(
               "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
             )!
-        : ref.watch(hiveBoxReaderMode).get("globalMangaReaderModeValue",
+        : ref.watch(hiveBoxReaderModeProvider).get("globalMangaReaderModeValue",
             defaultValue: ReaderMode.vertical)!;
   }
 
@@ -74,7 +74,7 @@ class ReaderController extends _$ReaderController {
   }
 
   void setReaderMode(ReaderMode newReaderMode) {
-    ref.watch(hiveBoxReaderMode).put(
+    ref.watch(hiveBoxReaderModeProvider).put(
         "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
         newReaderMode);
   }
@@ -83,7 +83,7 @@ class ReaderController extends _$ReaderController {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       ref
-          .watch(hiveBoxMangaInfo)
+          .watch(hiveBoxMangaInfoProvider)
           .put("${getSourceName()}/${getMangaName()}-showPagesNumber", value);
     }
   }
@@ -91,7 +91,7 @@ class ReaderController extends _$ReaderController {
   bool getShowPageNumber() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaInfo).get(
+      return ref.watch(hiveBoxMangaInfoProvider).get(
           "${getSourceName()}/${getMangaName()}-showPagesNumber",
           defaultValue: true);
     }
@@ -101,7 +101,7 @@ class ReaderController extends _$ReaderController {
   void setMangaHistoryUpdate() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaHistory).put(
+      ref.watch(hiveBoxMangaHistoryProvider).put(
           '${getModelManga().lang}-${getModelManga().link}',
           MangaHistoryModel(
               date: DateTime.now().toString(), modelManga: getModelManga()));
@@ -141,7 +141,7 @@ class ReaderController extends _$ReaderController {
           category: getModelManga().category,
           lastRead: getModelManga().lastRead);
       ref
-          .watch(hiveBoxManga)
+          .watch(hiveBoxMangaProvider)
           .put('${getModelManga().lang}-${getModelManga().link}', model);
     }
   }
@@ -180,14 +180,14 @@ class ReaderController extends _$ReaderController {
           category: getModelManga().category,
           lastRead: getModelManga().lastRead);
       ref
-          .watch(hiveBoxManga)
+          .watch(hiveBoxMangaProvider)
           .put('${getModelManga().lang}-${getModelManga().link}', model);
     }
   }
 
   bool getChapterBookmarked() {
     return ref
-        .watch(hiveBoxManga)
+        .watch(hiveBoxMangaProvider)
         .get('${getModelManga().lang}-${getModelManga().link}',
             defaultValue: getModelManga())!
         .chapters![getChapterIndex()]
@@ -201,7 +201,7 @@ class ReaderController extends _$ReaderController {
   void setChapterIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaInfo).put(
+      ref.watch(hiveBoxMangaInfoProvider).put(
           "${getSourceName()}/${getMangaName()}-chapter_index",
           mangaReaderModel.index.toString());
     }
@@ -210,7 +210,7 @@ class ReaderController extends _$ReaderController {
   int getPageIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaInfo).get(
+      return ref.watch(hiveBoxMangaInfoProvider).get(
           "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
           defaultValue: 0);
     }
@@ -220,7 +220,7 @@ class ReaderController extends _$ReaderController {
   int getPageLength(List incognitoPageLength) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      List<dynamic> page = ref.watch(hiveBoxMangaInfo).get(
+      List<dynamic> page = ref.watch(hiveBoxMangaInfoProvider).get(
             "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-pageurl",
           );
       return page.length;
@@ -231,7 +231,7 @@ class ReaderController extends _$ReaderController {
   void setPageIndex(int newIndex) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaInfo).put(
+      ref.watch(hiveBoxMangaInfoProvider).put(
           "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
           newIndex);
     }

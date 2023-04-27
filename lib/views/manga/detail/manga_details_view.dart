@@ -52,13 +52,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    final manga = ref.watch(hiveBoxManga);
+    final manga = ref.watch(hiveBoxMangaProvider);
     return Scaffold(
       floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
           : widget.modelManga.chapters!.isNotEmpty
               ? ValueListenableBuilder<Box>(
-                  valueListenable: ref.watch(hiveBoxMangaInfo).listenable(),
+                  valueListenable: ref.watch(hiveBoxMangaInfoProvider).listenable(),
                   builder: (context, value, child) {
                     final entries = value.get(
                         "${widget.modelManga.lang}-${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
@@ -207,7 +207,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           ],
         ),
         action: ValueListenableBuilder<Box<ModelManga>>(
-          valueListenable: ref.watch(hiveBoxManga).listenable(),
+          valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
           builder: (context, value, child) {
             final entries = value.values
                 .where((element) =>

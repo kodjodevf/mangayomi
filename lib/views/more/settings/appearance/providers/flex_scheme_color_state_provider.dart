@@ -11,19 +11,19 @@ class FlexSchemeColorState extends _$FlexSchemeColorState {
     return ref.read(themeModeStateProvider)
         ? ThemeAA
             .schemes[ref
-                .watch(hiveBoxSettings)
+                .watch(hiveBoxSettingsProvider)
                 .get('FlexColorIndex', defaultValue: 2)]
             .light
         : ThemeAA
             .schemes[ref
-                .watch(hiveBoxSettings)
+                .watch(hiveBoxSettingsProvider)
                 .get('FlexColorIndex', defaultValue: 2)]
             .dark;
   }
 
   void setTheme(FlexSchemeColor color, int index) {
     state = color;
-    ref.watch(hiveBoxSettings).put('FlexColorIndex', index);
+    ref.watch(hiveBoxSettingsProvider).put('FlexColorIndex', index);
   }
 }
 

@@ -133,7 +133,7 @@ Future<List<dynamic>> downloadChapter(DownloadChapterRef ref,
           isStartDownload: false);
 
       ref
-          .watch(hiveBoxMangaDownloads)
+          .watch(hiveBoxMangaDownloadsProvider)
           .put(modelManga.chapters![index].name!, model);
     } else {
       await FileDownloader().downloadBatch(

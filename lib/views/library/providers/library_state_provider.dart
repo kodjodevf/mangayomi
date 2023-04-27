@@ -8,13 +8,13 @@ class LibraryReverseListState extends _$LibraryReverseListState {
   @override
   bool build() {
     return ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .get('libraryReverseList', defaultValue: false)!;
   }
 
   void setLibraryReverseList(bool value) {
     state = value;
-    ref.watch(hiveBoxSettings).put('libraryReverseList', value);
+    ref.watch(hiveBoxSettingsProvider).put('libraryReverseList', value);
   }
 }
 
@@ -23,7 +23,7 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   @override
   String build() {
     return ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .get('displayType', defaultValue: DisplayType.coverOnlyGrid.name)!;
   }
 
@@ -49,7 +49,7 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
 
   void setLibraryDisplayType(DisplayType displayType) {
     state = displayType.name;
-    ref.watch(hiveBoxSettings).put('displayType', displayType.name);
+    ref.watch(hiveBoxSettingsProvider).put('displayType', displayType.name);
   }
 }
 
@@ -70,12 +70,12 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
 
   int getType() {
     return ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .get("filterMangaDownload", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put("filterMangaDownload", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangaDownload", type);
     state = type;
   }
 
@@ -85,7 +85,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
         List list = [];
         for (var chap in element.chapters!) {
           final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloads)
+              .watch(hiveBoxMangaDownloadsProvider)
               .get(chap.name, defaultValue: null);
           if (modelChapDownload != null &&
               modelChapDownload.isDownload == true) {
@@ -101,7 +101,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
         List list = [];
         for (var chap in element.chapters!) {
           final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloads)
+              .watch(hiveBoxMangaDownloadsProvider)
               .get(chap.name, defaultValue: null);
           if (modelChapDownload == null ||
               modelChapDownload.isDownload == false) {
@@ -122,7 +122,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
         List list = [];
         for (var chap in element.chapters!) {
           final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloads)
+              .watch(hiveBoxMangaDownloadsProvider)
               .get(chap.name, defaultValue: null);
           if (modelChapDownload != null &&
               modelChapDownload.isDownload == true) {
@@ -138,7 +138,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
         List list = [];
         for (var chap in element.chapters!) {
           final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloads)
+              .watch(hiveBoxMangaDownloadsProvider)
               .get(chap.name, defaultValue: null);
           if (modelChapDownload == null ||
               modelChapDownload.isDownload == false) {
@@ -165,11 +165,11 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettings).get("filterMangaUnread", defaultValue: 0);
+    return ref.watch(hiveBoxSettingsProvider).get("filterMangaUnread", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put("filterMangaUnread", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangaUnread", type);
     state = type;
   }
 
@@ -242,11 +242,11 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettings).get("filterMangaStated", defaultValue: 0);
+    return ref.watch(hiveBoxSettingsProvider).get("filterMangaStated", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put("filterMangaStated", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangaStated", type);
     state = type;
   }
 
@@ -320,12 +320,12 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
 
   int getType() {
     return ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .get("filterMangaBookMarked", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put("filterMangaBookMarked", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangaBookMarked", type);
     state = type;
   }
 

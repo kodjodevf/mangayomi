@@ -19,6 +19,7 @@ import 'package:mangayomi/views/more/about_screen.dart';
 import 'package:mangayomi/views/more/download_queue/download_queue_screen.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
 import 'package:mangayomi/views/more/settings/appearance/appearance_screen.dart';
+import 'package:mangayomi/views/more/settings/categoties/categories_screen.dart';
 import 'package:mangayomi/views/more/settings/settings_screen.dart';
 import 'package:mangayomi/views/updates/updates_screen.dart';
 
@@ -264,6 +265,19 @@ class AsyncRouterNotifier extends ChangeNotifier {
                 url: data["url"]!,
                 source: data["source"]!,
               ),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/categories",
+          name: "categories",
+          builder: (context, state) {
+            return const CategoriesScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const CategoriesScreen(),
             );
           },
         ),

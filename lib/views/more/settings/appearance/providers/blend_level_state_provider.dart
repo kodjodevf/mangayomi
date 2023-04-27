@@ -6,11 +6,11 @@ part 'blend_level_state_provider.g.dart';
 class BlendLevelState extends _$BlendLevelState {
   @override
   double build() {
-    return ref.watch(hiveBoxSettings).get('blendLevel', defaultValue: 10.0)!;
+    return ref.watch(hiveBoxSettingsProvider).get('blendLevel', defaultValue: 10.0)!;
   }
 
   void setBlendLevel(double blendLevelValue) {
     state = blendLevelValue;
-    ref.watch(hiveBoxSettings).put('blendLevel', state);
+    ref.watch(hiveBoxSettingsProvider).put('blendLevel', state);
   }
 }

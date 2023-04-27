@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/model_manga.dart';
@@ -30,6 +31,7 @@ void main() async {
   Hive.registerAdapter(TypeSourceAdapter());
   Hive.registerAdapter(DownloadModelAdapter());
   Hive.registerAdapter(ModelChaptersAdapter());
+  Hive.registerAdapter(CategoriesModelAdapter());
   await Hive.openBox<ModelManga>(HiveConstant.hiveBoxManga);
   await Hive.openBox<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
   await Hive.openBox<ReaderMode>(HiveConstant.hiveBoxReaderMode);
@@ -38,6 +40,7 @@ void main() async {
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
   await Hive.openBox(HiveConstant.hiveBoxMangaFilter);
   await Hive.openBox(HiveConstant.hiveBoxAppSettings);
+  await Hive.openBox(HiveConstant.hiveBoxCategories);
   runApp(const ProviderScope(child: MyApp()));
 }
 

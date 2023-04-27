@@ -516,7 +516,11 @@ class _MangaChapterPageGalleryState
                                                     .getPageLength(widget.url) -
                                                 1,
                                             1),
-                                        value: _currentIndex.toDouble(),
+                                        value: min(
+                                            _currentIndex.toDouble(),
+                                            widget.readerController
+                                                .getPageLength(widget.url)
+                                                .toDouble()),
                                         min: 0,
                                         max: (widget.readerController
                                                     .getPageLength(widget.url) -

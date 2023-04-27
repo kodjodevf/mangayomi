@@ -95,14 +95,14 @@ class IsExtendedState extends _$IsExtendedState {
 class ReverseMangaState extends _$ReverseMangaState {
   @override
   bool build({required ModelManga modelManga}) {
-    return ref.watch(hiveBoxSettings).get(
+    return ref.watch(hiveBoxSettingsProvider).get(
         "${modelManga.source}/${modelManga.name}-reverseChapter",
         defaultValue: false);
   }
 
   void update(bool value) {
     ref
-        .watch(hiveBoxSettings)
+        .watch(hiveBoxSettingsProvider)
         .put("${modelManga.source}/${modelManga.name}-reverseChapter", value);
     state = value;
   }
@@ -117,13 +117,13 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettings).get(
+    return ref.watch(hiveBoxSettingsProvider).get(
         "${modelManga.source}/${modelManga.name}-filterChapterDownload",
         defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put(
+    ref.watch(hiveBoxSettingsProvider).put(
         "${modelManga.source}/${modelManga.name}-filterChapterDownload", type);
     state = type;
   }
@@ -134,7 +134,7 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
       final chapters = modelManga.chapters;
       for (var i = 0; i < chapters!.length; i++) {
         final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloads)
+            .watch(hiveBoxMangaDownloadsProvider)
             .get(chapters[i].name, defaultValue: null);
         if (modelChapDownload != null && modelChapDownload.isDownload == true) {
           chap.add(ModelChapters(
@@ -156,7 +156,7 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
       final chapters = modelManga.chapters;
       for (var i = 0; i < chapters!.length; i++) {
         final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloads)
+            .watch(hiveBoxMangaDownloadsProvider)
             .get(chapters[i].name, defaultValue: null);
         if (!(modelChapDownload != null &&
             modelChapDownload.isDownload == true)) {
@@ -185,7 +185,7 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
       final chapters = modelManga.chapters;
       for (var i = 0; i < chapters!.length; i++) {
         final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloads)
+            .watch(hiveBoxMangaDownloadsProvider)
             .get(chapters[i].name, defaultValue: null);
         if (modelChapDownload != null && modelChapDownload.isDownload == true) {
           chap.add(ModelChapters(
@@ -207,7 +207,7 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
       final chapters = modelManga.chapters;
       for (var i = 0; i < chapters!.length; i++) {
         final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloads)
+            .watch(hiveBoxMangaDownloadsProvider)
             .get(chapters[i].name, defaultValue: null);
         if (!(modelChapDownload != null &&
             modelChapDownload.isDownload == true)) {
@@ -241,13 +241,13 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettings).get(
+    return ref.watch(hiveBoxSettingsProvider).get(
         "${modelManga.source}/${modelManga.name}-filterChapterUnread",
         defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put(
+    ref.watch(hiveBoxSettingsProvider).put(
         "${modelManga.source}/${modelManga.name}-filterChapterUnread", type);
     state = type;
   }
@@ -351,13 +351,13 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettings).get(
+    return ref.watch(hiveBoxSettingsProvider).get(
         "${modelManga.source}/${modelManga.name}-filterChapterBookMark",
         defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettings).put(
+    ref.watch(hiveBoxSettingsProvider).put(
         "${modelManga.source}/${modelManga.name}-filterChapterBookMark", type);
     state = type;
   }
@@ -521,7 +521,7 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
       List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
         final entries = ref
-            .watch(hiveBoxManga)
+            .watch(hiveBoxMangaProvider)
             .values
             .where((element) =>
                 '${element.lang}-${element.link}' ==
@@ -544,7 +544,7 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       ref
-          .watch(hiveBoxManga)
+          .watch(hiveBoxMangaProvider)
           .put('${modelManga.lang}-${modelManga.link}', model);
     }
   }
@@ -560,7 +560,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
       List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
         final entries = ref
-            .watch(hiveBoxManga)
+            .watch(hiveBoxMangaProvider)
             .values
             .where((element) =>
                 '${element.lang}-${element.link}' ==
@@ -584,7 +584,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       ref
-          .watch(hiveBoxManga)
+          .watch(hiveBoxMangaProvider)
           .put('${modelManga.lang}-${modelManga.link}', model);
     }
   }
@@ -606,7 +606,7 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
     }
     for (var idx in indexList) {
       final entries = ref
-          .watch(hiveBoxMangaDownloads)
+          .watch(hiveBoxMangaDownloadsProvider)
           .values
           .where((element) =>
               element.modelManga.chapters![element.index].name ==

@@ -57,11 +57,11 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       path!.deleteSync(recursive: true);
-      ref.watch(hiveBoxMangaDownloads).delete(
+      ref.watch(hiveBoxMangaDownloadsProvider).delete(
             widget.modelManga.chapters![widget.index].name!,
           );
     } catch (e) {
-      ref.watch(hiveBoxMangaDownloads).delete(
+      ref.watch(hiveBoxMangaDownloadsProvider).delete(
             widget.modelManga.chapters![widget.index].name!,
           );
     }
@@ -77,7 +77,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
         child: ValueListenableBuilder<Box<DownloadModel>>(
-          valueListenable: ref.watch(hiveBoxMangaDownloads).listenable(),
+          valueListenable: ref.watch(hiveBoxMangaDownloadsProvider).listenable(),
           builder: (context, val, child) {
             final entries = val.values
                 .where((element) =>
@@ -129,7 +129,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     .then((value) async {
                                   await Future.delayed(
                                       const Duration(seconds: 1));
-                                  ref.watch(hiveBoxMangaDownloads).delete(
+                                  ref.watch(hiveBoxMangaDownloadsProvider).delete(
                                         widget.modelManga
                                             .chapters![widget.index].name,
                                       );
@@ -206,7 +206,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                         .then((value) async {
                                       await Future.delayed(
                                           const Duration(seconds: 1));
-                                      ref.watch(hiveBoxMangaDownloads).delete(
+                                      ref.watch(hiveBoxMangaDownloadsProvider).delete(
                                             widget.modelManga
                                                 .chapters![widget.index].name,
                                           );
@@ -245,7 +245,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     ),
                                     onSelected: (value) {
                                       if (value.toString() == 'Retry') {
-                                        ref.watch(hiveBoxMangaDownloads).delete(
+                                        ref.watch(hiveBoxMangaDownloadsProvider).delete(
                                               widget.modelManga
                                                   .chapters![widget.index].name,
                                             );
@@ -280,7 +280,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                               .cancelTasksWithIds(taskIds)
                               .then((value) async {
                             await Future.delayed(const Duration(seconds: 1));
-                            ref.watch(hiveBoxMangaDownloads).delete(
+                            ref.watch(hiveBoxMangaDownloadsProvider).delete(
                                   widget
                                       .modelManga.chapters![widget.index].name!,
                                 );
