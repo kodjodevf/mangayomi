@@ -58,7 +58,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           ? null
           : widget.modelManga.chapters!.isNotEmpty
               ? ValueListenableBuilder<Box>(
-                  valueListenable: ref.watch(hiveBoxMangaInfoProvider).listenable(),
+                  valueListenable:
+                      ref.watch(hiveBoxMangaInfoProvider).listenable(),
                   builder: (context, value, child) {
                     final entries = value.get(
                         "${widget.modelManga.lang}-${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
@@ -227,8 +228,25 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         elevation: 0),
                     onPressed: () {
                       _setFavorite(false);
-                      manga.delete(
-                          '${widget.modelManga.lang}-${widget.modelManga.link}');
+                      final model = ModelManga(
+                          imageUrl: widget.modelManga.imageUrl,
+                          name: widget.modelManga.name,
+                          genre: widget.modelManga.genre,
+                          author: widget.modelManga.author,
+                          status: widget.modelManga.status,
+                          description: widget.modelManga.description,
+                          favorite: false,
+                          link: widget.modelManga.link,
+                          source: widget.modelManga.source,
+                          lang: widget.modelManga.lang,
+                          dateAdded: widget.modelManga.dateAdded,
+                          lastUpdate: widget.modelManga.lastUpdate,
+                          chapters: widget.modelManga.chapters,
+                          category: widget.modelManga.category,
+                          lastRead: widget.modelManga.lastRead);
+                      manga.put(
+                          '${widget.modelManga.lang}-${widget.modelManga.link}',
+                          model);
                     },
                     child: Column(
                       children: const [

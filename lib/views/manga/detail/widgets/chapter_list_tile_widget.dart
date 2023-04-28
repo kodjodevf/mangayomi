@@ -13,18 +13,19 @@ class ChapterListTileWidget extends ConsumerWidget {
   final bool reverse;
   final int reverseIndex;
   final int finalIndex;
-  final bool isLongPressed;
-  const ChapterListTileWidget(
-      {super.key,
-      required this.chapters,
-      required this.modelManga,
-      required this.reverse,
-      required this.reverseIndex,
-      required this.finalIndex,
-      required this.isLongPressed});
+
+  const ChapterListTileWidget({
+    super.key,
+    required this.chapters,
+    required this.modelManga,
+    required this.reverse,
+    required this.reverseIndex,
+    required this.finalIndex,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     final idx = reverse ? reverseIndex : finalIndex;
     final chapterNameList = ref.watch(chapterNameListStateProvider);
     final chapterName = modelManga.chapters![idx].name;

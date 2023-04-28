@@ -40,7 +40,7 @@ void main() async {
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
   await Hive.openBox(HiveConstant.hiveBoxMangaFilter);
   await Hive.openBox(HiveConstant.hiveBoxAppSettings);
-  await Hive.openBox(HiveConstant.hiveBoxCategories);
+  await Hive.openBox<CategoriesModel>(HiveConstant.hiveBoxCategories);
   runApp(const ProviderScope(child: MyApp()));
 }
 

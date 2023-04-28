@@ -473,18 +473,13 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
   }
 
   bool isNotFiltering() {
-    final downloadFilterType = ref
-        .read(chapterFilterDownloadedStateProvider(modelManga: modelManga)
-            .notifier)
-        .getType();
-    final unreadFilterType = ref
-        .read(chapterFilterUnreadStateProvider(modelManga: modelManga).notifier)
-        .getType();
+    final downloadFilterType =
+        ref.watch(chapterFilterDownloadedStateProvider(modelManga: modelManga));
+    final unreadFilterType =
+        ref.watch(chapterFilterUnreadStateProvider(modelManga: modelManga));
 
-    final bookmarkedFilterType = ref
-        .read(chapterFilterBookmarkedStateProvider(modelManga: modelManga)
-            .notifier)
-        .getType();
+    final bookmarkedFilterType =
+        ref.watch(chapterFilterBookmarkedStateProvider(modelManga: modelManga));
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         bookmarkedFilterType == 0;
@@ -517,19 +512,14 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   build({required ModelManga modelManga}) {}
 
   set() {
+    final entries = ref
+        .watch(hiveBoxMangaProvider)
+        .get('${modelManga.lang}-${modelManga.link}', defaultValue: modelManga);
     for (var name in ref.watch(chapterNameListStateProvider)) {
       List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        final entries = ref
-            .watch(hiveBoxMangaProvider)
-            .values
-            .where((element) =>
-                '${element.lang}-${element.link}' ==
-                '${modelManga.lang}-${modelManga.link}')
-            .toList()
-            .first;
         chap.add(ModelChapters(
-            name: entries.chapters![i].name,
+            name: entries!.chapters![i].name,
             url: entries.chapters![i].url,
             dateUpload: entries.chapters![i].dateUpload,
             isBookmarked: name == entries.chapters![i].name
@@ -556,19 +546,14 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   build({required ModelManga modelManga}) {}
 
   set() {
+    final entries = ref
+        .watch(hiveBoxMangaProvider)
+        .get('${modelManga.lang}-${modelManga.link}', defaultValue: modelManga);
     for (var name in ref.watch(chapterNameListStateProvider)) {
       List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        final entries = ref
-            .watch(hiveBoxMangaProvider)
-            .values
-            .where((element) =>
-                '${element.lang}-${element.link}' ==
-                '${modelManga.lang}-${modelManga.link}')
-            .toList()
-            .first;
         chap.add(ModelChapters(
-            name: entries.chapters![i].name,
+            name: entries!.chapters![i].name,
             url: entries.chapters![i].url,
             dateUpload: entries.chapters![i].dateUpload,
             isBookmarked: entries.chapters![i].isBookmarked,

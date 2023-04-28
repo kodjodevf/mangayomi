@@ -73,15 +73,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             .chapters!
             .length +
         1;
-    final chapterNameList = ref.watch(chapterNameListStateProvider);
-    final isLongPressed = ref.watch(isLongPressedStateProvider);
+
     final reverse =
         ref.watch(reverseMangaStateProvider(modelManga: widget.modelManga!));
-    final chapter = ref.watch(chapterModelStateProvider);
-    final isNotFiltering = ref
-        .read(chapterFilterResultStateProvider(modelManga: widget.modelManga!)
-            .notifier)
-        .isNotFiltering();
+
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -93,274 +88,308 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           return true;
         },
         child: Scaffold(
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-              child: isLongPressed
-                  ? Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: AppBar(
-                        title: Text(chapterNameList.length.toString()),
-                        backgroundColor: generalColor(context).withOpacity(0.2),
-                        leading: IconButton(
-                            onPressed: () {
-                              ref
-                                  .read(chapterNameListStateProvider.notifier)
-                                  .clear();
+            extendBodyBehindAppBar: true,
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(AppBar().preferredSize.height),
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final isNotFiltering = ref
+                        .read(chapterFilterResultStateProvider(
+                                modelManga: widget.modelManga!)
+                            .notifier)
+                        .isNotFiltering();
+                    final isLongPressed = ref.watch(isLongPressedStateProvider);
+                    final chapterNameList =
+                        ref.watch(chapterNameListStateProvider);
+                    return isLongPressed
+                        ? Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            child: AppBar(
+                              title: Text(chapterNameList.length.toString()),
+                              backgroundColor:
+                                  generalColor(context).withOpacity(0.2),
+                              leading: IconButton(
+                                  onPressed: () {
+                                    ref
+                                        .read(chapterNameListStateProvider
+                                            .notifier)
+                                        .clear();
 
-                              ref
-                                  .read(isLongPressedStateProvider.notifier)
-                                  .update(!isLongPressed);
-                            },
-                            icon: const Icon(Icons.clear)),
-                        actions: [
-                          IconButton(
-                              onPressed: () {
-                                for (var i = 0;
-                                    i < widget.modelManga!.chapters!.length;
-                                    i++) {
-                                  ref
-                                      .read(
-                                          chapterNameListStateProvider.notifier)
-                                      .selectAll(widget
-                                          .modelManga!.chapters![i].name!);
-                                }
-                              },
-                              icon: const Icon(Icons.select_all)),
-                          IconButton(
-                              onPressed: () {
-                                if (widget.modelManga!.chapters!.length ==
-                                    chapterNameList.length) {
-                                  for (var i = 0;
-                                      i < widget.modelManga!.chapters!.length;
-                                      i++) {
                                     ref
-                                        .read(chapterNameListStateProvider
-                                            .notifier)
-                                        .selectSome(widget
-                                            .modelManga!.chapters![i].name!);
-                                  }
-                                  ref
-                                      .read(isLongPressedStateProvider.notifier)
-                                      .update(false);
-                                } else {
-                                  for (var i = 0;
-                                      i < widget.modelManga!.chapters!.length;
-                                      i++) {
-                                    ref
-                                        .read(chapterNameListStateProvider
-                                            .notifier)
-                                        .selectSome(widget
-                                            .modelManga!.chapters![i].name!);
-                                  }
-                                }
-                              },
-                              icon: const Icon(Icons.flip_to_back_rounded)),
-                        ],
-                      ),
-                    )
-                  : AppBar(
-                      title: ref.watch(offetProvider) > 200
-                          ? Text(
-                              widget.modelManga!.name!,
-                              style: const TextStyle(fontSize: 17),
-                            )
-                          : null,
-                      backgroundColor: ref.watch(offetProvider) == 0.0
-                          ? Colors.transparent
-                          : Theme.of(context).scaffoldBackgroundColor,
-                      actions: [
-                        IconButton(
-                            splashRadius: 20,
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.download_outlined,
-                            )),
-                        IconButton(
-                            splashRadius: 20,
-                            onPressed: () {
-                              _showDraggableMenu();
-                            },
-                            icon: Icon(
-                              Icons.filter_list_sharp,
-                              color: isNotFiltering ? null : Colors.yellow,
-                            )),
-                        PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem<int>(
-                                    value: 0, child: Text("Edit categories")),
-                                const PopupMenuItem<int>(
-                                    value: 0, child: Text("Migrate")),
-                                const PopupMenuItem<int>(
-                                    value: 0, child: Text("Share")),
-                              ];
-                            },
-                            onSelected: (value) {}),
+                                        .read(
+                                            isLongPressedStateProvider.notifier)
+                                        .update(!isLongPressed);
+                                  },
+                                  icon: const Icon(Icons.clear)),
+                              actions: [
+                                IconButton(
+                                    onPressed: () {
+                                      for (var i = 0;
+                                          i <
+                                              widget
+                                                  .modelManga!.chapters!.length;
+                                          i++) {
+                                        ref
+                                            .read(chapterNameListStateProvider
+                                                .notifier)
+                                            .selectAll(widget.modelManga!
+                                                .chapters![i].name!);
+                                      }
+                                    },
+                                    icon: const Icon(Icons.select_all)),
+                                IconButton(
+                                    onPressed: () {
+                                      if (widget.modelManga!.chapters!.length ==
+                                          chapterNameList.length) {
+                                        for (var i = 0;
+                                            i <
+                                                widget.modelManga!.chapters!
+                                                    .length;
+                                            i++) {
+                                          ref
+                                              .read(chapterNameListStateProvider
+                                                  .notifier)
+                                              .selectSome(widget.modelManga!
+                                                  .chapters![i].name!);
+                                        }
+                                        ref
+                                            .read(isLongPressedStateProvider
+                                                .notifier)
+                                            .update(false);
+                                      } else {
+                                        for (var i = 0;
+                                            i <
+                                                widget.modelManga!.chapters!
+                                                    .length;
+                                            i++) {
+                                          ref
+                                              .read(chapterNameListStateProvider
+                                                  .notifier)
+                                              .selectSome(widget.modelManga!
+                                                  .chapters![i].name!);
+                                        }
+                                      }
+                                    },
+                                    icon:
+                                        const Icon(Icons.flip_to_back_rounded)),
+                              ],
+                            ),
+                          )
+                        : AppBar(
+                            title: ref.watch(offetProvider) > 200
+                                ? Text(
+                                    widget.modelManga!.name!,
+                                    style: const TextStyle(fontSize: 17),
+                                  )
+                                : null,
+                            backgroundColor: ref.watch(offetProvider) == 0.0
+                                ? Colors.transparent
+                                : Theme.of(context).scaffoldBackgroundColor,
+                            actions: [
+                              IconButton(
+                                  splashRadius: 20,
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.download_outlined,
+                                  )),
+                              IconButton(
+                                  splashRadius: 20,
+                                  onPressed: () {
+                                    _showDraggableMenu();
+                                  },
+                                  icon: Icon(
+                                    Icons.filter_list_sharp,
+                                    color:
+                                        isNotFiltering ? null : Colors.yellow,
+                                  )),
+                              PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text("Edit categories")),
+                                      const PopupMenuItem<int>(
+                                          value: 0, child: Text("Migrate")),
+                                      const PopupMenuItem<int>(
+                                          value: 0, child: Text("Share")),
+                                    ];
+                                  },
+                                  onSelected: (value) {}),
+                            ],
+                          );
+                  },
+                )),
+            body: Stack(
+              children: [
+                Positioned(
+                    top: 0,
+                    child: Stack(
+                      children: [
+                        cachedNetworkImage(
+                            imageUrl: widget.modelManga!.imageUrl!,
+                            width: mediaWidth(context, 1),
+                            height: 461,
+                            fit: BoxFit.cover),
+                        Container(
+                          width: mediaWidth(context, 1),
+                          height: 465,
+                          color: Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.9),
+                        ),
+                        SafeArea(
+                          child: Container(
+                              width: mediaWidth(context, 1),
+                              height: mediaHeight(context, 1),
+                              color: Theme.of(context).scaffoldBackgroundColor),
+                        )
                       ],
                     )),
-          body: Stack(
-            children: [
-              Positioned(
-                  top: 0,
-                  child: Stack(
-                    children: [
-                      cachedNetworkImage(
-                          imageUrl: widget.modelManga!.imageUrl!,
-                          width: mediaWidth(context, 1),
-                          height: 461,
-                          fit: BoxFit.cover),
-                      Container(
-                        width: mediaWidth(context, 1),
-                        height: 465,
-                        color: Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.9),
-                      ),
-                      SafeArea(
-                        child: Container(
-                            width: mediaWidth(context, 1),
-                            height: mediaHeight(context, 1),
-                            color: Theme.of(context).scaffoldBackgroundColor),
-                      )
-                    ],
-                  )),
-              SafeArea(
-                  child: DraggableScrollbar(
-                      heightScrollThumb: 48.0,
-                      backgroundColor: generalColor(context),
-                      scrollThumbBuilder: (backgroundColor, thumbAnimation,
-                          labelAnimation, height,
-                          {labelConstraints, labelText}) {
-                        return FadeTransition(
-                          opacity: thumbAnimation,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: backgroundColor,
-                                borderRadius: BorderRadius.circular(20)),
-                            height: height,
-                            width: 8.0,
-                          ),
-                        );
-                      },
-                      scrollbarTimeToFade: const Duration(seconds: 2),
-                      controller: _scrollController,
-                      child: ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.only(top: 0, bottom: 60),
-                          itemCount: _pageLength,
-                          itemBuilder: (context, index) {
-                            int finalIndex = index - 1;
-                            if (index == 0) {
-                              return _bodyContainer();
-                            }
-                            int reverseIndex = _chapters!.length -
-                                _chapters!.reversed.toList().indexOf(
-                                    _chapters!.reversed.toList()[finalIndex]) -
-                                1;
+                SafeArea(
+                    child: DraggableScrollbar(
+                        heightScrollThumb: 48.0,
+                        backgroundColor: generalColor(context),
+                        scrollThumbBuilder: (backgroundColor, thumbAnimation,
+                            labelAnimation, height,
+                            {labelConstraints, labelText}) {
+                          return FadeTransition(
+                            opacity: thumbAnimation,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: backgroundColor,
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: height,
+                              width: 8.0,
+                            ),
+                          );
+                        },
+                        scrollbarTimeToFade: const Duration(seconds: 2),
+                        controller: _scrollController,
+                        child: ListView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.only(top: 0, bottom: 60),
+                            itemCount: _pageLength,
+                            itemBuilder: (context, index) {
+                              int finalIndex = index - 1;
+                              if (index == 0) {
+                                return _bodyContainer();
+                              }
+                              int reverseIndex = _chapters!.length -
+                                  _chapters!.reversed.toList().indexOf(
+                                      _chapters!.reversed
+                                          .toList()[finalIndex]) -
+                                  1;
 
-                            List<ModelChapters> chapters = reverse
-                                ? _chapters!.reversed.toList()
-                                : _chapters!;
+                              List<ModelChapters> chapters = reverse
+                                  ? _chapters!.reversed.toList()
+                                  : _chapters!;
 
-                            return ChapterListTileWidget(
+                              return ChapterListTileWidget(
                                 chapters: chapters,
                                 modelManga: _modelManga!,
                                 reverse: reverse,
                                 reverseIndex: reverseIndex,
                                 finalIndex: finalIndex,
-                                isLongPressed: isLongPressed);
-                          }))),
-            ],
-          ),
-          bottomNavigationBar: AnimatedContainer(
-            curve: Curves.easeIn,
-            decoration: BoxDecoration(
-                color: generalColor(context).withOpacity(0.2),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            duration: const Duration(milliseconds: 100),
-            height: isLongPressed ? 70 : 0,
-            width: mediaWidth(context, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            elevation: 0, backgroundColor: Colors.transparent),
-                        onPressed: () async {
-                          ref
-                              .read(chapterSetIsBookmarkStateProvider(
-                                      modelManga: widget.modelManga!)
-                                  .notifier)
-                              .set();
-                          ref
-                              .read(chapterNameListStateProvider.notifier)
-                              .clear();
-
-                          ref
-                              .read(isLongPressedStateProvider.notifier)
-                              .update(false);
-                        },
-                        child: Icon(chapter.isBookmarked
-                            ? Icons.bookmark_remove
-                            : Icons.bookmark_add_outlined)),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            elevation: 0, backgroundColor: Colors.transparent),
-                        onPressed: () {
-                          ref
-                              .read(chapterSetIsReadStateProvider(
-                                      modelManga: widget.modelManga!)
-                                  .notifier)
-                              .set();
-                          ref
-                              .read(chapterNameListStateProvider.notifier)
-                              .clear();
-                          ref
-                              .read(isLongPressedStateProvider.notifier)
-                              .update(false);
-                        },
-                        child: Icon(chapter.isRead
-                            ? Icons.remove_done_sharp
-                            : Icons.done_all_sharp)),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            elevation: 0, backgroundColor: Colors.transparent),
-                        onPressed: () {
-                          ref
-                              .read(chapterSetDownloadStateProvider(
-                                      modelManga: widget.modelManga!)
-                                  .notifier)
-                              .set();
-                          ref
-                              .read(isLongPressedStateProvider.notifier)
-                              .update(false);
-                          ref
-                              .read(chapterNameListStateProvider.notifier)
-                              .clear();
-                        },
-                        child: const Icon(Icons.download_outlined)),
-                  ),
-                )
+                              );
+                            }))),
               ],
             ),
-          ),
-        ));
+            bottomNavigationBar: Consumer(
+              builder: (context, ref, child) {
+                final chapter = ref.watch(chapterModelStateProvider);
+                final isLongPressed = ref.watch(isLongPressedStateProvider);
+                return AnimatedContainer(
+                  curve: Curves.easeIn,
+                  decoration: BoxDecoration(
+                      color: generalColor(context).withOpacity(0.2),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
+                  duration: const Duration(milliseconds: 100),
+                  height: isLongPressed ? 70 : 0,
+                  width: mediaWidth(context, 1),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 70,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent),
+                              onPressed: () async {
+                                ref
+                                    .read(chapterSetIsBookmarkStateProvider(
+                                            modelManga: widget.modelManga!)
+                                        .notifier)
+                                    .set();
+                                ref
+                                    .read(chapterNameListStateProvider.notifier)
+                                    .clear();
+
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(false);
+                              },
+                              child: Icon(chapter.isBookmarked
+                                  ? Icons.bookmark_remove
+                                  : Icons.bookmark_add_outlined)),
+                        ),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 70,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent),
+                              onPressed: () {
+                                ref
+                                    .read(chapterSetIsReadStateProvider(
+                                            modelManga: widget.modelManga!)
+                                        .notifier)
+                                    .set();
+                                ref
+                                    .read(chapterNameListStateProvider.notifier)
+                                    .clear();
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(false);
+                              },
+                              child: Icon(chapter.isRead
+                                  ? Icons.remove_done_sharp
+                                  : Icons.done_all_sharp)),
+                        ),
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          height: 70,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent),
+                              onPressed: () {
+                                ref
+                                    .read(chapterSetDownloadStateProvider(
+                                            modelManga: widget.modelManga!)
+                                        .notifier)
+                                    .set();
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(false);
+                                ref
+                                    .read(chapterNameListStateProvider.notifier)
+                                    .clear();
+                              },
+                              child: const Icon(Icons.download_outlined)),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            )));
   }
 
   _showDraggableMenu() {

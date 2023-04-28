@@ -165,7 +165,9 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettingsProvider).get("filterMangaUnread", defaultValue: 0);
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get("filterMangaUnread", defaultValue: 0);
   }
 
   void setType(int type) {
@@ -242,11 +244,13 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
   }
 
   int getType() {
-    return ref.watch(hiveBoxSettingsProvider).get("filterMangaStated", defaultValue: 0);
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get("filterMangaStarted", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangaStated", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangaStarted", type);
     state = type;
   }
 
@@ -412,18 +416,14 @@ class MangaFilterResultState extends _$MangaFilterResultState {
   }
 
   bool isNotFiltering() {
-    final downloadFilterType = ref
-        .read(mangaFilterDownloadedStateProvider(mangaList: mangaList).notifier)
-        .getType();
-    final unreadFilterType = ref
-        .read(mangaFilterUnreadStateProvider(mangaList: mangaList).notifier)
-        .getType();
-    final startedFilterType = ref
-        .read(mangaFilterStartedStateProvider(mangaList: mangaList).notifier)
-        .getType();
-    final bookmarkedFilterType = ref
-        .read(mangaFilterBookmarkedStateProvider(mangaList: mangaList).notifier)
-        .getType();
+    final downloadFilterType =
+        ref.watch(mangaFilterDownloadedStateProvider(mangaList: mangaList));
+    final unreadFilterType =
+        ref.watch(mangaFilterUnreadStateProvider(mangaList: mangaList));
+    final startedFilterType =
+        ref.watch(mangaFilterStartedStateProvider(mangaList: mangaList));
+    final bookmarkedFilterType =
+        ref.watch(mangaFilterBookmarkedStateProvider(mangaList: mangaList));
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         startedFilterType == 0 &&
