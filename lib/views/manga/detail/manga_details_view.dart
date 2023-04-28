@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
@@ -9,6 +11,7 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
@@ -242,7 +245,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           dateAdded: widget.modelManga.dateAdded,
                           lastUpdate: widget.modelManga.lastUpdate,
                           chapters: widget.modelManga.chapters,
-                          category: widget.modelManga.category,
+                          categories: [],
                           lastRead: widget.modelManga.lastRead);
                       manga.put(
                           '${widget.modelManga.lang}-${widget.modelManga.link}',
@@ -275,26 +278,35 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             Theme.of(context).scaffoldBackgroundColor,
                         elevation: 0),
                     onPressed: () {
-                      _setFavorite(true);
-                      final model = ModelManga(
-                          imageUrl: widget.modelManga.imageUrl,
-                          name: widget.modelManga.name,
-                          genre: widget.modelManga.genre,
-                          author: widget.modelManga.author,
-                          status: widget.modelManga.status,
-                          description: widget.modelManga.description,
-                          favorite: true,
-                          link: widget.modelManga.link,
-                          source: widget.modelManga.source,
-                          lang: widget.modelManga.lang,
-                          dateAdded: DateTime.now().microsecondsSinceEpoch,
-                          lastUpdate: DateTime.now().microsecondsSinceEpoch,
-                          chapters: widget.modelManga.chapters,
-                          category: null,
-                          lastRead: '');
-                      manga.put(
-                          '${widget.modelManga.lang}-${widget.modelManga.link}',
-                          model);
+                      final checkCategoryList = ref
+                          .watch(hiveBoxCategoriesProvider)
+                          .values
+                          .toList()
+                          .isNotEmpty;
+                      if (checkCategoryList) {
+                        _openCategory(manga);
+                      } else {
+                        _setFavorite(true);
+                        final model = ModelManga(
+                            imageUrl: widget.modelManga.imageUrl,
+                            name: widget.modelManga.name,
+                            genre: widget.modelManga.genre,
+                            author: widget.modelManga.author,
+                            status: widget.modelManga.status,
+                            description: widget.modelManga.description,
+                            favorite: true,
+                            link: widget.modelManga.link,
+                            source: widget.modelManga.source,
+                            lang: widget.modelManga.lang,
+                            dateAdded: DateTime.now().microsecondsSinceEpoch,
+                            lastUpdate: DateTime.now().microsecondsSinceEpoch,
+                            chapters: widget.modelManga.chapters,
+                            categories: [],
+                            lastRead: '');
+                        manga.put(
+                            '${widget.modelManga.lang}-${widget.modelManga.link}',
+                            model);
+                      }
                     },
                     child: Column(
                       children: [
@@ -324,26 +336,35 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0),
                 onPressed: () {
-                  _setFavorite(true);
-                  final model = ModelManga(
-                      imageUrl: widget.modelManga.imageUrl,
-                      name: widget.modelManga.name,
-                      genre: widget.modelManga.genre,
-                      author: widget.modelManga.author,
-                      status: widget.modelManga.status,
-                      description: widget.modelManga.description,
-                      favorite: true,
-                      link: widget.modelManga.link,
-                      source: widget.modelManga.source,
-                      lang: widget.modelManga.lang,
-                      dateAdded: DateTime.now().microsecondsSinceEpoch,
-                      lastUpdate: DateTime.now().microsecondsSinceEpoch,
-                      chapters: widget.modelManga.chapters,
-                      category: null,
-                      lastRead: '');
-                  manga.put(
-                      '${widget.modelManga.lang}-${widget.modelManga.link}',
-                      model);
+                  final checkCategoryList = ref
+                      .watch(hiveBoxCategoriesProvider)
+                      .values
+                      .toList()
+                      .isNotEmpty;
+                  if (checkCategoryList) {
+                    _openCategory(manga);
+                  } else {
+                    _setFavorite(true);
+                    final model = ModelManga(
+                        imageUrl: widget.modelManga.imageUrl,
+                        name: widget.modelManga.name,
+                        genre: widget.modelManga.genre,
+                        author: widget.modelManga.author,
+                        status: widget.modelManga.status,
+                        description: widget.modelManga.description,
+                        favorite: true,
+                        link: widget.modelManga.link,
+                        source: widget.modelManga.source,
+                        lang: widget.modelManga.lang,
+                        dateAdded: DateTime.now().microsecondsSinceEpoch,
+                        lastUpdate: DateTime.now().microsecondsSinceEpoch,
+                        chapters: widget.modelManga.chapters,
+                        categories: [],
+                        lastRead: '');
+                    manga.put(
+                        '${widget.modelManga.lang}-${widget.modelManga.link}',
+                        model);
+                  }
                 },
                 child: Column(
                   children: [
@@ -373,5 +394,106 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         },
       ),
     );
+  }
+
+  _openCategory(Box<ModelManga> manga) {
+    List<int> categoryIds = [];
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: const Text(
+                  "Set categories",
+                ),
+                content: SizedBox(
+                  width: mediaWidth(context, 0.8),
+                  child: ValueListenableBuilder<Box<CategoriesModel>>(
+                      valueListenable:
+                          ref.watch(hiveBoxCategoriesProvider).listenable(),
+                      builder: (context, value, child) {
+                        final entries = value.values.toList();
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: entries.length,
+                          itemBuilder: (context, index) {
+                            return ListTileChapterFilter(
+                              label: entries[index].name,
+                              onTap: () {
+                                setState(() {
+                                  if (categoryIds.contains(entries[index].id)) {
+                                    categoryIds.remove(entries[index].id);
+                                  } else {
+                                    categoryIds.add(entries[index].id);
+                                  }
+                                });
+                              },
+                              type: categoryIds.contains(entries[index].id)
+                                  ? 1
+                                  : 0,
+                            );
+                          },
+                        );
+                      }),
+                ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            context.push("/categories");
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Edit")),
+                      Row(
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("Cancel")),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          TextButton(
+                              onPressed: () {
+                                _setFavorite(true);
+                                final model = ModelManga(
+                                    imageUrl: widget.modelManga.imageUrl,
+                                    name: widget.modelManga.name,
+                                    genre: widget.modelManga.genre,
+                                    author: widget.modelManga.author,
+                                    status: widget.modelManga.status,
+                                    description: widget.modelManga.description,
+                                    favorite: true,
+                                    link: widget.modelManga.link,
+                                    source: widget.modelManga.source,
+                                    lang: widget.modelManga.lang,
+                                    dateAdded:
+                                        DateTime.now().microsecondsSinceEpoch,
+                                    lastUpdate:
+                                        DateTime.now().microsecondsSinceEpoch,
+                                    chapters: widget.modelManga.chapters,
+                                    categories: categoryIds,
+                                    lastRead: '');
+                                manga.put(
+                                    '${widget.modelManga.lang}-${widget.modelManga.link}',
+                                    model);
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "OK",
+                              )),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              );
+            },
+          );
+        });
   }
 }

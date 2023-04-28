@@ -194,7 +194,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                 dateAdded: DateTime.now().microsecondsSinceEpoch,
                 lastUpdate: DateTime.now().microsecondsSinceEpoch,
                 chapters: data.chapters,
-                category: null,
+                categories: null,
                 lastRead: '');
             if (mounted) {
               context.push('/manga-reader/detail', extra: modelManga);

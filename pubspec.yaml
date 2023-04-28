@@ -60,6 +60,7 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   draggable_menu: ^0.3.0
   fast_cached_network_image: ^1.2.0
+  random_string: ^2.3.1
 
 
   # The following adds the Cupertino Icons font to your application.

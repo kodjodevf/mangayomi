@@ -502,7 +502,7 @@ ModelManga modelMangaWithNewChapValue(
       dateAdded: modelManga.dateAdded,
       lastUpdate: modelManga.lastUpdate,
       chapters: chapters,
-      category: modelManga.category,
+      categories: modelManga.categories,
       lastRead: modelManga.lastRead);
 }
 

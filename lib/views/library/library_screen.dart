@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -24,124 +27,182 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   List<ModelManga> entries = [];
   List<ModelManga> entriesFilter = [];
   final _textEditingController = TextEditingController();
-
+  late TabController tabBarController;
+  int tabIndex = 0;
   @override
   Widget build(BuildContext context) {
     final reverse = ref.watch(libraryReverseListStateProvider);
+    final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider);
+    final continueReaderBtn =
+        ref.watch(libraryShowContinueReadingButtonStateProvider);
+    final showNumbersOfItems =
+        ref.watch(libraryShowNumbersOfItemsStateProvider);
+    final downloadedChapter = ref.watch(libraryDownloadedChaptersStateProvider);
+    final language = ref.watch(libraryLanguageStateProvider);
     final displayType = ref
         .read(libraryDisplayTypeStateProvider.notifier)
         .getLibraryDisplayTypeValue(ref.watch(libraryDisplayTypeStateProvider));
     final isNotFiltering = ref
         .read(mangaFilterResultStateProvider(mangaList: entries).notifier)
         .isNotFiltering();
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: isSearch
-            ? null
-            : Text(
-                'Library',
-                style: TextStyle(color: Theme.of(context).hintColor),
-              ),
-        actions: [
-          isSearch
-              ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onPressed: () {
-                    setState(() {
-                      isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                    setState(() {});
-                  },
-                )
-              : IconButton(
-                  splashRadius: 20,
-                  onPressed: () {
-                    setState(() {
-                      isSearch = true;
-                    });
-                    _textEditingController.clear();
-                  },
-                  icon: const Icon(
-                    Icons.search,
-                  )),
-          IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                _showDraggableMenu();
-              },
-              icon: Icon(
-                Icons.filter_list_sharp,
-                color: isNotFiltering ? null : Colors.yellow,
-              )),
-          PopupMenuButton(
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem<int>(
-                      value: 0, child: Text("Open random entry")),
-                ];
-              },
-              onSelected: (value) {}),
-        ],
-      ),
-      body: ValueListenableBuilder<Box<ModelManga>>(
-        valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
+    return ValueListenableBuilder<Box<CategoriesModel>>(
+        valueListenable: ref.watch(hiveBoxCategoriesProvider).listenable(),
         builder: (context, value, child) {
-          entries = value.values.where((element) => element.favorite).toList();
-          final data =
-              ref.watch(mangaFilterResultStateProvider(mangaList: entries));
-          entriesFilter = _textEditingController.text.isNotEmpty
-              ? data
-                  .where((element) => element.name!
-                      .toLowerCase()
-                      .contains(_textEditingController.text.toLowerCase()))
-                  .toList()
-              : data;
-          final entriesManga =
-              reverse ? entriesFilter.reversed.toList() : entriesFilter;
+          final entr = value.values.toList();
+          if (entr.isNotEmpty && showCategoryTabs) {
+            tabBarController = TabController(length: entr.length, vsync: this);
+            tabBarController.animateTo(tabIndex);
+            tabBarController.addListener(() {
+              tabIndex = tabBarController.index;
+            });
+            return DefaultTabController(
+              length: entr.length,
+              child: Scaffold(
+                appBar:
+                    _appBar(isNotFiltering, showNumbersOfItems, entries.length),
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TabBar(
+                        isScrollable: true,
+                        controller: tabBarController,
+                        tabs: entr.map((e) => Tab(text: e.name)).toList()),
+                    Flexible(
+                        child: TabBarView(
+                      controller: tabBarController,
+                      children: entr
+                          .map(
+                            (e) => Scaffold(
+                              body: ValueListenableBuilder<Box<ModelManga>>(
+                                valueListenable: ref
+                                    .watch(hiveBoxMangaProvider)
+                                    .listenable(),
+                                builder: (context, value, child) {
+                                  entries = value.values
+                                      .where((element) =>
+                                          element.favorite &&
+                                          element.categories != null &&
+                                          element.categories!.contains(e.id))
+                                      .toList();
+                                  final data = ref.watch(
+                                      mangaFilterResultStateProvider(
+                                          mangaList: entries));
+                                  entriesFilter = _textEditingController
+                                          .text.isNotEmpty
+                                      ? data
+                                          .where((element) => element.name!
+                                              .toLowerCase()
+                                              .contains(_textEditingController
+                                                  .text
+                                                  .toLowerCase()))
+                                          .toList()
+                                      : data;
+                                  final entriesManga = reverse
+                                      ? entriesFilter.reversed.toList()
+                                      : entriesFilter;
 
-          if (entriesFilter.isNotEmpty) {
-            return displayType == DisplayType.list
-                ? LibraryListViewWidget(
-                    entriesManga: entriesManga,
-                  )
-                : LibraryGridViewWidget(
-                    entriesManga: entriesManga,
-                    isCoverOnlyGrid:
-                        displayType == DisplayType.compactGrid ? false : true,
-                    isComfortableGrid:
-                        displayType == DisplayType.comfortableGrid
-                            ? true
-                            : false,
-                  );
+                                  if (entriesFilter.isNotEmpty) {
+                                    return displayType == DisplayType.list
+                                        ? LibraryListViewWidget(
+                                            entriesManga: entriesManga,
+                                            continueReaderBtn:
+                                                continueReaderBtn,
+                                            downloadedChapter:
+                                                downloadedChapter,
+                                            language: language,
+                                          )
+                                        : LibraryGridViewWidget(
+                                            entriesManga: entriesManga,
+                                            isCoverOnlyGrid: displayType ==
+                                                    DisplayType.compactGrid
+                                                ? false
+                                                : true,
+                                            isComfortableGrid: displayType ==
+                                                    DisplayType.comfortableGrid
+                                                ? true
+                                                : false,
+                                            continueReaderBtn:
+                                                continueReaderBtn,
+                                            downloadedChapter:
+                                                downloadedChapter,
+                                            language: language,
+                                          );
+                                  }
+                                  return const Center(
+                                      child: Text("Empty Library"));
+                                },
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ))
+                  ],
+                ),
+              ),
+            );
           }
-          return const Center(child: Text("Empty Library"));
-        },
-      ),
-    );
+          return Scaffold(
+            appBar: _appBar(isNotFiltering, showNumbersOfItems, entries.length),
+            body: ValueListenableBuilder<Box<ModelManga>>(
+              valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
+              builder: (context, value, child) {
+                entries =
+                    value.values.where((element) => element.favorite).toList();
+                final data = ref
+                    .watch(mangaFilterResultStateProvider(mangaList: entries));
+                entriesFilter = _textEditingController.text.isNotEmpty
+                    ? data
+                        .where((element) => element.name!
+                            .toLowerCase()
+                            .contains(
+                                _textEditingController.text.toLowerCase()))
+                        .toList()
+                    : data;
+                final entriesManga =
+                    reverse ? entriesFilter.reversed.toList() : entriesFilter;
+
+                if (entriesFilter.isNotEmpty) {
+                  return displayType == DisplayType.list
+                      ? LibraryListViewWidget(
+                          entriesManga: entriesManga,
+                          continueReaderBtn: continueReaderBtn,
+                          downloadedChapter: downloadedChapter,
+                          language: language,
+                        )
+                      : LibraryGridViewWidget(
+                          entriesManga: entriesManga,
+                          isCoverOnlyGrid:
+                              displayType == DisplayType.compactGrid
+                                  ? false
+                                  : true,
+                          isComfortableGrid:
+                              displayType == DisplayType.comfortableGrid
+                                  ? true
+                                  : false,
+                          continueReaderBtn: continueReaderBtn,
+                          downloadedChapter: downloadedChapter,
+                          language: language,
+                        );
+                }
+                return const Center(child: Text("Empty Library"));
+              },
+            ),
+          );
+        });
   }
 
   _showDraggableMenu() {
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
-    tabBarController.animateTo(0);
     DraggableMenu.open(
         context,
         DraggableMenu(
             barItem: Container(),
-            uiType: DraggableMenuUiType.classic,
-            expandable: false,
-            maxHeight: mediaHeight(context, 0.4),
-            fastDrag: false,
-            minimizeBeforeFastDrag: false,
+            uiType: DraggableMenuUiType.softModern,
+            expandable: true,
+            expandedHeight: mediaHeight(context, 0.8),
+            maxHeight: mediaHeight(context, 0.5),
+            minimizeBeforeFastDrag: true,
             child: DefaultTabController(
                 length: 3,
                 child: Scaffold(
@@ -220,8 +281,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     .notifier)
                                             .update();
                                       });
-
-                                      // _refreshData();
                                     }),
                               ],
                             );
@@ -237,7 +296,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                     ref
                                         .read(libraryReverseListStateProvider
                                             .notifier)
-                                        .setLibraryReverseList(!reverse);
+                                        .set(!reverse);
                                   },
                                   dense: true,
                                   leading: Icon(reverse
@@ -253,25 +312,160 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 ref.watch(libraryDisplayTypeStateProvider);
                             final displayV = ref
                                 .read(libraryDisplayTypeStateProvider.notifier);
-
-                            return Column(
-                              children: [
-                                for (var i = 0;
-                                    i < DisplayType.values.length;
-                                    i++)
-                                  RadioListTile<DisplayType>(
-                                    title: Text(
-                                        displayV.getLibraryDisplayTypeName(
-                                            DisplayType.values[i].name)),
-                                    value: DisplayType.values[i],
-                                    groupValue: displayV
-                                        .getLibraryDisplayTypeValue(display),
-                                    selected: true,
-                                    onChanged: (value) {
-                                      displayV.setLibraryDisplayType(value!);
-                                    },
+                            final showCategoryTabs =
+                                ref.watch(libraryShowCategoryTabsStateProvider);
+                            final continueReaderBtn = ref.watch(
+                                libraryShowContinueReadingButtonStateProvider);
+                            final showNumbersOfItems = ref
+                                .watch(libraryShowNumbersOfItemsStateProvider);
+                            final downloadedChapter = ref
+                                .watch(libraryDownloadedChaptersStateProvider);
+                            final language =
+                                ref.watch(libraryLanguageStateProvider);
+                            return SingleChildScrollView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, top: 10),
+                                    child: Row(
+                                      children: const [
+                                        Text("Display mode"),
+                                      ],
+                                    ),
                                   ),
-                              ],
+                                  Column(
+                                      children: DisplayType.values
+                                          .map(
+                                            (e) => RadioListTile<DisplayType>(
+                                              title: Text(
+                                                displayV
+                                                    .getLibraryDisplayTypeName(
+                                                        e.name),
+                                                style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .color,
+                                                    fontSize: 14),
+                                              ),
+                                              value: e,
+                                              groupValue: displayV
+                                                  .getLibraryDisplayTypeValue(
+                                                      display),
+                                              selected: true,
+                                              onChanged: (value) {
+                                                displayV.setLibraryDisplayType(
+                                                    value!);
+                                              },
+                                            ),
+                                          )
+                                          .toList()),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, top: 10),
+                                    child: Row(
+                                      children: const [
+                                        Text("Badges"),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 10, top: 5),
+                                    child: Column(
+                                      children: [
+                                        ListTileChapterFilter(
+                                            label: "Downloaded chapters",
+                                            type: downloadedChapter ? 1 : 0,
+                                            onTap: () {
+                                              ref
+                                                  .read(
+                                                      libraryDownloadedChaptersStateProvider
+                                                          .notifier)
+                                                  .set(!downloadedChapter);
+                                            }),
+                                        ListTileChapterFilter(
+                                            label: "Language",
+                                            type: language ? 1 : 0,
+                                            onTap: () {
+                                              ref
+                                                  .read(
+                                                      libraryLanguageStateProvider
+                                                          .notifier)
+                                                  .set(!language);
+                                            }),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, top: 10),
+                                    child: Row(
+                                      children: const [
+                                        Text("Tabs"),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 10, top: 5),
+                                    child: Column(
+                                      children: [
+                                        ListTileChapterFilter(
+                                            label: "Show category tabs",
+                                            type: showCategoryTabs ? 1 : 0,
+                                            onTap: () {
+                                              ref
+                                                  .read(
+                                                      libraryShowCategoryTabsStateProvider
+                                                          .notifier)
+                                                  .set(!showCategoryTabs);
+                                            }),
+                                        ListTileChapterFilter(
+                                            label: "Show numbers of items",
+                                            type: showNumbersOfItems ? 1 : 0,
+                                            onTap: () {
+                                              ref
+                                                  .read(
+                                                      libraryShowNumbersOfItemsStateProvider
+                                                          .notifier)
+                                                  .set(!showNumbersOfItems);
+                                            }),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, top: 10),
+                                    child: Row(
+                                      children: const [
+                                        Text("Others"),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 10, top: 5),
+                                    child: Column(
+                                      children: [
+                                        ListTileChapterFilter(
+                                            label:
+                                                "Show continue reading button",
+                                            type: continueReaderBtn ? 1 : 0,
+                                            onTap: () {
+                                              ref
+                                                  .read(
+                                                      libraryShowContinueReadingButtonStateProvider
+                                                          .notifier)
+                                                  .set(!continueReaderBtn);
+                                            }),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             );
                           }),
                         ]),
@@ -279,5 +473,88 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     ],
                   ),
                 ))));
+  }
+
+  AppBar _appBar(
+      bool isNotFiltering, bool showNumbersOfItems, int numberOfItems) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      title: isSearch
+          ? null
+          : Row(
+              children: [
+                Text(
+                  'Library',
+                  style: TextStyle(color: Theme.of(context).hintColor),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                if (showNumbersOfItems)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).focusColor,
+                      radius: 10,
+                      child: Text(
+                        numberOfItems.toString(),
+                        style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                Theme.of(context).textTheme.bodySmall!.color),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+      actions: [
+        isSearch
+            ? SeachFormTextField(
+                onChanged: (value) {
+                  setState(() {});
+                },
+                onPressed: () {
+                  setState(() {
+                    isSearch = false;
+                  });
+                  _textEditingController.clear();
+                },
+                controller: _textEditingController,
+                onSuffixPressed: () {
+                  _textEditingController.clear();
+                  setState(() {});
+                },
+              )
+            : IconButton(
+                splashRadius: 20,
+                onPressed: () {
+                  setState(() {
+                    isSearch = true;
+                  });
+                  _textEditingController.clear();
+                },
+                icon: const Icon(
+                  Icons.search,
+                )),
+        IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              _showDraggableMenu();
+            },
+            icon: Icon(
+              Icons.filter_list_sharp,
+              color: isNotFiltering ? null : Colors.yellow,
+            )),
+        PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                const PopupMenuItem<int>(
+                    value: 0, child: Text("Open random entry")),
+              ];
+            },
+            onSelected: (value) {}),
+      ],
+    );
   }
 }

@@ -47,7 +47,7 @@ class ModelManga extends HiveObject {
   String? lastRead;
 
   @HiveField(14)
-  int? category;
+  List<int>? categories;
 
   ModelManga(
       {required this.source,
@@ -62,7 +62,7 @@ class ModelManga extends HiveObject {
       required this.description,
       required this.dateAdded,
       required this.lastUpdate,
-      required this.category,
+      required this.categories,
       required this.lastRead,
       required this.chapters});
 }

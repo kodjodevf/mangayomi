@@ -19,20 +19,17 @@ class CategoriesModelAdapter extends TypeAdapter<CategoriesModel> {
     return CategoriesModel(
       id: fields[0] as int,
       name: fields[1] as String,
-      listModelManga: (fields[2] as List).cast<ModelManga>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, CategoriesModel obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
-      ..writeByte(2)
-      ..write(obj.listModelManga);
+      ..write(obj.name);
   }
 
   @override

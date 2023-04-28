@@ -41,7 +41,7 @@ class MoreScreen extends StatelessWidget {
                   onTap: () {
                     context.push('/categories');
                   },
-                  icon: Icons.label_rounded,
+                  icon: Icons.label_outline_rounded,
                   title: 'Categories',
                 ),
                 const Divider(),

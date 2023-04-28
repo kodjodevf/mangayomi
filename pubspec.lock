@@ -881,6 +881,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
+  random_string:
+    dependency: "direct main"
+    description:
+      name: random_string
+      sha256: "03b52435aae8cbdd1056cf91bfc5bf845e9706724dd35ae2e99fa14a1ef79d02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.1"
   riverpod:
     dependency: transitive
     description:

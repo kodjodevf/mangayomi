@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryReverseListStateHash() =>
-    r'9a9b8cc5bacc6e84a89847cc4e0ea6793c6b851e';
+    r'5d9037f95ffe332019dd1d3d08b0db06d798738c';
 
 /// See also [LibraryReverseListState].
 @ProviderFor(LibraryReverseListState)
@@ -24,7 +24,7 @@ final libraryReverseListStateProvider =
 
 typedef _$LibraryReverseListState = AutoDisposeNotifier<bool>;
 String _$libraryDisplayTypeStateHash() =>
-    r'2743481e54668fe95294194b62014f9713de2cb8';
+    r'746bd6dac3600802c3ab5751b3c1def881274b3a';
 
 /// See also [LibraryDisplayTypeState].
 @ProviderFor(LibraryDisplayTypeState)
@@ -41,7 +41,7 @@ final libraryDisplayTypeStateProvider =
 
 typedef _$LibraryDisplayTypeState = AutoDisposeNotifier<String>;
 String _$mangaFilterDownloadedStateHash() =>
-    r'12b1cb7b473e6556ea9c1a2f9c7bf44017076ff4';
+    r'18ed17c06f41084cbb92b0b3300025f4e65aa413';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -161,7 +161,7 @@ class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'4b9172bbb95ebca0759946328b1fbdacf07392b1';
+    r'5eed6ec9f46f1562d48eb89a078f666ed5b466d8';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -260,7 +260,7 @@ class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'9b3c27078f42f624e3f3fdd255573a3279a4efed';
+    r'cf5440f02e8454d75de4f311f945b33f73668ea2';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -359,7 +359,7 @@ class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'88b9ef0b5a65735525a0141c6e7397d9aa7e27ff';
+    r'cdeeb68e7428e4856db3551443c70e28c3c7f95d';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -458,7 +458,7 @@ class MangaFilterBookmarkedStateProvider
 }
 
 String _$mangaFilterResultStateHash() =>
-    r'5ec8cf6917ccc72d5eef7f2e7b308725563e4831';
+    r'fb5c27326f49a7e361ac19b97b511f1d8ab50920';
 
 abstract class _$MangaFilterResultState
     extends BuildlessAutoDisposeNotifier<List<ModelManga>> {
@@ -555,4 +555,91 @@ class MangaFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
     );
   }
 }
+
+String _$libraryShowCategoryTabsStateHash() =>
+    r'0ee90372d42a11638479aadcf8ea5e688bb48369';
+
+/// See also [LibraryShowCategoryTabsState].
+@ProviderFor(LibraryShowCategoryTabsState)
+final libraryShowCategoryTabsStateProvider =
+    AutoDisposeNotifierProvider<LibraryShowCategoryTabsState, bool>.internal(
+  LibraryShowCategoryTabsState.new,
+  name: r'libraryShowCategoryTabsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryShowCategoryTabsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryShowCategoryTabsState = AutoDisposeNotifier<bool>;
+String _$libraryDownloadedChaptersStateHash() =>
+    r'bdbb37edcd547e8f34df39d9221bb85051f765ae';
+
+/// See also [LibraryDownloadedChaptersState].
+@ProviderFor(LibraryDownloadedChaptersState)
+final libraryDownloadedChaptersStateProvider =
+    AutoDisposeNotifierProvider<LibraryDownloadedChaptersState, bool>.internal(
+  LibraryDownloadedChaptersState.new,
+  name: r'libraryDownloadedChaptersStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryDownloadedChaptersStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryDownloadedChaptersState = AutoDisposeNotifier<bool>;
+String _$libraryLanguageStateHash() =>
+    r'b454724faeda5de41a67952cf9a80366fb72be9c';
+
+/// See also [LibraryLanguageState].
+@ProviderFor(LibraryLanguageState)
+final libraryLanguageStateProvider =
+    AutoDisposeNotifierProvider<LibraryLanguageState, bool>.internal(
+  LibraryLanguageState.new,
+  name: r'libraryLanguageStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryLanguageStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryLanguageState = AutoDisposeNotifier<bool>;
+String _$libraryShowNumbersOfItemsStateHash() =>
+    r'f6eeb5df01cee601f05e442229830f64891a5fe9';
+
+/// See also [LibraryShowNumbersOfItemsState].
+@ProviderFor(LibraryShowNumbersOfItemsState)
+final libraryShowNumbersOfItemsStateProvider =
+    AutoDisposeNotifierProvider<LibraryShowNumbersOfItemsState, bool>.internal(
+  LibraryShowNumbersOfItemsState.new,
+  name: r'libraryShowNumbersOfItemsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryShowNumbersOfItemsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryShowNumbersOfItemsState = AutoDisposeNotifier<bool>;
+String _$libraryShowContinueReadingButtonStateHash() =>
+    r'4d5553dc605e87714b3c23f54c52c1911910a8aa';
+
+/// See also [LibraryShowContinueReadingButtonState].
+@ProviderFor(LibraryShowContinueReadingButtonState)
+final libraryShowContinueReadingButtonStateProvider =
+    AutoDisposeNotifierProvider<LibraryShowContinueReadingButtonState,
+        bool>.internal(
+  LibraryShowContinueReadingButtonState.new,
+  name: r'libraryShowContinueReadingButtonStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryShowContinueReadingButtonStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryShowContinueReadingButtonState = AutoDisposeNotifier<bool>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

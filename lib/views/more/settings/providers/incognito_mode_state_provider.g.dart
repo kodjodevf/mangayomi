@@ -7,7 +7,7 @@ part of 'incognito_mode_state_provider.dart';
 // **************************************************************************
 
 String _$incognitoModeStateHash() =>
-    r'614663075117c18594fda5884b79451ec77c3f1f';
+    r'004cbf630f6431dcbaf87f4ac5dca0e2c96e689e';
 
 /// See also [IncognitoModeState].
 @ProviderFor(IncognitoModeState)

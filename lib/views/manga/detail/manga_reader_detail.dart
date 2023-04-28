@@ -75,7 +75,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     dateAdded: widget.modelManga.dateAdded,
                     lastUpdate: DateTime.now().microsecondsSinceEpoch,
                     chapters: chapters,
-                    category: widget.modelManga.category,
+                    categories: widget.modelManga.categories,
                     lastRead: widget.modelManga.lastRead);
                 ref.watch(hiveBoxMangaProvider).put(
                     '${widget.modelManga.lang}-${widget.modelManga.link}',

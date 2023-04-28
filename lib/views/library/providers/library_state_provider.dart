@@ -12,7 +12,7 @@ class LibraryReverseListState extends _$LibraryReverseListState {
         .get('libraryReverseList', defaultValue: false)!;
   }
 
-  void setLibraryReverseList(bool value) {
+  void set(bool value) {
     state = value;
     ref.watch(hiveBoxSettingsProvider).put('libraryReverseList', value);
   }
@@ -430,3 +430,82 @@ class MangaFilterResultState extends _$MangaFilterResultState {
         bookmarkedFilterType == 0;
   }
 }
+
+@riverpod
+class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryShowCategoryTabs', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref.watch(hiveBoxSettingsProvider).put('libraryShowCategoryTabs', value);
+  }
+}
+
+@riverpod
+class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryDownloadedChapters', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref.watch(hiveBoxSettingsProvider).put('libraryDownloadedChapters', value);
+  }
+}
+
+@riverpod
+class LibraryLanguageState extends _$LibraryLanguageState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryLanguage', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref.watch(hiveBoxSettingsProvider).put('libraryLanguage', value);
+  }
+}
+
+@riverpod
+class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryShowNumbersOfItems', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref.watch(hiveBoxSettingsProvider).put('libraryShowNumbersOfItems', value);
+  }
+}
+
+@riverpod
+class LibraryShowContinueReadingButtonState
+    extends _$LibraryShowContinueReadingButtonState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryShowContinueReadingButton', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref
+        .watch(hiveBoxSettingsProvider)
+        .put('libraryShowContinueReadingButton', value);
+  }
+}
+

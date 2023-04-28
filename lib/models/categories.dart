@@ -8,8 +8,8 @@ class CategoriesModel extends HiveObject {
   final int id;
   @HiveField(1)
   final String name;
-  @HiveField(2)
-  final List<ModelManga> listModelManga;
-  CategoriesModel(
-      {required this.id, required this.name, required this.listModelManga});
+  CategoriesModel({
+    required this.id,
+    required this.name,
+  });
 }

@@ -72,7 +72,7 @@ final isExtendedStateProvider =
 );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
-String _$reverseMangaStateHash() => r'ba21cdabf4a5e60e9c31b09a93080ccae84e3bd4';
+String _$reverseMangaStateHash() => r'27a74f99810dac3d27d428a107a397e03eb2835d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -190,7 +190,7 @@ class ReverseMangaStateProvider
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'46dca943e064d5f70968c711812091783e0a4039';
+    r'ea2313a3f81e408cdea77e98d82510e824ddd6a4';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -290,7 +290,7 @@ class ChapterFilterDownloadedStateProvider
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'48076800725c22f04493653deec4e946cb71d195';
+    r'54a6bd0ace5db2262298ec51a7a99149aeaff047';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -389,7 +389,7 @@ class ChapterFilterUnreadStateProvider
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'4772ce2506d0c939b549c8661cd3b62cae853e20';
+    r'316ae7f6d11556927aa160ab950585e3e74fc8e1';
 
 abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -489,7 +489,7 @@ class ChapterFilterBookmarkedStateProvider
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'85ab18048c228f674211c8254d7efedb92152b8f';
+    r'a0c0bccb457db8ccfba52e2b7e36a1f6e2b6afe3';
 
 abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<ModelManga> {
@@ -588,7 +588,7 @@ class ChapterFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'a53f9acaea333287e229c391ba01c9da22a59b0f';
+    r'1be8afbfd3ebd0a519922f315d204d60409bed57';
 
 abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -687,7 +687,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'9435f9d17d5d1fdcfab0279e93d964bd2e4d1fbb';
+    r'fafd4503e4e65d48f157893de2b3a2234f4b20c7';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -786,7 +786,7 @@ class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'9c27161d2eedd2e8d55281d9f5640e4459926d6f';
+    r'299986f635cf64cf09aafbd7da373fa3e93ac8fc';
 
 abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<dynamic> {

@@ -29,7 +29,7 @@ class ModelMangaAdapter extends TypeAdapter<ModelManga> {
       description: fields[3] as String?,
       dateAdded: fields[10] as int?,
       lastUpdate: fields[11] as int?,
-      category: fields[14] as int?,
+      categories: (fields[14] as List?)?.cast<int>(),
       lastRead: fields[13] as String?,
       chapters: (fields[12] as List?)?.cast<ModelChapters>(),
     );
@@ -68,7 +68,7 @@ class ModelMangaAdapter extends TypeAdapter<ModelManga> {
       ..writeByte(13)
       ..write(obj.lastRead)
       ..writeByte(14)
-      ..write(obj.category);
+      ..write(obj.categories);
   }
 
   @override

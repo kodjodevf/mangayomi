@@ -138,7 +138,7 @@ class ReaderController extends _$ReaderController {
           dateAdded: getModelManga().dateAdded,
           lastUpdate: getModelManga().lastUpdate,
           chapters: chap,
-          category: getModelManga().category,
+          categories: getModelManga().categories,
           lastRead: getModelManga().lastRead);
       ref
           .watch(hiveBoxMangaProvider)
@@ -177,7 +177,7 @@ class ReaderController extends _$ReaderController {
           dateAdded: getModelManga().dateAdded,
           lastUpdate: getModelManga().lastUpdate,
           chapters: chap,
-          category: getModelManga().category,
+          categories: getModelManga().categories,
           lastRead: getModelManga().lastRead);
       ref
           .watch(hiveBoxMangaProvider)
