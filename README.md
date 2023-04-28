@@ -4,7 +4,7 @@
 
 <h1 align="center"> Mangayomi </h1>
 
-Mangayomi is free and open source manga reader cross-plateforme app inspired by Tachiyomi made with flutter. It allows users to read manga from a variety of sources and is developed out of passion and the challenge of creating such an application. Currently, all content sources are directly integrated into the application.
+Mangayomi is free and open source manga reader cross-plateform app inspired by Tachiyomi made with flutter. It allows users to read manga from a variety of sources and is developed out of passion and the challenge of creating such an application. Currently, all content sources are directly integrated into the application.
 
 ## Features
 
