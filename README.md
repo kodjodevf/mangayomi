@@ -13,6 +13,10 @@ Features include:
 * Local reading of downloaded content
 * A configurable reader with multiple viewers, reading directions.
 * Light and dark themes
+
+## Download
+Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
+
 ### Prerequisites
 
 You can install Flutter & Dart from [Official website](https://docs.flutter.dev/get-started/install)
