@@ -54,10 +54,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "7b778222546d53fcd41a84f6aee90b87c2593930"
+      resolved-ref: "4ccc65af8b8171719c59d79a6c068840e8cf04c6"
       url: "https://github.com/kodjodevf/background_downloader.git"
     source: git
-    version: "5.4.5"
+    version: "5.5.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -410,10 +410,11 @@ packages:
   flutter_js:
     dependency: "direct main"
     description:
-      name: flutter_js
-      sha256: "86922b593f80512dfe72586aab826123708992ecd07476349828e9893d7cbaff"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "021297c5bdf30372dc94528583dc864951e43c39"
+      url: "https://github.com/kodjodevf/flutter_js.git"
+    source: git
     version: "0.6.0"
   flutter_launcher_icons:
     dependency: "direct dev"

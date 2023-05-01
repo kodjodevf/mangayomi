@@ -132,6 +132,9 @@ class _MangaChapterPageGalleryState
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     clearGestureDetailsCache();
+    widget.readerController.setMangaHistoryUpdate();
+    widget.readerController.setPageIndex(_currentIndex);
+    widget.readerController.setChapterPageLastRead(_currentIndex);
     super.dispose();
   }
 
@@ -159,18 +162,13 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    widget.readerController.setMangaHistoryUpdate();
-    if (mounted) {
-      setState(() {
-        _currentIndex = index;
-      });
-      if (_imageDetailY != 0) {
-        _imageDetailY = 0;
-        _rebuildDetail.sink.add(_imageDetailY);
-      }
+    ref.read(currentIndexProvider.notifier).setCurrentIndex(index);
+    _currentIndex = index;
+
+    if (_imageDetailY != 0) {
+      _imageDetailY = 0;
+      _rebuildDetail.sink.add(_imageDetailY);
     }
-    widget.readerController.setPageIndex(index);
-    widget.readerController.setChapterPageLastRead(index);
   }
 
   void _onAddButtonTapped(int index, bool isPrev, {bool isSlide = false}) {
@@ -244,19 +242,14 @@ class _MangaChapterPageGalleryState
     if (firstImageIndex == null) {
       return;
     }
-
-    _recordReadProgress(firstImageIndex);
+    if (_currentIndex != firstImageIndex) {
+      _recordReadProgress(firstImageIndex);
+    }
   }
 
   void _recordReadProgress(int index) {
-    widget.readerController.setMangaHistoryUpdate();
-    if (mounted) {
-      setState(() {
-        _currentIndex = index;
-      });
-    }
-    widget.readerController.setPageIndex(index);
-    widget.readerController.setChapterPageLastRead(index);
+    ref.read(currentIndexProvider.notifier).setCurrentIndex(index);
+    _currentIndex = index;
   }
 
   ReaderMode? _selectedValue;
@@ -370,6 +363,7 @@ class _MangaChapterPageGalleryState
   Widget _showMore() {
     return Consumer(
       builder: (context, ref, child) {
+        final currentIndex = ref.watch(currentIndexProvider);
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -495,7 +489,7 @@ class _MangaChapterPageGalleryState
                                         child: SizedBox(
                                           width: 25,
                                           child: Text(
-                                            "${_currentIndex + 1} ",
+                                            "${currentIndex + 1} ",
                                             style: const TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.bold,
@@ -667,13 +661,14 @@ class _MangaChapterPageGalleryState
   Widget _showPage() {
     return Consumer(
       builder: (context, ref, child) {
+        final currentIndex = ref.watch(currentIndexProvider);
         return _isView
             ? Container()
             : _showPagesNumber
                 ? Align(
                     alignment: Alignment.bottomCenter,
                     child: Text(
-                      '${_currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
+                      '${currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 12.0,
@@ -710,95 +705,63 @@ class _MangaChapterPageGalleryState
         return Row(
           children: [
             /// left region
-            _isVerticalContinous()
-                ? Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (_isReversHorizontal) {
-                          _onAddButtonTapped(_currentIndex + 1, false);
-                        } else {
-                          _onAddButtonTapped(_currentIndex - 1, true);
-                        }
-                      },
-                      onDoubleTapDown: (TapDownDetails details) {
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  if (_isReversHorizontal) {
+                    _onAddButtonTapped(_currentIndex + 1, false);
+                  } else {
+                    _onAddButtonTapped(_currentIndex - 1, true);
+                  }
+                },
+                onDoubleTapDown: _isVerticalContinous()
+                    ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
-                      },
-                      onDoubleTap: () {},
-                    ),
-                  )
-                : Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (_isReversHorizontal) {
-                          _onAddButtonTapped(_currentIndex + 1, false);
-                        } else {
-                          _onAddButtonTapped(_currentIndex - 1, true);
-                        }
-                      },
-                    ),
-                  ),
+                      }
+                    : null,
+                onDoubleTap: _isVerticalContinous() ? () {} : null,
+              ),
+            ),
 
             /// center region
-            _isVerticalContinous()
-                ? Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _isViewFunction();
-                      },
-                      onDoubleTapDown: (TapDownDetails details) {
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+                onDoubleTapDown: _isVerticalContinous()
+                    ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
-                      },
-                      onDoubleTap: () {},
-                    ),
-                  )
-                : Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _isViewFunction();
-                      },
-                    ),
-                  ),
+                      }
+                    : null,
+                onDoubleTap: _isVerticalContinous() ? () {} : null,
+              ),
+            ),
 
             /// right region
-            _isVerticalContinous()
-                ? Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (_isReversHorizontal) {
-                          _onAddButtonTapped(_currentIndex - 1, true);
-                        } else {
-                          _onAddButtonTapped(_currentIndex + 1, false);
-                        }
-                      },
-                      onDoubleTapDown: (TapDownDetails details) {
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  if (_isReversHorizontal) {
+                    _onAddButtonTapped(_currentIndex - 1, true);
+                  } else {
+                    _onAddButtonTapped(_currentIndex + 1, false);
+                  }
+                },
+                onDoubleTapDown: _isVerticalContinous()
+                    ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
-                      },
-                      onDoubleTap: () {},
-                    ),
-                  )
-                : Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        if (_isReversHorizontal) {
-                          _onAddButtonTapped(_currentIndex - 1, true);
-                        } else {
-                          _onAddButtonTapped(_currentIndex + 1, false);
-                        }
-                      },
-                    ),
-                  ),
+                      }
+                    : null,
+                onDoubleTap: _isVerticalContinous() ? () {} : null,
+              ),
+            ),
           ],
         );
       },
@@ -811,57 +774,41 @@ class _MangaChapterPageGalleryState
         return Column(
           children: [
             /// top region
-            _isVerticalContinous()
-                ? Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _onAddButtonTapped(_currentIndex - 1, true);
-                      },
-                      onDoubleTapDown: (TapDownDetails details) {
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _onAddButtonTapped(_currentIndex - 1, true);
+                },
+                onDoubleTapDown: _isVerticalContinous()
+                    ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
-                      },
-                      onDoubleTap: () {},
-                    ),
-                  )
-                : Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _onAddButtonTapped(_currentIndex - 1, true);
-                      },
-                    ),
-                  ),
+                      }
+                    : null,
+                onDoubleTap: _isVerticalContinous() ? () {} : null,
+              ),
+            ),
 
             /// center region
             Expanded(flex: 5, child: Container()),
 
             /// bottom region
-            _isVerticalContinous()
-                ? Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _onAddButtonTapped(_currentIndex + 1, false);
-                      },
-                      onDoubleTapDown: (TapDownDetails details) {
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _onAddButtonTapped(_currentIndex + 1, false);
+                },
+                onDoubleTapDown: _isVerticalContinous()
+                    ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
-                      },
-                      onDoubleTap: () {},
-                    ),
-                  )
-                : Expanded(
-                    flex: 2,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        _onAddButtonTapped(_currentIndex + 1, false);
-                      },
-                    ),
-                  ),
+                      }
+                    : null,
+                onDoubleTap: _isVerticalContinous() ? () {} : null,
+              ),
+            ),
           ],
         );
       },

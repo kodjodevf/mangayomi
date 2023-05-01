@@ -24,14 +24,7 @@ enum ReaderMode {
 @riverpod
 class CurrentIndex extends _$CurrentIndex {
   @override
-  int build(MangaReaderModel mangaReaderModel) {
-    final modelManga = mangaReaderModel.modelManga;
-    final incognitoMode = ref.watch(incognitoModeStateProvider);
-    if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaInfoProvider).get(
-          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![mangaReaderModel.index].name}-page_index",
-          defaultValue: 0);
-    }
+  int build() {
     return 0;
   }
 
@@ -108,41 +101,12 @@ class ReaderController extends _$ReaderController {
     }
   }
 
-  void setChapterPageLastRead(int pageIndex) {
+  void setChapterPageLastRead(int pageIndex) async {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      List<ModelChapters> chap = [];
-      for (var i = 0; i < getModelManga().chapters!.length; i++) {
-        chap.add(ModelChapters(
-            name: getModelManga().chapters![i].name,
-            url: getModelManga().chapters![i].url,
-            dateUpload: getModelManga().chapters![i].dateUpload,
-            isBookmarked: getModelManga().chapters![i].isBookmarked,
-            scanlator: getModelManga().chapters![i].scanlator,
-            isRead: getModelManga().chapters![i].isRead,
-            lastPageRead: getChapterIndex() == i
-                ? (pageIndex + 1).toString()
-                : getModelManga().chapters![i].lastPageRead));
-      }
-      final model = ModelManga(
-          imageUrl: getModelManga().imageUrl,
-          name: getModelManga().name,
-          genre: getModelManga().genre,
-          author: getModelManga().author,
-          description: getModelManga().description,
-          status: getModelManga().status,
-          favorite: getModelManga().favorite,
-          link: getModelManga().link,
-          source: getModelManga().source,
-          lang: getModelManga().lang,
-          dateAdded: getModelManga().dateAdded,
-          lastUpdate: getModelManga().lastUpdate,
-          chapters: chap,
-          categories: getModelManga().categories,
-          lastRead: getModelManga().lastRead);
-      ref
-          .watch(hiveBoxMangaProvider)
-          .put('${getModelManga().lang}-${getModelManga().link}', model);
+      List<ModelChapters> chapter = getModelManga().chapters!;
+      chapter[getChapterIndex()].lastPageRead = (pageIndex + 1).toString();
+      getModelManga().save();
     }
   }
 
@@ -150,38 +114,9 @@ class ReaderController extends _$ReaderController {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       final isBookmarked = getChapterBookmarked();
-      List<ModelChapters> chap = [];
-      for (var i = 0; i < getModelManga().chapters!.length; i++) {
-        chap.add(ModelChapters(
-            name: getModelManga().chapters![i].name,
-            url: getModelManga().chapters![i].url,
-            dateUpload: getModelManga().chapters![i].dateUpload,
-            isBookmarked: getChapterIndex() == i
-                ? !isBookmarked
-                : getModelManga().chapters![i].isBookmarked,
-            scanlator: getModelManga().chapters![i].scanlator,
-            isRead: getModelManga().chapters![i].isRead,
-            lastPageRead: getModelManga().chapters![i].lastPageRead));
-      }
-      final model = ModelManga(
-          imageUrl: getModelManga().imageUrl,
-          name: getModelManga().name,
-          genre: getModelManga().genre,
-          author: getModelManga().author,
-          description: getModelManga().description,
-          status: getModelManga().status,
-          favorite: getModelManga().favorite,
-          link: getModelManga().link,
-          source: getModelManga().source,
-          lang: getModelManga().lang,
-          dateAdded: getModelManga().dateAdded,
-          lastUpdate: getModelManga().lastUpdate,
-          chapters: chap,
-          categories: getModelManga().categories,
-          lastRead: getModelManga().lastRead);
-      ref
-          .watch(hiveBoxMangaProvider)
-          .put('${getModelManga().lang}-${getModelManga().link}', model);
+      List<ModelChapters> chapter = getModelManga().chapters!;
+      chapter[getChapterIndex()].isBookmarked = !isBookmarked;
+      getModelManga().save();
     }
   }
 

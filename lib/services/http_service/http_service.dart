@@ -15,10 +15,7 @@ Future<dynamic> httpGet(
     Document? dom;
     if (isCloudflaree) {
       dom = await cloudflareBypassDom(
-          url: url,
-          bypass: isCloudflaree,
-          source: source,
-          useUserAgent: useUserAgent);
+          url: url, source: source, useUserAgent: useUserAgent);
     } else {
       dom = await httpResToDom(url: url, headers: headers(source));
     }

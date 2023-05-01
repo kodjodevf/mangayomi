@@ -39,7 +39,9 @@ dependencies:
   http: ^0.13.5
   riverpod_annotation: ^2.0.2
   html: ^0.15.2
-  flutter_js: ^0.6.0
+  flutter_js:
+     git:
+      url: https://github.com/kodjodevf/flutter_js.git
   font_awesome_flutter: ^10.1.0
   expandable_text: ^2.3.0
   flex_color_scheme: ^7.0.0

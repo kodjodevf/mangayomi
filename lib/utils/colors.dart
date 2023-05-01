@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Color generalColor(BuildContext context) {
-  return Theme.of(context).toggleButtonsTheme.color!;
+Color primaryColor(BuildContext context) {
+  return Theme.of(context).primaryColor;
 }
 
 Color secondaryColor(BuildContext context) {

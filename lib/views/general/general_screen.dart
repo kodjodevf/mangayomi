@@ -45,7 +45,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                     : 0,
                 curve: Curves.easeIn,
                 duration: const Duration(milliseconds: 150),
-                color: generalColor(context),
+                color: primaryColor(context),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,

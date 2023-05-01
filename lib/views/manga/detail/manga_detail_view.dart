@@ -107,7 +107,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             child: AppBar(
                               title: Text(chapterNameList.length.toString()),
                               backgroundColor:
-                                  generalColor(context).withOpacity(0.2),
+                                  primaryColor(context).withOpacity(0.2),
                               leading: IconButton(
                                   onPressed: () {
                                     ref
@@ -248,7 +248,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 SafeArea(
                     child: DraggableScrollbar(
                         heightScrollThumb: 48.0,
-                        backgroundColor: generalColor(context),
+                        backgroundColor: primaryColor(context),
                         scrollThumbBuilder: (backgroundColor, thumbAnimation,
                             labelAnimation, height,
                             {labelConstraints, labelText}) {
@@ -301,7 +301,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 return AnimatedContainer(
                   curve: Curves.easeIn,
                   decoration: BoxDecoration(
-                      color: generalColor(context).withOpacity(0.2),
+                      color: primaryColor(context).withOpacity(0.2),
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20))),
@@ -327,10 +327,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ref
                                     .read(chapterNameListStateProvider.notifier)
                                     .clear();
-
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
                               },
                               child: Icon(chapter.isBookmarked
                                   ? Icons.bookmark_remove
@@ -353,9 +349,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ref
                                     .read(chapterNameListStateProvider.notifier)
                                     .clear();
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
                               },
                               child: Icon(chapter.isRead
                                   ? Icons.remove_done_sharp
@@ -375,9 +368,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             modelManga: widget.modelManga!)
                                         .notifier)
                                     .set();
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
                                 ref
                                     .read(chapterNameListStateProvider.notifier)
                                     .clear();

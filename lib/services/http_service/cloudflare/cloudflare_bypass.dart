@@ -6,7 +6,6 @@ import 'package:mangayomi/utils/constant.dart';
 
 Future<dom.Document?> cloudflareBypassDom(
     {required String url,
-    required bool bypass,
     required String source,
     required bool useUserAgent}) async {
   // log(source);

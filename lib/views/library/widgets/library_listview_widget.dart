@@ -28,8 +28,14 @@ class LibraryListViewWidget extends StatelessWidget {
     return ListViewWidget(
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0)),
+              elevation: 0,
+              shadowColor: Colors.transparent),
+          onPressed: () {
             context.push('/manga-reader/detail', extra: entriesManga[index]);
           },
           child: Padding(
@@ -67,7 +73,7 @@ class LibraryListViewWidget extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(3),
-                          color: generalColor(context)),
+                          color: primaryColor(context)),
                       child: SizedBox(
                         height: 22,
                         child: Row(
@@ -134,18 +140,22 @@ class LibraryListViewWidget extends StatelessWidget {
                             ),
                             if (language)
                               Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(3),
-                                      bottomRight: Radius.circular(3)),
-                                  color: Theme.of(context).hintColor,
-                                ),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(left: 3, right: 3),
-                                  child: Text(
-                                    entriesManga[index].lang!.toUpperCase(),
-                                    style: const TextStyle(color: Colors.white),
+                                color: primaryColor(context),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                        topRight: Radius.circular(3),
+                                        bottomRight: Radius.circular(3)),
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 3, right: 3),
+                                    child: Text(
+                                      entriesManga[index].lang!.toUpperCase(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -155,75 +165,69 @@ class LibraryListViewWidget extends StatelessWidget {
                     ),
                   ),
                   if (continueReaderBtn)
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            return ValueListenableBuilder<Box>(
-                              valueListenable: ref
-                                  .watch(hiveBoxMangaInfoProvider)
-                                  .listenable(),
-                              builder: (context, value, child) {
-                                final entries = value.get(
-                                    "${entriesManga[index].lang}-${entriesManga[index].source}/${entriesManga[index].name}-chapter_index",
-                                    defaultValue: '');
-                                final incognitoMode =
-                                    ref.watch(incognitoModeStateProvider);
+                    Consumer(
+                      builder: (context, ref, child) {
+                        return ValueListenableBuilder<Box>(
+                          valueListenable:
+                              ref.watch(hiveBoxMangaInfoProvider).listenable(),
+                          builder: (context, value, child) {
+                            final entries = value.get(
+                                "${entriesManga[index].lang}-${entriesManga[index].source}/${entriesManga[index].name}-chapter_index",
+                                defaultValue: '');
+                            final incognitoMode =
+                                ref.watch(incognitoModeStateProvider);
 
-                                if (entries.isNotEmpty && !incognitoMode) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      pushMangaReaderView(
-                                          context: context,
-                                          modelManga: entriesManga[index],
-                                          index: int.parse(entries.toString()));
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: generalColor(context)
-                                            .withOpacity(0.7),
-                                      ),
-                                      child: const Padding(
-                                          padding: EdgeInsets.all(7),
-                                          child: Icon(
-                                            Icons.play_arrow,
-                                            size: 19,
-                                            color: Colors.white,
-                                          )),
-                                    ),
-                                  );
-                                }
-                                return GestureDetector(
-                                  onTap: () {
-                                    pushMangaReaderView(
-                                        context: context,
-                                        modelManga: entriesManga[index],
-                                        index: entriesManga[index]
-                                                .chapters!
-                                                .length -
-                                            1);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: generalColor(context)
-                                          .withOpacity(0.7),
-                                    ),
-                                    child: const Padding(
-                                        padding: EdgeInsets.all(7),
-                                        child: Icon(
-                                          Icons.play_arrow,
-                                          size: 19,
-                                          color: Colors.white,
-                                        )),
+                            if (entries.isNotEmpty && !incognitoMode) {
+                              return GestureDetector(
+                                onTap: () {
+                                  pushMangaReaderView(
+                                      context: context,
+                                      modelManga: entriesManga[index],
+                                      index: int.parse(entries.toString()));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color:
+                                        primaryColor(context).withOpacity(0.9),
                                   ),
-                                );
+                                  child: const Padding(
+                                      padding: EdgeInsets.all(7),
+                                      child: Icon(
+                                        Icons.play_arrow,
+                                        size: 19,
+                                        color: Colors.white,
+                                      )),
+                                ),
+                              );
+                            }
+                            return GestureDetector(
+                              onTap: () {
+                                pushMangaReaderView(
+                                    context: context,
+                                    modelManga: entriesManga[index],
+                                    index:
+                                        entriesManga[index].chapters!.length -
+                                            1);
                               },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: primaryColor(context).withOpacity(0.9),
+                                ),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(7),
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      size: 19,
+                                      color: Colors.white,
+                                    )),
+                              ),
                             );
                           },
-                        ))
+                        );
+                      },
+                    )
                 ],
               ),
             ),

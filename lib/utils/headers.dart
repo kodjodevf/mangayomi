@@ -5,13 +5,13 @@ Map<String, String> headers(String source) {
   source = source.toLowerCase();
   final cookie = Hive.box(HiveConstant.hiveBoxAppSettings)
       .get("$source-cookie", defaultValue: "");
-  // log(cookie);
   final userAgent = Hive.box(HiveConstant.hiveBoxAppSettings)
       .get("ua", defaultValue: defaultUserAgent);
   return source == 'mangakawaii'
       ? {
           'Referer': 'https://www.mangakawaii.io/',
-          'User-Agent': userAgent,
+          'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\$userAgentRandomizer1.0.4\$userAgentRandomizer3.1\$userAgentRandomizer2 Safari/537.36',
           'Accept-Language': 'fr'
         }
       : source == 'mangahere'

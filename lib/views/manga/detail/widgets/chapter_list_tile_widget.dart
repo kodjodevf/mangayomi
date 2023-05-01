@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga_reader.dart';
@@ -29,9 +31,10 @@ class ChapterListTileWidget extends ConsumerWidget {
     final idx = reverse ? reverseIndex : finalIndex;
     final chapterNameList = ref.watch(chapterNameListStateProvider);
     final chapterName = modelManga.chapters![idx].name;
+    log(chapterNameList.length.toString());
     return Container(
       color: chapterNameList.contains(chapterName)
-          ? generalColor(context).withOpacity(0.4)
+          ? primaryColor(context).withOpacity(0.4)
           : null,
       child: ListTile(
         textColor: chapters[finalIndex].isRead
@@ -83,7 +86,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                 ? Icon(
                     Icons.bookmark,
                     size: 15,
-                    color: generalColor(context),
+                    color: primaryColor(context),
                   )
                 : Container(),
             Flexible(

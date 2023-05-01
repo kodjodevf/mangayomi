@@ -82,7 +82,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               curve: Curves.easeIn,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: generalColor(context),
+                                    backgroundColor: primaryColor(context),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(15))),
@@ -137,7 +137,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             curve: Curves.easeIn,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: generalColor(context),
+                                  backgroundColor: primaryColor(context),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15))),
                               onPressed: () {
@@ -247,9 +247,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           chapters: widget.modelManga.chapters,
                           categories: [],
                           lastRead: widget.modelManga.lastRead);
-                      manga.put(
-                          '${widget.modelManga.lang}-${widget.modelManga.link}',
-                          model);
+                      manga.delete(
+                          '${widget.modelManga.lang}-${widget.modelManga.link}'
+                          );
                     },
                     child: Column(
                       children: const [

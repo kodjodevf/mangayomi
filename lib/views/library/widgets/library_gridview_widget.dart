@@ -61,7 +61,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(3),
-                            color: generalColor(context),
+                            color: primaryColor(context),
                           ),
                           child: Row(
                             children: [
@@ -142,17 +142,21 @@ class LibraryGridViewWidget extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(5),
                           child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(3),
-                                  bottomLeft: Radius.circular(3)),
-                              color: Theme.of(context).hintColor,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 3, right: 3),
-                              child: Text(
-                                entriesManga[index].lang!.toUpperCase(),
-                                style: const TextStyle(color: Colors.white),
+                            color: primaryColor(context),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(3),
+                                    bottomLeft: Radius.circular(3)),
+                                color: Theme.of(context).hintColor,
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 3, right: 3),
+                                child: Text(
+                                  entriesManga[index].lang!.toUpperCase(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
                           ),
@@ -192,8 +196,8 @@ class LibraryGridViewWidget extends StatelessWidget {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        color: generalColor(context)
-                                            .withOpacity(0.7),
+                                        color: primaryColor(context)
+                                            .withOpacity(0.9),
                                       ),
                                       child: const Padding(
                                           padding: EdgeInsets.all(7),
@@ -218,8 +222,8 @@ class LibraryGridViewWidget extends StatelessWidget {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
-                                      color: generalColor(context)
-                                          .withOpacity(0.7),
+                                      color: primaryColor(context)
+                                          .withOpacity(0.9),
                                     ),
                                     child: const Padding(
                                         padding: EdgeInsets.all(7),

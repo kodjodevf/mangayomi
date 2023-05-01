@@ -131,45 +131,26 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
+      chap = modelManga.chapters!.where((element) {
         final modelChapDownload = ref
             .watch(hiveBoxMangaDownloadsProvider)
-            .get(chapters[i].name, defaultValue: null);
-        if (modelChapDownload != null && modelChapDownload.isDownload == true) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+            .get(element.name, defaultValue: null);
+        return modelChapDownload != null &&
+            modelChapDownload.isDownload == true;
+      }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
+      chap = modelManga.chapters!.where((element) {
         final modelChapDownload = ref
             .watch(hiveBoxMangaDownloadsProvider)
-            .get(chapters[i].name, defaultValue: null);
-        if (!(modelChapDownload != null &&
-            modelChapDownload.isDownload == true)) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+            .get(element.name, defaultValue: null);
+        return !(modelChapDownload != null &&
+            modelChapDownload.isDownload == true);
+      }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
@@ -182,45 +163,26 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
+      chap = modelManga.chapters!.where((element) {
         final modelChapDownload = ref
             .watch(hiveBoxMangaDownloadsProvider)
-            .get(chapters[i].name, defaultValue: null);
-        if (modelChapDownload != null && modelChapDownload.isDownload == true) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+            .get(element.name, defaultValue: null);
+        return modelChapDownload != null &&
+            modelChapDownload.isDownload == true;
+      }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
+      chap = modelManga.chapters!.where((element) {
         final modelChapDownload = ref
             .watch(hiveBoxMangaDownloadsProvider)
-            .get(chapters[i].name, defaultValue: null);
-        if (!(modelChapDownload != null &&
-            modelChapDownload.isDownload == true)) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+            .get(element.name, defaultValue: null);
+        return !(modelChapDownload != null &&
+            modelChapDownload.isDownload == true);
+      }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
@@ -255,38 +217,14 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (!chapters[i].isRead) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!.where((element) => !element.isRead).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (chapters[i].isRead) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!.where((element) => element.isRead).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
@@ -299,38 +237,14 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (!chapters[i].isRead) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!.where((element) => !element.isRead).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (chapters[i].isRead) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!.where((element) => element.isRead).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
@@ -365,38 +279,17 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (chapters[i].isBookmarked) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!
+          .where((element) => element.isBookmarked)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
-
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (!chapters[i].isBookmarked) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!
+          .where((element) => !element.isBookmarked)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
@@ -409,38 +302,18 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (chapters[i].isBookmarked) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!
+          .where((element) => element.isBookmarked)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      final chapters = modelManga.chapters;
-      for (var i = 0; i < chapters!.length; i++) {
-        if (!chapters[i].isBookmarked) {
-          chap.add(ModelChapters(
-              name: chapters[i].name,
-              url: chapters[i].url,
-              dateUpload: chapters[i].dateUpload,
-              isBookmarked: chapters[i].isBookmarked,
-              scanlator: chapters[i].scanlator,
-              isRead: chapters[i].isRead,
-              lastPageRead: chapters[i].lastPageRead));
-        }
-      }
+      chap = modelManga.chapters!
+          .where((element) => !element.isBookmarked)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
@@ -512,30 +385,15 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   build({required ModelManga modelManga}) {}
 
   set() {
-    final entries = ref
-        .watch(hiveBoxMangaProvider)
-        .get('${modelManga.lang}-${modelManga.link}', defaultValue: modelManga);
+    ref.read(isLongPressedStateProvider.notifier).update(false);
     for (var name in ref.watch(chapterNameListStateProvider)) {
-      List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        chap.add(ModelChapters(
-            name: entries!.chapters![i].name,
-            url: entries.chapters![i].url,
-            dateUpload: entries.chapters![i].dateUpload,
-            isBookmarked: name == entries.chapters![i].name
-                ? entries.chapters![i].isBookmarked
-                    ? false
-                    : true
-                : entries.chapters![i].isBookmarked,
-            scanlator: entries.chapters![i].scanlator,
-            isRead: entries.chapters![i].isRead,
-            lastPageRead: entries.chapters![i].lastPageRead));
+        modelManga.chapters![i].isBookmarked =
+            name == modelManga.chapters![i].name
+                ? !modelManga.chapters![i].isBookmarked
+                : modelManga.chapters![i].isBookmarked;
       }
-      final model =
-          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
-      ref
-          .watch(hiveBoxMangaProvider)
-          .put('${modelManga.lang}-${modelManga.link}', model);
+      modelManga.save();
     }
   }
 }
@@ -546,31 +404,14 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   build({required ModelManga modelManga}) {}
 
   set() {
-    final entries = ref
-        .watch(hiveBoxMangaProvider)
-        .get('${modelManga.lang}-${modelManga.link}', defaultValue: modelManga);
+    ref.read(isLongPressedStateProvider.notifier).update(false);
     for (var name in ref.watch(chapterNameListStateProvider)) {
-      List<ModelChapters> chap = [];
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        chap.add(ModelChapters(
-            name: entries!.chapters![i].name,
-            url: entries.chapters![i].url,
-            dateUpload: entries.chapters![i].dateUpload,
-            isBookmarked: entries.chapters![i].isBookmarked,
-            scanlator: entries.chapters![i].scanlator,
-            isRead: name == entries.chapters![i].name
-                ? entries.chapters![i].isRead
-                    ? false
-                    : true
-                : entries.chapters![i].isRead,
-            lastPageRead: entries.chapters![i].lastPageRead));
+        modelManga.chapters![i].isRead = name == modelManga.chapters![i].name
+            ? !modelManga.chapters![i].isRead
+            : modelManga.chapters![i].isRead;
       }
-
-      final model =
-          modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
-      ref
-          .watch(hiveBoxMangaProvider)
-          .put('${modelManga.lang}-${modelManga.link}', model);
+      modelManga.save();
     }
   }
 }
@@ -581,6 +422,7 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
   build({required ModelManga modelManga}) {}
 
   set() {
+    ref.read(isLongPressedStateProvider.notifier).update(false);
     List<int> indexList = [];
     for (var name in ref.watch(chapterNameListStateProvider)) {
       for (var i = 0; i < modelManga.chapters!.length; i++) {

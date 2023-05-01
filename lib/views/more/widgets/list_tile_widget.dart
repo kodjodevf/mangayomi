@@ -29,7 +29,7 @@ class ListTileWidget extends StatelessWidget {
           height: 40,
           child: Icon(
             icon,
-            color: generalColor(context),
+            color: primaryColor(context),
           )),
       title: Text(title),
       trailing: trailing,
