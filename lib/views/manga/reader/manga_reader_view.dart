@@ -15,6 +15,7 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/reader/image_view_horizontal.dart';
 import 'package:mangayomi/views/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -41,11 +42,15 @@ class MangaReaderView extends ConsumerWidget {
         readerControllerProvider(mangaReaderModel: mangaReaderModel).notifier);
     return chapterData.when(
       data: (data) {
+        if (data.urll.isEmpty) {
+          Navigator.pop(context);
+        }
         return MangaChapterPageGallery(
           path: data.path!,
           url: data.urll,
           readerController: readerController,
           isLocaleList: data.isLocaleList,
+          mangaReaderModel: mangaReaderModel,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -106,11 +111,13 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       required this.path,
       required this.url,
       required this.readerController,
-      required this.isLocaleList});
+      required this.isLocaleList,
+      required this.mangaReaderModel});
   final ReaderController readerController;
   final Directory path;
   final List url;
   final List<bool> isLocaleList;
+  final MangaReaderModel mangaReaderModel;
 
   @override
   ConsumerState createState() {
@@ -129,12 +136,13 @@ class _MangaChapterPageGalleryState
   late bool _isBookmarked = widget.readerController.getChapterBookmarked();
   @override
   void dispose() {
-    _rebuildDetail.close();
-    _doubleClickAnimationController.dispose();
-    clearGestureDetailsCache();
     widget.readerController.setMangaHistoryUpdate();
     widget.readerController.setPageIndex(_currentIndex);
     widget.readerController.setChapterPageLastRead(_currentIndex);
+    _rebuildDetail.close();
+    _doubleClickAnimationController.dispose();
+    clearGestureDetailsCache();
+
     super.dispose();
   }
 
@@ -162,7 +170,9 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    ref.read(currentIndexProvider.notifier).setCurrentIndex(index);
+    ref
+        .read(currentIndexProvider(widget.mangaReaderModel).notifier)
+        .setCurrentIndex(index);
     _currentIndex = index;
 
     if (_imageDetailY != 0) {
@@ -248,7 +258,9 @@ class _MangaChapterPageGalleryState
   }
 
   void _recordReadProgress(int index) {
-    ref.read(currentIndexProvider.notifier).setCurrentIndex(index);
+    ref
+        .read(currentIndexProvider(widget.mangaReaderModel).notifier)
+        .setCurrentIndex(index);
     _currentIndex = index;
   }
 
@@ -363,7 +375,8 @@ class _MangaChapterPageGalleryState
   Widget _showMore() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider);
+        final currentIndex =
+            ref.watch(currentIndexProvider(widget.mangaReaderModel));
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -661,7 +674,8 @@ class _MangaChapterPageGalleryState
   Widget _showPage() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider);
+        final currentIndex =
+            ref.watch(currentIndexProvider(widget.mangaReaderModel));
         return _isView
             ? Container()
             : _showPagesNumber
@@ -924,24 +938,11 @@ class _MangaChapterPageGalleryState
                                       ? loadingProgress!.cumulativeBytesLoaded /
                                           loadingProgress.expectedTotalBytes!
                                       : 0;
-                              return TweenAnimationBuilder<double>(
-                                duration: const Duration(seconds: 900),
-                                curve: Curves.elasticIn,
-                                tween: Tween<double>(
-                                  begin: 0,
-                                  end: progress,
-                                ),
-                                builder: (context, value, _) => Container(
-                                  color: Colors.black,
-                                  height: mediaHeight(context, 0.8),
-                                  child: Center(
-                                    child: progress == 0
-                                        ? const CircularProgressIndicator()
-                                        : CircularProgressIndicator(
-                                            value: progress,
-                                          ),
-                                  ),
-                                ),
+                              return Container(
+                                color: Colors.black,
+                                height: mediaHeight(context, 0.8),
+                                child: CircularProgressIndicatorAnimateRotate(
+                                    progress: progress),
                               );
                             }
                             if (state.extendedImageLoadState ==

@@ -190,7 +190,7 @@ class ReverseMangaStateProvider
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'ea2313a3f81e408cdea77e98d82510e824ddd6a4';
+    r'6b433670cf840fe1e8166ae5b7a4fe17c9b56b5d';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -290,7 +290,7 @@ class ChapterFilterDownloadedStateProvider
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'54a6bd0ace5db2262298ec51a7a99149aeaff047';
+    r'ee96d8e6b3f145096e00ff3c09fda07d5f968047';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -389,7 +389,7 @@ class ChapterFilterUnreadStateProvider
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'316ae7f6d11556927aa160ab950585e3e74fc8e1';
+    r'f9761f9a32d0d6af53f513f862476a7125054ce7';
 
 abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -588,7 +588,7 @@ class ChapterFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'1be8afbfd3ebd0a519922f315d204d60409bed57';
+    r'c12ed82216c7a649b9937226d841e413209ec704';
 
 abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -687,7 +687,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'fafd4503e4e65d48f157893de2b3a2234f4b20c7';
+    r'2976cee969928c8ce433e173e53ba67e6ee49d6d';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -786,7 +786,7 @@ class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'299986f635cf64cf09aafbd7da373fa3e93ac8fc';
+    r'cc003f376668ea8b1c8f3f6d03190f72d172f55e';
 
 abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<dynamic> {

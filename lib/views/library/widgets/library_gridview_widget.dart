@@ -7,6 +7,7 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/views/manga/download/download_model.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
@@ -49,6 +50,7 @@ class LibraryGridViewWidget extends StatelessWidget {
               Stack(
                 children: [
                   cachedNetworkImage(
+                      headers: headers(entriesManga[index].source!),
                       imageUrl: entriesManga[index].imageUrl!,
                       width: 200,
                       height: 270,

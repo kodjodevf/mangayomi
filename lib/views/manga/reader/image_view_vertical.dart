@@ -6,8 +6,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
-class ImageViewVertical extends StatelessWidget {
+class ImageViewVertical extends StatefulWidget {
   final int length;
   final bool isLocale;
   final String url;
@@ -30,24 +31,32 @@ class ImageViewVertical extends StatelessWidget {
   });
 
   @override
+  State<ImageViewVertical> createState() => _ImageViewVerticalState();
+}
+
+class _ImageViewVerticalState extends State<ImageViewVertical>
+    with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       color: Colors.black,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (index == 0)
+          if (widget.index == 0)
             SizedBox(
               height: MediaQuery.of(context).padding.top,
             ),
-          isLocale
+          widget.isLocale
               ? ExtendedImage.file(
                   fit: BoxFit.contain,
                   clearMemoryCacheWhenDispose: true,
                   enableMemoryCache: false,
-                  File('${path.path}${padIndex(index + 1)}.jpg'))
+                  File('${widget.path.path}${padIndex(widget.index + 1)}.jpg'))
               : ExtendedImage(
-                  image: FastCachedImageProvider(url, headers: headers(source)),
+                  image: FastCachedImageProvider(widget.url,
+                      headers: headers(widget.source)),
                   handleLoadingProgress: true,
                   fit: BoxFit.contain,
                   clearMemoryCacheWhenDispose: true,
@@ -61,24 +70,11 @@ class ImageViewVertical extends StatelessWidget {
                               ? loadingProgress!.cumulativeBytesLoaded /
                                   loadingProgress.expectedTotalBytes!
                               : 0;
-                      return TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 900),
-                        curve: Curves.elasticIn,
-                        tween: Tween<double>(
-                          begin: 0,
-                          end: progress,
-                        ),
-                        builder: (context, value, _) => Container(
-                          color: Colors.black,
-                          height: mediaHeight(context, 0.8),
-                          child: Center(
-                            child: progress == 0
-                                ? const CircularProgressIndicator()
-                                : CircularProgressIndicator(
-                                    value: progress,
-                                  ),
-                          ),
-                        ),
+                      return Container(
+                        color: Colors.black,
+                        height: mediaHeight(context, 0.8),
+                        child: CircularProgressIndicatorAnimateRotate(
+                            progress: progress),
                       );
                     }
                     if (state.extendedImageLoadState == LoadState.failed) {
@@ -101,14 +97,14 @@ class ImageViewVertical extends StatelessWidget {
                     }
                     return null;
                   }),
-          if (index + 1 == length)
+          if (widget.index + 1 == widget.length)
             SizedBox(
               height: mediaHeight(context, 0.3),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '$chapter finished',
+                    '${widget.chapter} finished',
                     style: const TextStyle(
                         fontSize: 17.0,
                         fontWeight: FontWeight.bold,
@@ -131,4 +127,7 @@ class ImageViewVertical extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

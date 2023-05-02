@@ -9,6 +9,7 @@ import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
@@ -51,15 +52,10 @@ _parseStatut(int i) {
 }
 
 Future findCurrentSlug(String oldSlug) async {
-  var headers = {
-    'Referer': 'https://comick.app/',
-    'User-Agent':
-        'Tachiyomi Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8\\\$userAgentRandomizer1.0.4\\\$userAgentRandomizer3.1\\\$userAgentRandomizer2 Safari/537.36'
-  };
   var request = http.Request('GET',
       Uri.parse('https://api.comick.fun/tachiyomi/mapping?slugs=$oldSlug'));
 
-  request.headers.addAll(headers);
+  request.headers.addAll(headers("comick"));
 
   http.StreamedResponse response = await request.send();
 
@@ -89,6 +85,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterDate = [];
   String? description;
   List<ModelChapters> chapters = [];
+  List<String> scanlators = [];
   /********/
   /*comick*/
   /********/
@@ -123,27 +120,30 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
             'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
         source: source,
         resDom: false) as String?;
-    List<String> chapterTitles = [];
-    List<String> chapterUrls = [];
-    List<String> chapterDates = [];
+    // List<String> chapterTitles = [];
+    // List<String> chapterUrls = [];
+    // List<String> chapterDates = [];
     var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
     var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
     for (var chapter in chapterDetailMap.chapters!) {
-      chapterUrls.add(
+      scanlators.add(chapter.groupName!.isNotEmpty
+          ? chapter.groupName!.first.toString() != 'null'
+              ? chapter.groupName!.first
+              : ""
+          : "");
+      // print(chapter.groupName!);
+      chapterUrl.add(
           "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
-      chapterDates.add(chapter.createdAt!.toString().substring(0, 10));
-      chapterTitles.add(beautifyChapterName(
+      chapterDate.add(chapter.createdAt!.toString().substring(0, 10));
+      chapterTitle.add(beautifyChapterName(
           chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
     }
-    List<String> chapterTitless = [];
-    for (var i = 0; i < chapterTitles.length; i++) {
-      if (!chapterTitless.contains(chapterTitles[i])) {
-        chapterTitle.add(chapterTitles[i]);
-        chapterUrl.add(chapterUrls[i]);
-        chapterDate.add(chapterDates[i].replaceAll('-', "/"));
-      }
-      chapterTitless.add(chapterTitles[i]);
-    }
+    // List<String> chapterTitless = [];
+    // for (var i = 0; i < chapterTitles.length; i++) {
+    //   chapterTitle.add(chapterTitles[i]);
+    //   chapterUrl.add(chapterUrls[i]);
+    //   chapterDate.add(chapterDates[i].replaceAll('-', "/"));
+    // }
   }
   /*************/
   /*mangathemesia*/
@@ -667,7 +667,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
           url: chapterUrl[i],
           dateUpload: chapterDate[i],
           isBookmarked: false,
-          scanlator: "",
+          scanlator: scanlators.isEmpty ? "" : scanlators[i],
           isRead: false,
           lastPageRead: ''));
     }

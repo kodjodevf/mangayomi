@@ -9,6 +9,7 @@ import 'package:mangayomi/models/manga_reader.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
@@ -93,7 +94,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               ),
                               TextButton(
                                   onPressed: () {
-                                    ref.watch(hiveBoxMangaHistoryProvider).clear();
+                                    ref
+                                        .watch(hiveBoxMangaHistoryProvider)
+                                        .clear();
                                     Navigator.pop(context);
                                   },
                                   child: const Text("Ok")),
@@ -146,6 +149,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(7),
                               child: cachedNetworkImage(
+                                  headers: headers(element.modelManga.source!),
                                   imageUrl: element.modelManga.imageUrl!,
                                   width: 60,
                                   height: 90,
@@ -155,8 +159,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         ),
                         Flexible(
                           child: ValueListenableBuilder<Box>(
-                            valueListenable:
-                                ref.watch(hiveBoxMangaInfoProvider).listenable(),
+                            valueListenable: ref
+                                .watch(hiveBoxMangaInfoProvider)
+                                .listenable(),
                             builder: (context, value, child) {
                               final values = value.get(
                                   "${element.modelManga.lang}-${element.modelManga.source}/${element.modelManga.name}-chapter_index",

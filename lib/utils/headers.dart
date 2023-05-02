@@ -33,5 +33,5 @@ Map<String, String> headers(String source) {
                           'Referer': "https://www.sushscan.net/",
                           "Cookie": cookie
                         }
-                      : {'User-Agent': userAgent, "Cookie": cookie};
+                      : {};
 }

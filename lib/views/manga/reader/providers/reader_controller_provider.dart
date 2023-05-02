@@ -24,7 +24,14 @@ enum ReaderMode {
 @riverpod
 class CurrentIndex extends _$CurrentIndex {
   @override
-  int build() {
+  int build(MangaReaderModel mangaReaderModel) {
+    final incognitoMode = ref.watch(incognitoModeStateProvider);
+    if (!incognitoMode) {
+      return ref
+          .read(readerControllerProvider(mangaReaderModel: mangaReaderModel)
+              .notifier)
+          .getPageIndex();
+    }
     return 0;
   }
 

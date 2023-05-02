@@ -9,6 +9,7 @@ import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
@@ -226,6 +227,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     child: Stack(
                       children: [
                         cachedNetworkImage(
+                            headers: headers(widget.modelManga!.source!),
                             imageUrl: widget.modelManga!.imageUrl!,
                             width: mediaWidth(context, 1),
                             height: 461,
@@ -510,6 +512,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         Positioned(
             top: 0,
             child: cachedNetworkImage(
+                headers: headers(widget.modelManga!.source!),
                 imageUrl: widget.modelManga!.imageUrl!,
                 width: mediaWidth(context, 1),
                 height: 300,

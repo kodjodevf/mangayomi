@@ -64,22 +64,7 @@ class ReaderModeAdapter extends TypeAdapter<ReaderMode> {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'af7ea51b2aa8a5c6db401c52958879b87fc56973';
-
-/// See also [CurrentIndex].
-@ProviderFor(CurrentIndex)
-final currentIndexProvider =
-    AutoDisposeNotifierProvider<CurrentIndex, int>.internal(
-  CurrentIndex.new,
-  name: r'currentIndexProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$currentIndexHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$CurrentIndex = AutoDisposeNotifier<int>;
-String _$readerControllerHash() => r'a389f9b08001c6863a651f6c2ed3d1b18588d5b0';
+String _$currentIndexHash() => r'13515f4fe649912e0a0cade86c968152481b56f2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -101,6 +86,103 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+abstract class _$CurrentIndex extends BuildlessAutoDisposeNotifier<int> {
+  late final MangaReaderModel mangaReaderModel;
+
+  int build(
+    MangaReaderModel mangaReaderModel,
+  );
+}
+
+/// See also [CurrentIndex].
+@ProviderFor(CurrentIndex)
+const currentIndexProvider = CurrentIndexFamily();
+
+/// See also [CurrentIndex].
+class CurrentIndexFamily extends Family<int> {
+  /// See also [CurrentIndex].
+  const CurrentIndexFamily();
+
+  /// See also [CurrentIndex].
+  CurrentIndexProvider call(
+    MangaReaderModel mangaReaderModel,
+  ) {
+    return CurrentIndexProvider(
+      mangaReaderModel,
+    );
+  }
+
+  @override
+  CurrentIndexProvider getProviderOverride(
+    covariant CurrentIndexProvider provider,
+  ) {
+    return call(
+      provider.mangaReaderModel,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'currentIndexProvider';
+}
+
+/// See also [CurrentIndex].
+class CurrentIndexProvider
+    extends AutoDisposeNotifierProviderImpl<CurrentIndex, int> {
+  /// See also [CurrentIndex].
+  CurrentIndexProvider(
+    this.mangaReaderModel,
+  ) : super.internal(
+          () => CurrentIndex()..mangaReaderModel = mangaReaderModel,
+          from: currentIndexProvider,
+          name: r'currentIndexProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$currentIndexHash,
+          dependencies: CurrentIndexFamily._dependencies,
+          allTransitiveDependencies:
+              CurrentIndexFamily._allTransitiveDependencies,
+        );
+
+  final MangaReaderModel mangaReaderModel;
+
+  @override
+  bool operator ==(Object other) {
+    return other is CurrentIndexProvider &&
+        other.mangaReaderModel == mangaReaderModel;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, mangaReaderModel.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  int runNotifierBuild(
+    covariant CurrentIndex notifier,
+  ) {
+    return notifier.build(
+      mangaReaderModel,
+    );
+  }
+}
+
+String _$readerControllerHash() => r'8999132e4d6b64b2c652d641cbef9ae6e9175d0e';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final MangaReaderModel mangaReaderModel;

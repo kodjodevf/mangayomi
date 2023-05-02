@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Widget cachedNetworkImage(
-    {Map<String, String>? headers,
+    {required Map<String, String>? headers,
     required String imageUrl,
     required double? width,
     required double? height,

@@ -35,7 +35,7 @@ class Chapters {
   String? updatedAt;
   int? upCount;
   int? downCount;
-  List<String>? groupName;
+  List<dynamic>? groupName;
   String? hid;
   List<MdGroups>? mdGroups;
 
@@ -65,6 +65,7 @@ class Chapters {
     // updatedAt = json['updated_at'];
     // upCount = json['up_count'];
     // downCount = json['down_count'];
+    groupName = json['group_name'] ?? [];
     hid = json['hid'];
     // if (json['md_groups'] != null) {
     //   mdGroups = <MdGroups>[];

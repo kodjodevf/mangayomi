@@ -83,7 +83,8 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
   /*mangathemesia*/
   /**************/
   if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
-    final dom = await httpGet(useUserAgent: true,
+    final dom = await httpGet(
+        useUserAgent: true,
         url: '${getWpMangaUrl(source)}/manga/?title=&page=$page&order=popular',
         source: source,
         resDom: true) as Document?;
@@ -198,7 +199,7 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
               ' body > div.container.weekrank.ranking > div > div > ul > li > a > img')
           .where((e) => e.attributes.containsKey('src'))
           .where((e) => e.attributes['src']!.contains("cover"))
-          .map((e) => e.attributes['src']!.split('?').first)
+          .map((e) => e.attributes['src'])
           .toList();
 
       name = dom
@@ -208,7 +209,11 @@ Future<GetMangaModel> getPopularManga(GetPopularMangaRef ref,
           .map((e) => e.attributes['title'])
           .toList();
     }
-  } else if (source == "japscan") {
+  }
+  /***********/
+  /*japscan*/
+  /***********/
+  else if (source == "japscan") {
     final dom = await httpGet(
         url: "https://www.japscan.lol/",
         source: source,

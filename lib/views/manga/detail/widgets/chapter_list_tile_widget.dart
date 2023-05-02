@@ -31,7 +31,6 @@ class ChapterListTileWidget extends ConsumerWidget {
     final idx = reverse ? reverseIndex : finalIndex;
     final chapterNameList = ref.watch(chapterNameListStateProvider);
     final chapterName = modelManga.chapters![idx].name;
-    log(chapterNameList.length.toString());
     return Container(
       color: chapterNameList.contains(chapterName)
           ? primaryColor(context).withOpacity(0.4)
@@ -116,6 +115,22 @@ class ChapterListTileWidget extends ConsumerWidget {
                         color: isLight(context)
                             ? Colors.black.withOpacity(0.4)
                             : Colors.white.withOpacity(0.3)),
+                  ),
+                ],
+              ),
+            if (chapters[finalIndex].scanlator!.isNotEmpty)
+              Row(
+                children: [
+                  const Text(' • '),
+                  Text(
+                    chapters[finalIndex].scanlator!,
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: chapters[finalIndex].isRead
+                            ? isLight(context)
+                                ? Colors.black.withOpacity(0.4)
+                                : Colors.white.withOpacity(0.3)
+                            : null),
                   ),
                 ],
               )
