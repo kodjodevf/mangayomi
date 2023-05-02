@@ -72,7 +72,8 @@ final isExtendedStateProvider =
 );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
-String _$reverseMangaStateHash() => r'27a74f99810dac3d27d428a107a397e03eb2835d';
+String _$reverseChapterStateHash() =>
+    r'7fb5d8f60f32377ca365eb328f989e31569c8b19';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -95,35 +96,36 @@ class _SystemHash {
   }
 }
 
-abstract class _$ReverseMangaState extends BuildlessAutoDisposeNotifier<bool> {
+abstract class _$ReverseChapterState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
   late final ModelManga modelManga;
 
-  bool build({
+  dynamic build({
     required ModelManga modelManga,
   });
 }
 
-/// See also [ReverseMangaState].
-@ProviderFor(ReverseMangaState)
-const reverseMangaStateProvider = ReverseMangaStateFamily();
+/// See also [ReverseChapterState].
+@ProviderFor(ReverseChapterState)
+const reverseChapterStateProvider = ReverseChapterStateFamily();
 
-/// See also [ReverseMangaState].
-class ReverseMangaStateFamily extends Family<bool> {
-  /// See also [ReverseMangaState].
-  const ReverseMangaStateFamily();
+/// See also [ReverseChapterState].
+class ReverseChapterStateFamily extends Family<dynamic> {
+  /// See also [ReverseChapterState].
+  const ReverseChapterStateFamily();
 
-  /// See also [ReverseMangaState].
-  ReverseMangaStateProvider call({
+  /// See also [ReverseChapterState].
+  ReverseChapterStateProvider call({
     required ModelManga modelManga,
   }) {
-    return ReverseMangaStateProvider(
+    return ReverseChapterStateProvider(
       modelManga: modelManga,
     );
   }
 
   @override
-  ReverseMangaStateProvider getProviderOverride(
-    covariant ReverseMangaStateProvider provider,
+  ReverseChapterStateProvider getProviderOverride(
+    covariant ReverseChapterStateProvider provider,
   ) {
     return call(
       modelManga: provider.modelManga,
@@ -142,33 +144,34 @@ class ReverseMangaStateFamily extends Family<bool> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'reverseMangaStateProvider';
+  String? get name => r'reverseChapterStateProvider';
 }
 
-/// See also [ReverseMangaState].
-class ReverseMangaStateProvider
-    extends AutoDisposeNotifierProviderImpl<ReverseMangaState, bool> {
-  /// See also [ReverseMangaState].
-  ReverseMangaStateProvider({
+/// See also [ReverseChapterState].
+class ReverseChapterStateProvider
+    extends AutoDisposeNotifierProviderImpl<ReverseChapterState, dynamic> {
+  /// See also [ReverseChapterState].
+  ReverseChapterStateProvider({
     required this.modelManga,
   }) : super.internal(
-          () => ReverseMangaState()..modelManga = modelManga,
-          from: reverseMangaStateProvider,
-          name: r'reverseMangaStateProvider',
+          () => ReverseChapterState()..modelManga = modelManga,
+          from: reverseChapterStateProvider,
+          name: r'reverseChapterStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$reverseMangaStateHash,
-          dependencies: ReverseMangaStateFamily._dependencies,
+                  : _$reverseChapterStateHash,
+          dependencies: ReverseChapterStateFamily._dependencies,
           allTransitiveDependencies:
-              ReverseMangaStateFamily._allTransitiveDependencies,
+              ReverseChapterStateFamily._allTransitiveDependencies,
         );
 
   final ModelManga modelManga;
 
   @override
   bool operator ==(Object other) {
-    return other is ReverseMangaStateProvider && other.modelManga == modelManga;
+    return other is ReverseChapterStateProvider &&
+        other.modelManga == modelManga;
   }
 
   @override
@@ -180,8 +183,8 @@ class ReverseMangaStateProvider
   }
 
   @override
-  bool runNotifierBuild(
-    covariant ReverseMangaState notifier,
+  dynamic runNotifierBuild(
+    covariant ReverseChapterState notifier,
   ) {
     return notifier.build(
       modelManga: modelManga,
@@ -877,6 +880,300 @@ class ChapterSetDownloadStateProvider
   @override
   dynamic runNotifierBuild(
     covariant ChapterSetDownloadState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$sortByUploadDateStateHash() =>
+    r'a86bc258687f71a0364874e8f6f0401f9fb1a1ee';
+
+abstract class _$SortByUploadDateState
+    extends BuildlessAutoDisposeNotifier<bool> {
+  late final ModelManga modelManga;
+
+  bool build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [SortByUploadDateState].
+@ProviderFor(SortByUploadDateState)
+const sortByUploadDateStateProvider = SortByUploadDateStateFamily();
+
+/// See also [SortByUploadDateState].
+class SortByUploadDateStateFamily extends Family<bool> {
+  /// See also [SortByUploadDateState].
+  const SortByUploadDateStateFamily();
+
+  /// See also [SortByUploadDateState].
+  SortByUploadDateStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return SortByUploadDateStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  SortByUploadDateStateProvider getProviderOverride(
+    covariant SortByUploadDateStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'sortByUploadDateStateProvider';
+}
+
+/// See also [SortByUploadDateState].
+class SortByUploadDateStateProvider
+    extends AutoDisposeNotifierProviderImpl<SortByUploadDateState, bool> {
+  /// See also [SortByUploadDateState].
+  SortByUploadDateStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => SortByUploadDateState()..modelManga = modelManga,
+          from: sortByUploadDateStateProvider,
+          name: r'sortByUploadDateStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$sortByUploadDateStateHash,
+          dependencies: SortByUploadDateStateFamily._dependencies,
+          allTransitiveDependencies:
+              SortByUploadDateStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is SortByUploadDateStateProvider &&
+        other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  bool runNotifierBuild(
+    covariant SortByUploadDateState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$sortBySourceStateHash() => r'77181a7c4e07a7714a0e3230f84830e66e36a40f';
+
+abstract class _$SortBySourceState extends BuildlessAutoDisposeNotifier<bool> {
+  late final ModelManga modelManga;
+
+  bool build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [SortBySourceState].
+@ProviderFor(SortBySourceState)
+const sortBySourceStateProvider = SortBySourceStateFamily();
+
+/// See also [SortBySourceState].
+class SortBySourceStateFamily extends Family<bool> {
+  /// See also [SortBySourceState].
+  const SortBySourceStateFamily();
+
+  /// See also [SortBySourceState].
+  SortBySourceStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return SortBySourceStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  SortBySourceStateProvider getProviderOverride(
+    covariant SortBySourceStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'sortBySourceStateProvider';
+}
+
+/// See also [SortBySourceState].
+class SortBySourceStateProvider
+    extends AutoDisposeNotifierProviderImpl<SortBySourceState, bool> {
+  /// See also [SortBySourceState].
+  SortBySourceStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => SortBySourceState()..modelManga = modelManga,
+          from: sortBySourceStateProvider,
+          name: r'sortBySourceStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$sortBySourceStateHash,
+          dependencies: SortBySourceStateFamily._dependencies,
+          allTransitiveDependencies:
+              SortBySourceStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is SortBySourceStateProvider && other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  bool runNotifierBuild(
+    covariant SortBySourceState notifier,
+  ) {
+    return notifier.build(
+      modelManga: modelManga,
+    );
+  }
+}
+
+String _$sortByChapterNumberStateHash() =>
+    r'68dc6bdf97aa6938fe2896d244aac3a77900ee2e';
+
+abstract class _$SortByChapterNumberState
+    extends BuildlessAutoDisposeNotifier<bool> {
+  late final ModelManga modelManga;
+
+  bool build({
+    required ModelManga modelManga,
+  });
+}
+
+/// See also [SortByChapterNumberState].
+@ProviderFor(SortByChapterNumberState)
+const sortByChapterNumberStateProvider = SortByChapterNumberStateFamily();
+
+/// See also [SortByChapterNumberState].
+class SortByChapterNumberStateFamily extends Family<bool> {
+  /// See also [SortByChapterNumberState].
+  const SortByChapterNumberStateFamily();
+
+  /// See also [SortByChapterNumberState].
+  SortByChapterNumberStateProvider call({
+    required ModelManga modelManga,
+  }) {
+    return SortByChapterNumberStateProvider(
+      modelManga: modelManga,
+    );
+  }
+
+  @override
+  SortByChapterNumberStateProvider getProviderOverride(
+    covariant SortByChapterNumberStateProvider provider,
+  ) {
+    return call(
+      modelManga: provider.modelManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'sortByChapterNumberStateProvider';
+}
+
+/// See also [SortByChapterNumberState].
+class SortByChapterNumberStateProvider
+    extends AutoDisposeNotifierProviderImpl<SortByChapterNumberState, bool> {
+  /// See also [SortByChapterNumberState].
+  SortByChapterNumberStateProvider({
+    required this.modelManga,
+  }) : super.internal(
+          () => SortByChapterNumberState()..modelManga = modelManga,
+          from: sortByChapterNumberStateProvider,
+          name: r'sortByChapterNumberStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$sortByChapterNumberStateHash,
+          dependencies: SortByChapterNumberStateFamily._dependencies,
+          allTransitiveDependencies:
+              SortByChapterNumberStateFamily._allTransitiveDependencies,
+        );
+
+  final ModelManga modelManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is SortByChapterNumberStateProvider &&
+        other.modelManga == modelManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, modelManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  bool runNotifierBuild(
+    covariant SortByChapterNumberState notifier,
   ) {
     return notifier.build(
       modelManga: modelManga,

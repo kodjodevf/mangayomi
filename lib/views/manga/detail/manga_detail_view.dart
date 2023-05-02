@@ -75,8 +75,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             .length +
         1;
 
-    final reverse =
-        ref.watch(reverseMangaStateProvider(modelManga: widget.modelManga!));
+    bool reverse = ref.watch(
+        reverseChapterStateProvider(modelManga: widget.modelManga!))["reverse"];
 
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
@@ -394,7 +394,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         barItem: Container(),
         uiType: DraggableMenuUiType.classic,
         expandable: false,
-        maxHeight: mediaHeight(context, 0.36),
+        maxHeight: 240,
         fastDrag: false,
         minimizeBeforeFastDrag: false,
         child: DefaultTabController(
@@ -459,20 +459,33 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         );
                       }),
                       Consumer(builder: (context, ref, chil) {
-                        final reverse = ref.watch(reverseMangaStateProvider(
-                            modelManga: widget.modelManga!));
+                        final reverse = ref
+                            .read(reverseChapterStateProvider(
+                                    modelManga: widget.modelManga!)
+                                .notifier)
+                            .isReverse();
+                        final reverseChapter = ref.watch(
+                            reverseChapterStateProvider(
+                                modelManga: widget.modelManga!));
                         return Column(
                           children: [
-                            ListTileChapterSort(
-                                label: "By upload date",
+                            for (var i = 0; i < 3; i++)
+                              ListTileChapterSort(
+                                label: i == 0
+                                    ? "By source"
+                                    : i == 1
+                                        ? "By chapter number"
+                                        : "By upload date",
                                 reverse: reverse,
                                 onTap: () {
                                   ref
-                                      .read(reverseMangaStateProvider(
+                                      .read(reverseChapterStateProvider(
                                               modelManga: widget.modelManga!)
                                           .notifier)
-                                      .update(!reverse);
-                                }),
+                                      .set(i);
+                                },
+                                showLeading: reverseChapter['index'] == i,
+                              ),
                           ],
                         );
                       }),

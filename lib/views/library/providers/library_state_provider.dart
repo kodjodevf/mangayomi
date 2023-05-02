@@ -508,4 +508,3 @@ class LibraryShowContinueReadingButtonState
         .put('libraryShowContinueReadingButton', value);
   }
 }
-

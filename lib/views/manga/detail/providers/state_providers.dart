@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
@@ -92,19 +94,53 @@ class IsExtendedState extends _$IsExtendedState {
 }
 
 @riverpod
-class ReverseMangaState extends _$ReverseMangaState {
+class ReverseChapterState extends _$ReverseChapterState {
   @override
-  bool build({required ModelManga modelManga}) {
+  dynamic build({required ModelManga modelManga}) {
     return ref.watch(hiveBoxSettingsProvider).get(
-        "${modelManga.source}/${modelManga.name}-reverseChapter",
-        defaultValue: false);
+        "${modelManga.source}/${modelManga.name}-reverseChapterMap",
+        defaultValue: {"reverse": false, "index": 0});
   }
 
-  void update(bool value) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("${modelManga.source}/${modelManga.name}-reverseChapter", value);
+  void update(bool reverse, int index) {
+    var value = {
+      "reverse": state['index'] == index ? !reverse : reverse,
+      "index": index
+    };
+    ref.watch(hiveBoxSettingsProvider).put(
+        "${modelManga.source}/${modelManga.name}-reverseChapterMap", value);
     state = value;
+  }
+
+  void set(int index) {
+    final reverse = ref
+        .read(reverseChapterStateProvider(modelManga: modelManga).notifier)
+        .isReverse();
+    final sortBySource =
+        ref.watch(sortBySourceStateProvider(modelManga: modelManga));
+    final sortByChapterNumber =
+        ref.watch(sortByChapterNumberStateProvider(modelManga: modelManga));
+    final sortByUploadDate =
+        ref.watch(sortByUploadDateStateProvider(modelManga: modelManga));
+    update(reverse, index);
+    if (index == 0) {
+      ref
+          .read(sortBySourceStateProvider(modelManga: modelManga).notifier)
+          .update(!sortBySource);
+    } else if (index == 1) {
+      ref
+          .read(
+              sortByChapterNumberStateProvider(modelManga: modelManga).notifier)
+          .update(!sortByChapterNumber);
+    } else {
+      ref
+          .read(sortByUploadDateStateProvider(modelManga: modelManga).notifier)
+          .update(!sortByUploadDate);
+    }
+  }
+
+  bool isReverse() {
+    return state["reverse"];
   }
 }
 
@@ -329,6 +365,8 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
 class ChapterFilterResultState extends _$ChapterFilterResultState {
   @override
   ModelManga build({required ModelManga modelManga}) {
+    int indexSelected =
+        ref.watch(reverseChapterStateProvider(modelManga: modelManga))["index"];
     final data1 = ref
         .read(chapterFilterDownloadedStateProvider(modelManga: modelManga)
             .notifier)
@@ -341,7 +379,25 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
     final data3 = ref
         .read(chapterFilterBookmarkedStateProvider(modelManga: data2).notifier)
         .getData();
-
+    if (indexSelected == 0) {
+      data3.chapters!.sort(
+        (a, b) {
+          return b.scanlator!.compareTo(a.scanlator!);
+        },
+      );
+    } else if (indexSelected == 1) {
+      // data3.chapters!.sort(
+      //   (a, b) {
+      //     return a.dateUpload!.compareTo(b.dateUpload!);
+      //   },
+      // );
+    } else {
+      data3.chapters!.sort(
+        (a, b) {
+          return a.dateUpload!.compareTo(b.dateUpload!);
+        },
+      );
+    }
     return data3;
   }
 
@@ -448,5 +504,55 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
         }
       }
     }
+  }
+}
+
+@riverpod
+class SortByUploadDateState extends _$SortByUploadDateState {
+  @override
+  bool build({required ModelManga modelManga}) {
+    return ref.watch(hiveBoxSettingsProvider).get(
+        "${modelManga.source}/${modelManga.name}-sortByUploadDateChapter",
+        defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref.watch(hiveBoxSettingsProvider).put(
+        "${modelManga.source}/${modelManga.name}-sortByUploadDateChapter",
+        value);
+    state = value;
+  }
+}
+
+@riverpod
+class SortBySourceState extends _$SortBySourceState {
+  @override
+  bool build({required ModelManga modelManga}) {
+    return ref.watch(hiveBoxSettingsProvider).get(
+        "${modelManga.source}/${modelManga.name}-sortBySourceChapter",
+        defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref.watch(hiveBoxSettingsProvider).put(
+        "${modelManga.source}/${modelManga.name}-sortBySourceChapter", value);
+    state = value;
+  }
+}
+
+@riverpod
+class SortByChapterNumberState extends _$SortByChapterNumberState {
+  @override
+  bool build({required ModelManga modelManga}) {
+    return ref.watch(hiveBoxSettingsProvider).get(
+        "${modelManga.source}/${modelManga.name}-sortByChapterNumberChapter",
+        defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref.watch(hiveBoxSettingsProvider).put(
+        "${modelManga.source}/${modelManga.name}-sortByChapterNumberChapter",
+        value);
+    state = value;
   }
 }
