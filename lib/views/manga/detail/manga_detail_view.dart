@@ -62,22 +62,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
 
   @override
   Widget build(BuildContext context) {
-    _chapters = ref
-        .watch(chapterFilterResultStateProvider(modelManga: widget.modelManga!))
-        .chapters;
-    _modelManga = ref.watch(
-        chapterFilterResultStateProvider(modelManga: widget.modelManga!));
-
-    _pageLength = ref
-            .watch(chapterFilterResultStateProvider(
-                modelManga: widget.modelManga!))
-            .chapters!
-            .length +
-        1;
-
-    bool reverse = ref.watch(
-        reverseChapterStateProvider(modelManga: widget.modelManga!))["reverse"];
-
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -133,8 +117,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         ref
                                             .read(chapterNameListStateProvider
                                                 .notifier)
-                                            .selectAll(widget.modelManga!
-                                                .chapters![i].name!);
+                                            .selectAll(
+                                                "${widget.modelManga!.chapters![i].name!}$i");
                                       }
                                     },
                                     icon: const Icon(Icons.select_all)),
@@ -150,8 +134,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           ref
                                               .read(chapterNameListStateProvider
                                                   .notifier)
-                                              .selectSome(widget.modelManga!
-                                                  .chapters![i].name!);
+                                              .selectSome(
+                                                  "${widget.modelManga!.chapters![i].name}$i");
                                         }
                                         ref
                                             .read(isLongPressedStateProvider
@@ -166,8 +150,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           ref
                                               .read(chapterNameListStateProvider
                                                   .notifier)
-                                              .selectSome(widget.modelManga!
-                                                  .chapters![i].name!);
+                                              .selectSome(
+                                                  "${widget.modelManga!.chapters![i].name}$i");
                                         }
                                       }
                                     },
@@ -247,53 +231,67 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         )
                       ],
                     )),
-                SafeArea(
-                    child: DraggableScrollbar(
-                        heightScrollThumb: 48.0,
-                        backgroundColor: primaryColor(context),
-                        scrollThumbBuilder: (backgroundColor, thumbAnimation,
-                            labelAnimation, height,
-                            {labelConstraints, labelText}) {
-                          return FadeTransition(
-                            opacity: thumbAnimation,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: backgroundColor,
-                                  borderRadius: BorderRadius.circular(20)),
-                              height: height,
-                              width: 8.0,
-                            ),
-                          );
-                        },
-                        scrollbarTimeToFade: const Duration(seconds: 2),
-                        controller: _scrollController,
-                        child: ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.only(top: 0, bottom: 60),
-                            itemCount: _pageLength,
-                            itemBuilder: (context, index) {
-                              int finalIndex = index - 1;
-                              if (index == 0) {
-                                return _bodyContainer();
-                              }
-                              int reverseIndex = _chapters!.length -
-                                  _chapters!.reversed.toList().indexOf(
-                                      _chapters!.reversed
-                                          .toList()[finalIndex]) -
-                                  1;
+                SafeArea(child: Consumer(builder: (context, ref, child) {
+                  _pageLength = ref
+                          .watch(chapterFilterResultStateProvider(
+                              modelManga: widget.modelManga!))
+                          .chapters!
+                          .length +
+                      1;
+                  _chapters = ref
+                      .watch(chapterFilterResultStateProvider(
+                          modelManga: widget.modelManga!))
+                      .chapters;
+                  _modelManga = ref.watch(chapterFilterResultStateProvider(
+                      modelManga: widget.modelManga!));
+                  bool reverse = ref.watch(reverseChapterStateProvider(
+                      modelManga: widget.modelManga!))["reverse"];
+                  return DraggableScrollbar(
+                      heightScrollThumb: 48.0,
+                      backgroundColor: primaryColor(context),
+                      scrollThumbBuilder: (backgroundColor, thumbAnimation,
+                          labelAnimation, height,
+                          {labelConstraints, labelText}) {
+                        return FadeTransition(
+                          opacity: thumbAnimation,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: backgroundColor,
+                                borderRadius: BorderRadius.circular(20)),
+                            height: height,
+                            width: 8.0,
+                          ),
+                        );
+                      },
+                      scrollbarTimeToFade: const Duration(seconds: 2),
+                      controller: _scrollController,
+                      child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.only(top: 0, bottom: 60),
+                          itemCount: _pageLength,
+                          itemBuilder: (context, index) {
+                            int finalIndex = index - 1;
+                            if (index == 0) {
+                              return _bodyContainer();
+                            }
+                            int reverseIndex = _chapters!.length -
+                                _chapters!.reversed.toList().indexOf(
+                                    _chapters!.reversed.toList()[finalIndex]) -
+                                1;
 
-                              List<ModelChapters> chapters = reverse
-                                  ? _chapters!.reversed.toList()
-                                  : _chapters!;
+                            List<ModelChapters> chapters = reverse
+                                ? _chapters!.reversed.toList()
+                                : _chapters!;
 
-                              return ChapterListTileWidget(
-                                chapters: chapters,
-                                modelManga: _modelManga!,
-                                reverse: reverse,
-                                reverseIndex: reverseIndex,
-                                finalIndex: finalIndex,
-                              );
-                            }))),
+                            return ChapterListTileWidget(
+                              chapters: chapters,
+                              modelManga: _modelManga!,
+                              reverse: reverse,
+                              reverseIndex: reverseIndex,
+                              finalIndex: finalIndex,
+                            );
+                          }));
+                })),
               ],
             ),
             bottomNavigationBar: Consumer(

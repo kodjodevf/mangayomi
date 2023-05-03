@@ -23,11 +23,12 @@ Future<List<dynamic>> downloadChapter(DownloadChapterRef ref,
   Directory? path;
   bool isOk = false;
   final path1 = await storageProvider.getDirectory();
-
+  String scanlator = modelManga.chapters![index].scanlator!.isNotEmpty
+      ? "${modelManga.chapters![index].scanlator!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}_"
+      : "";
   final finalPath =
-      "downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}";
-  path = Directory(
-      "${path1!.path}downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
+      "downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/$scanlator${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}";
+  path = Directory("${path1!.path}$finalPath/");
   ref
       .read(getMangaChapterUrlProvider(
     modelManga: modelManga,
@@ -134,7 +135,7 @@ Future<List<dynamic>> downloadChapter(DownloadChapterRef ref,
 
       ref
           .watch(hiveBoxMangaDownloadsProvider)
-          .put(modelManga.chapters![index].name!, model);
+          .put("${modelManga.chapters![index].name!}$index", model);
     } else {
       await FileDownloader().downloadBatch(
         tasks,
@@ -150,7 +151,7 @@ Future<List<dynamic>> downloadChapter(DownloadChapterRef ref,
               isStartDownload: true);
 
           Hive.box<DownloadModel>(HiveConstant.hiveBoxDownloads)
-              .put(modelManga.chapters![index].name!, model);
+              .put("${modelManga.chapters![index].name!}$index", model);
         },
         taskProgressCallback: (task, progress) async {
           if (progress == 1.0) {

@@ -30,37 +30,12 @@ class MangaDetailModelComick {
     if (json['authors'] != null) {
       authors = json['authors'];
     }
- 
 
     if (json['genres'] != null) {
       genres = json['genres'];
     }
     matureContent = json['matureContent'];
     checkVol2Chap1 = json['checkVol2Chap1'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    // if (firstChap != null) {
-    //   data['firstChap'] = firstChap!.toJson();
-    // }
-    if (comic != null) {
-      data['comic'] = comic!.toJson();
-    }
-    if (artists != null) {
-      data['artists'] = artists!.map((v) => v.toJson()).toList();
-    }
-    if (authors != null) {
-      data['authors'] = authors!.map((v) => v.toJson()).toList();
-    }
-    // data['langList'] = langList;
-
-    if (genres != null) {
-      data['genres'] = genres!.map((v) => v.toJson()).toList();
-    }
-    data['matureContent'] = matureContent;
-    data['checkVol2Chap1'] = checkVol2Chap1;
-    return data;
   }
 }
 
@@ -81,17 +56,6 @@ class FirstChap {
     chap = json['chap'];
     hid = json['hid'];
     lang = json['lang'];
-  
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['chap'] = chap;
-    data['hid'] = hid;
-    data['lang'] = lang;
-    data['group_name'] = groupName;
-
-    return data;
   }
 }
 
@@ -184,41 +148,6 @@ class Comic {
     // langNative = json['lang_native'];
     coverUrl = json['cover_url'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['hid'] = hid;
-    data['title'] = title;
-    data['country'] = country;
-    data['status'] = status;
-
-    data['last_chapter'] = lastChapter;
-    data['chapter_count'] = chapterCount;
-    data['demographic'] = demographic;
-    data['hentai'] = hentai;
-    data['user_follow_count'] = userFollowCount;
-    data['follow_rank'] = followRank;
-    data['comment_count'] = commentCount;
-    data['follow_count'] = followCount;
-    data['desc'] = desc;
-    data['parsed'] = parsed;
-    data['slug'] = slug;
-
-    data['year'] = year;
-    data['bayesian_rating'] = bayesianRating;
-    data['rating_count'] = ratingCount;
-    data['content_rating'] = contentRating;
-    data['translation_completed'] = translationCompleted;
-    data['chapter_numbers_reset_on_new_volume_manual'] =
-        chapterNumbersResetOnNewVolumeManual;
-
-    data['iso639_1'] = iso6391;
-    data['lang_name'] = langName;
-    data['lang_native'] = langNative;
-    data['cover_url'] = coverUrl;
-    return data;
-  }
 }
 
 class Artists {
@@ -230,12 +159,5 @@ class Artists {
   Artists.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     slug = json['slug'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name;
-    data['slug'] = slug;
-    return data;
   }
 }

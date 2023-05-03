@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -40,6 +42,10 @@ class ExtensionScreen extends ConsumerWidget {
                 ),
               ),
               itemBuilder: (context, SourceModel element) {
+                if (element.isCloudflare && !Platform.isWindows ||
+                    element.isCloudflare && !Platform.isLinux) {
+                  return Container();
+                }
                 final source =
                     value.get("${element.sourceName}${element.lang}")!;
                 return ExtensionListTileWidget(

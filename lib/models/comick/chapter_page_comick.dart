@@ -36,25 +36,6 @@ class ChapterPageComick {
     chapTitle = json['chapTitle'];
     checkVol2Chap1 = json['checkVol2Chap1'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (chapter != null) {
-      data['chapter'] = chapter!.toJson();
-    }
-
-    data['matureContent'] = matureContent;
-    if (chapters != null) {
-      data['chapters'] = chapters!.map((v) => v.toJson()).toList();
-    }
-
-    data['canonical'] = canonical;
-    data['seoTitle'] = seoTitle;
-    data['seoDescription'] = seoDescription;
-    data['chapTitle'] = chapTitle;
-    data['checkVol2Chap1'] = checkVol2Chap1;
-    return data;
-  }
 }
 
 class Chapter {
@@ -115,31 +96,6 @@ class Chapter {
       });
     }
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['chap'] = chap;
-
-    data['title'] = title;
-    data['server'] = server;
-    data['hid'] = hid;
-    data['hash'] = hash;
-    data['group_name'] = groupName;
-
-    data['created_at'] = createdAt;
-    data['mdid'] = mdid;
-    data['comment_count'] = commentCount;
-    data['up_count'] = upCount;
-    data['down_count'] = downCount;
-    data['status'] = status;
-    data['lang'] = lang;
-
-    if (images != null) {
-      data['images'] = images!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
 }
 
 class Images {
@@ -181,16 +137,5 @@ class Chapters {
     lang = json['lang'];
     id = json['id'];
     title = json['title'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['chap'] = chap;
-    data['vol'] = vol;
-    data['hid'] = hid;
-    data['lang'] = lang;
-    data['id'] = id;
-    data['title'] = title;
-    return data;
   }
 }

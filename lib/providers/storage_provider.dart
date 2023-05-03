@@ -36,9 +36,12 @@ class StorageProvider {
 
   Future<Directory?> getMangaChapterDirectory(
       ModelManga modelManga, index) async {
+    String scanlator = modelManga.chapters![index].scanlator!.isNotEmpty
+        ? "${modelManga.chapters![index].scanlator!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}_"
+        : "";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
+        "${dir!.path}/downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/$scanlator${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
   }
 
   Future<Directory?> getMangaMainDirectory(ModelManga modelManga, index) async {

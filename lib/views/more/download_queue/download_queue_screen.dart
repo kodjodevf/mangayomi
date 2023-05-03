@@ -96,9 +96,17 @@ class DownloadQueueScreen extends ConsumerWidget {
                             const SizedBox(
                               height: 8,
                             ),
-                            LinearProgressIndicator(
-                              value: element.succeeded / element.total,
-                            )
+                            TweenAnimationBuilder<double>(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeInOut,
+                                tween: Tween<double>(
+                                  begin: 0,
+                                  end: element.succeeded / element.total,
+                                ),
+                                builder: (context, value, _) =>
+                                    LinearProgressIndicator(
+                                      value: value,
+                                    )),
                           ],
                         ),
                       ),
@@ -118,8 +126,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 await Future.delayed(
                                     const Duration(seconds: 1));
                                 ref.watch(hiveBoxMangaDownloadsProvider).delete(
-                                      element.modelManga
-                                          .chapters![element.index].name,
+                                      "${element.modelManga.chapters![element.index].name}${element.index}",
                                     );
                               });
                             }

@@ -30,9 +30,10 @@ class ChapterListTileWidget extends ConsumerWidget {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final idx = reverse ? reverseIndex : finalIndex;
     final chapterNameList = ref.watch(chapterNameListStateProvider);
+    log(chapterNameList.toString());
     final chapterName = modelManga.chapters![idx].name;
     return Container(
-      color: chapterNameList.contains(chapterName)
+      color: chapterNameList.contains("$chapterName$idx")
           ? primaryColor(context).withOpacity(0.4)
           : null,
       child: ListTile(
@@ -48,7 +49,7 @@ class ChapterListTileWidget extends ConsumerWidget {
           if (!isLongPressed) {
             ref
                 .read(chapterNameListStateProvider.notifier)
-                .update(chapterName!);
+                .update("$chapterName$idx");
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);
@@ -58,7 +59,7 @@ class ChapterListTileWidget extends ConsumerWidget {
           } else {
             ref
                 .read(chapterNameListStateProvider.notifier)
-                .update(chapterName!);
+                .update("$chapterName$idx");
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);
@@ -68,7 +69,7 @@ class ChapterListTileWidget extends ConsumerWidget {
           if (isLongPressed) {
             ref
                 .read(chapterNameListStateProvider.notifier)
-                .update(chapterName!);
+                .update("$chapterName$idx");
             ref
                 .read(chapterModelStateProvider.notifier)
                 .update(chapters[finalIndex]);

@@ -445,7 +445,7 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
     for (var name in ref.watch(chapterNameListStateProvider)) {
       for (var i = 0; i < modelManga.chapters!.length; i++) {
         modelManga.chapters![i].isBookmarked =
-            name == modelManga.chapters![i].name
+            name == "${modelManga.chapters![i].name}$i"
                 ? !modelManga.chapters![i].isBookmarked
                 : modelManga.chapters![i].isBookmarked;
       }
@@ -463,9 +463,10 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
     ref.read(isLongPressedStateProvider.notifier).update(false);
     for (var name in ref.watch(chapterNameListStateProvider)) {
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        modelManga.chapters![i].isRead = name == modelManga.chapters![i].name
-            ? !modelManga.chapters![i].isRead
-            : modelManga.chapters![i].isRead;
+        modelManga.chapters![i].isRead =
+            name == "${modelManga.chapters![i].name}$i"
+                ? !modelManga.chapters![i].isRead
+                : modelManga.chapters![i].isRead;
       }
       modelManga.save();
     }
@@ -482,7 +483,7 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
     List<int> indexList = [];
     for (var name in ref.watch(chapterNameListStateProvider)) {
       for (var i = 0; i < modelManga.chapters!.length; i++) {
-        if (modelManga.chapters![i].name == name) {
+        if ("${modelManga.chapters![i].name}$i" == name) {
           indexList.add(i);
         }
       }

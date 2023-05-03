@@ -78,38 +78,6 @@ class PopularMangaModelComick {
         json['mu_comics'] != null ? MuComics.fromJson(json['mu_comics']) : null;
     coverUrl = json['cover_url'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['hid'] = hid;
-    data['slug'] = slug;
-    data['title'] = title;
-    data['rating'] = rating;
-    data['bayesian_rating'] = bayesianRating;
-    data['rating_count'] = ratingCount;
-    data['follow_count'] = followCount;
-    data['desc'] = desc;
-    data['last_chapter'] = lastChapter as int;
-    data['translation_completed'] = translationCompleted;
-    data['view_count'] = viewCount;
-    data['content_rating'] = contentRating;
-    data['demographic'] = demographic;
-    data['genres'] = genres;
-    data['user_follow_count'] = userFollowCount;
-    data['year'] = year;
-    if (mdTitles != null) {
-      data['md_titles'] = mdTitles!.map((v) => v.toJson()).toList();
-    }
-    if (mdCovers != null) {
-      data['md_covers'] = mdCovers!.map((v) => v.toJson()).toList();
-    }
-    if (muComics != null) {
-      data['mu_comics'] = muComics!.toJson();
-    }
-    data['cover_url'] = coverUrl;
-    return data;
-  }
 }
 
 class MdTitles {
@@ -157,11 +125,5 @@ class MuComics {
 
   MuComics.fromJson(Map<String, dynamic> json) {
     year = json['year'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['year'] = year;
-    return data;
   }
 }

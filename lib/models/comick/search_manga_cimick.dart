@@ -51,13 +51,4 @@ class MdCovers {
     h = json['h'];
     b2key = json['b2key'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['vol'] = vol;
-    data['w'] = w;
-    data['h'] = h;
-    data['b2key'] = b2key;
-    return data;
-  }
 }

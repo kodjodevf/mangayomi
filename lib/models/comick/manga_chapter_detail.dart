@@ -13,15 +13,6 @@ class MangaChapterModelComick {
     }
     total = json['total'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (chapters != null) {
-      data['chapters'] = chapters!.map((v) => v.toJson()).toList();
-    }
-    data['total'] = total;
-    return data;
-  }
 }
 
 class Chapters {
@@ -74,26 +65,6 @@ class Chapters {
     //   });
     // }
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['chap'] = chap;
-    data['title'] = title;
-    data['vol'] = vol;
-    data['slug'] = slug;
-    data['lang'] = lang;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['up_count'] = upCount;
-    data['down_count'] = downCount;
-    data['group_name'] = groupName;
-    data['hid'] = hid;
-    if (mdGroups != null) {
-      data['md_groups'] = mdGroups!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
 }
 
 class MdGroups {
@@ -105,12 +76,5 @@ class MdGroups {
   MdGroups.fromJson(Map<String, dynamic> json) {
     slug = json['slug'];
     title = json['title'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['slug'] = slug;
-    data['title'] = title;
-    return data;
   }
 }
