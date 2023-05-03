@@ -190,11 +190,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
-                                      const PopupMenuItem<int>(
-                                          value: 0,
-                                          child: Text("Edit categories")),
-                                      const PopupMenuItem<int>(
-                                          value: 0, child: Text("Migrate")),
+                                      if (widget.modelManga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text("Edit categories")),
+                                      if (widget.modelManga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0, child: Text("Migrate")),
                                       const PopupMenuItem<int>(
                                           value: 0, child: Text("Share")),
                                     ];

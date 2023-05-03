@@ -247,9 +247,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           chapters: widget.modelManga.chapters,
                           categories: [],
                           lastRead: widget.modelManga.lastRead);
-                      manga.delete(
-                          '${widget.modelManga.lang}-${widget.modelManga.link}'
-                          );
+                      manga.put(
+                          '${widget.modelManga.lang}-${widget.modelManga.link}',
+                          model);
                     },
                     child: Column(
                       children: const [
