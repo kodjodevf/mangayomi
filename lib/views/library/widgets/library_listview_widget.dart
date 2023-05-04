@@ -8,7 +8,6 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/widgets/listview_widget.dart';
 
@@ -87,21 +86,16 @@ class LibraryListViewWidget extends StatelessWidget {
                                   builder: (context, ref, child) {
                                     List nbrDown = [];
                                     for (var i = 0;
-                                        i <
-                                            entriesManga[index]
-                                                .chapters!
-                                                .length;
+                                        i < entriesManga[index].chapters.length;
                                         i++) {
                                       final entries = ref
                                           .watch(hiveBoxMangaDownloadsProvider)
                                           .values
                                           .where((element) =>
-                                              element
-                                                  .modelManga
-                                                  .chapters![element.index]
-                                                  .name ==
+                                              element.chapterName ==
                                               entriesManga[index]
-                                                  .chapters![i]
+                                                  .chapters
+                                                  .toList()[i]
                                                   .name)
                                           .toList();
                                       if (entries.isNotEmpty &&
@@ -136,7 +130,7 @@ class LibraryListViewWidget extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 3),
                               child: Text(
-                                entriesManga[index].chapters!.length.toString(),
+                                entriesManga[index].chapters.length.toString(),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),
@@ -208,9 +202,8 @@ class LibraryListViewWidget extends StatelessWidget {
                                 pushMangaReaderView(
                                     context: context,
                                     modelManga: entriesManga[index],
-                                    index:
-                                        entriesManga[index].chapters!.length -
-                                            1);
+                                    index: entriesManga[index].chapters.length -
+                                        1);
                               },
                               child: Container(
                                 decoration: BoxDecoration(

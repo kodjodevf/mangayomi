@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
@@ -17,7 +19,8 @@ class ChapterModelState extends _$ChapterModelState {
         isBookmarked: false,
         scanlator: "",
         isRead: false,
-        lastPageRead: "");
+        lastPageRead: "",
+        mangaId: null);
   }
 
   void update(ModelChapters chapters) {
@@ -26,13 +29,13 @@ class ChapterModelState extends _$ChapterModelState {
 }
 
 @riverpod
-class ChapterNameListState extends _$ChapterNameListState {
+class ChapterIdsListState extends _$ChapterIdsListState {
   @override
-  List<String> build() {
+  List<ModelChapters> build() {
     return [];
   }
 
-  void update(String value) {
+  void update(ModelChapters value) {
     var newList = state.reversed.toList();
     if (newList.contains(value)) {
       newList.remove(value);
@@ -45,7 +48,7 @@ class ChapterNameListState extends _$ChapterNameListState {
     state = newList;
   }
 
-  void selectAll(String value) {
+  void selectAll(ModelChapters value) {
     var newList = state.reversed.toList();
     if (!newList.contains(value)) {
       newList.add(value);
@@ -54,7 +57,7 @@ class ChapterNameListState extends _$ChapterNameListState {
     state = newList;
   }
 
-  void selectSome(String value) {
+  void selectSome(ModelChapters value) {
     var newList = state.reversed.toList();
     if (newList.contains(value)) {
       newList.remove(value);
@@ -167,26 +170,26 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) {
-        final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloadsProvider)
-            .get(element.name, defaultValue: null);
-        return modelChapDownload != null &&
-            modelChapDownload.isDownload == true;
-      }).toList();
+      // chap = modelManga.chapters.where((element) {
+      //   final modelChapDownload = ref
+      //       .watch(hiveBoxMangaDownloadsProvider)
+      //       .get(element.name, defaultValue: null);
+      //   return modelChapDownload != null &&
+      //       modelChapDownload.isDownload == true;
+      // }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) {
-        final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloadsProvider)
-            .get(element.name, defaultValue: null);
-        return !(modelChapDownload != null &&
-            modelChapDownload.isDownload == true);
-      }).toList();
+      // chap = modelManga.chapters.where((element) {
+      //   final modelChapDownload = ref
+      //       .watch(hiveBoxMangaDownloadsProvider)
+      //       .get(element.name, defaultValue: null);
+      //   return !(modelChapDownload != null &&
+      //       modelChapDownload.isDownload == true);
+      // }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
@@ -199,26 +202,26 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) {
-        final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloadsProvider)
-            .get(element.name, defaultValue: null);
-        return modelChapDownload != null &&
-            modelChapDownload.isDownload == true;
-      }).toList();
+      // chap = modelManga.chapters!.where((element) {
+      //   final modelChapDownload = ref
+      //       .watch(hiveBoxMangaDownloadsProvider)
+      //       .get(element.name, defaultValue: null);
+      //   return modelChapDownload != null &&
+      //       modelChapDownload.isDownload == true;
+      // }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) {
-        final modelChapDownload = ref
-            .watch(hiveBoxMangaDownloadsProvider)
-            .get(element.name, defaultValue: null);
-        return !(modelChapDownload != null &&
-            modelChapDownload.isDownload == true);
-      }).toList();
+      // chap = modelManga.chapters!.where((element) {
+      //   final modelChapDownload = ref
+      //       .watch(hiveBoxMangaDownloadsProvider)
+      //       .get(element.name, defaultValue: null);
+      //   return !(modelChapDownload != null &&
+      //       modelChapDownload.isDownload == true);
+      // }).toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
@@ -253,14 +256,18 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) => !element.isRead).toList();
+      chap = modelManga.chapters
+          .where((element) => element.isRead == false)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) => element.isRead).toList();
+      chap = modelManga.chapters
+          .where((element) => element.isRead == true)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
 
@@ -273,14 +280,18 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) => !element.isRead).toList();
+      chap = modelManga.chapters
+          .where((element) => element.isRead == false)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(1);
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!.where((element) => element.isRead).toList();
+      chap = modelManga.chapters
+          .where((element) => element.isRead == false)
+          .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       setType(2);
@@ -315,16 +326,16 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   ModelManga getData() {
     if (getType() == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!
-          .where((element) => element.isBookmarked)
+      chap = modelManga.chapters
+          .where((element) => element.isBookmarked == true)
           .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
       return model;
     } else if (getType() == 2) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!
-          .where((element) => !element.isBookmarked)
+      chap = modelManga.chapters
+          .where((element) => element.isBookmarked == false)
           .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
@@ -338,8 +349,8 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   ModelManga update() {
     if (state == 0) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!
-          .where((element) => element.isBookmarked)
+      chap = modelManga.chapters
+          .where((element) => element.isBookmarked == true)
           .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
@@ -347,8 +358,8 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
       return model;
     } else if (state == 1) {
       List<ModelChapters> chap = [];
-      chap = modelManga.chapters!
-          .where((element) => !element.isBookmarked)
+      chap = modelManga.chapters
+          .where((element) => element.isBookmarked == false)
           .toList();
       final model =
           modelMangaWithNewChapValue(modelManga: modelManga, chapters: chap);
@@ -380,7 +391,7 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
         .read(chapterFilterBookmarkedStateProvider(modelManga: data2).notifier)
         .getData();
     if (indexSelected == 0) {
-      data3.chapters!.sort(
+      data3.chapters.toList().sort(
         (a, b) {
           return b.scanlator!.compareTo(a.scanlator!);
         },
@@ -392,7 +403,7 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
       //   },
       // );
     } else {
-      data3.chapters!.sort(
+      data3.chapters.toList().sort(
         (a, b) {
           return a.dateUpload!.compareTo(b.dateUpload!);
         },
@@ -430,7 +441,6 @@ ModelManga modelMangaWithNewChapValue(
       lang: modelManga.lang,
       dateAdded: modelManga.dateAdded,
       lastUpdate: modelManga.lastUpdate,
-      chapters: chapters,
       categories: modelManga.categories,
       lastRead: modelManga.lastRead);
 }
@@ -440,17 +450,17 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   @override
   build({required ModelManga modelManga}) {}
 
-  set() {
-    ref.read(isLongPressedStateProvider.notifier).update(false);
-    for (var name in ref.watch(chapterNameListStateProvider)) {
-      for (var i = 0; i < modelManga.chapters!.length; i++) {
-        modelManga.chapters![i].isBookmarked =
-            name == "${modelManga.chapters![i].name}$i"
-                ? !modelManga.chapters![i].isBookmarked
-                : modelManga.chapters![i].isBookmarked;
+  set() async {
+    final chapters = ref.watch(chapterIdsListStateProvider);
+    await isar.writeTxn(() async {
+      for (var chapter in chapters) {
+        chapter.isBookmarked = !chapter.isBookmarked!;
+        await isar.modelChapters.put(chapter..manga.value = modelManga);
+        await chapter.manga.save();
       }
-      modelManga.save();
-    }
+    });
+    ref.read(isLongPressedStateProvider.notifier).update(false);
+    ref.read(chapterIdsListStateProvider.notifier).clear();
   }
 }
 
@@ -459,17 +469,17 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   @override
   build({required ModelManga modelManga}) {}
 
-  set() {
-    ref.read(isLongPressedStateProvider.notifier).update(false);
-    for (var name in ref.watch(chapterNameListStateProvider)) {
-      for (var i = 0; i < modelManga.chapters!.length; i++) {
-        modelManga.chapters![i].isRead =
-            name == "${modelManga.chapters![i].name}$i"
-                ? !modelManga.chapters![i].isRead
-                : modelManga.chapters![i].isRead;
+  set() async {
+    final chapters = ref.watch(chapterIdsListStateProvider);
+    await isar.writeTxn(() async {
+      for (var chapter in chapters) {
+        chapter.isRead = !chapter.isRead!;
+        await isar.modelChapters.put(chapter..manga.value = modelManga);
+        await chapter.manga.save();
       }
-      modelManga.save();
-    }
+    });
+    ref.read(isLongPressedStateProvider.notifier).update(false);
+    ref.read(chapterIdsListStateProvider.notifier).clear();
   }
 }
 
@@ -481,30 +491,31 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
   set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
     List<int> indexList = [];
-    for (var name in ref.watch(chapterNameListStateProvider)) {
-      for (var i = 0; i < modelManga.chapters!.length; i++) {
-        if ("${modelManga.chapters![i].name}$i" == name) {
+    for (var name in ref.watch(chapterIdsListStateProvider)) {
+      for (var i = 0; i < modelManga.chapters.length; i++) {
+        if ("$i" == name) {
           indexList.add(i);
         }
       }
     }
     for (var idx in indexList) {
-      final entries = ref
-          .watch(hiveBoxMangaDownloadsProvider)
-          .values
-          .where((element) =>
-              element.modelManga.chapters![element.index].name ==
-              modelManga.chapters![idx].name)
-          .toList();
-      if (entries.isEmpty) {
-        ref.watch(downloadChapterProvider(modelManga: modelManga, index: idx));
-      } else {
-        if (!entries.first.isDownload) {
-          ref.watch(
-              downloadChapterProvider(modelManga: modelManga, index: idx));
-        }
-      }
+      // final entries = ref
+      //     .watch(hiveBoxMangaDownloadsProvider)
+      //     .values
+      //     .where((element) =>
+      //         element.modelManga.chapters.toList()[element.index].name ==
+      //         modelManga.chapters.toList()[idx].name)
+      //     .toList();
+      // if (entries.isEmpty) {
+      //   // ref.watch(downloadChapterProvider(modelManga: modelManga, index: idx));
+      // } else {
+      //   if (!entries.first.isDownload) {
+      //     // ref.watch(
+      //     //     downloadChapterProvider(modelManga: modelManga, index: idx));
+      //   }
+      // }
     }
+    ref.read(chapterIdsListStateProvider.notifier).clear();
   }
 }
 

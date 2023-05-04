@@ -1,28 +1,30 @@
+import 'dart:io';
+
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/models/manga_history.dart';
-import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/source/source_model.dart';
-import 'package:mangayomi/views/manga/download/download_model.dart';
+import 'package:mangayomi/views/manga/download/model/download_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 part 'hive_provider.g.dart';
 
-@riverpod
-Box<ModelManga> hiveBoxManga(HiveBoxMangaRef ref) {
-  return Hive.box<ModelManga>(HiveConstant.hiveBoxManga);
-}
+// @riverpod
+// Box<ModelManga> hiveBoxManga(HiveBoxMangaRef ref) {
+//   return Hive.box<ModelManga>(HiveConstant.hiveBoxManga);
+// }
 
 @riverpod
 Box hiveBoxMangaInfo(HiveBoxMangaInfoRef ref) {
   return Hive.box(HiveConstant.hiveBoxMangaInfo);
 }
 
-@riverpod
-Box<MangaHistoryModel> hiveBoxMangaHistory(HiveBoxMangaHistoryRef ref) {
-  return Hive.box<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
-}
+// @riverpod
+// Box<MangaHistoryModel> hiveBoxMangaHistory(HiveBoxMangaHistoryRef ref) {
+//   return Hive.box<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
+// }
 
 @riverpod
 Box<ReaderMode> hiveBoxReaderMode(HiveBoxReaderModeRef ref) {
@@ -53,3 +55,4 @@ Box hiveBoxSettings(HiveBoxSettingsRef ref) {
 Box<CategoriesModel> hiveBoxCategories(HiveBoxCategoriesRef ref) {
   return Hive.box(HiveConstant.hiveBoxCategories);
 }
+

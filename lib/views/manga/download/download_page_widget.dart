@@ -7,7 +7,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/views/manga/download/download_model.dart';
+import 'package:mangayomi/views/manga/download/model/download_model.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_page_widget.g.dart';
@@ -15,21 +15,27 @@ part 'download_page_widget.g.dart';
 @riverpod
 class ChapterPageDownloads extends _$ChapterPageDownloads {
   @override
-  Widget build({required ModelManga modelManga, required int index}) {
+  Widget build(
+      {required ModelManga modelManga,
+      required int chapterIndex,
+      required int chapterId}) {
     return ChapterPageDownload(
-      index: index,
+      chapterId: chapterId,
+      chapterIndex: chapterIndex,
       modelManga: modelManga,
     );
   }
-
-  // ...
 }
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
   final ModelManga modelManga;
-  final int index;
+  final int chapterId;
+  final int chapterIndex;
   const ChapterPageDownload(
-      {super.key, required this.modelManga, required this.index});
+      {super.key,
+      required this.modelManga,
+      required this.chapterId,
+      required this.chapterIndex});
 
   @override
   ConsumerState createState() => _ChapterPageDownloadState();
@@ -42,7 +48,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload() async {
     final data = await ref.watch(downloadChapterProvider(
-            modelManga: widget.modelManga, index: widget.index)
+            modelManga: widget.modelManga,
+            chapterId: widget.chapterId,
+            chapterIndex: widget.chapterIndex)
         .future);
     if (mounted) {
       setState(() {
@@ -53,16 +61,16 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
   _deleteFile(List pageUrl) async {
     final path = await _storageProvider.getMangaChapterDirectory(
-        widget.modelManga, widget.index);
+        widget.modelManga, widget.chapterIndex);
 
     try {
       path!.deleteSync(recursive: true);
       ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            widget.modelManga.chapters![widget.index].name!,
+            widget.modelManga.chapters.toList()[widget.chapterIndex].name!,
           );
     } catch (e) {
       ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            widget.modelManga.chapters![widget.index].name!,
+            widget.modelManga.chapters.toList()[widget.chapterIndex].name!,
           );
     }
   }
@@ -82,8 +90,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
           builder: (context, val, child) {
             final entries = val.values
                 .where((element) =>
-                    "${element.modelManga.chapters![element.index].name}${element.index}" ==
-                    "${widget.modelManga.chapters![widget.index].name}${widget.index}")
+                    "${element.chapterName}${element.chapterIndex}${element.chapterId}" ==
+                    "${widget.modelManga.chapters.toList()[widget.chapterIndex].name!}${widget.chapterIndex}${widget.chapterId}")
                 .toList();
 
             if (entries.isNotEmpty) {
@@ -216,7 +224,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                             .watch(
                                                 hiveBoxMangaDownloadsProvider)
                                             .delete(
-                                              "${widget.modelManga.chapters![widget.index].name}${widget.index}",
+                                              "${widget.modelManga.chapters.toList()[widget.chapterIndex].name}${widget.chapterIndex}${widget.chapterId}",
                                             );
                                         _startDownload();
                                         setState(() {
@@ -274,7 +282,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     FileDownloader().cancelTasksWithIds(taskIds).then((value) async {
       await Future.delayed(const Duration(seconds: 1));
       ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            "${widget.modelManga.chapters![widget.index].name}${widget.index}",
+            "${widget.modelManga.chapters.toList()[widget.chapterIndex].name}${widget.chapterIndex}${widget.chapterId}",
           );
     });
   }

@@ -469,7 +469,7 @@ class _MangaChapterPageGalleryState
                                                       1 !=
                                                   widget.readerController
                                                       .getModelManga()
-                                                      .chapters!
+                                                      .chapters
                                                       .length
                                               ? Theme.of(context)
                                                   .textTheme

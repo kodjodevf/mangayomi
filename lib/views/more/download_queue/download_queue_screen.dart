@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/views/manga/download/download_model.dart';
+import 'package:mangayomi/views/manga/download/model/download_model.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
@@ -50,11 +50,10 @@ class DownloadQueueScreen extends ConsumerWidget {
             ),
             body: GroupedListView<DownloadModel, String>(
               elements: entries,
-              groupBy: (element) => element.modelManga.source!,
+              groupBy: (element) => element.mangaSource!,
               groupSeparatorBuilder: (String groupByValue) {
                 final sourceQueueLength = entries
-                    .where(
-                        (element) => element.modelManga.source == groupByValue)
+                    .where((element) => element.mangaSource! == groupByValue)
                     .toList()
                     .length;
                 return Padding(
@@ -80,7 +79,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  element.modelManga.name!,
+                                  element.mangaName!,
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
@@ -90,7 +89,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               ],
                             ),
                             Text(
-                              element.modelManga.chapters![element.index].name!,
+                              element.chapterName!,
                               style: const TextStyle(fontSize: 13),
                             ),
                             const SizedBox(
@@ -126,7 +125,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 await Future.delayed(
                                     const Duration(seconds: 1));
                                 ref.watch(hiveBoxMangaDownloadsProvider).delete(
-                                      "${element.modelManga.chapters![element.index].name}${element.index}",
+                                      "${element.chapterName}${element.chapterIndex}${element.chapterId}",
                                     );
                               });
                             }
@@ -142,7 +141,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                 );
               },
               itemComparator: (item1, item2) =>
-                  item1.modelManga.source!.compareTo(item2.modelManga.source!),
+                  item1.mangaSource!.compareTo(item2.mangaSource!),
               order: GroupedListOrder.DESC,
             ),
           );

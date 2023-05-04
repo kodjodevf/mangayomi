@@ -1,15 +1,13 @@
-import 'package:hive/hive.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:isar/isar.dart';
 part 'categories.g.dart';
 
-@HiveType(typeId: 8)
-class CategoriesModel extends HiveObject {
-  @HiveField(0)
-  final int id;
-  @HiveField(1)
-  final String name;
+@collection
+@Name("Category")
+class CategoriesModel {
+  Id? id;
+  String? name;
   CategoriesModel({
-    required this.id,
+    this.id = Isar.autoIncrement,
     required this.name,
   });
 }

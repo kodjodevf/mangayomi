@@ -106,23 +106,19 @@ class AsyncRouterNotifier extends ChangeNotifier {
         GoRoute(
             path: '/manga-reader/detail',
             builder: (context, state) {
-              ModelManga? model;
-
-              model = state.extra as ModelManga;
+              int idManga = state.extra as int;
 
               return MangaReaderDetail(
-                modelManga: model,
+                idManga: idManga,
               );
             },
             pageBuilder: (context, state) {
-              ModelManga? model;
-
-              model = state.extra as ModelManga;
+              int idManga = state.extra as int;
 
               return CustomTransition(
                   key: state.pageKey,
                   child: MangaReaderDetail(
-                    modelManga: model,
+                    idManga: idManga,
                   ));
             }),
         GoRoute(

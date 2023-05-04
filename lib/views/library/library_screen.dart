@@ -4,6 +4,8 @@ import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
@@ -45,12 +47,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final isNotFiltering = ref
         .read(mangaFilterResultStateProvider(mangaList: entries).notifier)
         .isNotFiltering();
-    return ValueListenableBuilder<Box<CategoriesModel>>(
-        valueListenable: ref.watch(hiveBoxCategoriesProvider).listenable(),
-        builder: (context, value, child) {
-          final entr = value.values.toList();
-          if (entr.isNotEmpty && showCategoryTabs) {
-            tabBarController = TabController(length: entr.length, vsync: this);
+    return StreamBuilder(
+        stream: isar.categoriesModels
+            .filter()
+            .idIsNotNull()
+            .watch(fireImmediately: true),
+        builder: (context, snapshot) {
+          if (snapshot.hasData &&
+              snapshot.data!.isNotEmpty &&
+              showCategoryTabs) {
+            final entr = snapshot.data;
+            tabBarController = TabController(length: entr!.length, vsync: this);
             tabBarController.animateTo(tabIndex);
             tabBarController.addListener(() {
               tabIndex = tabBarController.index;
@@ -73,35 +80,35 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       children: entr
                           .map(
                             (e) => Scaffold(
-                              body: ValueListenableBuilder<Box<ModelManga>>(
-                                valueListenable: ref
-                                    .watch(hiveBoxMangaProvider)
-                                    .listenable(),
-                                builder: (context, value, child) {
-                                  entries = value.values
-                                      .where((element) =>
-                                          element.favorite &&
-                                          element.categories != null &&
-                                          element.categories!.contains(e.id))
-                                      .toList();
-                                  final data = ref.watch(
-                                      mangaFilterResultStateProvider(
-                                          mangaList: entries));
-                                  entriesFilter = _textEditingController
-                                          .text.isNotEmpty
-                                      ? data
-                                          .where((element) => element.name!
-                                              .toLowerCase()
-                                              .contains(_textEditingController
-                                                  .text
-                                                  .toLowerCase()))
-                                          .toList()
-                                      : data;
-                                  final entriesManga = reverse
-                                      ? entriesFilter.reversed.toList()
-                                      : entriesFilter;
+                              body: StreamBuilder(
+                                stream: isar.modelMangas
+                                    .filter()
+                                    .idIsNotNull()
+                                    .favoriteEqualTo(true)
+                                    .categoriesIsNotEmpty()
+                                    .categoriesElementEqualTo(e.id!)
+                                    .watch(fireImmediately: true),
+                                builder: (context, snapshot) {
+                                  // final data = ref.watch(
+                                  //     mangaFilterResultStateProvider(
+                                  //         mangaList: entries));
+                                  // entriesFilter = _textEditingController
+                                  //         .text.isNotEmpty
+                                  //     ? data
+                                  //         .where((element) => element.name!
+                                  //             .toLowerCase()
+                                  //             .contains(_textEditingController
+                                  //                 .text
+                                  //                 .toLowerCase()))
+                                  //         .toList()
+                                  //     : data;
 
-                                  if (entriesFilter.isNotEmpty) {
+                                  if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    final entries = snapshot.data!;
+                                    final entriesManga = reverse
+                                        ? entries.reversed.toList()
+                                        : entries;
                                     return displayType == DisplayType.list
                                         ? LibraryListViewWidget(
                                             entriesManga: entriesManga,
@@ -143,25 +150,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           }
           return Scaffold(
             appBar: _appBar(isNotFiltering, showNumbersOfItems, entries.length),
-            body: ValueListenableBuilder<Box<ModelManga>>(
-              valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
-              builder: (context, value, child) {
-                entries =
-                    value.values.where((element) => element.favorite).toList();
-                final data = ref
-                    .watch(mangaFilterResultStateProvider(mangaList: entries));
-                entriesFilter = _textEditingController.text.isNotEmpty
-                    ? data
-                        .where((element) => element.name!
-                            .toLowerCase()
-                            .contains(
-                                _textEditingController.text.toLowerCase()))
-                        .toList()
-                    : data;
-                final entriesManga =
-                    reverse ? entriesFilter.reversed.toList() : entriesFilter;
-
-                if (entriesFilter.isNotEmpty) {
+            body: StreamBuilder(
+              stream: isar.modelMangas
+                  .filter()
+                  .idIsNotNull()
+                  .favoriteEqualTo(true)
+                  .watch(fireImmediately: true),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final entries = snapshot.data!;
+                  final entriesManga =
+                      reverse ? entries.reversed.toList() : entries;
                   return displayType == DisplayType.list
                       ? LibraryListViewWidget(
                           entriesManga: entriesManga,

@@ -84,13 +84,13 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload != null &&
-              modelChapDownload.isDownload == true) {
-            list.add(true);
-          }
+          // final modelChapDownload = ref
+          //     .watch(hiveBoxMangaDownloadsProvider)
+          //     .get(chap.name, defaultValue: null);
+          // if (modelChapDownload != null &&
+          //     modelChapDownload.isDownload == true) {
+          //   list.add(true);
+          // }
         }
         return list.isNotEmpty;
       }).toList();
@@ -100,13 +100,13 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload == null ||
-              modelChapDownload.isDownload == false) {
-            list.add(true);
-          }
+          // final modelChapDownload = ref
+          //     .watch(hiveBoxMangaDownloadsProvider)
+          //     .get(chap.name, defaultValue: null);
+          // if (modelChapDownload == null ||
+          //     modelChapDownload.isDownload == false) {
+          //   list.add(true);
+          // }
         }
         return list.length == element.chapters!.length;
       }).toList();
@@ -121,13 +121,13 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload != null &&
-              modelChapDownload.isDownload == true) {
-            list.add(true);
-          }
+          // final modelChapDownload = ref
+          //     .watch(hiveBoxMangaDownloadsProvider)
+          //     .get(chap.name, defaultValue: null);
+          // if (modelChapDownload != null &&
+          //     modelChapDownload.isDownload == true) {
+          //   list.add(true);
+          // }
         }
         return list.isNotEmpty;
       }).toList();
@@ -137,13 +137,13 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload == null ||
-              modelChapDownload.isDownload == false) {
-            list.add(true);
-          }
+          // final modelChapDownload = ref
+          //     .watch(hiveBoxMangaDownloadsProvider)
+          //     .get(chap.name, defaultValue: null);
+          // if (modelChapDownload == null ||
+          //     modelChapDownload.isDownload == false) {
+          //   list.add(true);
+          // }
         }
         return list.length == element.chapters!.length;
       }).toList();
@@ -180,7 +180,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -191,7 +191,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isRead) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
@@ -208,7 +208,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -220,7 +220,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isRead) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
@@ -259,7 +259,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -270,7 +270,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isRead) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
@@ -287,7 +287,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -299,7 +299,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isRead) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
@@ -338,7 +338,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isBookmarked) {
+          if (chap.isBookmarked!) {
             list.add(true);
           }
         }
@@ -349,7 +349,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isBookmarked) {
+          if (!chap.isBookmarked!) {
             list.add(true);
           }
         }
@@ -366,7 +366,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (chap.isBookmarked) {
+          if (chap.isBookmarked!) {
             list.add(true);
           }
         }
@@ -378,7 +378,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
       final data = mangaList.where((element) {
         List list = [];
         for (var chap in element.chapters!) {
-          if (!chap.isBookmarked) {
+          if (!chap.isBookmarked!) {
             list.add(true);
           }
         }

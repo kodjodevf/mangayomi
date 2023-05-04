@@ -63,6 +63,8 @@ dependencies:
   draggable_menu: ^0.3.0
   fast_cached_network_image: ^1.2.0
   random_string: ^2.3.1
+  isar: 3.1.0+1
+  isar_flutter_libs: 3.1.0+1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -75,6 +77,7 @@ dev_dependencies:
   build_runner: ^2.3.3
   riverpod_generator: ^2.1.4
   flutter_launcher_icons: ^0.13.1
+  isar_generator: 3.1.0+1
   flutter_lints: ^2.0.1
 
 flutter_launcher_icons:

@@ -193,7 +193,6 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                 lang: widget.lang,
                 dateAdded: DateTime.now().microsecondsSinceEpoch,
                 lastUpdate: DateTime.now().microsecondsSinceEpoch,
-                chapters: data.chapters,
                 categories: null,
                 lastRead: '');
             if (mounted) {

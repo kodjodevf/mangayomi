@@ -17,37 +17,46 @@ class DownloadModelAdapter extends TypeAdapter<DownloadModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DownloadModel(
-      modelManga: fields[0] as ModelManga,
-      succeeded: fields[2] as int,
-      failed: fields[3] as int,
-      index: fields[1] as int,
-      total: fields[4] as int,
-      isDownload: fields[6] as bool,
-      taskIds: (fields[7] as List).cast<dynamic>(),
-      isStartDownload: fields[8] as bool,
+      chapterId: fields[7] as int?,
+      succeeded: fields[1] as int,
+      failed: fields[2] as int,
+      chapterIndex: fields[0] as int,
+      total: fields[3] as int,
+      isDownload: fields[4] as bool,
+      taskIds: (fields[5] as List).cast<dynamic>(),
+      isStartDownload: fields[6] as bool,
+      mangaSource: fields[9] as String?,
+      chapterName: fields[10] as String?,
+      mangaName: fields[11] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, DownloadModel obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(11)
       ..writeByte(0)
-      ..write(obj.modelManga)
+      ..write(obj.chapterIndex)
       ..writeByte(1)
-      ..write(obj.index)
-      ..writeByte(2)
       ..write(obj.succeeded)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.failed)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.total)
-      ..writeByte(6)
+      ..writeByte(4)
       ..write(obj.isDownload)
-      ..writeByte(7)
+      ..writeByte(5)
       ..write(obj.taskIds)
-      ..writeByte(8)
-      ..write(obj.isStartDownload);
+      ..writeByte(6)
+      ..write(obj.isStartDownload)
+      ..writeByte(7)
+      ..write(obj.chapterId)
+      ..writeByte(9)
+      ..write(obj.mangaSource)
+      ..writeByte(10)
+      ..write(obj.chapterName)
+      ..writeByte(11)
+      ..write(obj.mangaName);
   }
 
   @override

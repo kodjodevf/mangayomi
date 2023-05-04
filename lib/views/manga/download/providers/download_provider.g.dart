@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'982e5db78e716894f63b97598709e29098c3eb8f';
+String _$downloadChapterHash() => r'19ec35b1bc0db5ebbc91f5ddb456dcac93b840ab';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,11 +43,13 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
   /// See also [downloadChapter].
   DownloadChapterProvider call({
     required ModelManga modelManga,
-    required int index,
+    required int chapterIndex,
+    required int chapterId,
   }) {
     return DownloadChapterProvider(
       modelManga: modelManga,
-      index: index,
+      chapterIndex: chapterIndex,
+      chapterId: chapterId,
     );
   }
 
@@ -57,7 +59,8 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
   ) {
     return call(
       modelManga: provider.modelManga,
-      index: provider.index,
+      chapterIndex: provider.chapterIndex,
+      chapterId: provider.chapterId,
     );
   }
 
@@ -81,12 +84,14 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
     required this.modelManga,
-    required this.index,
+    required this.chapterIndex,
+    required this.chapterId,
   }) : super.internal(
           (ref) => downloadChapter(
             ref,
             modelManga: modelManga,
-            index: index,
+            chapterIndex: chapterIndex,
+            chapterId: chapterId,
           ),
           from: downloadChapterProvider,
           name: r'downloadChapterProvider',
@@ -100,20 +105,23 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
         );
 
   final ModelManga modelManga;
-  final int index;
+  final int chapterIndex;
+  final int chapterId;
 
   @override
   bool operator ==(Object other) {
     return other is DownloadChapterProvider &&
         other.modelManga == modelManga &&
-        other.index == index;
+        other.chapterIndex == chapterIndex &&
+        other.chapterId == chapterId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, modelManga.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
+    hash = _SystemHash.combine(hash, chapterIndex.hashCode);
+    hash = _SystemHash.combine(hash, chapterId.hashCode);
 
     return _SystemHash.finish(hash);
   }

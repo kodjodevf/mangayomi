@@ -7,7 +7,7 @@ part of 'download_page_widget.dart';
 // **************************************************************************
 
 String _$chapterPageDownloadsHash() =>
-    r'0b3eaf9a3ca4786287616a87e5de62af24259b68';
+    r'682bf480c3b8e3ccda792661746e5fba24755526';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,11 +33,13 @@ class _SystemHash {
 abstract class _$ChapterPageDownloads
     extends BuildlessAutoDisposeNotifier<Widget> {
   late final ModelManga modelManga;
-  late final int index;
+  late final int chapterIndex;
+  late final int chapterId;
 
   Widget build({
     required ModelManga modelManga,
-    required int index,
+    required int chapterIndex,
+    required int chapterId,
   });
 }
 
@@ -53,11 +55,13 @@ class ChapterPageDownloadsFamily extends Family<Widget> {
   /// See also [ChapterPageDownloads].
   ChapterPageDownloadsProvider call({
     required ModelManga modelManga,
-    required int index,
+    required int chapterIndex,
+    required int chapterId,
   }) {
     return ChapterPageDownloadsProvider(
       modelManga: modelManga,
-      index: index,
+      chapterIndex: chapterIndex,
+      chapterId: chapterId,
     );
   }
 
@@ -67,7 +71,8 @@ class ChapterPageDownloadsFamily extends Family<Widget> {
   ) {
     return call(
       modelManga: provider.modelManga,
-      index: provider.index,
+      chapterIndex: provider.chapterIndex,
+      chapterId: provider.chapterId,
     );
   }
 
@@ -92,11 +97,13 @@ class ChapterPageDownloadsProvider
   /// See also [ChapterPageDownloads].
   ChapterPageDownloadsProvider({
     required this.modelManga,
-    required this.index,
+    required this.chapterIndex,
+    required this.chapterId,
   }) : super.internal(
           () => ChapterPageDownloads()
             ..modelManga = modelManga
-            ..index = index,
+            ..chapterIndex = chapterIndex
+            ..chapterId = chapterId,
           from: chapterPageDownloadsProvider,
           name: r'chapterPageDownloadsProvider',
           debugGetCreateSourceHash:
@@ -109,20 +116,23 @@ class ChapterPageDownloadsProvider
         );
 
   final ModelManga modelManga;
-  final int index;
+  final int chapterIndex;
+  final int chapterId;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterPageDownloadsProvider &&
         other.modelManga == modelManga &&
-        other.index == index;
+        other.chapterIndex == chapterIndex &&
+        other.chapterId == chapterId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, modelManga.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
+    hash = _SystemHash.combine(hash, chapterIndex.hashCode);
+    hash = _SystemHash.combine(hash, chapterId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -133,7 +143,8 @@ class ChapterPageDownloadsProvider
   ) {
     return notifier.build(
       modelManga: modelManga,
-      index: index,
+      chapterIndex: chapterIndex,
+      chapterId: chapterId,
     );
   }
 }

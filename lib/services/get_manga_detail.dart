@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
 import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -86,6 +87,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   String? description;
   List<ModelChapters> chapters = [];
   List<String> scanlators = [];
+
   /********/
   /*comick*/
   /********/
@@ -669,7 +671,8 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
           isBookmarked: false,
           scanlator: scanlators.isEmpty ? "" : scanlators[i],
           isRead: false,
-          lastPageRead: ''));
+          lastPageRead: '',
+          mangaId: null));
     }
   }
 

@@ -101,39 +101,41 @@ class ReaderController extends _$ReaderController {
   void setMangaHistoryUpdate() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaHistoryProvider).put(
-          '${getModelManga().lang}-${getModelManga().link}',
-          MangaHistoryModel(
-              date: DateTime.now().toString(), modelManga: getModelManga()));
+      // ref.watch(hiveBoxMangaHistoryProvider).put(
+      //     '${getModelManga().lang}-${getModelManga().link}',
+      //     MangaHistoryModel(
+      //         date: DateTime.now().toString(), modelManga: getModelManga()));
     }
   }
 
   void setChapterPageLastRead(int pageIndex) async {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
-    if (!incognitoMode) {
-      List<ModelChapters> chapter = getModelManga().chapters!;
-      chapter[getChapterIndex()].lastPageRead = (pageIndex + 1).toString();
-      getModelManga().save();
-    }
+    // if (!incognitoMode) {
+    //   List<ModelChapters> chapter = getModelManga().chapters!;
+    //   chapter[getChapterIndex()].lastPageRead = (pageIndex + 1).toString();
+    //   getModelManga().save();
+    // }
   }
 
   void setChapterBookmarked() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
-    if (!incognitoMode) {
-      final isBookmarked = getChapterBookmarked();
-      List<ModelChapters> chapter = getModelManga().chapters!;
-      chapter[getChapterIndex()].isBookmarked = !isBookmarked;
-      getModelManga().save();
-    }
+    // if (!incognitoMode) {
+    //   final isBookmarked = getChapterBookmarked();
+    //   List<ModelChapters> chapter = getModelManga().chapters!;
+    //   chapter[getChapterIndex()].isBookmarked = !isBookmarked;
+    //   getModelManga().save();
+    // }
   }
 
   bool getChapterBookmarked() {
-    return ref
-        .watch(hiveBoxMangaProvider)
-        .get('${getModelManga().lang}-${getModelManga().link}',
-            defaultValue: getModelManga())!
-        .chapters![getChapterIndex()]
-        .isBookmarked;
+    return true;
+
+    // ref
+    //     .watch(hiveBoxMangaProvider)
+    //     .get('${getModelManga().lang}-${getModelManga().link}',
+    //         defaultValue: getModelManga())!
+    //     .chapters![getChapterIndex()]
+    //     .isBookmarked;
   }
 
   int getChapterIndex() {
@@ -188,6 +190,6 @@ class ReaderController extends _$ReaderController {
   }
 
   String getChapterTitle() {
-    return getModelManga().chapters![mangaReaderModel.index].name!;
+    return getModelManga().chapters.toList()[mangaReaderModel.index].name!;
   }
 }

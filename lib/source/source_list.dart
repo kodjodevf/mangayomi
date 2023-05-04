@@ -151,14 +151,14 @@ List<SourceModel> sourcesList = [
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: ''),
-  SourceModel(
-      sourceName: "ArenaScans",
-      url: "https://arenascans.net",
-      lang: "en",
-      typeSource: TypeSource.mangathemesia,
-      logoUrl:
-          'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
-      isCloudflare: true),
+  // SourceModel(
+  //     sourceName: "ArenaScans",
+  //     url: "https://arenascans.net",
+  //     lang: "en",
+  //     typeSource: TypeSource.mangathemesia,
+  //     logoUrl:
+  //         'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
+  //     isCloudflare: true),
   SourceModel(
       sourceName: "AzureScans",
       url: "https://azuremanga.com",

@@ -41,7 +41,7 @@ final libraryDisplayTypeStateProvider =
 
 typedef _$LibraryDisplayTypeState = AutoDisposeNotifier<String>;
 String _$mangaFilterDownloadedStateHash() =>
-    r'18ed17c06f41084cbb92b0b3300025f4e65aa413';
+    r'3c09b61fc80e35711b308b2b0050879c37cdd299';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -161,7 +161,7 @@ class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'5eed6ec9f46f1562d48eb89a078f666ed5b466d8';
+    r'bb771edf600c96e1b9fe4ceb786f143fe7050bfb';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -260,7 +260,7 @@ class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'cf5440f02e8454d75de4f311f945b33f73668ea2';
+    r'b8447b0eb414f15c4200bad461c260bdde3fe91c';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -359,7 +359,7 @@ class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'cdeeb68e7428e4856db3551443c70e28c3c7f95d';
+    r'777ac2ceb266d5bf6837ea270fd62ab8471add92';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {

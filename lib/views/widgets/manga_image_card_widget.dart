@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
@@ -24,7 +28,6 @@ class MangaImageCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final manga = ref.watch(hiveBoxMangaProvider);
     return GestureDetector(
       onTap: () async {
         final modelManga = ModelManga(
@@ -40,16 +43,42 @@ class MangaImageCardWidget extends ConsumerWidget {
             lang: lang,
             dateAdded: null,
             lastUpdate: null,
-            chapters: getMangaDetailModel!.chapters,
             categories: [],
             lastRead: '');
-        if (manga.get('$lang-${getMangaDetailModel!.url}',
-                defaultValue: null) ==
-            null) {
-          manga.put('$lang-${getMangaDetailModel!.url}', modelManga);
-        }
 
-        context.push('/manga-reader/detail', extra: modelManga);
+        final empty = await isar.modelMangas
+            .filter()
+            .langEqualTo(lang)
+            .nameEqualTo(getMangaDetailModel!.name)
+            .sourceEqualTo(getMangaDetailModel!.source)
+            .isEmpty();
+        if (empty) {
+          await isar.writeTxn(() async {
+            await isar.modelMangas.put(modelManga);
+            for (var i = 0; i < getMangaDetailModel!.chapters.length; i++) {
+              final chapters = ModelChapters(
+                  name: getMangaDetailModel!.chapters[i].name,
+                  url: getMangaDetailModel!.chapters[i].url,
+                  dateUpload: getMangaDetailModel!.chapters[i].dateUpload,
+                  isBookmarked: false,
+                  scanlator: getMangaDetailModel!.chapters[i].scanlator,
+                  isRead: false,
+                  lastPageRead: '',
+                  mangaId: modelManga.id)
+                ..manga.value = modelManga;
+              await isar.modelChapters.put(chapters);
+              await chapters.manga.save();
+            }
+          });
+        }
+        final getMangaId = await isar.modelMangas
+            .filter()
+            .langEqualTo(lang)
+            .nameEqualTo(getMangaDetailModel!.name)
+            .sourceEqualTo(getMangaDetailModel!.source)
+            .findFirst();
+        context.push('/manga-reader/detail', extra: getMangaId!.id);
+        log("${getMangaId.id}");
       },
       child: CoverViewWidget(children: [
         cachedNetworkImage(

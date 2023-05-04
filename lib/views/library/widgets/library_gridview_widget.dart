@@ -8,7 +8,6 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/views/manga/download/download_model.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
@@ -38,7 +37,7 @@ class LibraryGridViewWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            context.push('/manga-reader/detail', extra: entriesManga[index]);
+            context.push('/manga-reader/detail', extra: entriesManga[index].id);
           },
           child: CoverViewWidget(
             bottomTextWidget: BottomTextWidget(
@@ -76,7 +75,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                       for (var i = 0;
                                           i <
                                               entriesManga[index]
-                                                  .chapters!
+                                                  .chapters
                                                   .length;
                                           i++) {
                                         final entries = ref
@@ -84,12 +83,10 @@ class LibraryGridViewWidget extends StatelessWidget {
                                                 hiveBoxMangaDownloadsProvider)
                                             .values
                                             .where((element) =>
-                                                element
-                                                    .modelManga
-                                                    .chapters![element.index]
-                                                    .name ==
+                                                element.chapterName ==
                                                 entriesManga[index]
-                                                    .chapters![i]
+                                                    .chapters
+                                                    .toList()[i]
                                                     .name)
                                             .toList();
                                         if (entries.isNotEmpty &&
@@ -127,7 +124,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                 padding: const EdgeInsets.only(right: 3),
                                 child: Text(
                                   entriesManga[index]
-                                      .chapters!
+                                      .chapters
                                       .length
                                       .toString(),
                                   style: const TextStyle(color: Colors.white),
@@ -217,7 +214,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                         context: context,
                                         modelManga: entriesManga[index],
                                         index: entriesManga[index]
-                                                .chapters!
+                                                .chapters
                                                 .length -
                                             1);
                                   },

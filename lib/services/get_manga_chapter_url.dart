@@ -84,7 +84,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   List<bool> isLocaleList = [];
   String source = modelManga.source!.toLowerCase();
   List pagesUrl = ref.watch(hiveBoxMangaInfoProvider).get(
-      "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
+      "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters.toList()[index].name}-pageurl",
       defaultValue: []);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   path = await StorageProvider().getMangaChapterDirectory(modelManga, index);
@@ -98,7 +98,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /********/
   else if (getWpMangTypeSource(source) == TypeSource.comick) {
     String mangaId =
-        modelManga.chapters![index].url!.split('/').last.split('-').first;
+        modelManga.chapters.toList()[index].url!.split('/').last.split('-').first;
 
     final response = await httpGet(
         url: 'https://api.comick.fun/chapter/$mangaId?tachiyomi=true',
@@ -117,7 +117,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
     final dom = await httpGet(
         useUserAgent: true,
-        url: modelManga.chapters![index].url!,
+        url: modelManga.chapters.toList()[index].url!,
         source: source,
         resDom: true) as Document?;
     if (dom!.querySelectorAll('#readerarea').isNotEmpty) {
@@ -165,7 +165,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   else if (source == 'mangakawaii') {
     final response = await httpGet(
-        url: modelManga.chapters![index].url!,
+        url: modelManga.chapters.toList()[index].url!,
         source: source,
         resDom: false) as String?;
     var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
@@ -193,7 +193,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
     final dom = await httpGet(
         useUserAgent: true,
-        url: modelManga.chapters![index].url!,
+        url: modelManga.chapters.toList()[index].url!,
         source: source,
         resDom: true) as Document?;
     if (dom!.querySelectorAll('#all > .img-responsive').isNotEmpty) {
@@ -242,7 +242,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
       return secretKeyResultScript;
     }
 
-    var link = "http://www.mangahere.cc${modelManga.chapters![index].url!}";
+    var link = "http://www.mangahere.cc${modelManga.chapters.toList()[index].url!}";
     final response =
         await httpGet(url: link, source: source, resDom: false) as String?;
 
@@ -329,7 +329,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   } else if (source == 'japscan') {
     final response = await httpGet(
         useUserAgent: true,
-        url: modelManga.chapters![index].url!,
+        url: modelManga.chapters.toList()[index].url!,
         source: source,
         resDom: false) as String?;
     RegExp regex = RegExp(r'<script src="/zjs/(.*?)"');
@@ -349,7 +349,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   if (urll.isNotEmpty) {
     if (!incognitoMode) {
       ref.watch(hiveBoxMangaInfoProvider).put(
-          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters![index].name}-pageurl",
+          "${modelManga.lang}-${modelManga.source}/${modelManga.name}/${modelManga.chapters.toList()[index].name}-pageurl",
           urll);
     }
     for (var i = 0; i < urll.length; i++) {
