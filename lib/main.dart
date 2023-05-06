@@ -13,6 +13,7 @@ import 'package:mangayomi/models/manga_history.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/views/manga/detail/models/chapter_filter.dart';
 import 'package:mangayomi/views/manga/download/model/download_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
@@ -56,14 +57,24 @@ initIsar() async {
   final dir = await getApplicationDocumentsDirectory();
   if (Platform.isAndroid || Platform.isIOS) {
     isar = Isar.openSync(
-      [ModelMangaSchema, ModelChaptersSchema, CategoriesModelSchema],
+      [
+        ModelMangaSchema,
+        ModelChaptersSchema,
+        CategoriesModelSchema,
+        ChaptersFilterSchema
+      ],
       directory: dir.path,
     );
   } else {
-    String rootDir = path.join(Directory.current.path, '.dart_tool', 'isar');
+    String rootDir = path.join(Directory.current.path, '.dart_tool_', 'isar');
     await Directory(rootDir).create(recursive: true); // something like this
     isar = await Isar.open(
-      [ModelMangaSchema, ModelChaptersSchema, CategoriesModelSchema],
+      [
+        ModelMangaSchema,
+        ModelChaptersSchema,
+        CategoriesModelSchema,
+        ChaptersFilterSchema
+      ],
       directory: rootDir,
     );
   }

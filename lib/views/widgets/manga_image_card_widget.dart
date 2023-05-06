@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/views/manga/detail/models/chapter_filter.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 
@@ -68,6 +69,11 @@ class MangaImageCardWidget extends ConsumerWidget {
                 ..manga.value = modelManga;
               await isar.modelChapters.put(chapters);
               await chapters.manga.save();
+              log(modelManga.id.toString());
+              final chaptersFilters = ChaptersFilter()
+                ..manga.value = modelManga;
+              await isar.chaptersFilters.put(chaptersFilters);
+              // await chaptersFilters.manga.save();
             }
           });
         }

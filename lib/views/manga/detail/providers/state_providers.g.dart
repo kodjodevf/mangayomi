@@ -73,7 +73,7 @@ final isExtendedStateProvider =
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
 String _$reverseChapterStateHash() =>
-    r'd7f4d869e7c4bbceaee361bf790d4e8bba7df30e';
+    r'8e3db99ef54d27d37e9af35ef9d822a4f5dc6eaf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -98,10 +98,10 @@ class _SystemHash {
 
 abstract class _$ReverseChapterState
     extends BuildlessAutoDisposeNotifier<dynamic> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   dynamic build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -116,10 +116,10 @@ class ReverseChapterStateFamily extends Family<dynamic> {
 
   /// See also [ReverseChapterState].
   ReverseChapterStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return ReverseChapterStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -128,7 +128,7 @@ class ReverseChapterStateFamily extends Family<dynamic> {
     covariant ReverseChapterStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -152,9 +152,9 @@ class ReverseChapterStateProvider
     extends AutoDisposeNotifierProviderImpl<ReverseChapterState, dynamic> {
   /// See also [ReverseChapterState].
   ReverseChapterStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => ReverseChapterState()..modelManga = modelManga,
+          () => ReverseChapterState()..mangaId = mangaId,
           from: reverseChapterStateProvider,
           name: r'reverseChapterStateProvider',
           debugGetCreateSourceHash:
@@ -166,18 +166,17 @@ class ReverseChapterStateProvider
               ReverseChapterStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
-    return other is ReverseChapterStateProvider &&
-        other.modelManga == modelManga;
+    return other is ReverseChapterStateProvider && other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -187,20 +186,20 @@ class ReverseChapterStateProvider
     covariant ReverseChapterState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'33e96291f58f4ddfb1271c44ab06032da80e7c58';
+    r'a19a077ae1caa5bd5b4cdcded1c41960e6fa86f2';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   int build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -216,10 +215,10 @@ class ChapterFilterDownloadedStateFamily extends Family<int> {
 
   /// See also [ChapterFilterDownloadedState].
   ChapterFilterDownloadedStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return ChapterFilterDownloadedStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -228,7 +227,7 @@ class ChapterFilterDownloadedStateFamily extends Family<int> {
     covariant ChapterFilterDownloadedStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -252,9 +251,9 @@ class ChapterFilterDownloadedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterDownloadedState, int> {
   /// See also [ChapterFilterDownloadedState].
   ChapterFilterDownloadedStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => ChapterFilterDownloadedState()..modelManga = modelManga,
+          () => ChapterFilterDownloadedState()..mangaId = mangaId,
           from: chapterFilterDownloadedStateProvider,
           name: r'chapterFilterDownloadedStateProvider',
           debugGetCreateSourceHash:
@@ -266,18 +265,18 @@ class ChapterFilterDownloadedStateProvider
               ChapterFilterDownloadedStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterFilterDownloadedStateProvider &&
-        other.modelManga == modelManga;
+        other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -287,20 +286,20 @@ class ChapterFilterDownloadedStateProvider
     covariant ChapterFilterDownloadedState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'bcd0a645901a80401affe5bf08d92244e3324832';
+    r'f7d0609cb5dd9809c0f9af1e7931ad02e34b7569';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   int build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -315,10 +314,10 @@ class ChapterFilterUnreadStateFamily extends Family<int> {
 
   /// See also [ChapterFilterUnreadState].
   ChapterFilterUnreadStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return ChapterFilterUnreadStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -327,7 +326,7 @@ class ChapterFilterUnreadStateFamily extends Family<int> {
     covariant ChapterFilterUnreadStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -351,9 +350,9 @@ class ChapterFilterUnreadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterUnreadState, int> {
   /// See also [ChapterFilterUnreadState].
   ChapterFilterUnreadStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => ChapterFilterUnreadState()..modelManga = modelManga,
+          () => ChapterFilterUnreadState()..mangaId = mangaId,
           from: chapterFilterUnreadStateProvider,
           name: r'chapterFilterUnreadStateProvider',
           debugGetCreateSourceHash:
@@ -365,18 +364,18 @@ class ChapterFilterUnreadStateProvider
               ChapterFilterUnreadStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterFilterUnreadStateProvider &&
-        other.modelManga == modelManga;
+        other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -386,20 +385,20 @@ class ChapterFilterUnreadStateProvider
     covariant ChapterFilterUnreadState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'2f7d04afd075d55b6d7849ed312bc40fcfd35e05';
+    r'b0b0865a5d093ad0da01ed6c2e374a05e460d14a';
 
 abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   int build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -415,10 +414,10 @@ class ChapterFilterBookmarkedStateFamily extends Family<int> {
 
   /// See also [ChapterFilterBookmarkedState].
   ChapterFilterBookmarkedStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return ChapterFilterBookmarkedStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -427,7 +426,7 @@ class ChapterFilterBookmarkedStateFamily extends Family<int> {
     covariant ChapterFilterBookmarkedStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -451,9 +450,9 @@ class ChapterFilterBookmarkedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterBookmarkedState, int> {
   /// See also [ChapterFilterBookmarkedState].
   ChapterFilterBookmarkedStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => ChapterFilterBookmarkedState()..modelManga = modelManga,
+          () => ChapterFilterBookmarkedState()..mangaId = mangaId,
           from: chapterFilterBookmarkedStateProvider,
           name: r'chapterFilterBookmarkedStateProvider',
           debugGetCreateSourceHash:
@@ -465,18 +464,18 @@ class ChapterFilterBookmarkedStateProvider
               ChapterFilterBookmarkedStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterFilterBookmarkedStateProvider &&
-        other.modelManga == modelManga;
+        other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -486,20 +485,20 @@ class ChapterFilterBookmarkedStateProvider
     covariant ChapterFilterBookmarkedState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'2efadc2a20b1b7ffde1ce95da77e52b9930a5543';
+    r'0ccd5617e876a3002bb0e6b7293e4c67bf35b1bd';
 
 abstract class _$ChapterFilterResultState
-    extends BuildlessAutoDisposeNotifier<ModelManga> {
-  late final ModelManga modelManga;
+    extends BuildlessAutoDisposeNotifier<bool> {
+  late final int mangaId;
 
-  ModelManga build({
-    required ModelManga modelManga,
+  bool build({
+    required int mangaId,
   });
 }
 
@@ -508,16 +507,16 @@ abstract class _$ChapterFilterResultState
 const chapterFilterResultStateProvider = ChapterFilterResultStateFamily();
 
 /// See also [ChapterFilterResultState].
-class ChapterFilterResultStateFamily extends Family<ModelManga> {
+class ChapterFilterResultStateFamily extends Family<bool> {
   /// See also [ChapterFilterResultState].
   const ChapterFilterResultStateFamily();
 
   /// See also [ChapterFilterResultState].
   ChapterFilterResultStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return ChapterFilterResultStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -526,7 +525,7 @@ class ChapterFilterResultStateFamily extends Family<ModelManga> {
     covariant ChapterFilterResultStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -546,13 +545,13 @@ class ChapterFilterResultStateFamily extends Family<ModelManga> {
 }
 
 /// See also [ChapterFilterResultState].
-class ChapterFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
-    ChapterFilterResultState, ModelManga> {
+class ChapterFilterResultStateProvider
+    extends AutoDisposeNotifierProviderImpl<ChapterFilterResultState, bool> {
   /// See also [ChapterFilterResultState].
   ChapterFilterResultStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => ChapterFilterResultState()..modelManga = modelManga,
+          () => ChapterFilterResultState()..mangaId = mangaId,
           from: chapterFilterResultStateProvider,
           name: r'chapterFilterResultStateProvider',
           debugGetCreateSourceHash:
@@ -564,28 +563,28 @@ class ChapterFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
               ChapterFilterResultStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterFilterResultStateProvider &&
-        other.modelManga == modelManga;
+        other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
 
   @override
-  ModelManga runNotifierBuild(
+  bool runNotifierBuild(
     covariant ChapterFilterResultState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
@@ -888,14 +887,14 @@ class ChapterSetDownloadStateProvider
 }
 
 String _$sortByUploadDateStateHash() =>
-    r'a86bc258687f71a0364874e8f6f0401f9fb1a1ee';
+    r'5dd31fd2ee8fbaa5f3f5c8e2397842fa60af8b46';
 
 abstract class _$SortByUploadDateState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   bool build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -910,10 +909,10 @@ class SortByUploadDateStateFamily extends Family<bool> {
 
   /// See also [SortByUploadDateState].
   SortByUploadDateStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return SortByUploadDateStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -922,7 +921,7 @@ class SortByUploadDateStateFamily extends Family<bool> {
     covariant SortByUploadDateStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -946,9 +945,9 @@ class SortByUploadDateStateProvider
     extends AutoDisposeNotifierProviderImpl<SortByUploadDateState, bool> {
   /// See also [SortByUploadDateState].
   SortByUploadDateStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => SortByUploadDateState()..modelManga = modelManga,
+          () => SortByUploadDateState()..mangaId = mangaId,
           from: sortByUploadDateStateProvider,
           name: r'sortByUploadDateStateProvider',
           debugGetCreateSourceHash:
@@ -960,18 +959,17 @@ class SortByUploadDateStateProvider
               SortByUploadDateStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
-    return other is SortByUploadDateStateProvider &&
-        other.modelManga == modelManga;
+    return other is SortByUploadDateStateProvider && other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -981,18 +979,18 @@ class SortByUploadDateStateProvider
     covariant SortByUploadDateState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
-String _$sortBySourceStateHash() => r'77181a7c4e07a7714a0e3230f84830e66e36a40f';
+String _$sortBySourceStateHash() => r'b254edd8c935aafd1cb41e4841134d177b58ba62';
 
 abstract class _$SortBySourceState extends BuildlessAutoDisposeNotifier<bool> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   bool build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -1007,10 +1005,10 @@ class SortBySourceStateFamily extends Family<bool> {
 
   /// See also [SortBySourceState].
   SortBySourceStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return SortBySourceStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -1019,7 +1017,7 @@ class SortBySourceStateFamily extends Family<bool> {
     covariant SortBySourceStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -1043,9 +1041,9 @@ class SortBySourceStateProvider
     extends AutoDisposeNotifierProviderImpl<SortBySourceState, bool> {
   /// See also [SortBySourceState].
   SortBySourceStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => SortBySourceState()..modelManga = modelManga,
+          () => SortBySourceState()..mangaId = mangaId,
           from: sortBySourceStateProvider,
           name: r'sortBySourceStateProvider',
           debugGetCreateSourceHash:
@@ -1057,17 +1055,17 @@ class SortBySourceStateProvider
               SortBySourceStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
-    return other is SortBySourceStateProvider && other.modelManga == modelManga;
+    return other is SortBySourceStateProvider && other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -1077,20 +1075,20 @@ class SortBySourceStateProvider
     covariant SortBySourceState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }
 
 String _$sortByChapterNumberStateHash() =>
-    r'68dc6bdf97aa6938fe2896d244aac3a77900ee2e';
+    r'c3f088a3235a0c0305b8c33376fa430950902fc6';
 
 abstract class _$SortByChapterNumberState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final ModelManga modelManga;
+  late final int mangaId;
 
   bool build({
-    required ModelManga modelManga,
+    required int mangaId,
   });
 }
 
@@ -1105,10 +1103,10 @@ class SortByChapterNumberStateFamily extends Family<bool> {
 
   /// See also [SortByChapterNumberState].
   SortByChapterNumberStateProvider call({
-    required ModelManga modelManga,
+    required int mangaId,
   }) {
     return SortByChapterNumberStateProvider(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 
@@ -1117,7 +1115,7 @@ class SortByChapterNumberStateFamily extends Family<bool> {
     covariant SortByChapterNumberStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      mangaId: provider.mangaId,
     );
   }
 
@@ -1141,9 +1139,9 @@ class SortByChapterNumberStateProvider
     extends AutoDisposeNotifierProviderImpl<SortByChapterNumberState, bool> {
   /// See also [SortByChapterNumberState].
   SortByChapterNumberStateProvider({
-    required this.modelManga,
+    required this.mangaId,
   }) : super.internal(
-          () => SortByChapterNumberState()..modelManga = modelManga,
+          () => SortByChapterNumberState()..mangaId = mangaId,
           from: sortByChapterNumberStateProvider,
           name: r'sortByChapterNumberStateProvider',
           debugGetCreateSourceHash:
@@ -1155,18 +1153,18 @@ class SortByChapterNumberStateProvider
               SortByChapterNumberStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final int mangaId;
 
   @override
   bool operator ==(Object other) {
     return other is SortByChapterNumberStateProvider &&
-        other.modelManga == modelManga;
+        other.mangaId == mangaId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -1176,7 +1174,7 @@ class SortByChapterNumberStateProvider
     covariant SortByChapterNumberState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      mangaId: mangaId,
     );
   }
 }

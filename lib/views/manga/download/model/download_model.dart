@@ -26,17 +26,19 @@ class DownloadModel extends HiveObject {
   final String? chapterName;
   @HiveField(11)
   final String? mangaName;
-  DownloadModel({
-    required this.chapterId,
-    required this.succeeded,
-    required this.failed,
-    required this.chapterIndex,
-    required this.total,
-    required this.isDownload,
-    required this.taskIds,
-    required this.isStartDownload,
-    required this.mangaSource,
-    required this.chapterName,
-    required this.mangaName,
-  });
+  @HiveField(12)
+  final int? mangaId;
+  DownloadModel(
+      {required this.chapterId,
+      required this.succeeded,
+      required this.failed,
+      required this.chapterIndex,
+      required this.total,
+      required this.isDownload,
+      required this.taskIds,
+      required this.isStartDownload,
+      required this.mangaSource,
+      required this.chapterName,
+      required this.mangaName,
+      required this.mangaId});
 }

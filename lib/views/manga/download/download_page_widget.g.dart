@@ -7,7 +7,7 @@ part of 'download_page_widget.dart';
 // **************************************************************************
 
 String _$chapterPageDownloadsHash() =>
-    r'682bf480c3b8e3ccda792661746e5fba24755526';
+    r'bfe13c0c9efee4c0caf6d2a399d9c74aaed78aba';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,11 +35,13 @@ abstract class _$ChapterPageDownloads
   late final ModelManga modelManga;
   late final int chapterIndex;
   late final int chapterId;
+  late final ModelChapters chapters;
 
   Widget build({
     required ModelManga modelManga,
     required int chapterIndex,
     required int chapterId,
+    required ModelChapters chapters,
   });
 }
 
@@ -57,11 +59,13 @@ class ChapterPageDownloadsFamily extends Family<Widget> {
     required ModelManga modelManga,
     required int chapterIndex,
     required int chapterId,
+    required ModelChapters chapters,
   }) {
     return ChapterPageDownloadsProvider(
       modelManga: modelManga,
       chapterIndex: chapterIndex,
       chapterId: chapterId,
+      chapters: chapters,
     );
   }
 
@@ -73,6 +77,7 @@ class ChapterPageDownloadsFamily extends Family<Widget> {
       modelManga: provider.modelManga,
       chapterIndex: provider.chapterIndex,
       chapterId: provider.chapterId,
+      chapters: provider.chapters,
     );
   }
 
@@ -99,11 +104,13 @@ class ChapterPageDownloadsProvider
     required this.modelManga,
     required this.chapterIndex,
     required this.chapterId,
+    required this.chapters,
   }) : super.internal(
           () => ChapterPageDownloads()
             ..modelManga = modelManga
             ..chapterIndex = chapterIndex
-            ..chapterId = chapterId,
+            ..chapterId = chapterId
+            ..chapters = chapters,
           from: chapterPageDownloadsProvider,
           name: r'chapterPageDownloadsProvider',
           debugGetCreateSourceHash:
@@ -118,13 +125,15 @@ class ChapterPageDownloadsProvider
   final ModelManga modelManga;
   final int chapterIndex;
   final int chapterId;
+  final ModelChapters chapters;
 
   @override
   bool operator ==(Object other) {
     return other is ChapterPageDownloadsProvider &&
         other.modelManga == modelManga &&
         other.chapterIndex == chapterIndex &&
-        other.chapterId == chapterId;
+        other.chapterId == chapterId &&
+        other.chapters == chapters;
   }
 
   @override
@@ -133,6 +142,7 @@ class ChapterPageDownloadsProvider
     hash = _SystemHash.combine(hash, modelManga.hashCode);
     hash = _SystemHash.combine(hash, chapterIndex.hashCode);
     hash = _SystemHash.combine(hash, chapterId.hashCode);
+    hash = _SystemHash.combine(hash, chapters.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -145,6 +155,7 @@ class ChapterPageDownloadsProvider
       modelManga: modelManga,
       chapterIndex: chapterIndex,
       chapterId: chapterId,
+      chapters: chapters,
     );
   }
 }

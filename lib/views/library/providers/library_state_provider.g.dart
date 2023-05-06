@@ -41,7 +41,7 @@ final libraryDisplayTypeStateProvider =
 
 typedef _$LibraryDisplayTypeState = AutoDisposeNotifier<String>;
 String _$mangaFilterDownloadedStateHash() =>
-    r'3c09b61fc80e35711b308b2b0050879c37cdd299';
+    r'd489a673c7a180129be17adccd3da69d529c1ff4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -161,7 +161,7 @@ class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'bb771edf600c96e1b9fe4ceb786f143fe7050bfb';
+    r'46091316aacb44f8fb900b054632e03fea03fe0d';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -260,7 +260,7 @@ class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'b8447b0eb414f15c4200bad461c260bdde3fe91c';
+    r'8b31487fdd597ce67f67581267df65a0037788f2';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -359,7 +359,7 @@ class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'777ac2ceb266d5bf6837ea270fd62ab8471add92';
+    r'e97a2dccce54775e2d321933d9d57a318a6ec973';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -457,39 +457,39 @@ class MangaFilterBookmarkedStateProvider
   }
 }
 
-String _$mangaFilterResultStateHash() =>
-    r'fb5c27326f49a7e361ac19b97b511f1d8ab50920';
+String _$mangasFilterResultStateHash() =>
+    r'56207315fb81ae3adefa81ff1bea89015e0f99ec';
 
-abstract class _$MangaFilterResultState
-    extends BuildlessAutoDisposeNotifier<List<ModelManga>> {
+abstract class _$MangasFilterResultState
+    extends BuildlessAutoDisposeNotifier<bool> {
   late final List<ModelManga> mangaList;
 
-  List<ModelManga> build({
+  bool build({
     required List<ModelManga> mangaList,
   });
 }
 
-/// See also [MangaFilterResultState].
-@ProviderFor(MangaFilterResultState)
-const mangaFilterResultStateProvider = MangaFilterResultStateFamily();
+/// See also [MangasFilterResultState].
+@ProviderFor(MangasFilterResultState)
+const mangasFilterResultStateProvider = MangasFilterResultStateFamily();
 
-/// See also [MangaFilterResultState].
-class MangaFilterResultStateFamily extends Family<List<ModelManga>> {
-  /// See also [MangaFilterResultState].
-  const MangaFilterResultStateFamily();
+/// See also [MangasFilterResultState].
+class MangasFilterResultStateFamily extends Family<bool> {
+  /// See also [MangasFilterResultState].
+  const MangasFilterResultStateFamily();
 
-  /// See also [MangaFilterResultState].
-  MangaFilterResultStateProvider call({
+  /// See also [MangasFilterResultState].
+  MangasFilterResultStateProvider call({
     required List<ModelManga> mangaList,
   }) {
-    return MangaFilterResultStateProvider(
+    return MangasFilterResultStateProvider(
       mangaList: mangaList,
     );
   }
 
   @override
-  MangaFilterResultStateProvider getProviderOverride(
-    covariant MangaFilterResultStateProvider provider,
+  MangasFilterResultStateProvider getProviderOverride(
+    covariant MangasFilterResultStateProvider provider,
   ) {
     return call(
       mangaList: provider.mangaList,
@@ -508,33 +508,33 @@ class MangaFilterResultStateFamily extends Family<List<ModelManga>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'mangaFilterResultStateProvider';
+  String? get name => r'mangasFilterResultStateProvider';
 }
 
-/// See also [MangaFilterResultState].
-class MangaFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
-    MangaFilterResultState, List<ModelManga>> {
-  /// See also [MangaFilterResultState].
-  MangaFilterResultStateProvider({
+/// See also [MangasFilterResultState].
+class MangasFilterResultStateProvider
+    extends AutoDisposeNotifierProviderImpl<MangasFilterResultState, bool> {
+  /// See also [MangasFilterResultState].
+  MangasFilterResultStateProvider({
     required this.mangaList,
   }) : super.internal(
-          () => MangaFilterResultState()..mangaList = mangaList,
-          from: mangaFilterResultStateProvider,
-          name: r'mangaFilterResultStateProvider',
+          () => MangasFilterResultState()..mangaList = mangaList,
+          from: mangasFilterResultStateProvider,
+          name: r'mangasFilterResultStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$mangaFilterResultStateHash,
-          dependencies: MangaFilterResultStateFamily._dependencies,
+                  : _$mangasFilterResultStateHash,
+          dependencies: MangasFilterResultStateFamily._dependencies,
           allTransitiveDependencies:
-              MangaFilterResultStateFamily._allTransitiveDependencies,
+              MangasFilterResultStateFamily._allTransitiveDependencies,
         );
 
   final List<ModelManga> mangaList;
 
   @override
   bool operator ==(Object other) {
-    return other is MangaFilterResultStateProvider &&
+    return other is MangasFilterResultStateProvider &&
         other.mangaList == mangaList;
   }
 
@@ -547,8 +547,8 @@ class MangaFilterResultStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 
   @override
-  List<ModelManga> runNotifierBuild(
-    covariant MangaFilterResultState notifier,
+  bool runNotifierBuild(
+    covariant MangasFilterResultState notifier,
   ) {
     return notifier.build(
       mangaList: mangaList,

@@ -28,13 +28,14 @@ class DownloadModelAdapter extends TypeAdapter<DownloadModel> {
       mangaSource: fields[9] as String?,
       chapterName: fields[10] as String?,
       mangaName: fields[11] as String?,
+      mangaId: fields[12] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, DownloadModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.chapterIndex)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class DownloadModelAdapter extends TypeAdapter<DownloadModel> {
       ..writeByte(10)
       ..write(obj.chapterName)
       ..writeByte(11)
-      ..write(obj.mangaName);
+      ..write(obj.mangaName)
+      ..writeByte(12)
+      ..write(obj.mangaId);
   }
 
   @override

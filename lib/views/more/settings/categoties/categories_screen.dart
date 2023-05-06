@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/categories.dart';
+import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
 import 'package:mangayomi/views/more/settings/categoties/widgets/custom_textfield.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
@@ -16,138 +17,145 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   List<CategoriesModel> _entries = [];
   @override
   Widget build(BuildContext context) {
+    final categories = ref.watch(getMangaCategorieStreamProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit categories"),
       ),
-      body: StreamBuilder(
-        stream: isar.categoriesModels
-            .filter()
-            .idIsNotNull()
-            .watch(fireImmediately: true),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            _entries = snapshot.data!;
-            return ListView.builder(
-              itemCount: _entries.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Card(
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                elevation: 0,
-                                shadowColor: Colors.transparent,
-                                shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(0),
-                                        bottomRight: Radius.circular(0),
-                                        topRight: Radius.circular(10),
-                                        topLeft: Radius.circular(10)))),
-                            onPressed: () {
-                              _renameCategory(_entries[index]);
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Icon(Icons.label_outline_rounded),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Expanded(child: Text(_entries[index].name!))
-                              ],
-                            )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: const [
-                                SizedBox(width: 10),
-                                Icon(Icons.arrow_drop_up_outlined),
-                                SizedBox(width: 10),
-                                Icon(Icons.arrow_drop_down_outlined)
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      _renameCategory(_entries[index]);
-                                    },
-                                    icon: const Icon(
-                                        Icons.mode_edit_outline_outlined)),
-                                IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return StatefulBuilder(
-                                              builder: (context, setState) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                    "Delete category",
-                                                  ),
-                                                  content: Text(
-                                                      "Do you wish to delete the category"
-                                                      ' "${_entries[index].name}"?'),
-                                                  actions: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child: const Text(
-                                                                "Cancel")),
-                                                        const SizedBox(
-                                                          width: 15,
-                                                        ),
-                                                        TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              await isar
-                                                                  .writeTxn(
-                                                                      () async {
-                                                                await isar
-                                                                    .categoriesModels
-                                                                    .delete(_entries[
-                                                                            index]
-                                                                        .id!);
-                                                              });
-                                                              if (mounted) {
-                                                                Navigator.pop(
-                                                                    context);
-                                                              }
-                                                            },
-                                                            child: const Text(
-                                                              "OK",
-                                                            )),
-                                                      ],
-                                                    )
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          });
-                                    },
-                                    icon: const Icon(Icons.delete_outlined))
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
+      body: categories.when(
+        data: (data) {
+          if (data.isEmpty) {
+            _entries = [];
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "You have no categories. Tap the plus button to create one for organizing your library",
+                  textAlign: TextAlign.center,
+                ),
+              ),
             );
           }
+          _entries = data;
+          return ListView.builder(
+            itemCount: _entries.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Card(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(0),
+                                      bottomRight: Radius.circular(0),
+                                      topRight: Radius.circular(10),
+                                      topLeft: Radius.circular(10)))),
+                          onPressed: () {
+                            _renameCategory(_entries[index]);
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Icon(Icons.label_outline_rounded),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Expanded(child: Text(_entries[index].name!))
+                            ],
+                          )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: const [
+                              SizedBox(width: 10),
+                              Icon(Icons.arrow_drop_up_outlined),
+                              SizedBox(width: 10),
+                              Icon(Icons.arrow_drop_down_outlined)
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    _renameCategory(_entries[index]);
+                                  },
+                                  icon: const Icon(
+                                      Icons.mode_edit_outline_outlined)),
+                              IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return StatefulBuilder(
+                                            builder: (context, setState) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                  "Delete category",
+                                                ),
+                                                content: Text(
+                                                    "Do you wish to delete the category"
+                                                    ' "${_entries[index].name}"?'),
+                                                actions: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                              "Cancel")),
+                                                      const SizedBox(
+                                                        width: 15,
+                                                      ),
+                                                      TextButton(
+                                                          onPressed: () async {
+                                                            await isar.writeTxn(
+                                                                () async {
+                                                              await isar
+                                                                  .categoriesModels
+                                                                  .delete(_entries[
+                                                                          index]
+                                                                      .id!);
+                                                            });
+                                                            if (mounted) {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }
+                                                          },
+                                                          child: const Text(
+                                                            "OK",
+                                                          )),
+                                                    ],
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        });
+                                  },
+                                  icon: const Icon(Icons.delete_outlined))
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        error: (Object error, StackTrace stackTrace) {
           _entries = [];
           return const Center(
             child: Padding(
@@ -157,6 +165,11 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
+          );
+        },
+        loading: () {
+          return Center(
+            child: CircularProgressIndicator(),
           );
         },
       ),

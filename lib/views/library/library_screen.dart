@@ -10,11 +10,15 @@ import 'package:mangayomi/models/categories.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/views/library/providers/isar_providers.dart';
 import 'package:mangayomi/views/library/providers/library_state_provider.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 import 'package:mangayomi/views/library/widgets/library_gridview_widget.dart';
 import 'package:mangayomi/views/library/widgets/library_listview_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
+import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   const LibraryScreen({super.key});
@@ -44,121 +48,107 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final displayType = ref
         .read(libraryDisplayTypeStateProvider.notifier)
         .getLibraryDisplayTypeValue(ref.watch(libraryDisplayTypeStateProvider));
-    final isNotFiltering = ref
-        .read(mangaFilterResultStateProvider(mangaList: entries).notifier)
-        .isNotFiltering();
-    return StreamBuilder(
-        stream: isar.categoriesModels
-            .filter()
-            .idIsNotNull()
-            .watch(fireImmediately: true),
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.data!.isNotEmpty &&
-              showCategoryTabs) {
-            final entr = snapshot.data;
-            tabBarController = TabController(length: entr!.length, vsync: this);
-            tabBarController.animateTo(tabIndex);
-            tabBarController.addListener(() {
-              tabIndex = tabBarController.index;
-            });
-            return DefaultTabController(
-              length: entr.length,
-              child: Scaffold(
-                appBar:
-                    _appBar(isNotFiltering, showNumbersOfItems, entries.length),
-                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TabBar(
-                        isScrollable: true,
-                        controller: tabBarController,
-                        tabs: entr.map((e) => Tab(text: e.name)).toList()),
-                    Flexible(
-                        child: TabBarView(
-                      controller: tabBarController,
-                      children: entr
-                          .map(
-                            (e) => Scaffold(
-                              body: StreamBuilder(
-                                stream: isar.modelMangas
-                                    .filter()
-                                    .idIsNotNull()
-                                    .favoriteEqualTo(true)
-                                    .categoriesIsNotEmpty()
-                                    .categoriesElementEqualTo(e.id!)
-                                    .watch(fireImmediately: true),
-                                builder: (context, snapshot) {
-                                  // final data = ref.watch(
-                                  //     mangaFilterResultStateProvider(
-                                  //         mangaList: entries));
-                                  // entriesFilter = _textEditingController
-                                  //         .text.isNotEmpty
-                                  //     ? data
-                                  //         .where((element) => element.name!
-                                  //             .toLowerCase()
-                                  //             .contains(_textEditingController
-                                  //                 .text
-                                  //                 .toLowerCase()))
-                                  //         .toList()
-                                  //     : data;
+    final isNotFiltering =
+        ref.watch(mangasFilterResultStateProvider(mangaList: entries));
+    final categories = ref.watch(getMangaCategorieStreamProvider);
+    final downloadFilterType =
+        ref.watch(mangaFilterDownloadedStateProvider(mangaList: entries));
+    final unreadFilterType =
+        ref.watch(mangaFilterUnreadStateProvider(mangaList: entries));
+    final startedFilterType =
+        ref.watch(mangaFilterStartedStateProvider(mangaList: entries));
+    final bookmarkedFilterType =
+        ref.watch(mangaFilterBookmarkedStateProvider(mangaList: entries));
+    log(downloadFilterType.toString());
+    return categories.when(
+      data: (data) {
+        if (data.isNotEmpty && showCategoryTabs) {
+          final entr = data;
+          tabBarController = TabController(length: entr.length, vsync: this);
+          tabBarController.animateTo(tabIndex);
+          tabBarController.addListener(() {
+            tabIndex = tabBarController.index;
+          });
 
-                                  if (snapshot.hasData &&
-                                      snapshot.data!.isNotEmpty) {
-                                    final entries = snapshot.data!;
-                                    final entriesManga = reverse
-                                        ? entries.reversed.toList()
-                                        : entries;
-                                    return displayType == DisplayType.list
-                                        ? LibraryListViewWidget(
-                                            entriesManga: entriesManga,
-                                            continueReaderBtn:
-                                                continueReaderBtn,
-                                            downloadedChapter:
-                                                downloadedChapter,
-                                            language: language,
-                                          )
-                                        : LibraryGridViewWidget(
-                                            entriesManga: entriesManga,
-                                            isCoverOnlyGrid: displayType ==
-                                                    DisplayType.compactGrid
-                                                ? false
-                                                : true,
-                                            isComfortableGrid: displayType ==
-                                                    DisplayType.comfortableGrid
-                                                ? true
-                                                : false,
-                                            continueReaderBtn:
-                                                continueReaderBtn,
-                                            downloadedChapter:
-                                                downloadedChapter,
-                                            language: language,
-                                          );
-                                  }
-                                  return const Center(
-                                      child: Text("Empty Library"));
-                                },
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ))
-                  ],
-                ),
+          return DefaultTabController(
+            length: entr.length,
+            child: Scaffold(
+              appBar:
+                  _appBar(isNotFiltering, showNumbersOfItems, entries.length),
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TabBar(
+                      isScrollable: true,
+                      controller: tabBarController,
+                      tabs: entr.map((e) => Tab(text: e.name)).toList()),
+                  Flexible(
+                      child: TabBarView(
+                    controller: tabBarController,
+                    children: entr.map((e) {
+                      final mangas = ref
+                          .watch(getAllMangaStreamProvider(categoryId: e.id));
+                      return Scaffold(
+                          body: mangas.when(
+                        data: (data) {
+                          final entries = _filterMangas(
+                              data: data,
+                              downloadFilterType: downloadFilterType,
+                              unreadFilterType: unreadFilterType,
+                              startedFilterType: startedFilterType,
+                              bookmarkedFilterType: bookmarkedFilterType);
+                          if (entries.isNotEmpty) {
+                            final entriesManga =
+                                reverse ? entries.reversed.toList() : entries;
+                            return displayType == DisplayType.list
+                                ? LibraryListViewWidget(
+                                    entriesManga: entriesManga,
+                                    continueReaderBtn: continueReaderBtn,
+                                    downloadedChapter: downloadedChapter,
+                                    language: language,
+                                  )
+                                : LibraryGridViewWidget(
+                                    entriesManga: entriesManga,
+                                    isCoverOnlyGrid:
+                                        displayType == DisplayType.compactGrid
+                                            ? false
+                                            : true,
+                                    isComfortableGrid: displayType ==
+                                            DisplayType.comfortableGrid
+                                        ? true
+                                        : false,
+                                    continueReaderBtn: continueReaderBtn,
+                                    downloadedChapter: downloadedChapter,
+                                    language: language,
+                                  );
+                          }
+                          return const Center(child: Text("Empty Library"));
+                        },
+                        error: (Object error, StackTrace stackTrace) {
+                          return ErrorText(error);
+                        },
+                        loading: () {
+                          return const ProgressCenter();
+                        },
+                      ));
+                    }).toList(),
+                  ))
+                ],
               ),
-            );
-          }
-          return Scaffold(
+            ),
+          );
+        }
+        return Scaffold(
             appBar: _appBar(isNotFiltering, showNumbersOfItems, entries.length),
-            body: StreamBuilder(
-              stream: isar.modelMangas
-                  .filter()
-                  .idIsNotNull()
-                  .favoriteEqualTo(true)
-                  .watch(fireImmediately: true),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final entries = snapshot.data!;
+            body: ref.watch(getAllMangaStreamProvider(categoryId: null)).when(
+              data: (data) {
+                final entries = _filterMangas(
+                    data: data,
+                    downloadFilterType: downloadFilterType,
+                    unreadFilterType: unreadFilterType,
+                    startedFilterType: startedFilterType,
+                    bookmarkedFilterType: bookmarkedFilterType);
+                if (entries.isNotEmpty) {
                   final entriesManga =
                       reverse ? entries.reversed.toList() : entries;
                   return displayType == DisplayType.list
@@ -185,9 +175,94 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 }
                 return const Center(child: Text("Empty Library"));
               },
-            ),
-          );
-        });
+              error: (Object error, StackTrace stackTrace) {
+                return ErrorText(error);
+              },
+              loading: () {
+                return const ProgressCenter();
+              },
+            ));
+      },
+      error: (Object error, StackTrace stackTrace) {
+        return ErrorText(error);
+      },
+      loading: () {
+        return const ProgressCenter();
+      },
+    );
+  }
+
+  List<ModelManga> _filterMangas(
+      {required List<ModelManga> data,
+      required int downloadFilterType,
+      required int unreadFilterType,
+      required int startedFilterType,
+      required int bookmarkedFilterType}) {
+    return data.where((element) {
+      List list = [];
+      if (downloadFilterType == 1) {
+        for (var chap in element.chapters) {
+          final modelChapDownload = ref
+              .watch(hiveBoxMangaDownloadsProvider)
+              .get("${chap.mangaId}/${chap.id}", defaultValue: null);
+          if (modelChapDownload != null &&
+              modelChapDownload.isDownload == true) {
+            list.add(true);
+          }
+        }
+        return list.length == element.chapters.length;
+      } else if (downloadFilterType == 2) {
+        for (var chap in element.chapters) {
+          final modelChapDownload = ref
+              .watch(hiveBoxMangaDownloadsProvider)
+              .get("${chap.mangaId}/${chap.id}", defaultValue: null);
+          if (!(modelChapDownload != null &&
+              modelChapDownload.isDownload == true)) {
+            list.add(true);
+          }
+        }
+        return list.length == element.chapters.length;
+      }
+      return true;
+    }).where((element) {
+      List list = [];
+      if (unreadFilterType == 1 || startedFilterType == 1) {
+        for (var chap in element.chapters) {
+          if (!chap.isRead!) {
+            list.add(true);
+          }
+        }
+        return list.isNotEmpty;
+      } else if (unreadFilterType == 2 || startedFilterType == 2) {
+        List list = [];
+        for (var chap in element.chapters) {
+          if (chap.isRead!) {
+            list.add(true);
+          }
+        }
+        return list.length == element.chapters.length;
+      }
+      return true;
+    }).where((element) {
+      List list = [];
+      if (bookmarkedFilterType == 1) {
+        for (var chap in element.chapters) {
+          if (chap.isBookmarked!) {
+            list.add(true);
+          }
+        }
+        return list.isNotEmpty;
+      } else if (bookmarkedFilterType == 2) {
+        List list = [];
+        for (var chap in element.chapters) {
+          if (!chap.isBookmarked!) {
+            list.add(true);
+          }
+        }
+        return list.length == element.chapters.length;
+      }
+      return true;
+    }).toList();
   }
 
   _showDraggableMenu() {
@@ -227,14 +302,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         mangaFilterDownloadedStateProvider(
                                             mangaList: entries)),
                                     onTap: () {
-                                      setState(() {
-                                        entriesFilter = ref
-                                            .read(
-                                                mangaFilterDownloadedStateProvider(
-                                                        mangaList: entries)
-                                                    .notifier)
-                                            .update();
-                                      });
+                                      ref
+                                          .read(
+                                              mangaFilterDownloadedStateProvider(
+                                                      mangaList: entries)
+                                                  .notifier)
+                                          .update();
                                     }),
                                 ListTileChapterFilter(
                                     label: "Unread",
@@ -242,14 +315,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         mangaFilterUnreadStateProvider(
                                             mangaList: entries)),
                                     onTap: () {
-                                      setState(() {
-                                        entriesFilter = ref
-                                            .read(
-                                                mangaFilterUnreadStateProvider(
-                                                        mangaList: entries)
-                                                    .notifier)
-                                            .update();
-                                      });
+                                      ref
+                                          .read(mangaFilterUnreadStateProvider(
+                                                  mangaList: entries)
+                                              .notifier)
+                                          .update();
                                     }),
                                 ListTileChapterFilter(
                                     label: "Started",
@@ -257,14 +327,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         mangaFilterStartedStateProvider(
                                             mangaList: entries)),
                                     onTap: () {
-                                      setState(() {
-                                        entriesFilter = ref
-                                            .read(
-                                                mangaFilterStartedStateProvider(
-                                                        mangaList: entries)
-                                                    .notifier)
-                                            .update();
-                                      });
+                                      ref
+                                          .read(mangaFilterStartedStateProvider(
+                                                  mangaList: entries)
+                                              .notifier)
+                                          .update();
                                     }),
                                 ListTileChapterFilter(
                                     label: "Bookmarked",

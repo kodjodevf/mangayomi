@@ -25,6 +25,7 @@ class ChapterListTileWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
+    
     return Container(
       color: chapterNameList.contains(chapter)
           ? primaryColor(context).withOpacity(0.4)
@@ -117,7 +118,8 @@ class ChapterListTileWidget extends ConsumerWidget {
         trailing: ref.watch(ChapterPageDownloadsProvider(
             chapterIndex: chapterIndex,
             modelManga: modelManga,
-            chapterId: chapter.id!)),
+            chapterId: chapter.id!,
+            chapters: chapter)),
       ),
     );
   }

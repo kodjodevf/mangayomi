@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
@@ -5,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -12,17 +16,19 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/utils.dart';
+import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/detail/readmore.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
 
-  final int listLength;
   final Widget? titleDescription;
   final List<Color>? backButtonColors;
   final Widget? action;
@@ -34,7 +40,6 @@ class MangaDetailView extends ConsumerStatefulWidget {
     this.backButtonColors,
     this.action,
     required this.modelManga,
-    required this.listLength,
   });
 
   @override
@@ -60,8 +65,23 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget build(BuildContext context) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chapterIdsListStateProvider);
-    bool reverse = ref.watch(
-        reverseChapterStateProvider(modelManga: widget.modelManga!))["reverse"];
+    bool reverse =
+        ref.watch(reverseChapterStateProvider(mangaId: widget.modelManga!.id!))[
+            "reverse"];
+    // log(reverse.toString());
+    // final chaptersList =
+    //     ref.watch(getChaptersStreamProvider(mangaId: widget.modelManga!.id!));
+    final filterUnread = ref.watch(
+        chapterFilterUnreadStateProvider(mangaId: widget.modelManga!.id!));
+    final filterBookmarked = ref.watch(
+        chapterFilterBookmarkedStateProvider(mangaId: widget.modelManga!.id!));
+    final filterDownloaded = ref.watch(
+        chapterFilterDownloadedStateProvider(mangaId: widget.modelManga!.id!));
+    final sortChapter =
+        ref.watch(reverseChapterStateProvider(mangaId: widget.modelManga!.id!))[
+            'index'] as int;
+    final chapters =
+        ref.watch(getChaptersStreamProvider(mangaId: widget.modelManga!.id!));
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -72,278 +92,313 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           }
           return true;
         },
-        child: Scaffold(
-            extendBodyBehindAppBar: true,
-            appBar: PreferredSize(
-                preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    final isNotFiltering = ref
-                        .read(chapterFilterResultStateProvider(
-                                modelManga: widget.modelManga!)
-                            .notifier)
-                        .isNotFiltering();
-                    final isLongPressed = ref.watch(isLongPressedStateProvider);
-                    final chapterNameList =
-                        ref.watch(chapterIdsListStateProvider);
-                    return isLongPressed
-                        ? Container(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: AppBar(
-                              title: Text(chapterNameList.length.toString()),
-                              backgroundColor:
-                                  primaryColor(context).withOpacity(0.2),
-                              leading: IconButton(
-                                  onPressed: () {
+        child: chapters.when(
+          data: (data) {
+            List<ModelChapters> chapterList = data
+                .where((element) => filterUnread == 1
+                    ? element.isRead == false
+                    : filterUnread == 2
+                        ? element.isRead == true
+                        : true)
+                .where((element) => filterBookmarked == 1
+                    ? element.isBookmarked == true
+                    : filterBookmarked == 2
+                        ? element.isBookmarked == false
+                        : true)
+                .where((element) {
+              final modelChapDownload = ref
+                  .watch(hiveBoxMangaDownloadsProvider)
+                  .get("${element.mangaId}/${element.id}", defaultValue: null);
+              return filterDownloaded == 1
+                  ? modelChapDownload != null &&
+                      modelChapDownload.isDownload == true
+                  : filterDownloaded == 2
+                      ? !(modelChapDownload != null &&
+                          modelChapDownload.isDownload == true)
+                      : true;
+            }).toList();
+            List<ModelChapters> chapters =
+                sortChapter == 1 ? chapterList.reversed.toList() : chapterList;
+            if (sortChapter == 0) {
+              chapters.sort(
+                (a, b) {
+                  return a.scanlator!.compareTo(b.scanlator!) |
+                      a.dateUpload!.compareTo(b.dateUpload!);
+                },
+              );
+            } else if (sortChapter == 2) {
+              chapters.sort(
+                (a, b) {
+                  return a.dateUpload!.compareTo(b.dateUpload!);
+                },
+              );
+            }
+            return _buildWidget(
+                chapters: chapters,
+                reverse: reverse,
+                chapterNameList: chapterNameList,
+                isLongPressed: isLongPressed);
+          },
+          error: (Object error, StackTrace stackTrace) {
+            return ErrorText(error);
+          },
+          loading: () {
+            return _buildWidget(
+                chapters: widget.modelManga!.chapters.toList(),
+                reverse: reverse,
+                chapterNameList: chapterNameList,
+                isLongPressed: isLongPressed);
+          },
+        ));
+  }
+
+  Widget _buildWidget(
+      {required List<ModelChapters> chapters,
+      required bool reverse,
+      required List<ModelChapters> chapterNameList,
+      required bool isLongPressed}) {
+    return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(AppBar().preferredSize.height),
+            child: Consumer(
+              builder: (context, ref, child) {
+                final isNotFiltering = ref.watch(
+                    chapterFilterResultStateProvider(
+                        mangaId: widget.modelManga!.id!));
+                final isLongPressed = ref.watch(isLongPressedStateProvider);
+                // final chapterNameList = ref.watch(chapterIdsListStateProvider);
+                return isLongPressed
+                    ? Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: AppBar(
+                          title: Text(chapterNameList.length.toString()),
+                          backgroundColor:
+                              primaryColor(context).withOpacity(0.2),
+                          leading: IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(chapterIdsListStateProvider.notifier)
+                                    .clear();
+
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(!isLongPressed);
+                              },
+                              icon: const Icon(Icons.clear)),
+                          actions: [
+                            IconButton(
+                                onPressed: () {
+                                  for (var chapter in chapters) {
                                     ref
                                         .read(chapterIdsListStateProvider
                                             .notifier)
-                                        .clear();
-
+                                        .selectAll(chapter);
+                                  }
+                                },
+                                icon: const Icon(Icons.select_all)),
+                            IconButton(
+                                onPressed: () {
+                                  if (chapters.length ==
+                                      chapterNameList.length) {
+                                    for (var chapter in chapters) {
+                                      ref
+                                          .read(chapterIdsListStateProvider
+                                              .notifier)
+                                          .selectSome(chapter);
+                                    }
                                     ref
                                         .read(
                                             isLongPressedStateProvider.notifier)
-                                        .update(!isLongPressed);
-                                  },
-                                  icon: const Icon(Icons.clear)),
-                              actions: [
-                                IconButton(
-                                    onPressed: () {
-                                      for (var chapter
-                                          in widget.modelManga!.chapters) {
-                                        ref
-                                            .read(chapterIdsListStateProvider
-                                                .notifier)
-                                            .selectAll(chapter);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.select_all)),
-                                IconButton(
-                                    onPressed: () {
-                                      if (widget.modelManga!.chapters.length ==
-                                          chapterNameList.length) {
-                                        for (var chapter
-                                            in widget.modelManga!.chapters) {
-                                          ref
-                                              .read(chapterIdsListStateProvider
-                                                  .notifier)
-                                              .selectSome(chapter);
-                                        }
-                                        ref
-                                            .read(isLongPressedStateProvider
-                                                .notifier)
-                                            .update(false);
-                                      } else {
-                                        for (var chapter
-                                            in widget.modelManga!.chapters) {
-                                          ref
-                                              .read(chapterIdsListStateProvider
-                                                  .notifier)
-                                              .selectSome(chapter);
-                                        }
-                                      }
-                                    },
-                                    icon:
-                                        const Icon(Icons.flip_to_back_rounded)),
-                              ],
-                            ),
-                          )
-                        : Stack(
-                            children: [
-                              Positioned(
-                                  top: 0,
-                                  child: Stack(
-                                    children: [
-                                      cachedNetworkImage(
-                                          headers: headers(
-                                              widget.modelManga!.source!),
-                                          imageUrl:
-                                              widget.modelManga!.imageUrl!,
-                                          width: mediaWidth(context, 1),
-                                          height: 410,
-                                          fit: BoxFit.cover),
-                                      Container(
-                                        width: mediaWidth(context, 1),
-                                        height: 465,
-                                        color: Theme.of(context)
-                                            .scaffoldBackgroundColor
-                                            .withOpacity(0.9),
-                                      ),
-                                    ],
-                                  )),
-                              AppBar(
-                                title: ref.watch(offetProvider) > 200
-                                    ? Text(
-                                        widget.modelManga!.name!,
-                                        style: const TextStyle(fontSize: 17),
-                                      )
-                                    : null,
-                                backgroundColor: ref.watch(offetProvider) == 0.0
-                                    ? Colors.transparent
-                                    : Theme.of(context).scaffoldBackgroundColor,
-                                actions: [
-                                  IconButton(
-                                      splashRadius: 20,
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.download_outlined,
-                                      )),
-                                  IconButton(
-                                      splashRadius: 20,
-                                      onPressed: () {
-                                        _showDraggableMenu();
-                                      },
-                                      icon: Icon(
-                                        Icons.filter_list_sharp,
-                                        color: isNotFiltering
-                                            ? null
-                                            : Colors.yellow,
-                                      )),
-                                  PopupMenuButton(
-                                      itemBuilder: (context) {
-                                        return [
-                                          if (widget.modelManga!.favorite)
-                                            const PopupMenuItem<int>(
-                                                value: 0,
-                                                child: Text("Edit categories")),
-                                          if (widget.modelManga!.favorite)
-                                            const PopupMenuItem<int>(
-                                                value: 0,
-                                                child: Text("Migrate")),
-                                          const PopupMenuItem<int>(
-                                              value: 0, child: Text("Share")),
-                                        ];
-                                      },
-                                      onSelected: (value) {}),
-                                ],
-                              )
-                            ],
-                          );
-                  },
-                )),
-            body: SafeArea(
-                child: DraggableScrollbar(
-                    heightScrollThumb: 48.0,
-                    backgroundColor: primaryColor(context),
-                    scrollThumbBuilder: (backgroundColor, thumbAnimation,
-                        labelAnimation, height,
-                        {labelConstraints, labelText}) {
-                      return FadeTransition(
-                        opacity: thumbAnimation,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: backgroundColor,
-                              borderRadius: BorderRadius.circular(20)),
-                          height: height,
-                          width: 8.0,
+                                        .update(false);
+                                  } else {
+                                    for (var chapter in chapters) {
+                                      ref
+                                          .read(chapterIdsListStateProvider
+                                              .notifier)
+                                          .selectSome(chapter);
+                                    }
+                                  }
+                                },
+                                icon: const Icon(Icons.flip_to_back_rounded)),
+                          ],
                         ),
+                      )
+                    : Stack(
+                        children: [
+                          Positioned(
+                              top: 0,
+                              child: Stack(
+                                children: [
+                                  cachedNetworkImage(
+                                      headers:
+                                          headers(widget.modelManga!.source!),
+                                      imageUrl: widget.modelManga!.imageUrl!,
+                                      width: mediaWidth(context, 1),
+                                      height: 410,
+                                      fit: BoxFit.cover),
+                                  Container(
+                                    width: mediaWidth(context, 1),
+                                    height: 465,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor
+                                        .withOpacity(0.9),
+                                  ),
+                                ],
+                              )),
+                          AppBar(
+                            title: ref.watch(offetProvider) > 200
+                                ? Text(
+                                    widget.modelManga!.name!,
+                                    style: const TextStyle(fontSize: 17),
+                                  )
+                                : null,
+                            backgroundColor: ref.watch(offetProvider) == 0.0
+                                ? Colors.transparent
+                                : Theme.of(context).scaffoldBackgroundColor,
+                            actions: [
+                              IconButton(
+                                  splashRadius: 20,
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.download_outlined,
+                                  )),
+                              IconButton(
+                                  splashRadius: 20,
+                                  onPressed: () {
+                                    _showDraggableMenu();
+                                  },
+                                  icon: Icon(
+                                    Icons.filter_list_sharp,
+                                    color:
+                                        isNotFiltering ? null : Colors.yellow,
+                                  )),
+                              PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return [
+                                      if (widget.modelManga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text("Edit categories")),
+                                      if (widget.modelManga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0, child: Text("Migrate")),
+                                      const PopupMenuItem<int>(
+                                          value: 0, child: Text("Share")),
+                                    ];
+                                  },
+                                  onSelected: (value) {}),
+                            ],
+                          )
+                        ],
                       );
-                    },
-                    scrollbarTimeToFade: const Duration(seconds: 2),
+              },
+            )),
+        body: SafeArea(
+            child: DraggableScrollbar(
+                heightScrollThumb: 48.0,
+                backgroundColor: primaryColor(context),
+                scrollThumbBuilder:
+                    (backgroundColor, thumbAnimation, labelAnimation, height,
+                        {labelConstraints, labelText}) {
+                  return FadeTransition(
+                    opacity: thumbAnimation,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: backgroundColor,
+                          borderRadius: BorderRadius.circular(20)),
+                      height: height,
+                      width: 8.0,
+                    ),
+                  );
+                },
+                scrollbarTimeToFade: const Duration(seconds: 2),
+                controller: _scrollController,
+                child: ListView.builder(
                     controller: _scrollController,
-                    child: ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.only(top: 0, bottom: 60),
-                        itemCount: widget.listLength,
-                        itemBuilder: (context, index) {
-                          int finalIndex = index - 1;
-                          if (index == 0) {
-                            return _bodyContainer();
-                          }
-
-                          int reverseIndex =
-                              widget.modelManga!.chapters.length -
-                                  widget.modelManga!.chapters
-                                      .toList()
-                                      .reversed
-                                      .toList()
-                                      .indexOf(widget.modelManga!.chapters
-                                          .toList()
-                                          .reversed
-                                          .toList()[finalIndex]) -
-                                  1;
-                          final indexx = reverse ? reverseIndex : finalIndex;
-                          List<ModelChapters> chapters = reverse
-                              ? widget.modelManga!.chapters
-                                  .toList()
-                                  .reversed
-                                  .toList()
-                              : widget.modelManga!.chapters.toList();
-
-                          return ChapterListTileWidget(
-                            modelManga: widget.modelManga!,
-                            chapter: chapters[indexx],
-                            chapterNameList: chapterNameList,
-                            chapterIndex: indexx,
-                          );
-                        }))),
-            bottomNavigationBar: AnimatedContainer(
-              curve: Curves.easeIn,
-              decoration: BoxDecoration(
-                  color: primaryColor(context).withOpacity(0.2),
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              duration: const Duration(milliseconds: 100),
-              height: isLongPressed ? 70 : 0,
-              width: mediaWidth(context, 1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 70,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent),
-                          onPressed: () {
-                            ref
-                                .read(chapterSetIsBookmarkStateProvider(
-                                        modelManga: widget.modelManga!)
-                                    .notifier)
-                                .set();
-                          },
-                          child: const Icon(Icons.bookmark_add_outlined)),
-                    ),
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 70,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent),
-                          onPressed: () {
-                            ref
-                                .read(chapterSetIsReadStateProvider(
-                                        modelManga: widget.modelManga!)
-                                    .notifier)
-                                .set();
-                          },
-                          child: const Icon(Icons.done_all_sharp)),
-                    ),
-                  ),
-                  Expanded(
-                    child: SizedBox(
-                      height: 70,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent),
-                          onPressed: () {
-                            ref
-                                .read(chapterSetDownloadStateProvider(
-                                        modelManga: widget.modelManga!)
-                                    .notifier)
-                                .set();
-                          },
-                          child: const Icon(Icons.download_outlined)),
-                    ),
-                  )
-                ],
+                    padding: const EdgeInsets.only(top: 0, bottom: 60),
+                    itemCount: chapters.length + 1,
+                    itemBuilder: (context, index) {
+                      int finalIndex = index - 1;
+                      if (index == 0) {
+                        return _bodyContainer(chapterLength: chapters.length);
+                      }
+                      int reverseIndex = chapters.length -
+                          chapters.reversed
+                              .toList()
+                              .indexOf(chapters.reversed.toList()[finalIndex]) -
+                          1;
+                      final indexx = reverse ? reverseIndex : finalIndex;
+                      return ChapterListTileWidget(
+                        modelManga: widget.modelManga!,
+                        chapter: chapters[indexx],
+                        chapterNameList: chapterNameList,
+                        chapterIndex: indexx,
+                      );
+                    }))),
+        bottomNavigationBar: AnimatedContainer(
+          curve: Curves.easeIn,
+          decoration: BoxDecoration(
+              color: primaryColor(context).withOpacity(0.2),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          duration: const Duration(milliseconds: 100),
+          height: isLongPressed ? 70 : 0,
+          width: mediaWidth(context, 1),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 70,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0, backgroundColor: Colors.transparent),
+                      onPressed: () {
+                        ref
+                            .read(chapterSetIsBookmarkStateProvider(
+                                    modelManga: widget.modelManga!)
+                                .notifier)
+                            .set();
+                      },
+                      child: const Icon(Icons.bookmark_add_outlined)),
+                ),
               ),
-            )));
+              Expanded(
+                child: SizedBox(
+                  height: 70,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0, backgroundColor: Colors.transparent),
+                      onPressed: () {
+                        ref
+                            .read(chapterSetIsReadStateProvider(
+                                    modelManga: widget.modelManga!)
+                                .notifier)
+                            .set();
+                      },
+                      child: const Icon(Icons.done_all_sharp)),
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 70,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          elevation: 0, backgroundColor: Colors.transparent),
+                      onPressed: () {
+                        ref
+                            .read(chapterSetDownloadStateProvider(
+                                    modelManga: widget.modelManga!)
+                                .notifier)
+                            .set();
+                      },
+                      child: const Icon(Icons.download_outlined)),
+                ),
+              )
+            ],
+          ),
+        ));
   }
 
   _showDraggableMenu() {
@@ -381,13 +436,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Downloaded",
                                 type: ref.watch(
                                     chapterFilterDownloadedStateProvider(
-                                        modelManga: widget.modelManga!)),
+                                        mangaId: widget.modelManga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(
                                           chapterFilterDownloadedStateProvider(
-                                                  modelManga:
-                                                      widget.modelManga!)
+                                                  mangaId:
+                                                      widget.modelManga!.id!)
                                               .notifier)
                                       .update();
                                 }),
@@ -395,11 +450,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Unread",
                                 type: ref.watch(
                                     chapterFilterUnreadStateProvider(
-                                        modelManga: widget.modelManga!)),
+                                        mangaId: widget.modelManga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(chapterFilterUnreadStateProvider(
-                                              modelManga: widget.modelManga!)
+                                              mangaId: widget.modelManga!.id!)
                                           .notifier)
                                       .update();
                                 }),
@@ -407,13 +462,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Bookmarked",
                                 type: ref.watch(
                                     chapterFilterBookmarkedStateProvider(
-                                        modelManga: widget.modelManga!)),
+                                        mangaId: widget.modelManga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(
                                           chapterFilterBookmarkedStateProvider(
-                                                  modelManga:
-                                                      widget.modelManga!)
+                                                  mangaId:
+                                                      widget.modelManga!.id!)
                                               .notifier)
                                       .update();
                                 }),
@@ -423,12 +478,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       Consumer(builder: (context, ref, chil) {
                         final reverse = ref
                             .read(reverseChapterStateProvider(
-                                    modelManga: widget.modelManga!)
+                                    mangaId: widget.modelManga!.id!)
                                 .notifier)
                             .isReverse();
                         final reverseChapter = ref.watch(
                             reverseChapterStateProvider(
-                                modelManga: widget.modelManga!));
+                                mangaId: widget.modelManga!.id!));
                         return Column(
                           children: [
                             for (var i = 0; i < 3; i++)
@@ -442,7 +497,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 onTap: () {
                                   ref
                                       .read(reverseChapterStateProvider(
-                                              modelManga: widget.modelManga!)
+                                              mangaId: widget.modelManga!.id!)
                                           .notifier)
                                       .set(i);
                                 },
@@ -481,7 +536,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  Widget _bodyContainer() {
+  Widget _bodyContainer({required int chapterLength}) {
     return Stack(
       children: [
         Positioned(
@@ -621,7 +676,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
-                                '${(widget.listLength - 1)} chapters',
+                                '$chapterLength chapters',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
