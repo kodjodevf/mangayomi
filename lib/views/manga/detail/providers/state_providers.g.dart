@@ -6,12 +6,12 @@ part of 'state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chapterModelStateHash() => r'd36dd66381770f0e710929ae95ed100828c8d9ae';
+String _$chapterModelStateHash() => r'e1b191e6176992d1fc5f04dcb1e25e211f8a69a7';
 
 /// See also [ChapterModelState].
 @ProviderFor(ChapterModelState)
 final chapterModelStateProvider =
-    AutoDisposeNotifierProvider<ChapterModelState, ModelChapters>.internal(
+    AutoDisposeNotifierProvider<ChapterModelState, Chapter>.internal(
   ChapterModelState.new,
   name: r'chapterModelStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,14 +21,14 @@ final chapterModelStateProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$ChapterModelState = AutoDisposeNotifier<ModelChapters>;
+typedef _$ChapterModelState = AutoDisposeNotifier<Chapter>;
 String _$chapterIdsListStateHash() =>
-    r'0cfdc515b7c2086eea593eba19ccd0b1f2ecdcd6';
+    r'5a9fd3e05f1f4b55644b0b3c1bf004950c469cb3';
 
 /// See also [ChapterIdsListState].
 @ProviderFor(ChapterIdsListState)
-final chapterIdsListStateProvider = AutoDisposeNotifierProvider<
-    ChapterIdsListState, List<ModelChapters>>.internal(
+final chapterIdsListStateProvider =
+    AutoDisposeNotifierProvider<ChapterIdsListState, List<Chapter>>.internal(
   ChapterIdsListState.new,
   name: r'chapterIdsListStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -38,7 +38,7 @@ final chapterIdsListStateProvider = AutoDisposeNotifierProvider<
   allTransitiveDependencies: null,
 );
 
-typedef _$ChapterIdsListState = AutoDisposeNotifier<List<ModelChapters>>;
+typedef _$ChapterIdsListState = AutoDisposeNotifier<List<Chapter>>;
 String _$isLongPressedStateHash() =>
     r'26fe435e8381046a30e3f6c4495303946aa3aaa7';
 
@@ -590,14 +590,14 @@ class ChapterFilterResultStateProvider
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'd52ed51da1434f4192f99e316279414011a51200';
+    r'adc7acb6ba68175e2986e8e80eb0339b1c5d0a5d';
 
 abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<dynamic> {
-  late final ModelManga modelManga;
+  late final Manga manga;
 
   dynamic build({
-    required ModelManga modelManga,
+    required Manga manga,
   });
 }
 
@@ -612,10 +612,10 @@ class ChapterSetIsBookmarkStateFamily extends Family<dynamic> {
 
   /// See also [ChapterSetIsBookmarkState].
   ChapterSetIsBookmarkStateProvider call({
-    required ModelManga modelManga,
+    required Manga manga,
   }) {
     return ChapterSetIsBookmarkStateProvider(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 
@@ -624,7 +624,7 @@ class ChapterSetIsBookmarkStateFamily extends Family<dynamic> {
     covariant ChapterSetIsBookmarkStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      manga: provider.manga,
     );
   }
 
@@ -648,9 +648,9 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
     ChapterSetIsBookmarkState, dynamic> {
   /// See also [ChapterSetIsBookmarkState].
   ChapterSetIsBookmarkStateProvider({
-    required this.modelManga,
+    required this.manga,
   }) : super.internal(
-          () => ChapterSetIsBookmarkState()..modelManga = modelManga,
+          () => ChapterSetIsBookmarkState()..manga = manga,
           from: chapterSetIsBookmarkStateProvider,
           name: r'chapterSetIsBookmarkStateProvider',
           debugGetCreateSourceHash:
@@ -662,18 +662,17 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
               ChapterSetIsBookmarkStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final Manga manga;
 
   @override
   bool operator ==(Object other) {
-    return other is ChapterSetIsBookmarkStateProvider &&
-        other.modelManga == modelManga;
+    return other is ChapterSetIsBookmarkStateProvider && other.manga == manga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -683,20 +682,20 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
     covariant ChapterSetIsBookmarkState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'88a5f68d8d24924f6399cb86347150669a725211';
+    r'25b9bb2671c8db9b0d7cea9c6715c3ba30a4fef0';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
-  late final ModelManga modelManga;
+  late final Manga manga;
 
   dynamic build({
-    required ModelManga modelManga,
+    required Manga manga,
   });
 }
 
@@ -711,10 +710,10 @@ class ChapterSetIsReadStateFamily extends Family<dynamic> {
 
   /// See also [ChapterSetIsReadState].
   ChapterSetIsReadStateProvider call({
-    required ModelManga modelManga,
+    required Manga manga,
   }) {
     return ChapterSetIsReadStateProvider(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 
@@ -723,7 +722,7 @@ class ChapterSetIsReadStateFamily extends Family<dynamic> {
     covariant ChapterSetIsReadStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      manga: provider.manga,
     );
   }
 
@@ -747,9 +746,9 @@ class ChapterSetIsReadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, dynamic> {
   /// See also [ChapterSetIsReadState].
   ChapterSetIsReadStateProvider({
-    required this.modelManga,
+    required this.manga,
   }) : super.internal(
-          () => ChapterSetIsReadState()..modelManga = modelManga,
+          () => ChapterSetIsReadState()..manga = manga,
           from: chapterSetIsReadStateProvider,
           name: r'chapterSetIsReadStateProvider',
           debugGetCreateSourceHash:
@@ -761,18 +760,17 @@ class ChapterSetIsReadStateProvider
               ChapterSetIsReadStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final Manga manga;
 
   @override
   bool operator ==(Object other) {
-    return other is ChapterSetIsReadStateProvider &&
-        other.modelManga == modelManga;
+    return other is ChapterSetIsReadStateProvider && other.manga == manga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -782,20 +780,20 @@ class ChapterSetIsReadStateProvider
     covariant ChapterSetIsReadState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'b74fbabed0abb3abbebd50c6f1af789b13af3f97';
+    r'b3c61cf6efaa978abc25b94be2a6727e7162e960';
 
 abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
-  late final ModelManga modelManga;
+  late final Manga manga;
 
   dynamic build({
-    required ModelManga modelManga,
+    required Manga manga,
   });
 }
 
@@ -810,10 +808,10 @@ class ChapterSetDownloadStateFamily extends Family<dynamic> {
 
   /// See also [ChapterSetDownloadState].
   ChapterSetDownloadStateProvider call({
-    required ModelManga modelManga,
+    required Manga manga,
   }) {
     return ChapterSetDownloadStateProvider(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 
@@ -822,7 +820,7 @@ class ChapterSetDownloadStateFamily extends Family<dynamic> {
     covariant ChapterSetDownloadStateProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
+      manga: provider.manga,
     );
   }
 
@@ -846,9 +844,9 @@ class ChapterSetDownloadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, dynamic> {
   /// See also [ChapterSetDownloadState].
   ChapterSetDownloadStateProvider({
-    required this.modelManga,
+    required this.manga,
   }) : super.internal(
-          () => ChapterSetDownloadState()..modelManga = modelManga,
+          () => ChapterSetDownloadState()..manga = manga,
           from: chapterSetDownloadStateProvider,
           name: r'chapterSetDownloadStateProvider',
           debugGetCreateSourceHash:
@@ -860,18 +858,17 @@ class ChapterSetDownloadStateProvider
               ChapterSetDownloadStateFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
+  final Manga manga;
 
   @override
   bool operator ==(Object other) {
-    return other is ChapterSetDownloadStateProvider &&
-        other.modelManga == modelManga;
+    return other is ChapterSetDownloadStateProvider && other.manga == manga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -881,7 +878,7 @@ class ChapterSetDownloadStateProvider
     covariant ChapterSetDownloadState notifier,
   ) {
     return notifier.build(
-      modelManga: modelManga,
+      manga: manga,
     );
   }
 }

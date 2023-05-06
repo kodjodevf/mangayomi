@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
@@ -65,7 +65,7 @@ enum DisplayType {
 @riverpod
 class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -95,7 +95,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
 @riverpod
 class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -111,7 +111,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
@@ -174,7 +174,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
 @riverpod
 class MangaFilterStartedState extends _$MangaFilterStartedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -190,7 +190,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
@@ -218,7 +218,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     }
   }
 
-  List<ModelManga> update() {
+  List<Manga> update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
@@ -253,7 +253,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
 @riverpod
 class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -269,7 +269,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
@@ -297,7 +297,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     }
   }
 
-  List<ModelManga> update() {
+  List<Manga> update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
@@ -332,7 +332,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
 @riverpod
 class MangasFilterResultState extends _$MangasFilterResultState {
   @override
-  bool build({required List<ModelManga> mangaList}) {
+  bool build({required List<Manga> mangaList}) {
     final downloadFilterType =
         ref.watch(mangaFilterDownloadedStateProvider(mangaList: mangaList));
     final unreadFilterType =

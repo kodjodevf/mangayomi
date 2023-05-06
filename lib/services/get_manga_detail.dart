@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
-import 'package:mangayomi/models/model_manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -17,7 +16,7 @@ part 'get_manga_detail.g.dart';
 
 class GetMangaDetailModel {
   List<String> genre = [];
-  List<ModelChapters> chapters = [];
+  List<Chapter> chapters = [];
   String? author;
   String? status;
   String? source;
@@ -85,7 +84,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
   String? description;
-  List<ModelChapters> chapters = [];
+  List<Chapter> chapters = [];
   List<String> scanlators = [];
 
   /********/
@@ -664,7 +663,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
       chapterTitle.isNotEmpty &&
       chapterUrl.isNotEmpty) {
     for (var i = 0; i < chapterUrl.length; i++) {
-      chapters.add(ModelChapters(
+      chapters.add(Chapter(
           name: chapterTitle[i],
           url: chapterUrl[i],
           dateUpload: chapterDate[i],

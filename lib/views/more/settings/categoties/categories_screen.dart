@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/categories.dart';
+import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
 import 'package:mangayomi/views/more/settings/categoties/widgets/custom_textfield.dart';
 
@@ -14,7 +14,7 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 }
 
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
-  List<CategoriesModel> _entries = [];
+  List<Category> _entries = [];
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(getMangaCategorieStreamProvider);
@@ -122,7 +122,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                                             await isar.writeTxn(
                                                                 () async {
                                                               await isar
-                                                                  .categoriesModels
+                                                                  .categorys
                                                                   .delete(_entries[
                                                                           index]
                                                                       .id!);
@@ -216,8 +216,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                             ? null
                                             : () async {
                                                 await isar.writeTxn(() async {
-                                                  await isar.categoriesModels
-                                                      .put(CategoriesModel(
+                                                  await isar.categorys
+                                                      .put(Category(
                                                     name: controller.text,
                                                   ));
                                                 });
@@ -256,7 +256,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     );
   }
 
-  _renameCategory(CategoriesModel category) {
+  _renameCategory(Category category) {
     bool isExist = false;
     final controller = TextEditingController(text: category.name);
     bool isSameName = controller.text == category.name;
@@ -305,7 +305,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                               : () async {
                                   await isar.writeTxn(() async {
                                     category.name = controller.text;
-                                    await isar.categoriesModels.put(category);
+                                    await isar.categorys.put(category);
                                   });
                                   if (mounted) {
                                     Navigator.pop(context);

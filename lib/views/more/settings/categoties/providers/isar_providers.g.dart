@@ -7,12 +7,12 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaCategorieStreamHash() =>
-    r'e258e033c3948b7215162bfa9e90529b362d7a7c';
+    r'5d34c27407fe6a6e276a944e68b5ece30a91aad3';
 
 /// See also [getMangaCategorieStream].
 @ProviderFor(getMangaCategorieStream)
 final getMangaCategorieStreamProvider =
-    AutoDisposeStreamProvider<List<CategoriesModel>>.internal(
+    AutoDisposeStreamProvider<List<Category>>.internal(
   getMangaCategorieStream,
   name: r'getMangaCategorieStreamProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -23,5 +23,5 @@ final getMangaCategorieStreamProvider =
 );
 
 typedef GetMangaCategorieStreamRef
-    = AutoDisposeStreamProviderRef<List<CategoriesModel>>;
+    = AutoDisposeStreamProviderRef<List<Category>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

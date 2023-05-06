@@ -6,7 +6,7 @@ part of 'isar_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAllMangaStreamHash() => r'484e9a88316fef837e7bd38ee518734c19e2c718';
+String _$getAllMangaStreamHash() => r'880357b7617f6592cd453186336b8114982a081b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,14 +29,14 @@ class _SystemHash {
   }
 }
 
-typedef GetAllMangaStreamRef = AutoDisposeStreamProviderRef<List<ModelManga>>;
+typedef GetAllMangaStreamRef = AutoDisposeStreamProviderRef<List<Manga>>;
 
 /// See also [getAllMangaStream].
 @ProviderFor(getAllMangaStream)
 const getAllMangaStreamProvider = GetAllMangaStreamFamily();
 
 /// See also [getAllMangaStream].
-class GetAllMangaStreamFamily extends Family<AsyncValue<List<ModelManga>>> {
+class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   /// See also [getAllMangaStream].
   const GetAllMangaStreamFamily();
 
@@ -74,8 +74,7 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<ModelManga>>> {
 }
 
 /// See also [getAllMangaStream].
-class GetAllMangaStreamProvider
-    extends AutoDisposeStreamProvider<List<ModelManga>> {
+class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider({
     required this.categoryId,

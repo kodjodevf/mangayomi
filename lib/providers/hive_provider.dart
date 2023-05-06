@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:isar/isar.dart';
-import 'package:mangayomi/models/categories.dart';
+import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/download_model.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/source/source_model.dart';
-import 'package:mangayomi/views/manga/download/model/download_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -52,7 +49,7 @@ Box hiveBoxSettings(HiveBoxSettingsRef ref) {
 }
 
 @riverpod
-Box<CategoriesModel> hiveBoxCategories(HiveBoxCategoriesRef ref) {
+Box<Category> hiveBoxCategories(HiveBoxCategoriesRef ref) {
   return Hive.box(HiveConstant.hiveBoxCategories);
 }
 

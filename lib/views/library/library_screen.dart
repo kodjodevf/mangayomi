@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/categories.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/library/providers/isar_providers.dart';
@@ -30,8 +30,8 @@ class LibraryScreen extends ConsumerStatefulWidget {
 class _LibraryScreenState extends ConsumerState<LibraryScreen>
     with TickerProviderStateMixin {
   bool isSearch = false;
-  List<ModelManga> entries = [];
-  List<ModelManga> entriesFilter = [];
+  List<Manga> entries = [];
+  List<Manga> entriesFilter = [];
   final _textEditingController = TextEditingController();
   late TabController tabBarController;
   int tabIndex = 0;
@@ -192,8 +192,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     );
   }
 
-  List<ModelManga> _filterMangas(
-      {required List<ModelManga> data,
+  List<Manga> _filterMangas(
+      {required List<Manga> data,
       required int downloadFilterType,
       required int unreadFilterType,
       required int startedFilterType,

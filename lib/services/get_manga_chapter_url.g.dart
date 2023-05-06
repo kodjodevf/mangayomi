@@ -7,7 +7,7 @@ part of 'get_manga_chapter_url.dart';
 // **************************************************************************
 
 String _$getMangaChapterUrlHash() =>
-    r'30b846643d79dbe431155158f8a9568878e8ad57';
+    r'929281b933e901fdbc94fc57bd7ee00a1413316a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -45,12 +45,10 @@ class GetMangaChapterUrlFamily
 
   /// See also [getMangaChapterUrl].
   GetMangaChapterUrlProvider call({
-    required ModelManga modelManga,
-    required int index,
+    required Chapter chapter,
   }) {
     return GetMangaChapterUrlProvider(
-      modelManga: modelManga,
-      index: index,
+      chapter: chapter,
     );
   }
 
@@ -59,8 +57,7 @@ class GetMangaChapterUrlFamily
     covariant GetMangaChapterUrlProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
-      index: provider.index,
+      chapter: provider.chapter,
     );
   }
 
@@ -84,13 +81,11 @@ class GetMangaChapterUrlProvider
     extends AutoDisposeFutureProvider<GetMangaChapterUrlModel> {
   /// See also [getMangaChapterUrl].
   GetMangaChapterUrlProvider({
-    required this.modelManga,
-    required this.index,
+    required this.chapter,
   }) : super.internal(
           (ref) => getMangaChapterUrl(
             ref,
-            modelManga: modelManga,
-            index: index,
+            chapter: chapter,
           ),
           from: getMangaChapterUrlProvider,
           name: r'getMangaChapterUrlProvider',
@@ -103,21 +98,17 @@ class GetMangaChapterUrlProvider
               GetMangaChapterUrlFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
-  final int index;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaChapterUrlProvider &&
-        other.modelManga == modelManga &&
-        other.index == index;
+    return other is GetMangaChapterUrlProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }

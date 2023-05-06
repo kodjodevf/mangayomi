@@ -9,7 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -32,14 +33,14 @@ class MangaDetailView extends ConsumerStatefulWidget {
   final Widget? titleDescription;
   final List<Color>? backButtonColors;
   final Widget? action;
-  final ModelManga? modelManga;
+  final Manga? manga;
   const MangaDetailView({
     super.key,
     required this.isExtended,
     this.titleDescription,
     this.backButtonColors,
     this.action,
-    required this.modelManga,
+    required this.manga,
   });
 
   @override
@@ -65,23 +66,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget build(BuildContext context) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chapterIdsListStateProvider);
-    bool reverse =
-        ref.watch(reverseChapterStateProvider(mangaId: widget.modelManga!.id!))[
-            "reverse"];
+    bool reverse = ref.watch(
+        reverseChapterStateProvider(mangaId: widget.manga!.id!))["reverse"];
     // log(reverse.toString());
     // final chaptersList =
-    //     ref.watch(getChaptersStreamProvider(mangaId: widget.modelManga!.id!));
-    final filterUnread = ref.watch(
-        chapterFilterUnreadStateProvider(mangaId: widget.modelManga!.id!));
+    //     ref.watch(getChaptersStreamProvider(mangaId: widget.manga!.id!));
+    final filterUnread =
+        ref.watch(chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!));
     final filterBookmarked = ref.watch(
-        chapterFilterBookmarkedStateProvider(mangaId: widget.modelManga!.id!));
+        chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!));
     final filterDownloaded = ref.watch(
-        chapterFilterDownloadedStateProvider(mangaId: widget.modelManga!.id!));
-    final sortChapter =
-        ref.watch(reverseChapterStateProvider(mangaId: widget.modelManga!.id!))[
-            'index'] as int;
+        chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!));
+    final sortChapter = ref.watch(
+            reverseChapterStateProvider(mangaId: widget.manga!.id!))['index']
+        as int;
     final chapters =
-        ref.watch(getChaptersStreamProvider(mangaId: widget.modelManga!.id!));
+        ref.watch(getChaptersStreamProvider(mangaId: widget.manga!.id!));
     return NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.forward) {
@@ -94,7 +94,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         },
         child: chapters.when(
           data: (data) {
-            List<ModelChapters> chapterList = data
+            List<Chapter> chapterList = data
                 .where((element) => filterUnread == 1
                     ? element.isRead == false
                     : filterUnread == 2
@@ -117,7 +117,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           modelChapDownload.isDownload == true)
                       : true;
             }).toList();
-            List<ModelChapters> chapters =
+            List<Chapter> chapters =
                 sortChapter == 1 ? chapterList.reversed.toList() : chapterList;
             if (sortChapter == 0) {
               chapters.sort(
@@ -144,7 +144,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           },
           loading: () {
             return _buildWidget(
-                chapters: widget.modelManga!.chapters.toList(),
+                chapters: widget.manga!.chapters.toList(),
                 reverse: reverse,
                 chapterNameList: chapterNameList,
                 isLongPressed: isLongPressed);
@@ -153,9 +153,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   Widget _buildWidget(
-      {required List<ModelChapters> chapters,
+      {required List<Chapter> chapters,
       required bool reverse,
-      required List<ModelChapters> chapterNameList,
+      required List<Chapter> chapterNameList,
       required bool isLongPressed}) {
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -165,7 +165,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               builder: (context, ref, child) {
                 final isNotFiltering = ref.watch(
                     chapterFilterResultStateProvider(
-                        mangaId: widget.modelManga!.id!));
+                        mangaId: widget.manga!.id!));
                 final isLongPressed = ref.watch(isLongPressedStateProvider);
                 // final chapterNameList = ref.watch(chapterIdsListStateProvider);
                 return isLongPressed
@@ -231,9 +231,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               child: Stack(
                                 children: [
                                   cachedNetworkImage(
-                                      headers:
-                                          headers(widget.modelManga!.source!),
-                                      imageUrl: widget.modelManga!.imageUrl!,
+                                      headers: headers(widget.manga!.source!),
+                                      imageUrl: widget.manga!.imageUrl!,
                                       width: mediaWidth(context, 1),
                                       height: 410,
                                       fit: BoxFit.cover),
@@ -249,7 +248,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           AppBar(
                             title: ref.watch(offetProvider) > 200
                                 ? Text(
-                                    widget.modelManga!.name!,
+                                    widget.manga!.name!,
                                     style: const TextStyle(fontSize: 17),
                                   )
                                 : null,
@@ -276,11 +275,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
-                                      if (widget.modelManga!.favorite)
+                                      if (widget.manga!.favorite)
                                         const PopupMenuItem<int>(
                                             value: 0,
                                             child: Text("Edit categories")),
-                                      if (widget.modelManga!.favorite)
+                                      if (widget.manga!.favorite)
                                         const PopupMenuItem<int>(
                                             value: 0, child: Text("Migrate")),
                                       const PopupMenuItem<int>(
@@ -330,10 +329,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           1;
                       final indexx = reverse ? reverseIndex : finalIndex;
                       return ChapterListTileWidget(
-                        modelManga: widget.modelManga!,
                         chapter: chapters[indexx],
                         chapterNameList: chapterNameList,
-                        chapterIndex: indexx,
                       );
                     }))),
         bottomNavigationBar: AnimatedContainer(
@@ -357,7 +354,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       onPressed: () {
                         ref
                             .read(chapterSetIsBookmarkStateProvider(
-                                    modelManga: widget.modelManga!)
+                                    manga: widget.manga!)
                                 .notifier)
                             .set();
                       },
@@ -373,7 +370,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       onPressed: () {
                         ref
                             .read(chapterSetIsReadStateProvider(
-                                    modelManga: widget.modelManga!)
+                                    manga: widget.manga!)
                                 .notifier)
                             .set();
                       },
@@ -389,7 +386,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       onPressed: () {
                         ref
                             .read(chapterSetDownloadStateProvider(
-                                    modelManga: widget.modelManga!)
+                                    manga: widget.manga!)
                                 .notifier)
                             .set();
                       },
@@ -436,13 +433,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Downloaded",
                                 type: ref.watch(
                                     chapterFilterDownloadedStateProvider(
-                                        mangaId: widget.modelManga!.id!)),
+                                        mangaId: widget.manga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(
                                           chapterFilterDownloadedStateProvider(
-                                                  mangaId:
-                                                      widget.modelManga!.id!)
+                                                  mangaId: widget.manga!.id!)
                                               .notifier)
                                       .update();
                                 }),
@@ -450,11 +446,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Unread",
                                 type: ref.watch(
                                     chapterFilterUnreadStateProvider(
-                                        mangaId: widget.modelManga!.id!)),
+                                        mangaId: widget.manga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(chapterFilterUnreadStateProvider(
-                                              mangaId: widget.modelManga!.id!)
+                                              mangaId: widget.manga!.id!)
                                           .notifier)
                                       .update();
                                 }),
@@ -462,13 +458,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 label: "Bookmarked",
                                 type: ref.watch(
                                     chapterFilterBookmarkedStateProvider(
-                                        mangaId: widget.modelManga!.id!)),
+                                        mangaId: widget.manga!.id!)),
                                 onTap: () {
                                   ref
                                       .read(
                                           chapterFilterBookmarkedStateProvider(
-                                                  mangaId:
-                                                      widget.modelManga!.id!)
+                                                  mangaId: widget.manga!.id!)
                                               .notifier)
                                       .update();
                                 }),
@@ -478,12 +473,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       Consumer(builder: (context, ref, chil) {
                         final reverse = ref
                             .read(reverseChapterStateProvider(
-                                    mangaId: widget.modelManga!.id!)
+                                    mangaId: widget.manga!.id!)
                                 .notifier)
                             .isReverse();
                         final reverseChapter = ref.watch(
                             reverseChapterStateProvider(
-                                mangaId: widget.modelManga!.id!));
+                                mangaId: widget.manga!.id!));
                         return Column(
                           children: [
                             for (var i = 0; i < 3; i++)
@@ -497,7 +492,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 onTap: () {
                                   ref
                                       .read(reverseChapterStateProvider(
-                                              mangaId: widget.modelManga!.id!)
+                                              mangaId: widget.manga!.id!)
                                           .notifier)
                                       .set(i);
                                 },
@@ -542,8 +537,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         Positioned(
             top: 0,
             child: cachedNetworkImage(
-                headers: headers(widget.modelManga!.source!),
-                imageUrl: widget.modelManga!.imageUrl!,
+                headers: headers(widget.manga!.source!),
+                imageUrl: widget.manga!.imageUrl!,
                 width: mediaWidth(context, 1),
                 height: 300,
                 fit: BoxFit.cover)),
@@ -579,11 +574,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (widget.modelManga!.description != null)
+                  if (widget.manga!.description != null)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ReadMoreWidget(
-                        text: widget.modelManga!.description!,
+                        text: widget.manga!.description!,
                         onChanged: (value) {
                           setState(() {
                             _expanded = value;
@@ -597,7 +592,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ? Wrap(
                               children: [
                                 for (var i = 0;
-                                    i < widget.modelManga!.genre!.length;
+                                    i < widget.manga!.genre!.length;
                                     i++)
                                   Padding(
                                     padding: const EdgeInsets.only(
@@ -614,7 +609,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                     BorderRadius.circular(5))),
                                         onPressed: () {},
                                         child: Text(
-                                          widget.modelManga!.genre![i],
+                                          widget.manga!.genre![i],
                                           style: TextStyle(
                                               fontSize: 11.5,
                                               color: isLight(context)
@@ -632,7 +627,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   for (var i = 0;
-                                      i < widget.modelManga!.genre!.length;
+                                      i < widget.manga!.genre!.length;
                                       i++)
                                     Padding(
                                       padding: const EdgeInsets.only(
@@ -650,7 +645,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                           5))),
                                           onPressed: () {},
                                           child: Text(
-                                            widget.modelManga!.genre![i],
+                                            widget.manga!.genre![i],
                                             style: TextStyle(
                                                 fontSize: 11.5,
                                                 color: isLight(context)
@@ -708,7 +703,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               image: DecorationImage(
-                image: CachedNetworkImageProvider(widget.modelManga!.imageUrl!),
+                image: CachedNetworkImageProvider(widget.manga!.imageUrl!),
                 fit: BoxFit.cover,
               ),
             ),
@@ -729,7 +724,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.modelManga!.name!,
+            Text(widget.manga!.name!,
                 style: const TextStyle(
                   fontSize: 18,
                 )),
@@ -758,8 +753,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   elevation: 0),
               onPressed: () {
                 Map<String, String> data = {
-                  'url': widget.modelManga!.link!,
-                  'source': widget.modelManga!.source!,
+                  'url': widget.manga!.link!,
+                  'source': widget.manga!.source!,
                 };
                 context.push("/mangawebview", extra: data);
               },

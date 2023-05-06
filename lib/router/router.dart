@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/manga_reader.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/webview.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
@@ -125,17 +126,17 @@ class AsyncRouterNotifier extends ChangeNotifier {
           path: "/mangareaderview",
           name: "mangareaderview",
           builder: (context, state) {
-            final mangaReaderModel = state.extra as MangaReaderModel;
+            final chapter = state.extra as Chapter;
             return MangaReaderView(
-              mangaReaderModel: mangaReaderModel,
+              chapter: chapter,
             );
           },
           pageBuilder: (context, state) {
-            final mangaReaderModel = state.extra as MangaReaderModel;
+            final chapter = state.extra as Chapter;
             return CustomTransition(
               key: state.pageKey,
               child: MangaReaderView(
-                mangaReaderModel: mangaReaderModel,
+                chapter: chapter,
               ),
             );
           },

@@ -6,19 +6,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/models/categories.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/chapter_filter.dart';
+import 'package:mangayomi/models/download_model.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/models/manga_history.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/source/source_model.dart';
-import 'package:mangayomi/views/manga/detail/models/chapter_filter.dart';
-import 'package:mangayomi/views/manga/download/model/download_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
-import 'views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'views/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -31,16 +30,10 @@ void main() async {
     await Hive.initFlutter("Mangayomi/databases");
   }
   await FastCachedImageConfig.init(subDir: "Mangayomi/databases");
-  // Hive.registerAdapter(ModelMangaAdapter());
-  // Hive.registerAdapter(MangaHistoryModelAdapter());
   Hive.registerAdapter(SourceModelAdapter());
   Hive.registerAdapter(ReaderModeAdapter());
   Hive.registerAdapter(TypeSourceAdapter());
   Hive.registerAdapter(DownloadModelAdapter());
-  // Hive.registerAdapter(ModelChaptersAdapter());
-  // Hive.registerAdapter(CategoriesModelAdapter());
-  // await Hive.openBox<ModelManga>(HiveConstant.hiveBoxManga);
-  // await Hive.openBox<MangaHistoryModel>(HiveConstant.hiveBoxMangaHistory);
   await Hive.openBox<ReaderMode>(HiveConstant.hiveBoxReaderMode);
   await Hive.openBox<SourceModel>(HiveConstant.hiveBoxMangaSource);
   await Hive.openBox<DownloadModel>(HiveConstant.hiveBoxDownloads);
@@ -57,24 +50,14 @@ initIsar() async {
   final dir = await getApplicationDocumentsDirectory();
   if (Platform.isAndroid || Platform.isIOS) {
     isar = Isar.openSync(
-      [
-        ModelMangaSchema,
-        ModelChaptersSchema,
-        CategoriesModelSchema,
-        ChaptersFilterSchema
-      ],
+      [MangaSchema, ChapterSchema, CategorySchema, ChaptersFilterSchema],
       directory: dir.path,
     );
   } else {
-    String rootDir = path.join(Directory.current.path, '.dart_tool_', 'isar');
+    String rootDir = path.join(Directory.current.path, '.dart_tool', 'isar');
     await Directory(rootDir).create(recursive: true); // something like this
     isar = await Isar.open(
-      [
-        ModelMangaSchema,
-        ModelChaptersSchema,
-        CategoriesModelSchema,
-        ChaptersFilterSchema
-      ],
+      [MangaSchema, ChapterSchema, CategorySchema, ChaptersFilterSchema],
       directory: rootDir,
     );
   }
@@ -86,7 +69,6 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ref.read(isarDataProvider.notifier).set(isar);
     final isThemeLight = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
     ThemeData themeLight = FlexThemeData.light(

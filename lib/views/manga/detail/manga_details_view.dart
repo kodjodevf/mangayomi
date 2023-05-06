@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/categories.dart';
-import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -17,12 +17,12 @@ import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_wi
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
-  final ModelManga modelManga;
+  final Manga manga;
   final Function(bool) isFavorite;
   const MangaDetailsView({
     super.key,
     required this.isFavorite,
-    required this.modelManga,
+    required this.manga,
   });
 
   @override
@@ -57,17 +57,17 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
 
   @override
   Widget build(BuildContext context) {
-    _checkFavorite(widget.modelManga.favorite);
+    _checkFavorite(widget.manga.favorite);
     return Scaffold(
       floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
-          : widget.modelManga.chapters.isNotEmpty
+          : widget.manga.chapters.isNotEmpty
               ? ValueListenableBuilder<Box>(
                   valueListenable:
                       ref.watch(hiveBoxMangaInfoProvider).listenable(),
                   builder: (context, value, child) {
                     final entries = value.get(
-                        "${widget.modelManga.lang}-${widget.modelManga.source}/${widget.modelManga.name}-chapter_index",
+                        "${widget.manga.lang}-${widget.manga.source}/${widget.manga.name}-chapter_index",
                         defaultValue: '');
                     final incognitoMode = ref.watch(incognitoModeStateProvider);
 
@@ -89,10 +89,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                         borderRadius:
                                             BorderRadius.circular(15))),
                                 onPressed: () {
-                                  pushMangaReaderView(
-                                      context: context,
-                                      modelManga: widget.modelManga,
-                                      index: int.parse(entries.toString()));
+                                  // pushMangaReaderView(
+                                  //     context: context,
+                                  //     chapter: widget.manga,
+                                  //     index: int.parse(entries.toString()));
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -143,11 +143,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15))),
                               onPressed: () {
-                                pushMangaReaderView(
-                                    context: context,
-                                    modelManga: widget.modelManga,
-                                    index:
-                                        widget.modelManga.chapters.length - 1);
+                                // pushMangaReaderView(
+                                //     context: context,
+                                //     manga: widget.manga,
+                                //     index:
+                                //         widget.manga.chapters.length - 1);
                               },
                               child: Row(
                                 children: [
@@ -188,7 +188,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.modelManga.author!,
+              widget.manga.author!,
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             Row(
@@ -200,19 +200,19 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 const SizedBox(
                   width: 4,
                 ),
-                Text(widget.modelManga.status!),
+                Text(widget.manga.status!),
                 const Text(' • '),
                 Row(
                   children: [
-                    Text(widget.modelManga.source!),
-                    Text(' (${widget.modelManga.lang!.toUpperCase()})'),
+                    Text(widget.manga.source!),
+                    Text(' (${widget.manga.lang!.toUpperCase()})'),
                   ],
                 )
               ],
             )
           ],
         ),
-        action: widget.modelManga.favorite
+        action: widget.manga.favorite
             ? SizedBox(
                 width: mediaWidth(context, 0.4),
                 child: ElevatedButton(
@@ -222,10 +222,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       elevation: 0),
                   onPressed: () async {
                     _setFavorite(false);
-                    final model = widget.modelManga;
+                    final model = widget.manga;
                     await isar.writeTxn(() async {
                       model.favorite = false;
-                      await isar.modelMangas.put(model);
+                      await isar.mangas.put(model);
                     });
                   },
                   child: Column(
@@ -253,18 +253,18 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           Theme.of(context).scaffoldBackgroundColor,
                       elevation: 0),
                   onPressed: () async {
-                    final checkCategoryList = await isar.categoriesModels
+                    final checkCategoryList = await isar.categorys
                         .filter()
                         .idIsNotNull()
                         .isNotEmpty();
                     if (checkCategoryList) {
-                      _openCategory(widget.modelManga);
+                      _openCategory(widget.manga);
                     } else {
                       _setFavorite(true);
-                      final model = widget.modelManga;
+                      final model = widget.manga;
                       await isar.writeTxn(() async {
                         model.favorite = true;
-                        await isar.modelMangas.put(model);
+                        await isar.mangas.put(model);
                       });
                     }
                   },
@@ -287,7 +287,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   ),
                 ),
               ),
-        modelManga: widget.modelManga,
+        manga: widget.manga,
         isExtended: (value) {
           ref.read(isExtendedStateProvider.notifier).update(value);
         },
@@ -295,7 +295,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     );
   }
 
-  _openCategory(ModelManga manga) {
+  _openCategory(Manga manga) {
     List<int> categoryIds = [];
     showDialog(
         context: context,
@@ -309,7 +309,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 content: SizedBox(
                   width: mediaWidth(context, 0.8),
                   child: StreamBuilder(
-                      stream: isar.categoriesModels
+                      stream: isar.categorys
                           .filter()
                           .idIsNotNull()
                           .watch(fireImmediately: true),
@@ -365,11 +365,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           TextButton(
                               onPressed: () async {
                                 _setFavorite(true);
-                                final model = widget.modelManga;
+                                final model = widget.manga;
                                 await isar.writeTxn(() async {
                                   model.favorite = true;
                                   model.categories = categoryIds;
-                                  await isar.modelMangas.put(model);
+                                  await isar.mangas.put(model);
                                 });
                                 if (mounted) {
                                   Navigator.pop(context);

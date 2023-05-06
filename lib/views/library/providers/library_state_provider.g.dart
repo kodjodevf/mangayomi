@@ -41,7 +41,7 @@ final libraryDisplayTypeStateProvider =
 
 typedef _$LibraryDisplayTypeState = AutoDisposeNotifier<String>;
 String _$mangaFilterDownloadedStateHash() =>
-    r'd489a673c7a180129be17adccd3da69d529c1ff4';
+    r'96066910b5ff9ca0efcfef7c1411b18e94b7b250';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -66,10 +66,10 @@ class _SystemHash {
 
 abstract class _$MangaFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final List<ModelManga> mangaList;
+  late final List<Manga> mangaList;
 
   int build({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   });
 }
 
@@ -84,7 +84,7 @@ class MangaFilterDownloadedStateFamily extends Family<int> {
 
   /// See also [MangaFilterDownloadedState].
   MangaFilterDownloadedStateProvider call({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   }) {
     return MangaFilterDownloadedStateProvider(
       mangaList: mangaList,
@@ -134,7 +134,7 @@ class MangaFilterDownloadedStateProvider
               MangaFilterDownloadedStateFamily._allTransitiveDependencies,
         );
 
-  final List<ModelManga> mangaList;
+  final List<Manga> mangaList;
 
   @override
   bool operator ==(Object other) {
@@ -161,14 +161,14 @@ class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'46091316aacb44f8fb900b054632e03fea03fe0d';
+    r'c6ae52956f7889ee70a640230993dc7b76f4e2f2';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final List<ModelManga> mangaList;
+  late final List<Manga> mangaList;
 
   int build({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   });
 }
 
@@ -183,7 +183,7 @@ class MangaFilterUnreadStateFamily extends Family<int> {
 
   /// See also [MangaFilterUnreadState].
   MangaFilterUnreadStateProvider call({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   }) {
     return MangaFilterUnreadStateProvider(
       mangaList: mangaList,
@@ -233,7 +233,7 @@ class MangaFilterUnreadStateProvider
               MangaFilterUnreadStateFamily._allTransitiveDependencies,
         );
 
-  final List<ModelManga> mangaList;
+  final List<Manga> mangaList;
 
   @override
   bool operator ==(Object other) {
@@ -260,14 +260,14 @@ class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'8b31487fdd597ce67f67581267df65a0037788f2';
+    r'4adef7169a977bdc582ae38c7fd453f42775bcef';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final List<ModelManga> mangaList;
+  late final List<Manga> mangaList;
 
   int build({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   });
 }
 
@@ -282,7 +282,7 @@ class MangaFilterStartedStateFamily extends Family<int> {
 
   /// See also [MangaFilterStartedState].
   MangaFilterStartedStateProvider call({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   }) {
     return MangaFilterStartedStateProvider(
       mangaList: mangaList,
@@ -332,7 +332,7 @@ class MangaFilterStartedStateProvider
               MangaFilterStartedStateFamily._allTransitiveDependencies,
         );
 
-  final List<ModelManga> mangaList;
+  final List<Manga> mangaList;
 
   @override
   bool operator ==(Object other) {
@@ -359,14 +359,14 @@ class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'e97a2dccce54775e2d321933d9d57a318a6ec973';
+    r'8379126605e9c4b05b52f254dd0d3d6a492b526c';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
-  late final List<ModelManga> mangaList;
+  late final List<Manga> mangaList;
 
   int build({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   });
 }
 
@@ -381,7 +381,7 @@ class MangaFilterBookmarkedStateFamily extends Family<int> {
 
   /// See also [MangaFilterBookmarkedState].
   MangaFilterBookmarkedStateProvider call({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   }) {
     return MangaFilterBookmarkedStateProvider(
       mangaList: mangaList,
@@ -431,7 +431,7 @@ class MangaFilterBookmarkedStateProvider
               MangaFilterBookmarkedStateFamily._allTransitiveDependencies,
         );
 
-  final List<ModelManga> mangaList;
+  final List<Manga> mangaList;
 
   @override
   bool operator ==(Object other) {
@@ -458,14 +458,14 @@ class MangaFilterBookmarkedStateProvider
 }
 
 String _$mangasFilterResultStateHash() =>
-    r'56207315fb81ae3adefa81ff1bea89015e0f99ec';
+    r'610122fe8e193b4c51410a1139159500f4093ae5';
 
 abstract class _$MangasFilterResultState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final List<ModelManga> mangaList;
+  late final List<Manga> mangaList;
 
   bool build({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   });
 }
 
@@ -480,7 +480,7 @@ class MangasFilterResultStateFamily extends Family<bool> {
 
   /// See also [MangasFilterResultState].
   MangasFilterResultStateProvider call({
-    required List<ModelManga> mangaList,
+    required List<Manga> mangaList,
   }) {
     return MangasFilterResultStateProvider(
       mangaList: mangaList,
@@ -530,7 +530,7 @@ class MangasFilterResultStateProvider
               MangasFilterResultStateFamily._allTransitiveDependencies,
         );
 
-  final List<ModelManga> mangaList;
+  final List<Manga> mangaList;
 
   @override
   bool operator ==(Object other) {

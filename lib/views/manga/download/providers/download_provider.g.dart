@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'0138ae85989eaf1bc8d6f28fee2bdd394fafd3ce';
+String _$downloadChapterHash() => r'240d09a7cf3726a4b75c2a45ef12a50de20d5a0e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,16 +42,10 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
 
   /// See also [downloadChapter].
   DownloadChapterProvider call({
-    required ModelManga modelManga,
-    required ModelChapters chapters,
-    required int chapterIndex,
-    required int chapterId,
+    required Chapter chapter,
   }) {
     return DownloadChapterProvider(
-      modelManga: modelManga,
-      chapters: chapters,
-      chapterIndex: chapterIndex,
-      chapterId: chapterId,
+      chapter: chapter,
     );
   }
 
@@ -60,10 +54,7 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
     covariant DownloadChapterProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
-      chapters: provider.chapters,
-      chapterIndex: provider.chapterIndex,
-      chapterId: provider.chapterId,
+      chapter: provider.chapter,
     );
   }
 
@@ -86,17 +77,11 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
 class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
-    required this.modelManga,
-    required this.chapters,
-    required this.chapterIndex,
-    required this.chapterId,
+    required this.chapter,
   }) : super.internal(
           (ref) => downloadChapter(
             ref,
-            modelManga: modelManga,
-            chapters: chapters,
-            chapterIndex: chapterIndex,
-            chapterId: chapterId,
+            chapter: chapter,
           ),
           from: downloadChapterProvider,
           name: r'downloadChapterProvider',
@@ -109,27 +94,17 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
               DownloadChapterFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
-  final ModelChapters chapters;
-  final int chapterIndex;
-  final int chapterId;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.modelManga == modelManga &&
-        other.chapters == chapters &&
-        other.chapterIndex == chapterIndex &&
-        other.chapterId == chapterId;
+    return other is DownloadChapterProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
-    hash = _SystemHash.combine(hash, chapters.hashCode);
-    hash = _SystemHash.combine(hash, chapterIndex.hashCode);
-    hash = _SystemHash.combine(hash, chapterId.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }

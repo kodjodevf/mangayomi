@@ -64,7 +64,7 @@ class ReaderModeAdapter extends TypeAdapter<ReaderMode> {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'13515f4fe649912e0a0cade86c968152481b56f2';
+String _$currentIndexHash() => r'c2b912af925d9efd3e36e7a810914ef11393c1da';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -88,10 +88,10 @@ class _SystemHash {
 }
 
 abstract class _$CurrentIndex extends BuildlessAutoDisposeNotifier<int> {
-  late final MangaReaderModel mangaReaderModel;
+  late final Chapter chapter;
 
   int build(
-    MangaReaderModel mangaReaderModel,
+    Chapter chapter,
   );
 }
 
@@ -106,10 +106,10 @@ class CurrentIndexFamily extends Family<int> {
 
   /// See also [CurrentIndex].
   CurrentIndexProvider call(
-    MangaReaderModel mangaReaderModel,
+    Chapter chapter,
   ) {
     return CurrentIndexProvider(
-      mangaReaderModel,
+      chapter,
     );
   }
 
@@ -118,7 +118,7 @@ class CurrentIndexFamily extends Family<int> {
     covariant CurrentIndexProvider provider,
   ) {
     return call(
-      provider.mangaReaderModel,
+      provider.chapter,
     );
   }
 
@@ -142,9 +142,9 @@ class CurrentIndexProvider
     extends AutoDisposeNotifierProviderImpl<CurrentIndex, int> {
   /// See also [CurrentIndex].
   CurrentIndexProvider(
-    this.mangaReaderModel,
+    this.chapter,
   ) : super.internal(
-          () => CurrentIndex()..mangaReaderModel = mangaReaderModel,
+          () => CurrentIndex()..chapter = chapter,
           from: currentIndexProvider,
           name: r'currentIndexProvider',
           debugGetCreateSourceHash:
@@ -156,18 +156,17 @@ class CurrentIndexProvider
               CurrentIndexFamily._allTransitiveDependencies,
         );
 
-  final MangaReaderModel mangaReaderModel;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is CurrentIndexProvider &&
-        other.mangaReaderModel == mangaReaderModel;
+    return other is CurrentIndexProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaReaderModel.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -177,18 +176,18 @@ class CurrentIndexProvider
     covariant CurrentIndex notifier,
   ) {
     return notifier.build(
-      mangaReaderModel,
+      chapter,
     );
   }
 }
 
-String _$readerControllerHash() => r'255b727a186844a75ea4b71f724142f3f09a1e9a';
+String _$readerControllerHash() => r'aa391d434050f0f895bb83b3b5db54835749f033';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
-  late final MangaReaderModel mangaReaderModel;
+  late final Chapter chapter;
 
   void build({
-    required MangaReaderModel mangaReaderModel,
+    required Chapter chapter,
   });
 }
 
@@ -203,10 +202,10 @@ class ReaderControllerFamily extends Family<void> {
 
   /// See also [ReaderController].
   ReaderControllerProvider call({
-    required MangaReaderModel mangaReaderModel,
+    required Chapter chapter,
   }) {
     return ReaderControllerProvider(
-      mangaReaderModel: mangaReaderModel,
+      chapter: chapter,
     );
   }
 
@@ -215,7 +214,7 @@ class ReaderControllerFamily extends Family<void> {
     covariant ReaderControllerProvider provider,
   ) {
     return call(
-      mangaReaderModel: provider.mangaReaderModel,
+      chapter: provider.chapter,
     );
   }
 
@@ -239,9 +238,9 @@ class ReaderControllerProvider
     extends AutoDisposeNotifierProviderImpl<ReaderController, void> {
   /// See also [ReaderController].
   ReaderControllerProvider({
-    required this.mangaReaderModel,
+    required this.chapter,
   }) : super.internal(
-          () => ReaderController()..mangaReaderModel = mangaReaderModel,
+          () => ReaderController()..chapter = chapter,
           from: readerControllerProvider,
           name: r'readerControllerProvider',
           debugGetCreateSourceHash:
@@ -253,18 +252,17 @@ class ReaderControllerProvider
               ReaderControllerFamily._allTransitiveDependencies,
         );
 
-  final MangaReaderModel mangaReaderModel;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is ReaderControllerProvider &&
-        other.mangaReaderModel == mangaReaderModel;
+    return other is ReaderControllerProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaReaderModel.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -274,7 +272,7 @@ class ReaderControllerProvider
     covariant ReaderController notifier,
   ) {
     return notifier.build(
-      mangaReaderModel: mangaReaderModel,
+      chapter: chapter,
     );
   }
 }

@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,8 +12,8 @@ part 'state_providers.g.dart';
 @riverpod
 class ChapterModelState extends _$ChapterModelState {
   @override
-  ModelChapters build() {
-    return ModelChapters(
+  Chapter build() {
+    return Chapter(
         name: "",
         url: "",
         dateUpload: "",
@@ -23,7 +24,7 @@ class ChapterModelState extends _$ChapterModelState {
         mangaId: null);
   }
 
-  void update(ModelChapters chapters) {
+  void update(Chapter chapters) {
     state = chapters;
   }
 }
@@ -31,11 +32,11 @@ class ChapterModelState extends _$ChapterModelState {
 @riverpod
 class ChapterIdsListState extends _$ChapterIdsListState {
   @override
-  List<ModelChapters> build() {
+  List<Chapter> build() {
     return [];
   }
 
-  void update(ModelChapters value) {
+  void update(Chapter value) {
     var newList = state.reversed.toList();
     if (newList.contains(value)) {
       newList.remove(value);
@@ -48,7 +49,7 @@ class ChapterIdsListState extends _$ChapterIdsListState {
     state = newList;
   }
 
-  void selectAll(ModelChapters value) {
+  void selectAll(Chapter value) {
     var newList = state.reversed.toList();
     if (!newList.contains(value)) {
       newList.add(value);
@@ -57,7 +58,7 @@ class ChapterIdsListState extends _$ChapterIdsListState {
     state = newList;
   }
 
-  void selectSome(ModelChapters value) {
+  void selectSome(Chapter value) {
     var newList = state.reversed.toList();
     if (newList.contains(value)) {
       newList.remove(value);
@@ -256,36 +257,36 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
   }
 }
 
-ModelManga modelMangaWithNewChapValue(
-    {required ModelManga modelManga, required List<ModelChapters>? chapters}) {
-  return ModelManga(
-      imageUrl: modelManga.imageUrl,
-      name: modelManga.name,
-      genre: modelManga.genre,
-      author: modelManga.author,
-      description: modelManga.description,
-      status: modelManga.status,
-      favorite: modelManga.favorite,
-      link: modelManga.link,
-      source: modelManga.source,
-      lang: modelManga.lang,
-      dateAdded: modelManga.dateAdded,
-      lastUpdate: modelManga.lastUpdate,
-      categories: modelManga.categories,
-      lastRead: modelManga.lastRead);
+Manga mangaWithNewChapValue(
+    {required Manga manga, required List<Chapter>? chapters}) {
+  return Manga(
+      imageUrl: manga.imageUrl,
+      name: manga.name,
+      genre: manga.genre,
+      author: manga.author,
+      description: manga.description,
+      status: manga.status,
+      favorite: manga.favorite,
+      link: manga.link,
+      source: manga.source,
+      lang: manga.lang,
+      dateAdded: manga.dateAdded,
+      lastUpdate: manga.lastUpdate,
+      categories: manga.categories,
+      lastRead: manga.lastRead);
 }
 
 @riverpod
 class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   @override
-  build({required ModelManga modelManga}) {}
+  build({required Manga manga}) {}
 
   set() async {
     final chapters = ref.watch(chapterIdsListStateProvider);
     await isar.writeTxn(() async {
       for (var chapter in chapters) {
         chapter.isBookmarked = !chapter.isBookmarked!;
-        await isar.modelChapters.put(chapter..manga.value = modelManga);
+        await isar.chapters.put(chapter..manga.value = manga);
         await chapter.manga.save();
       }
     });
@@ -297,14 +298,14 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
 @riverpod
 class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   @override
-  build({required ModelManga modelManga}) {}
+  build({required Manga manga}) {}
 
   set() async {
     final chapters = ref.watch(chapterIdsListStateProvider);
     await isar.writeTxn(() async {
       for (var chapter in chapters) {
         chapter.isRead = !chapter.isRead!;
-        await isar.modelChapters.put(chapter..manga.value = modelManga);
+        await isar.chapters.put(chapter..manga.value = manga);
         await chapter.manga.save();
       }
     });
@@ -316,13 +317,13 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
 @riverpod
 class ChapterSetDownloadState extends _$ChapterSetDownloadState {
   @override
-  build({required ModelManga modelManga}) {}
+  build({required Manga manga}) {}
 
   set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
     List<int> indexList = [];
     for (var name in ref.watch(chapterIdsListStateProvider)) {
-      for (var i = 0; i < modelManga.chapters.length; i++) {
+      for (var i = 0; i < manga.chapters.length; i++) {
         if ("$i" == name) {
           indexList.add(i);
         }
@@ -333,15 +334,15 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
       //     .watch(hiveBoxMangaDownloadsProvider)
       //     .values
       //     .where((element) =>
-      //         element.modelManga.chapters.toList()[element.index].name ==
-      //         modelManga.chapters.toList()[idx].name)
+      //         element.manga.chapters.toList()[element.index].name ==
+      //         manga.chapters.toList()[idx].name)
       //     .toList();
       // if (entries.isEmpty) {
-      //   // ref.watch(downloadChapterProvider(modelManga: modelManga, index: idx));
+      //   // ref.watch(downloadChapterProvider(Manga: Manga, index: idx));
       // } else {
       //   if (!entries.first.isDownload) {
       //     // ref.watch(
-      //     //     downloadChapterProvider(modelManga: modelManga, index: idx));
+      //     //     downloadChapterProvider(Manga: Manga, index: idx));
       //   }
       // }
     }

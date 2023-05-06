@@ -2,30 +2,27 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/download/download_page_widget.dart';
 
 class ChapterListTileWidget extends ConsumerWidget {
-  final ModelManga modelManga;
-  final ModelChapters chapter;
-  final int chapterIndex;
-  final List<ModelChapters> chapterNameList;
+  final Chapter chapter;
+  final List<Chapter> chapterNameList;
   const ChapterListTileWidget({
     required this.chapterNameList,
     required this.chapter,
-    required this.chapterIndex,
     super.key,
-    required this.modelManga,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
-    
+
     return Container(
       color: chapterNameList.contains(chapter)
           ? primaryColor(context).withOpacity(0.4)
@@ -55,8 +52,7 @@ class ChapterListTileWidget extends ConsumerWidget {
             ref.read(chapterIdsListStateProvider.notifier).update(chapter);
             ref.read(chapterModelStateProvider.notifier).update(chapter);
           } else {
-            pushMangaReaderView(
-                context: context, modelManga: modelManga, index: chapterIndex);
+            pushMangaReaderView(context: context, chapter: chapter);
           }
         },
         title: Row(
@@ -115,11 +111,7 @@ class ChapterListTileWidget extends ConsumerWidget {
               )
           ],
         ),
-        trailing: ref.watch(ChapterPageDownloadsProvider(
-            chapterIndex: chapterIndex,
-            modelManga: modelManga,
-            chapterId: chapter.id!,
-            chapters: chapter)),
+        trailing: ChapterPageDownload(chapter: chapter),
       ),
     );
   }

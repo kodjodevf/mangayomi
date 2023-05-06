@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaDetailStreamHash() =>
-    r'e5323174237e1a07497b683c59a88f4f3d74b492';
+    r'1c8bd2eb2db6f3384626fae22bcc93422aa0e118';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,14 +30,14 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailStreamRef = AutoDisposeStreamProviderRef<ModelManga?>;
+typedef GetMangaDetailStreamRef = AutoDisposeStreamProviderRef<Manga?>;
 
 /// See also [getMangaDetailStream].
 @ProviderFor(getMangaDetailStream)
 const getMangaDetailStreamProvider = GetMangaDetailStreamFamily();
 
 /// See also [getMangaDetailStream].
-class GetMangaDetailStreamFamily extends Family<AsyncValue<ModelManga?>> {
+class GetMangaDetailStreamFamily extends Family<AsyncValue<Manga?>> {
   /// See also [getMangaDetailStream].
   const GetMangaDetailStreamFamily();
 
@@ -75,8 +75,7 @@ class GetMangaDetailStreamFamily extends Family<AsyncValue<ModelManga?>> {
 }
 
 /// See also [getMangaDetailStream].
-class GetMangaDetailStreamProvider
-    extends AutoDisposeStreamProvider<ModelManga?> {
+class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   /// See also [getMangaDetailStream].
   GetMangaDetailStreamProvider({
     required this.mangaId,
@@ -112,16 +111,15 @@ class GetMangaDetailStreamProvider
   }
 }
 
-String _$getChaptersStreamHash() => r'975919d4d4c67e8677bf47d81e2f2def812c1325';
-typedef GetChaptersStreamRef
-    = AutoDisposeStreamProviderRef<List<ModelChapters>>;
+String _$getChaptersStreamHash() => r'ab0f88b1db530c5f24bd3c518b8bd0691388239c';
+typedef GetChaptersStreamRef = AutoDisposeStreamProviderRef<List<Chapter>>;
 
 /// See also [getChaptersStream].
 @ProviderFor(getChaptersStream)
 const getChaptersStreamProvider = GetChaptersStreamFamily();
 
 /// See also [getChaptersStream].
-class GetChaptersStreamFamily extends Family<AsyncValue<List<ModelChapters>>> {
+class GetChaptersStreamFamily extends Family<AsyncValue<List<Chapter>>> {
   /// See also [getChaptersStream].
   const GetChaptersStreamFamily();
 
@@ -160,7 +158,7 @@ class GetChaptersStreamFamily extends Family<AsyncValue<List<ModelChapters>>> {
 
 /// See also [getChaptersStream].
 class GetChaptersStreamProvider
-    extends AutoDisposeStreamProvider<List<ModelChapters>> {
+    extends AutoDisposeStreamProvider<List<Chapter>> {
   /// See also [getChaptersStream].
   GetChaptersStreamProvider({
     required this.mangaId,

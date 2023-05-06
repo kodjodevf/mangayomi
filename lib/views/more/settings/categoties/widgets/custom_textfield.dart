@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/models/categories.dart';
+import 'package:mangayomi/models/category.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
-  final List<CategoriesModel> entries;
+  final List<Category> entries;
   final BuildContext context;
   final Function(bool) exist;
   final bool isExist;

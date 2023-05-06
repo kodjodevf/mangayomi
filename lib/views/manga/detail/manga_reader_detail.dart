@@ -7,7 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/views/manga/detail/manga_details_view.dart';
@@ -67,7 +68,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     int newChapsIndex =
                         value.chapters.length - modelManga.chapters.length;
                     for (var i = 0; i < newChapsIndex; i++) {
-                      final chapters = ModelChapters(
+                      final chapters = Chapter(
                           name: value.chapters[i].name,
                           url: value.chapters[i].url,
                           dateUpload: value.chapters[i].dateUpload,
@@ -77,7 +78,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                           lastPageRead: '',
                           mangaId: modelManga.id)
                         ..manga.value = modelManga;
-                      await isar.modelChapters.put(chapters);
+                      await isar.chapters.put(chapters);
                       await chapters.manga.save();
                     }
                   });
@@ -98,7 +99,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
             }
           },
           child: MangaDetailsView(
-            modelManga: modelManga!,
+            manga: modelManga!,
             isFavorite: (value) {
               setState(() {
                 _isFavorite = value;

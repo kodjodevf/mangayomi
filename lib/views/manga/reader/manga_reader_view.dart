@@ -8,7 +8,8 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/models/manga_reader.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_manga_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -24,10 +25,10 @@ import 'package:collection/collection.dart';
 typedef DoubleClickAnimationListener = void Function();
 
 class MangaReaderView extends ConsumerWidget {
-  final MangaReaderModel mangaReaderModel;
+  final Chapter chapter;
   const MangaReaderView({
     super.key,
-    required this.mangaReaderModel,
+    required this.chapter,
   });
 
   @override
@@ -35,11 +36,10 @@ class MangaReaderView extends ConsumerWidget {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
     final chapterData = ref.watch(GetMangaChapterUrlProvider(
-      modelManga: mangaReaderModel.modelManga,
-      index: mangaReaderModel.index,
+      chapter: chapter,
     ));
-    final readerController = ref.read(
-        readerControllerProvider(mangaReaderModel: mangaReaderModel).notifier);
+    final readerController =
+        ref.read(readerControllerProvider(chapter: chapter).notifier);
     return chapterData.when(
       data: (data) {
         if (data.urll.isEmpty) {
@@ -50,7 +50,7 @@ class MangaReaderView extends ConsumerWidget {
           url: data.urll,
           readerController: readerController,
           isLocaleList: data.isLocaleList,
-          mangaReaderModel: mangaReaderModel,
+          chapter: chapter,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -112,12 +112,12 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       required this.url,
       required this.readerController,
       required this.isLocaleList,
-      required this.mangaReaderModel});
+      required this.chapter});
   final ReaderController readerController;
   final Directory path;
   final List url;
   final List<bool> isLocaleList;
-  final MangaReaderModel mangaReaderModel;
+  final Chapter chapter;
 
   @override
   ConsumerState createState() {
@@ -171,7 +171,7 @@ class _MangaChapterPageGalleryState
 
   void _onPageChanged(int index) {
     ref
-        .read(currentIndexProvider(widget.mangaReaderModel).notifier)
+        .read(currentIndexProvider(widget.chapter).notifier)
         .setCurrentIndex(index);
     _currentIndex = index;
 
@@ -259,7 +259,7 @@ class _MangaChapterPageGalleryState
 
   void _recordReadProgress(int index) {
     ref
-        .read(currentIndexProvider(widget.mangaReaderModel).notifier)
+        .read(currentIndexProvider(widget.chapter).notifier)
         .setCurrentIndex(index);
     _currentIndex = index;
   }
@@ -375,8 +375,7 @@ class _MangaChapterPageGalleryState
   Widget _showMore() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex =
-            ref.watch(currentIndexProvider(widget.mangaReaderModel));
+        final currentIndex = ref.watch(currentIndexProvider(widget.chapter));
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -454,11 +453,8 @@ class _MangaChapterPageGalleryState
                                 onPressed: () {
                                   pushReplacementMangaReaderView(
                                       context: context,
-                                      modelManga: widget.readerController
-                                          .getModelManga(),
-                                      index: widget.readerController
-                                              .getChapterIndex() +
-                                          1);
+                                      chapter: widget.readerController
+                                          .getNextChapter());
                                 },
                                 icon: Transform.scale(
                                   scaleX: 1,
@@ -468,9 +464,7 @@ class _MangaChapterPageGalleryState
                                                           .getChapterIndex() +
                                                       1 !=
                                                   widget.readerController
-                                                      .getModelManga()
-                                                      .chapters
-                                                      .length
+                                                      .getChaptersLength()
                                               ? Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge!
@@ -565,12 +559,10 @@ class _MangaChapterPageGalleryState
                             child: IconButton(
                               onPressed: () {
                                 pushReplacementMangaReaderView(
-                                    context: context,
-                                    modelManga:
-                                        widget.readerController.getModelManga(),
-                                    index: widget.readerController
-                                            .getChapterIndex() -
-                                        1);
+                                  context: context,
+                                  chapter:
+                                      widget.readerController.getPrevChapter(),
+                                );
                               },
                               icon: Transform.scale(
                                 scaleX: 1,
@@ -674,8 +666,7 @@ class _MangaChapterPageGalleryState
   Widget _showPage() {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex =
-            ref.watch(currentIndexProvider(widget.mangaReaderModel));
+        final currentIndex = ref.watch(currentIndexProvider(widget.chapter));
         return _isView
             ? Container()
             : _showPagesNumber
@@ -884,7 +875,7 @@ class _MangaChapterPageGalleryState
                           source: widget.readerController
                               .getSourceName()
                               .replaceAll(
-                                  '${widget.readerController.mangaReaderModel.modelManga.lang}-',
+                                  '${widget.readerController.getManga().lang}-',
                                   ''),
                           index: index,
                           url: widget.url[index],
@@ -920,7 +911,7 @@ class _MangaChapterPageGalleryState
                           source: widget.readerController
                               .getSourceName()
                               .replaceAll(
-                                  '${widget.readerController.mangaReaderModel.modelManga.lang}-',
+                                  '${widget.readerController.getManga().lang}-',
                                   ''),
                           index: index,
                           url: widget.url[index],

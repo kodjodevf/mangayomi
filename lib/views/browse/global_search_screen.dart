@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
@@ -180,7 +180,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
       data: (data) {
         return GestureDetector(
           onTap: () async {
-            final modelManga = ModelManga(
+            final modelManga = Manga(
                 imageUrl: data.imageUrl,
                 name: data.name,
                 genre: data.genre,

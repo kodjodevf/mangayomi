@@ -101,12 +101,11 @@ final hiveBoxSettingsProvider = AutoDisposeProvider<Box<dynamic>>.internal(
 );
 
 typedef HiveBoxSettingsRef = AutoDisposeProviderRef<Box<dynamic>>;
-String _$hiveBoxCategoriesHash() => r'615bfbed369d04371e7403052fea307f001d61fd';
+String _$hiveBoxCategoriesHash() => r'cd07b3b052cc750ee9c9c8a59f5339daa70213ba';
 
 /// See also [hiveBoxCategories].
 @ProviderFor(hiveBoxCategories)
-final hiveBoxCategoriesProvider =
-    AutoDisposeProvider<Box<CategoriesModel>>.internal(
+final hiveBoxCategoriesProvider = AutoDisposeProvider<Box<dynamic>>.internal(
   hiveBoxCategories,
   name: r'hiveBoxCategoriesProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -116,5 +115,5 @@ final hiveBoxCategoriesProvider =
   allTransitiveDependencies: null,
 );
 
-typedef HiveBoxCategoriesRef = AutoDisposeProviderRef<Box<CategoriesModel>>;
+typedef HiveBoxCategoriesRef = AutoDisposeProviderRef<Box<dynamic>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

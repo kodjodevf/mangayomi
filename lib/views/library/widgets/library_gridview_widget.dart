@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -16,7 +16,7 @@ import 'package:mangayomi/views/widgets/gridview_widget.dart';
 class LibraryGridViewWidget extends StatelessWidget {
   final bool isCoverOnlyGrid;
   final bool isComfortableGrid;
-  final List<ModelManga> entriesManga;
+  final List<Manga> entriesManga;
   final bool language;
   final bool downloadedChapter;
   final bool continueReaderBtn;
@@ -187,10 +187,10 @@ class LibraryGridViewWidget extends StatelessWidget {
                                 if (entries.isNotEmpty && !incognitoMode) {
                                   return GestureDetector(
                                     onTap: () {
-                                      pushMangaReaderView(
-                                          context: context,
-                                          modelManga: entriesManga[index],
-                                          index: int.parse(entries.toString()));
+                                      // pushMangaReaderView(
+                                      //     context: context,
+                                      //     chapter: entriesManga[index],
+                                      //     index: int.parse(entries.toString()));
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -210,13 +210,13 @@ class LibraryGridViewWidget extends StatelessWidget {
                                 }
                                 return GestureDetector(
                                   onTap: () {
-                                    pushMangaReaderView(
-                                        context: context,
-                                        modelManga: entriesManga[index],
-                                        index: entriesManga[index]
-                                                .chapters
-                                                .length -
-                                            1);
+                                    // pushMangaReaderView(
+                                    //     context: context,
+                                    //     modelManga: entriesManga[index],
+                                    //     index: entriesManga[index]
+                                    //             .chapters
+                                    //             .length -
+                                    //         1);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(

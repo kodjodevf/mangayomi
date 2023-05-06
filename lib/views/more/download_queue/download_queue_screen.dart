@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/models/download_model.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/views/manga/download/model/download_model.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
@@ -125,7 +125,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 await Future.delayed(
                                     const Duration(seconds: 1));
                                 ref.watch(hiveBoxMangaDownloadsProvider).delete(
-                                      "${element.chapterName}${element.chapterIndex}${element.chapterId}",
+                                      "${element.mangaId}/${element.chapterId}",
                                     );
                               });
                             }
