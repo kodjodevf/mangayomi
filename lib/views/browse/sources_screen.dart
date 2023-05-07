@@ -63,24 +63,26 @@ class SourcesScreen extends ConsumerWidget {
                             .secondaryHeaderColor
                             .withOpacity(0.5),
                         borderRadius: BorderRadius.circular(5)),
-                    child: element.logoUrl.isEmpty
-                        ? const Icon(Icons.source_outlined)
-                        : CachedNetworkImage(
-                          httpHeaders: headers(element.sourceName),
-                            imageUrl: element.logoUrl,
-                            fit: BoxFit.contain,
-                            width: 37,
-                            height: 37,
-                            errorWidget: (context, url, error) {
-                              return const SizedBox(
-                                width: 37,
-                                height: 37,
-                                child: Center(
-                                  child: Icon(Icons.source_outlined),
-                                ),
-                              );
-                            },
-                          ),
+                    child: 
+                    // element.logoUrl.isEmpty
+                    //     ? 
+                        const Icon(Icons.source_outlined),
+                        // : CachedNetworkImage(
+                        //   httpHeaders: headers(element.sourceName),
+                        //     imageUrl: element.logoUrl,
+                        //     fit: BoxFit.contain,
+                        //     width: 37,
+                        //     height: 37,
+                        //     errorWidget: (context, url, error) {
+                        //       return const SizedBox(
+                        //         width: 37,
+                        //         height: 37,
+                        //         child: Center(
+                        //           child: Icon(Icons.source_outlined),
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
                   ),
                   subtitle: Text(
                     completeLang(source.lang.toLowerCase()),

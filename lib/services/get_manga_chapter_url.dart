@@ -81,7 +81,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   List<bool> isLocaleList = [];
   String source = manga.source!.toLowerCase();
-  List pagesUrl = ref.watch(hiveBoxMangaInfoProvider).get(
+  List pagesUrl = ref.watch(hiveBoxMangaProvider).get(
       "${manga.lang}-${manga.source}/${manga.name}/${chapter.name}-pageurl",
       defaultValue: []);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
@@ -344,7 +344,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   }
   if (urll.isNotEmpty) {
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaInfoProvider).put(
+      ref.watch(hiveBoxMangaProvider).put(
           "${manga.lang}-${manga.source}/${manga.name}/${chapter.name}-pageurl",
           urll);
     }

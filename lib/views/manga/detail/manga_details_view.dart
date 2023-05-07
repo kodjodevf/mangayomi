@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/views/history/providers/isar_providers.dart';
+import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
@@ -57,20 +59,18 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final history = ref.watch(getAllHistoryStreamProvider);
     _checkFavorite(widget.manga.favorite);
     return Scaffold(
       floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
           : widget.manga.chapters.isNotEmpty
-              ? ValueListenableBuilder<Box>(
-                  valueListenable:
-                      ref.watch(hiveBoxMangaInfoProvider).listenable(),
-                  builder: (context, value, child) {
-                    final entries = value.get(
-                        "${widget.manga.lang}-${widget.manga.source}/${widget.manga.name}-chapter_index",
-                        defaultValue: '');
+              ? history.when(
+                  data: (data) {
                     final incognitoMode = ref.watch(incognitoModeStateProvider);
-
+                    final entries = data
+                        .where((element) => element.mangaId == widget.manga.id)
+                        .toList();
                     if (entries.isNotEmpty && !incognitoMode) {
                       return Consumer(builder: (context, ref, child) {
                         final isExtended = ref.watch(isExtendedStateProvider);
@@ -89,10 +89,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                         borderRadius:
                                             BorderRadius.circular(15))),
                                 onPressed: () {
-                                  // pushMangaReaderView(
-                                  //     context: context,
-                                  //     chapter: widget.manga,
-                                  //     index: int.parse(entries.toString()));
+                                  pushMangaReaderView(
+                                    context: context,
+                                    chapter: entries.first.chapter.value!,
+                                  );
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -143,11 +143,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15))),
                               onPressed: () {
-                                // pushMangaReaderView(
-                                //     context: context,
-                                //     manga: widget.manga,
-                                //     index:
-                                //         widget.manga.chapters.length - 1);
+                                pushMangaReaderView(
+                                    context: context,
+                                    chapter: widget.manga.chapters.last);
                               },
                               child: Row(
                                 children: [
@@ -180,6 +178,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         ],
                       );
                     });
+                  },
+                  error: (Object error, StackTrace stackTrace) {
+                    return ErrorText(error);
+                  },
+                  loading: () {
+                    return const ProgressCenter();
                   },
                 )
               : null,

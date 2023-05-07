@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/views/history/providers/isar_providers.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
@@ -9,7 +10,9 @@ import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
 import 'package:mangayomi/views/widgets/listview_widget.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class LibraryListViewWidget extends StatelessWidget {
   final List<Manga> entriesManga;
@@ -36,7 +39,7 @@ class LibraryListViewWidget extends StatelessWidget {
               elevation: 0,
               shadowColor: Colors.transparent),
           onPressed: () {
-            context.push('/manga-reader/detail', extra: entriesManga[index]);
+            context.push('/manga-reader/detail', extra: entriesManga[index].id);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -163,23 +166,22 @@ class LibraryListViewWidget extends StatelessWidget {
                   if (continueReaderBtn)
                     Consumer(
                       builder: (context, ref, child) {
-                        return ValueListenableBuilder<Box>(
-                          valueListenable:
-                              ref.watch(hiveBoxMangaInfoProvider).listenable(),
-                          builder: (context, value, child) {
-                            final entries = value.get(
-                                "${entriesManga[index].lang}-${entriesManga[index].source}/${entriesManga[index].name}-chapter_index",
-                                defaultValue: '');
+                        final history = ref.watch(getAllHistoryStreamProvider);
+                        return history.when(
+                          data: (data) {
                             final incognitoMode =
                                 ref.watch(incognitoModeStateProvider);
-
+                            final entries = data
+                                .where((element) =>
+                                    element.mangaId == entriesManga[index].id)
+                                .toList();
                             if (entries.isNotEmpty && !incognitoMode) {
                               return GestureDetector(
                                 onTap: () {
-                                  // pushMangaReaderView(
-                                  //     context: context,
-                                  //     modelManga: entriesManga[index],
-                                  //     index: int.parse(entries.toString()));
+                                  pushMangaReaderView(
+                                    context: context,
+                                    chapter: entries.first.chapter.value!,
+                                  );
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -199,11 +201,9 @@ class LibraryListViewWidget extends StatelessWidget {
                             }
                             return GestureDetector(
                               onTap: () {
-                                // pushMangaReaderView(
-                                //     context: context,
-                                //     modelManga: entriesManga[index],
-                                //     index: entriesManga[index].chapters.length -
-                                //         1);
+                                pushMangaReaderView(
+                                    context: context,
+                                    chapter: entriesManga[index].chapters.last);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -219,6 +219,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                     )),
                               ),
                             );
+                          },
+                          error: (Object error, StackTrace stackTrace) {
+                            return ErrorText(error);
+                          },
+                          loading: () {
+                            return const ProgressCenter();
                           },
                         );
                       },

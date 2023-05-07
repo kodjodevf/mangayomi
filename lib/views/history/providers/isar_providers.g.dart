@@ -1,24 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'refresh_filter_data.dart';
+part of 'isar_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$refreshFilterDataHash() => r'60c9569f6062e6f951b735873f92a89885cc5964';
+String _$getAllHistoryStreamHash() =>
+    r'361f085ba7b3269583a09cd7b2e2629d8f3282aa';
 
-/// See also [refreshFilterData].
-@ProviderFor(refreshFilterData)
-final refreshFilterDataProvider = AutoDisposeProvider<dynamic>.internal(
-  refreshFilterData,
-  name: r'refreshFilterDataProvider',
+/// See also [getAllHistoryStream].
+@ProviderFor(getAllHistoryStream)
+final getAllHistoryStreamProvider =
+    AutoDisposeStreamProvider<List<History>>.internal(
+  getAllHistoryStream,
+  name: r'getAllHistoryStreamProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$refreshFilterDataHash,
+      : _$getAllHistoryStreamHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef RefreshFilterDataRef = AutoDisposeProviderRef<dynamic>;
+typedef GetAllHistoryStreamRef = AutoDisposeStreamProviderRef<List<History>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

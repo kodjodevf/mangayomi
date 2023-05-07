@@ -65,12 +65,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   @override
   Widget build(BuildContext context) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
-    final chapterNameList = ref.watch(chapterIdsListStateProvider);
+    final chapterNameList = ref.watch(chaptersListStateProvider);
     bool reverse = ref.watch(
         reverseChapterStateProvider(mangaId: widget.manga!.id!))["reverse"];
-    // log(reverse.toString());
-    // final chaptersList =
-    //     ref.watch(getChaptersStreamProvider(mangaId: widget.manga!.id!));
     final filterUnread =
         ref.watch(chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!));
     final filterBookmarked = ref.watch(
@@ -136,7 +133,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             return _buildWidget(
                 chapters: chapters,
                 reverse: reverse,
-                chapterNameList: chapterNameList,
+                chapterList: chapterNameList,
                 isLongPressed: isLongPressed);
           },
           error: (Object error, StackTrace stackTrace) {
@@ -146,7 +143,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             return _buildWidget(
                 chapters: widget.manga!.chapters.toList(),
                 reverse: reverse,
-                chapterNameList: chapterNameList,
+                chapterList: chapterNameList,
                 isLongPressed: isLongPressed);
           },
         ));
@@ -155,7 +152,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _buildWidget(
       {required List<Chapter> chapters,
       required bool reverse,
-      required List<Chapter> chapterNameList,
+      required List<Chapter> chapterList,
       required bool isLongPressed}) {
     return Scaffold(
         extendBodyBehindAppBar: true,
@@ -167,18 +164,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     chapterFilterResultStateProvider(
                         mangaId: widget.manga!.id!));
                 final isLongPressed = ref.watch(isLongPressedStateProvider);
-                // final chapterNameList = ref.watch(chapterIdsListStateProvider);
+                // final chapterList = ref.watch(chaptersListStateProvider);
                 return isLongPressed
                     ? Container(
                         color: Theme.of(context).scaffoldBackgroundColor,
                         child: AppBar(
-                          title: Text(chapterNameList.length.toString()),
+                          title: Text(chapterList.length.toString()),
                           backgroundColor:
                               primaryColor(context).withOpacity(0.2),
                           leading: IconButton(
                               onPressed: () {
                                 ref
-                                    .read(chapterIdsListStateProvider.notifier)
+                                    .read(chaptersListStateProvider.notifier)
                                     .clear();
 
                                 ref
@@ -191,7 +188,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 onPressed: () {
                                   for (var chapter in chapters) {
                                     ref
-                                        .read(chapterIdsListStateProvider
+                                        .read(chaptersListStateProvider
                                             .notifier)
                                         .selectAll(chapter);
                                   }
@@ -200,10 +197,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             IconButton(
                                 onPressed: () {
                                   if (chapters.length ==
-                                      chapterNameList.length) {
+                                      chapterList.length) {
                                     for (var chapter in chapters) {
                                       ref
-                                          .read(chapterIdsListStateProvider
+                                          .read(chaptersListStateProvider
                                               .notifier)
                                           .selectSome(chapter);
                                     }
@@ -214,7 +211,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   } else {
                                     for (var chapter in chapters) {
                                       ref
-                                          .read(chapterIdsListStateProvider
+                                          .read(chaptersListStateProvider
                                               .notifier)
                                           .selectSome(chapter);
                                     }
@@ -330,7 +327,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       final indexx = reverse ? reverseIndex : finalIndex;
                       return ChapterListTileWidget(
                         chapter: chapters[indexx],
-                        chapterNameList: chapterNameList,
+                        chapterList: chapterList,
                       );
                     }))),
         bottomNavigationBar: AnimatedContainer(

@@ -224,7 +224,7 @@ Manga _mangaDeserialize(
     categories: reader.readLongList(offsets[1]),
     dateAdded: reader.readLongOrNull(offsets[2]),
     description: reader.readStringOrNull(offsets[3]),
-    favorite: reader.readBool(offsets[4]),
+    favorite: reader.readBoolOrNull(offsets[4]) ?? false,
     genre: reader.readStringList(offsets[5]),
     id: id,
     imageUrl: reader.readStringOrNull(offsets[6]),
@@ -255,7 +255,7 @@ P _mangaDeserializeProp<P>(
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
       return (reader.readStringList(offset)) as P;
     case 6:

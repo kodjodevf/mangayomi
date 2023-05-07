@@ -5,6 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
 import 'package:mangayomi/views/more/settings/categoties/widgets/custom_textfield.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
@@ -168,9 +169,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           );
         },
         loading: () {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return const ProgressCenter();
         },
       ),
       floatingActionButton: FloatingActionButton.extended(

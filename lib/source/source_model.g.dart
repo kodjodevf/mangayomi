@@ -22,6 +22,8 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       lang: fields[2] as String,
       typeSource: fields[6] as TypeSource,
       logoUrl: fields[7] as String,
+      dateFormat: fields[10] as String,
+      dateFormatLocale: fields[11] as String,
       isActive: fields[3] == null ? true : fields[3] as bool,
       isAdded: fields[4] == null ? false : fields[4] as bool,
       isNsfw: fields[5] == null ? false : fields[5] as bool,
@@ -33,7 +35,7 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
   @override
   void write(BinaryWriter writer, SourceModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.sourceName)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       ..writeByte(8)
       ..write(obj.isFullData)
       ..writeByte(9)
-      ..write(obj.isCloudflare);
+      ..write(obj.isCloudflare)
+      ..writeByte(10)
+      ..write(obj.dateFormat)
+      ..writeByte(11)
+      ..write(obj.dateFormatLocale);
   }
 
   @override

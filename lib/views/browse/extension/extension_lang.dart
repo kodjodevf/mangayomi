@@ -41,11 +41,11 @@ class ExtensionsLang extends ConsumerWidget {
                         }
                       }
                       List<dynamic> entries = ref
-                          .watch(hiveBoxMangaFilterProvider)
+                          .watch(hiveBoxMangaProvider)
                           .get("language_filter", defaultValue: []);
                       entries.remove("${lang(language[index])}");
                       ref
-                          .watch(hiveBoxMangaFilterProvider)
+                          .watch(hiveBoxMangaProvider)
                           .put("language_filter", entries);
                     } else {
                       for (var element in entri) {
@@ -56,11 +56,11 @@ class ExtensionsLang extends ConsumerWidget {
                         }
                       }
                       List<dynamic> entries = ref
-                          .watch(hiveBoxMangaFilterProvider)
+                          .watch(hiveBoxMangaProvider)
                           .get("language_filter", defaultValue: []);
                       entries.add("${lang(language[index])}");
                       ref
-                          .watch(hiveBoxMangaFilterProvider)
+                          .watch(hiveBoxMangaProvider)
                           .put("language_filter", entries);
                     }
                   },

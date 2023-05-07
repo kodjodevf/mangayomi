@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -12,9 +14,9 @@ import 'package:mangayomi/views/manga/download/download_page_widget.dart';
 
 class ChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
-  final List<Chapter> chapterNameList;
+  final List<Chapter> chapterList;
   const ChapterListTileWidget({
-    required this.chapterNameList,
+    required this.chapterList,
     required this.chapter,
     super.key,
   });
@@ -24,7 +26,7 @@ class ChapterListTileWidget extends ConsumerWidget {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
 
     return Container(
-      color: chapterNameList.contains(chapter)
+      color: chapterList.contains(chapter)
           ? primaryColor(context).withOpacity(0.4)
           : null,
       child: ListTile(
@@ -37,19 +39,19 @@ class ChapterListTileWidget extends ConsumerWidget {
             chapter.isRead! ? Colors.white.withOpacity(0.3) : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
-            ref.read(chapterIdsListStateProvider.notifier).update(chapter);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
             ref.read(chapterModelStateProvider.notifier).update(chapter);
             ref
                 .read(isLongPressedStateProvider.notifier)
                 .update(!isLongPressed);
           } else {
-            ref.read(chapterIdsListStateProvider.notifier).update(chapter);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
             ref.read(chapterModelStateProvider.notifier).update(chapter);
           }
         },
         onTap: () async {
           if (isLongPressed) {
-            ref.read(chapterIdsListStateProvider.notifier).update(chapter);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
             ref.read(chapterModelStateProvider.notifier).update(chapter);
           } else {
             pushMangaReaderView(context: context, chapter: chapter);
@@ -76,7 +78,7 @@ class ChapterListTileWidget extends ConsumerWidget {
         subtitle: Row(
           children: [
             Text(
-              chapter.dateUpload!,
+              dateFormat(chapter.dateUpload!, ref: ref),
               style: const TextStyle(fontSize: 11),
             ),
             if (chapter.lastPageRead!.isNotEmpty && chapter.lastPageRead != "1")

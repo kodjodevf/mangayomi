@@ -22,23 +22,22 @@ final chapterModelStateProvider =
 );
 
 typedef _$ChapterModelState = AutoDisposeNotifier<Chapter>;
-String _$chapterIdsListStateHash() =>
-    r'5a9fd3e05f1f4b55644b0b3c1bf004950c469cb3';
+String _$chaptersListStateHash() => r'251609214d127964e84d4616d2c3a7afa4fd80b4';
 
-/// See also [ChapterIdsListState].
-@ProviderFor(ChapterIdsListState)
-final chapterIdsListStateProvider =
-    AutoDisposeNotifierProvider<ChapterIdsListState, List<Chapter>>.internal(
-  ChapterIdsListState.new,
-  name: r'chapterIdsListStateProvider',
+/// See also [ChaptersListState].
+@ProviderFor(ChaptersListState)
+final chaptersListStateProvider =
+    AutoDisposeNotifierProvider<ChaptersListState, List<Chapter>>.internal(
+  ChaptersListState.new,
+  name: r'chaptersListStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$chapterIdsListStateHash,
+      : _$chaptersListStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ChapterIdsListState = AutoDisposeNotifier<List<Chapter>>;
+typedef _$ChaptersListState = AutoDisposeNotifier<List<Chapter>>;
 String _$isLongPressedStateHash() =>
     r'26fe435e8381046a30e3f6c4495303946aa3aaa7';
 
@@ -590,7 +589,7 @@ class ChapterFilterResultStateProvider
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'adc7acb6ba68175e2986e8e80eb0339b1c5d0a5d';
+    r'd8218bacd17ab93480808ad0b015341ccb80d335';
 
 abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -688,7 +687,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'25b9bb2671c8db9b0d7cea9c6715c3ba30a4fef0';
+    r'a8436a6cdac49c241483b4260f41c7b4045c060d';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
@@ -786,7 +785,7 @@ class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'b3c61cf6efaa978abc25b94be2a6727e7162e960';
+    r'9491a65fa03119197ff5db96f6375356d4f226d7';
 
 abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<dynamic> {

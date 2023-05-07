@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   go_router: ^6.5.2
   flutter_riverpod: ^2.3.2
   cached_network_image: ^3.2.3
@@ -50,7 +52,7 @@ dependencies:
   photo_view: ^0.14.0
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
-  intl: ^0.18.0
+  intl: ^0.17.0
   google_fonts: ^4.0.3
   url_launcher: ^6.1.10
   package_info_plus: ^3.0.2

@@ -30,7 +30,7 @@ class ChapterModelState extends _$ChapterModelState {
 }
 
 @riverpod
-class ChapterIdsListState extends _$ChapterIdsListState {
+class ChaptersListState extends _$ChaptersListState {
   @override
   List<Chapter> build() {
     return [];
@@ -281,17 +281,17 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   @override
   build({required Manga manga}) {}
 
-  set() async {
-    final chapters = ref.watch(chapterIdsListStateProvider);
-    await isar.writeTxn(() async {
+  set() {
+    final chapters = ref.watch(chaptersListStateProvider);
+    isar.writeTxnSync(() {
       for (var chapter in chapters) {
         chapter.isBookmarked = !chapter.isBookmarked!;
-        await isar.chapters.put(chapter..manga.value = manga);
-        await chapter.manga.save();
+        isar.chapters.putSync(chapter..manga.value = manga);
+        chapter.manga.saveSync();
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);
-    ref.read(chapterIdsListStateProvider.notifier).clear();
+    ref.read(chaptersListStateProvider.notifier).clear();
   }
 }
 
@@ -300,17 +300,17 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   @override
   build({required Manga manga}) {}
 
-  set() async {
-    final chapters = ref.watch(chapterIdsListStateProvider);
-    await isar.writeTxn(() async {
+  set() {
+    final chapters = ref.watch(chaptersListStateProvider);
+    isar.writeTxnSync(() async {
       for (var chapter in chapters) {
         chapter.isRead = !chapter.isRead!;
-        await isar.chapters.put(chapter..manga.value = manga);
-        await chapter.manga.save();
+        isar.chapters.putSync(chapter..manga.value = manga);
+        chapter.manga.saveSync();
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);
-    ref.read(chapterIdsListStateProvider.notifier).clear();
+    ref.read(chaptersListStateProvider.notifier).clear();
   }
 }
 
@@ -321,32 +321,19 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
 
   set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
-    List<int> indexList = [];
-    for (var name in ref.watch(chapterIdsListStateProvider)) {
-      for (var i = 0; i < manga.chapters.length; i++) {
-        if ("$i" == name) {
-          indexList.add(i);
-        }
+    for (var chapter in ref.watch(chaptersListStateProvider)) {
+      final entries = ref
+          .watch(hiveBoxMangaDownloadsProvider)
+          .values
+          .where((element) =>
+              "${element.mangaId}/${element.chapterId}" ==
+              "${manga.id}/${chapter.id}")
+          .toList();
+      if (entries.isEmpty || !entries.first.isDownload) {
+        ref.watch(downloadChapterProvider(chapter: chapter));
       }
     }
-    for (var idx in indexList) {
-      // final entries = ref
-      //     .watch(hiveBoxMangaDownloadsProvider)
-      //     .values
-      //     .where((element) =>
-      //         element.manga.chapters.toList()[element.index].name ==
-      //         manga.chapters.toList()[idx].name)
-      //     .toList();
-      // if (entries.isEmpty) {
-      //   // ref.watch(downloadChapterProvider(Manga: Manga, index: idx));
-      // } else {
-      //   if (!entries.first.isDownload) {
-      //     // ref.watch(
-      //     //     downloadChapterProvider(Manga: Manga, index: idx));
-      //   }
-      // }
-    }
-    ref.read(chapterIdsListStateProvider.notifier).clear();
+    ref.read(chaptersListStateProvider.notifier).clear();
   }
 }
 

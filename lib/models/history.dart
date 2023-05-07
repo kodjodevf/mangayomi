@@ -7,10 +7,12 @@ part 'history.g.dart';
 @Name("History")
 class History {
   Id? id;
+  int? mangaId;
   final chapter = IsarLink<Chapter>();
   String? date;
   History({
     this.id = Isar.autoIncrement,
+    required this.mangaId,
     required this.date,
   });
 }

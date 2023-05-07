@@ -59,7 +59,9 @@ class ExtensionScreen extends ConsumerWidget {
                             lang: element.lang,
                             typeSource: element.typeSource,
                             isAdded: val,
-                            logoUrl: element.logoUrl));
+                            logoUrl: element.logoUrl,
+                            dateFormat: element.dateFormat,
+                            dateFormatLocale: element.dateFormatLocale));
                   },
                   sourceName: source.sourceName,
                   value: source.isAdded,

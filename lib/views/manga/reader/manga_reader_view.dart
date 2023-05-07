@@ -164,7 +164,6 @@ class _MangaChapterPageGalleryState
 
   _initCurrentIndex() async {
     await Future.delayed(const Duration(milliseconds: 1));
-    widget.readerController.setChapterIndex();
     _selectedValue = widget.readerController.getReaderMode();
     _axisHive(_selectedValue!, true);
   }
@@ -174,7 +173,6 @@ class _MangaChapterPageGalleryState
         .read(currentIndexProvider(widget.chapter).notifier)
         .setCurrentIndex(index);
     _currentIndex = index;
-
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
       _rebuildDetail.sink.add(_imageDetailY);
