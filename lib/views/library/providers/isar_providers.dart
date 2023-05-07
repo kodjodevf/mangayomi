@@ -21,3 +21,17 @@ Stream<List<Manga>> getAllMangaStream(GetAllMangaStreamRef ref,
           .categoriesElementEqualTo(categoryId)
           .watch(fireImmediately: true);
 }
+
+@riverpod
+Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
+  GetAllMangaWithoutCategoriesStreamRef ref,
+) async* {
+  yield* isar.mangas
+      .filter()
+      .idIsNotNull()
+      .favoriteEqualTo(true)
+      .categoriesIsEmpty()
+      .or()
+      .categoriesIsNull()
+      .watch(fireImmediately: true);
+}

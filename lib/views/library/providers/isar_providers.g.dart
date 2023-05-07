@@ -109,4 +109,23 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
     return _SystemHash.finish(hash);
   }
 }
+
+String _$getAllMangaWithoutCategoriesStreamHash() =>
+    r'76230abaa3a6394c56b3ec90b6a4af812f6ebfb5';
+
+/// See also [getAllMangaWithoutCategoriesStream].
+@ProviderFor(getAllMangaWithoutCategoriesStream)
+final getAllMangaWithoutCategoriesStreamProvider =
+    AutoDisposeStreamProvider<List<Manga>>.internal(
+  getAllMangaWithoutCategoriesStream,
+  name: r'getAllMangaWithoutCategoriesStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getAllMangaWithoutCategoriesStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef GetAllMangaWithoutCategoriesStreamRef
+    = AutoDisposeStreamProviderRef<List<Manga>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
