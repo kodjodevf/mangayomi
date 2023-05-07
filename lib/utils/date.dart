@@ -28,18 +28,17 @@ String dateFormat(String timestamp,
       useRelativeTimesTamps &&
       relativeTimestamps != 0) {
     return 'Yesterday';
-  } else if (date.isAfter(twoDaysAgo) ||
-      date.isAfter(twoDaysAgo) ||
-      date.isAfter(threeDaysAgo) ||
-      date.isAfter(fourDaysAgo) ||
-      date.isAfter(fiveDaysAgo) ||
-      date.isAfter(sixDaysAgo) ||
-      date.isAfter(aWeekAgo) &&
-          useRelativeTimesTamps &&
-          useRelativeTimesTamps &&
-          relativeTimestamps == 2) {
-    final difference = today.difference(date).inDays;
-    return difference != 7 ? '$difference days ago' : 'A week ago';
+  } else if (useRelativeTimesTamps && relativeTimestamps == 2) {
+    if (date.isAfter(twoDaysAgo) ||
+        date.isAfter(twoDaysAgo) ||
+        date.isAfter(threeDaysAgo) ||
+        date.isAfter(fourDaysAgo) ||
+        date.isAfter(fiveDaysAgo) ||
+        date.isAfter(sixDaysAgo) ||
+        date.isAfter(aWeekAgo)) {
+      final difference = today.difference(date).inDays;
+      return difference != 7 ? '$difference days ago' : 'A week ago';
+    }
   }
   return formatter.format(date);
 }

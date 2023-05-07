@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+import 'dart:developer';
 import 'dart:io';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -20,18 +22,33 @@ import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_s
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 late Isar isar;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _initDB();
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+_initDB() async {
   if (Platform.isAndroid || Platform.isIOS) {
     await Hive.initFlutter();
+    await FastCachedImageConfig.init();
   } else {
     await Hive.initFlutter("Mangayomi/databases");
+    await FastCachedImageConfig.init(subDir: "Mangayomi/databases");
   }
-  await FastCachedImageConfig.init(subDir: "Mangayomi/databases");
+  final dir = await getApplicationDocumentsDirectory();
+  if (Platform.isAndroid || Platform.isIOS) {
+    isar = Isar.openSync(
+      [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
+      directory: dir.path,
+    );
+  } else {
+    isar = await Isar.open(
+        [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
+        directory: "${dir.path}/Mangayomi/databases", name: "MangayomiDb");
+  }
   Hive.registerAdapter(SourceModelAdapter());
   Hive.registerAdapter(ReaderModeAdapter());
   Hive.registerAdapter(TypeSourceAdapter());
@@ -41,25 +58,23 @@ void main() async {
   await Hive.openBox<DownloadModel>(HiveConstant.hiveBoxDownloads);
   await Hive.openBox(HiveConstant.hiveBoxAppSettings);
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
-  await initIsar();
-  runApp(const ProviderScope(child: MyApp()));
 }
 
-initIsar() async {
-  final dir = await getApplicationDocumentsDirectory();
-  if (Platform.isAndroid || Platform.isIOS) {
-    isar = Isar.openSync(
-      [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
-      directory: dir.path,
-    );
-  } else {
-    String rootDir = path.join(Directory.current.path, '.dart_tool', 'isar');
-    await Directory(rootDir).create(recursive: true);
-    isar = await Isar.open(
-      [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
-      directory: rootDir,
-    );
-  }
+_iniDateFormatting() {
+  initializeDateFormatting("en", null);
+  initializeDateFormatting("fr", null);
+  initializeDateFormatting("ar", null);
+  initializeDateFormatting("es", null);
+  initializeDateFormatting("pt", null);
+  initializeDateFormatting("ru", null);
+  initializeDateFormatting("hi", null);
+  initializeDateFormatting("id", null);
+  initializeDateFormatting("it", null);
+  initializeDateFormatting("de", null);
+  initializeDateFormatting("ja", null);
+  initializeDateFormatting("zh", null);
+  initializeDateFormatting("pl", null);
+  initializeDateFormatting("tr", null);
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -70,26 +85,9 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  _ini() {
-    initializeDateFormatting("en", null);
-    initializeDateFormatting("fr", null);
-    initializeDateFormatting("ar", null);
-    initializeDateFormatting("es", null);
-    initializeDateFormatting("pt", null);
-    initializeDateFormatting("ru", null);
-    initializeDateFormatting("hi", null);
-    initializeDateFormatting("id", null);
-    initializeDateFormatting("it", null);
-    initializeDateFormatting("de", null);
-    initializeDateFormatting("ja", null);
-    initializeDateFormatting("zh", null);
-    initializeDateFormatting("pl", null);
-    initializeDateFormatting("tr", null);
-  }
-
   @override
   void initState() {
-    _ini();
+    _iniDateFormatting();
     super.initState();
   }
 
