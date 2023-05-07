@@ -41,6 +41,26 @@ TypeSource getWpMangTypeSource(String source) {
   return typeSource!;
 }
 
+String getFormatDate(String source) {
+  String? dateFormat;
+  for (var i = 0; i < sourcesList.length; i++) {
+    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+      dateFormat = sourcesList[i].dateFormat;
+    }
+  }
+  return dateFormat!;
+}
+
+String getFormatDateLocale(String source) {
+  String? dateFormatLocale;
+  for (var i = 0; i < sourcesList.length; i++) {
+    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+      dateFormatLocale = sourcesList[i].dateFormatLocale;
+    }
+  }
+  return dateFormatLocale!;
+}
+
 bool isCloudflare(String source) {
   bool? isCloudflare;
   for (var i = 0; i < sourcesList.length; i++) {

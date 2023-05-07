@@ -7,7 +7,7 @@ part 'refresh_filter_data.g.dart';
 @riverpod
 refreshFilterData(RefreshFilterDataRef ref) async {
   final lf = ref
-      .watch(hiveBoxMangaFilterProvider)
+      .watch(hiveBoxMangaProvider)
       .get("language_filter", defaultValue: []);
   if (lf.isEmpty) {
     for (var element in sourcesList) {
@@ -27,7 +27,9 @@ refreshFilterData(RefreshFilterDataRef ref) async {
                 isFullData: element.isFullData,
                 isActive: oldSp!.isActive,
                 isAdded: oldSp.isAdded,
-                isNsfw: oldSp.isNsfw));
+                isNsfw: oldSp.isNsfw,
+                dateFormat: element.dateFormat,
+                dateFormatLocale: element.dateFormatLocale));
       } else {
         ref
             .watch(hiveBoxMangaSourceProvider)
@@ -52,7 +54,9 @@ refreshFilterData(RefreshFilterDataRef ref) async {
                 isFullData: element.isFullData,
                 isActive: oldSp!.isActive,
                 isAdded: oldSp.isAdded,
-                isNsfw: oldSp.isNsfw));
+                isNsfw: oldSp.isNsfw,
+                dateFormat: element.dateFormat,
+                dateFormatLocale: element.dateFormatLocale));
       } else {
         ref
             .watch(hiveBoxMangaSourceProvider)

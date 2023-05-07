@@ -1,17 +1,24 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/views/manga/detail/manga_details_view.dart';
+import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class MangaReaderDetail extends ConsumerStatefulWidget {
-  final ModelManga modelManga;
-  const MangaReaderDetail({super.key, required this.modelManga});
+  final int mangaId;
+  const MangaReaderDetail({super.key, required this.mangaId});
 
   @override
   ConsumerState<MangaReaderDetail> createState() => _MangaReaderDetailState();
@@ -25,6 +32,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     super.initState();
   }
 
@@ -36,95 +44,76 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final manga =
+        ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          if (_isFavorite) {
-            bool isOk = false;
-            ref
-                .watch(getMangaDetailProvider(
-                        imageUrl: widget.modelManga.imageUrl!,
-                        lang: widget.modelManga.lang!,
-                        title: widget.modelManga.name!,
-                        source: widget.modelManga.source!,
-                        url: widget.modelManga.link!)
-                    .future)
-                .then((value) {
-              if (value.chapters.isNotEmpty &&
-                  value.chapters.length > widget.modelManga.chapters!.length) {
-                List<ModelChapters>? chapters = [];
-                for (var chap in widget.modelManga.chapters!) {
-                  chapters.add(chap);
-                }
-                int newChapsSize =
-                    value.chapters.length - widget.modelManga.chapters!.length;
-                for (var i = 0; i < newChapsSize; i++) {
-                  chapters.insert(i, value.chapters[i]);
-                }
-                final model = ModelManga(
-                    imageUrl: widget.modelManga.imageUrl,
-                    name: widget.modelManga.name,
-                    genre: widget.modelManga.genre,
-                    author: widget.modelManga.author,
-                    description: widget.modelManga.description,
-                    status: value.status,
-                    favorite: _isFavorite,
-                    link: widget.modelManga.link,
-                    source: widget.modelManga.source,
-                    lang: widget.modelManga.lang,
-                    dateAdded: widget.modelManga.dateAdded,
-                    lastUpdate: DateTime.now().microsecondsSinceEpoch,
-                    chapters: chapters,
-                    categories: widget.modelManga.categories,
-                    lastRead: widget.modelManga.lastRead);
-                ref.watch(hiveBoxMangaProvider).put(
-                    '${widget.modelManga.lang}-${widget.modelManga.link}',
-                    model);
-              }
-              if (mounted) {
-                setState(() {
-                  isOk = true;
-                });
-              }
-            });
-            await Future.doWhile(() async {
-              await Future.delayed(const Duration(seconds: 1));
-              if (isOk == true) {
-                return false;
-              }
-              return true;
-            });
-          }
-        },
-        child: ValueListenableBuilder<Box<ModelManga>>(
-          valueListenable: ref.watch(hiveBoxMangaProvider).listenable(),
-          builder: (context, value, child) {
-            final entries = value.values
-                .where((element) =>
-                    '${element.lang}-${element.link}' ==
-                    '${widget.modelManga.lang}-${widget.modelManga.link}')
-                .toList();
-            if (entries.isNotEmpty) {
-              return MangaDetailsView(
-                modelManga: entries[0],
-                isFavorite: (value) {
-                  setState(() {
-                    _isFavorite = value;
+        body: manga.when(
+      data: (modelManga) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            if (_isFavorite) {
+              bool isOk = false;
+              ref
+                  .watch(getMangaDetailProvider(
+                          imageUrl: modelManga.imageUrl!,
+                          lang: modelManga.lang!,
+                          title: modelManga.name!,
+                          source: modelManga.source!,
+                          url: modelManga.link!)
+                      .future)
+                  .then((value) async {
+                if (value.chapters.isNotEmpty &&
+                    value.chapters.length > modelManga.chapters.length) {
+                  await isar.writeTxn(() async {
+                    int newChapsIndex =
+                        value.chapters.length - modelManga.chapters.length;
+                    for (var i = 0; i < newChapsIndex; i++) {
+                      final chapters = Chapter(
+                          name: value.chapters[i].name,
+                          url: value.chapters[i].url,
+                          dateUpload: value.chapters[i].dateUpload,
+                          isBookmarked: false,
+                          scanlator: value.chapters[i].scanlator,
+                          isRead: false,
+                          lastPageRead: '',
+                          mangaId: modelManga.id)
+                        ..manga.value = modelManga;
+                      await isar.chapters.put(chapters);
+                      await chapters.manga.save();
+                    }
                   });
-                },
-              );
+                }
+                if (mounted) {
+                  setState(() {
+                    isOk = true;
+                  });
+                }
+              });
+              await Future.doWhile(() async {
+                await Future.delayed(const Duration(seconds: 1));
+                if (isOk == true) {
+                  return false;
+                }
+                return true;
+              });
             }
-            return MangaDetailsView(
-              modelManga: widget.modelManga,
-              isFavorite: (value) {
-                setState(() {
-                  _isFavorite = value;
-                });
-              },
-            );
           },
-        ),
-      ),
-    );
+          child: MangaDetailsView(
+            manga: modelManga!,
+            isFavorite: (value) {
+              setState(() {
+                _isFavorite = value;
+              });
+            },
+          ),
+        );
+      },
+      error: (Object error, StackTrace stackTrace) {
+        return ErrorText(error);
+      },
+      loading: () {
+        return const ProgressCenter();
+      },
+    ));
   }
 }

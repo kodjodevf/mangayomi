@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
 import 'package:mangayomi/models/comick/manga_detail_comick.dart';
-import 'package:mangayomi/models/model_manga.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -16,7 +18,7 @@ part 'get_manga_detail.g.dart';
 
 class GetMangaDetailModel {
   List<String> genre = [];
-  List<ModelChapters> chapters = [];
+  List<Chapter> chapters = [];
   String? author;
   String? status;
   String? source;
@@ -70,6 +72,18 @@ beautifyChapterName(String? vol, String? chap, String? title, String? lang) {
   return "${vol!.isNotEmpty ? chap!.isEmpty ? "Volume $vol " : "Vol. $vol " : ""}${chap!.isNotEmpty ? vol.isEmpty ? lang == "fr" ? "Chapitre $chap" : "Chapter $chap" : "Ch. $chap " : ""}${title!.isNotEmpty ? chap.isEmpty ? title : " : $title" : ""}";
 }
 
+String utilDate(String data) {
+  DateTime date = DateTime.parse(data);
+  return date.millisecondsSinceEpoch.toString();
+}
+
+parseDate(String data, String source) {
+  source = source.toLowerCase();
+  DateTime date = DateFormat(getFormatDate(source), getFormatDateLocale(source))
+      .parse(data);
+  return date.millisecondsSinceEpoch.toString();
+}
+
 @riverpod
 Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     {required String imageUrl,
@@ -84,8 +98,9 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
   String? description;
-  List<ModelChapters> chapters = [];
+  List<Chapter> chapters = [];
   List<String> scanlators = [];
+
   /********/
   /*comick*/
   /********/
@@ -120,9 +135,6 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
             'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
         source: source,
         resDom: false) as String?;
-    // List<String> chapterTitles = [];
-    // List<String> chapterUrls = [];
-    // List<String> chapterDates = [];
     var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
     var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
     for (var chapter in chapterDetailMap.chapters!) {
@@ -131,19 +143,13 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
               ? chapter.groupName!.first
               : ""
           : "");
-      // print(chapter.groupName!);
       chapterUrl.add(
           "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
-      chapterDate.add(chapter.createdAt!.toString().substring(0, 10));
+      chapterDate.add(parseDate(chapter.createdAt!, source));
+
       chapterTitle.add(beautifyChapterName(
           chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
     }
-    // List<String> chapterTitless = [];
-    // for (var i = 0; i < chapterTitles.length; i++) {
-    //   chapterTitle.add(chapterTitles[i]);
-    //   chapterUrl.add(chapterUrls[i]);
-    //   chapterDate.add(chapterDates[i].replaceAll('-', "/"));
-    // }
   }
   /*************/
   /*mangathemesia*/
@@ -272,7 +278,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
             .toList();
         tt.removeWhere((element) => element.contains('{{date}}'));
         for (var ok in tt) {
-          chapterDate.add(ok);
+          chapterDate.add(parseDate(ok, source));
         }
       }
     }
@@ -371,19 +377,14 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
               .toList();
           if (urlz.length > url.length) {
             for (var _ in urlz) {
-              chapterDate.add(DateTime.now()
-                  .toString()
-                  .substring(0, 10)
-                  .replaceAll('-', "/"));
+              chapterDate.add(parseDate(
+                  "${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}",
+                  source));
             }
           } else {
             for (var ok in url) {
-              chapterDate.add(ok
-                  .split(" ")
-                  .first
-                  .toString()
-                  .substring(0, 10)
-                  .replaceAll('.', "/"));
+              chapterDate.add(parseDate(
+                  ok.split(" ").first.toString().substring(0, 10), source));
             }
           }
         }
@@ -479,7 +480,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
           .toList();
 
       for (var da in date) {
-        chapterDate.add(da);
+        chapterDate.add(parseDate(da, source));
       }
     }
   }
@@ -560,7 +561,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
           .map((e) => e.text.trim())
           .toList();
       for (var ok in tt) {
-        chapterDate.add(ok);
+        chapterDate.add(parseDate(ok, source));
       }
     }
     if (dom
@@ -654,7 +655,7 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
         dom.querySelectorAll('.col-4').map((e) => e.text.trim()).toList();
     if (chapterDatee.isNotEmpty) {
       for (var ok in chapterDatee) {
-        chapterDate.add(ok);
+        chapterDate.add(parseDate(ok, source));
       }
     }
   }
@@ -662,14 +663,15 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
       chapterTitle.isNotEmpty &&
       chapterUrl.isNotEmpty) {
     for (var i = 0; i < chapterUrl.length; i++) {
-      chapters.add(ModelChapters(
+      chapters.add(Chapter(
           name: chapterTitle[i],
           url: chapterUrl[i],
           dateUpload: chapterDate[i],
           isBookmarked: false,
           scanlator: scanlators.isEmpty ? "" : scanlators[i],
           isRead: false,
-          lastPageRead: ''));
+          lastPageRead: '',
+          mangaId: null));
     }
   }
 

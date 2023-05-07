@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/views/history/providers/isar_providers.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/widgets/error_text.dart';
 import 'package:mangayomi/views/widgets/listview_widget.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class LibraryListViewWidget extends StatelessWidget {
-  final List<ModelManga> entriesManga;
+  final List<Manga> entriesManga;
   final bool language;
   final bool downloadedChapter;
   final bool continueReaderBtn;
@@ -37,7 +39,7 @@ class LibraryListViewWidget extends StatelessWidget {
               elevation: 0,
               shadowColor: Colors.transparent),
           onPressed: () {
-            context.push('/manga-reader/detail', extra: entriesManga[index]);
+            context.push('/manga-reader/detail', extra: entriesManga[index].id);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -87,21 +89,16 @@ class LibraryListViewWidget extends StatelessWidget {
                                   builder: (context, ref, child) {
                                     List nbrDown = [];
                                     for (var i = 0;
-                                        i <
-                                            entriesManga[index]
-                                                .chapters!
-                                                .length;
+                                        i < entriesManga[index].chapters.length;
                                         i++) {
                                       final entries = ref
                                           .watch(hiveBoxMangaDownloadsProvider)
                                           .values
                                           .where((element) =>
-                                              element
-                                                  .modelManga
-                                                  .chapters![element.index]
-                                                  .name ==
+                                              element.chapterName ==
                                               entriesManga[index]
-                                                  .chapters![i]
+                                                  .chapters
+                                                  .toList()[i]
                                                   .name)
                                           .toList();
                                       if (entries.isNotEmpty &&
@@ -136,7 +133,7 @@ class LibraryListViewWidget extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(right: 3),
                               child: Text(
-                                entriesManga[index].chapters!.length.toString(),
+                                entriesManga[index].chapters.length.toString(),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ),
@@ -169,23 +166,22 @@ class LibraryListViewWidget extends StatelessWidget {
                   if (continueReaderBtn)
                     Consumer(
                       builder: (context, ref, child) {
-                        return ValueListenableBuilder<Box>(
-                          valueListenable:
-                              ref.watch(hiveBoxMangaInfoProvider).listenable(),
-                          builder: (context, value, child) {
-                            final entries = value.get(
-                                "${entriesManga[index].lang}-${entriesManga[index].source}/${entriesManga[index].name}-chapter_index",
-                                defaultValue: '');
+                        final history = ref.watch(getAllHistoryStreamProvider);
+                        return history.when(
+                          data: (data) {
                             final incognitoMode =
                                 ref.watch(incognitoModeStateProvider);
-
+                            final entries = data
+                                .where((element) =>
+                                    element.mangaId == entriesManga[index].id)
+                                .toList();
                             if (entries.isNotEmpty && !incognitoMode) {
                               return GestureDetector(
                                 onTap: () {
                                   pushMangaReaderView(
-                                      context: context,
-                                      modelManga: entriesManga[index],
-                                      index: int.parse(entries.toString()));
+                                    context: context,
+                                    chapter: entries.first.chapter.value!,
+                                  );
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -207,10 +203,7 @@ class LibraryListViewWidget extends StatelessWidget {
                               onTap: () {
                                 pushMangaReaderView(
                                     context: context,
-                                    modelManga: entriesManga[index],
-                                    index:
-                                        entriesManga[index].chapters!.length -
-                                            1);
+                                    chapter: entriesManga[index].chapters.last);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -226,6 +219,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                     )),
                               ),
                             );
+                          },
+                          error: (Object error, StackTrace stackTrace) {
+                            return ErrorText(error);
+                          },
+                          loading: () {
+                            return const ProgressCenter();
                           },
                         );
                       },

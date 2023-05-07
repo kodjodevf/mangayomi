@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
-
 import 'dart:io';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -35,18 +34,21 @@ class StorageProvider {
   }
 
   Future<Directory?> getMangaChapterDirectory(
-      ModelManga modelManga, index) async {
-    String scanlator = modelManga.chapters![index].scanlator!.isNotEmpty
-        ? "${modelManga.chapters![index].scanlator!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}_"
+    Chapter chapter,
+  ) async {
+    final manga = chapter.manga.value!;
+    String scanlator = chapter.scanlator!.isNotEmpty
+        ? "${chapter.scanlator!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}_"
         : "";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/$scanlator${modelManga.chapters![index].name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
+        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/$scanlator${chapter.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
   }
 
-  Future<Directory?> getMangaMainDirectory(ModelManga modelManga, index) async {
+  Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
+    final manga = chapter.manga.value!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${modelManga.source} (${modelManga.lang!.toUpperCase()})/${modelManga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
+        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_')}/");
   }
 }

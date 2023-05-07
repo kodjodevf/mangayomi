@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   go_router: ^6.5.2
   flutter_riverpod: ^2.3.2
   cached_network_image: ^3.2.3
@@ -50,7 +52,7 @@ dependencies:
   photo_view: ^0.14.0
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
-  intl: ^0.18.0
+  intl: ^0.17.0
   google_fonts: ^4.0.3
   url_launcher: ^6.1.10
   package_info_plus: ^3.0.2
@@ -63,6 +65,8 @@ dependencies:
   draggable_menu: ^0.3.0
   fast_cached_network_image: ^1.2.0
   random_string: ^2.3.1
+  isar: 3.1.0+1
+  isar_flutter_libs: 3.1.0+1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -75,6 +79,7 @@ dev_dependencies:
   build_runner: ^2.3.3
   riverpod_generator: ^2.1.4
   flutter_launcher_icons: ^0.13.1
+  isar_generator: 3.1.0+1
   flutter_lints: ^2.0.1
 
 flutter_launcher_icons:

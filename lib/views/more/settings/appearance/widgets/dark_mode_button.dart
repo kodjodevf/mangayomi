@@ -25,9 +25,9 @@ class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
             ref.read(themeModeStateProvider.notifier).setDarkTheme();
           }
         },
-        title: const Text("Theme mode"),
+        title: const Text("Dark mode"),
         subtitle: Text(
-          ref.watch(themeModeStateProvider) ? 'Light' : 'Dark',
+          ref.watch(themeModeStateProvider) ? 'Off' : 'On',
           style: TextStyle(fontSize: 11, color: secondaryColor(context)),
         ),
         trailing: Switch(

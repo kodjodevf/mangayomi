@@ -1,5 +1,5 @@
 class ChapterPageComick {
-  Chapter? chapter;
+  ChapterC? chapter;
   bool? matureContent;
   List<Chapters>? chapters;
   String? canonical;
@@ -20,7 +20,7 @@ class ChapterPageComick {
 
   ChapterPageComick.fromJson(Map<String, dynamic> json) {
     chapter =
-        json['chapter'] != null ? Chapter.fromJson(json['chapter']) : null;
+        json['chapter'] != null ? ChapterC.fromJson(json['chapter']) : null;
 
     matureContent = json['matureContent'];
     if (json['chapters'] != null) {
@@ -38,7 +38,7 @@ class ChapterPageComick {
   }
 }
 
-class Chapter {
+class ChapterC {
   int? id;
   String? chap;
   String? title;
@@ -55,7 +55,7 @@ class Chapter {
   String? lang;
   List<Images>? images;
 
-  Chapter(
+  ChapterC(
       {this.id,
       this.chap,
       this.title,
@@ -72,7 +72,7 @@ class Chapter {
       this.lang,
       this.images});
 
-  Chapter.fromJson(Map<String, dynamic> json) {
+  ChapterC.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     chap = json['chap'];
 

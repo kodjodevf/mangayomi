@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'982e5db78e716894f63b97598709e29098c3eb8f';
+String _$downloadChapterHash() => r'240d09a7cf3726a4b75c2a45ef12a50de20d5a0e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,12 +42,10 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
 
   /// See also [downloadChapter].
   DownloadChapterProvider call({
-    required ModelManga modelManga,
-    required int index,
+    required Chapter chapter,
   }) {
     return DownloadChapterProvider(
-      modelManga: modelManga,
-      index: index,
+      chapter: chapter,
     );
   }
 
@@ -56,8 +54,7 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
     covariant DownloadChapterProvider provider,
   ) {
     return call(
-      modelManga: provider.modelManga,
-      index: provider.index,
+      chapter: provider.chapter,
     );
   }
 
@@ -80,13 +77,11 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
 class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
-    required this.modelManga,
-    required this.index,
+    required this.chapter,
   }) : super.internal(
           (ref) => downloadChapter(
             ref,
-            modelManga: modelManga,
-            index: index,
+            chapter: chapter,
           ),
           from: downloadChapterProvider,
           name: r'downloadChapterProvider',
@@ -99,21 +94,17 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
               DownloadChapterFamily._allTransitiveDependencies,
         );
 
-  final ModelManga modelManga;
-  final int index;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.modelManga == modelManga &&
-        other.index == index;
+    return other is DownloadChapterProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, modelManga.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }

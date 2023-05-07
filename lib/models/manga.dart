@@ -1,0 +1,58 @@
+import 'package:isar/isar.dart';
+import 'package:mangayomi/models/chapter.dart';
+part 'manga.g.dart';
+
+@collection
+@Name("Manga")
+class Manga {
+  Id? id;
+
+  String? name;
+
+  String? link;
+
+  String? imageUrl;
+
+  String? description;
+
+  String? author;
+
+  String? status;
+
+  List<String>? genre;
+
+  bool favorite;
+
+  String? source;
+
+  String? lang;
+
+  int? dateAdded;
+
+  int? lastUpdate;
+
+  String? lastRead;
+
+  List<int>? categories;
+
+  @Backlink(to: "manga")
+  final chapters = IsarLinks<Chapter>();
+
+  Manga({
+    this.id = Isar.autoIncrement,
+    required this.source,
+    required this.author,
+    this.favorite = false,
+    required this.genre,
+    required this.imageUrl,
+    required this.lang,
+    required this.link,
+    required this.name,
+    required this.status,
+    required this.description,
+    this.dateAdded,
+    this.lastUpdate,
+    this.categories,
+    this.lastRead,
+  });
+}

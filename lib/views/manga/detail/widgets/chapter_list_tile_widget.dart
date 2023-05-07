@@ -2,87 +2,64 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/models/manga_reader.dart';
-import 'package:mangayomi/models/model_manga.dart';
+import 'package:intl/intl.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/download/download_page_widget.dart';
 
 class ChapterListTileWidget extends ConsumerWidget {
-  final List<ModelChapters> chapters;
-  final ModelManga modelManga;
-  final bool reverse;
-  final int reverseIndex;
-  final int finalIndex;
-
+  final Chapter chapter;
+  final List<Chapter> chapterList;
   const ChapterListTileWidget({
+    required this.chapterList,
+    required this.chapter,
     super.key,
-    required this.chapters,
-    required this.modelManga,
-    required this.reverse,
-    required this.reverseIndex,
-    required this.finalIndex,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
-    final idx = reverse ? reverseIndex : finalIndex;
-    final chapterNameList = ref.watch(chapterNameListStateProvider);
-    log(chapterNameList.toString());
-    final chapterName = modelManga.chapters![idx].name;
+
     return Container(
-      color: chapterNameList.contains("$chapterName$idx")
+      color: chapterList.contains(chapter)
           ? primaryColor(context).withOpacity(0.4)
           : null,
       child: ListTile(
-        textColor: chapters[finalIndex].isRead
+        textColor: chapter.isRead!
             ? isLight(context)
                 ? Colors.black.withOpacity(0.4)
                 : Colors.white.withOpacity(0.3)
             : null,
-        selectedColor: chapters[finalIndex].isRead
-            ? Colors.white.withOpacity(0.3)
-            : Colors.white,
+        selectedColor:
+            chapter.isRead! ? Colors.white.withOpacity(0.3) : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
-            ref
-                .read(chapterNameListStateProvider.notifier)
-                .update("$chapterName$idx");
-            ref
-                .read(chapterModelStateProvider.notifier)
-                .update(chapters[finalIndex]);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
             ref
                 .read(isLongPressedStateProvider.notifier)
                 .update(!isLongPressed);
           } else {
-            ref
-                .read(chapterNameListStateProvider.notifier)
-                .update("$chapterName$idx");
-            ref
-                .read(chapterModelStateProvider.notifier)
-                .update(chapters[finalIndex]);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
           }
         },
         onTap: () async {
           if (isLongPressed) {
-            ref
-                .read(chapterNameListStateProvider.notifier)
-                .update("$chapterName$idx");
-            ref
-                .read(chapterModelStateProvider.notifier)
-                .update(chapters[finalIndex]);
+            ref.read(chaptersListStateProvider.notifier).update(chapter);
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
           } else {
-            pushMangaReaderView(
-                context: context,
-                modelManga: modelManga,
-                index: reverse ? reverseIndex : finalIndex);
+            pushMangaReaderView(context: context, chapter: chapter);
           }
         },
         title: Row(
           children: [
-            chapters[finalIndex].isBookmarked
+            chapter.isBookmarked!
                 ? Icon(
                     Icons.bookmark,
                     size: 15,
@@ -91,7 +68,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                 : Container(),
             Flexible(
               child: Text(
-                chapters[finalIndex].name!,
+                chapter.name!,
                 style: const TextStyle(fontSize: 13),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -101,16 +78,15 @@ class ChapterListTileWidget extends ConsumerWidget {
         subtitle: Row(
           children: [
             Text(
-              chapters[finalIndex].dateUpload!,
+              dateFormat(chapter.dateUpload!, ref: ref),
               style: const TextStyle(fontSize: 11),
             ),
-            if (chapters[finalIndex].lastPageRead.isNotEmpty &&
-                chapters[finalIndex].lastPageRead != "1")
+            if (chapter.lastPageRead!.isNotEmpty && chapter.lastPageRead != "1")
               Row(
                 children: [
                   const Text(' • '),
                   Text(
-                    "Page ${chapters[finalIndex].lastPageRead}",
+                    "Page ${chapter.lastPageRead}",
                     style: TextStyle(
                         fontSize: 11,
                         color: isLight(context)
@@ -119,15 +95,15 @@ class ChapterListTileWidget extends ConsumerWidget {
                   ),
                 ],
               ),
-            if (chapters[finalIndex].scanlator!.isNotEmpty)
+            if (chapter.scanlator!.isNotEmpty)
               Row(
                 children: [
                   const Text(' • '),
                   Text(
-                    chapters[finalIndex].scanlator!,
+                    chapter.scanlator!,
                     style: TextStyle(
                         fontSize: 11,
-                        color: chapters[finalIndex].isRead
+                        color: chapter.isRead!
                             ? isLight(context)
                                 ? Colors.black.withOpacity(0.4)
                                 : Colors.white.withOpacity(0.3)
@@ -137,9 +113,7 @@ class ChapterListTileWidget extends ConsumerWidget {
               )
           ],
         ),
-        trailing: ref.watch(ChapterPageDownloadsProvider(
-            index: reverse ? reverseIndex : finalIndex,
-            modelManga: modelManga)),
+        trailing: ChapterPageDownload(chapter: chapter),
       ),
     );
   }

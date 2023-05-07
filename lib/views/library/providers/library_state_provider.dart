@@ -1,4 +1,6 @@
-import 'package:mangayomi/models/model_manga.dart';
+import 'dart:developer';
+
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
@@ -63,7 +65,7 @@ enum DisplayType {
 @riverpod
 class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -71,87 +73,21 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   int getType() {
     return ref
         .watch(hiveBoxSettingsProvider)
-        .get("filterMangaDownload", defaultValue: 0);
+        .get("filterMangasDownload", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangaDownload", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangasDownload", type);
     state = type;
   }
 
-  List<ModelManga> getData() {
-    if (getType() == 1) {
-      final data = mangaList.where((element) {
-        List list = [];
-        for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload != null &&
-              modelChapDownload.isDownload == true) {
-            list.add(true);
-          }
-        }
-        return list.isNotEmpty;
-      }).toList();
-
-      return data;
-    } else if (getType() == 2) {
-      final data = mangaList.where((element) {
-        List list = [];
-        for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload == null ||
-              modelChapDownload.isDownload == false) {
-            list.add(true);
-          }
-        }
-        return list.length == element.chapters!.length;
-      }).toList();
-      return data;
-    } else {
-      return mangaList;
-    }
-  }
-
-  List<ModelManga> update() {
+  update() {
     if (state == 0) {
-      final data = mangaList.where((element) {
-        List list = [];
-        for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload != null &&
-              modelChapDownload.isDownload == true) {
-            list.add(true);
-          }
-        }
-        return list.isNotEmpty;
-      }).toList();
       setType(1);
-      return data;
     } else if (state == 1) {
-      final data = mangaList.where((element) {
-        List list = [];
-        for (var chap in element.chapters!) {
-          final modelChapDownload = ref
-              .watch(hiveBoxMangaDownloadsProvider)
-              .get(chap.name, defaultValue: null);
-          if (modelChapDownload == null ||
-              modelChapDownload.isDownload == false) {
-            list.add(true);
-          }
-        }
-        return list.length == element.chapters!.length;
-      }).toList();
       setType(2);
-      return data;
     } else {
       setType(0);
-      return mangaList;
     }
   }
 }
@@ -159,7 +95,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
 @riverpod
 class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -167,20 +103,20 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   int getType() {
     return ref
         .watch(hiveBoxSettingsProvider)
-        .get("filterMangaUnread", defaultValue: 0);
+        .get("filterMangasUnread", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangaUnread", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangasUnread", type);
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+        for (var chap in element.chapters) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -190,12 +126,12 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     } else if (getType() == 2) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isRead) {
+        for (var chap in element.chapters) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       return data;
     } else {
@@ -203,12 +139,12 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     }
   }
 
-  List<ModelManga> update() {
+   update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+        for (var chap in element.chapters) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -219,12 +155,12 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     } else if (state == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isRead) {
+        for (var chap in element.chapters) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       setType(2);
       return data;
@@ -238,7 +174,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
 @riverpod
 class MangaFilterStartedState extends _$MangaFilterStartedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -246,20 +182,20 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
   int getType() {
     return ref
         .watch(hiveBoxSettingsProvider)
-        .get("filterMangaStarted", defaultValue: 0);
+        .get("filterMangasStarted", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangaStarted", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangasStarted", type);
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+        for (var chap in element.chapters) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -269,12 +205,12 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     } else if (getType() == 2) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isRead) {
+        for (var chap in element.chapters) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       return data;
     } else {
@@ -282,12 +218,12 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     }
   }
 
-  List<ModelManga> update() {
+  List<Manga> update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isRead) {
+        for (var chap in element.chapters) {
+          if (!chap.isRead!) {
             list.add(true);
           }
         }
@@ -298,12 +234,12 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     } else if (state == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isRead) {
+        for (var chap in element.chapters) {
+          if (chap.isRead!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       setType(2);
       return data;
@@ -317,7 +253,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
 @riverpod
 class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   @override
-  int build({required List<ModelManga> mangaList}) {
+  int build({required List<Manga> mangaList}) {
     state = getType();
     return getType();
   }
@@ -325,20 +261,20 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   int getType() {
     return ref
         .watch(hiveBoxSettingsProvider)
-        .get("filterMangaBookMarked", defaultValue: 0);
+        .get("filterMangasBookMarked", defaultValue: 0);
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangaBookMarked", type);
+    ref.watch(hiveBoxSettingsProvider).put("filterMangasBookMarked", type);
     state = type;
   }
 
-  List<ModelManga> getData() {
+  List<Manga> getData() {
     if (getType() == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isBookmarked) {
+        for (var chap in element.chapters) {
+          if (chap.isBookmarked!) {
             list.add(true);
           }
         }
@@ -348,12 +284,12 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     } else if (getType() == 2) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isBookmarked) {
+        for (var chap in element.chapters) {
+          if (!chap.isBookmarked!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       return data;
     } else {
@@ -361,12 +297,12 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     }
   }
 
-  List<ModelManga> update() {
+  List<Manga> update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (chap.isBookmarked) {
+        for (var chap in element.chapters) {
+          if (chap.isBookmarked!) {
             list.add(true);
           }
         }
@@ -377,12 +313,12 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     } else if (state == 1) {
       final data = mangaList.where((element) {
         List list = [];
-        for (var chap in element.chapters!) {
-          if (!chap.isBookmarked) {
+        for (var chap in element.chapters) {
+          if (!chap.isBookmarked!) {
             list.add(true);
           }
         }
-        return list.length == element.chapters!.length;
+        return list.length == element.chapters.length;
       }).toList();
       setType(2);
       return data;
@@ -394,28 +330,9 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
 }
 
 @riverpod
-class MangaFilterResultState extends _$MangaFilterResultState {
+class MangasFilterResultState extends _$MangasFilterResultState {
   @override
-  List<ModelManga> build({required List<ModelManga> mangaList}) {
-    final data1 = ref
-        .read(mangaFilterDownloadedStateProvider(mangaList: mangaList).notifier)
-        .getData();
-
-    final data2 = ref
-        .read(mangaFilterUnreadStateProvider(mangaList: data1).notifier)
-        .getData();
-
-    final data3 = ref
-        .read(mangaFilterStartedStateProvider(mangaList: data2).notifier)
-        .getData();
-    final data4 = ref
-        .read(mangaFilterBookmarkedStateProvider(mangaList: data3).notifier)
-        .getData();
-
-    return data4;
-  }
-
-  bool isNotFiltering() {
+  bool build({required List<Manga> mangaList}) {
     final downloadFilterType =
         ref.watch(mangaFilterDownloadedStateProvider(mangaList: mangaList));
     final unreadFilterType =

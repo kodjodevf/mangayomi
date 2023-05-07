@@ -6,11 +6,11 @@ part of 'hive_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$hiveBoxMangaHash() => r'63b8c649d7ac482b84fafa635626249294d4f92d';
+String _$hiveBoxMangaHash() => r'c33563594027369f6f2f83fad7e5279c676ef157';
 
 /// See also [hiveBoxManga].
 @ProviderFor(hiveBoxManga)
-final hiveBoxMangaProvider = AutoDisposeProvider<Box<ModelManga>>.internal(
+final hiveBoxMangaProvider = AutoDisposeProvider<Box<dynamic>>.internal(
   hiveBoxManga,
   name: r'hiveBoxMangaProvider',
   debugGetCreateSourceHash:
@@ -19,39 +19,7 @@ final hiveBoxMangaProvider = AutoDisposeProvider<Box<ModelManga>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef HiveBoxMangaRef = AutoDisposeProviderRef<Box<ModelManga>>;
-String _$hiveBoxMangaInfoHash() => r'638c65c996c731a9764acc5911f9b0ec75b60273';
-
-/// See also [hiveBoxMangaInfo].
-@ProviderFor(hiveBoxMangaInfo)
-final hiveBoxMangaInfoProvider = AutoDisposeProvider<Box<dynamic>>.internal(
-  hiveBoxMangaInfo,
-  name: r'hiveBoxMangaInfoProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hiveBoxMangaInfoHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef HiveBoxMangaInfoRef = AutoDisposeProviderRef<Box<dynamic>>;
-String _$hiveBoxMangaHistoryHash() =>
-    r'dd5c7a3cd8bfceb7b577c56f5ef8755914416c1e';
-
-/// See also [hiveBoxMangaHistory].
-@ProviderFor(hiveBoxMangaHistory)
-final hiveBoxMangaHistoryProvider =
-    AutoDisposeProvider<Box<MangaHistoryModel>>.internal(
-  hiveBoxMangaHistory,
-  name: r'hiveBoxMangaHistoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hiveBoxMangaHistoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef HiveBoxMangaHistoryRef = AutoDisposeProviderRef<Box<MangaHistoryModel>>;
+typedef HiveBoxMangaRef = AutoDisposeProviderRef<Box<dynamic>>;
 String _$hiveBoxReaderModeHash() => r'fabc2f9e6b46c1ba0f1965630ff91f0bdccfeb99';
 
 /// See also [hiveBoxReaderMode].
@@ -67,22 +35,6 @@ final hiveBoxReaderModeProvider = AutoDisposeProvider<Box<ReaderMode>>.internal(
 );
 
 typedef HiveBoxReaderModeRef = AutoDisposeProviderRef<Box<ReaderMode>>;
-String _$hiveBoxMangaFilterHash() =>
-    r'fe7604bc1dd46517a81f669fe11a8898d89aca44';
-
-/// See also [hiveBoxMangaFilter].
-@ProviderFor(hiveBoxMangaFilter)
-final hiveBoxMangaFilterProvider = AutoDisposeProvider<Box<dynamic>>.internal(
-  hiveBoxMangaFilter,
-  name: r'hiveBoxMangaFilterProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hiveBoxMangaFilterHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef HiveBoxMangaFilterRef = AutoDisposeProviderRef<Box<dynamic>>;
 String _$hiveBoxMangaSourceHash() =>
     r'9620aa7034d4efb0cb5a06276db8e308e4b22c83';
 
@@ -132,20 +84,4 @@ final hiveBoxSettingsProvider = AutoDisposeProvider<Box<dynamic>>.internal(
 );
 
 typedef HiveBoxSettingsRef = AutoDisposeProviderRef<Box<dynamic>>;
-String _$hiveBoxCategoriesHash() => r'615bfbed369d04371e7403052fea307f001d61fd';
-
-/// See also [hiveBoxCategories].
-@ProviderFor(hiveBoxCategories)
-final hiveBoxCategoriesProvider =
-    AutoDisposeProvider<Box<CategoriesModel>>.internal(
-  hiveBoxCategories,
-  name: r'hiveBoxCategoriesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hiveBoxCategoriesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef HiveBoxCategoriesRef = AutoDisposeProviderRef<Box<CategoriesModel>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
