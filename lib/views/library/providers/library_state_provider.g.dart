@@ -6,23 +6,6 @@ part of 'library_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$libraryReverseListStateHash() =>
-    r'5d9037f95ffe332019dd1d3d08b0db06d798738c';
-
-/// See also [LibraryReverseListState].
-@ProviderFor(LibraryReverseListState)
-final libraryReverseListStateProvider =
-    AutoDisposeNotifierProvider<LibraryReverseListState, bool>.internal(
-  LibraryReverseListState.new,
-  name: r'libraryReverseListStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$libraryReverseListStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$LibraryReverseListState = AutoDisposeNotifier<bool>;
 String _$libraryDisplayTypeStateHash() =>
     r'746bd6dac3600802c3ab5751b3c1def881274b3a';
 
@@ -642,4 +625,249 @@ final libraryShowContinueReadingButtonStateProvider =
 );
 
 typedef _$LibraryShowContinueReadingButtonState = AutoDisposeNotifier<bool>;
+String _$sortLibraryMangaStateHash() =>
+    r'81abfe6c2841cf7b25301928d88f8af80cd480fd';
+
+/// See also [SortLibraryMangaState].
+@ProviderFor(SortLibraryMangaState)
+final sortLibraryMangaStateProvider =
+    AutoDisposeNotifierProvider<SortLibraryMangaState, dynamic>.internal(
+  SortLibraryMangaState.new,
+  name: r'sortLibraryMangaStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sortLibraryMangaStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SortLibraryMangaState = AutoDisposeNotifier<dynamic>;
+String _$mangasListStateHash() => r'ad1cc419dfd3793bfc8c90f3ce8b7726561dd9ad';
+
+/// See also [MangasListState].
+@ProviderFor(MangasListState)
+final mangasListStateProvider =
+    AutoDisposeNotifierProvider<MangasListState, List<int>>.internal(
+  MangasListState.new,
+  name: r'mangasListStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mangasListStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$MangasListState = AutoDisposeNotifier<List<int>>;
+String _$isLongPressedMangaStateHash() =>
+    r'f77076b0335e92df26a75ea0c338d4214a330184';
+
+/// See also [IsLongPressedMangaState].
+@ProviderFor(IsLongPressedMangaState)
+final isLongPressedMangaStateProvider =
+    AutoDisposeNotifierProvider<IsLongPressedMangaState, bool>.internal(
+  IsLongPressedMangaState.new,
+  name: r'isLongPressedMangaStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$isLongPressedMangaStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
+String _$mangasSetIsReadStateHash() =>
+    r'240a9a3e317e3b2a42fd5babe906699e8869ae0a';
+
+abstract class _$MangasSetIsReadState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final List<int> mangaIds;
+
+  dynamic build({
+    required List<int> mangaIds,
+  });
+}
+
+/// See also [MangasSetIsReadState].
+@ProviderFor(MangasSetIsReadState)
+const mangasSetIsReadStateProvider = MangasSetIsReadStateFamily();
+
+/// See also [MangasSetIsReadState].
+class MangasSetIsReadStateFamily extends Family<dynamic> {
+  /// See also [MangasSetIsReadState].
+  const MangasSetIsReadStateFamily();
+
+  /// See also [MangasSetIsReadState].
+  MangasSetIsReadStateProvider call({
+    required List<int> mangaIds,
+  }) {
+    return MangasSetIsReadStateProvider(
+      mangaIds: mangaIds,
+    );
+  }
+
+  @override
+  MangasSetIsReadStateProvider getProviderOverride(
+    covariant MangasSetIsReadStateProvider provider,
+  ) {
+    return call(
+      mangaIds: provider.mangaIds,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'mangasSetIsReadStateProvider';
+}
+
+/// See also [MangasSetIsReadState].
+class MangasSetIsReadStateProvider
+    extends AutoDisposeNotifierProviderImpl<MangasSetIsReadState, dynamic> {
+  /// See also [MangasSetIsReadState].
+  MangasSetIsReadStateProvider({
+    required this.mangaIds,
+  }) : super.internal(
+          () => MangasSetIsReadState()..mangaIds = mangaIds,
+          from: mangasSetIsReadStateProvider,
+          name: r'mangasSetIsReadStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$mangasSetIsReadStateHash,
+          dependencies: MangasSetIsReadStateFamily._dependencies,
+          allTransitiveDependencies:
+              MangasSetIsReadStateFamily._allTransitiveDependencies,
+        );
+
+  final List<int> mangaIds;
+
+  @override
+  bool operator ==(Object other) {
+    return other is MangasSetIsReadStateProvider && other.mangaIds == mangaIds;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, mangaIds.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant MangasSetIsReadState notifier,
+  ) {
+    return notifier.build(
+      mangaIds: mangaIds,
+    );
+  }
+}
+
+String _$mangasSetUnReadStateHash() =>
+    r'0494afb9a17a0e4346e182cc2944341174348514';
+
+abstract class _$MangasSetUnReadState
+    extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final List<int> mangaIds;
+
+  dynamic build({
+    required List<int> mangaIds,
+  });
+}
+
+/// See also [MangasSetUnReadState].
+@ProviderFor(MangasSetUnReadState)
+const mangasSetUnReadStateProvider = MangasSetUnReadStateFamily();
+
+/// See also [MangasSetUnReadState].
+class MangasSetUnReadStateFamily extends Family<dynamic> {
+  /// See also [MangasSetUnReadState].
+  const MangasSetUnReadStateFamily();
+
+  /// See also [MangasSetUnReadState].
+  MangasSetUnReadStateProvider call({
+    required List<int> mangaIds,
+  }) {
+    return MangasSetUnReadStateProvider(
+      mangaIds: mangaIds,
+    );
+  }
+
+  @override
+  MangasSetUnReadStateProvider getProviderOverride(
+    covariant MangasSetUnReadStateProvider provider,
+  ) {
+    return call(
+      mangaIds: provider.mangaIds,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'mangasSetUnReadStateProvider';
+}
+
+/// See also [MangasSetUnReadState].
+class MangasSetUnReadStateProvider
+    extends AutoDisposeNotifierProviderImpl<MangasSetUnReadState, dynamic> {
+  /// See also [MangasSetUnReadState].
+  MangasSetUnReadStateProvider({
+    required this.mangaIds,
+  }) : super.internal(
+          () => MangasSetUnReadState()..mangaIds = mangaIds,
+          from: mangasSetUnReadStateProvider,
+          name: r'mangasSetUnReadStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$mangasSetUnReadStateHash,
+          dependencies: MangasSetUnReadStateFamily._dependencies,
+          allTransitiveDependencies:
+              MangasSetUnReadStateFamily._allTransitiveDependencies,
+        );
+
+  final List<int> mangaIds;
+
+  @override
+  bool operator ==(Object other) {
+    return other is MangasSetUnReadStateProvider && other.mangaIds == mangaIds;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, mangaIds.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant MangasSetUnReadState notifier,
+  ) {
+    return notifier.build(
+      mangaIds: mangaIds,
+    );
+  }
+}
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

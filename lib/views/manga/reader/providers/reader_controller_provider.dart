@@ -106,6 +106,11 @@ class ReaderController extends _$ReaderController {
   void setMangaHistoryUpdate() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
+      isar.writeTxnSync(() {
+        Manga? manga = chapter.manga.value;
+        manga!.lastRead = DateTime.now().millisecondsSinceEpoch;
+        isar.mangas.putSync(manga);
+      });
       History? history;
 
       final empty =
@@ -205,9 +210,11 @@ class ReaderController extends _$ReaderController {
   int getPageIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaProvider).get(
-          "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
-          defaultValue: 0);
+      return chapter.isRead!
+          ? 0
+          : ref.watch(hiveBoxMangaProvider).get(
+              "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
+              defaultValue: 0);
     }
     return 0;
   }

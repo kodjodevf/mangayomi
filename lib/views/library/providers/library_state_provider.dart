@@ -1,24 +1,9 @@
-import 'dart:developer';
-
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
-
-@riverpod
-class LibraryReverseListState extends _$LibraryReverseListState {
-  @override
-  bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryReverseList', defaultValue: false)!;
-  }
-
-  void set(bool value) {
-    state = value;
-    ref.watch(hiveBoxSettingsProvider).put('libraryReverseList', value);
-  }
-}
 
 @riverpod
 class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
@@ -139,7 +124,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     }
   }
 
-   update() {
+  update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
@@ -423,5 +408,134 @@ class LibraryShowContinueReadingButtonState
     ref
         .watch(hiveBoxSettingsProvider)
         .put('libraryShowContinueReadingButton', value);
+  }
+}
+
+@riverpod
+class SortLibraryMangaState extends _$SortLibraryMangaState {
+  @override
+  dynamic build() {
+    return ref.watch(hiveBoxSettingsProvider).get("sortLibraryMangaMap",
+        defaultValue: {"reverse": false, "index": 2});
+  }
+
+  void update(bool reverse, int index) {
+    var value = {
+      "reverse": state['index'] == index ? !reverse : reverse,
+      "index": index
+    };
+    ref.watch(hiveBoxSettingsProvider).put("sortLibraryMangaMap", value);
+    state = value;
+  }
+
+  void set(int index) {
+    final reverse = isReverse();
+    update(reverse, index);
+  }
+
+  bool isReverse() {
+    return state["reverse"];
+  }
+}
+
+@riverpod
+class MangasListState extends _$MangasListState {
+  @override
+  List<int> build() {
+    return [];
+  }
+
+  void update(Manga value) {
+    var newList = state.reversed.toList();
+    if (newList.contains(value.id)) {
+      newList.remove(value.id);
+    } else {
+      newList.add(value.id!);
+    }
+    if (newList.isEmpty) {
+      ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+    }
+    state = newList;
+  }
+
+  void selectAll(Manga value) {
+    var newList = state.reversed.toList();
+    if (!newList.contains(value.id)) {
+      newList.add(value.id!);
+    }
+
+    state = newList;
+  }
+
+  void selectSome(Manga value) {
+    var newList = state.reversed.toList();
+    if (newList.contains(value.id)) {
+      newList.remove(value.id);
+    } else {
+      newList.add(value.id!);
+    }
+    state = newList;
+  }
+
+  void clear() {
+    state = [];
+  }
+}
+
+@riverpod
+class IsLongPressedMangaState extends _$IsLongPressedMangaState {
+  @override
+  bool build() {
+    return false;
+  }
+
+  void update(bool value) {
+    state = value;
+  }
+}
+
+@riverpod
+class MangasSetIsReadState extends _$MangasSetIsReadState {
+  @override
+  build({required List<int> mangaIds}) {}
+
+  set() {
+    for (var mangaid in mangaIds) {
+      final manga = isar.mangas.getSync(mangaid)!;
+      final chapters = manga.chapters;
+      isar.writeTxnSync(() {
+        for (var chapter in chapters) {
+          chapter.isRead = true;
+          isar.chapters.putSync(chapter..manga.value = manga);
+          chapter.manga.saveSync();
+        }
+      });
+    }
+
+    ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+    ref.read(mangasListStateProvider.notifier).clear();
+  }
+}
+
+@riverpod
+class MangasSetUnReadState extends _$MangasSetUnReadState {
+  @override
+  build({required List<int> mangaIds}) {}
+
+  set() {
+    for (var mangaid in mangaIds) {
+      final manga = isar.mangas.getSync(mangaid)!;
+      final chapters = manga.chapters;
+      isar.writeTxnSync(() {
+        for (var chapter in chapters) {
+          chapter.isRead = false;
+          isar.chapters.putSync(chapter..manga.value = manga);
+          chapter.manga.saveSync();
+        }
+      });
+    }
+
+    ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+    ref.read(mangasListStateProvider.notifier).clear();
   }
 }

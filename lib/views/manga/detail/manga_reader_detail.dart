@@ -25,7 +25,6 @@ class MangaReaderDetail extends ConsumerStatefulWidget {
 }
 
 class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
-  bool _isFavorite = false;
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
@@ -51,60 +50,54 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
       data: (modelManga) {
         return RefreshIndicator(
           onRefresh: () async {
-            if (_isFavorite) {
-              bool isOk = false;
-              ref
-                  .watch(getMangaDetailProvider(
-                          imageUrl: modelManga.imageUrl!,
-                          lang: modelManga.lang!,
-                          title: modelManga.name!,
-                          source: modelManga.source!,
-                          url: modelManga.link!)
-                      .future)
-                  .then((value) async {
-                if (value.chapters.isNotEmpty &&
-                    value.chapters.length > modelManga.chapters.length) {
-                  await isar.writeTxn(() async {
-                    int newChapsIndex =
-                        value.chapters.length - modelManga.chapters.length;
-                    for (var i = 0; i < newChapsIndex; i++) {
-                      final chapters = Chapter(
-                          name: value.chapters[i].name,
-                          url: value.chapters[i].url,
-                          dateUpload: value.chapters[i].dateUpload,
-                          isBookmarked: false,
-                          scanlator: value.chapters[i].scanlator,
-                          isRead: false,
-                          lastPageRead: '',
-                          mangaId: modelManga.id)
-                        ..manga.value = modelManga;
-                      await isar.chapters.put(chapters);
-                      await chapters.manga.save();
-                    }
-                  });
-                }
-                if (mounted) {
-                  setState(() {
-                    isOk = true;
-                  });
-                }
-              });
-              await Future.doWhile(() async {
-                await Future.delayed(const Duration(seconds: 1));
-                if (isOk == true) {
-                  return false;
-                }
-                return true;
-              });
-            }
+            bool isOk = false;
+            ref
+                .watch(getMangaDetailProvider(
+                        imageUrl: modelManga.imageUrl!,
+                        lang: modelManga.lang!,
+                        title: modelManga.name!,
+                        source: modelManga.source!,
+                        url: modelManga.link!)
+                    .future)
+                .then((value) async {
+              if (value.chapters.isNotEmpty &&
+                  value.chapters.length > modelManga.chapters.length) {
+                await isar.writeTxn(() async {
+                  int newChapsIndex =
+                      value.chapters.length - modelManga.chapters.length;
+                  modelManga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
+                  for (var i = 0; i < newChapsIndex; i++) {
+                    final chapters = Chapter(
+                        name: value.chapters[i].name,
+                        url: value.chapters[i].url,
+                        dateUpload: value.chapters[i].dateUpload,
+                        isBookmarked: false,
+                        scanlator: value.chapters[i].scanlator,
+                        isRead: false,
+                        lastPageRead: '',
+                        mangaId: modelManga.id)
+                      ..manga.value = modelManga;
+                    await isar.chapters.put(chapters);
+                    await chapters.manga.save();
+                  }
+                });
+              }
+              if (mounted) {
+                setState(() {
+                  isOk = true;
+                });
+              }
+            });
+            await Future.doWhile(() async {
+              await Future.delayed(const Duration(seconds: 1));
+              if (isOk == true) {
+                return false;
+              }
+              return true;
+            });
           },
           child: MangaDetailsView(
             manga: modelManga!,
-            isFavorite: (value) {
-              setState(() {
-                _isFavorite = value;
-              });
-            },
           ),
         );
       },

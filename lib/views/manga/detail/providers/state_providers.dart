@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -8,26 +5,6 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
-
-@riverpod
-class ChapterModelState extends _$ChapterModelState {
-  @override
-  Chapter build() {
-    return Chapter(
-        name: "",
-        url: "",
-        dateUpload: "",
-        isBookmarked: false,
-        scanlator: "",
-        isRead: false,
-        lastPageRead: "",
-        mangaId: null);
-  }
-
-  void update(Chapter chapters) {
-    state = chapters;
-  }
-}
 
 @riverpod
 class ChaptersListState extends _$ChaptersListState {
@@ -98,10 +75,10 @@ class IsExtendedState extends _$IsExtendedState {
 }
 
 @riverpod
-class ReverseChapterState extends _$ReverseChapterState {
+class SortChapterState extends _$SortChapterState {
   @override
   dynamic build({required int mangaId}) {
-    return ref.watch(hiveBoxSettingsProvider).get("$mangaId-reverseChapterMap",
+    return ref.watch(hiveBoxSettingsProvider).get("$mangaId-sortChapterMap",
         defaultValue: {"reverse": false, "index": 2});
   }
 
@@ -110,33 +87,13 @@ class ReverseChapterState extends _$ReverseChapterState {
       "reverse": state['index'] == index ? !reverse : reverse,
       "index": index
     };
-    ref.watch(hiveBoxSettingsProvider).put("$mangaId-reverseChapterMap", value);
+    ref.watch(hiveBoxSettingsProvider).put("$mangaId-sortChapterMap", value);
     state = value;
   }
 
   void set(int index) {
-    final reverse = ref
-        .read(reverseChapterStateProvider(mangaId: mangaId).notifier)
-        .isReverse();
-    final sortBySource = ref.watch(sortBySourceStateProvider(mangaId: mangaId));
-    final sortByChapterNumber =
-        ref.watch(sortByChapterNumberStateProvider(mangaId: mangaId));
-    final sortByUploadDate =
-        ref.watch(sortByUploadDateStateProvider(mangaId: mangaId));
+    final reverse = isReverse();
     update(reverse, index);
-    if (index == 0) {
-      ref
-          .read(sortBySourceStateProvider(mangaId: mangaId).notifier)
-          .update(!sortBySource);
-    } else if (index == 1) {
-      ref
-          .read(sortByChapterNumberStateProvider(mangaId: mangaId).notifier)
-          .update(!sortByChapterNumber);
-    } else {
-      ref
-          .read(sortByUploadDateStateProvider(mangaId: mangaId).notifier)
-          .update(!sortByUploadDate);
-    }
   }
 
   bool isReverse() {
@@ -260,20 +217,20 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
 Manga mangaWithNewChapValue(
     {required Manga manga, required List<Chapter>? chapters}) {
   return Manga(
-      imageUrl: manga.imageUrl,
-      name: manga.name,
-      genre: manga.genre,
-      author: manga.author,
-      description: manga.description,
-      status: manga.status,
-      favorite: manga.favorite,
-      link: manga.link,
-      source: manga.source,
-      lang: manga.lang,
-      dateAdded: manga.dateAdded,
-      lastUpdate: manga.lastUpdate,
-      categories: manga.categories,
-      lastRead: manga.lastRead);
+    imageUrl: manga.imageUrl,
+    name: manga.name,
+    genre: manga.genre,
+    author: manga.author,
+    description: manga.description,
+    status: manga.status,
+    favorite: manga.favorite,
+    link: manga.link,
+    source: manga.source,
+    lang: manga.lang,
+    dateAdded: manga.dateAdded,
+    lastUpdate: manga.lastUpdate,
+    categories: manga.categories,
+  );
 }
 
 @riverpod
@@ -302,7 +259,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
 
   set() {
     final chapters = ref.watch(chaptersListStateProvider);
-    isar.writeTxnSync(() async {
+    isar.writeTxnSync(() {
       for (var chapter in chapters) {
         chapter.isRead = !chapter.isRead!;
         isar.chapters.putSync(chapter..manga.value = manga);
@@ -334,56 +291,5 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
       }
     }
     ref.read(chaptersListStateProvider.notifier).clear();
-  }
-}
-
-@riverpod
-class SortByUploadDateState extends _$SortByUploadDateState {
-  @override
-  bool build({required int mangaId}) {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-sortByUploadDateChapter", defaultValue: false);
-  }
-
-  void update(bool value) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-sortByUploadDateChapter", value);
-    state = value;
-  }
-}
-
-@riverpod
-class SortBySourceState extends _$SortBySourceState {
-  @override
-  bool build({required int mangaId}) {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-sortBySourceChapter", defaultValue: false);
-  }
-
-  void update(bool value) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-sortBySourceChapter", value);
-    state = value;
-  }
-}
-
-@riverpod
-class SortByChapterNumberState extends _$SortByChapterNumberState {
-  @override
-  bool build({required int mangaId}) {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-sortByChapterNumberChapter", defaultValue: false);
-  }
-
-  void update(bool value) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-sortByChapterNumberChapter", value);
-    state = value;
   }
 }
