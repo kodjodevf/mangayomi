@@ -6,22 +6,6 @@ part of 'state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chapterModelStateHash() => r'e1b191e6176992d1fc5f04dcb1e25e211f8a69a7';
-
-/// See also [ChapterModelState].
-@ProviderFor(ChapterModelState)
-final chapterModelStateProvider =
-    AutoDisposeNotifierProvider<ChapterModelState, Chapter>.internal(
-  ChapterModelState.new,
-  name: r'chapterModelStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$chapterModelStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ChapterModelState = AutoDisposeNotifier<Chapter>;
 String _$chaptersListStateHash() => r'251609214d127964e84d4616d2c3a7afa4fd80b4';
 
 /// See also [ChaptersListState].
@@ -686,7 +670,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'a8436a6cdac49c241483b4260f41c7b4045c060d';
+    r'b60dfd136e52743fdde9067d3e366d90d49dd9b4';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<dynamic> {
