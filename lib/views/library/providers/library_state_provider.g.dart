@@ -6,6 +6,23 @@ part of 'library_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$libraryReverseListStateHash() =>
+    r'5d9037f95ffe332019dd1d3d08b0db06d798738c';
+
+/// See also [LibraryReverseListState].
+@ProviderFor(LibraryReverseListState)
+final libraryReverseListStateProvider =
+    AutoDisposeNotifierProvider<LibraryReverseListState, bool>.internal(
+  LibraryReverseListState.new,
+  name: r'libraryReverseListStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryReverseListStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryReverseListState = AutoDisposeNotifier<bool>;
 String _$libraryDisplayTypeStateHash() =>
     r'746bd6dac3600802c3ab5751b3c1def881274b3a';
 
@@ -625,21 +642,4 @@ final libraryShowContinueReadingButtonStateProvider =
 );
 
 typedef _$LibraryShowContinueReadingButtonState = AutoDisposeNotifier<bool>;
-String _$sortLibraryMangaStateHash() =>
-    r'81abfe6c2841cf7b25301928d88f8af80cd480fd';
-
-/// See also [SortLibraryMangaState].
-@ProviderFor(SortLibraryMangaState)
-final sortLibraryMangaStateProvider =
-    AutoDisposeNotifierProvider<SortLibraryMangaState, dynamic>.internal(
-  SortLibraryMangaState.new,
-  name: r'sortLibraryMangaStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sortLibraryMangaStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$SortLibraryMangaState = AutoDisposeNotifier<dynamic>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

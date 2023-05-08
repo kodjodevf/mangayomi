@@ -98,10 +98,10 @@ class IsExtendedState extends _$IsExtendedState {
 }
 
 @riverpod
-class SortChapterState extends _$SortChapterState {
+class ReverseChapterState extends _$ReverseChapterState {
   @override
   dynamic build({required int mangaId}) {
-    return ref.watch(hiveBoxSettingsProvider).get("$mangaId-sortChapterMap",
+    return ref.watch(hiveBoxSettingsProvider).get("$mangaId-reverseChapterMap",
         defaultValue: {"reverse": false, "index": 2});
   }
 
@@ -110,13 +110,33 @@ class SortChapterState extends _$SortChapterState {
       "reverse": state['index'] == index ? !reverse : reverse,
       "index": index
     };
-    ref.watch(hiveBoxSettingsProvider).put("$mangaId-sortChapterMap", value);
+    ref.watch(hiveBoxSettingsProvider).put("$mangaId-reverseChapterMap", value);
     state = value;
   }
 
   void set(int index) {
-    final reverse = isReverse();
+    final reverse = ref
+        .read(reverseChapterStateProvider(mangaId: mangaId).notifier)
+        .isReverse();
+    final sortBySource = ref.watch(sortBySourceStateProvider(mangaId: mangaId));
+    final sortByChapterNumber =
+        ref.watch(sortByChapterNumberStateProvider(mangaId: mangaId));
+    final sortByUploadDate =
+        ref.watch(sortByUploadDateStateProvider(mangaId: mangaId));
     update(reverse, index);
+    if (index == 0) {
+      ref
+          .read(sortBySourceStateProvider(mangaId: mangaId).notifier)
+          .update(!sortBySource);
+    } else if (index == 1) {
+      ref
+          .read(sortByChapterNumberStateProvider(mangaId: mangaId).notifier)
+          .update(!sortByChapterNumber);
+    } else {
+      ref
+          .read(sortByUploadDateStateProvider(mangaId: mangaId).notifier)
+          .update(!sortByUploadDate);
+    }
   }
 
   bool isReverse() {
@@ -240,20 +260,20 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
 Manga mangaWithNewChapValue(
     {required Manga manga, required List<Chapter>? chapters}) {
   return Manga(
-    imageUrl: manga.imageUrl,
-    name: manga.name,
-    genre: manga.genre,
-    author: manga.author,
-    description: manga.description,
-    status: manga.status,
-    favorite: manga.favorite,
-    link: manga.link,
-    source: manga.source,
-    lang: manga.lang,
-    dateAdded: manga.dateAdded,
-    lastUpdate: manga.lastUpdate,
-    categories: manga.categories,
-  );
+      imageUrl: manga.imageUrl,
+      name: manga.name,
+      genre: manga.genre,
+      author: manga.author,
+      description: manga.description,
+      status: manga.status,
+      favorite: manga.favorite,
+      link: manga.link,
+      source: manga.source,
+      lang: manga.lang,
+      dateAdded: manga.dateAdded,
+      lastUpdate: manga.lastUpdate,
+      categories: manga.categories,
+      lastRead: manga.lastRead);
 }
 
 @riverpod
@@ -314,5 +334,56 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
       }
     }
     ref.read(chaptersListStateProvider.notifier).clear();
+  }
+}
+
+@riverpod
+class SortByUploadDateState extends _$SortByUploadDateState {
+  @override
+  bool build({required int mangaId}) {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get("$mangaId-sortByUploadDateChapter", defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref
+        .watch(hiveBoxSettingsProvider)
+        .put("$mangaId-sortByUploadDateChapter", value);
+    state = value;
+  }
+}
+
+@riverpod
+class SortBySourceState extends _$SortBySourceState {
+  @override
+  bool build({required int mangaId}) {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get("$mangaId-sortBySourceChapter", defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref
+        .watch(hiveBoxSettingsProvider)
+        .put("$mangaId-sortBySourceChapter", value);
+    state = value;
+  }
+}
+
+@riverpod
+class SortByChapterNumberState extends _$SortByChapterNumberState {
+  @override
+  bool build({required int mangaId}) {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get("$mangaId-sortByChapterNumberChapter", defaultValue: false);
+  }
+
+  void update(bool value) {
+    ref
+        .watch(hiveBoxSettingsProvider)
+        .put("$mangaId-sortByChapterNumberChapter", value);
+    state = value;
   }
 }

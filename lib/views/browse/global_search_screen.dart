@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
@@ -183,48 +180,24 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
       data: (data) {
         return GestureDetector(
           onTap: () async {
-            final manga = Manga(
+            final modelManga = Manga(
                 imageUrl: data.imageUrl,
                 name: data.name,
                 genre: data.genre,
                 author: data.author,
                 status: data.status,
                 description: data.description,
+                favorite: false,
                 link: data.url,
                 source: data.source,
                 lang: widget.lang,
-                lastUpdate: DateTime.now().millisecondsSinceEpoch);
-
-            final empty = isar.mangas
-                .filter()
-                .langEqualTo(widget.lang)
-                .nameEqualTo(data.name)
-                .sourceEqualTo(data.source)
-                .isEmptySync();
-            if (empty) {
-              isar.writeTxnSync(() {
-                isar.mangas.putSync(manga);
-                for (var i = 0; i < data.chapters.length; i++) {
-                  final chapters = Chapter(
-                      name: data.chapters[i].name,
-                      url: data.chapters[i].url,
-                      dateUpload: data.chapters[i].dateUpload,
-                      scanlator: data.chapters[i].scanlator,
-                      mangaId: manga.id)
-                    ..manga.value = manga;
-                  isar.chapters.putSync(chapters);
-                  chapters.manga.saveSync();
-                }
-              });
+                dateAdded: DateTime.now().microsecondsSinceEpoch,
+                lastUpdate: DateTime.now().microsecondsSinceEpoch,
+                categories: null,
+                lastRead: '');
+            if (mounted) {
+              context.push('/manga-reader/detail', extra: modelManga);
             }
-            final mangaId = isar.mangas
-                .filter()
-                .langEqualTo(widget.lang)
-                .nameEqualTo(data.name)
-                .sourceEqualTo(data.source)
-                .findFirstSync()!
-                .id!;
-            context.push('/manga-reader/detail', extra: mangaId);
           },
           child: SizedBox(
             width: 90,

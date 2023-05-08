@@ -60,7 +60,7 @@ const MangaSchema = CollectionSchema(
     r'lastRead': PropertySchema(
       id: 8,
       name: r'lastRead',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'lastUpdate': PropertySchema(
       id: 9,
@@ -159,6 +159,12 @@ int _mangaEstimateSize(
     }
   }
   {
+    final value = object.lastRead;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.link;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -199,7 +205,7 @@ void _mangaSerialize(
   writer.writeStringList(offsets[5], object.genre);
   writer.writeString(offsets[6], object.imageUrl);
   writer.writeString(offsets[7], object.lang);
-  writer.writeLong(offsets[8], object.lastRead);
+  writer.writeString(offsets[8], object.lastRead);
   writer.writeLong(offsets[9], object.lastUpdate);
   writer.writeString(offsets[10], object.link);
   writer.writeString(offsets[11], object.name);
@@ -223,7 +229,7 @@ Manga _mangaDeserialize(
     id: id,
     imageUrl: reader.readStringOrNull(offsets[6]),
     lang: reader.readStringOrNull(offsets[7]),
-    lastRead: reader.readLongOrNull(offsets[8]),
+    lastRead: reader.readStringOrNull(offsets[8]),
     lastUpdate: reader.readLongOrNull(offsets[9]),
     link: reader.readStringOrNull(offsets[10]),
     name: reader.readStringOrNull(offsets[11]),
@@ -257,7 +263,7 @@ P _mangaDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readLongOrNull(offset)) as P;
     case 10:
@@ -1491,46 +1497,54 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'lastRead',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'lastRead',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'lastRead',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1539,6 +1553,75 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'lastRead',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'lastRead',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'lastRead',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'lastRead',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastRead',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> lastReadIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'lastRead',
+        value: '',
       ));
     });
   }
@@ -2608,9 +2691,10 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QDistinct> distinctByLastRead() {
+  QueryBuilder<Manga, Manga, QDistinct> distinctByLastRead(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'lastRead');
+      return query.addDistinctBy(r'lastRead', caseSensitive: caseSensitive);
     });
   }
 
@@ -2704,7 +2788,7 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Manga, int?, QQueryOperations> lastReadProperty() {
+  QueryBuilder<Manga, String?, QQueryOperations> lastReadProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastRead');
     });

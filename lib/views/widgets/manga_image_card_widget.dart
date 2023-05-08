@@ -28,16 +28,16 @@ class MangaImageCardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final manga = Manga(
-            imageUrl: getMangaDetailModel!.imageUrl,
-            name: getMangaDetailModel!.name,
-            genre: getMangaDetailModel!.genre,
-            author: getMangaDetailModel!.author,
-            status: getMangaDetailModel!.status,
-            description: getMangaDetailModel!.description,
-            link: getMangaDetailModel!.url,
-            source: getMangaDetailModel!.source,
-            lang: lang,
-            lastUpdate: DateTime.now().millisecondsSinceEpoch);
+          imageUrl: getMangaDetailModel!.imageUrl,
+          name: getMangaDetailModel!.name,
+          genre: getMangaDetailModel!.genre,
+          author: getMangaDetailModel!.author,
+          status: getMangaDetailModel!.status,
+          description: getMangaDetailModel!.description,
+          link: getMangaDetailModel!.url,
+          source: getMangaDetailModel!.source,
+          lang: lang,
+        );
 
         final empty = isar.mangas
             .filter()

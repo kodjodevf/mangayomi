@@ -1,7 +1,24 @@
+import 'dart:developer';
+
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
+
+@riverpod
+class LibraryReverseListState extends _$LibraryReverseListState {
+  @override
+  bool build() {
+    return ref
+        .watch(hiveBoxSettingsProvider)
+        .get('libraryReverseList', defaultValue: false)!;
+  }
+
+  void set(bool value) {
+    state = value;
+    ref.watch(hiveBoxSettingsProvider).put('libraryReverseList', value);
+  }
+}
 
 @riverpod
 class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
@@ -122,7 +139,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     }
   }
 
-  update() {
+   update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];
@@ -406,32 +423,5 @@ class LibraryShowContinueReadingButtonState
     ref
         .watch(hiveBoxSettingsProvider)
         .put('libraryShowContinueReadingButton', value);
-  }
-}
-
-@riverpod
-class SortLibraryMangaState extends _$SortLibraryMangaState {
-  @override
-  dynamic build() {
-    return ref.watch(hiveBoxSettingsProvider).get("sortLibraryMangaMap",
-        defaultValue: {"reverse": false, "index": 2});
-  }
-
-  void update(bool reverse, int index) {
-    var value = {
-      "reverse": state['index'] == index ? !reverse : reverse,
-      "index": index
-    };
-    ref.watch(hiveBoxSettingsProvider).put("sortLibraryMangaMap", value);
-    state = value;
-  }
-
-  void set(int index) {
-    final reverse = isReverse();
-    update(reverse, index);
-  }
-
-  bool isReverse() {
-    return state["reverse"];
   }
 }
