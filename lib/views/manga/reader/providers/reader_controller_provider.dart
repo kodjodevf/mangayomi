@@ -210,11 +210,9 @@ class ReaderController extends _$ReaderController {
   int getPageIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return chapter.isRead!
-          ? 0
-          : ref.watch(hiveBoxMangaProvider).get(
-              "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
-              defaultValue: 0);
+      return ref.watch(hiveBoxMangaProvider).get(
+          "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
+          defaultValue: 0);
     }
     return 0;
   }

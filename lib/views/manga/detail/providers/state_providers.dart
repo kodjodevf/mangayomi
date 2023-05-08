@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -5,6 +8,26 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
+
+@riverpod
+class ChapterModelState extends _$ChapterModelState {
+  @override
+  Chapter build() {
+    return Chapter(
+        name: "",
+        url: "",
+        dateUpload: "",
+        isBookmarked: false,
+        scanlator: "",
+        isRead: false,
+        lastPageRead: "",
+        mangaId: null);
+  }
+
+  void update(Chapter chapters) {
+    state = chapters;
+  }
+}
 
 @riverpod
 class ChaptersListState extends _$ChaptersListState {
@@ -259,7 +282,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
 
   set() {
     final chapters = ref.watch(chaptersListStateProvider);
-    isar.writeTxnSync(() {
+    isar.writeTxnSync(() async {
       for (var chapter in chapters) {
         chapter.isRead = !chapter.isRead!;
         isar.chapters.putSync(chapter..manga.value = manga);

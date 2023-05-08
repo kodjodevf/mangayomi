@@ -40,17 +40,19 @@ class ChapterListTileWidget extends ConsumerWidget {
         onLongPress: () {
           if (!isLongPressed) {
             ref.read(chaptersListStateProvider.notifier).update(chapter);
-
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
             ref
                 .read(isLongPressedStateProvider.notifier)
                 .update(!isLongPressed);
           } else {
             ref.read(chaptersListStateProvider.notifier).update(chapter);
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
           }
         },
         onTap: () async {
           if (isLongPressed) {
             ref.read(chaptersListStateProvider.notifier).update(chapter);
+            ref.read(chapterModelStateProvider.notifier).update(chapter);
           } else {
             pushMangaReaderView(context: context, chapter: chapter);
           }
@@ -60,7 +62,7 @@ class ChapterListTileWidget extends ConsumerWidget {
             chapter.isBookmarked!
                 ? Icon(
                     Icons.bookmark,
-                    size: 16,
+                    size: 15,
                     color: primaryColor(context),
                   )
                 : Container(),
@@ -79,7 +81,6 @@ class ChapterListTileWidget extends ConsumerWidget {
               dateFormat(chapter.dateUpload!, ref: ref),
               style: const TextStyle(fontSize: 11),
             ),
-            if(!chapter.isRead!)
             if (chapter.lastPageRead!.isNotEmpty && chapter.lastPageRead != "1")
               Row(
                 children: [

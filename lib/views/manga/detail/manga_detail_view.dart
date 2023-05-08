@@ -164,33 +164,28 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       required List<Chapter> chapterList,
       required bool isLongPressed}) {
     return Stack(
-      children: [
-        Consumer(
-          builder: (context, ref, child) {
-            return Positioned(
-              top: 0,
-              child: ref.watch(offetProvider) == 0.0
-                  ? Stack(
-                      children: [
-                        cachedNetworkImage(
-                            headers: headers(widget.manga!.source!),
-                            imageUrl: widget.manga!.imageUrl!,
-                            width: mediaWidth(context, 1),
-                            height: 410,
-                            fit: BoxFit.cover),
-                        Container(
-                          width: mediaWidth(context, 1),
-                          height: 465,
-                          color: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.9),
-                        ),
-                      ],
-                    )
-                  : Container(),
-            );
-          },
-        ),
+      children: [Consumer(builder:(context, ref, child) {
+        return Positioned(
+            top: 0,
+            child:ref.watch(offetProvider) == 0.0? Stack(
+              children: [
+                cachedNetworkImage(
+                    headers: headers(widget.manga!.source!),
+                    imageUrl: widget.manga!.imageUrl!,
+                    width: mediaWidth(context, 1),
+                    height: 410,
+                    fit: BoxFit.cover),
+                Container(
+                  width: mediaWidth(context, 1),
+                  height: 465,
+                  color: Theme.of(context)
+                      .scaffoldBackgroundColor
+                      .withOpacity(0.9),
+                ),
+              ],
+            ):Container(),);
+      },),
+        
         Scaffold(
             backgroundColor: Colors.transparent,
             extendBodyBehindAppBar: true,
@@ -288,68 +283,64 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     color:
                                         isNotFiltering ? null : Colors.yellow,
                                   )),
-                              PopupMenuButton(itemBuilder: (context) {
-                                return [
-                                  if (widget.manga!.favorite)
-                                    const PopupMenuItem<int>(
-                                        value: 0,
-                                        child: Text("Edit categories")),
-                                  if (widget.manga!.favorite)
-                                    const PopupMenuItem<int>(
-                                        value: 0, child: Text("Migrate")),
-                                  const PopupMenuItem<int>(
-                                      value: 0, child: Text("Share")),
-                                ];
-                              }, onSelected: (value) {
-                                if (value == 0) {
-                                  context.push("/categories");
-                                }
-                              }),
+                              PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return [
+                                      if (widget.manga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text("Edit categories")),
+                                      if (widget.manga!.favorite)
+                                        const PopupMenuItem<int>(
+                                            value: 0, child: Text("Migrate")),
+                                      const PopupMenuItem<int>(
+                                          value: 0, child: Text("Share")),
+                                    ];
+                                  },
+                                  onSelected: (value) {}),
                             ],
                           );
                   },
                 )),
-            body: SafeArea(
-              child: DraggableScrollbar(
-                  padding: const EdgeInsets.only(right: 7),
-                  heightScrollThumb: 48.0,
-                  backgroundColor: primaryColor(context),
-                  scrollThumbBuilder:
-                      (backgroundColor, thumbAnimation, labelAnimation, height,
-                          {labelConstraints, labelText}) {
-                    return FadeTransition(
-                      opacity: thumbAnimation,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: backgroundColor,
-                            borderRadius: BorderRadius.circular(20)),
-                        height: height,
-                        width: 8.0,
-                      ),
-                    );
-                  },
-                  scrollbarTimeToFade: const Duration(seconds: 2),
-                  controller: _scrollController,
-                  child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(top: 0, bottom: 60),
-                      itemCount: chapters.length + 1,
-                      itemBuilder: (context, index) {
-                        int finalIndex = index - 1;
-                        if (index == 0) {
-                          return _bodyContainer(chapterLength: chapters.length);
-                        }
-                        int reverseIndex = chapters.length -
-                            chapters.reversed.toList().indexOf(
-                                chapters.reversed.toList()[finalIndex]) -
-                            1;
-                        final indexx = reverse ? reverseIndex : finalIndex;
-                        return ChapterListTileWidget(
-                          chapter: chapters[indexx],
-                          chapterList: chapterList,
-                        );
-                      })),
-            ),
+            body: DraggableScrollbar(
+                heightScrollThumb: 48.0,
+                backgroundColor: primaryColor(context),
+                scrollThumbBuilder:
+                    (backgroundColor, thumbAnimation, labelAnimation, height,
+                        {labelConstraints, labelText}) {
+                  return FadeTransition(
+                    opacity: thumbAnimation,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: backgroundColor,
+                          borderRadius: BorderRadius.circular(20)),
+                      height: height,
+                      width: 8.0,
+                    ),
+                  );
+                },
+                scrollbarTimeToFade: const Duration(seconds: 2),
+                controller: _scrollController,
+                child: ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(top: 0, bottom: 60),
+                    itemCount: chapters.length + 1,
+                    itemBuilder: (context, index) {
+                      int finalIndex = index - 1;
+                      if (index == 0) {
+                        return _bodyContainer(chapterLength: chapters.length);
+                      }
+                      int reverseIndex = chapters.length -
+                          chapters.reversed
+                              .toList()
+                              .indexOf(chapters.reversed.toList()[finalIndex]) -
+                          1;
+                      final indexx = reverse ? reverseIndex : finalIndex;
+                      return ChapterListTileWidget(
+                        chapter: chapters[indexx],
+                        chapterList: chapterList,
+                      );
+                    })),
             bottomNavigationBar: AnimatedContainer(
               curve: Curves.easeIn,
               decoration: BoxDecoration(
@@ -368,10 +359,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       height: 70,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent),
                           onPressed: () {
                             ref
                                 .read(chapterSetIsBookmarkStateProvider(
@@ -379,11 +368,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     .notifier)
                                 .set();
                           },
-                          child: Icon(Icons.bookmark_add_outlined,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .color)),
+                          child: const Icon(Icons.bookmark_add_outlined)),
                     ),
                   ),
                   Expanded(
@@ -391,10 +376,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       height: 70,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent),
                           onPressed: () {
                             ref
                                 .read(chapterSetIsReadStateProvider(
@@ -402,11 +385,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     .notifier)
                                 .set();
                           },
-                          child: Icon(Icons.done_all_sharp,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .color!)),
+                          child: const Icon(Icons.done_all_sharp)),
                     ),
                   ),
                   Expanded(
@@ -414,10 +393,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       height: 70,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent),
                           onPressed: () {
                             ref
                                 .read(chapterSetDownloadStateProvider(
@@ -425,11 +402,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     .notifier)
                                 .set();
                           },
-                          child: Icon(
-                            Icons.download_outlined,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge!.color!,
-                          )),
+                          child: const Icon(Icons.download_outlined)),
                     ),
                   )
                 ],
@@ -580,156 +553,165 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   Widget _bodyContainer({required int chapterLength}) {
-    return Stack(
+    return Column(
       children: [
-        Positioned(
-            top: 0,
-            child: cachedNetworkImage(
-                headers: headers(widget.manga!.source!),
-                imageUrl: widget.manga!.imageUrl!,
-                width: mediaWidth(context, 1),
-                height: 250,
-                fit: BoxFit.cover)),
-        Container(
-          height: 300,
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-                Color(Theme.of(context).scaffoldBackgroundColor.value)
-              ],
-              stops: const [0, .35],
-            ),
-          ),
+        SizedBox(
+          height: AppBar().preferredSize.height,
         ),
-        Column(
+        Stack(
           children: [
-            SizedBox(
-              height: 180,
-              child: Stack(
-                children: [
-                  _titles(),
-                  _coverCard(),
-                ],
+            Positioned(
+                top: 0,
+                child: cachedNetworkImage(
+                    headers: headers(widget.manga!.source!),
+                    imageUrl: widget.manga!.imageUrl!,
+                    width: mediaWidth(context, 1),
+                    height: 300,
+                    fit: BoxFit.cover)),
+            Container(
+              height: 300,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+                    Color(Theme.of(context).scaffoldBackgroundColor.value)
+                  ],
+                  stops: const [0, .35],
+                ),
               ),
             ),
-            _actionFavouriteAndWebview(),
-            Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (widget.manga!.description != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ReadMoreWidget(
-                        text: widget.manga!.description!,
-                        onChanged: (value) {
-                          setState(() {
-                            _expanded = value;
-                          });
-                        },
-                      ),
-                    ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: _expanded
-                          ? Wrap(
-                              children: [
-                                for (var i = 0;
-                                    i < widget.manga!.genre!.length;
-                                    i++)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 2, right: 2, bottom: 5),
-                                    child: SizedBox(
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor:
-                                                Colors.grey.withOpacity(0.2),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5))),
-                                        onPressed: () {},
-                                        child: Text(
-                                          widget.manga!.genre![i],
-                                          style: TextStyle(
-                                              fontSize: 11.5,
-                                              color: isLight(context)
-                                                  ? Colors.black
-                                                  : Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            )
-                          : SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  for (var i = 0;
-                                      i < widget.manga!.genre!.length;
-                                      i++)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 2, right: 2, bottom: 5),
-                                      child: SizedBox(
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor:
-                                                  Colors.grey.withOpacity(0.2),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5))),
-                                          onPressed: () {},
-                                          child: Text(
-                                            widget.manga!.genre![i],
-                                            style: TextStyle(
-                                                fontSize: 11.5,
-                                                color: isLight(context)
-                                                    ? Colors.black
-                                                    : Colors.white),
+            Column(
+              children: [
+                SizedBox(
+                  height: 180,
+                  child: Stack(
+                    children: [
+                      _titles(),
+                      _coverCard(),
+                    ],
+                  ),
+                ),
+                _actionConstructor(),
+                Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (widget.manga!.description != null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ReadMoreWidget(
+                            text: widget.manga!.description!,
+                            onChanged: (value) {
+                              setState(() {
+                                _expanded = value;
+                              });
+                            },
+                          ),
+                        ),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: _expanded
+                              ? Wrap(
+                                  children: [
+                                    for (var i = 0;
+                                        i < widget.manga!.genre!.length;
+                                        i++)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 2, right: 2, bottom: 5),
+                                        child: SizedBox(
+                                          height: 30,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor: Colors.grey
+                                                    .withOpacity(0.2),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5))),
+                                            onPressed: () {},
+                                            child: Text(
+                                              widget.manga!.genre![i],
+                                              style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  color: isLight(context)
+                                                      ? Colors.black
+                                                      : Colors.white),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                            )),
-                  Column(
-                    children: [
-                      //Description
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                '$chapterLength chapters',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        ),
+                                  ],
+                                )
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var i = 0;
+                                          i < widget.manga!.genre!.length;
+                                          i++)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 2, right: 2, bottom: 5),
+                                          child: SizedBox(
+                                            height: 30,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor: Colors.grey
+                                                      .withOpacity(0.2),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5))),
+                                              onPressed: () {},
+                                              child: Text(
+                                                widget.manga!.genre![i],
+                                                style: TextStyle(
+                                                    fontSize: 11.5,
+                                                    color: isLight(context)
+                                                        ? Colors.black
+                                                        : Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                )),
+                      // log
+                      Column(
+                        children: [
+                          //Description
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    '$chapterLength chapters',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
@@ -740,7 +722,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _coverCard() {
     return Positioned(
       top: 20,
-      left: 13,
+      left: 20,
       child: GestureDetector(
         onTap: () {},
         child: SizedBox(
@@ -763,11 +745,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _titles() {
     return Positioned(
       top: 60,
-      left: 23,
+      left: 30,
       child: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 100),
-        width: MediaQuery.of(context).size.width * 1,
+        width: MediaQuery.of(context).size.width * 0.9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -782,7 +764,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  Widget _actionFavouriteAndWebview() {
+  Widget _actionConstructor() {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Row(

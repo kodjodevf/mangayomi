@@ -338,12 +338,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             width: 15,
                           ),
                           TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 final model = widget.manga;
-                                isar.writeTxnSync(() {
+                                await isar.writeTxn(() async {
                                   model.favorite = true;
                                   model.categories = categoryIds;
-                                  isar.mangas.putSync(model);
+                                  await isar.mangas.put(model);
                                 });
                                 if (mounted) {
                                   Navigator.pop(context);
