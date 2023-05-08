@@ -6,7 +6,6 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/views/history/providers/isar_providers.dart';
-import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -20,10 +19,8 @@ import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
-  final Function(bool) isFavorite;
   const MangaDetailsView({
     super.key,
-    required this.isFavorite,
     required this.manga,
   });
 
@@ -32,35 +29,9 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 }
 
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
-  bool isFavorite = false;
-  bool _isOk = false;
-  bool isGplay = false;
-  _checkFavorite(bool i) async {
-    if (!_isOk) {
-      await Future.delayed(const Duration(milliseconds: 30));
-      if (mounted) {
-        setState(() {
-          widget.isFavorite(i);
-          isFavorite = i;
-          _isOk = true;
-        });
-      }
-    }
-  }
-
-  _setFavorite(bool i) async {
-    if (mounted) {
-      setState(() {
-        widget.isFavorite(i);
-        isFavorite = i;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(getAllHistoryStreamProvider);
-    _checkFavorite(widget.manga.favorite);
     return Scaffold(
       floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
@@ -113,7 +84,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                       duration:
                                           const Duration(milliseconds: 200),
                                       child: const Text(
-                                        "Continue",
+                                        "Resume",
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.white),
@@ -224,12 +195,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       backgroundColor:
                           Theme.of(context).scaffoldBackgroundColor,
                       elevation: 0),
-                  onPressed: () async {
-                    _setFavorite(false);
+                  onPressed: () {
                     final model = widget.manga;
-                    await isar.writeTxn(() async {
+                    isar.writeTxnSync(() {
                       model.favorite = false;
-                      await isar.mangas.put(model);
+                      model.dateAdded = 0;
+                      isar.mangas.putSync(model);
                     });
                   },
                   child: Column(
@@ -264,11 +235,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     if (checkCategoryList) {
                       _openCategory(widget.manga);
                     } else {
-                      _setFavorite(true);
                       final model = widget.manga;
-                      await isar.writeTxn(() async {
+                      isar.writeTxnSync(() {
                         model.favorite = true;
-                        await isar.mangas.put(model);
+                        model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                        isar.mangas.putSync(model);
                       });
                     }
                   },
@@ -368,7 +339,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           ),
                           TextButton(
                               onPressed: () async {
-                                _setFavorite(true);
                                 final model = widget.manga;
                                 await isar.writeTxn(() async {
                                   model.favorite = true;

@@ -31,7 +31,7 @@ class Manga {
 
   int? lastUpdate;
 
-  String? lastRead;
+  int? lastRead;
 
   List<int>? categories;
 
@@ -53,6 +53,6 @@ class Manga {
     this.dateAdded,
     this.lastUpdate,
     this.categories,
-    this.lastRead,
+    this.lastRead = 0,
   });
 }
