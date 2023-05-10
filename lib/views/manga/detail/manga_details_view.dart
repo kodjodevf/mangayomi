@@ -32,10 +32,15 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(getAllHistoryStreamProvider);
+    final chaptersList = ref.watch(chaptersListttStateProvider);
     return Scaffold(
       floatingActionButton: ref.watch(isLongPressedStateProvider) == true
           ? null
-          : widget.manga.chapters.isNotEmpty
+          : chaptersList.isNotEmpty &&
+                  chaptersList
+                      .where((element) => !element.isRead!)
+                      .toList()
+                      .isNotEmpty
               ? history.when(
                   data: (data) {
                     final incognitoMode = ref.watch(incognitoModeStateProvider);

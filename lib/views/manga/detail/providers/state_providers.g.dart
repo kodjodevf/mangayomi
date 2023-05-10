@@ -864,4 +864,22 @@ class ChapterSetDownloadStateProvider
     );
   }
 }
+
+String _$chaptersListttStateHash() =>
+    r'2f81698d88c8087360e33c19884bfbb018604269';
+
+/// See also [ChaptersListttState].
+@ProviderFor(ChaptersListttState)
+final chaptersListttStateProvider =
+    AutoDisposeNotifierProvider<ChaptersListttState, List<Chapter>>.internal(
+  ChaptersListttState.new,
+  name: r'chaptersListttStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$chaptersListttStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ChaptersListttState = AutoDisposeNotifier<List<Chapter>>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

@@ -12,7 +12,7 @@ import 'package:mangayomi/views/browse/global_search_screen.dart';
 import 'package:mangayomi/views/general/general_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
-import 'package:mangayomi/views/manga/detail/manga_reader_detail.dart';
+import 'package:mangayomi/views/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/views/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/views/manga/reader/manga_reader_view.dart';

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -36,7 +38,10 @@ class CurrentIndex extends _$CurrentIndex {
     return 0;
   }
 
-  setCurrentIndex(int currentIndex) {
+  setCurrentIndex(int currentIndex, ReaderController readerController) {
+    readerController.setMangaHistoryUpdate();
+    readerController.setPageIndex(currentIndex);
+    readerController.setChapterPageLastRead(currentIndex);
     state = currentIndex;
   }
 }
@@ -104,6 +109,7 @@ class ReaderController extends _$ReaderController {
   }
 
   void setMangaHistoryUpdate() {
+    // log("message");
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       isar.writeTxnSync(() {
@@ -126,6 +132,7 @@ class ReaderController extends _$ReaderController {
             .filter()
             .mangaIdEqualTo(getManga().id)
             .findFirstSync())!
+          ..chapter.value = chapter
           ..date = DateTime.now().millisecondsSinceEpoch.toString();
       }
       isar.writeTxnSync(() {
@@ -135,7 +142,7 @@ class ReaderController extends _$ReaderController {
     }
   }
 
-  void setChapterPageLastRead(int pageIndex) async {
+  void setChapterPageLastRead(int pageIndex) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       final chap = chapter;
@@ -231,6 +238,7 @@ class ReaderController extends _$ReaderController {
   }
 
   void setPageIndex(int newIndex) {
+    // log(newIndex.toString());
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       ref.watch(hiveBoxMangaProvider).put(

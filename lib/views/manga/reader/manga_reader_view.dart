@@ -1,4 +1,3 @@
-// ignore_for_file: unnecessary_string_escapes, depend_on_referenced_packages
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
@@ -20,7 +19,6 @@ import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:collection/collection.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -136,13 +134,9 @@ class _MangaChapterPageGalleryState
   late bool _isBookmarked = widget.readerController.getChapterBookmarked();
   @override
   void dispose() {
-    widget.readerController.setMangaHistoryUpdate();
-    widget.readerController.setPageIndex(_currentIndex);
-    widget.readerController.setChapterPageLastRead(_currentIndex);
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     clearGestureDetailsCache();
-
     super.dispose();
   }
 
@@ -156,13 +150,23 @@ class _MangaChapterPageGalleryState
     _animation = Tween(begin: 1.0, end: 2.0).animate(
         CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
     _animation.addListener(() => _photoViewController.scale = _animation.value);
-    _itemPositionsListener.itemPositions.addListener(_readProgressListener);
-    widget.readerController.setMangaHistoryUpdate();
     _initCurrentIndex();
+    _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     super.initState();
   }
 
+  _readProgressListener() {
+    var posIndex = _itemPositionsListener.itemPositions.value.first.index;
+    if (posIndex >= 0 && posIndex < widget.url.length) {
+      ref
+          .read(currentIndexProvider(widget.chapter).notifier)
+          .setCurrentIndex(posIndex, widget.readerController);
+      _currentIndex = posIndex;
+    }
+  }
+
   _initCurrentIndex() async {
+    widget.readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
     _selectedValue = widget.readerController.getReaderMode();
     _axisHive(_selectedValue!, true);
@@ -171,7 +175,7 @@ class _MangaChapterPageGalleryState
   void _onPageChanged(int index) {
     ref
         .read(currentIndexProvider(widget.chapter).notifier)
-        .setCurrentIndex(index);
+        .setCurrentIndex(index, widget.readerController);
     _currentIndex = index;
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
@@ -229,37 +233,6 @@ class _MangaChapterPageGalleryState
         }
       }
     }
-  }
-
-  List<ItemPosition> _filterAndSortItems(Iterable<ItemPosition> positions) {
-    positions = positions
-        .where(
-            (item) => !(item.itemTrailingEdge < 0 || item.itemLeadingEdge > 1))
-        .toList();
-    (positions as List<ItemPosition>).sort((a, b) => a.index - b.index);
-    return positions;
-  }
-
-  List<ItemPosition> getCurrentVisibleItems() {
-    return _filterAndSortItems(_itemPositionsListener.itemPositions.value);
-  }
-
-  void _readProgressListener() {
-    int? firstImageIndex = getCurrentVisibleItems().firstOrNull?.index;
-
-    if (firstImageIndex == null) {
-      return;
-    }
-    if (_currentIndex != firstImageIndex) {
-      _recordReadProgress(firstImageIndex);
-    }
-  }
-
-  void _recordReadProgress(int index) {
-    ref
-        .read(currentIndexProvider(widget.chapter).notifier)
-        .setCurrentIndex(index);
-    _currentIndex = index;
   }
 
   ReaderMode? _selectedValue;

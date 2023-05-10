@@ -293,3 +293,16 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
     ref.read(chaptersListStateProvider.notifier).clear();
   }
 }
+
+@riverpod
+class ChaptersListttState extends _$ChaptersListttState {
+  @override
+  List<Chapter> build() {
+    return [];
+  }
+
+  set(List<Chapter> chapters) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    state = chapters;
+  }
+}

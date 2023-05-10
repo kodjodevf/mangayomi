@@ -111,7 +111,7 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
 }
 
 String _$getAllMangaWithoutCategoriesStreamHash() =>
-    r'6fc216e2a14edb3a0323b358ef3749a75007e8b5';
+    r'affd1fab4a6ab0e0bbc16b67384a0b17498fe209';
 
 /// See also [getAllMangaWithoutCategoriesStream].
 @ProviderFor(getAllMangaWithoutCategoriesStream)
