@@ -31,32 +31,88 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   @override
   Widget build(BuildContext context) {
-    final history = ref.watch(getAllHistoryStreamProvider);
-    final chaptersList = ref.watch(chaptersListttStateProvider);
     return Scaffold(
-      floatingActionButton: ref.watch(isLongPressedStateProvider) == true
-          ? null
-          : chaptersList.isNotEmpty &&
-                  chaptersList
-                      .where((element) => !element.isRead!)
-                      .toList()
-                      .isNotEmpty
-              ? history.when(
-                  data: (data) {
-                    final incognitoMode = ref.watch(incognitoModeStateProvider);
-                    final entries = data
-                        .where((element) => element.mangaId == widget.manga.id)
-                        .toList();
-                    if (entries.isNotEmpty && !incognitoMode) {
-                      return Consumer(builder: (context, ref, child) {
-                        final isExtended = ref.watch(isExtendedStateProvider);
+      floatingActionButton: Consumer(
+        builder: (context, ref, child) {
+          final history = ref.watch(getAllHistoryStreamProvider);
+          final chaptersList = ref.watch(chaptersListttStateProvider);
+          final isExtended = ref.watch(isExtendedStateProvider);
+          return ref.watch(isLongPressedStateProvider) == true
+              ? Container()
+              : chaptersList.isNotEmpty &&
+                      chaptersList
+                          .where((element) => !element.isRead!)
+                          .toList()
+                          .isNotEmpty
+                  ? history.when(
+                      data: (data) {
+                        final incognitoMode =
+                            ref.watch(incognitoModeStateProvider);
+                        final entries = data
+                            .where(
+                                (element) => element.mangaId == widget.manga.id)
+                            .toList();
+                        if (entries.isNotEmpty && !incognitoMode) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              AnimatedContainer(
+                                height: 55,
+                                width: !isExtended ? 63 : 130,
+                                duration: const Duration(milliseconds: 200),
+                                curve: Curves.easeIn,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: primaryColor(context),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15))),
+                                  onPressed: () {
+                                    pushMangaReaderView(
+                                      context: context,
+                                      chapter: entries.first.chapter.value!,
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.white,
+                                      ),
+                                      AnimatedContainer(
+                                        curve: Curves.easeIn,
+                                        width: !isExtended ? 0 : 8,
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                      ),
+                                      AnimatedContainer(
+                                        curve: Curves.easeIn,
+                                        width: !isExtended ? 0 : 60,
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        child: const Text(
+                                          "Resume",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             AnimatedContainer(
                               height: 55,
-                              width: !isExtended ? 63 : 130,
-                              duration: const Duration(milliseconds: 200),
+                              width: !isExtended ? 60 : 105,
+                              duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -66,12 +122,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                             BorderRadius.circular(15))),
                                 onPressed: () {
                                   pushMangaReaderView(
-                                    context: context,
-                                    chapter: entries.first.chapter.value!,
-                                  );
+                                      context: context,
+                                      chapter: widget.manga.chapters.last);
                                 },
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Icon(
                                       Icons.play_arrow,
@@ -79,20 +133,22 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                     ),
                                     AnimatedContainer(
                                       curve: Curves.easeIn,
-                                      width: !isExtended ? 0 : 8,
+                                      width: !isExtended ? 0 : 5,
                                       duration:
-                                          const Duration(milliseconds: 500),
+                                          const Duration(milliseconds: 300),
                                     ),
                                     AnimatedContainer(
                                       curve: Curves.easeIn,
-                                      width: !isExtended ? 0 : 60,
+                                      width: !isExtended ? 0 : 40,
                                       duration:
-                                          const Duration(milliseconds: 200),
+                                          const Duration(milliseconds: 300),
                                       child: const Text(
-                                        "Resume",
+                                        "Read",
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.white),
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -101,68 +157,17 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             ),
                           ],
                         );
-                      });
-                    }
-                    return Consumer(builder: (context, ref, child) {
-                      final isExtended = ref.watch(isExtendedStateProvider);
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          AnimatedContainer(
-                            height: 55,
-                            width: !isExtended ? 60 : 105,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor(context),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15))),
-                              onPressed: () {
-                                pushMangaReaderView(
-                                    context: context,
-                                    chapter: widget.manga.chapters.last);
-                              },
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                  ),
-                                  AnimatedContainer(
-                                    curve: Curves.easeIn,
-                                    width: !isExtended ? 0 : 5,
-                                    duration: const Duration(milliseconds: 300),
-                                  ),
-                                  AnimatedContainer(
-                                    curve: Curves.easeIn,
-                                    width: !isExtended ? 0 : 40,
-                                    duration: const Duration(milliseconds: 300),
-                                    child: const Text(
-                                      "Read",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    });
-                  },
-                  error: (Object error, StackTrace stackTrace) {
-                    return ErrorText(error);
-                  },
-                  loading: () {
-                    return const ProgressCenter();
-                  },
-                )
-              : null,
+                      },
+                      error: (Object error, StackTrace stackTrace) {
+                        return ErrorText(error);
+                      },
+                      loading: () {
+                        return const ProgressCenter();
+                      },
+                    )
+                  : Container();
+        },
+      ),
       body: MangaDetailView(
         titleDescription: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

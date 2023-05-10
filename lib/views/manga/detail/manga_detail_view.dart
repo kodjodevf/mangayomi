@@ -299,9 +299,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         child: Text("Edit categories")),
                                   if (widget.manga!.favorite)
                                     const PopupMenuItem<int>(
-                                        value: 0, child: Text("Migrate")),
+                                        value: 1, child: Text("Migrate")),
                                   const PopupMenuItem<int>(
-                                      value: 0, child: Text("Share")),
+                                      value: 2, child: Text("Share")),
                                 ];
                               }, onSelected: (value) {
                                 if (value == 0) {
