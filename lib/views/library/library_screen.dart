@@ -10,6 +10,7 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/library/providers/isar_providers.dart';
@@ -471,7 +472,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          _deleteManga();
+                        },
                         child: Icon(
                           Icons.delete_outline_outlined,
                           color: color,
@@ -482,119 +485,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             ),
           );
         }));
-  }
-
-  _openCategory() {
-    List<int> categoryIds = [];
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Consumer(builder: (context, ref, child) {
-            final mangaIdsList = ref.watch(mangasListStateProvider);
-            final List<Manga> mangasList = [];
-            for (var id in mangaIdsList) {
-              mangasList.add(isar.mangas.getSync(id)!);
-            }
-
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return AlertDialog(
-                  title: const Text(
-                    "Set categories",
-                  ),
-                  content: SizedBox(
-                    width: mediaWidth(context, 0.8),
-                    child: StreamBuilder(
-                        stream: isar.categorys
-                            .filter()
-                            .idIsNotNull()
-                            .watch(fireImmediately: true),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                            final entries = snapshot.data!;
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: entries.length,
-                              itemBuilder: (context, index) {
-                                return ListTileMangaCategory(
-                                  category: entries[index],
-                                  categoryIds: categoryIds,
-                                  mangasList: mangasList,
-                                  onTap: () {
-                                    setState(() {
-                                      if (categoryIds
-                                          .contains(entries[index].id)) {
-                                        categoryIds.remove(entries[index].id);
-                                      } else {
-                                        categoryIds.add(entries[index].id!);
-                                      }
-                                    });
-                                  },
-                                  res: (res) {
-                                    if (res.isNotEmpty) {
-                                      categoryIds.add(entries[index].id!);
-                                    }
-                                  },
-                                );
-                              },
-                            );
-                          }
-                          return Container();
-                        }),
-                  ),
-                  actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              context.push("/categories");
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Edit")),
-                        Row(
-                          children: [
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Cancel")),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  isar.writeTxnSync(() {
-                                    for (var id in mangaIdsList) {
-                                      Manga? manga = isar.mangas.getSync(id);
-                                      manga!.categories = categoryIds;
-                                      isar.mangas.putSync(manga);
-                                    }
-                                  });
-                                  ref
-                                      .read(mangasListStateProvider.notifier)
-                                      .clear();
-                                  ref
-                                      .read(isLongPressedMangaStateProvider
-                                          .notifier)
-                                      .update(false);
-                                  if (mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: const Text(
-                                  "OK",
-                                )),
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                );
-              },
-            );
-          });
-        });
   }
 
   Widget _categoriesNumberOfItems(
@@ -858,12 +748,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     } else if (sortType == 3) {
       mangas.sort(
         (a, b) {
-          return a.lastUpdate!.compareTo(b.lastUpdate!);
-        },
-      );
-    } else if (sortType == 4) {
-      mangas.sort(
-        (a, b) {
           return a.chapters
               .where((element) => !element.isRead!)
               .toList()
@@ -872,6 +756,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   .where((element) => !element.isRead!)
                   .toList()
                   .length);
+        },
+      );
+    } else if (sortType == 4) {
+      mangas.sort(
+        (a, b) {
+          return a.chapters.length.compareTo(b.chapters.length);
         },
       );
     } else if (sortType == 5) {
@@ -889,6 +779,242 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       );
     }
     return mangas;
+  }
+
+  _openCategory() {
+    List<int> categoryIds = [];
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Consumer(builder: (context, ref, child) {
+            final mangaIdsList = ref.watch(mangasListStateProvider);
+            final List<Manga> mangasList = [];
+            for (var id in mangaIdsList) {
+              mangasList.add(isar.mangas.getSync(id)!);
+            }
+
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text(
+                    "Set categories",
+                  ),
+                  content: SizedBox(
+                    width: mediaWidth(context, 0.8),
+                    child: StreamBuilder(
+                        stream: isar.categorys
+                            .filter()
+                            .idIsNotNull()
+                            .watch(fireImmediately: true),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            final entries = snapshot.data!;
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: entries.length,
+                              itemBuilder: (context, index) {
+                                return ListTileMangaCategory(
+                                  category: entries[index],
+                                  categoryIds: categoryIds,
+                                  mangasList: mangasList,
+                                  onTap: () {
+                                    setState(() {
+                                      if (categoryIds
+                                          .contains(entries[index].id)) {
+                                        categoryIds.remove(entries[index].id);
+                                      } else {
+                                        categoryIds.add(entries[index].id!);
+                                      }
+                                    });
+                                  },
+                                  res: (res) {
+                                    if (res.isNotEmpty) {
+                                      categoryIds.add(entries[index].id!);
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          }
+                          return Container();
+                        }),
+                  ),
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              context.push("/categories");
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Edit")),
+                        Row(
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Cancel")),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  isar.writeTxnSync(() {
+                                    for (var id in mangaIdsList) {
+                                      Manga? manga = isar.mangas.getSync(id);
+                                      manga!.categories = categoryIds;
+                                      isar.mangas.putSync(manga);
+                                    }
+                                  });
+                                  ref
+                                      .read(mangasListStateProvider.notifier)
+                                      .clear();
+                                  ref
+                                      .read(isLongPressedMangaStateProvider
+                                          .notifier)
+                                      .update(false);
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: const Text(
+                                  "OK",
+                                )),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              },
+            );
+          });
+        });
+  }
+
+  _deleteManga() {
+    List<int> fromLibList = [];
+    List<int> downloadedChapsList = [];
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Consumer(builder: (context, ref, child) {
+            final mangaIdsList = ref.watch(mangasListStateProvider);
+            final List<Manga> mangasList = [];
+            for (var id in mangaIdsList) {
+              mangasList.add(isar.mangas.getSync(id)!);
+            }
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text(
+                    "Remove",
+                  ),
+                  content: SizedBox(
+                      height: 100,
+                      width: mediaWidth(context, 0.8),
+                      child: Column(
+                        children: [
+                          ListTileChapterFilter(
+                            label: "From library",
+                            onTap: () {
+                              setState(() {
+                                if (fromLibList == mangaIdsList) {
+                                  fromLibList = [];
+                                } else {
+                                  fromLibList = mangaIdsList;
+                                }
+                              });
+                            },
+                            type: fromLibList.isNotEmpty ? 1 : 0,
+                          ),
+                          ListTileChapterFilter(
+                            label: "Downloaded chapters",
+                            onTap: () {
+                              setState(() {
+                                if (downloadedChapsList == mangaIdsList) {
+                                  downloadedChapsList = [];
+                                } else {
+                                  downloadedChapsList = mangaIdsList;
+                                }
+                              });
+                            },
+                            type: downloadedChapsList.isNotEmpty ? 1 : 0,
+                          ),
+                        ],
+                      )),
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Cancel")),
+                        const SizedBox(
+                          width: 15,
+                        ),
+                        TextButton(
+                            onPressed: () async {
+                              if (fromLibList.isNotEmpty) {
+                                isar.writeTxnSync(() {
+                                  for (var manga in mangasList) {
+                                    manga.favorite = false;
+                                    isar.mangas.putSync(manga);
+                                  }
+                                });
+                              }
+                              if (downloadedChapsList.isNotEmpty) {
+                                for (var manga in mangasList) {
+                                  for (var chapter in manga.chapters) {
+                                    final path = await StorageProvider()
+                                        .getMangaChapterDirectory(
+                                      chapter,
+                                    );
+
+                                    try {
+                                      path!.deleteSync(recursive: true);
+                                      ref
+                                          .watch(hiveBoxMangaDownloadsProvider)
+                                          .delete(
+                                            "${manga.id}/${chapter.id}",
+                                          );
+                                    } catch (e) {
+                                      ref
+                                          .watch(hiveBoxMangaDownloadsProvider)
+                                          .delete(
+                                            "${manga.id}/${chapter.id}",
+                                          );
+                                    }
+                                  }
+                                }
+                              }
+
+                              ref
+                                  .read(mangasListStateProvider.notifier)
+                                  .clear();
+                              ref
+                                  .read(
+                                      isLongPressedMangaStateProvider.notifier)
+                                  .update(false);
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Text(
+                              "OK",
+                            )),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+        });
   }
 
   _showDraggableMenu() {
@@ -1330,14 +1456,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         Icons.filter_list_sharp,
                         color: isNotFiltering ? null : Colors.yellow,
                       )),
-                  PopupMenuButton(
-                      itemBuilder: (context) {
-                        return [
-                          const PopupMenuItem<int>(
-                              value: 0, child: Text("Open random entry")),
-                        ];
-                      },
-                      onSelected: (value) {}),
+                  PopupMenuButton(itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                          value: 0, child: Text("Open random entry")),
+                    ];
+                  }, onSelected: (value) {
+                    manga.whenData((value) {
+                      var randomManga = (value..shuffle()).first;
+                      context.push('/manga-reader/detail',
+                          extra: randomManga.id);
+                    });
+                  }),
                 ],
               ));
   }

@@ -32,6 +32,8 @@ Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
       .favoriteEqualTo(true)
       .categoriesIsEmpty()
       .or()
+      .idIsNotNull()
       .categoriesIsNull()
+      .favoriteEqualTo(true)
       .watch(fireImmediately: true);
 }

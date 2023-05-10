@@ -9,7 +9,6 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -47,11 +46,11 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     try {
       path!.deleteSync(recursive: true);
       ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            widget.chapter.name!,
+            "${manga.id}/${widget.chapter.id}",
           );
     } catch (e) {
       ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            widget.chapter.name!,
+            "${manga.id}/${widget.chapter.id}",
           );
     }
   }

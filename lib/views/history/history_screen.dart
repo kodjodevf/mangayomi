@@ -26,7 +26,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   List<History> entriesData = [];
-  List<History> entriesFilter = [];
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(getAllHistoryStreamProvider);
@@ -44,13 +43,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             _isSearch
                 ? SeachFormTextField(
                     onChanged: (value) {
-                      setState(() {
-                        entriesFilter = entriesData
-                            .where((element) => element.chapter.value!.name!
-                                .toLowerCase()
-                                .contains(value.toLowerCase()))
-                            .toList();
-                      });
+                      setState(() {});
                     },
                     onSuffixPressed: () {
                       _textEditingController.clear();
@@ -125,14 +118,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         ),
         body: history.when(
           data: (data) {
-            final entries = data.toList();
-            entriesData = data.toList();
-            final entriesHistory = _textEditingController.text.isNotEmpty
-                ? entriesFilter
-                : entries;
+            final entries = data
+                .where((element) => _textEditingController.text.isNotEmpty
+                    ? element.chapter.value!.manga.value!.name!.toLowerCase()
+                        .contains(_textEditingController.text.toLowerCase())
+                    : true)
+                .toList();
+
             if (entries.isNotEmpty) {
               return GroupedListView<History, String>(
-                elements: entriesHistory,
+                elements: entries,
                 groupBy: (element) => dateFormat(element.date!, ref: ref),
                 groupSeparatorBuilder: (String groupByValue) => Padding(
                   padding: const EdgeInsets.only(bottom: 8, left: 12),
@@ -161,7 +156,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       child: SizedBox(
                         height: 105,
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
                               width: 60,

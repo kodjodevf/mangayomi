@@ -47,7 +47,7 @@ _initDB() async {
   } else {
     isar = await Isar.open(
         [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
-        directory: "${dir.path}/Mangayomi/databases", name: "MangayomiDb");
+        directory: "${dir.path}/Mangayomi/databases", name: "mangayomiDb");
   }
   Hive.registerAdapter(SourceModelAdapter());
   Hive.registerAdapter(ReaderModeAdapter());

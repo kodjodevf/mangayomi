@@ -227,11 +227,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       backgroundColor:
                           Theme.of(context).scaffoldBackgroundColor,
                       elevation: 0),
-                  onPressed: () async {
-                    final checkCategoryList = await isar.categorys
-                        .filter()
-                        .idIsNotNull()
-                        .isNotEmpty();
+                  onPressed: () {
+                    final checkCategoryList =
+                        isar.categorys.filter().idIsNotNull().isNotEmptySync();
                     if (checkCategoryList) {
                       _openCategory(widget.manga);
                     } else {
@@ -343,6 +341,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 isar.writeTxnSync(() {
                                   model.favorite = true;
                                   model.categories = categoryIds;
+                                  model.dateAdded =
+                                      DateTime.now().millisecondsSinceEpoch;
                                   isar.mangas.putSync(model);
                                 });
                                 if (mounted) {
