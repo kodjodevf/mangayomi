@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/models/download_model.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/models/source_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

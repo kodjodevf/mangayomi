@@ -1,6 +1,6 @@
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/source/source_list.dart';
-import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/sources/source_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'refresh_filter_data.g.dart';
 

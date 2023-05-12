@@ -1,88 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
-import 'package:html/dom.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
-import 'package:mangayomi/models/comick/manga_detail_comick.dart';
-import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
-import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/source/source_model.dart';
-import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
+import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
+import 'package:mangayomi/sources/src/fr/japscan/src/japscan.dart';
+import 'package:mangayomi/sources/src/fr/mangakawaii/src/mangakawaii.dart';
+import 'package:mangayomi/sources/src/multi/mangathemesia/src/mangathemesia.dart';
+import 'package:mangayomi/sources/src/multi/mmrcms/src/mmrcms.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
-
-class GetMangaDetailModel {
-  List<String> genre = [];
-  List<Chapter> chapters = [];
-  String? author;
-  String? status;
-  String? source;
-  String? url;
-  String? name;
-  String? imageUrl;
-  String? description;
-  GetMangaDetailModel({
-    required this.genre,
-    required this.author,
-    required this.status,
-    required this.chapters,
-    required this.imageUrl,
-    required this.description,
-    required this.url,
-    required this.name,
-    required this.source,
-  });
-}
-
-_parseStatut(int i) {
-  if (i == 1) {
-    return 'Ongoing';
-  } else if (i == 2) {
-    return 'Completed';
-  } else if (i == 3) {
-    return 'Canceled';
-  } else if (i == 4) {
-    return '';
-  } else {
-    return 'Unknown';
-  }
-}
-
-Future findCurrentSlug(String oldSlug) async {
-  var request = http.Request('GET',
-      Uri.parse('https://api.comick.fun/tachiyomi/mapping?slugs=$oldSlug'));
-
-  request.headers.addAll(headers("comick"));
-
-  http.StreamedResponse response = await request.send();
-
-  if (response.statusCode == 200) {
-    return await response.stream.bytesToString();
-  } else {
-    return response.reasonPhrase;
-  }
-}
-
-beautifyChapterName(String? vol, String? chap, String? title, String? lang) {
-  return "${vol!.isNotEmpty ? chap!.isEmpty ? "Volume $vol " : "Vol. $vol " : ""}${chap!.isNotEmpty ? vol.isEmpty ? lang == "fr" ? "Chapitre $chap" : "Chapter $chap" : "Ch. $chap " : ""}${title!.isNotEmpty ? chap.isEmpty ? title : " : $title" : ""}";
-}
-
-String utilDate(String data) {
-  DateTime date = DateTime.parse(data);
-  return date.millisecondsSinceEpoch.toString();
-}
-
-parseDate(String data, String source) {
-  source = source.toLowerCase();
-  DateTime date = DateFormat(getFormatDate(source), getFormatDateLocale(source))
-      .parse(data);
-  return date.millisecondsSinceEpoch.toString();
-}
 
 @riverpod
 Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
@@ -91,305 +18,30 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
     required String title,
     required String lang,
     required String source}) async {
-  List<String> genre = [];
-  String? author;
-  String? status;
-  List<String> chapterTitle = [];
-  List<String> chapterUrl = [];
-  List<String> chapterDate = [];
-  String? description;
-  List<Chapter> chapters = [];
-  List<String> scanlators = [];
+  GetMangaDetailModel? mangadetail;
 
   /********/
   /*comick*/
   /********/
+
   if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.comick) {
-    final response = await httpGet(
-        url: 'https://api.comick.fun$url?tachiyomi=true',
-        source: source,
-        resDom: false) as String?;
-    var mangaDetail = jsonDecode(response!) as Map<String, dynamic>;
-
-    var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
-
-    RegExp regExp = RegExp(r'name:\s*(.*?),');
-
-    String authorr =
-        regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
-            '';
-    String statuss = _parseStatut(mangaDetailLMap.comic!.status!);
-    status = statuss;
-    author = authorr;
-    RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
-    for (var ok in mangaDetailLMap.genres!) {
-      genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
-    }
-    description = mangaDetailLMap.comic!.desc;
-    String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!);
-    String mangaId = tt.split('":"').last.replaceAll('"}', '');
-    String limit = mangaDetailLMap.comic!.chapterCount.toString();
-
-    final responsee = await httpGet(
-        url:
-            'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
-        source: source,
-        resDom: false) as String?;
-    var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
-    var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
-    for (var chapter in chapterDetailMap.chapters!) {
-      scanlators.add(chapter.groupName!.isNotEmpty
-          ? chapter.groupName!.first.toString() != 'null'
-              ? chapter.groupName!.first
-              : ""
-          : "");
-      chapterUrl.add(
-          "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
-      chapterDate.add(parseDate(chapter.createdAt!, source));
-
-      chapterTitle.add(beautifyChapterName(
-          chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
-    }
+    mangadetail = await Comick().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
   }
   /*************/
   /*mangathemesia*/
   /**************/
 
   if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mangathemesia) {
-    final dom = await httpGet(
-        url: url,
-        source: source,
-        resDom: true,
-        useUserAgent: true) as Document?;
-    if (dom!
-        .querySelectorAll(
-            'div.bigcontent, div.animefull, div.main-info, div.postbody')
-        .isNotEmpty) {
-      final resHtml = dom.querySelector(
-          'div.bigcontent, div.animefull, div.main-info, div.postbody');
-      if (resHtml!.querySelectorAll('.tsinfo .imptdt').isNotEmpty) {
-        status = resHtml
-            .querySelectorAll('.tsinfo .imptdt')
-            .where((e) =>
-                e.innerHtml.contains("Status") ||
-                e.innerHtml.contains("Situação"))
-            .map((e) => e.innerHtml.contains("Situação")
-                ? e.text.replaceAll('Situação', '').trim()
-                : e.text.replaceAll('Status', '').trim())
-            .toList()
-            .last;
-      } else if (resHtml.querySelectorAll('.infotable tr').isNotEmpty) {
-        status = resHtml
-            .querySelectorAll('.infotable tr')
-            .where((e) =>
-                e.innerHtml.toLowerCase().contains('statut') ||
-                e.innerHtml.toLowerCase().contains('status'))
-            .map((e) => e.querySelector('td:last-child')!.text)
-            .toList()
-            .first;
-      } else if (resHtml.querySelectorAll('.fmed').isNotEmpty) {
-        status = resHtml
-            .querySelectorAll('.tsinfo .imptdt')
-            .map((e) => e.text.replaceAll('Status', '').trim())
-            .toList()
-            .first;
-      } else {
-        status = "";
-      }
-
-      //2
-      if (resHtml.querySelectorAll('.fmed').isNotEmpty) {
-        author = resHtml
-            .querySelectorAll('.fmed')
-            .where((e) => e.innerHtml.contains("Author"))
-            .map((e) => e.text.replaceAll('Author', '').trim())
-            .toList()
-            .first;
-      } else if (resHtml.querySelectorAll('.tsinfo .imptdt').isNotEmpty) {
-        author = resHtml
-            .querySelectorAll('.tsinfo .imptdt')
-            .where((e) =>
-                e.innerHtml.contains("Author") ||
-                e.innerHtml.contains("Auteur") ||
-                e.innerHtml.contains("Autor"))
-            .map((e) => e.innerHtml.contains("Autor")
-                ? e.text.replaceAll('Autor', '').trim()
-                : e.innerHtml.contains("Autheur")
-                    ? e.text.replaceAll('Auteur', '').trim()
-                    : e.text.replaceAll('Author', '').trim())
-            .toList()
-            .first;
-      } else if (resHtml.querySelectorAll('.infotable tr').isNotEmpty) {
-        author = resHtml
-            .querySelectorAll('.infotable tr')
-            .where((e) =>
-                e.innerHtml.toLowerCase().contains('auteur') ||
-                e.innerHtml.toLowerCase().contains('author'))
-            .map((e) => e.querySelector('td:last-child')!.text)
-            .toList()
-            .first;
-      } else {
-        author = "";
-      }
-
-      description = resHtml
-          .querySelector(".desc, .entry-content[itemprop=description]")!
-          .text;
-      if (resHtml
-          .querySelectorAll('div.gnr a, .mgen a, .seriestugenre a')
-          .isNotEmpty) {
-        final tt = resHtml
-            .querySelectorAll('div.gnr a, .mgen a, .seriestugenre a')
-            .map((e) => e.text.trim())
-            .toList();
-
-        for (var ok in tt) {
-          genre.add(ok);
-        }
-      } else {
-        genre.add('');
-      }
-      if (resHtml.querySelectorAll('#chapterlist a').isNotEmpty) {
-        final udl = resHtml
-            .querySelectorAll('#chapterlist a ')
-            .where((e) => e.attributes.containsKey('href'))
-            .map((e) => e.attributes['href'])
-            .toList();
-
-        for (var ok in udl) {
-          chapterUrl.add(ok!);
-        }
-      }
-      if (resHtml.querySelectorAll('.lch a, .chapternum').isNotEmpty) {
-        final tt = resHtml
-            .querySelectorAll('.lch a, .chapternum')
-            .map((e) => e.text.trim())
-            .toList();
-
-        tt.removeWhere((element) => element.contains('{{number}}'));
-        for (var ok in tt) {
-          chapterTitle.add(ok.trimLeft());
-        }
-      }
-      if (resHtml.querySelectorAll('.chapterdate').isNotEmpty) {
-        final tt = resHtml
-            .querySelectorAll('.chapterdate')
-            .map((e) => e.text.trim())
-            .toList();
-        tt.removeWhere((element) => element.contains('{{date}}'));
-        for (var ok in tt) {
-          chapterDate.add(parseDate(ok, source));
-        }
-      }
-    }
+    mangadetail = await MangaThemeSia().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
   }
   /***********/
   /*mangakawaii*/
   /***********/
   else if (source.toLowerCase() == "mangakawaii") {
-    final dom = await httpGet(
-        url: 'https://www.mangakawaii.io$url',
-        source: source,
-        resDom: true) as Document?;
-    List detail = [];
-    imageUrl =
-        "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
-    if (dom!.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('dd.text-justify.text-break')
-          .map((e) => e.text.trim())
-          .toList();
-      description = tt[0];
-    }
-    if (dom
-        .querySelectorAll('span.badge.bg-success.text-uppercase')
-        .isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('span.badge.bg-success.text-uppercase')
-          .map((e) => e.text.trim())
-          .toList();
-      detail.add(tt[0]);
-    } else {
-      detail.add("");
-    }
-
-    if (dom.querySelectorAll('a[href*=author]').isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('a[href*=author]')
-          .map((e) => e.text.trim())
-          .toList();
-      detail.add(tt[0]);
-    } else {
-      detail.add("");
-    }
-
-    if (dom.querySelectorAll('a[href*=category]').isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('a[href*=category]')
-          .map((e) => e.text.trim())
-          .toList();
-      for (var ok in tt) {
-        genre.add(ok);
-      }
-    }
-    detail = detail.toSet().toList();
-    status = detail[0];
-    author = detail[1];
-    if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
-      final url = dom.querySelectorAll("tr[class*='volume-']").map((e) {
-        RegExp exp = RegExp(r'<a href="([^"]+)"');
-        Iterable<Match> matches = exp.allMatches(e.outerHtml);
-        String? firstMatch = matches.first.group(1);
-        return firstMatch;
-      }).toList();
-      final htm = await httpResToDom(
-          url: 'https://www.mangakawaii.io${url[0]}',
-          headers: {"Accept-Language": "fr"});
-
-      if (htm
-          .querySelectorAll(
-              '#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li > a')
-          .isNotEmpty) {
-        final tt = htm
-            .querySelectorAll(
-                '#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li > a')
-            .map((e) => e.innerHtml)
-            .toList();
-        final urlz = htm
-            .querySelectorAll(
-                "#bottom_nav_reader > div > div > ul.chapter-pager.navbar-nav > li.nav-item.dropup.d-inline-block > ul > li ")
-            .map((e) => e.innerHtml)
-            .toList();
-
-        for (var ok in urlz) {
-          chapterUrl.add(ok.split('href="')[1].split('"').first);
-        }
-        for (var ok in tt) {
-          chapterTitle.add(ok);
-        }
-        if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
-          final url = dom
-              .querySelectorAll("tr[class*='volume-']")
-              .map((e) => e
-                  .querySelectorAll('td.table__date')
-                  .map((e) => e.text.trim())
-                  .toList()[0])
-              .toList();
-          if (urlz.length > url.length) {
-            for (var _ in urlz) {
-              chapterDate.add(parseDate(
-                  "${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}",
-                  source));
-            }
-          } else {
-            for (var ok in url) {
-              chapterDate.add(parseDate(
-                  ok.split(" ").first.toString().substring(0, 10), source));
-            }
-          }
-        }
-      }
-    }
+    mangadetail = await MangaKawaii().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
   }
 
   /***********/
@@ -397,293 +49,25 @@ Future<GetMangaDetailModel> getMangaDetail(GetMangaDetailRef ref,
   /***********/
 
   else if (getWpMangTypeSource(source.toLowerCase()) == TypeSource.mmrcms) {
-    final dom =
-        await httpGet(url: url, source: source, resDom: true) as Document?;
-    description = dom!
-        .querySelectorAll('.row .well p')
-        .map((e) => e.text.trim())
-        .toList()
-        .first;
-    status = dom
-        .querySelectorAll('.row .dl-horizontal dt')
-        .where((e) =>
-            e.innerHtml.toString().toLowerCase().contains("status") ||
-            e.innerHtml.toString().toLowerCase().contains("statut") ||
-            e.innerHtml.toString().toLowerCase().contains("estado") ||
-            e.innerHtml.toString().toLowerCase().contains("durum"))
-        .map((e) => e.nextElementSibling!.text.trim())
-        .toList()
-        .first;
-    if (dom.querySelectorAll(".row .dl-horizontal dt").isNotEmpty) {
-      author = dom
-          .querySelectorAll('.row .dl-horizontal dt')
-          .where((e) =>
-              e.innerHtml.toString().toLowerCase().contains("auteur(s)") ||
-              e.innerHtml.toString().toLowerCase().contains("author(s)") ||
-              e.innerHtml.toString().toLowerCase().contains("autor(es)") ||
-              e.innerHtml.toString().toLowerCase().contains("yazar(lar)") ||
-              e.innerHtml.toString().toLowerCase().contains("mangaka(lar)") ||
-              e.innerHtml
-                  .toString()
-                  .toLowerCase()
-                  .contains("pengarang/penulis") ||
-              e.innerHtml.toString().toLowerCase().contains("autor") ||
-              e.innerHtml.toString().toLowerCase().contains("penulis"))
-          .map((e) => e.nextElementSibling!.text
-              .trim()
-              .replaceAll(RegExp(r"\s+\b|\b\s"), ""))
-          .toList()
-          .first;
-      final genr = dom
-          .querySelectorAll('.row .dl-horizontal dt')
-          .where((e) =>
-              e.innerHtml.toString().toLowerCase().contains("categories") ||
-              e.innerHtml.toString().toLowerCase().contains("categorías") ||
-              e.innerHtml.toString().toLowerCase().contains("catégories") ||
-              e.innerHtml.toString().toLowerCase().contains("kategoriler") ||
-              e.innerHtml.toString().toLowerCase().contains("categorias") ||
-              e.innerHtml.toString().toLowerCase().contains("kategorie") ||
-              e.innerHtml.toString().toLowerCase().contains("kategori") ||
-              e.innerHtml.toString().toLowerCase().contains("tagi"))
-          .map((e) => e.nextElementSibling!.text.trim())
-          .toList();
-      if (genr.isNotEmpty) {
-        genre = genr.first.replaceAll(RegExp(r"\s+\b|\b\s"), "").split(',');
-      }
-    }
-    final rrr = dom.querySelectorAll(".row [class^=img-responsive]");
-    final data = rrr.map((e) => e.outerHtml).toList();
-    if (source.toLowerCase() == 'jpmangas' ||
-        source.toLowerCase() == 'fr scan') {
-      imageUrl = regSrcMatcher(data.first).replaceAll('//', 'https://');
-    } else {
-      imageUrl = regSrcMatcher(data.first);
-    }
-
-    final ttt = dom
-        .querySelectorAll("ul[class^=chapters] > li:not(.btn), table.table tr");
-    if (ttt.isNotEmpty) {
-      final data = ttt
-          .map((e) => e.querySelector("[class^=chapter-title-rtl]")!)
-          .toList();
-      var name = data;
-      for (var iaa in name) {
-        chapterTitle.add(iaa.getElementsByTagName("a").first.text);
-        chapterUrl
-            .add(regHrefMatcher(iaa.getElementsByTagName("a").first.outerHtml));
-      }
-      final date = ttt
-          .map((e) => e
-              .getElementsByClassName("date-chapter-title-rtl")
-              .map((e) => e.text.trim())
-              .first)
-          .toList();
-
-      for (var da in date) {
-        chapterDate.add(parseDate(da, source));
-      }
-    }
+    mangadetail = await Mmrcms().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
   }
 
   /***********/
   /*mangahere*/
   /***********/
   else if (source.toLowerCase() == "mangahere") {
-    final dom = await httpGet(
-        url: "http://www.mangahere.cc$url",
-        source: source,
-        resDom: true) as Document?;
-    if (dom!
-        .querySelectorAll(
-            ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
-        .isNotEmpty) {
-      final tt = dom
-          .querySelectorAll(
-              ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
-          .map((e) => e.text.trim())
-          .toList();
-
-      status = tt[0];
-    } else {
-      status = "";
-    }
-    if (dom
-        .querySelectorAll(
-            ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
-        .isNotEmpty) {
-      final tt = dom
-          .querySelectorAll(
-              ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
-          .map((e) => e.text.trim())
-          .toList();
-
-      author = tt[0];
-    } else {
-      author = "";
-    }
-
-    if (dom
-        .querySelectorAll(
-            'body > div > div > div.detail-info-right > p.detail-info-right-content')
-        .isNotEmpty) {
-      final tt = dom
-          .querySelectorAll(
-              'body > div > div > div.detail-info-right > p.detail-info-right-content')
-          .map((e) => e.text.trim())
-          .toList();
-
-      description = tt.first;
-    }
-
-    if (dom.querySelectorAll('ul > li > a').isNotEmpty) {
-      final udl = dom
-          .querySelectorAll('ul > li > a ')
-          .where((e) => e.attributes.containsKey('href'))
-          .map((e) => e.attributes['href'])
-          .toList();
-
-      for (var ok in udl) {
-        chapterUrl.add(ok!);
-      }
-    }
-    if (dom.querySelectorAll('ul > li > a > div > p.title3').isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('ul > li > a > div > p.title3')
-          .map((e) => e.text.trim())
-          .toList();
-      for (var ok in tt) {
-        chapterTitle.add(ok);
-      }
-    }
-    if (dom.querySelectorAll('ul > li > a > div > p.title2').isNotEmpty) {
-      final tt = dom
-          .querySelectorAll('ul > li > a > div > p.title2')
-          .map((e) => e.text.trim())
-          .toList();
-      for (var ok in tt) {
-        chapterDate.add(parseDate(ok, source));
-      }
-    }
-    if (dom
-        .querySelectorAll(
-            ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
-        .isNotEmpty) {
-      final tt = dom
-          .querySelectorAll(
-              ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
-          .map((e) => e.text.trim())
-          .toList();
-
-      for (var ok in tt) {
-        genre.add(ok);
-      }
-    }
-  } else if (source.toLowerCase() == "japscan") {
-    final dom =
-        await httpGet(url: url, source: source, resDom: true) as Document?;
-    if (dom!.querySelectorAll('.col-7 > p').isNotEmpty) {
-      final images =
-          dom.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
-      RegExp exp = RegExp(r'src="([^"]+)"');
-
-      String? srcValue = exp.firstMatch(images[0])?.group(1);
-      imageUrl = 'https://www.japscan.lol$srcValue';
-
-      if (dom.querySelectorAll('.col-7 > p').isNotEmpty) {
-        final stat = dom
-            .querySelectorAll('.col-7 > p')
-            .where((element) => element.innerHtml.contains('Statut:'))
-            .map((e) => e.text)
-            .toList();
-        if (stat.isNotEmpty) {
-          status = stat[0].replaceAll('Statut:', '').trim();
-        }
-
-        final auth = dom
-            .querySelectorAll('.col-7 > p')
-            .where((element) => element.innerHtml.contains('Auteur(s):'))
-            .map((e) => e.text)
-            .toList();
-        if (auth.isNotEmpty) {
-          author = auth[0].replaceAll('Auteur(s):', '').trim();
-        }
-      } else {
-        author = "";
-        status = "";
-      }
-
-      final genres = dom
-          .querySelectorAll('.col-7 > p')
-          .where((element) => element.innerHtml.contains('Genre(s):'))
-          .map((e) => e.text.replaceAll('Genre(s):', '').trim())
-          .toList();
-      if (genres.isNotEmpty) {
-        for (var ok in genres[0].split(',')) {
-          genre.add(ok);
-        }
-      }
-
-      final synop = dom
-          .querySelectorAll('p.list-group-item ')
-          .map((e) => e.text.trim())
-          .toList();
-      if (synop.isNotEmpty) {
-        description = synop[0];
-      }
-    }
-
-    final urls =
-        dom.querySelectorAll('.col-8 ').map((e) => e.outerHtml).toList();
-
-    for (var ok in urls) {
-      RegExp exp = RegExp(r'href="([^"]+)"');
-
-      String? srcValue = exp.firstMatch(ok)?.group(1);
-      chapterUrl.add('https://www.japscan.lol$srcValue');
-    }
-
-    final chapterTitlee =
-        dom.querySelectorAll('.col-8').map((e) => e.text.trim()).toList();
-
-    if (chapterTitlee.isNotEmpty) {
-      for (var ok in chapterTitlee) {
-        chapterTitle.add(ok);
-      }
-    }
-
-    final chapterDatee =
-        dom.querySelectorAll('.col-4').map((e) => e.text.trim()).toList();
-    if (chapterDatee.isNotEmpty) {
-      for (var ok in chapterDatee) {
-        chapterDate.add(parseDate(ok, source));
-      }
-    }
-  }
-  if (chapterDate.isNotEmpty &&
-      chapterTitle.isNotEmpty &&
-      chapterUrl.isNotEmpty) {
-    for (var i = 0; i < chapterUrl.length; i++) {
-      chapters.add(Chapter(
-          name: chapterTitle[i],
-          url: chapterUrl[i],
-          dateUpload: chapterDate[i],
-          isBookmarked: false,
-          scanlator: scanlators.isEmpty ? "" : scanlators[i],
-          isRead: false,
-          lastPageRead: '',
-          mangaId: null));
-    }
+    mangadetail = await Mangahere().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
   }
 
-  return GetMangaDetailModel(
-    status: status,
-    genre: genre,
-    author: author,
-    description: description,
-    name: title,
-    url: url,
-    source: source,
-    imageUrl: imageUrl,
-    chapters: chapters,
-  );
+  /***********/
+  /*japscan*/
+  /***********/
+
+  else if (source.toLowerCase() == "japscan") {
+    mangadetail = await Japscan().getMangaDetail(
+        imageUrl: imageUrl, url: url, title: title, lang: lang, source: source);
+  }
+  return mangadetail!;
 }

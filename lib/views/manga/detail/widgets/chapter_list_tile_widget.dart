@@ -1,12 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';

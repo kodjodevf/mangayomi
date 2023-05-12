@@ -866,7 +866,7 @@ class ChapterSetDownloadStateProvider
 }
 
 String _$chaptersListttStateHash() =>
-    r'2f81698d88c8087360e33c19884bfbb018604269';
+    r'5f1b0d2be32fcb904c12c5735f1340c8b33400a9';
 
 /// See also [ChaptersListttState].
 @ProviderFor(ChaptersListttState)

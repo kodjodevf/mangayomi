@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'42e2ad9fac5c3a0db0a6aefe8f77f2c97eaaf235';
+String _$getMangaDetailHash() => r'989fdfaf80bf546d1f9910b0715afc9a0e64f33a';
 
 /// Copied from Dart SDK
 class _SystemHash {

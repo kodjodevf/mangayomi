@@ -1,0 +1,295 @@
+import 'package:flutter_js/flutter_js.dart';
+import 'package:html/dom.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/services/http_service/http_service.dart';
+import 'package:mangayomi/sources/service/service.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/dom.dart' as dom;
+import 'package:mangayomi/sources/utils/utils.dart';
+
+class Mangahere extends MangaYomiServices {
+  @override
+  Future<GetMangaDetailModel?> getMangaDetail(
+      {required String imageUrl,
+      required String url,
+      required String title,
+      required String lang,
+      required String source}) async {
+    final dom = await httpGet(
+        url: "http://www.mangahere.cc$url",
+        source: source,
+        resDom: true) as Document?;
+    if (dom!
+        .querySelectorAll(
+            ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
+        .isNotEmpty) {
+      final tt = dom
+          .querySelectorAll(
+              ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
+          .map((e) => e.text.trim())
+          .toList();
+
+      status = tt[0];
+    } else {
+      status = "";
+    }
+    if (dom
+        .querySelectorAll(
+            ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
+        .isNotEmpty) {
+      final tt = dom
+          .querySelectorAll(
+              ' body > div > div > div.detail-info-right > p.detail-info-right-say > a')
+          .map((e) => e.text.trim())
+          .toList();
+
+      author = tt[0];
+    } else {
+      author = "";
+    }
+
+    if (dom
+        .querySelectorAll(
+            'body > div > div > div.detail-info-right > p.detail-info-right-content')
+        .isNotEmpty) {
+      final tt = dom
+          .querySelectorAll(
+              'body > div > div > div.detail-info-right > p.detail-info-right-content')
+          .map((e) => e.text.trim())
+          .toList();
+
+      description = tt.first;
+    }
+
+    if (dom.querySelectorAll('ul > li > a').isNotEmpty) {
+      final udl = dom
+          .querySelectorAll('ul > li > a ')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+
+      for (var ok in udl) {
+        chapterUrl.add(ok!);
+      }
+    }
+    if (dom.querySelectorAll('ul > li > a > div > p.title3').isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('ul > li > a > div > p.title3')
+          .map((e) => e.text.trim())
+          .toList();
+      for (var ok in tt) {
+        chapterTitle.add(ok);
+      }
+    }
+    if (dom.querySelectorAll('ul > li > a > div > p.title2').isNotEmpty) {
+      final tt = dom
+          .querySelectorAll('ul > li > a > div > p.title2')
+          .map((e) => e.text.trim())
+          .toList();
+      for (var ok in tt) {
+        chapterDate.add(parseDate(ok, source));
+      }
+    }
+    if (dom
+        .querySelectorAll(
+            ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
+        .isNotEmpty) {
+      final tt = dom
+          .querySelectorAll(
+              ' body > div > div > div.detail-info-right > p.detail-info-right-tag-list > a')
+          .map((e) => e.text.trim())
+          .toList();
+
+      for (var ok in tt) {
+        genre.add(ok);
+      }
+    }
+    return mangadetailRes(
+        imageUrl: imageUrl, url: url, title: title, source: source);
+  }
+
+  @override
+  Future<GetMangaModel?> getPopularManga(
+      {required String source, required int page}) async {
+    final dom = await httpGet(
+        url: 'https://www.mangahere.cc/ranking/',
+        source: source,
+        resDom: true) as Document?;
+    if (dom!
+        .querySelectorAll(
+            'body > div.container.weekrank.ranking > div > div > ul > li > a')
+        .isNotEmpty) {
+      url = dom
+          .querySelectorAll(
+              'body > div.container.weekrank.ranking > div > div > ul > li > a ')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+
+      image = dom
+          .querySelectorAll(
+              ' body > div.container.weekrank.ranking > div > div > ul > li > a > img')
+          .where((e) => e.attributes.containsKey('src'))
+          .where((e) => e.attributes['src']!.contains("cover"))
+          .map((e) => e.attributes['src'])
+          .toList();
+
+      name = dom
+          .querySelectorAll(
+              'body > div.container.weekrank.ranking > div > div > ul > li > a ')
+          .where((e) => e.attributes.containsKey('title'))
+          .map((e) => e.attributes['title'])
+          .toList();
+    }
+    return mangaRes();
+  }
+
+  @override
+  Future<GetMangaModel?> searchManga(
+      {required String source, required String query}) async {
+    final dom = await httpGet(
+        url:
+            '${getWpMangaUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
+        source: source,
+        resDom: true) as Document?;
+
+    if (dom!
+        .querySelectorAll(
+            'body > div.container > div > div > ul > li > p.manga-list-4-item-title > a')
+        .isNotEmpty) {
+      url = dom
+          .querySelectorAll(
+              'body > div.container > div > div > ul > li > p.manga-list-4-item-title > a')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+
+      image = dom
+          .querySelectorAll(
+              'body > div.container > div > div > ul > li > a > img')
+          .where((e) => e.attributes.containsKey('src'))
+          .where((e) => e.attributes['src']!.contains("cover"))
+          .map((e) => e.attributes['src'])
+          .toList();
+
+      name = dom
+          .querySelectorAll(
+              'body > div.container > div > div > ul > li > p.manga-list-4-item-title > a')
+          .where((e) => e.attributes.containsKey('title'))
+          .map((e) => e.attributes['title'])
+          .toList();
+    }
+    return mangaRes();
+  }
+
+  @override
+  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+    JavascriptRuntime? flutterJs;
+    flutterJs = getJavascriptRuntime();
+    extractSecretKey(String response, JavascriptRuntime? flutterJs) {
+      var secretKeyScriptLocation =
+          response.indexOf("eval(function(p,a,c,k,e,d)");
+      var secretKeyScriptEndLocation =
+          response.indexOf("</script>", secretKeyScriptLocation);
+      var secretKeyScript = response
+          .substring(secretKeyScriptLocation, secretKeyScriptEndLocation)
+          .replaceAll("eval", "");
+      var secretKeyDeobfuscatedScript =
+          flutterJs!.evaluate(secretKeyScript).toString();
+      var secretKeyStartLoc = secretKeyDeobfuscatedScript.indexOf("'");
+      var secretKeyEndLoc = secretKeyDeobfuscatedScript.indexOf(";");
+
+      var secretKeyResultScript = secretKeyDeobfuscatedScript.substring(
+          secretKeyStartLoc, secretKeyEndLoc);
+
+      return secretKeyResultScript;
+    }
+
+    var link = "http://www.mangahere.cc${chapter.url!}";
+    final response =
+        await httpGet(url: link, source: "managhere", resDom: false) as String?;
+
+    dom.Document htmll = dom.Document.html(response!);
+    int? pagesNumber = -1;
+    if (htmll.querySelectorAll('body > div > div > span > a:').isNotEmpty) {
+      final ta = htmll
+          .querySelectorAll('body > div > div > span > a:')
+          .map((e) => e.text.trim())
+          .toList();
+      ta.removeLast();
+      pagesNumber = int.parse(ta.last);
+    }
+    if (pagesNumber == -1) {
+      final script = htmll
+          .getElementsByTagName("script")
+          .firstWhere((e) => e.innerHtml.contains(
+                "function(p,a,c,k,e,d)",
+              ))
+          .innerHtml
+          .replaceAll("eval", "");
+
+      String deobfuscatedScript = flutterJs.evaluate(script).toString();
+      List<String> urlss = deobfuscatedScript
+          .substring(
+              deobfuscatedScript.indexOf("newImgs=['") + "newImgs=['".length,
+              deobfuscatedScript.indexOf("'];"))
+          .split("','");
+      for (var tt in urlss) {
+        pageUrls.add("https:$tt");
+      }
+      flutterJs.dispose();
+    } else {
+      var secretKey = extractSecretKey(response, flutterJs);
+
+      var chapterIdStartLoc = response.indexOf("chapterid");
+      var chapterId = response
+          .substring(
+              chapterIdStartLoc + 11, response.indexOf(";", chapterIdStartLoc))
+          .trim();
+
+      var pageBase = link.substring(0, link.lastIndexOf("/"));
+
+      for (int i = 1; i <= pagesNumber; i++) {
+        var pageLink =
+            "$pageBase/chapterfun.ashx?cid=$chapterId&page=$i&key=$secretKey";
+        var responseText = "";
+
+        for (int tr = 1; tr <= 3; tr++) {
+          var response = await http.get(Uri.parse(pageLink), headers: {
+            "Referer": link,
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Connection": "keep-alive",
+            "Host": "www.mangahere.cc",
+            "X-Requested-With": "XMLHttpRequest"
+          });
+          responseText = response.body;
+          if (responseText.isNotEmpty) {
+            break;
+          } else {
+            secretKey = "";
+          }
+        }
+
+        var deobfuscatedScript =
+            flutterJs.evaluate(responseText.replaceAll("eval", "")).toString();
+
+        var baseLinkStartPos = deobfuscatedScript.indexOf("pix=") + 5;
+        var baseLinkEndPos =
+            deobfuscatedScript.indexOf(";", baseLinkStartPos) - 1;
+        var baseLink =
+            deobfuscatedScript.substring(baseLinkStartPos, baseLinkEndPos);
+
+        var imageLinkStartPos = deobfuscatedScript.indexOf("pvalue=") + 9;
+        var imageLinkEndPos =
+            deobfuscatedScript.indexOf("\"", imageLinkStartPos);
+        var imageLink =
+            deobfuscatedScript.substring(imageLinkStartPos, imageLinkEndPos);
+        pageUrls.add("https:$baseLink$imageLink");
+      }
+
+      flutterJs.dispose();
+    }
+    return pageUrls;
+  }
+}

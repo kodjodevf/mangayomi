@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/models/source_model.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
 import 'package:mangayomi/views/browse/extension/widgets/extension_list_tile_widget.dart';

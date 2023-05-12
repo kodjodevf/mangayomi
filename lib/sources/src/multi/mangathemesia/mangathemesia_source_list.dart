@@ -1,191 +1,13 @@
-import 'package:mangayomi/source/source_model.dart';
-List<SourceModel> sourcesList = [
-  SourceModel(
-    sourceName: "MangaHere",
-    url: "http://www.mangahere.cc",
-    lang: "en",
-    typeSource: TypeSource.single,
-    logoUrl: 'http://static.mangahere.cc/v20210106/mangahere/images/logo.png',
-    isFullData: true,
-    dateFormat: "MMM dd,yyyy",
-    dateFormatLocale: "en",
-  ),
-  // SourceModel(
-  //     sourceName: "MangaSee",
-  //     url: "https://mangasee123.com",
-  //     lang: "en",
-  //     typeSource: TypeSource.single,
-  //     logoUrl: 'https://mangasee123.com/media/navbar.brand.png',
-  //     dateFormat: "MMM dd,yyyy",
-  //     dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: "MangaKawaii",
-      url: "https://www.mangakawaii.io",
-      lang: "fr",
-      typeSource: TypeSource.single,
-      logoUrl: 'https://www.mangakawaii.io/assets/img/logo.png',
-      dateFormat: "dd.MM.yyyy",
-      dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'en',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'ar',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'pt',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'pt-br',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'it',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'ru',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'es',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'es-419',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'id',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'hi',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'de',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'ja',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'tr',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'pl',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'zh',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'zh-hk',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: 'Comick',
-      url: 'https://api.comick.fun/',
-      lang: 'fr',
-      typeSource: TypeSource.comick,
-      logoUrl:
-          'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75',
-      dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
+import 'package:mangayomi/models/source_model.dart';
+
+List<SourceModel> mangathemesiaSourcesList = [
   SourceModel(
       sourceName: "KomikLab",
       url: "https://komiklab.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
-      dateFormat:  "MMMM dd, yyyy",
+      dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "AnimatedGlitchedScans",
@@ -193,7 +15,7 @@ List<SourceModel> sourcesList = [
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
-      dateFormat:  "MMMM dd, yyyy",
+      dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "ArenaScans",
@@ -234,7 +56,7 @@ List<SourceModel> sourcesList = [
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
-      dateFormat:  "MMMM dd, yyyy",
+      dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "DiskusScan",
@@ -272,7 +94,7 @@ List<SourceModel> sourcesList = [
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
       isCloudflare: true,
-      dateFormat:  "MMMM dd, yyyy",
+      dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
 
   // SourceModel(
@@ -487,70 +309,4 @@ List<SourceModel> sourcesList = [
           'https://xcalibrscans.com/wp-content/uploads/2021/06/xcalibr-dark-v3.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-
-  // SourceModel(
-  //     sourceName: "Fallen Angels",
-  //     url: "https://manga.fascans.com",
-  //     lang: "en",
-  //     typeSource: TypeSource.mmrcms,
-  //     logoUrl: '',
-  //     dateFormat: "d MMM. yyyy",
-  //     dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: "Scan FR",
-      url: "https://www.scan-fr.org",
-      lang: "fr",
-      typeSource: TypeSource.mmrcms,
-      logoUrl: '',
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: "Scan VF",
-      url: "https://www.scan-vf.net",
-      lang: "fr",
-      typeSource: TypeSource.mmrcms,
-      logoUrl: '',
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"), //
-  SourceModel(
-      sourceName: "Komikid",
-      url: "https://www.komikid.com",
-      lang: "id",
-      typeSource: TypeSource.mmrcms,
-      logoUrl: '',
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"),
-  // SourceModel(
-  //     sourceName: "MangaHanta",
-  //     url: "http://mangahanta.com",
-  //     lang: "tr",
-  //     typeSource: TypeSource.mmrcms,
-  //     logoUrl: '',
-  //     dateFormat: "d MMM. yyyy",
-  //     dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: "MangaID",
-      url: "https://mangaid.click",
-      lang: "id",
-      typeSource: TypeSource.mmrcms,
-      logoUrl: '',
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: "Jpmangas",
-      url: "https://jpmangas.cc",
-      lang: "fr",
-      typeSource: TypeSource.mmrcms,
-      logoUrl: '',
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"),
-  SourceModel(
-      sourceName: "Japscan",
-      url: "https://japscan.lol",
-      lang: "fr",
-      typeSource: TypeSource.single,
-      logoUrl: '',
-      isCloudflare: true,
-      dateFormat: "d MMM. yyyy",
-      dateFormatLocale: "en_US"),
 ];

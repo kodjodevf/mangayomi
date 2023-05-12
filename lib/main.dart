@@ -1,5 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:developer';
 import 'dart:io';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
@@ -16,7 +15,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/source/source_model.dart';
+import 'package:mangayomi/models/source_model.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';

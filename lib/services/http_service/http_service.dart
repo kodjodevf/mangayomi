@@ -1,8 +1,8 @@
 import 'package:html/dom.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
-import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/headers.dart';
 
 Future<dynamic> httpGet(
@@ -29,8 +29,13 @@ Future<dynamic> httpGet(
         useUserAgent: useUserAgent,
       );
     } else {
-      final response = await http.get(Uri.parse(url), headers: headers(source));
-      resHtml = response.body;
+      try {
+        final response =
+            await http.get(Uri.parse(url), headers: headers(source));
+        resHtml = response.body;
+      } catch (e) {
+        rethrow;
+      }
     }
     return resHtml;
   }

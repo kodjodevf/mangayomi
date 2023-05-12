@@ -18,7 +18,7 @@ Future<List<dynamic>> downloadChapter(
   DownloadChapterRef ref, {
   required Chapter chapter,
 }) async {
-  List urll = [];
+  List pageUrls = [];
   List<DownloadTask> tasks = [];
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
@@ -39,8 +39,8 @@ Future<List<dynamic>> downloadChapter(
     chapter: chapter,
   ).future)
       .then((value) {
-    if (value.urll.isNotEmpty) {
-      urll = value.urll;
+    if (value.pageUrls.isNotEmpty) {
+      pageUrls = value.pageUrls;
       isOk = true;
     }
   });
@@ -52,8 +52,8 @@ Future<List<dynamic>> downloadChapter(
     return true;
   });
 
-  if (urll.isNotEmpty) {
-    for (var index = 0; index < urll.length; index++) {
+  if (pageUrls.isNotEmpty) {
+    for (var index = 0; index < pageUrls.length; index++) {
       final path2 = Directory("${path1.path}downloads/");
       final path4 = Directory(
           "${path2.path}${manga.source} (${manga.lang!.toUpperCase()})/");
@@ -83,9 +83,9 @@ Future<List<dynamic>> downloadChapter(
         if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
         } else {
           tasks.add(DownloadTask(
-            taskId: urll[index],
+            taskId: pageUrls[index],
             headers: headers(manga.source!),
-            url: urll[index],
+            url: pageUrls[index],
             filename: "${padIndex(index + 1)}.jpg",
             baseDirectory:
                 Platform.isWindows || Platform.isMacOS || Platform.isLinux
@@ -104,9 +104,9 @@ Future<List<dynamic>> downloadChapter(
         if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
         } else {
           tasks.add(DownloadTask(
-            taskId: urll[index],
+            taskId: pageUrls[index],
             headers: headers(manga.source!),
-            url: urll[index],
+            url: pageUrls[index],
             filename: "${padIndex(index + 1)}.jpg",
             baseDirectory:
                 Platform.isWindows || Platform.isMacOS || Platform.isLinux
@@ -122,7 +122,7 @@ Future<List<dynamic>> downloadChapter(
         }
       }
     }
-    if (tasks.isEmpty && urll.isNotEmpty) {
+    if (tasks.isEmpty && pageUrls.isNotEmpty) {
       final model = DownloadModel(
           chapterId: chapter.id,
           mangaName: manga.name,
@@ -133,7 +133,7 @@ Future<List<dynamic>> downloadChapter(
           total: 0,
           isDownload: true,
           mangaId: manga.id!,
-          taskIds: urll,
+          taskIds: pageUrls,
           isStartDownload: false);
 
       ref
@@ -150,7 +150,7 @@ Future<List<dynamic>> downloadChapter(
             chapterId: chapter.id,
             total: tasks.length,
             isDownload: (succeeded == tasks.length) ? true : false,
-            taskIds: urll,
+            taskIds: pageUrls,
             isStartDownload: true,
             chapterName: chapter.name!,
             mangaSource: manga.source,
@@ -182,5 +182,5 @@ Future<List<dynamic>> downloadChapter(
       );
     }
   }
-  return urll;
+  return pageUrls;
 }

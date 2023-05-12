@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';

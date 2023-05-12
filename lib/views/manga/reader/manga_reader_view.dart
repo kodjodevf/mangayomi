@@ -40,12 +40,12 @@ class MangaReaderView extends ConsumerWidget {
         ref.read(readerControllerProvider(chapter: chapter).notifier);
     return chapterData.when(
       data: (data) {
-        if (data.urll.isEmpty) {
+        if (data.pageUrls.isEmpty) {
           Navigator.pop(context);
         }
         return MangaChapterPageGallery(
           path: data.path!,
-          url: data.urll,
+          url: data.pageUrls,
           readerController: readerController,
           isLocaleList: data.isLocaleList,
           chapter: chapter,
