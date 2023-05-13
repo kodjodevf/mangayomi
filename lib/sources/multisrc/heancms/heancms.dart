@@ -54,6 +54,7 @@ class HeanCms extends MangaYomiServices {
     http.StreamedResponse response = await request.send();
     final res = await response.stream.bytesToString();
     var mangaDetail = jsonDecode(res) as Map<String, dynamic>;
+    
     final d = Data.fromJson(mangaDetail);
 
     final dom = await httpResToDom(
@@ -68,12 +69,14 @@ class HeanCms extends MangaYomiServices {
         .toList();
     final auth = dom
         .querySelectorAll("div > p")
-        .where((element) => element.outerHtml.toLowerCase().contains('autor'))
+        .where((element) =>
+            element.outerHtml.toLowerCase().contains('autor') ||
+            element.outerHtml.toLowerCase().contains('author'))
         .map((e) => e.text)
         .toList();
     author = auth.first.split(":").last;
     status = manga.status;
-    genre = genres;
+    genre = source == "OmegaScans" ? [] : genres;
     description = des.first;
     for (var chapter in d.chapters!) {
       chapterUrl

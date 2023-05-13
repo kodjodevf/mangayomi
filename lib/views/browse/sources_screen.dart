@@ -63,31 +63,50 @@ class SourcesScreen extends ConsumerWidget {
                             .secondaryHeaderColor
                             .withOpacity(0.5),
                         borderRadius: BorderRadius.circular(5)),
-                    child: 
-                    // element.logoUrl.isEmpty
-                    //     ? 
-                        const Icon(Icons.source_outlined),
-                        // : CachedNetworkImage(
-                        //   httpHeaders: headers(element.sourceName),
-                        //     imageUrl: element.logoUrl,
-                        //     fit: BoxFit.contain,
-                        //     width: 37,
-                        //     height: 37,
-                        //     errorWidget: (context, url, error) {
-                        //       return const SizedBox(
-                        //         width: 37,
-                        //         height: 37,
-                        //         child: Center(
-                        //           child: Icon(Icons.source_outlined),
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
+                    child: element.logoUrl.isEmpty
+                        ? const Icon(Icons.source_outlined)
+                        : CachedNetworkImage(
+                            httpHeaders: headers(element.sourceName),
+                            imageUrl: element.logoUrl,
+                            fit: BoxFit.contain,
+                            width: 37,
+                            height: 37,
+                            errorWidget: (context, url, error) {
+                              return const SizedBox(
+                                width: 37,
+                                height: 37,
+                                child: Center(
+                                  child: Icon(Icons.source_outlined),
+                                ),
+                              );
+                            },
+                          ),
                   ),
-                  subtitle: Text(
-                    completeLang(source.lang.toLowerCase()),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w300, fontSize: 12),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        completeLang(source.lang.toLowerCase()),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w300, fontSize: 12),
+                      ),
+                      if (source.isNsfw)
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "18+",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 10,
+                                  color: Colors.redAccent
+                                      .withBlue(5)
+                                      .withOpacity(0.8)),
+                            ),
+                          ],
+                        )
+                    ],
                   ),
                   title: Text(source.sourceName),
                   trailing: SizedBox(

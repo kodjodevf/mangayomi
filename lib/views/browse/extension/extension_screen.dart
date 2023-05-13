@@ -67,6 +67,7 @@ class ExtensionScreen extends ConsumerWidget {
                   sourceName: source.sourceName,
                   value: source.isAdded,
                   logoUrl: source.logoUrl,
+                  isNsfw: source.isNsfw,
                 );
               },
               groupComparator: (group1, group2) => group1.compareTo(group2),

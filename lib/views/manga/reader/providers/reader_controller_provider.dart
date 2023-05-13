@@ -38,10 +38,9 @@ class CurrentIndex extends _$CurrentIndex {
     return 0;
   }
 
-  setCurrentIndex(int currentIndex, ReaderController readerController) {
-    readerController.setMangaHistoryUpdate();
-    readerController.setPageIndex(currentIndex);
-    readerController.setChapterPageLastRead(currentIndex);
+  setCurrentIndex(
+    int currentIndex,
+  ) {
     state = currentIndex;
   }
 }

@@ -158,10 +158,15 @@ class _MangaChapterPageGalleryState
   _readProgressListener() {
     var posIndex = _itemPositionsListener.itemPositions.value.first.index;
     if (posIndex >= 0 && posIndex < widget.url.length) {
-      ref
-          .read(currentIndexProvider(widget.chapter).notifier)
-          .setCurrentIndex(posIndex, widget.readerController);
-      _currentIndex = posIndex;
+      if (_currentIndex != posIndex) {
+        ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
+              posIndex,
+            );
+        widget.readerController.setMangaHistoryUpdate();
+        widget.readerController.setPageIndex(posIndex);
+        widget.readerController.setChapterPageLastRead(posIndex);
+        _currentIndex = posIndex;
+      }
     }
   }
 
@@ -173,9 +178,12 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    ref
-        .read(currentIndexProvider(widget.chapter).notifier)
-        .setCurrentIndex(index, widget.readerController);
+    ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
+          index,
+        );
+    widget.readerController.setMangaHistoryUpdate();
+    widget.readerController.setPageIndex(index);
+    widget.readerController.setChapterPageLastRead(index);
     _currentIndex = index;
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
