@@ -1,0 +1,2 @@
+
+RegExp timeStampRegex = RegExp("-\\d+");

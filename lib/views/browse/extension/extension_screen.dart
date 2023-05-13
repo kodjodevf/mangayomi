@@ -55,7 +55,8 @@ class ExtensionScreen extends ConsumerWidget {
                         "${element.sourceName}${element.lang}",
                         SourceModel(
                             sourceName: element.sourceName,
-                            url: element.url,
+                            baseUrl: element.baseUrl,
+                            apiUrl: element.apiUrl,
                             lang: element.lang,
                             typeSource: element.typeSource,
                             isAdded: val,

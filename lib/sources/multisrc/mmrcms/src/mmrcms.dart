@@ -3,20 +3,18 @@ import 'dart:convert';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class Mmrcms extends MangaYomiServices {
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
-    final dom =
-        await httpGet(url: url, source: source, resDom: true) as Document?;
+    final dom = await httpGet(url: manga.url!, source: source, resDom: true)
+        as Document?;
     description = dom!
         .querySelectorAll('.row .well p')
         .map((e) => e.text.trim())
@@ -73,9 +71,9 @@ class Mmrcms extends MangaYomiServices {
     final data = rrr.map((e) => e.outerHtml).toList();
     if (source.toLowerCase() == 'jpmangas' ||
         source.toLowerCase() == 'fr scan') {
-      imageUrl = regSrcMatcher(data.first).replaceAll('//', 'https://');
+      manga.imageUrl = regSrcMatcher(data.first).replaceAll('//', 'https://');
     } else {
-      imageUrl = regSrcMatcher(data.first);
+      manga.imageUrl = regSrcMatcher(data.first);
     }
 
     final ttt = dom
@@ -101,16 +99,15 @@ class Mmrcms extends MangaYomiServices {
         chapterDate.add(parseDate(da, source));
       }
     }
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     final dom = await httpGet(
         url:
-            '${getWpMangaUrl(source)}/filterList?page=$page&sortBy=views&asc=false',
+            '${getMangaBaseUrl(source)}/filterList?page=$page&sortBy=views&asc=false',
         source: source,
         resDom: true) as Document?;
     final urlElement = dom!.getElementsByClassName('chart-title');
@@ -132,20 +129,20 @@ class Mmrcms extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query}) async {
     final response = await httpGet(
-        url: '${getWpMangaUrl(source)}/search?query=${query.trim()}',
+        url: '${getMangaBaseUrl(source)}/search?query=${query.trim()}',
         source: source,
         resDom: false) as String?;
     final rep = jsonDecode(response!);
     for (var ok in rep['suggestions']) {
       if (source == 'Read Comics Online') {
-        url.add('${getWpMangaUrl(source)}/comic/${ok['data']}');
+        url.add('${getMangaBaseUrl(source)}/comic/${ok['data']}');
       } else if (source == 'Scan VF') {
-        url.add('${getWpMangaUrl(source)}/${ok['data']}');
+        url.add('${getMangaBaseUrl(source)}/${ok['data']}');
       } else {
-        url.add('${getWpMangaUrl(source)}/manga/${ok['data']}');
+        url.add('${getMangaBaseUrl(source)}/manga/${ok['data']}');
       }
       name.add(ok["value"]);
       image.add('');
@@ -163,7 +160,8 @@ class Mmrcms extends MangaYomiServices {
     if (dom!.querySelectorAll('#all > .img-responsive').isNotEmpty) {
       pageUrls = dom.querySelectorAll('#all > .img-responsive').map((e) {
         final RegExp regexx = RegExp(r'data-src="([^"]+)"');
-        if (chapter.manga.value!.source!.toLowerCase() == 'fr scan') {
+        if (chapter.manga.value!.source!.toLowerCase() == 'fr scan' ||
+            chapter.manga.value!.source!.toLowerCase() == 'jpmangas') {
           return regexx
               .allMatches(e.outerHtml)
               .first

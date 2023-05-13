@@ -2,16 +2,14 @@ import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/utils/utils.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class MangaKawaii extends MangaYomiServices {
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
     final dom = await httpGet(
@@ -19,7 +17,7 @@ class MangaKawaii extends MangaYomiServices {
         source: source,
         resDom: true) as Document?;
     List detail = [];
-    imageUrl =
+    manga.imageUrl =
         "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
     if (dom!.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
       final tt = dom
@@ -117,12 +115,11 @@ class MangaKawaii extends MangaYomiServices {
         }
       }
     }
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     final dom = await httpGet(
         url: 'https://www.mangakawaii.io/',
@@ -146,7 +143,7 @@ class MangaKawaii extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query}) async {
     final dom = await httpGet(
         url:

@@ -1,19 +1,19 @@
 import 'dart:convert';
 
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/comick/chapter_page_comick.dart';
-import 'package:mangayomi/models/comick/manga_chapter_detail.dart';
-import 'package:mangayomi/models/comick/manga_detail_comick.dart';
-import 'package:mangayomi/models/comick/popular_manga_comick.dart';
-import 'package:mangayomi/models/comick/search_manga_cimick.dart';
+import 'package:mangayomi/sources/src/all/comick/src/model/chapter_page_comick.dart';
+import 'package:mangayomi/sources/src/all/comick/src/model/manga_chapter_detail.dart';
+import 'package:mangayomi/sources/src/all/comick/src/model/manga_detail_comick.dart';
+import 'package:mangayomi/sources/src/all/comick/src/model/popular_manga_comick.dart';
+import 'package:mangayomi/sources/src/all/comick/src/model/search_manga_cimick.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/utils/utils.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class Comick extends MangaYomiServices {
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     source = source.toLowerCase();
     final response = await httpGet(
@@ -34,14 +34,12 @@ class Comick extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
     final response = await httpGet(
-        url: 'https://api.comick.fun$url?tachiyomi=true',
+        url: 'https://api.comick.fun${manga.url}?tachiyomi=true',
         source: source,
         resDom: false) as String?;
     var mangaDetail = jsonDecode(response!) as Map<String, dynamic>;
@@ -86,12 +84,11 @@ class Comick extends MangaYomiServices {
           chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
     }
 
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query}) async {
     final response = await httpGet(
         url:

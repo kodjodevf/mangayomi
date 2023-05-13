@@ -5,29 +5,34 @@ abstract class MangaYomiServices {
   List<String?> name = [];
   List<String?> image = [];
   List<String> genre = [];
-  String? author;
-  String? status;
+  String? author = "";
+  String? status = "";
+  List<String> statusList = [];
   List<String> chapterTitle = [];
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
-  String? description;
+  String? description = "";
   List<Chapter> chapters = [];
   List<String> scanlators = [];
   List pageUrls = [];
-
-  GetMangaModel mangaRes() {
-    return GetMangaModel(
-      name: name,
-      url: url,
-      image: image,
-    );
+  List<GetManga> mangaList = [];
+  List<GetManga> mangaRes() {
+    for (var i = 0; i < name.length; i++) {
+      mangaList.add(GetManga(
+          genre: genre,
+          author: author,
+          status: statusList.isEmpty ? "" : statusList[i],
+          chapters: chapters,
+          imageUrl: image[i],
+          description: description,
+          url: url[i],
+          name: name[i],
+          source: ""));
+    }
+    return mangaList;
   }
 
-  GetMangaDetailModel mangadetailRes(
-      {required String imageUrl,
-      required String url,
-      required String title,
-      required String source}) {
+  GetManga mangadetailRes({required GetManga manga, required String source}) {
     if (chapterDate.isNotEmpty &&
         chapterTitle.isNotEmpty &&
         chapterUrl.isNotEmpty) {
@@ -43,48 +48,31 @@ abstract class MangaYomiServices {
             mangaId: null));
       }
     }
-    return GetMangaDetailModel(
+    return GetManga(
       status: status,
       genre: genre,
       author: author,
       description: description,
-      name: title,
-      url: url,
+      name: manga.name,
+      url: manga.url,
       source: source,
-      imageUrl: imageUrl,
+      imageUrl: manga.imageUrl,
       chapters: chapters,
     );
   }
 
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page});
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
-      required String lang,
-      required String source});
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga, required String lang, required String source});
   Future<List<dynamic>?> getMangaChapterUrl({
     required Chapter chapter,
   });
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query});
 }
 
-
-
-class GetMangaModel {
-  late List<String?> url;
-  late List<String?> name;
-  late List<String?> image;
-  GetMangaModel({
-    required this.name,
-    required this.url,
-    required this.image,
-  });
-}
-
-class GetMangaDetailModel {
+class GetManga {
   List<String> genre = [];
   List<Chapter> chapters = [];
   String? author;
@@ -94,7 +82,7 @@ class GetMangaDetailModel {
   String? name;
   String? imageUrl;
   String? description;
-  GetMangaDetailModel({
+  GetManga({
     required this.genre,
     required this.author,
     required this.status,

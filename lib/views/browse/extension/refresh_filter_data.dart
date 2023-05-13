@@ -6,9 +6,8 @@ part 'refresh_filter_data.g.dart';
 
 @riverpod
 refreshFilterData(RefreshFilterDataRef ref) async {
-  final lf = ref
-      .watch(hiveBoxMangaProvider)
-      .get("language_filter", defaultValue: []);
+  final lf =
+      ref.watch(hiveBoxMangaProvider).get("language_filter", defaultValue: []);
   if (lf.isEmpty) {
     for (var element in sourcesList) {
       final sP = ref.watch(hiveBoxMangaSourceProvider);
@@ -20,7 +19,8 @@ refreshFilterData(RefreshFilterDataRef ref) async {
             "${element.sourceName}${element.lang}",
             SourceModel(
                 sourceName: element.sourceName,
-                url: element.url,
+                baseUrl: element.baseUrl,
+                apiUrl: element.apiUrl,
                 lang: element.lang,
                 typeSource: element.typeSource,
                 logoUrl: element.logoUrl,
@@ -47,7 +47,8 @@ refreshFilterData(RefreshFilterDataRef ref) async {
             "${element.sourceName}${element.lang}",
             SourceModel(
                 sourceName: element.sourceName,
-                url: element.url,
+                baseUrl: element.baseUrl,
+                apiUrl: element.apiUrl,
                 lang: element.lang,
                 typeSource: element.typeSource,
                 logoUrl: element.logoUrl,

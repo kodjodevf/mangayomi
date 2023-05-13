@@ -6,7 +6,7 @@ part of 'search_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'1694578ec0cc207b533f4709427d3f68b691b1b7';
+String _$searchMangaHash() => r'881d305e97081528fa6259bc4c2ea0a28b63e1fd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,14 +29,14 @@ class _SystemHash {
   }
 }
 
-typedef SearchMangaRef = AutoDisposeFutureProviderRef<GetMangaModel>;
+typedef SearchMangaRef = AutoDisposeFutureProviderRef<List<GetManga?>>;
 
 /// See also [searchManga].
 @ProviderFor(searchManga)
 const searchMangaProvider = SearchMangaFamily();
 
 /// See also [searchManga].
-class SearchMangaFamily extends Family<AsyncValue<GetMangaModel>> {
+class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
   /// See also [searchManga].
   const SearchMangaFamily();
 
@@ -77,7 +77,7 @@ class SearchMangaFamily extends Family<AsyncValue<GetMangaModel>> {
 }
 
 /// See also [searchManga].
-class SearchMangaProvider extends AutoDisposeFutureProvider<GetMangaModel> {
+class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
   /// See also [searchManga].
   SearchMangaProvider({
     required this.source,

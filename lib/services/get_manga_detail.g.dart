@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'989fdfaf80bf546d1f9910b0715afc9a0e64f33a';
+String _$getMangaDetailHash() => r'ee4c8c5203a9cc0d6de3697f96e5e46e80218fc2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,29 +29,25 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<GetMangaDetailModel>;
+typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<GetManga>;
 
 /// See also [getMangaDetail].
 @ProviderFor(getMangaDetail)
 const getMangaDetailProvider = GetMangaDetailFamily();
 
 /// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
+class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
   /// See also [getMangaDetail].
   const GetMangaDetailFamily();
 
   /// See also [getMangaDetail].
   GetMangaDetailProvider call({
-    required String imageUrl,
-    required String url,
-    required String title,
+    required GetManga manga,
     required String lang,
     required String source,
   }) {
     return GetMangaDetailProvider(
-      imageUrl: imageUrl,
-      url: url,
-      title: title,
+      manga: manga,
       lang: lang,
       source: source,
     );
@@ -62,9 +58,7 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
     covariant GetMangaDetailProvider provider,
   ) {
     return call(
-      imageUrl: provider.imageUrl,
-      url: provider.url,
-      title: provider.title,
+      manga: provider.manga,
       lang: provider.lang,
       source: provider.source,
     );
@@ -86,21 +80,16 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetMangaDetailModel>> {
 }
 
 /// See also [getMangaDetail].
-class GetMangaDetailProvider
-    extends AutoDisposeFutureProvider<GetMangaDetailModel> {
+class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
   /// See also [getMangaDetail].
   GetMangaDetailProvider({
-    required this.imageUrl,
-    required this.url,
-    required this.title,
+    required this.manga,
     required this.lang,
     required this.source,
   }) : super.internal(
           (ref) => getMangaDetail(
             ref,
-            imageUrl: imageUrl,
-            url: url,
-            title: title,
+            manga: manga,
             lang: lang,
             source: source,
           ),
@@ -115,18 +104,14 @@ class GetMangaDetailProvider
               GetMangaDetailFamily._allTransitiveDependencies,
         );
 
-  final String imageUrl;
-  final String url;
-  final String title;
+  final GetManga manga;
   final String lang;
   final String source;
 
   @override
   bool operator ==(Object other) {
     return other is GetMangaDetailProvider &&
-        other.imageUrl == imageUrl &&
-        other.url == url &&
-        other.title == title &&
+        other.manga == manga &&
         other.lang == lang &&
         other.source == source;
   }
@@ -134,9 +119,7 @@ class GetMangaDetailProvider
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, imageUrl.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-    hash = _SystemHash.combine(hash, title.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
     hash = _SystemHash.combine(hash, lang.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
 

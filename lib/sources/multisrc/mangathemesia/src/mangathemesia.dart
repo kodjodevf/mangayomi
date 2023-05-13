@@ -1,19 +1,17 @@
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class MangaThemeSia extends MangaYomiServices {
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
     final dom = await httpGet(
-        url: url,
+        url: manga.url!,
         source: source,
         resDom: true,
         useUserAgent: true) as Document?;
@@ -138,17 +136,17 @@ class MangaThemeSia extends MangaYomiServices {
         }
       }
     }
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     source = source.toLowerCase();
     final dom = await httpGet(
         useUserAgent: true,
-        url: '${getWpMangaUrl(source)}/manga/?title=&page=$page&order=popular',
+        url:
+            '${getMangaBaseUrl(source)}/manga/?title=&page=$page&order=popular',
         source: source,
         resDom: true) as Document?;
     if (dom!
@@ -189,10 +187,10 @@ class MangaThemeSia extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query}) async {
     final dom = await httpGet(
-        url: '${getWpMangaUrl(source)}/?s=${query.trim()}',
+        url: '${getMangaBaseUrl(source)}/?s=${query.trim()}',
         source: source,
         resDom: true) as Document?;
     if (dom!

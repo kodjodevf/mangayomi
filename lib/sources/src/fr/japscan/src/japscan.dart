@@ -7,27 +7,25 @@ import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:collection/collection.dart';
 
 class Japscan extends MangaYomiServices {
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
-    final dom =
-        await httpGet(url: url, source: source, resDom: true) as Document?;
+    final dom = await httpGet(url: manga.url!, source: source, resDom: true)
+        as Document?;
     if (dom!.querySelectorAll('.col-7 > p').isNotEmpty) {
       final images =
           dom.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
       RegExp exp = RegExp(r'src="([^"]+)"');
 
       String? srcValue = exp.firstMatch(images[0])?.group(1);
-      imageUrl = 'https://www.japscan.lol$srcValue';
+      manga.imageUrl = 'https://www.japscan.lol$srcValue';
 
       if (dom.querySelectorAll('.col-7 > p').isNotEmpty) {
         final stat = dom
@@ -98,12 +96,11 @@ class Japscan extends MangaYomiServices {
         chapterDate.add(parseDate(ok, source));
       }
     }
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     final dom = await httpGet(
         url: "https://www.japscan.lol/",
@@ -131,7 +128,7 @@ class Japscan extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>> searchManga(
       {required String source, required String query}) async {
     final dom = await httpGet(
         url: "https://www.google.com/search?q=${query.toLowerCase()}+japscan",

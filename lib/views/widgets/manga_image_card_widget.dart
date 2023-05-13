@@ -5,7 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
@@ -15,7 +15,7 @@ class MangaImageCardWidget extends StatelessWidget {
   final String lang;
   final bool isLoading;
 
-  final GetMangaDetailModel? getMangaDetailModel;
+  final GetManga? getMangaDetailModel;
 
   const MangaImageCardWidget({
     required this.lang,

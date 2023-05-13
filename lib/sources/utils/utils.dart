@@ -2,17 +2,27 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/models/source_model.dart';
 import 'package:mangayomi/sources/source_list.dart';
 
-String getWpMangaUrl(String source) {
+String getMangaBaseUrl(String source) {
   String url = "";
   for (var i = 0; i < sourcesList.length; i++) {
     if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
-      url = sourcesList[i].url;
+      url = sourcesList[i].baseUrl;
     }
   }
   return url;
 }
 
-TypeSource getWpMangTypeSource(String source) {
+String getMangaAPIUrl(String source) {
+  String url = "";
+  for (var i = 0; i < sourcesList.length; i++) {
+    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+      url = sourcesList[i].apiUrl;
+    }
+  }
+  return url;
+}
+
+TypeSource getMangaTypeSource(String source) {
   TypeSource? typeSource;
   for (var i = 0; i < sourcesList.length; i++) {
     if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
@@ -59,7 +69,15 @@ String utilDate(String data) {
 
 parseDate(String data, String source) {
   source = source.toLowerCase();
-  DateTime date = DateFormat(getFormatDate(source), getFormatDateLocale(source))
-      .parse(data);
+  final now = DateTime.now();
+  DateTime? date;
+  if (data.toLowerCase() == "yesterday") {
+    date = DateTime(now.year, now.month, now.day - 1);
+  } else if (data.toLowerCase().contains("hour ago")) {
+    date = now;
+  } else {
+    date = DateFormat(getFormatDate(source), getFormatDateLocale(source))
+        .parse(data);
+  }
   return date.millisecondsSinceEpoch.toString();
 }

@@ -7,7 +7,7 @@ class SourceModel extends HiveObject {
   @HiveField(0)
   final String sourceName;
   @HiveField(1)
-  final String url;
+  final String baseUrl;
   @HiveField(2)
   final String lang;
   @HiveField(3, defaultValue: true)
@@ -28,10 +28,11 @@ class SourceModel extends HiveObject {
   final String dateFormat;
   @HiveField(11)
   final String dateFormatLocale;
-
+  @HiveField(12)
+  final String apiUrl;
   SourceModel({
     required this.sourceName,
-    required this.url,
+    required this.baseUrl,
     required this.lang,
     required this.typeSource,
     required this.logoUrl,
@@ -42,6 +43,7 @@ class SourceModel extends HiveObject {
     this.isNsfw = false,
     this.isFullData = false,
     this.isCloudflare = false,
+    this.apiUrl = "",
   });
 }
 
@@ -54,5 +56,7 @@ enum TypeSource {
   @HiveField(3)
   comick,
   @HiveField(4)
-  mmrcms
+  mmrcms,
+  @HiveField(5)
+  heancms
 }

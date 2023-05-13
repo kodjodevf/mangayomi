@@ -114,14 +114,12 @@ class SearchResultScreen extends ConsumerWidget {
                 ),
             error: (error, stackTrace) => Center(child: Text(error.toString())),
             data: (data) {
-              if (data.name.isNotEmpty) {
+              if (data.isNotEmpty) {
                 return GridViewWidget(
-                  itemCount: data.name.length,
+                  itemCount: data.length,
                   itemBuilder: (context, index) {
                     return MangaHomeImageCard(
-                      url: data.url[index]!,
-                      name: data.name[index]!,
-                      image: data.image[index]!,
+                      manga: data[index]!,
                       source: source,
                       lang: lang,
                     );

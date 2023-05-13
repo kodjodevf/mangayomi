@@ -1,9 +1,10 @@
 import 'package:mangayomi/models/source_model.dart';
 
-List<SourceModel> mangathemesiaSourcesList = [
+List<SourceModel> get mangathemesiaSourcesList => _mangathemesiaSourcesList;
+List<SourceModel> _mangathemesiaSourcesList = [
   SourceModel(
       sourceName: "KomikLab",
-      url: "https://komiklab.com",
+      baseUrl: "https://komiklab.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -11,7 +12,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "AnimatedGlitchedScans",
-      url: "https://anigliscans.com",
+      baseUrl: "https://anigliscans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -19,7 +20,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "ArenaScans",
-  //     url: "https://arenascans.net",
+  //     baseUrl: "https://arenascans.net",
   //     lang: "en",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl:
@@ -27,14 +28,14 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     isCloudflare: true),
   // SourceModel(
   //     sourceName: "AzureScans",
-  //     url: "https://azuremanga.com",
+  //     baseUrl: "https://azuremanga.com",
   //     lang: "en",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: ''),
 
   SourceModel(
       sourceName: "Boosei",
-      url: "https://boosei.net",
+      baseUrl: "https://boosei.net",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -43,7 +44,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "id"),
   SourceModel(
       sourceName: "Clayrer",
-      url: "https://clayrer.net",
+      baseUrl: "https://clayrer.net",
       lang: "es",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -52,7 +53,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "es"),
   SourceModel(
       sourceName: "CosmicScans",
-      url: "https://cosmicscans.com",
+      baseUrl: "https://cosmicscans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -60,7 +61,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "DiskusScan",
-      url: "https://diskusscan.com",
+      baseUrl: "https://diskusscan.com",
       lang: "pt-br",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -69,7 +70,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "pt"),
   SourceModel(
       sourceName: "DuniaKomik",
-      url: "https://duniakomik.id",
+      baseUrl: "https://duniakomik.id",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -77,19 +78,19 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "id"),
   // SourceModel(
   //     sourceName: "FlameScans",
-  //     url: "https://flamescans.fr",
+  //     baseUrl: "https://flamescans.fr",
   //     lang: "fr",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: ''),
   // SourceModel(
   //     sourceName: "GremoryMangas",
-  //     url: "https://gremorymangas.com",
+  //     baseUrl: "https://gremorymangas.com",
   //     lang: "es",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: 'https://gremorymangas.com/wp-content/uploads/2022/09/6941.png'),
   SourceModel(
       sourceName: "InfernalVoidScans",
-      url: "https://void-scans.com",
+      baseUrl: "https://void-scans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -99,7 +100,7 @@ List<SourceModel> mangathemesiaSourcesList = [
 
   // SourceModel(
   //     sourceName: "Kiryuu",
-  //     url: "https://kiryuu.id",
+  //     baseUrl: "https://kiryuu.id",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -107,7 +108,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "id"),
   // SourceModel(
   //     sourceName: "KomikIndo",
-  //     url: "https://komikindo.co",
+  //     baseUrl: "https://komikindo.co",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -115,7 +116,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "id"),
   SourceModel(
       sourceName: "KomikMama",
-      url: "https://komikmama.co",
+      baseUrl: "https://komikmama.co",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl: '',
@@ -123,7 +124,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "id"),
   SourceModel(
       sourceName: "Komiku",
-      url: "https://komiku.com",
+      baseUrl: "https://komiku.com",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl: 'https://komiku.com/wp-content/uploads/2022/03/logooo.png',
@@ -131,7 +132,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "id"),
   SourceModel(
       sourceName: "KumaScans (Kuma Translation)",
-      url: "https://kumascans.com",
+      baseUrl: "https://kumascans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -140,7 +141,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "MangaKita",
-  //     url: "https://mangakita.net",
+  //     baseUrl: "https://mangakita.net",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -148,7 +149,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "MangaTale",
-  //     url: "https://mangatale.co",
+  //     baseUrl: "https://mangatale.co",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl:
@@ -157,7 +158,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   SourceModel(
       sourceName: "MangaYaro",
-      url: "https://mangayaro.net",
+      baseUrl: "https://mangayaro.net",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -166,7 +167,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "MangKomik",
-      url: "https://mangkomik.net",
+      baseUrl: "https://mangkomik.net",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -175,7 +176,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "id"),
   SourceModel(
       sourceName: "MangásChan",
-      url: "https://mangaschan.com",
+      baseUrl: "https://mangaschan.com",
       lang: "pt-br",
       typeSource: TypeSource.mangathemesia,
       logoUrl: 'https://mangaschan.com/wp-content/uploads/Logo-web.webp',
@@ -183,7 +184,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "pt-br"),
   // SourceModel(
   //     sourceName: "ManhwaFreak",
-  //     url: "https://manhwafreak.com",
+  //     baseUrl: "https://manhwafreak.com",
   //     lang: "en",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl:
@@ -192,7 +193,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   SourceModel(
       sourceName: "ManhwaList",
-      url: "https://manhwalist.in",
+      baseUrl: "https://manhwalist.in",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl: 'https://manhwalist.in/wp-content/uploads/2022/12/4666667.png',
@@ -200,7 +201,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "MasterKomik",
-  //     url: "https://masterkomik.com",
+  //     baseUrl: "https://masterkomik.com",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: 'https://masterkomik.com/wp-content/uploads/2020/12/New-MK.png',
@@ -208,7 +209,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "id"),
   // SourceModel(
   //     sourceName: "Nekomik",
-  //     url: "https://nekomik.com",
+  //     baseUrl: "https://nekomik.com",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -216,7 +217,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "PhantomScans",
-  //     url: "https://phantomscans.com",
+  //     baseUrl: "https://phantomscans.com",
   //     lang: "en",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -224,7 +225,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "PhoenixFansub",
-  //     url: "https://phoenixfansub.com",
+  //     baseUrl: "https://phoenixfansub.com",
   //     lang: "es",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: '',
@@ -232,7 +233,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "es"),
   SourceModel(
       sourceName: "PiScans",
-      url: "https://piscans.in",
+      baseUrl: "https://piscans.in",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -241,7 +242,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "Rawkuma",
-  //     url: "https://rawkuma.com/",
+  //     baseUrl: "https://rawkuma.com/",
   //     lang: "ja",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: 'http://rawkuma.com/wp-content/uploads/2021/12/Rawkuma-Logo.png',
@@ -249,7 +250,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   SourceModel(
       sourceName: "Readkomik",
-      url: "https://readkomik.com",
+      baseUrl: "https://readkomik.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -258,7 +259,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "SuryaScans",
-      url: "https://suryascans.com",
+      baseUrl: "https://suryascans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -267,7 +268,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: "SushiScan",
-      url: "https://sushiscan.net",
+      baseUrl: "https://sushiscan.net",
       lang: "fr",
       typeSource: TypeSource.mangathemesia,
       logoUrl: 'https://sushiscan.net/wp-content/uploads/SushiScanNewLogo.png',
@@ -276,7 +277,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "fr"),
   SourceModel(
       sourceName: "TsundokuTraduções",
-      url: "https://tsundoku.com.br",
+      baseUrl: "https://tsundoku.com.br",
       lang: "pt-br",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -285,7 +286,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "pt-br"),
   SourceModel(
       sourceName: "TukangKomik",
-      url: "https://tukangkomik.id",
+      baseUrl: "https://tukangkomik.id",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
       logoUrl:
@@ -294,7 +295,7 @@ List<SourceModel> mangathemesiaSourcesList = [
       dateFormatLocale: "en"),
   // SourceModel(
   //     sourceName: "WestManga",
-  //     url: "https://westmanga.info",
+  //     baseUrl: "https://westmanga.info",
   //     lang: "id",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: 'https://westmanga.info/wp-content/uploads/2021/01/LOGOxx-1.png',
@@ -302,7 +303,7 @@ List<SourceModel> mangathemesiaSourcesList = [
   //     dateFormatLocale: "en"),
   SourceModel(
       sourceName: "xCaliBRScans",
-      url: "https://xcalibrscans.com",
+      baseUrl: "https://xcalibrscans.com",
       lang: "en",
       typeSource: TypeSource.mangathemesia,
       logoUrl:

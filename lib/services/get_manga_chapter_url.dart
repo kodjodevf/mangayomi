@@ -5,12 +5,13 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source_model.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
 import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
 import 'package:mangayomi/sources/src/fr/japscan/src/japscan.dart';
 import 'package:mangayomi/sources/src/fr/mangakawaii/src/mangakawaii.dart';
-import 'package:mangayomi/sources/src/multi/mangathemesia/src/mangathemesia.dart';
-import 'package:mangayomi/sources/src/multi/mmrcms/src/mmrcms.dart';
+import 'package:mangayomi/sources/multisrc/mangathemesia/src/mangathemesia.dart';
+import 'package:mangayomi/sources/multisrc/mmrcms/src/mmrcms.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
@@ -49,7 +50,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /*comick*/
   /********/
 
-  else if (getWpMangTypeSource(source) == TypeSource.comick) {
+  else if (getMangaTypeSource(source) == TypeSource.comick) {
     pageUrls = await Comick().getMangaChapterUrl(chapter: chapter);
   }
 
@@ -57,7 +58,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /*mangathemesia*/
   /**************/
 
-  else if (getWpMangTypeSource(source) == TypeSource.mangathemesia) {
+  else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
     pageUrls = await MangaThemeSia().getMangaChapterUrl(chapter: chapter);
   }
 
@@ -73,7 +74,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /*mmrcms*/
   /***********/
 
-  else if (getWpMangTypeSource(source) == TypeSource.mmrcms) {
+  else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
     pageUrls = await Mmrcms().getMangaChapterUrl(chapter: chapter);
   }
 
@@ -91,6 +92,14 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
 
   else if (source == 'japscan') {
     pageUrls = await Japscan().getMangaChapterUrl(chapter: chapter);
+  }
+
+  /***********/
+  /*heancms*/
+  /***********/
+
+  else if (getMangaTypeSource(source) == TypeSource.heancms) {
+    pageUrls = await HeanCms().getMangaChapterUrl(chapter: chapter);
   }
 
   if (pageUrls.isNotEmpty) {

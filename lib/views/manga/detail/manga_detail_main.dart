@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/views/manga/detail/manga_details_view.dart';
 import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
@@ -40,25 +41,33 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
         ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
     return Scaffold(
         body: manga.when(
-      data: (modelManga) {
+      data: (manga) {
         return RefreshIndicator(
           onRefresh: () async {
+            final mangaS = GetManga(
+                genre: manga.genre!,
+                author: manga.author,
+                status: manga.status,
+                chapters: manga.chapters.toList(),
+                imageUrl: manga.imageUrl,
+                description: manga.description,
+                url: manga.link,
+                name: manga.name,
+                source: manga.source);
             bool isOk = false;
             ref
                 .watch(getMangaDetailProvider(
-                        imageUrl: modelManga.imageUrl!,
-                        lang: modelManga.lang!,
-                        title: modelManga.name!,
-                        source: modelManga.source!,
-                        url: modelManga.link!)
-                    .future)
+              manga: mangaS,
+              lang: manga.lang!,
+              source: manga.source!,
+            ).future)
                 .then((value) async {
               if (value.chapters.isNotEmpty &&
-                  value.chapters.length > modelManga.chapters.length) {
+                  value.chapters.length > manga.chapters.length) {
                 await isar.writeTxn(() async {
                   int newChapsIndex =
-                      value.chapters.length - modelManga.chapters.length;
-                  modelManga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
+                      value.chapters.length - manga.chapters.length;
+                  manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
                   for (var i = 0; i < newChapsIndex; i++) {
                     final chapters = Chapter(
                         name: value.chapters[i].name,
@@ -68,8 +77,8 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                         scanlator: value.chapters[i].scanlator,
                         isRead: false,
                         lastPageRead: '',
-                        mangaId: modelManga.id)
-                      ..manga.value = modelManga;
+                        mangaId: manga.id)
+                      ..manga.value = manga;
                     await isar.chapters.put(chapters);
                     await chapters.manga.save();
                   }
@@ -90,7 +99,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
             });
           },
           child: MangaDetailsView(
-            manga: modelManga!,
+            manga: manga!,
           ),
         );
       },

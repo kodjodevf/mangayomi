@@ -2,21 +2,19 @@ import 'package:flutter_js/flutter_js.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
-import 'package:mangayomi/sources/service/service.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class Mangahere extends MangaYomiServices {
   @override
-  Future<GetMangaDetailModel?> getMangaDetail(
-      {required String imageUrl,
-      required String url,
-      required String title,
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
       required String lang,
       required String source}) async {
     final dom = await httpGet(
-        url: "http://www.mangahere.cc$url",
+        url: "http://www.mangahere.cc${manga.url}",
         source: source,
         resDom: true) as Document?;
     if (dom!
@@ -104,12 +102,11 @@ class Mangahere extends MangaYomiServices {
         genre.add(ok);
       }
     }
-    return mangadetailRes(
-        imageUrl: imageUrl, url: url, title: title, source: source);
+    return mangadetailRes(manga: manga, source: source);
   }
 
   @override
-  Future<GetMangaModel?> getPopularManga(
+  Future<List<GetManga?>> getPopularManga(
       {required String source, required int page}) async {
     final dom = await httpGet(
         url: 'https://www.mangahere.cc/ranking/',
@@ -145,11 +142,11 @@ class Mangahere extends MangaYomiServices {
   }
 
   @override
-  Future<GetMangaModel?> searchManga(
+  Future<List<GetManga?>>  searchManga(
       {required String source, required String query}) async {
     final dom = await httpGet(
         url:
-            '${getWpMangaUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
+            '${getMangaBaseUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
         source: source,
         resDom: true) as Document?;
 

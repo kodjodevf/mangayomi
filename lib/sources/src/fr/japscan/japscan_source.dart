@@ -1,8 +1,10 @@
 import 'package:mangayomi/models/source_model.dart';
 
-SourceModel japscanSource = SourceModel(
+SourceModel get japscanSource => _japscanSource;
+
+SourceModel _japscanSource = SourceModel(
     sourceName: "Japscan",
-    url: "https://japscan.lol",
+    baseUrl: "https://japscan.lol",
     lang: "fr",
     typeSource: TypeSource.single,
     logoUrl: '',

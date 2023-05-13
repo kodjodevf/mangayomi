@@ -18,7 +18,7 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
     };
     return SourceModel(
       sourceName: fields[0] as String,
-      url: fields[1] as String,
+      baseUrl: fields[1] as String,
       lang: fields[2] as String,
       typeSource: fields[6] as TypeSource,
       logoUrl: fields[7] as String,
@@ -29,17 +29,18 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       isNsfw: fields[5] == null ? false : fields[5] as bool,
       isFullData: fields[8] == null ? false : fields[8] as bool,
       isCloudflare: fields[9] == null ? false : fields[9] as bool,
+      apiUrl: fields[12] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, SourceModel obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.sourceName)
       ..writeByte(1)
-      ..write(obj.url)
+      ..write(obj.baseUrl)
       ..writeByte(2)
       ..write(obj.lang)
       ..writeByte(3)
@@ -59,7 +60,9 @@ class SourceModelAdapter extends TypeAdapter<SourceModel> {
       ..writeByte(10)
       ..write(obj.dateFormat)
       ..writeByte(11)
-      ..write(obj.dateFormatLocale);
+      ..write(obj.dateFormatLocale)
+      ..writeByte(12)
+      ..write(obj.apiUrl);
   }
 
   @override
@@ -88,6 +91,8 @@ class TypeSourceAdapter extends TypeAdapter<TypeSource> {
         return TypeSource.comick;
       case 4:
         return TypeSource.mmrcms;
+      case 5:
+        return TypeSource.heancms;
       default:
         return TypeSource.single;
     }
@@ -107,6 +112,9 @@ class TypeSourceAdapter extends TypeAdapter<TypeSource> {
         break;
       case TypeSource.mmrcms:
         writer.writeByte(4);
+        break;
+      case TypeSource.heancms:
+        writer.writeByte(5);
         break;
     }
   }

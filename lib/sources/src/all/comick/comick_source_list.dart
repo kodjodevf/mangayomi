@@ -1,12 +1,16 @@
 import 'package:mangayomi/models/source_model.dart';
 
-String logoUrl =
+const logoUrl =
     'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75';
-String apiUrl = 'https://api.comick.fun/';
-List<SourceModel> comickSourcesList = [
+const apiUrl = 'https://api.comick.fun/';
+const baseUrl = 'https://comick.app/';
+
+List<SourceModel> get comickSourcesList => _comickSourcesList;
+List<SourceModel> _comickSourcesList = [
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'en',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -14,7 +18,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'ar',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -22,7 +27,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'pt',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -30,7 +36,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'pt-br',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -38,7 +45,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'it',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -46,7 +54,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'ru',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -54,7 +63,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'es',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -62,7 +72,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'es-419',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -70,7 +81,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'id',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -78,7 +90,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'hi',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -86,7 +99,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'de',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -94,7 +108,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'ja',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -102,7 +117,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'tr',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -110,7 +126,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'pl',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -118,7 +135,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'zh',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -126,7 +144,8 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'zh-hk',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
@@ -134,26 +153,11 @@ List<SourceModel> comickSourcesList = [
       dateFormatLocale: "en"),
   SourceModel(
       sourceName: 'Comick',
-      url: apiUrl,
+      apiUrl: apiUrl,
+      baseUrl: baseUrl,
       lang: 'fr',
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: "KomikLab",
-      url: "https://komiklab.com",
-      lang: "en",
-      typeSource: TypeSource.mangathemesia,
-      logoUrl: '',
-      dateFormat: "MMMM dd, yyyy",
-      dateFormatLocale: "en"),
-  SourceModel(
-      sourceName: "AnimatedGlitchedScans",
-      url: "https://anigliscans.com",
-      lang: "en",
-      typeSource: TypeSource.mangathemesia,
-      logoUrl: '',
-      dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
 ];

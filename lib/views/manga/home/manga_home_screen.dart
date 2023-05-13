@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/manga/home/manga_search_screen.dart';
@@ -39,7 +40,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             IconButton(
               onPressed: () {
                 Map<String, String> data = {
-                  'url': getWpMangaUrl(widget.mangaType.source!),
+                  'url': getMangaBaseUrl(widget.mangaType.source!),
                   'source': widget.mangaType.source!,
                 };
                 context.push("/mangawebview", extra: data);
@@ -54,7 +55,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         ),
         body: getManga.when(
           data: (data) {
-            if (data.url.isEmpty) {
+            if (data.isEmpty) {
               return const Center(child: Text("No result"));
             }
             _scrollController.addListener(() {
@@ -91,9 +92,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       (value) {
                         if (mounted) {
                           setState(() {
-                            data.url.addAll(value.url);
-                            data.name.addAll(value.name);
-                            data.image.addAll(value.image);
+                            data.addAll(value);
                             _isLoading = false;
                           });
                         }
@@ -103,9 +102,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 }
               }
             });
-            final length = widget.mangaType.isFullData!
-                ? _fullDataLength
-                : data.url.length;
+            final length =
+                widget.mangaType.isFullData! ? _fullDataLength : data.length;
             return Column(
               children: [
                 Flexible(
@@ -117,9 +115,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       return _buildProgressIndicator();
                     }
                     return MangaHomeImageCard(
-                      url: data.url[index]!,
-                      name: data.name[index]!,
-                      image: data.image[index]!,
+                      manga: data[index]!,
                       source: widget.mangaType.source!,
                       lang: widget.mangaType.lang!,
                     );
@@ -151,16 +147,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 }
 
 class MangaHomeImageCard extends ConsumerStatefulWidget {
-  final String image;
-  final String url;
-  final String name;
+  final GetManga manga;
   final String source;
   final String lang;
   const MangaHomeImageCard({
     super.key,
-    required this.url,
-    required this.name,
-    required this.image,
+    required this.manga,
     required this.source,
     required this.lang,
   });
@@ -175,11 +167,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
   Widget build(BuildContext context) {
     super.build(context);
     final getMangaDetail = ref.watch(getMangaDetailProvider(
-        source: widget.source,
-        imageUrl: widget.image,
-        title: widget.name,
-        url: widget.url,
-        lang: widget.lang));
+        source: widget.source, manga: widget.manga, lang: widget.lang));
 
     return getMangaDetail.when(
       data: (data) {
@@ -198,7 +186,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
           ),
         ),
         BottomTextWidget(
-          text: widget.name,
+          text: widget.manga.name!,
           isLoading: true,
         )
       ]),

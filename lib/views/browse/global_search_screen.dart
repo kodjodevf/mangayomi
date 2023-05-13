@@ -9,6 +9,7 @@ import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
@@ -121,15 +122,13 @@ class SourceSearchScreen extends ConsumerWidget {
                 error: (error, stackTrace) =>
                     Center(child: Text(error.toString())),
                 data: (data) {
-                  if (data.name.isNotEmpty) {
+                  if (data.isNotEmpty) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: data.name.length,
+                      itemCount: data.length,
                       itemBuilder: (context, index) {
                         return MangaGlobalImageCard(
-                          url: data.url[index]!,
-                          name: data.name[index]!,
-                          image: data.image[index]!,
+                          manga: data[index]!,
                           source: source.sourceName,
                           lang: source.lang,
                         );
@@ -148,16 +147,12 @@ class SourceSearchScreen extends ConsumerWidget {
 }
 
 class MangaGlobalImageCard extends ConsumerStatefulWidget {
-  final String image;
-  final String url;
-  final String name;
+  final GetManga manga;
   final String source;
   final String lang;
   const MangaGlobalImageCard({
     super.key,
-    required this.url,
-    required this.name,
-    required this.image,
+    required this.manga,
     required this.source,
     required this.lang,
   });
@@ -173,11 +168,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
   Widget build(BuildContext context) {
     super.build(context);
     final getMangaDetail = ref.watch(getMangaDetailProvider(
-        source: widget.source,
-        imageUrl: widget.image,
-        title: widget.name,
-        url: widget.url,
-        lang: widget.lang));
+        source: widget.source, manga: widget.manga, lang: widget.lang));
 
     return getMangaDetail.when(
       data: (data) {
@@ -237,7 +228,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                   fit: BoxFit.fill),
               BottomTextWidget(
                 fontSize: 12.0,
-                text: widget.name,
+                text: widget.manga.name!,
                 isLoading: true,
                 isComfortableGrid: true,
               )
@@ -258,7 +249,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
           ),
           BottomTextWidget(
             fontSize: 12.0,
-            text: widget.name,
+            text: widget.manga.name!,
             isLoading: true,
             isComfortableGrid: true,
           )
