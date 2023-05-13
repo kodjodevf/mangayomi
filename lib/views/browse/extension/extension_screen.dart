@@ -57,6 +57,8 @@ class ExtensionScreen extends ConsumerWidget {
                             sourceName: element.sourceName,
                             baseUrl: element.baseUrl,
                             apiUrl: element.apiUrl,
+                            isNsfw: element.isNsfw,
+                            isCloudflare: element.isCloudflare,
                             lang: element.lang,
                             typeSource: element.typeSource,
                             isAdded: val,

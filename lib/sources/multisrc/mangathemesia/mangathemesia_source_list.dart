@@ -196,7 +196,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       baseUrl: "https://manhwalist.in",
       lang: "id",
       typeSource: TypeSource.mangathemesia,
-      logoUrl: 'https://manhwalist.in/wp-content/uploads/2022/12/4666667.png',
+      logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
   // SourceModel(
