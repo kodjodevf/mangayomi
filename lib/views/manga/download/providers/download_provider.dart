@@ -6,7 +6,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download_model.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/get_manga_chapter_url.dart';
+import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -35,7 +35,7 @@ Future<List<dynamic>> downloadChapter(
   path = Directory("${path1!.path}$finalPath/");
   log(scanlator);
   ref
-      .read(getMangaChapterUrlProvider(
+      .read(getChapterUrlProvider(
     chapter: chapter,
   ).future)
       .then((value) {

@@ -213,8 +213,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       isar.mangas.putSync(model);
                     });
                   },
-                  child: Column(
-                    children: const [
+                  child: const Column(
+                    children: [
                       Icon(
                         Icons.favorite,
                         size: 22,

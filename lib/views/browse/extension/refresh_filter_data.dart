@@ -50,6 +50,7 @@ refreshFilterData(RefreshFilterDataRef ref) async {
                 baseUrl: element.baseUrl,
                 apiUrl: element.apiUrl,
                 lang: element.lang,
+                isCloudflare: element.isCloudflare,
                 typeSource: element.typeSource,
                 logoUrl: element.logoUrl,
                 isFullData: element.isFullData,

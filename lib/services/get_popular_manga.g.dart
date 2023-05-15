@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'0571fdcea7fc7aebb97c5748f6781e4075705382';
+String _$getPopularMangaHash() => r'09e78df804d440b2ab9777aab28bdc75f64f7fac';
 
 /// Copied from Dart SDK
 class _SystemHash {

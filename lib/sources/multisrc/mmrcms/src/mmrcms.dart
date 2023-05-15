@@ -151,7 +151,7 @@ class Mmrcms extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     final dom = await httpGet(
         useUserAgent: true,
         url: chapter.url!,

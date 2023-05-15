@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
-import 'dart:developer';
 import 'package:html/dom.dart' as dom;
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -120,7 +119,7 @@ class Japscan extends MangaYomiServices {
               '#top_mangas_week > ul > li > a.text-dark.font-weight-bold')
           .map((e) => e.innerHtml)
           .toList();
-      for (var ia in name) {
+      for (var i = 0; i < name.length; i++) {
         image.add("");
       }
     }
@@ -160,7 +159,7 @@ class Japscan extends MangaYomiServices {
       }
       name = ta.toSet().toList();
       url = tt.toSet().toList();
-      for (var a in url) {
+      for (var i = 0; i < name.length; i++) {
         image.add("");
       }
     }
@@ -168,7 +167,7 @@ class Japscan extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     final response = await httpGet(
         useUserAgent: true,
         url: chapter.url!,

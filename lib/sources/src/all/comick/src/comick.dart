@@ -107,7 +107,7 @@ class Comick extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     String mangaId = chapter.url!.split('/').last.split('-').first;
 
     final response = await httpGet(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
@@ -73,8 +72,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: const [
+                          const Row(
+                            children: [
                               SizedBox(width: 10),
                               Icon(Icons.arrow_drop_up_outlined),
                               SizedBox(width: 10),
@@ -243,8 +242,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   );
                 });
           },
-          label: Row(
-            children: const [
+          label: const Row(
+            children: [
               Icon(Icons.add),
               SizedBox(
                 width: 10,

@@ -16,19 +16,19 @@ import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'get_manga_chapter_url.g.dart';
+part 'get_chapter_url.g.dart';
 
-class GetMangaChapterUrlModel {
+class GetChapterUrlModel {
   Directory? path;
   List pageUrls = [];
   List<bool> isLocaleList = [];
-  GetMangaChapterUrlModel(
+  GetChapterUrlModel(
       {required this.path, required this.pageUrls, required this.isLocaleList});
 }
 
 @riverpod
-Future<GetMangaChapterUrlModel> getMangaChapterUrl(
-  GetMangaChapterUrlRef ref, {
+Future<GetChapterUrlModel> getChapterUrl(
+  GetChapterUrlRef ref, {
   required Chapter chapter,
 }) async {
   Directory? path;
@@ -51,7 +51,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /********/
 
   else if (getMangaTypeSource(source) == TypeSource.comick) {
-    pageUrls = await Comick().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await Comick().getChapterUrl(chapter: chapter);
   }
 
   /*************/
@@ -59,7 +59,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /**************/
 
   else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    pageUrls = await MangaThemeSia().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await MangaThemeSia().getChapterUrl(chapter: chapter);
   }
 
   /***********/
@@ -67,7 +67,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (source == 'mangakawaii') {
-    pageUrls = await MangaKawaii().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await MangaKawaii().getChapterUrl(chapter: chapter);
   }
 
   /***********/
@@ -75,7 +75,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    pageUrls = await Mmrcms().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await Mmrcms().getChapterUrl(chapter: chapter);
   }
 
   /***********/
@@ -83,7 +83,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (source == 'mangahere') {
-    pageUrls = await Mangahere().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await Mangahere().getChapterUrl(chapter: chapter);
   }
 
   /***********/
@@ -91,7 +91,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (source == 'japscan') {
-    pageUrls = await Japscan().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await Japscan().getChapterUrl(chapter: chapter);
   }
 
   /***********/
@@ -99,7 +99,7 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    pageUrls = await HeanCms().getMangaChapterUrl(chapter: chapter);
+    pageUrls = await HeanCms().getChapterUrl(chapter: chapter);
   }
 
   if (pageUrls.isNotEmpty) {
@@ -117,6 +117,6 @@ Future<GetMangaChapterUrlModel> getMangaChapterUrl(
     }
   }
 
-  return GetMangaChapterUrlModel(
+  return GetChapterUrlModel(
       path: path, pageUrls: pageUrls, isLocaleList: isLocaleList);
 }

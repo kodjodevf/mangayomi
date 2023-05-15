@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:extended_image/extended_image.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/services/get_manga_chapter_url.dart';
+import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/reader/image_view_horizontal.dart';
@@ -33,7 +32,7 @@ class MangaReaderView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
-    final chapterData = ref.watch(GetMangaChapterUrlProvider(
+    final chapterData = ref.watch(GetChapterUrlProvider(
       chapter: chapter,
     ));
     final readerController =
@@ -264,9 +263,10 @@ class _MangaChapterPageGalleryState
     initialPage: _currentIndex,
     shouldIgnorePointerWhenScrolling: false,
   );
-  double get pixelRatio => ui.window.devicePixelRatio;
 
-  Size get size => ui.window.physicalSize / pixelRatio;
+  double get pixelRatio => View.of(context).devicePixelRatio;
+
+  Size get size => View.of(context).physicalSize / pixelRatio;
   Alignment _computeAlignmentByTapOffset(Offset offset) {
     return Alignment((offset.dx - size.width / 2) / (size.width / 2),
         (offset.dy - size.height / 2) / (size.height / 2));
@@ -1044,8 +1044,7 @@ class _MangaChapterPageGalleryState
     DraggableMenu.open(
         context,
         DraggableMenu(
-            barItem: Container(),
-            uiType: DraggableMenuUiType.classic,
+            ui: ClassicDraggableMenu(barItem: Container()),
             expandable: false,
             maxHeight: mediaHeight(context, 0.4),
             fastDrag: false,

@@ -15,7 +15,7 @@ class HeanCms extends MangaYomiServices {
         'Content-Type': 'application/json'
       };
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     final chapterId = chapter.url!.split("#").last;
     var request = http.Request(
         'GET',

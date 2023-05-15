@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -1023,8 +1020,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     DraggableMenu.open(
         context,
         DraggableMenu(
-            barItem: Container(),
-            uiType: DraggableMenuUiType.softModern,
+            ui: SoftModernDraggableMenu(barItem: Container()),
             expandable: true,
             expandedHeight: mediaHeight(context, 0.8),
             maxHeight: mediaHeight(context, 0.6),
@@ -1145,11 +1141,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               physics: const NeverScrollableScrollPhysics(),
                               child: Column(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, top: 10),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20, top: 10),
                                     child: Row(
-                                      children: const [
+                                      children: [
                                         Text("Display mode"),
                                       ],
                                     ),
@@ -1181,11 +1176,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             ),
                                           )
                                           .toList()),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, top: 10),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20, top: 10),
                                     child: Row(
-                                      children: const [
+                                      children: [
                                         Text("Badges"),
                                       ],
                                     ),
@@ -1218,11 +1212,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                       ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, top: 10),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20, top: 10),
                                     child: Row(
-                                      children: const [
+                                      children: [
                                         Text("Tabs"),
                                       ],
                                     ),
@@ -1255,11 +1248,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                       ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, top: 10),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 20, top: 10),
                                     child: Row(
-                                      children: const [
+                                      children: [
                                         Text("Others"),
                                       ],
                                     ),

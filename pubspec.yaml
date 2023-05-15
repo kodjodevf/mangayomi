@@ -41,18 +41,16 @@ dependencies:
   http: ^0.13.5
   riverpod_annotation: ^2.0.2
   html: ^0.15.2
-  flutter_js:
-     git:
-      url: https://github.com/kodjodevf/flutter_js.git
+  flutter_js: ^0.7.0
   font_awesome_flutter: ^10.1.0
   expandable_text: ^2.3.0
   flex_color_scheme: ^7.0.0
   scrollable_positioned_list: ^0.3.5
-  extended_image: ^7.0.2
+  extended_image: ^8.0.1
   photo_view: ^0.14.0
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
-  intl: ^0.17.0
+  intl: ^0.18.0
   google_fonts: ^4.0.3
   url_launcher: ^6.1.10
   package_info_plus: ^3.0.2
@@ -62,7 +60,7 @@ dependencies:
   permission_handler: ^10.2.0
   flutter_inappwebview: ^6.0.0-beta.22
   flutter_cache_manager: ^3.3.0
-  draggable_menu: ^0.3.0
+  draggable_menu: ^2.0.2
   fast_cached_network_image: ^1.2.0
   random_string: ^2.3.1
   isar: 3.1.0+1

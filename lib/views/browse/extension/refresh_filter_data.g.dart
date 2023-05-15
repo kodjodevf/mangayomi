@@ -6,7 +6,7 @@ part of 'refresh_filter_data.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$refreshFilterDataHash() => r'03aed46bb9e7b0ee3d7e99b99784d3080751895b';
+String _$refreshFilterDataHash() => r'e2e98a67c955e61c62392e39521fd968c5bcff8b';
 
 /// See also [refreshFilterData].
 @ProviderFor(refreshFilterData)

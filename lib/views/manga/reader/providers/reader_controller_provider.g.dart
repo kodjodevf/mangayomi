@@ -64,7 +64,7 @@ class ReaderModeAdapter extends TypeAdapter<ReaderMode> {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'eaabf2b9ecb9a1238da037e067a6a7759d4cbe27';
+String _$currentIndexHash() => r'c2b912af925d9efd3e36e7a810914ef11393c1da';
 
 /// Copied from Dart SDK
 class _SystemHash {

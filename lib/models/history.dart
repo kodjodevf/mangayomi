@@ -1,4 +1,3 @@
-import 'package:hive/hive.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/models/chapter.dart';
 part 'history.g.dart';

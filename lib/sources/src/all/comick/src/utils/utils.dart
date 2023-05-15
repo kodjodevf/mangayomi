@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:http/http.dart' as http;
 

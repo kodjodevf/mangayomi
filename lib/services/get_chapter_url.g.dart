@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_manga_chapter_url.dart';
+part of 'get_chapter_url.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaChapterUrlHash() =>
-    r'066c4d826fd17ba3d3682d806778fe1010378c05';
+String _$getChapterUrlHash() => r'a13c39db0b03f5c1575c94f76b24676ebaa4e3c6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,31 +29,29 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaChapterUrlRef
-    = AutoDisposeFutureProviderRef<GetMangaChapterUrlModel>;
+typedef GetChapterUrlRef = AutoDisposeFutureProviderRef<GetChapterUrlModel>;
 
-/// See also [getMangaChapterUrl].
-@ProviderFor(getMangaChapterUrl)
-const getMangaChapterUrlProvider = GetMangaChapterUrlFamily();
+/// See also [getChapterUrl].
+@ProviderFor(getChapterUrl)
+const getChapterUrlProvider = GetChapterUrlFamily();
 
-/// See also [getMangaChapterUrl].
-class GetMangaChapterUrlFamily
-    extends Family<AsyncValue<GetMangaChapterUrlModel>> {
-  /// See also [getMangaChapterUrl].
-  const GetMangaChapterUrlFamily();
+/// See also [getChapterUrl].
+class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
+  /// See also [getChapterUrl].
+  const GetChapterUrlFamily();
 
-  /// See also [getMangaChapterUrl].
-  GetMangaChapterUrlProvider call({
+  /// See also [getChapterUrl].
+  GetChapterUrlProvider call({
     required Chapter chapter,
   }) {
-    return GetMangaChapterUrlProvider(
+    return GetChapterUrlProvider(
       chapter: chapter,
     );
   }
 
   @override
-  GetMangaChapterUrlProvider getProviderOverride(
-    covariant GetMangaChapterUrlProvider provider,
+  GetChapterUrlProvider getProviderOverride(
+    covariant GetChapterUrlProvider provider,
   ) {
     return call(
       chapter: provider.chapter,
@@ -73,36 +70,36 @@ class GetMangaChapterUrlFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getMangaChapterUrlProvider';
+  String? get name => r'getChapterUrlProvider';
 }
 
-/// See also [getMangaChapterUrl].
-class GetMangaChapterUrlProvider
-    extends AutoDisposeFutureProvider<GetMangaChapterUrlModel> {
-  /// See also [getMangaChapterUrl].
-  GetMangaChapterUrlProvider({
+/// See also [getChapterUrl].
+class GetChapterUrlProvider
+    extends AutoDisposeFutureProvider<GetChapterUrlModel> {
+  /// See also [getChapterUrl].
+  GetChapterUrlProvider({
     required this.chapter,
   }) : super.internal(
-          (ref) => getMangaChapterUrl(
+          (ref) => getChapterUrl(
             ref,
             chapter: chapter,
           ),
-          from: getMangaChapterUrlProvider,
-          name: r'getMangaChapterUrlProvider',
+          from: getChapterUrlProvider,
+          name: r'getChapterUrlProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getMangaChapterUrlHash,
-          dependencies: GetMangaChapterUrlFamily._dependencies,
+                  : _$getChapterUrlHash,
+          dependencies: GetChapterUrlFamily._dependencies,
           allTransitiveDependencies:
-              GetMangaChapterUrlFamily._allTransitiveDependencies,
+              GetChapterUrlFamily._allTransitiveDependencies,
         );
 
   final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaChapterUrlProvider && other.chapter == chapter;
+    return other is GetChapterUrlProvider && other.chapter == chapter;
   }
 
   @override

@@ -180,7 +180,7 @@ class Mangahere extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     JavascriptRuntime? flutterJs;
     flutterJs = getJavascriptRuntime();
     extractSecretKey(String response, JavascriptRuntime? flutterJs) {
@@ -204,7 +204,7 @@ class Mangahere extends MangaYomiServices {
 
     var link = "http://www.mangahere.cc${chapter.url!}";
     final response =
-        await httpGet(url: link, source: "managhere", resDom: false) as String?;
+        await httpGet(url: link, source: "mangahere", resDom: false) as String?;
 
     dom.Document htmll = dom.Document.html(response!);
     int? pagesNumber = -1;

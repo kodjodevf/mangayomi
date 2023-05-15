@@ -65,7 +65,7 @@ abstract class MangaYomiServices {
       {required String source, required int page});
   Future<GetManga?> getMangaDetail(
       {required GetManga manga, required String lang, required String source});
-  Future<List<dynamic>?> getMangaChapterUrl({
+  Future<List<dynamic>?> getChapterUrl({
     required Chapter chapter,
   });
   Future<List<GetManga?>> searchManga(

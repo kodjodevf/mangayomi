@@ -551,8 +551,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     DraggableMenu.open(
       context,
       DraggableMenu(
-        barItem: Container(),
-        uiType: DraggableMenuUiType.classic,
+        ui: ClassicDraggableMenu(barItem: Container()),
         expandable: false,
         maxHeight: 240,
         fastDrag: false,

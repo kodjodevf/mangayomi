@@ -3,7 +3,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
-import 'package:mangayomi/sources/src/all/comick/src/utils/utils.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class MangaKawaii extends MangaYomiServices {
@@ -135,7 +134,7 @@ class MangaKawaii extends MangaYomiServices {
           .querySelectorAll('a > div > div.hot-manga__item-name')
           .map((e) => e.innerHtml)
           .toList();
-      for (var ia in name) {
+      for (var i = 0; i < name.length; i++) {
         image.add("");
       }
     }
@@ -178,7 +177,7 @@ class MangaKawaii extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getMangaChapterUrl({required Chapter chapter}) async {
+  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
     final response =
         await httpGet(url: chapter.url!, source: "mangakawaii", resDom: false)
             as String?;

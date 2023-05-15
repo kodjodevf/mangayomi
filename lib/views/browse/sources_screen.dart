@@ -109,11 +109,11 @@ class SourcesScreen extends ConsumerWidget {
                     ],
                   ),
                   title: Text(source.sourceName),
-                  trailing: SizedBox(
+                  trailing: const SizedBox(
                       width: 110,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
+                        children: [
                           Icon(
                             Icons.push_pin_outlined,
                             color: Colors.black,
