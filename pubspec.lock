@@ -54,10 +54,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "4ccc65af8b8171719c59d79a6c068840e8cf04c6"
+      resolved-ref: "92c20d487d7f63a36105bf944ddaa1be6374706d"
       url: "https://github.com/kodjodevf/background_downloader.git"
     source: git
-    version: "5.5.0"
+    version: "7.0.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -662,14 +662,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
-  localstore:
-    dependency: transitive
-    description:
-      name: localstore
-      sha256: "42a0afb7696cfab1b4bd7d08355b4ee01f975fd364553b28d51496eccaf11cce"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.5"
   logging:
     dependency: transitive
     description:

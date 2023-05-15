@@ -68,7 +68,7 @@ Future<List<dynamic>> downloadChapter(
           File("${path1.path}" ".nomedia").create();
         }
       }
-      log(path2.path);
+      // log(path2.path);
       if (!(await path2.exists())) {
         path2.create();
       }
@@ -108,14 +108,18 @@ Future<List<dynamic>> downloadChapter(
             headers: headers(manga.source!),
             url: pageUrls[index],
             filename: "${padIndex(index + 1)}.jpg",
-            baseDirectory:
-                Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                    ? BaseDirectory.applicationDocuments
-                    : BaseDirectory.temporary,
-            directory:
-                Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                    ? 'Mangayomi/$finalPath'
-                    : finalPath,
+            baseDirectory: Platform.isWindows ||
+                    Platform.isMacOS ||
+                    Platform.isLinux ||
+                    Platform.isIOS
+                ? BaseDirectory.applicationDocuments
+                : BaseDirectory.temporary,
+            directory: Platform.isWindows ||
+                    Platform.isMacOS ||
+                    Platform.isLinux ||
+                    Platform.isIOS
+                ? 'Mangayomi/$finalPath'
+                : finalPath,
             updates: Updates.statusAndProgress,
             allowPause: true,
           ));
@@ -159,20 +163,20 @@ Future<List<dynamic>> downloadChapter(
           Hive.box<DownloadModel>(HiveConstant.hiveBoxDownloads)
               .put("${manga.id}/${chapter.id}", model);
         },
-        taskProgressCallback: (task, progress) async {
-          if (progress == 1.0) {
+        taskProgressCallback: (taskProgress) async {
+          if (taskProgress.progress == 1.0) {
             final downloadTask = DownloadTask(
-              creationTime: task.creationTime,
-              taskId: task.taskId,
-              headers: task.headers,
-              url: task.url,
-              filename: task.filename,
-              baseDirectory: task.baseDirectory,
-              directory: task.directory,
-              updates: task.updates,
-              allowPause: task.allowPause,
+              creationTime: taskProgress.task.creationTime,
+              taskId: taskProgress.task.taskId,
+              headers: taskProgress.task.headers,
+              url: taskProgress.task.url,
+              filename: taskProgress.task.filename,
+              baseDirectory: taskProgress.task.baseDirectory,
+              directory: taskProgress.task.directory,
+              updates: taskProgress.task.updates,
+              allowPause: taskProgress.task.allowPause,
             );
-            if (Platform.isAndroid || Platform.isIOS) {
+            if (Platform.isAndroid) {
               await FileDownloader().moveToSharedStorage(
                   downloadTask, SharedStorage.external,
                   directory: finalPath);
