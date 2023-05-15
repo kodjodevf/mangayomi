@@ -190,7 +190,7 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  void _onAddButtonTapped(int index, bool isPrev, {bool isSlide = false}) {
+  void _onBtnTapped(int index, bool isPrev, {bool isSlide = false}) {
     if (isPrev) {
       if (_selectedValue == ReaderMode.verticalContinuous ||
           _selectedValue == ReaderMode.webtoon) {
@@ -355,6 +355,10 @@ class _MangaChapterPageGalleryState
     return Consumer(
       builder: (context, ref, child) {
         final currentIndex = ref.watch(currentIndexProvider(widget.chapter));
+        bool isNotFirstChapter =
+            widget.readerController.getChapterIndex() + 1 !=
+                widget.readerController.getChaptersLength();
+        bool isNotLastChapter = widget.readerController.getChapterIndex() != 0;
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -429,30 +433,27 @@ class _MangaChapterPageGalleryState
                             radius: 23,
                             backgroundColor: colorsBlack(context),
                             child: IconButton(
-                                onPressed: () {
-                                  pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter: widget.readerController
-                                          .getNextChapter());
-                                },
+                                onPressed: isNotFirstChapter
+                                    ? () {
+                                        pushReplacementMangaReaderView(
+                                            context: context,
+                                            chapter: widget.readerController
+                                                .getNextChapter());
+                                      }
+                                    : null,
                                 icon: Transform.scale(
                                   scaleX: 1,
                                   child: Icon(Icons.skip_previous_rounded,
-                                      color:
-                                          widget.readerController
-                                                          .getChapterIndex() +
-                                                      1 !=
-                                                  widget.readerController
-                                                      .getChaptersLength()
-                                              ? Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color
-                                              : Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color!
-                                                  .withOpacity(0.4)),
+                                      color: isNotFirstChapter
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color!
+                                              .withOpacity(0.4)),
                                 )),
                           ),
                         ),
@@ -487,8 +488,7 @@ class _MangaChapterPageGalleryState
                                     Flexible(
                                       child: Slider(
                                         onChanged: (newValue) {
-                                          _onAddButtonTapped(
-                                              newValue.toInt(), true,
+                                          _onBtnTapped(newValue.toInt(), true,
                                               isSlide: true);
                                         },
                                         divisions: max(
@@ -536,20 +536,20 @@ class _MangaChapterPageGalleryState
                             radius: 23,
                             backgroundColor: colorsBlack(context),
                             child: IconButton(
-                              onPressed: () {
-                                pushReplacementMangaReaderView(
-                                  context: context,
-                                  chapter:
-                                      widget.readerController.getPrevChapter(),
-                                );
-                              },
+                              onPressed: isNotLastChapter
+                                  ? () {
+                                      pushReplacementMangaReaderView(
+                                        context: context,
+                                        chapter: widget.readerController
+                                            .getPrevChapter(),
+                                      );
+                                    }
+                                  : null,
                               icon: Transform.scale(
                                 scaleX: 1,
                                 child: Icon(
                                   Icons.skip_next_rounded,
-                                  color: widget.readerController
-                                              .getChapterIndex() !=
-                                          0
+                                  color: isNotLastChapter
                                       ? Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
@@ -695,9 +695,9 @@ class _MangaChapterPageGalleryState
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   if (_isReversHorizontal) {
-                    _onAddButtonTapped(_currentIndex + 1, false);
+                    _onBtnTapped(_currentIndex + 1, false);
                   } else {
-                    _onAddButtonTapped(_currentIndex - 1, true);
+                    _onBtnTapped(_currentIndex - 1, true);
                   }
                 },
                 onDoubleTapDown: _isVerticalContinous()
@@ -733,9 +733,9 @@ class _MangaChapterPageGalleryState
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   if (_isReversHorizontal) {
-                    _onAddButtonTapped(_currentIndex - 1, true);
+                    _onBtnTapped(_currentIndex - 1, true);
                   } else {
-                    _onAddButtonTapped(_currentIndex + 1, false);
+                    _onBtnTapped(_currentIndex + 1, false);
                   }
                 },
                 onDoubleTapDown: _isVerticalContinous()
@@ -763,7 +763,7 @@ class _MangaChapterPageGalleryState
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  _onAddButtonTapped(_currentIndex - 1, true);
+                  _onBtnTapped(_currentIndex - 1, true);
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
@@ -783,7 +783,7 @@ class _MangaChapterPageGalleryState
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  _onAddButtonTapped(_currentIndex + 1, false);
+                  _onBtnTapped(_currentIndex + 1, false);
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
@@ -799,6 +799,7 @@ class _MangaChapterPageGalleryState
     );
   }
 
+  bool isDoubleTap = false;
   bool _isVerticalContinous() {
     return _selectedValue == ReaderMode.verticalContinuous ||
         _selectedValue == ReaderMode.webtoon;
@@ -879,6 +880,7 @@ class _MangaChapterPageGalleryState
                       scrollDirection: _scrollDirection,
                       reverse: _isReversHorizontal,
                       physics: const ClampingScrollPhysics(),
+                      preloadPagesCount: isDoubleTap ? 0 : 5,
                       canScrollPage: (GestureDetails? gestureDetails) {
                         return gestureDetails != null
                             ? !(gestureDetails.totalScale! > 1.0)
@@ -981,7 +983,7 @@ class _MangaChapterPageGalleryState
                               maxScale: 8,
                               animationMaxScale: 8,
                               initialAlignment: InitialAlignment.center,
-                              cacheGesture: false,
+                              cacheGesture: true,
                               hitTestBehavior: HitTestBehavior.translucent,
                             );
                           },
@@ -1003,20 +1005,28 @@ class _MangaChapterPageGalleryState
                             _doubleClickAnimationController.reset();
 
                             if (begin == doubleTapScales[0]) {
+                              setState(() {
+                                isDoubleTap = true;
+                              });
                               end = doubleTapScales[1];
                             } else {
+                              setState(() {
+                                isDoubleTap = false;
+                              });
                               end = doubleTapScales[0];
                             }
 
                             _doubleClickAnimationListener = () {
-                              //print(_animation.value);
                               state.handleDoubleTap(
                                   scale: _doubleClickAnimation!.value,
                                   doubleTapPosition: pointerDownPosition);
                             };
-                            _doubleClickAnimation =
-                                _doubleClickAnimationController.drive(
-                                    Tween<double>(begin: begin, end: end));
+
+                            _doubleClickAnimation = Tween(
+                                    begin: begin, end: end)
+                                .animate(CurvedAnimation(
+                                    curve: Curves.ease,
+                                    parent: _doubleClickAnimationController));
 
                             _doubleClickAnimation!
                                 .addListener(_doubleClickAnimationListener);

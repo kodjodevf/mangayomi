@@ -167,13 +167,15 @@ class Mmrcms extends MangaYomiServices {
               .first
               .group(1)!
               .replaceAll('//', 'https://')
-              .replaceAll(RegExp(r"\s+\b|\b\s"), "");
+              .replaceAll(RegExp(r"\s+\b|\b\s"), "")
+              .replaceAll("https:https://", "https://");
         }
         return regexx
             .allMatches(e.outerHtml)
             .first
             .group(1)!
-            .replaceAll(RegExp(r"\s+\b|\b\s"), "");
+            .replaceAll(RegExp(r"\s+\b|\b\s"), "")
+            .replaceAll("https:https://", "https://");
       }).toList();
     }
     return pageUrls;

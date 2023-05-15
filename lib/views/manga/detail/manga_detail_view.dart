@@ -16,7 +16,7 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/views/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/views/manga/detail/readmore.dart';
+import 'package:mangayomi/views/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
@@ -181,12 +181,24 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             width: mediaWidth(context, 1),
                             height: 410,
                             fit: BoxFit.cover),
-                        Container(
-                          width: mediaWidth(context, 1),
-                          height: 465,
-                          color: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.9),
+                        Stack(
+                          children: [
+                            Container(
+                              width: mediaWidth(context, 1),
+                              height: 465,
+                              color: Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(0.9),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                  width: mediaWidth(context, 1),
+                                  height: 100,
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor),
+                            ),
+                          ],
                         ),
                       ],
                     )

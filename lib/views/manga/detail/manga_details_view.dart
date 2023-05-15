@@ -6,6 +6,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/views/history/providers/isar_providers.dart';
+import 'package:mangayomi/views/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -53,109 +54,29 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 (element) => element.mangaId == widget.manga.id)
                             .toList();
                         if (entries.isNotEmpty && !incognitoMode) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              AnimatedContainer(
-                                height: 55,
-                                width: !isExtended ? 63 : 130,
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeIn,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: primaryColor(context),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15))),
-                                  onPressed: () {
-                                    pushMangaReaderView(
-                                      context: context,
-                                      chapter: entries.first.chapter.value!,
-                                    );
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.white,
-                                      ),
-                                      AnimatedContainer(
-                                        curve: Curves.easeIn,
-                                        width: !isExtended ? 0 : 8,
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                      ),
-                                      AnimatedContainer(
-                                        curve: Curves.easeIn,
-                                        width: !isExtended ? 0 : 60,
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        child: const Text(
-                                          "Resume",
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          return CustomFloatingActionBtn(
+                            isExtended: !isExtended,
+                            label: 'Resume',
+                            onPressed: () {
+                              pushMangaReaderView(
+                                context: context,
+                                chapter: entries.first.chapter.value!,
+                              );
+                            },
+                            textWidth: 70,
+                            width: 110,
                           );
                         }
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            AnimatedContainer(
-                              height: 55,
-                              width: !isExtended ? 60 : 105,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeIn,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryColor(context),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15))),
-                                onPressed: () {
-                                  pushMangaReaderView(
-                                      context: context,
-                                      chapter: widget.manga.chapters.last);
-                                },
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.white,
-                                    ),
-                                    AnimatedContainer(
-                                      curve: Curves.easeIn,
-                                      width: !isExtended ? 0 : 5,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                    ),
-                                    AnimatedContainer(
-                                      curve: Curves.easeIn,
-                                      width: !isExtended ? 0 : 40,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      child: const Text(
-                                        "Read",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                        return CustomFloatingActionBtn(
+                          isExtended: !isExtended,
+                          label: 'Read',
+                          onPressed: () {
+                            pushMangaReaderView(
+                                context: context,
+                                chapter: widget.manga.chapters.last);
+                          },
+                          textWidth: 40,
+                          width: 90,
                         );
                       },
                       error: (Object error, StackTrace stackTrace) {
