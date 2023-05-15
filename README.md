@@ -18,12 +18,6 @@ Features include:
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
 
-### Prerequisites
-
-You can install Flutter & Dart from [Official website](https://docs.flutter.dev/get-started/install)
-
-  - Dart sdk
-  - Flutter - Channel Stable
 
 ### Building
 
