@@ -3,64 +3,6 @@
 part of 'reader_controller_provider.dart';
 
 // **************************************************************************
-// TypeAdapterGenerator
-// **************************************************************************
-
-class ReaderModeAdapter extends TypeAdapter<ReaderMode> {
-  @override
-  final int typeId = 5;
-
-  @override
-  ReaderMode read(BinaryReader reader) {
-    switch (reader.readByte()) {
-      case 1:
-        return ReaderMode.vertical;
-      case 2:
-        return ReaderMode.ltr;
-      case 3:
-        return ReaderMode.rtl;
-      case 4:
-        return ReaderMode.verticalContinuous;
-      case 5:
-        return ReaderMode.webtoon;
-      default:
-        return ReaderMode.vertical;
-    }
-  }
-
-  @override
-  void write(BinaryWriter writer, ReaderMode obj) {
-    switch (obj) {
-      case ReaderMode.vertical:
-        writer.writeByte(1);
-        break;
-      case ReaderMode.ltr:
-        writer.writeByte(2);
-        break;
-      case ReaderMode.rtl:
-        writer.writeByte(3);
-        break;
-      case ReaderMode.verticalContinuous:
-        writer.writeByte(4);
-        break;
-      case ReaderMode.webtoon:
-        writer.writeByte(5);
-        break;
-    }
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ReaderModeAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-// **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
@@ -181,7 +123,7 @@ class CurrentIndexProvider
   }
 }
 
-String _$readerControllerHash() => r'b2d6282fa0374c4762dc175142b13515080c5512';
+String _$readerControllerHash() => r'bc59a95312515f4609f994e30ab996268d08a7a8';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter chapter;

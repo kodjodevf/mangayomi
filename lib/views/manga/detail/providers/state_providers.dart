@@ -1,5 +1,7 @@
+import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
@@ -278,18 +280,19 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
 
   set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
-    for (var chapter in ref.watch(chaptersListStateProvider)) {
-      final entries = ref
-          .watch(hiveBoxMangaDownloadsProvider)
-          .values
-          .where((element) =>
-              "${element.mangaId}/${element.chapterId}" ==
-              "${manga.id}/${chapter.id}")
-          .toList();
-      if (entries.isEmpty || !entries.first.isDownload) {
-        ref.watch(downloadChapterProvider(chapter: chapter));
+    isar.txnSync(() {
+      for (var chapter in ref.watch(chaptersListStateProvider)) {
+        final entries = isar.downloads
+            .filter()
+            .idIsNotNull()
+            .chapterIdEqualTo(chapter.id)
+            .findAllSync();
+        if (entries.isEmpty || !entries.first.isDownload!) {
+          ref.watch(downloadChapterProvider(chapter: chapter));
+        }
       }
-    }
+    });
+
     ref.read(chaptersListStateProvider.notifier).clear();
   }
 }

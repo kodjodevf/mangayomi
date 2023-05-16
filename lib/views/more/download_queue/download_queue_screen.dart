@@ -2,27 +2,27 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/models/download_model.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/download.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ValueListenableBuilder<Box<DownloadModel>>(
-      valueListenable: ref.watch(hiveBoxMangaDownloadsProvider).listenable(),
-      builder: (context, val, child) {
-        final entries = val.values
-            .where(
-              (element) => element.isDownload == false,
-            )
-            .where((element) => element.isStartDownload == true)
-            .toList();
-        final allQueueLength = entries.toList().length;
-
-        if (entries.isNotEmpty) {
+    return StreamBuilder(
+      stream:
+          isar.downloads.filter().idIsNotNull().watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final entries = snapshot.data!
+              .where(
+                (element) => element.isDownload == false,
+              )
+              .where((element) => element.isStartDownload == true)
+              .toList();
+          final allQueueLength = entries.toList().length;
           return Scaffold(
             appBar: AppBar(
               title: Row(
@@ -48,12 +48,14 @@ class DownloadQueueScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            body: GroupedListView<DownloadModel, String>(
+            body: GroupedListView<Download, String>(
               elements: entries,
-              groupBy: (element) => element.mangaSource!,
+              groupBy: (element) => element.chapter.value!.manga.value!.source!,
               groupSeparatorBuilder: (String groupByValue) {
                 final sourceQueueLength = entries
-                    .where((element) => element.mangaSource! == groupByValue)
+                    .where((element) =>
+                        element.chapter.value!.manga.value!.source! ==
+                        groupByValue)
                     .toList()
                     .length;
                 return Padding(
@@ -61,7 +63,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                   child: Text('$groupByValue ($sourceQueueLength)'),
                 );
               },
-              itemBuilder: (context, DownloadModel element) {
+              itemBuilder: (context, Download element) {
                 return SizedBox(
                   height: 60,
                   child: Row(
@@ -79,7 +81,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  element.mangaName!,
+                                  element.chapter.value!.manga.value!.name!,
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
@@ -89,7 +91,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               ],
                             ),
                             Text(
-                              element.chapterName!,
+                              element.chapter.value!.name!,
                               style: const TextStyle(fontSize: 13),
                             ),
                             const SizedBox(
@@ -100,7 +102,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 curve: Curves.easeInOut,
                                 tween: Tween<double>(
                                   begin: 0,
-                                  end: element.succeeded / element.total,
+                                  end: element.succeeded! / element.total!,
                                 ),
                                 builder: (context, value, _) =>
                                     LinearProgressIndicator(
@@ -116,7 +118,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                           onSelected: (value) {
                             if (value.toString() == 'Cancel') {
                               List<String> taskIds = [];
-                              for (var id in entries.first.taskIds) {
+                              for (var id in entries.first.taskIds!) {
                                 taskIds.add(id);
                               }
                               FileDownloader()
@@ -124,9 +126,15 @@ class DownloadQueueScreen extends ConsumerWidget {
                                   .then((value) async {
                                 await Future.delayed(
                                     const Duration(seconds: 1));
-                                ref.watch(hiveBoxMangaDownloadsProvider).delete(
-                                      "${element.mangaId}/${element.chapterId}",
-                                    );
+                                isar.writeTxnSync(() {
+                                  int id = isar.downloads
+                                      .filter()
+                                      .chapterIdEqualTo(
+                                          element.chapter.value!.id)
+                                      .findFirstSync()!
+                                      .id!;
+                                  isar.downloads.deleteSync(id);
+                                });
                               });
                             }
                           },
@@ -140,8 +148,9 @@ class DownloadQueueScreen extends ConsumerWidget {
                   ),
                 );
               },
-              itemComparator: (item1, item2) =>
-                  item1.mangaSource!.compareTo(item2.mangaSource!),
+              itemComparator: (item1, item2) => item1
+                  .chapter.value!.manga.value!.source!
+                  .compareTo(item2.chapter.value!.manga.value!.source!),
               order: GroupedListOrder.DESC,
             ),
           );

@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';

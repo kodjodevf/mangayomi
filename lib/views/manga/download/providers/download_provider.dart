@@ -1,13 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:background_downloader/background_downloader.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download_model.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -126,42 +125,56 @@ Future<List<dynamic>> downloadChapter(
         }
       }
     }
+    List<String> url = [];
+    for (var a in pageUrls) {
+      url.add(a);
+    }
     if (tasks.isEmpty && pageUrls.isNotEmpty) {
-      final model = DownloadModel(
-          chapterId: chapter.id,
-          mangaName: manga.name,
+      final model = Download(
           succeeded: 0,
           failed: 0,
-          chapterName: chapter.name!,
-          mangaSource: manga.source,
           total: 0,
           isDownload: true,
-          mangaId: manga.id!,
-          taskIds: pageUrls,
-          isStartDownload: false);
+          taskIds: url,
+          isStartDownload: false,
+          chapterId: chapter.id);
 
-      ref
-          .watch(hiveBoxMangaDownloadsProvider)
-          .put("${manga.id}/${chapter.id}", model);
+      isar.writeTxnSync(() {
+        isar.downloads.putSync(model..chapter.value = chapter);
+      });
     } else {
       await FileDownloader().downloadBatch(
         tasks,
         batchProgressCallback: (succeeded, failed) {
-          final model = DownloadModel(
-            mangaName: manga.name,
-            succeeded: succeeded,
-            failed: failed,
-            chapterId: chapter.id,
-            total: tasks.length,
-            isDownload: (succeeded == tasks.length) ? true : false,
-            taskIds: pageUrls,
-            isStartDownload: true,
-            chapterName: chapter.name!,
-            mangaSource: manga.source,
-            mangaId: manga.id!,
-          );
-          Hive.box<DownloadModel>(HiveConstant.hiveBoxDownloads)
-              .put("${manga.id}/${chapter.id}", model);
+          bool isEmpty = isar.downloads
+              .filter()
+              .chapterIdEqualTo(chapter.id!)
+              .isEmptySync();
+          if (isEmpty) {
+            final model = Download(
+              succeeded: succeeded,
+              failed: failed,
+              total: tasks.length,
+              isDownload: (succeeded == tasks.length) ? true : false,
+              taskIds: url,
+              isStartDownload: true,
+              chapterId: chapter.id,
+            );
+            isar.writeTxnSync(() {
+              isar.downloads.putSync(model..chapter.value = chapter);
+            });
+          } else {
+            final model = isar.downloads
+                .filter()
+                .chapterIdEqualTo(chapter.id!)
+                .findFirstSync()!;
+            isar.writeTxnSync(() {
+              isar.downloads.putSync(model
+                ..succeeded = succeeded
+                ..failed = failed
+                ..isDownload = (succeeded == tasks.length) ? true : false);
+            });
+          }
         },
         taskProgressCallback: (taskProgress) async {
           if (taskProgress.progress == 1.0) {

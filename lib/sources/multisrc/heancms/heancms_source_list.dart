@@ -1,8 +1,8 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-List<SourceModel> get heanCmsSourcesList => _heanCmsSourcesList;
-List<SourceModel> _heanCmsSourcesList = [
-  SourceModel(
+List<Source> get heanCmsSourcesList => _heanCmsSourcesList;
+List<Source> _heanCmsSourcesList = [
+  Source(
       sourceName: "YugenMangas",
       baseUrl: "https://yugenmangas.com",
       apiUrl: "https://api.yugenmangas.com/",
@@ -12,7 +12,7 @@ List<SourceModel> _heanCmsSourcesList = [
       logoUrl: '',
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "OmegaScans",
       baseUrl: "https://omegascans.org",
       apiUrl: "https://api.omegascans.org/",
@@ -22,7 +22,7 @@ List<SourceModel> _heanCmsSourcesList = [
       logoUrl: '',
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //   sourceName: "ReaperScans",
   //   baseUrl: "https://reaperscans.net",
   //   apiUrl: "https://api.reaperscans.net/",

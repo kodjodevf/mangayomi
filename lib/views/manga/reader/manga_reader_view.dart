@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/reader_settings.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
@@ -173,7 +174,7 @@ class _MangaChapterPageGalleryState
     widget.readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
     _selectedValue = widget.readerController.getReaderMode();
-    _axisHive(_selectedValue!, true);
+    _(_selectedValue!, true);
   }
 
   void _onPageChanged(int index) {
@@ -209,6 +210,9 @@ class _MangaChapterPageGalleryState
       } else {
         if (index != -1) {
           if (_extendedController.hasClients) {
+            setState(() {
+              _isZoom = false;
+            });
             _extendedController.animateToPage(index,
                 duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
@@ -233,6 +237,9 @@ class _MangaChapterPageGalleryState
       } else {
         if (widget.readerController.getPageLength(widget.url) != index) {
           if (_extendedController.hasClients) {
+            setState(() {
+              _isZoom = false;
+            });
             _extendedController.animateToPage(index.toInt(),
                 duration: Duration(milliseconds: isSlide ? 2 : 150),
                 curve: Curves.ease);
@@ -244,15 +251,14 @@ class _MangaChapterPageGalleryState
 
   ReaderMode? _selectedValue;
   bool _isView = false;
-  double maxScale = 4.1;
-  Alignment scalePosition = Alignment.center;
+  Alignment _scalePosition = Alignment.center;
   final PhotoViewController _photoViewController = PhotoViewController();
   final PhotoViewScaleStateController _photoViewScaleStateController =
       PhotoViewScaleStateController();
 
   final ItemPositionsListener _itemPositionsListener =
       ItemPositionsListener.create();
-  void onScaleEnd(BuildContext context, ScaleEndDetails details,
+  void _onScaleEnd(BuildContext context, ScaleEndDetails details,
       PhotoViewControllerValue controllerValue) {
     if (controllerValue.scale! < 1) {
       _photoViewScaleStateController.reset();
@@ -279,7 +285,7 @@ class _MangaChapterPageGalleryState
       }
 
       if (_photoViewController.scale == 1.0) {
-        scalePosition = _computeAlignmentByTapOffset(tapPosition);
+        _scalePosition = _computeAlignmentByTapOffset(tapPosition);
 
         if (_scaleAnimationController.isCompleted) {
           _scaleAnimationController.reset();
@@ -302,7 +308,7 @@ class _MangaChapterPageGalleryState
   bool _isReversHorizontal = false;
 
   late bool _showPagesNumber = widget.readerController.getShowPageNumber();
-  _axisHive(ReaderMode value, bool isInit) async {
+  _(ReaderMode value, bool isInit) async {
     widget.readerController.setReaderMode(value);
 
     if (value == ReaderMode.vertical) {
@@ -348,7 +354,7 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  Color colorsBlack(BuildContext context) =>
+  Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
 
   Widget _showMore() {
@@ -413,7 +419,7 @@ class _MangaChapterPageGalleryState
                     IconButton(
                         onPressed: () {}, icon: const Icon(Icons.public)),
                   ],
-                  backgroundColor: colorsBlack(context),
+                  backgroundColor: _backgroundColor(context),
                 ),
               ),
             ),
@@ -431,7 +437,7 @@ class _MangaChapterPageGalleryState
                           padding: const EdgeInsets.all(8.0),
                           child: CircleAvatar(
                             radius: 23,
-                            backgroundColor: colorsBlack(context),
+                            backgroundColor: _backgroundColor(context),
                             child: IconButton(
                                 onPressed: isNotFirstChapter
                                     ? () {
@@ -465,7 +471,7 @@ class _MangaChapterPageGalleryState
                               child: Container(
                                 height: 70,
                                 decoration: BoxDecoration(
-                                    color: colorsBlack(context),
+                                    color: _backgroundColor(context),
                                     borderRadius: BorderRadius.circular(25)),
                                 child: Row(
                                   children: [
@@ -534,7 +540,7 @@ class _MangaChapterPageGalleryState
                           padding: const EdgeInsets.all(8.0),
                           child: CircleAvatar(
                             radius: 23,
-                            backgroundColor: colorsBlack(context),
+                            backgroundColor: _backgroundColor(context),
                             child: IconButton(
                               onPressed: isNotLastChapter
                                   ? () {
@@ -571,7 +577,7 @@ class _MangaChapterPageGalleryState
                   Flexible(
                     child: Container(
                       height: 65,
-                      color: colorsBlack(context),
+                      color: _backgroundColor(context),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -586,7 +592,7 @@ class _MangaChapterPageGalleryState
                                   _selectedValue = value;
                                 });
                               }
-                              _axisHive(value, true);
+                              _(value, true);
                             },
                             itemBuilder: (context) => [
                               for (var readerMode in ReaderMode.values)
@@ -799,7 +805,7 @@ class _MangaChapterPageGalleryState
     );
   }
 
-  bool isDoubleTap = false;
+  bool _isZoom = false;
   bool _isVerticalContinous() {
     return _selectedValue == ReaderMode.verticalContinuous ||
         _selectedValue == ReaderMode.webtoon;
@@ -834,8 +840,8 @@ class _MangaChapterPageGalleryState
                   builder: (_, __) => PhotoViewGalleryPageOptions.customChild(
                     controller: _photoViewController,
                     scaleStateController: _photoViewScaleStateController,
-                    basePosition: scalePosition,
-                    onScaleEnd: onScaleEnd,
+                    basePosition: _scalePosition,
+                    onScaleEnd: _onScaleEnd,
                     child: ScrollablePositionedList.separated(
                       physics: const ClampingScrollPhysics(),
                       minCacheExtent: 8 * (MediaQuery.of(context).size.height),
@@ -880,7 +886,9 @@ class _MangaChapterPageGalleryState
                       scrollDirection: _scrollDirection,
                       reverse: _isReversHorizontal,
                       physics: const ClampingScrollPhysics(),
-                      preloadPagesCount: isDoubleTap ? 0 : 5,
+                      preloadPagesCount: _isZoom
+                          ? 0
+                          : widget.readerController.getPageLength(widget.url),
                       canScrollPage: (GestureDetails? gestureDetails) {
                         return gestureDetails != null
                             ? !(gestureDetails.totalScale! > 1.0)
@@ -1006,12 +1014,12 @@ class _MangaChapterPageGalleryState
 
                             if (begin == doubleTapScales[0]) {
                               setState(() {
-                                isDoubleTap = true;
+                                _isZoom = true;
                               });
                               end = doubleTapScales[1];
                             } else {
                               setState(() {
-                                isDoubleTap = false;
+                                _isZoom = false;
                               });
                               end = doubleTapScales[0];
                             }

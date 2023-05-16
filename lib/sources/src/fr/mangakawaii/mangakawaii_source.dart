@@ -1,7 +1,7 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-SourceModel get mangakawaiiSource => _mangakawaiiSource;
-SourceModel _mangakawaiiSource = SourceModel(
+Source get mangakawaiiSource => _mangakawaiiSource;
+Source _mangakawaiiSource = Source(
     sourceName: "MangaKawaii",
     baseUrl: "https://www.mangakawaii.io",
     lang: "fr",

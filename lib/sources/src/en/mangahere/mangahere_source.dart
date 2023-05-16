@@ -1,8 +1,8 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-SourceModel get mangahereSource => _mangahereSource;
+Source get mangahereSource => _mangahereSource;
 
-SourceModel _mangahereSource = SourceModel(
+Source _mangahereSource = Source(
   sourceName: "MangaHere",
   baseUrl: "http://www.mangahere.cc",
   lang: "en",

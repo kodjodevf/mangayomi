@@ -1,8 +1,8 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-List<SourceModel> get mmrcmsSourcesList => _mmrcmsSourcesList;
-List<SourceModel> _mmrcmsSourcesList = [
-  // SourceModel(
+List<Source> get mmrcmsSourcesList => _mmrcmsSourcesList;
+List<Source> _mmrcmsSourcesList = [
+  // Source(
   //     sourceName: "Fallen Angels",
   //     baseUrl: "https://manga.fascans.com",
   //     lang: "en",
@@ -10,7 +10,7 @@ List<SourceModel> _mmrcmsSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "d MMM. yyyy",
   //     dateFormatLocale: "en_US"),
-  SourceModel(
+  Source(
       sourceName: "Scan FR",
       baseUrl: "https://www.scan-fr.org",
       lang: "fr",
@@ -18,7 +18,7 @@ List<SourceModel> _mmrcmsSourcesList = [
       logoUrl: '',
       dateFormat: "d MMM. yyyy",
       dateFormatLocale: "en_US"),
-  SourceModel(
+  Source(
       sourceName: "Scan VF",
       baseUrl: "https://www.scan-vf.net",
       lang: "fr",
@@ -26,7 +26,7 @@ List<SourceModel> _mmrcmsSourcesList = [
       logoUrl: '',
       dateFormat: "d MMM. yyyy",
       dateFormatLocale: "en_US"), //
-  SourceModel(
+  Source(
       sourceName: "Komikid",
       baseUrl: "https://www.komikid.com",
       lang: "id",
@@ -34,7 +34,7 @@ List<SourceModel> _mmrcmsSourcesList = [
       logoUrl: '',
       dateFormat: "d MMM. yyyy",
       dateFormatLocale: "en_US"),
-  // SourceModel(
+  // Source(
   //     sourceName: "MangaHanta",
   //     baseUrl: "http://mangahanta.com",
   //     lang: "tr",
@@ -42,7 +42,7 @@ List<SourceModel> _mmrcmsSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "d MMM. yyyy",
   //     dateFormatLocale: "en_US"),
-  SourceModel(
+  Source(
       sourceName: "MangaID",
       baseUrl: "https://mangaid.click",
       lang: "id",
@@ -50,7 +50,7 @@ List<SourceModel> _mmrcmsSourcesList = [
       logoUrl: '',
       dateFormat: "d MMM. yyyy",
       dateFormatLocale: "en_US"),
-  SourceModel(
+  Source(
       sourceName: "Jpmangas",
       baseUrl: "https://jpmangas.cc",
       lang: "fr",

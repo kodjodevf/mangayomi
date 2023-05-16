@@ -1,13 +1,13 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
 const logoUrl =
     'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75';
 const apiUrl = 'https://api.comick.fun/';
 const baseUrl = 'https://comick.app/';
 
-List<SourceModel> get comickSourcesList => _comickSourcesList;
-List<SourceModel> _comickSourcesList = [
-  SourceModel(
+List<Source> get comickSourcesList => _comickSourcesList;
+List<Source> _comickSourcesList = [
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -16,7 +16,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -25,7 +25,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -34,7 +34,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -43,7 +43,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -52,7 +52,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -61,7 +61,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -70,7 +70,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -79,7 +79,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -88,7 +88,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -97,7 +97,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -106,7 +106,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -115,7 +115,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -124,7 +124,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -133,7 +133,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -142,7 +142,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,
@@ -151,7 +151,7 @@ List<SourceModel> _comickSourcesList = [
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: 'Comick',
       apiUrl: apiUrl,
       baseUrl: baseUrl,

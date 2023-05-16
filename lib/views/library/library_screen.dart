@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -654,22 +654,27 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           List list = [];
           if (downloadFilterType == 1) {
             for (var chap in element.chapters) {
-              final modelChapDownload = ref
-                  .watch(hiveBoxMangaDownloadsProvider)
-                  .get("${chap.mangaId}/${chap.id}", defaultValue: null);
-              if (modelChapDownload != null &&
-                  modelChapDownload.isDownload == true) {
+              final modelChapDownload = isar.downloads
+                  .filter()
+                  .idIsNotNull()
+                  .chapterIdEqualTo(chap.id)
+                  .findAllSync();
+
+              if (modelChapDownload.isNotEmpty &&
+                  modelChapDownload.first.isDownload == true) {
                 list.add(true);
               }
             }
-            return list.length == element.chapters.length;
+            return list.isNotEmpty;
           } else if (downloadFilterType == 2) {
             for (var chap in element.chapters) {
-              final modelChapDownload = ref
-                  .watch(hiveBoxMangaDownloadsProvider)
-                  .get("${chap.mangaId}/${chap.id}", defaultValue: null);
-              if (!(modelChapDownload != null &&
-                  modelChapDownload.isDownload == true)) {
+              final modelChapDownload = isar.downloads
+                  .filter()
+                  .idIsNotNull()
+                  .chapterIdEqualTo(chap.id)
+                  .findAllSync();
+              if (!(modelChapDownload.isNotEmpty &&
+                  modelChapDownload.first.isDownload == true)) {
                 list.add(true);
               }
             }
@@ -789,7 +794,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             for (var id in mangaIdsList) {
               mangasList.add(isar.mangas.getSync(id)!);
             }
-
             return StatefulBuilder(
               builder: (context, setState) {
                 return AlertDialog(
@@ -965,29 +969,26 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 });
                               }
                               if (downloadedChapsList.isNotEmpty) {
-                                for (var manga in mangasList) {
-                                  for (var chapter in manga.chapters) {
-                                    final path = await StorageProvider()
-                                        .getMangaChapterDirectory(
-                                      chapter,
-                                    );
-
-                                    try {
-                                      path!.deleteSync(recursive: true);
-                                      ref
-                                          .watch(hiveBoxMangaDownloadsProvider)
-                                          .delete(
-                                            "${manga.id}/${chapter.id}",
-                                          );
-                                    } catch (e) {
-                                      ref
-                                          .watch(hiveBoxMangaDownloadsProvider)
-                                          .delete(
-                                            "${manga.id}/${chapter.id}",
-                                          );
+                                isar.writeTxnSync(() async {
+                                  for (var manga in mangasList) {
+                                    for (var chapter in manga.chapters) {
+                                      final path = await StorageProvider()
+                                          .getMangaChapterDirectory(
+                                        chapter,
+                                      );
+                                      try {
+                                        path!.deleteSync(recursive: true);
+                                      } catch (e) {
+                                        int id = isar.downloads
+                                            .filter()
+                                            .chapterIdEqualTo(chapter.id!)
+                                            .findFirstSync()!
+                                            .id!;
+                                        isar.downloads.deleteSync(id);
+                                      }
                                     }
                                   }
-                                }
+                                });
                               }
 
                               ref

@@ -1,8 +1,8 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-SourceModel get japscanSource => _japscanSource;
+Source get japscanSource => _japscanSource;
 
-SourceModel _japscanSource = SourceModel(
+Source _japscanSource = Source(
     sourceName: "Japscan",
     baseUrl: "https://japscan.lol",
     lang: "fr",

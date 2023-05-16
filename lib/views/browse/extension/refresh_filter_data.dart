@@ -1,78 +1,35 @@
-import 'package:mangayomi/providers/hive_provider.dart';
-import 'package:mangayomi/models/source_model.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/source_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'refresh_filter_data.g.dart';
 
 @riverpod
-refreshFilterData(RefreshFilterDataRef ref) async {
-  final lf =
-      ref.watch(hiveBoxMangaProvider).get("language_filter", defaultValue: []);
-  if (lf.isEmpty) {
-    for (var element in sourcesList) {
-      final sP = ref.watch(hiveBoxMangaSourceProvider);
-      if (sP.containsKey("${element.sourceName}${element.lang}")) {
-        final oldSp = ref
-            .watch(hiveBoxMangaSourceProvider)
-            .get("${element.sourceName}${element.lang}");
-        ref.watch(hiveBoxMangaSourceProvider).put(
-            "${element.sourceName}${element.lang}",
-            SourceModel(
-                sourceName: element.sourceName,
-                baseUrl: element.baseUrl,
-                apiUrl: element.apiUrl,
-                lang: element.lang,
-                typeSource: element.typeSource,
-                logoUrl: element.logoUrl,
-                isFullData: element.isFullData,
-                isActive: oldSp!.isActive,
-                isAdded: oldSp.isAdded,
-                isNsfw: oldSp.isNsfw,
-                dateFormat: element.dateFormat,
-                dateFormatLocale: element.dateFormatLocale));
+refreshFilterData(RefreshFilterDataRef ref) {
+  isar.writeTxnSync(() {
+    for (var source in sourcesList) {
+      final sourceF = isar.sources
+          .filter()
+          .sourceNameEqualTo(source.sourceName)
+          .and()
+          .langEqualTo(source.lang)
+          .findAllSync();
+      if (sourceF.isEmpty) {
+        isar.sources.putSync(source);
       } else {
-        ref
-            .watch(hiveBoxMangaSourceProvider)
-            .put("${element.sourceName}${element.lang}", element);
+        isar.sources.putSync(sourceF.first
+          ..apiUrl = source.apiUrl
+          ..baseUrl = source.baseUrl
+          ..dateFormat = source.dateFormat
+          ..dateFormatLocale = source.dateFormatLocale
+          ..isCloudflare = source.isCloudflare
+          ..logoUrl = source.logoUrl
+          ..typeSource = source.typeSource
+          ..isFullData = source.isFullData
+          ..lang = source.lang
+          ..sourceName = source.sourceName);
       }
     }
-  } else {
-    for (var element in sourcesList) {
-      final sP = ref.watch(hiveBoxMangaSourceProvider);
-      if (sP.containsKey("${element.sourceName}${element.lang}")) {
-        final oldSp = ref
-            .watch(hiveBoxMangaSourceProvider)
-            .get("${element.sourceName}${element.lang}");
-        ref.watch(hiveBoxMangaSourceProvider).put(
-            "${element.sourceName}${element.lang}",
-            SourceModel(
-                sourceName: element.sourceName,
-                baseUrl: element.baseUrl,
-                apiUrl: element.apiUrl,
-                lang: element.lang,
-                isCloudflare: element.isCloudflare,
-                typeSource: element.typeSource,
-                logoUrl: element.logoUrl,
-                isFullData: element.isFullData,
-                isActive: oldSp!.isActive,
-                isAdded: oldSp.isAdded,
-                isNsfw: oldSp.isNsfw,
-                dateFormat: element.dateFormat,
-                dateFormatLocale: element.dateFormatLocale));
-      } else {
-        ref
-            .watch(hiveBoxMangaSourceProvider)
-            .put("${element.sourceName}${element.lang}", element);
-      }
-    }
-    for (var element in sourcesList) {
-      for (var lang in lf) {
-        if (element.lang.toLowerCase() == lang) {
-          ref
-              .watch(hiveBoxMangaSourceProvider)
-              .delete("${element.sourceName}${element.lang}");
-        }
-      }
-    }
-  }
+  });
 }

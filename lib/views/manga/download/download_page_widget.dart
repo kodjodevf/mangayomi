@@ -3,11 +3,11 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download_model.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
@@ -45,14 +45,15 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       path!.deleteSync(recursive: true);
-      ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            "${manga.id}/${widget.chapter.id}",
-          );
-    } catch (e) {
-      ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            "${manga.id}/${widget.chapter.id}",
-          );
-    }
+    } catch (_) {}
+    isar.writeTxnSync(() {
+      int id = isar.downloads
+          .filter()
+          .chapterIdEqualTo(widget.chapter.id!)
+          .findFirstSync()!
+          .id!;
+      isar.downloads.deleteSync(id);
+    });
   }
 
   bool _isStarted = false;
@@ -64,18 +65,17 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
       width: 35,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
-        child: ValueListenableBuilder<Box<DownloadModel>>(
-          valueListenable:
-              ref.watch(hiveBoxMangaDownloadsProvider).listenable(),
-          builder: (context, val, child) {
-            final entries = val.values
-                .where((element) =>
-                    "${element.mangaId}/${element.chapterId}" ==
-                    "${manga.id}/${widget.chapter.id}")
-                .toList();
-
-            if (entries.isNotEmpty) {
-              return entries.first.isDownload
+        child: StreamBuilder(
+          stream: isar.downloads
+              .filter()
+              .idIsNotNull()
+              .and()
+              .chapterIdEqualTo(widget.chapter.id)
+              .watch(fireImmediately: true),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              final entries = snapshot.data!;
+              return entries.first.isDownload!
                   ? PopupMenuButton(
                       child: Icon(
                         size: 25,
@@ -88,7 +88,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                           setState(() {
                             _isStarted = false;
                           });
-                          _deleteFile(entries.first.taskIds);
+                          _deleteFile(entries.first.taskIds!);
                         }
                       },
                       itemBuilder: (context) => [
@@ -97,7 +97,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                             value: 'Delete', child: Text('Delete')),
                       ],
                     )
-                  : entries.first.isStartDownload &&
+                  : entries.first.isStartDownload! &&
                           entries.first.succeeded == 0
                       ? SizedBox(
                           height: 41,
@@ -129,8 +129,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                         curve: Curves.easeInOut,
                                         tween: Tween<double>(
                                           begin: 0,
-                                          end: (entries.first.succeeded /
-                                              entries.first.total),
+                                          end: (entries.first.succeeded! /
+                                              entries.first.total!),
                                         ),
                                         builder: (context, value, _) =>
                                             SizedBox(
@@ -151,8 +151,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                         alignment: Alignment.center,
                                         child: Icon(
                                           Icons.arrow_downward_sharp,
-                                          color: (entries.first.succeeded /
-                                                      entries.first.total) >
+                                          color: (entries.first.succeeded! /
+                                                      entries.first.total!) >
                                                   0.5
                                               ? Theme.of(context)
                                                   .scaffoldBackgroundColor
@@ -200,12 +200,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     ),
                                     onSelected: (value) {
                                       if (value.toString() == 'Retry') {
-                                        ref
-                                            .watch(
-                                                hiveBoxMangaDownloadsProvider)
-                                            .delete(
-                                              "${manga.id}/${widget.chapter.id}",
-                                            );
+                                        _cancelTasks();
                                         _startDownload();
                                         setState(() {
                                           _isStarted = true;
@@ -261,9 +256,15 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     }
     FileDownloader().cancelTasksWithIds(taskIds).then((value) async {
       await Future.delayed(const Duration(seconds: 1));
-      ref.watch(hiveBoxMangaDownloadsProvider).delete(
-            "${manga.id}/${widget.chapter.id}",
-          );
+      isar.writeTxnSync(() {
+        int id = isar.downloads
+            .filter()
+            .chapterIdEqualTo(widget.chapter.id!)
+            .findFirstSync()!
+            .id!;
+
+        isar.downloads.deleteSync(id);
+      });
     });
   }
 

@@ -1,8 +1,8 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 
-List<SourceModel> get mangathemesiaSourcesList => _mangathemesiaSourcesList;
-List<SourceModel> _mangathemesiaSourcesList = [
-  SourceModel(
+List<Source> get mangathemesiaSourcesList => _mangathemesiaSourcesList;
+List<Source> _mangathemesiaSourcesList = [
+  Source(
       sourceName: "KomikLab",
       baseUrl: "https://komiklab.com",
       lang: "en",
@@ -10,7 +10,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "AnimatedGlitchedScans",
       baseUrl: "https://anigliscans.com",
       lang: "en",
@@ -18,7 +18,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "ArenaScans",
   //     baseUrl: "https://arenascans.net",
   //     lang: "en",
@@ -26,14 +26,14 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl:
   //         'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
   //     isCloudflare: true),
-  // SourceModel(
+  // Source(
   //     sourceName: "AzureScans",
   //     baseUrl: "https://azuremanga.com",
   //     lang: "en",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: ''),
 
-  SourceModel(
+  Source(
       sourceName: "Boosei",
       baseUrl: "https://boosei.net",
       lang: "id",
@@ -42,7 +42,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://cdn.boosei.com/wp-content/uploads/2021/11/Logo-Darkmode.png.webp',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "id"),
-  SourceModel(
+  Source(
       sourceName: "Clayrer",
       baseUrl: "https://clayrer.net",
       lang: "es",
@@ -51,7 +51,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://clayrer.net/wp-content/uploads/2022/12/cropped-BackgroundEraser_20221205_145151639-1.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "es"),
-  SourceModel(
+  Source(
       sourceName: "CosmicScans",
       baseUrl: "https://cosmicscans.com",
       lang: "en",
@@ -59,7 +59,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "DiskusScan",
       baseUrl: "https://diskusscan.com",
       lang: "pt-br",
@@ -68,7 +68,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://diskusscan.com/wp-content/uploads/2022/12/imagem_2022-12-26_222007506.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "pt"),
-  SourceModel(
+  Source(
       sourceName: "DuniaKomik",
       baseUrl: "https://duniakomik.id",
       lang: "id",
@@ -76,19 +76,19 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "id"),
-  // SourceModel(
+  // Source(
   //     sourceName: "FlameScans",
   //     baseUrl: "https://flamescans.fr",
   //     lang: "fr",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: ''),
-  // SourceModel(
+  // Source(
   //     sourceName: "GremoryMangas",
   //     baseUrl: "https://gremorymangas.com",
   //     lang: "es",
   //     typeSource: TypeSource.mangathemesia,
   //     logoUrl: 'https://gremorymangas.com/wp-content/uploads/2022/09/6941.png'),
-  SourceModel(
+  Source(
       sourceName: "InfernalVoidScans",
       baseUrl: "https://void-scans.com",
       lang: "en",
@@ -98,7 +98,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
 
-  // SourceModel(
+  // Source(
   //     sourceName: "Kiryuu",
   //     baseUrl: "https://kiryuu.id",
   //     lang: "id",
@@ -106,7 +106,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "id"),
-  // SourceModel(
+  // Source(
   //     sourceName: "KomikIndo",
   //     baseUrl: "https://komikindo.co",
   //     lang: "id",
@@ -114,7 +114,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMM dd, yyyy",
   //     dateFormatLocale: "id"),
-  SourceModel(
+  Source(
       sourceName: "KomikMama",
       baseUrl: "https://komikmama.co",
       lang: "id",
@@ -122,7 +122,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "id"),
-  SourceModel(
+  Source(
       sourceName: "Komiku",
       baseUrl: "https://komiku.com",
       lang: "id",
@@ -130,7 +130,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: 'https://komiku.com/wp-content/uploads/2022/03/logooo.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "id"),
-  SourceModel(
+  Source(
       sourceName: "KumaScans (Kuma Translation)",
       baseUrl: "https://kumascans.com",
       lang: "en",
@@ -139,7 +139,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'http://kumascans.com/wp-content/uploads/2021/01/web-rawkuma-copy.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "MangaKita",
   //     baseUrl: "https://mangakita.net",
   //     lang: "id",
@@ -147,7 +147,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "MangaTale",
   //     baseUrl: "https://mangatale.co",
   //     lang: "id",
@@ -156,7 +156,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //         'http://mangatale.co/wp-content/uploads/2022/07/Group-of-23-Objects.png',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "MangaYaro",
       baseUrl: "https://mangayaro.net",
       lang: "id",
@@ -165,7 +165,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://cache.mangayaro.net/wp-content/uploads/2021/07/20210723_193720.png.webp',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "MangKomik",
       baseUrl: "https://mangkomik.net",
       lang: "id",
@@ -174,7 +174,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://cdn.mangkomik.net/wp-content/uploads/2023/02/image_2023-02-04_175453454-e1675527068905.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "id"),
-  SourceModel(
+  Source(
       sourceName: "MangásChan",
       baseUrl: "https://mangaschan.com",
       lang: "pt-br",
@@ -182,7 +182,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: 'https://mangaschan.com/wp-content/uploads/Logo-web.webp',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "pt-br"),
-  // SourceModel(
+  // Source(
   //     sourceName: "ManhwaFreak",
   //     baseUrl: "https://manhwafreak.com",
   //     lang: "en",
@@ -191,7 +191,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //         'https://manhwafreak.com/wp-content/uploads/2022/09/New-Theme-Logo-2.png',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "ManhwaList",
       baseUrl: "https://manhwalist.in",
       lang: "id",
@@ -199,7 +199,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "MasterKomik",
   //     baseUrl: "https://masterkomik.com",
   //     lang: "id",
@@ -207,7 +207,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: 'https://masterkomik.com/wp-content/uploads/2020/12/New-MK.png',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "id"),
-  // SourceModel(
+  // Source(
   //     sourceName: "Nekomik",
   //     baseUrl: "https://nekomik.com",
   //     lang: "id",
@@ -215,7 +215,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "PhantomScans",
   //     baseUrl: "https://phantomscans.com",
   //     lang: "en",
@@ -223,7 +223,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "PhoenixFansub",
   //     baseUrl: "https://phoenixfansub.com",
   //     lang: "es",
@@ -231,7 +231,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "es"),
-  SourceModel(
+  Source(
       sourceName: "PiScans",
       baseUrl: "https://piscans.in",
       lang: "id",
@@ -240,7 +240,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://piscans.in/wp-content/uploads/2022/11/WM-Websitewq1.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "Rawkuma",
   //     baseUrl: "https://rawkuma.com/",
   //     lang: "ja",
@@ -248,7 +248,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: 'http://rawkuma.com/wp-content/uploads/2021/12/Rawkuma-Logo.png',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "Readkomik",
       baseUrl: "https://readkomik.com",
       lang: "en",
@@ -257,7 +257,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://readkomik.com/wp-content/uploads/2021/01/PicsArt_01-23-03.51.01.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "SuryaScans",
       baseUrl: "https://suryascans.com",
       lang: "en",
@@ -266,7 +266,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://suryascans.com/wp-content/uploads/2022/09/new-text-surya-logo1x.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "SushiScan",
       baseUrl: "https://sushiscan.net",
       lang: "fr",
@@ -275,7 +275,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
       isCloudflare: true,
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "fr"),
-  SourceModel(
+  Source(
       sourceName: "TsundokuTraduções",
       baseUrl: "https://tsundoku.com.br",
       lang: "pt-br",
@@ -284,7 +284,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://tsundoku.com.br/wp-content/uploads/2022/01/TsunBranca.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "pt-br"),
-  SourceModel(
+  Source(
       sourceName: "TukangKomik",
       baseUrl: "https://tukangkomik.id",
       lang: "id",
@@ -293,7 +293,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
           'https://tukangkomik.id/wp-content/uploads/2022/03/tukangkomik-logo-1.png',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // SourceModel(
+  // Source(
   //     sourceName: "WestManga",
   //     baseUrl: "https://westmanga.info",
   //     lang: "id",
@@ -301,7 +301,7 @@ List<SourceModel> _mangathemesiaSourcesList = [
   //     logoUrl: 'https://westmanga.info/wp-content/uploads/2021/01/LOGOxx-1.png',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  SourceModel(
+  Source(
       sourceName: "xCaliBRScans",
       baseUrl: "https://xcalibrscans.com",
       lang: "en",

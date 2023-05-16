@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/views/browse/extension/extension_screen.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
 import 'package:mangayomi/views/browse/sources_screen.dart';
@@ -37,8 +37,8 @@ class _BrowseScreenState extends State<BrowseScreen>
     await StorageProvider().requestPermission();
   }
 
-  List<SourceModel> _entries = [];
-  List<SourceModel> _entriesFilter = [];
+  List<Source> _entries = [];
+  List<Source> _entriesFilter = [];
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   @override
@@ -60,7 +60,7 @@ class _BrowseScreenState extends State<BrowseScreen>
                     onChanged: (value) {
                       setState(() {
                         _entriesFilter = _entries
-                            .where((element) => element.sourceName
+                            .where((element) => element.sourceName!
                                 .toLowerCase()
                                 .contains(value.toLowerCase()))
                             .toList();
@@ -129,7 +129,7 @@ class _BrowseScreenState extends State<BrowseScreen>
           const SourcesScreen(),
           ExtensionScreen(
             entriesData: (val) {
-              _entries = val as List<SourceModel>;
+              _entries = val as List<Source>;
             },
             entriesFilter: _entriesFilter,
           ),

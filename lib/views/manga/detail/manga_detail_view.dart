@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -132,14 +133,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 ? element.isBookmarked == false
                 : true)
         .where((element) {
-      final modelChapDownload = ref
-          .watch(hiveBoxMangaDownloadsProvider)
-          .get("${element.mangaId}/${element.id}", defaultValue: null);
+      final modelChapDownload = isar.downloads
+          .filter()
+          .idIsNotNull()
+          .chapterIdEqualTo(element.id)
+          .findAllSync();
       return filterDownloaded == 1
-          ? modelChapDownload != null && modelChapDownload.isDownload == true
+          ? modelChapDownload.isNotEmpty &&
+              modelChapDownload.first.isDownload == true
           : filterDownloaded == 2
-              ? !(modelChapDownload != null &&
-                  modelChapDownload.isDownload == true)
+              ? !(modelChapDownload.isNotEmpty &&
+                  modelChapDownload.first.isDownload == true)
               : true;
     }).toList();
     List<Chapter> chapters =
@@ -519,21 +523,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               shadowColor: Colors.transparent,
                             ),
                             onPressed: () {
-                              for (var chapter
-                                  in ref.watch(chaptersListStateProvider)) {
-                                final entries = ref
-                                    .watch(hiveBoxMangaDownloadsProvider)
-                                    .values
-                                    .where((element) =>
-                                        "${element.mangaId}/${element.chapterId}" ==
-                                        "${widget.manga!.id}/${chapter.id}")
-                                    .toList();
-                                if (entries.isEmpty ||
-                                    !entries.first.isDownload) {
-                                  ref.watch(downloadChapterProvider(
-                                      chapter: chapter));
+                              isar.txnSync(() {
+                                for (var chapter
+                                    in ref.watch(chaptersListStateProvider)) {
+                                  final entries = isar.downloads
+                                      .filter()
+                                      .idIsNotNull()
+                                      .chapterIdEqualTo(chapter.id)
+                                      .findAllSync();
+                                  if (entries.isEmpty ||
+                                      !entries.first.isDownload!) {
+                                    ref.watch(downloadChapterProvider(
+                                        chapter: chapter));
+                                  }
                                 }
-                              }
+                              });
+
                               ref
                                   .read(isLongPressedStateProvider.notifier)
                                   .update(false);

@@ -1,4 +1,4 @@
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';

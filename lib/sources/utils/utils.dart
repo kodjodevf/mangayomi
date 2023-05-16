@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart';
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/source_list.dart';
 
 String getMangaBaseUrl(String source) {
   String url = "";
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
-      url = sourcesList[i].baseUrl;
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
+      url = sourcesList[i].baseUrl!;
     }
   }
   return url;
@@ -15,8 +15,8 @@ String getMangaBaseUrl(String source) {
 String getMangaAPIUrl(String source) {
   String url = "";
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
-      url = sourcesList[i].apiUrl;
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
+      url = sourcesList[i].apiUrl!;
     }
   }
   return url;
@@ -25,7 +25,7 @@ String getMangaAPIUrl(String source) {
 TypeSource getMangaTypeSource(String source) {
   TypeSource? typeSource;
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
       typeSource = sourcesList[i].typeSource;
     }
   }
@@ -35,7 +35,7 @@ TypeSource getMangaTypeSource(String source) {
 String getFormatDate(String source) {
   String? dateFormat;
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
       dateFormat = sourcesList[i].dateFormat;
     }
   }
@@ -45,7 +45,7 @@ String getFormatDate(String source) {
 String getFormatDateLocale(String source) {
   String? dateFormatLocale;
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
       dateFormatLocale = sourcesList[i].dateFormatLocale;
     }
   }
@@ -55,7 +55,7 @@ String getFormatDateLocale(String source) {
 bool isCloudflare(String source) {
   bool? isCloudflare;
   for (var i = 0; i < sourcesList.length; i++) {
-    if (sourcesList[i].sourceName.toLowerCase() == source.toLowerCase()) {
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
       isCloudflare = sourcesList[i].isCloudflare;
     }
   }

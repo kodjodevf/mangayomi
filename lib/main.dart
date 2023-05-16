@@ -10,13 +10,13 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download_model.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/reader_settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/models/source_model.dart';
-import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
@@ -40,21 +40,30 @@ _initDB() async {
   final dir = await getApplicationDocumentsDirectory();
   if (Platform.isAndroid || Platform.isIOS) {
     isar = Isar.openSync(
-      [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
+      [
+        MangaSchema,
+        ChapterSchema,
+        CategorySchema,
+        HistorySchema,
+        DownloadSchema,
+        SourceSchema,
+        PersonalReaderModeSchema,
+        ReaderSettingsSchema
+      ],
       directory: dir.path,
     );
   } else {
-    isar = await Isar.open(
-        [MangaSchema, ChapterSchema, CategorySchema, HistorySchema],
-        directory: "${dir.path}/Mangayomi/databases", name: "mangayomiDb");
+    isar = await Isar.open([
+      MangaSchema,
+      ChapterSchema,
+      CategorySchema,
+      HistorySchema,
+      DownloadSchema,
+      SourceSchema,
+      PersonalReaderModeSchema,
+      ReaderSettingsSchema
+    ], directory: "${dir.path}/Mangayomi/databases", name: "mangayomiDb");
   }
-  Hive.registerAdapter(SourceModelAdapter());
-  Hive.registerAdapter(ReaderModeAdapter());
-  Hive.registerAdapter(TypeSourceAdapter());
-  Hive.registerAdapter(DownloadModelAdapter());
-  await Hive.openBox<ReaderMode>(HiveConstant.hiveBoxReaderMode);
-  await Hive.openBox<SourceModel>(HiveConstant.hiveBoxMangaSource);
-  await Hive.openBox<DownloadModel>(HiveConstant.hiveBoxDownloads);
   await Hive.openBox(HiveConstant.hiveBoxAppSettings);
   await Hive.openBox(HiveConstant.hiveBoxMangaInfo);
 }

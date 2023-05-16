@@ -768,7 +768,7 @@ class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'9491a65fa03119197ff5db96f6375356d4f226d7';
+    r'7001c969e208fb928a48723780dce8e3daaecc0a';
 
 abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<dynamic> {

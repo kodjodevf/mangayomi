@@ -3,25 +3,11 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/reader_settings.dart';
 import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:hive/hive.dart';
 part 'reader_controller_provider.g.dart';
-
-@HiveType(typeId: 5)
-enum ReaderMode {
-  @HiveField(1)
-  vertical,
-  @HiveField(2)
-  ltr,
-  @HiveField(3)
-  rtl,
-  @HiveField(4)
-  verticalContinuous,
-  @HiveField(5)
-  webtoon
-}
 
 @riverpod
 class CurrentIndex extends _$CurrentIndex {
@@ -57,15 +43,15 @@ class ReaderController extends _$ReaderController {
   }
 
   ReaderMode getReaderMode() {
-    return ref.watch(hiveBoxReaderModeProvider).get(
-                "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-                defaultValue: null) !=
-            null
-        ? ref.watch(hiveBoxReaderModeProvider).get(
-              "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-            )!
-        : ref.watch(hiveBoxReaderModeProvider).get("globalMangaReaderModeValue",
-            defaultValue: ReaderMode.vertical)!;
+    final personalReaderMode = isar.personalReaderModes
+        .filter()
+        .mangaIdEqualTo(getManga().id)
+        .findAllSync();
+    if (personalReaderMode.isNotEmpty) {
+      return personalReaderMode.first.readerMode;
+    }
+    // return isar.readerSettings.getSync(227)!.defaultReaderMode;
+    return ReaderMode.vertical;
   }
 
   String getReaderModeValue(ReaderMode readerMode) {
@@ -81,9 +67,18 @@ class ReaderController extends _$ReaderController {
   }
 
   void setReaderMode(ReaderMode newReaderMode) {
-    ref.watch(hiveBoxReaderModeProvider).put(
-        "${getSourceName()}/${getMangaName()}-singleMangaReaderModeValue",
-        newReaderMode);
+    final personalReaderMode = isar.personalReaderModes
+        .filter()
+        .mangaIdEqualTo(getManga().id)
+        .findAllSync();
+    if (personalReaderMode.isNotEmpty) {
+      isar.writeTxnSync(() => isar.personalReaderModes
+          .putSync(personalReaderMode.first..readerMode = newReaderMode));
+    } else {
+      isar.writeTxnSync(() => isar.personalReaderModes.putSync(
+          PersonalReaderMode(
+              mangaId: getManga().id, readerMode: newReaderMode)));
+    }
   }
 
   void setShowPageNumber(bool value) {

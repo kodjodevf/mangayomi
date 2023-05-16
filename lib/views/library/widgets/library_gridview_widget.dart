@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/views/history/providers/isar_providers.dart';
 import 'package:mangayomi/views/library/providers/library_state_provider.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -112,28 +114,30 @@ class LibraryGridViewWidget extends StatelessWidget {
                                       child: Consumer(
                                         builder: (context, ref, child) {
                                           List nbrDown = [];
-                                          for (var i = 0;
-                                              i <
-                                                  entriesManga[index]
-                                                      .chapters
-                                                      .length;
-                                              i++) {
-                                            final entries = ref
-                                                .watch(
-                                                    hiveBoxMangaDownloadsProvider)
-                                                .values
-                                                .where((element) =>
-                                                    element.chapterName ==
+                                          isar.txnSync(() {
+                                            for (var i = 0;
+                                                i <
                                                     entriesManga[index]
                                                         .chapters
-                                                        .toList()[i]
-                                                        .name)
-                                                .toList();
-                                            if (entries.isNotEmpty &&
-                                                entries.first.isDownload) {
-                                              nbrDown.add(entries.first);
+                                                        .length;
+                                                i++) {
+                                              final entries = isar.downloads
+                                                  .filter()
+                                                  .idIsNotNull()
+                                                  .chapterIdEqualTo(
+                                                      entriesManga[index]
+                                                          .chapters
+                                                          .toList()[i]
+                                                          .id)
+                                                  .findAllSync();
+
+                                              if (entries.isNotEmpty &&
+                                                  entries.first.isDownload!) {
+                                                nbrDown.add(entries.first);
+                                              }
                                             }
-                                          }
+                                          });
+
                                           if (nbrDown.isNotEmpty) {
                                             return Container(
                                               decoration: BoxDecoration(

@@ -5,10 +5,9 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
-import 'package:mangayomi/models/source_model.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -30,11 +29,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   final _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final sourceList = ref
-        .watch(hiveBoxMangaSourceProvider)
-        .values
-        .where((element) => element.isAdded == true)
-        .toList();
+    final sourceList = isar.sources.filter().isAddedEqualTo(true).findAllSync();
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -80,7 +75,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
 class SourceSearchScreen extends ConsumerWidget {
   final String query;
 
-  final SourceModel source;
+  final Source source;
   const SourceSearchScreen({
     super.key,
     required this.query,
@@ -90,7 +85,7 @@ class SourceSearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final search =
-        ref.watch(searchMangaProvider(source: source.sourceName, query: query));
+        ref.watch(searchMangaProvider(source: source.sourceName!, query: query));
     return Scaffold(
         body: SizedBox(
       height: 240,
@@ -107,9 +102,9 @@ class SourceSearchScreen extends ConsumerWidget {
               };
               context.push('/searchResult', extra: data);
             },
-            title: Text(source.sourceName),
+            title: Text(source.sourceName!),
             subtitle: Text(
-              completeLang(source.lang),
+              completeLang(source.lang!),
               style: const TextStyle(fontSize: 10),
             ),
             trailing: const Icon(Icons.arrow_forward_sharp),
@@ -129,8 +124,8 @@ class SourceSearchScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         return MangaGlobalImageCard(
                           manga: data[index]!,
-                          source: source.sourceName,
-                          lang: source.lang,
+                          source: source.sourceName!,
+                          lang: source.lang!,
                         );
                       },
                     );
