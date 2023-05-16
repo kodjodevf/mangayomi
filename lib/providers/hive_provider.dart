@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'hive_provider.g.dart';

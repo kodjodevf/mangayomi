@@ -22,8 +22,12 @@ class ExtensionScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: StreamBuilder(
-          stream:
-              isar.sources.filter().idIsNotNull().watch(fireImmediately: true),
+          stream: isar.sources
+              .filter()
+              .idIsNotNull()
+              .and()
+              .isActiveEqualTo(true)
+              .watch(fireImmediately: true),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               final entries = snapshot.data!;
