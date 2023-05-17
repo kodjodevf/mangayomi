@@ -118,7 +118,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           data: (data) {
             final entries = data
                 .where((element) => _textEditingController.text.isNotEmpty
-                    ? element.chapter.value!.manga.value!.name!.toLowerCase()
+                    ? element.chapter.value!.manga.value!.name!
+                        .toLowerCase()
                         .contains(_textEditingController.text.toLowerCase())
                     : true)
                 .toList();
@@ -172,7 +173,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(7),
                                   child: cachedNetworkImage(
-                                      headers: headers(manga.source!),
+                                      headers: ref.watch(headersProvider(
+                                          source: manga.source!)),
                                       imageUrl: manga.imageUrl!,
                                       width: 60,
                                       height: 90,

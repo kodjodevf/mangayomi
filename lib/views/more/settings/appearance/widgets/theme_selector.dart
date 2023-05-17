@@ -2,7 +2,8 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 
@@ -20,8 +21,7 @@ class ThemeSelector extends ConsumerStatefulWidget {
 class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
   @override
   Widget build(BuildContext context) {
-    int selected =
-        ref.watch(hiveBoxSettingsProvider).get('FlexColorIndex', defaultValue: 7);
+    int selected = isar.settings.getSync(227)!.flexSchemeColorIndex!;
     const double height = 45;
     const double width = height * 1.5;
     final ThemeData theme = Theme.of(context);

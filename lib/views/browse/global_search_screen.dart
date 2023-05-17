@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -14,6 +12,7 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
+import 'package:mangayomi/views/widgets/manga_image_card_widget.dart';
 
 class GlobalSearchScreen extends ConsumerStatefulWidget {
   const GlobalSearchScreen({
@@ -84,8 +83,8 @@ class SourceSearchScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final search =
-        ref.watch(searchMangaProvider(source: source.sourceName!, query: query));
+    final search = ref
+        .watch(searchMangaProvider(source: source.sourceName!, query: query));
     return Scaffold(
         body: SizedBox(
       height: 240,
@@ -169,54 +168,14 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
       data: (data) {
         return GestureDetector(
           onTap: () async {
-            final manga = Manga(
-                imageUrl: data.imageUrl,
-                name: data.name,
-                genre: data.genre,
-                author: data.author,
-                status: data.status,
-                description: data.description,
-                link: data.url,
-                source: data.source,
-                lang: widget.lang,
-                lastUpdate: DateTime.now().millisecondsSinceEpoch);
-
-            final empty = isar.mangas
-                .filter()
-                .langEqualTo(widget.lang)
-                .nameEqualTo(data.name)
-                .sourceEqualTo(data.source)
-                .isEmptySync();
-            if (empty) {
-              isar.writeTxnSync(() {
-                isar.mangas.putSync(manga);
-                for (var i = 0; i < data.chapters.length; i++) {
-                  final chapters = Chapter(
-                      name: data.chapters[i].name,
-                      url: data.chapters[i].url,
-                      dateUpload: data.chapters[i].dateUpload,
-                      scanlator: data.chapters[i].scanlator,
-                      mangaId: manga.id)
-                    ..manga.value = manga;
-                  isar.chapters.putSync(chapters);
-                  chapters.manga.saveSync();
-                }
-              });
-            }
-            final mangaId = isar.mangas
-                .filter()
-                .langEqualTo(widget.lang)
-                .nameEqualTo(data.name)
-                .sourceEqualTo(data.source)
-                .findFirstSync()!
-                .id!;
-            context.push('/manga-reader/detail', extra: mangaId);
+            pushToMangaReaderDetail(
+                context: context, getManga: data, lang: widget.lang);
           },
           child: SizedBox(
             width: 90,
             child: Column(children: [
               cachedNetworkImage(
-                  headers: headers(data.source!),
+                  headers: ref.watch(headersProvider(source: data.source!)),
                   imageUrl: data.imageUrl!,
                   width: 80,
                   height: 120,

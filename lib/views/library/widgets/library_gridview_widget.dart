@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
@@ -16,6 +15,7 @@ import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
 import 'package:mangayomi/views/widgets/gridview_widget.dart';
+import 'package:mangayomi/views/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class LibraryGridViewWidget extends StatelessWidget {
@@ -62,8 +62,10 @@ class LibraryGridViewWidget extends StatelessWidget {
                       .read(mangasListStateProvider.notifier)
                       .update(entriesManga[index]);
                 } else {
-                  context.push('/manga-reader/detail',
-                      extra: entriesManga[index].id);
+                  pushToMangaReaderDetail(
+                      context: context,
+                      lang: entriesManga[index].lang!,
+                      mangaM: entriesManga[index]);
                 }
               },
               onLongPress: () {
@@ -91,7 +93,8 @@ class LibraryGridViewWidget extends StatelessWidget {
                   Stack(
                     children: [
                       cachedNetworkImage(
-                          headers: headers(entriesManga[index].source!),
+                          headers: ref.watch(headersProvider(
+                              source: entriesManga[index].source!)),
                           imageUrl: entriesManga[index].imageUrl!,
                           width: 200,
                           height: 270,

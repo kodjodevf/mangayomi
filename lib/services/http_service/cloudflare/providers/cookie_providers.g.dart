@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_chapter_url.dart';
+part of 'cookie_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'7713a0aa89a528cf9aa90016fdebb63af89a2520';
+String _$cookieStateHash() => r'1ae831fd859a7f084f26be985ebf1e126b38a788';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,38 @@ class _SystemHash {
   }
 }
 
-typedef GetChapterUrlRef = AutoDisposeFutureProviderRef<GetChapterUrlModel>;
+abstract class _$CookieState extends BuildlessAutoDisposeNotifier<String> {
+  late final String source;
 
-/// See also [getChapterUrl].
-@ProviderFor(getChapterUrl)
-const getChapterUrlProvider = GetChapterUrlFamily();
+  String build(
+    String source,
+  );
+}
 
-/// See also [getChapterUrl].
-class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
-  /// See also [getChapterUrl].
-  const GetChapterUrlFamily();
+/// See also [CookieState].
+@ProviderFor(CookieState)
+const cookieStateProvider = CookieStateFamily();
 
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider call({
-    required Chapter chapter,
-  }) {
-    return GetChapterUrlProvider(
-      chapter: chapter,
+/// See also [CookieState].
+class CookieStateFamily extends Family<String> {
+  /// See also [CookieState].
+  const CookieStateFamily();
+
+  /// See also [CookieState].
+  CookieStateProvider call(
+    String source,
+  ) {
+    return CookieStateProvider(
+      source,
     );
   }
 
   @override
-  GetChapterUrlProvider getProviderOverride(
-    covariant GetChapterUrlProvider provider,
+  CookieStateProvider getProviderOverride(
+    covariant CookieStateProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
+      provider.source,
     );
   }
 
@@ -70,44 +76,50 @@ class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getChapterUrlProvider';
+  String? get name => r'cookieStateProvider';
 }
 
-/// See also [getChapterUrl].
-class GetChapterUrlProvider
-    extends AutoDisposeFutureProvider<GetChapterUrlModel> {
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider({
-    required this.chapter,
-  }) : super.internal(
-          (ref) => getChapterUrl(
-            ref,
-            chapter: chapter,
-          ),
-          from: getChapterUrlProvider,
-          name: r'getChapterUrlProvider',
+/// See also [CookieState].
+class CookieStateProvider
+    extends AutoDisposeNotifierProviderImpl<CookieState, String> {
+  /// See also [CookieState].
+  CookieStateProvider(
+    this.source,
+  ) : super.internal(
+          () => CookieState()..source = source,
+          from: cookieStateProvider,
+          name: r'cookieStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getChapterUrlHash,
-          dependencies: GetChapterUrlFamily._dependencies,
+                  : _$cookieStateHash,
+          dependencies: CookieStateFamily._dependencies,
           allTransitiveDependencies:
-              GetChapterUrlFamily._allTransitiveDependencies,
+              CookieStateFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
+  final String source;
 
   @override
   bool operator ==(Object other) {
-    return other is GetChapterUrlProvider && other.chapter == chapter;
+    return other is CookieStateProvider && other.source == source;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, source.hashCode);
 
     return _SystemHash.finish(hash);
+  }
+
+  @override
+  String runNotifierBuild(
+    covariant CookieState notifier,
+  ) {
+    return notifier.build(
+      source,
+    );
   }
 }
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

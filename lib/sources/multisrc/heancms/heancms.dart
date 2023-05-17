@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/sources/multisrc/heancms/model/search.dart';
@@ -15,7 +16,9 @@ class HeanCms extends MangaYomiServices {
         'Content-Type': 'application/json'
       };
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
     final chapterId = chapter.url!.split("#").last;
     var request = http.Request(
         'GET',
@@ -41,7 +44,8 @@ class HeanCms extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
     String currentSlug = manga.url!.split('/').last;
 
     var request = http.Request(
@@ -54,7 +58,7 @@ class HeanCms extends MangaYomiServices {
     http.StreamedResponse response = await request.send();
     final res = await response.stream.bytesToString();
     var mangaDetail = jsonDecode(res) as Map<String, dynamic>;
-    
+
     final d = Data.fromJson(mangaDetail);
 
     final dom = await httpResToDom(
@@ -89,7 +93,9 @@ class HeanCms extends MangaYomiServices {
 
   @override
   Future<List<GetManga>> getPopularManga(
-      {required String source, required int page}) async {
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
     var request = http.Request(
         'POST', Uri.parse('${getMangaAPIUrl(source)}series/querysearch'));
     request.body = json.encode({
@@ -127,7 +133,9 @@ class HeanCms extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
     var request = http.Request(
         'POST', Uri.parse('${getMangaAPIUrl(source)}series/search'));
     request.body = json.encode({"term": query.trim()});

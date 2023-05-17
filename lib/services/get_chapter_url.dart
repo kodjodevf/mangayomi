@@ -1,9 +1,10 @@
 // ignore_for_file: depend_o
 import 'dart:async';
 import 'dart:io';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
@@ -20,7 +21,7 @@ part 'get_chapter_url.g.dart';
 
 class GetChapterUrlModel {
   Directory? path;
-  List pageUrls = [];
+  List<String> pageUrls = [];
   List<bool> isLocaleList = [];
   GetChapterUrlModel(
       {required this.path, required this.pageUrls, required this.isLocaleList});
@@ -32,18 +33,20 @@ Future<GetChapterUrlModel> getChapterUrl(
   required Chapter chapter,
 }) async {
   Directory? path;
-  List pageUrls = [];
+  List<String> pageUrls = [];
   final manga = chapter.manga.value!;
   List<bool> isLocaleList = [];
   String source = manga.source!.toLowerCase();
-  List hivePagesUrls = ref.watch(hiveBoxMangaProvider).get(
-      "${manga.lang}-${manga.source}/${manga.name}/${chapter.name}-pageurl",
-      defaultValue: []);
+  final settings = isar.settings.getSync(227);
+  final isarPageUrls = settings!.chapterPageUrlsList!
+      .where((element) => element.chapterId == chapter.id);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   path = await StorageProvider().getMangaChapterDirectory(chapter);
 
-  if (hivePagesUrls.isNotEmpty) {
-    pageUrls = hivePagesUrls;
+  if (isarPageUrls.isNotEmpty &&
+      isarPageUrls.first.urls != null &&
+      isarPageUrls.first.urls!.isNotEmpty) {
+    pageUrls = isarPageUrls.first.urls!;
   }
 
   /*********/
@@ -51,7 +54,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /********/
 
   else if (getMangaTypeSource(source) == TypeSource.comick) {
-    pageUrls = await Comick().getChapterUrl(chapter: chapter);
+    pageUrls = await Comick().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /*************/
@@ -59,7 +62,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /**************/
 
   else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    pageUrls = await MangaThemeSia().getChapterUrl(chapter: chapter);
+    pageUrls = await MangaThemeSia().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /***********/
@@ -67,7 +70,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /***********/
 
   else if (source == 'mangakawaii') {
-    pageUrls = await MangaKawaii().getChapterUrl(chapter: chapter);
+    pageUrls = await MangaKawaii().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /***********/
@@ -75,7 +78,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    pageUrls = await Mmrcms().getChapterUrl(chapter: chapter);
+    pageUrls = await Mmrcms().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /***********/
@@ -83,7 +86,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /***********/
 
   else if (source == 'mangahere') {
-    pageUrls = await Mangahere().getChapterUrl(chapter: chapter);
+    pageUrls = await Mangahere().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /***********/
@@ -91,7 +94,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   /***********/
 
   else if (source == 'japscan') {
-    pageUrls = await Japscan().getChapterUrl(chapter: chapter);
+    pageUrls = await Japscan().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   /***********/
@@ -99,14 +102,22 @@ Future<GetChapterUrlModel> getChapterUrl(
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    pageUrls = await HeanCms().getChapterUrl(chapter: chapter);
+    pageUrls = await HeanCms().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   if (pageUrls.isNotEmpty) {
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaProvider).put(
-          "${manga.lang}-${manga.source}/${manga.name}/${chapter.name}-pageurl",
-          pageUrls);
+      List<ChapterPageurls>? chapterPageUrls = [];
+      for (var chapterPageUrl in settings.chapterPageUrlsList!) {
+        if (chapterPageUrl.chapterId != chapter.id) {
+          chapterPageUrls.add(chapterPageUrl);
+        }
+      }
+      chapterPageUrls.add(ChapterPageurls()
+        ..chapterId = chapter.id
+        ..urls = pageUrls);
+      isar.writeTxnSync(() => isar.settings
+          .putSync(settings..chapterPageUrlsList = chapterPageUrls));
     }
     for (var i = 0; i < pageUrls.length; i++) {
       if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {

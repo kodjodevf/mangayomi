@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
-class ImageViewVertical extends StatefulWidget {
+class ImageViewVertical extends ConsumerWidget {
   final int length;
   final bool isLocale;
   final String url;
@@ -31,80 +31,72 @@ class ImageViewVertical extends StatefulWidget {
   });
 
   @override
-  State<ImageViewVertical> createState() => _ImageViewVerticalState();
-}
-
-class _ImageViewVerticalState extends State<ImageViewVertical>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       color: Colors.black,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (widget.index == 0)
+          if (index == 0)
             SizedBox(
               height: MediaQuery.of(context).padding.top,
             ),
-          widget.isLocale
+          isLocale
               ? ExtendedImage.file(
                   fit: BoxFit.contain,
                   clearMemoryCacheWhenDispose: true,
                   enableMemoryCache: false,
-                  File('${widget.path.path}${padIndex(widget.index + 1)}.jpg'))
-              : ExtendedImage(
-                  image: FastCachedImageProvider(widget.url,
-                      headers: headers(widget.source)),
+                  File('${path.path}${padIndex(index + 1)}.jpg'))
+              : ExtendedImage.network(url,
+                  headers: ref.watch(headersProvider(source: source)),
                   handleLoadingProgress: true,
+                  cacheMaxAge: const Duration(days: 7),
                   fit: BoxFit.contain,
-                  clearMemoryCacheWhenDispose: true,
-                  enableMemoryCache: false,
+                  enableMemoryCache: true,
                   loadStateChanged: (ExtendedImageState state) {
-                    if (state.extendedImageLoadState == LoadState.loading) {
-                      final ImageChunkEvent? loadingProgress =
-                          state.loadingProgress;
-                      final double progress =
-                          loadingProgress?.expectedTotalBytes != null
-                              ? loadingProgress!.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : 0;
-                      return Container(
+                  if (state.extendedImageLoadState == LoadState.loading) {
+                    final ImageChunkEvent? loadingProgress =
+                        state.loadingProgress;
+                    final double progress =
+                        loadingProgress?.expectedTotalBytes != null
+                            ? loadingProgress!.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : 0;
+                    return Container(
+                      color: Colors.black,
+                      height: mediaHeight(context, 0.8),
+                      child: CircularProgressIndicatorAnimateRotate(
+                          progress: progress),
+                    );
+                  }
+                  if (state.extendedImageLoadState == LoadState.failed) {
+                    return Container(
                         color: Colors.black,
                         height: mediaHeight(context, 0.8),
-                        child: CircularProgressIndicatorAnimateRotate(
-                            progress: progress),
-                      );
-                    }
-                    if (state.extendedImageLoadState == LoadState.failed) {
-                      return Container(
-                          color: Colors.black,
-                          height: mediaHeight(context, 0.8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    state.reLoadImage();
-                                  },
-                                  child: const Icon(
-                                    Icons.replay_outlined,
-                                    size: 30,
-                                  )),
-                            ],
-                          ));
-                    }
-                    return null;
-                  }),
-          if (widget.index + 1 == widget.length)
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                                onPressed: () {
+                                  state.reLoadImage();
+                                },
+                                child: const Icon(
+                                  Icons.replay_outlined,
+                                  size: 30,
+                                )),
+                          ],
+                        ));
+                  }
+                  return null;
+                }),
+          if (index + 1 == length)
             SizedBox(
               height: mediaHeight(context, 0.3),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${widget.chapter} finished',
+                    '$chapter finished',
                     style: const TextStyle(
                         fontSize: 17.0,
                         fontWeight: FontWeight.bold,
@@ -127,7 +119,4 @@ class _ImageViewVerticalState extends State<ImageViewVertical>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

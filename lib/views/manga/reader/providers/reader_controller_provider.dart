@@ -4,7 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/reader_settings.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
@@ -50,8 +50,7 @@ class ReaderController extends _$ReaderController {
     if (personalReaderMode.isNotEmpty) {
       return personalReaderMode.first.readerMode;
     }
-    // return isar.readerSettings.getSync(227)!.defaultReaderMode;
-    return ReaderMode.vertical;
+    return isar.readerSettings.getSync(227)!.defaultReaderMode;
   }
 
   String getReaderModeValue(ReaderMode readerMode) {
@@ -84,18 +83,19 @@ class ReaderController extends _$ReaderController {
   void setShowPageNumber(bool value) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref
-          .watch(hiveBoxMangaProvider)
-          .put("${getSourceName()}/${getMangaName()}-showPagesNumber", value);
+      isar.writeTxnSync(() =>
+          isar.settings.putSync(getIsarSetting()..showPagesNumber = value));
     }
+  }
+
+  Settings getIsarSetting() {
+    return isar.settings.getSync(227)!;
   }
 
   bool getShowPageNumber() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      return ref.watch(hiveBoxMangaProvider).get(
-          "${getSourceName()}/${getMangaName()}-showPagesNumber",
-          defaultValue: true);
+      return getIsarSetting().showPagesNumber!;
     }
     return true;
   }
@@ -208,12 +208,15 @@ class ReaderController extends _$ReaderController {
 
   int getPageIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
+    final index = getIsarSetting()
+        .chapterPageIndexList!
+        .where((element) => element.chapterId == chapter.id);
     if (!incognitoMode) {
       return chapter.isRead!
           ? 0
-          : ref.watch(hiveBoxMangaProvider).get(
-              "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
-              defaultValue: 0);
+          : index.isNotEmpty
+              ? index.first.index!
+              : 0;
     }
     return 0;
   }
@@ -221,21 +224,30 @@ class ReaderController extends _$ReaderController {
   int getPageLength(List incognitoPageLength) {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      List<dynamic> page = ref.watch(hiveBoxMangaProvider).get(
-            "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-pageurl",
-          );
-      return page.length;
+      return getIsarSetting()
+          .chapterPageUrlsList!
+          .where((element) => element.chapterId == chapter.id)
+          .first
+          .urls!
+          .length;
     }
     return incognitoPageLength.length;
   }
 
   void setPageIndex(int newIndex) {
-    // log(newIndex.toString());
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
-      ref.watch(hiveBoxMangaProvider).put(
-          "${getSourceName()}/${getMangaName()}/${getChapterTitle()}-page_index",
-          newIndex);
+      List<ChapterPageIndex>? chapterPageIndexs = [];
+      for (var chapterPageIndex in getIsarSetting().chapterPageIndexList!) {
+        if (chapterPageIndex.chapterId != chapter.id) {
+          chapterPageIndexs.add(chapterPageIndex);
+        }
+      }
+      chapterPageIndexs.add(ChapterPageIndex()
+        ..chapterId = chapter.id
+        ..index = newIndex);
+      isar.writeTxnSync(() => isar.settings
+          .putSync(getIsarSetting()..chapterPageIndexList = chapterPageIndexs));
     }
   }
 
@@ -244,7 +256,7 @@ class ReaderController extends _$ReaderController {
   }
 
   String getSourceName() {
-    return '${getManga().lang}-${getManga().source!}';
+    return getManga().source!;
   }
 
   String getChapterTitle() {

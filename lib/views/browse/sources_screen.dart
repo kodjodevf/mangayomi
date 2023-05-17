@@ -27,7 +27,7 @@ class SourcesScreen extends ConsumerWidget {
               .isAddedEqualTo(true)
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
-            if (!snapshot.hasData ) {
+            if (!snapshot.hasData) {
               return const Center(child: Text("Empty"));
             }
             final entries = snapshot.data!;
@@ -66,7 +66,8 @@ class SourcesScreen extends ConsumerWidget {
                     child: element.logoUrl!.isEmpty
                         ? const Icon(Icons.source_outlined)
                         : CachedNetworkImage(
-                            httpHeaders: headers(element.sourceName!),
+                            httpHeaders: ref.watch(
+                                headersProvider(source: element.sourceName!)),
                             imageUrl: element.logoUrl!,
                             fit: BoxFit.contain,
                             width: 37,

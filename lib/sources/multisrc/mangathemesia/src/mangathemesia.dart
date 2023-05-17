@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -9,12 +10,11 @@ class MangaThemeSia extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final dom = await httpGet(
-        url: manga.url!,
-        source: source,
-        resDom: true,
-        useUserAgent: true) as Document?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: manga.url!, source: source, resDom: true, useUserAgent: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             'div.bigcontent, div.animefull, div.main-info, div.postbody')
@@ -141,14 +141,17 @@ class MangaThemeSia extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
-    final dom = await httpGet(
-        useUserAgent: true,
-        url:
-            '${getMangaBaseUrl(source)}/manga/?title=&page=$page&order=popular',
-        source: source,
-        resDom: true) as Document?;
+    final dom = await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url:
+                '${getMangaBaseUrl(source)}/manga/?title=&page=$page&order=popular',
+            source: source,
+            resDom: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx')
@@ -188,11 +191,14 @@ class MangaThemeSia extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
-    final dom = await httpGet(
-        url: '${getMangaBaseUrl(source)}/?s=${query.trim()}',
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/?s=${query.trim()}',
+            source: source,
+            resDom: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             '#content > div > div.postbody > div > div.listupd > div > div > a')
@@ -222,12 +228,15 @@ class MangaThemeSia extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
-    final dom = await httpGet(
-        useUserAgent: true,
-        url: chapter.url!,
-        source: "mangathemesia",
-        resDom: true) as Document?;
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url: chapter.url!,
+            source: "mangathemesia",
+            resDom: true)
+        .future) as Document?;
     if (dom!.querySelectorAll('#readerarea').isNotEmpty) {
       final ta =
           dom.querySelectorAll('#readerarea').map((e) => e.outerHtml).toList();
@@ -261,7 +270,7 @@ class MangaThemeSia extends MangaYomiServices {
         }
       } else if (urls.length > 1 && urls.isNotEmpty) {
         for (var tt in urls) {
-          pageUrls.add(tt);
+          pageUrls.add(tt!);
         }
       }
     }

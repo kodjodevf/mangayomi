@@ -274,7 +274,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
     return getMangaDetail.when(
       data: (data) {
         return MangaImageCardWidget(
-          getMangaDetailModel: data,
+          getMangaDetail: data,
           lang: widget.lang,
         );
       },

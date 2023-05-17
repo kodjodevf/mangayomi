@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 
 abstract class MangaYomiServices {
@@ -14,7 +15,7 @@ abstract class MangaYomiServices {
   String? description = "";
   List<Chapter> chapters = [];
   List<String> scanlators = [];
-  List pageUrls = [];
+  List<String> pageUrls = [];
   List<GetManga> mangaList = [];
   List<GetManga> mangaRes() {
     for (var i = 0; i < name.length; i++) {
@@ -62,14 +63,20 @@ abstract class MangaYomiServices {
   }
 
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page});
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref});
   Future<GetManga?> getMangaDetail(
-      {required GetManga manga, required String lang, required String source});
-  Future<List<dynamic>?> getChapterUrl({
-    required Chapter chapter,
-  });
+      {required GetManga manga,
+      required String lang,
+      required String source,
+      required AutoDisposeFutureProviderRef ref});
+  Future<List<String>?> getChapterUrl(
+      {required Chapter chapter, required AutoDisposeFutureProviderRef ref});
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query});
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref});
 }
 
 class GetManga {

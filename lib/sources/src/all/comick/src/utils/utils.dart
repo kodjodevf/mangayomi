@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,11 +16,11 @@ parseStatut(int i) {
   }
 }
 
-Future findCurrentSlug(String oldSlug) async {
+Future findCurrentSlug(String oldSlug, AutoDisposeFutureProviderRef ref) async {
   var request = http.Request('GET',
       Uri.parse('https://api.comick.fun/tachiyomi/mapping?slugs=$oldSlug'));
 
-  request.headers.addAll(headers("comick"));
+  request.headers.addAll(ref.watch(headersProvider(source: "comick")));
 
   http.StreamedResponse response = await request.send();
 
@@ -33,4 +34,3 @@ Future findCurrentSlug(String oldSlug) async {
 beautifyChapterName(String? vol, String? chap, String? title, String? lang) {
   return "${vol!.isNotEmpty ? chap!.isEmpty ? "Volume $vol " : "Vol. $vol " : ""}${chap!.isNotEmpty ? vol.isEmpty ? lang == "fr" ? "Chapitre $chap" : "Chapter $chap" : "Ch. $chap " : ""}${title!.isNotEmpty ? chap.isEmpty ? title : " : $title" : ""}";
 }
-

@@ -1,12 +1,15 @@
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mangayomi/utils/constant.dart';
 
-Map<String, String> headers(String source) {
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/services/http_service/cloudflare/providers/cookie_providers.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'headers.g.dart';
+
+@riverpod
+Map<String, String> headers(HeadersRef ref, {String source = ""}) {
   source = source.toLowerCase();
-  final cookie = Hive.box(HiveConstant.hiveBoxAppSettings)
-      .get("$source-cookie", defaultValue: "");
-  final userAgent = Hive.box(HiveConstant.hiveBoxAppSettings)
-      .get("ua", defaultValue: defaultUserAgent);
+  final cookie = ref.watch(cookieStateProvider(source));
+  final userAgent = isar.settings.getSync(227)!.userAgent!;
   return source == 'mangakawaii'
       ? {
           'Referer': 'https://www.mangakawaii.io/',

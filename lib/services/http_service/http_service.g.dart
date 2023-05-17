@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_manga_detail.dart';
+part of 'http_service.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'938a051244e585f8350f95556bd3f94b9d0145c4';
+String _$httpGetHash() => r'57b50256bd7577a4d795cf74f9429d3a4434792f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,38 +29,41 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<GetManga>;
+typedef HttpGetRef = AutoDisposeFutureProviderRef<dynamic>;
 
-/// See also [getMangaDetail].
-@ProviderFor(getMangaDetail)
-const getMangaDetailProvider = GetMangaDetailFamily();
+/// See also [httpGet].
+@ProviderFor(httpGet)
+const httpGetProvider = HttpGetFamily();
 
-/// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
-  /// See also [getMangaDetail].
-  const GetMangaDetailFamily();
+/// See also [httpGet].
+class HttpGetFamily extends Family<AsyncValue<dynamic>> {
+  /// See also [httpGet].
+  const HttpGetFamily();
 
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider call({
-    required GetManga manga,
-    required String lang,
+  /// See also [httpGet].
+  HttpGetProvider call({
+    required String url,
     required String source,
+    required bool resDom,
+    bool useUserAgent = false,
   }) {
-    return GetMangaDetailProvider(
-      manga: manga,
-      lang: lang,
+    return HttpGetProvider(
+      url: url,
       source: source,
+      resDom: resDom,
+      useUserAgent: useUserAgent,
     );
   }
 
   @override
-  GetMangaDetailProvider getProviderOverride(
-    covariant GetMangaDetailProvider provider,
+  HttpGetProvider getProviderOverride(
+    covariant HttpGetProvider provider,
   ) {
     return call(
-      manga: provider.manga,
-      lang: provider.lang,
+      url: provider.url,
       source: provider.source,
+      resDom: provider.resDom,
+      useUserAgent: provider.useUserAgent,
     );
   }
 
@@ -76,52 +79,56 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getMangaDetailProvider';
+  String? get name => r'httpGetProvider';
 }
 
-/// See also [getMangaDetail].
-class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider({
-    required this.manga,
-    required this.lang,
+/// See also [httpGet].
+class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
+  /// See also [httpGet].
+  HttpGetProvider({
+    required this.url,
     required this.source,
+    required this.resDom,
+    this.useUserAgent = false,
   }) : super.internal(
-          (ref) => getMangaDetail(
+          (ref) => httpGet(
             ref,
-            manga: manga,
-            lang: lang,
+            url: url,
             source: source,
+            resDom: resDom,
+            useUserAgent: useUserAgent,
           ),
-          from: getMangaDetailProvider,
-          name: r'getMangaDetailProvider',
+          from: httpGetProvider,
+          name: r'httpGetProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getMangaDetailHash,
-          dependencies: GetMangaDetailFamily._dependencies,
-          allTransitiveDependencies:
-              GetMangaDetailFamily._allTransitiveDependencies,
+                  : _$httpGetHash,
+          dependencies: HttpGetFamily._dependencies,
+          allTransitiveDependencies: HttpGetFamily._allTransitiveDependencies,
         );
 
-  final GetManga manga;
-  final String lang;
+  final String url;
   final String source;
+  final bool resDom;
+  final bool useUserAgent;
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaDetailProvider &&
-        other.manga == manga &&
-        other.lang == lang &&
-        other.source == source;
+    return other is HttpGetProvider &&
+        other.url == url &&
+        other.source == source &&
+        other.resDom == resDom &&
+        other.useUserAgent == useUserAgent;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, manga.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, resDom.hashCode);
+    hash = _SystemHash.combine(hash, useUserAgent.hashCode);
 
     return _SystemHash.finish(hash);
   }

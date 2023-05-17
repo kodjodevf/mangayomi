@@ -13,11 +13,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
 @riverpod
-Future<List<dynamic>> downloadChapter(
+Future<List<String>> downloadChapter(
   DownloadChapterRef ref, {
   required Chapter chapter,
 }) async {
-  List pageUrls = [];
+  List<String> pageUrls = [];
   List<DownloadTask> tasks = [];
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
@@ -83,7 +83,7 @@ Future<List<dynamic>> downloadChapter(
         } else {
           tasks.add(DownloadTask(
             taskId: pageUrls[index],
-            headers: headers(manga.source!),
+            headers: ref.watch(headersProvider(source: manga.source!)),
             url: pageUrls[index],
             filename: "${padIndex(index + 1)}.jpg",
             baseDirectory:
@@ -104,7 +104,7 @@ Future<List<dynamic>> downloadChapter(
         } else {
           tasks.add(DownloadTask(
             taskId: pageUrls[index],
-            headers: headers(manga.source!),
+            headers: ref.watch(headersProvider(source: manga.source!)),
             url: pageUrls[index],
             filename: "${padIndex(index + 1)}.jpg",
             baseDirectory: Platform.isWindows ||
@@ -125,17 +125,14 @@ Future<List<dynamic>> downloadChapter(
         }
       }
     }
-    List<String> url = [];
-    for (var a in pageUrls) {
-      url.add(a);
-    }
+
     if (tasks.isEmpty && pageUrls.isNotEmpty) {
       final model = Download(
           succeeded: 0,
           failed: 0,
           total: 0,
           isDownload: true,
-          taskIds: url,
+          taskIds: pageUrls,
           isStartDownload: false,
           chapterId: chapter.id);
 
@@ -156,7 +153,7 @@ Future<List<dynamic>> downloadChapter(
               failed: failed,
               total: tasks.length,
               isDownload: (succeeded == tasks.length) ? true : false,
-              taskIds: url,
+              taskIds: pageUrls,
               isStartDownload: true,
               chapterId: chapter.id,
             );

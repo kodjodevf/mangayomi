@@ -22,23 +22,24 @@ Future<List<GetManga?>> getPopularManga(GetPopularMangaRef ref,
   /*comick*/
   /*******/
   if (getMangaTypeSource(source) == TypeSource.comick) {
-    popularManga = await Comick().getPopularManga(source: source, page: page);
+    popularManga =
+        await Comick().getPopularManga(source: source, page: page, ref: ref);
   }
 
   /***************/
   /*mangathemesia*/
   /**************/
   if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    popularManga =
-        await MangaThemeSia().getPopularManga(source: source, page: page);
+    popularManga = await MangaThemeSia()
+        .getPopularManga(source: source, page: page, ref: ref);
   }
 
   /***********/
   /*mangakawaii*/
   /***********/
   if (source == "mangakawaii") {
-    popularManga =
-        await MangaKawaii().getPopularManga(source: source, page: page);
+    popularManga = await MangaKawaii()
+        .getPopularManga(source: source, page: page, ref: ref);
   }
 
   /***********/
@@ -46,7 +47,8 @@ Future<List<GetManga?>> getPopularManga(GetPopularMangaRef ref,
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    popularManga = await Mmrcms().getPopularManga(source: source, page: page);
+    popularManga =
+        await Mmrcms().getPopularManga(source: source, page: page, ref: ref);
   }
 
   /***********/
@@ -54,20 +56,22 @@ Future<List<GetManga?>> getPopularManga(GetPopularMangaRef ref,
   /***********/
   else if (source == "mangahere") {
     popularManga =
-        await Mangahere().getPopularManga(source: source, page: page);
+        await Mangahere().getPopularManga(source: source, page: page, ref: ref);
   }
   /***********/
   /*japscan*/
   /***********/
   else if (source == "japscan") {
-    popularManga = await Japscan().getPopularManga(source: source, page: page);
+    popularManga =
+        await Japscan().getPopularManga(source: source, page: page, ref: ref);
   }
 
   /***********/
   /*japscan*/
   /***********/
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    popularManga = await HeanCms().getPopularManga(source: source, page: page);
+    popularManga =
+        await HeanCms().getPopularManga(source: source, page: page, ref: ref);
   }
   return popularManga!;
 }

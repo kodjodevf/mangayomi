@@ -1,4 +1,5 @@
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'date_format_state_provider.g.dart';
 
@@ -6,14 +7,14 @@ part 'date_format_state_provider.g.dart';
 class DateFormatState extends _$DateFormatState {
   @override
   String build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('dateFormat', defaultValue: "M/d/y")!;
+    return isar.settings.getSync(227)!.dateFormat!;
   }
 
   void set(String dateFormat) {
+    final settings = isar.settings.getSync(227);
     state = dateFormat;
-    ref.watch(hiveBoxSettingsProvider).put('dateFormat', state);
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..dateFormat = state));
   }
 }
 
@@ -21,13 +22,13 @@ class DateFormatState extends _$DateFormatState {
 class RelativeTimesTampsState extends _$RelativeTimesTampsState {
   @override
   int build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('relativeTimesTamps', defaultValue: 2)!;
+    return isar.settings.getSync(227)!.relativeTimesTamps!;
   }
 
   void set(int type) {
+    final settings = isar.settings.getSync(227);
     state = type;
-    ref.watch(hiveBoxSettingsProvider).put('relativeTimesTamps', state);
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..relativeTimesTamps = state));
   }
 }

@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'20b3014063b793031f0b0b8b358667f64cae5bd5';
+String _$downloadChapterHash() => r'c99c801fcfed7065161e0220625ebc8db49703c1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,14 +29,14 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<dynamic>>;
+typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
 
 /// See also [downloadChapter].
 @ProviderFor(downloadChapter)
 const downloadChapterProvider = DownloadChapterFamily();
 
 /// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
+class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
   /// See also [downloadChapter].
   const DownloadChapterFamily();
 
@@ -74,7 +74,7 @@ class DownloadChapterFamily extends Family<AsyncValue<List<dynamic>>> {
 }
 
 /// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<dynamic>> {
+class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
     required this.chapter,

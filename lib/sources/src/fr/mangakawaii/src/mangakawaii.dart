@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
@@ -10,11 +11,11 @@ class MangaKawaii extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final dom = await httpGet(
-        url: 'https://www.mangakawaii.io$url',
-        source: source,
-        resDom: true) as Document?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: 'https://www.mangakawaii.io$url', source: source, resDom: true)
+        .future) as Document?;
     List detail = [];
     manga.imageUrl =
         "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
@@ -119,11 +120,12 @@ class MangaKawaii extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
-    final dom = await httpGet(
-        url: 'https://www.mangakawaii.io/',
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: 'https://www.mangakawaii.io/', source: source, resDom: true)
+        .future) as Document?;
     if (dom!.querySelectorAll('a.hot-manga__item').isNotEmpty) {
       url = dom
           .querySelectorAll('a.hot-manga__item ')
@@ -143,12 +145,15 @@ class MangaKawaii extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
-    final dom = await httpGet(
-        url:
-            'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga',
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url:
+                'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga',
+            source: source,
+            resDom: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             '#page-content > div > div > ul > li > div.section__list-group-right > div.section__list-group-header > div > h4 > a')
@@ -177,10 +182,13 @@ class MangaKawaii extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
-    final response =
-        await httpGet(url: chapter.url!, source: "mangakawaii", resDom: false)
-            as String?;
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final response = await ref.watch(
+        httpGetProvider(url: chapter.url!, source: "mangakawaii", resDom: false)
+            .future) as String?;
+
     var chapterSlug = RegExp("""var chapter_slug = "([^"]*)";""")
         .allMatches(response!)
         .last

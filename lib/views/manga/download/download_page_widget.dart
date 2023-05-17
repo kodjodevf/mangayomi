@@ -24,7 +24,7 @@ class ChapterPageDownload extends ConsumerStatefulWidget {
 
 class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     with AutomaticKeepAliveClientMixin<ChapterPageDownload> {
-  List _urll = [];
+  List<String> _pageUrls = [];
 
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload() async {
@@ -32,7 +32,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
         .watch(downloadChapterProvider(chapter: widget.chapter).future);
     if (mounted) {
       setState(() {
-        _urll = data;
+        _pageUrls = data;
       });
     }
   }
@@ -250,11 +250,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     setState(() {
       _isStarted = false;
     });
-    List<String> taskIds = [];
-    for (var id in _urll) {
-      taskIds.add(id);
-    }
-    FileDownloader().cancelTasksWithIds(taskIds).then((value) async {
+
+    FileDownloader().cancelTasksWithIds(_pageUrls).then((value) async {
       await Future.delayed(const Duration(seconds: 1));
       isar.writeTxnSync(() {
         int id = isar.downloads

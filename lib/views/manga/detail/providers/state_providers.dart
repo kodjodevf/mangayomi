@@ -3,7 +3,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
@@ -79,17 +79,32 @@ class IsExtendedState extends _$IsExtendedState {
 @riverpod
 class SortChapterState extends _$SortChapterState {
   @override
-  dynamic build({required int mangaId}) {
-    return ref.watch(hiveBoxSettingsProvider).get("$mangaId-sortChapterMap",
-        defaultValue: {"reverse": false, "index": 2});
+  SortChapter build({required int mangaId}) {
+    return isar.settings
+        .getSync(227)!
+        .sortChapterList!
+        .where((element) => element.mangaId == mangaId)
+        .toList()
+        .first;
   }
 
   void update(bool reverse, int index) {
-    var value = {
-      "reverse": state['index'] == index ? !reverse : reverse,
-      "index": index
-    };
-    ref.watch(hiveBoxSettingsProvider).put("$mangaId-sortChapterMap", value);
+    var value = SortChapter()
+      ..index = index
+      ..mangaId = mangaId
+      ..reverse = state.index == index ? !reverse : reverse;
+    final settings = isar.settings.getSync(227)!;
+    List<SortChapter>? sortChapterList = [];
+    for (var sortChapter in settings.sortChapterList!) {
+      if (sortChapter.mangaId != mangaId) {
+        sortChapterList.add(sortChapter);
+      }
+    }
+    sortChapterList.add(value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..sortChapterList = sortChapterList);
+    });
+
     state = value;
   }
 
@@ -99,7 +114,7 @@ class SortChapterState extends _$SortChapterState {
   }
 
   bool isReverse() {
-    return state["reverse"];
+    return state.reverse!;
   }
 }
 
@@ -112,15 +127,32 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-filterChapterDownload", defaultValue: 0);
+    return isar.settings
+        .getSync(227)!
+        .chapterFilterDownloadedList!
+        .where((element) => element.mangaId == mangaId)
+        .toList()
+        .first
+        .type!;
   }
 
   void setType(int type) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-filterChapterDownload", type);
+    var value = ChapterFilterDownloaded()
+      ..type = type
+      ..mangaId = mangaId;
+    final settings = isar.settings.getSync(227)!;
+    List<ChapterFilterDownloaded>? chapterFilterDownloadedList = [];
+    for (var filterChapter in settings.chapterFilterDownloadedList!) {
+      if (filterChapter.mangaId != mangaId) {
+        chapterFilterDownloadedList.add(filterChapter);
+      }
+    }
+    chapterFilterDownloadedList.add(value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+          settings..chapterFilterDownloadedList = chapterFilterDownloadedList);
+    });
+
     state = type;
   }
 
@@ -144,15 +176,31 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-filterChapterUnread", defaultValue: 0);
+    return isar.settings
+        .getSync(227)!
+        .chapterFilterUnreadList!
+        .where((element) => element.mangaId == mangaId)
+        .toList()
+        .first
+        .type!;
   }
 
   void setType(int type) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-filterChapterUnread", type);
+    var value = ChapterFilterUnread()
+      ..type = type
+      ..mangaId = mangaId;
+    final settings = isar.settings.getSync(227)!;
+    List<ChapterFilterUnread>? chapterFilterUnreadList = [];
+    for (var filterChapter in settings.chapterFilterUnreadList!) {
+      if (filterChapter.mangaId != mangaId) {
+        chapterFilterUnreadList.add(filterChapter);
+      }
+    }
+    chapterFilterUnreadList.add(value);
+    isar.writeTxnSync(() {
+      isar.settings
+          .putSync(settings..chapterFilterUnreadList = chapterFilterUnreadList);
+    });
     state = type;
   }
 
@@ -176,15 +224,31 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("$mangaId-filterChapterBookMark", defaultValue: 0);
+    return isar.settings
+        .getSync(227)!
+        .chapterFilterBookmarkedList!
+        .where((element) => element.mangaId == mangaId)
+        .toList()
+        .first
+        .type!;
   }
 
   void setType(int type) {
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put("$mangaId-filterChapterBookMark", type);
+    var value = ChapterFilterBookmarked()
+      ..type = type
+      ..mangaId = mangaId;
+    final settings = isar.settings.getSync(227)!;
+    List<ChapterFilterBookmarked>? chapterFilterBookmarkedList = [];
+    for (var filterChapter in settings.chapterFilterBookmarkedList!) {
+      if (filterChapter.mangaId != mangaId) {
+        chapterFilterBookmarkedList.add(filterChapter);
+      }
+    }
+    chapterFilterBookmarkedList.add(value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+          settings..chapterFilterBookmarkedList = chapterFilterBookmarkedList);
+    });
     state = type;
   }
 

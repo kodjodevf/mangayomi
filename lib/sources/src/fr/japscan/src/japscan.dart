@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -15,9 +16,11 @@ class Japscan extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final dom = await httpGet(url: manga.url!, source: source, resDom: true)
-        as Document?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(
+        httpGetProvider(url: manga.url!, source: source, resDom: true)
+            .future) as Document?;
     if (dom!.querySelectorAll('.col-7 > p').isNotEmpty) {
       final images =
           dom.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
@@ -100,11 +103,12 @@ class Japscan extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
-    final dom = await httpGet(
-        url: "https://www.japscan.lol/",
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = ref.watch(httpGetProvider(
+            url: "https://www.japscan.lol/", source: source, resDom: true)
+        .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
       final urls = dom
           .querySelectorAll('#top_mangas_week > ul > li > a')
@@ -128,11 +132,15 @@ class Japscan extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
-    final dom = await httpGet(
-        url: "https://www.google.com/search?q=${query.toLowerCase()}+japscan",
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url:
+                "https://www.google.com/search?q=${query.toLowerCase()}+japscan",
+            source: source,
+            resDom: true)
+        .future) as Document?;
 
     if (dom!.querySelectorAll("div > div > div > div > div > a").isNotEmpty) {
       final urls = dom
@@ -167,18 +175,21 @@ class Japscan extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
-    final response = await httpGet(
-        useUserAgent: true,
-        url: chapter.url!,
-        source: "japscan",
-        resDom: false) as String?;
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final response = await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url: chapter.url!,
+            source: "japscan",
+            resDom: false)
+        .future) as String?;
     RegExp regex = RegExp(r'<script src="/zjs/(.*?)"');
     Match? match = regex.firstMatch(response!);
     String zjsurl = match!.group(1)!;
     baseUrl = response;
     zjsUrl = "https://www.japscan.lol/zjs/$zjsurl";
-    zjs();
+    zjs(ref);
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
       if (isOk == true) {
@@ -192,9 +203,10 @@ class Japscan extends MangaYomiServices {
   bool isOk = false;
   String? baseUrl;
   String? zjsUrl;
-  zjs() async {
-    final html = await cloudflareBypassHtml(
-        url: zjsUrl!, source: "japscan", useUserAgent: true);
+  zjs(AutoDisposeFutureProviderRef ref) async {
+    final html = await ref.watch(cloudflareBypassHtmlProvider(
+            url: zjsUrl!, source: "japscan", useUserAgent: true)
+        .future);
     dom.Document htmll = dom.Document.html(baseUrl!);
     final strings = html
         .replaceAll(RegExp(r'\\[(.*?)\\]'), '')

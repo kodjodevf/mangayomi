@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/chapter_page_comick.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/manga_chapter_detail.dart';
@@ -14,13 +15,16 @@ import 'package:mangayomi/sources/utils/utils.dart';
 class Comick extends MangaYomiServices {
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
-    final response = await httpGet(
-        url:
-            'https://api.comick.fun/v1.0/search?sort=follow&page=$page&tachiyomi=true',
-        source: source,
-        resDom: false) as String?;
+    final response = await ref.watch(httpGetProvider(
+            url:
+                'https://api.comick.fun/v1.0/search?sort=follow&page=$page&tachiyomi=true',
+            source: source,
+            resDom: false)
+        .future) as String?;
     var popularManga = jsonDecode(response!) as List;
 
     var popularMangaList =
@@ -37,11 +41,13 @@ class Comick extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final response = await httpGet(
-        url: 'https://api.comick.fun${manga.url}?tachiyomi=true',
-        source: source,
-        resDom: false) as String?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final response = await ref.watch(httpGetProvider(
+            url: 'https://api.comick.fun${manga.url}?tachiyomi=true',
+            source: source,
+            resDom: false)
+        .future) as String?;
     var mangaDetail = jsonDecode(response!) as Map<String, dynamic>;
 
     var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
@@ -59,15 +65,16 @@ class Comick extends MangaYomiServices {
       genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
     }
     description = mangaDetailLMap.comic!.desc;
-    String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!);
+    String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!, ref);
     String mangaId = tt.split('":"').last.replaceAll('"}', '');
     String limit = mangaDetailLMap.comic!.chapterCount.toString();
 
-    final responsee = await httpGet(
-        url:
-            'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
-        source: source,
-        resDom: false) as String?;
+    final responsee = await ref.watch(httpGetProvider(
+            url:
+                'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
+            source: source,
+            resDom: false)
+        .future) as String?;
     var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
     var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
     for (var chapter in chapterDetailMap.chapters!) {
@@ -89,12 +96,15 @@ class Comick extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
-    final response = await httpGet(
-        url:
-            'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1',
-        source: source,
-        resDom: false) as String?;
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final response = await ref.watch(httpGetProvider(
+            url:
+                'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1',
+            source: source,
+            resDom: false)
+        .future) as String?;
     var popularManga = jsonDecode(response!) as List;
     var popularMangaList =
         popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
@@ -107,17 +117,20 @@ class Comick extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
     String mangaId = chapter.url!.split('/').last.split('-').first;
 
-    final response = await httpGet(
-        url: 'https://api.comick.fun/chapter/$mangaId?tachiyomi=true',
-        source: 'comick',
-        resDom: false) as String?;
+    final response = await ref.watch(httpGetProvider(
+            url: 'https://api.comick.fun/chapter/$mangaId?tachiyomi=true',
+            source: 'comick',
+            resDom: false)
+        .future) as String?;
     var data = jsonDecode(response!) as Map<String, dynamic>;
     var page = ChapterPageComick.fromJson(data);
     for (var url in page.chapter!.images!) {
-      pageUrls.add(url.url);
+      pageUrls.add(url.url!);
     }
     return pageUrls;
   }

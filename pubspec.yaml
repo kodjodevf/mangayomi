@@ -35,9 +35,6 @@ dependencies:
   go_router: ^6.5.2
   flutter_riverpod: ^2.3.2
   cached_network_image: ^3.2.3
-  hive_flutter: ^1.1.0
-  hive_generator: ^2.0.0
-  hive: ^2.2.3
   http: ^0.13.5
   riverpod_annotation: ^2.0.2
   html: ^0.15.2
@@ -59,10 +56,7 @@ dependencies:
       url: https://github.com/kodjodevf/background_downloader.git
   permission_handler: ^10.2.0
   flutter_inappwebview: ^6.0.0-beta.22
-  flutter_cache_manager: ^3.3.0
   draggable_menu: ^2.0.2
-  fast_cached_network_image: ^1.2.0
-  random_string: ^2.3.1
   isar: 3.1.0+1
   isar_flutter_libs: 3.1.0+1
 

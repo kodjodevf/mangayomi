@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
@@ -132,16 +132,14 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                   });
                 },
                 onUpdateVisitedHistory: (controller, url, isReload) async {
-                  await setCookie(widget.source, url.toString());
+                  await ref.watch(
+                      setCookieProvider(widget.source, url.toString()).future);
                   setState(() {
                     _url = url.toString();
                   });
                 },
                 initialSettings: InAppWebViewSettings(
-                    userAgent: Hive.box(HiveConstant.hiveBoxAppSettings).get(
-                        "ua",
-                        defaultValue:
-                            defaultUserAgent)),
+                    userAgent: isar.settings.getSync(227)!.userAgent!),
                 initialUrlRequest:
                     URLRequest(url: WebUri.uri(Uri.parse(widget.url))),
               ),

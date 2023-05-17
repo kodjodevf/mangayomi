@@ -123,7 +123,7 @@ class CurrentIndexProvider
   }
 }
 
-String _$readerControllerHash() => r'bc59a95312515f4609f994e30ab996268d08a7a8';
+String _$readerControllerHash() => r'f7b59c997f224f05d925ff8ccea2eb67d10ef5ea';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter chapter;

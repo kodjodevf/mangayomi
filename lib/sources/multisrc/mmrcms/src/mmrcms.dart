@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -12,9 +13,11 @@ class Mmrcms extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final dom = await httpGet(url: manga.url!, source: source, resDom: true)
-        as Document?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(
+        httpGetProvider(url: manga.url!, source: source, resDom: true)
+            .future) as Document?;
     description = dom!
         .querySelectorAll('.row .well p')
         .map((e) => e.text.trim())
@@ -104,12 +107,15 @@ class Mmrcms extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
-    final dom = await httpGet(
-        url:
-            '${getMangaBaseUrl(source)}/filterList?page=$page&sortBy=views&asc=false',
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url:
+                '${getMangaBaseUrl(source)}/filterList?page=$page&sortBy=views&asc=false',
+            source: source,
+            resDom: true)
+        .future) as Document?;
     final urlElement = dom!.getElementsByClassName('chart-title');
     for (var e in urlElement) {
       RegExp exp = RegExp(r'href="([^"]+)"');
@@ -130,11 +136,14 @@ class Mmrcms extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> searchManga(
-      {required String source, required String query}) async {
-    final response = await httpGet(
-        url: '${getMangaBaseUrl(source)}/search?query=${query.trim()}',
-        source: source,
-        resDom: false) as String?;
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final response = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/search?query=${query.trim()}',
+            source: source,
+            resDom: false)
+        .future) as String?;
     final rep = jsonDecode(response!);
     for (var ok in rep['suggestions']) {
       if (source == 'Read Comics Online') {
@@ -151,12 +160,15 @@ class Mmrcms extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
-    final dom = await httpGet(
-        useUserAgent: true,
-        url: chapter.url!,
-        source: chapter.manga.value!.source!.toLowerCase(),
-        resDom: true) as Document?;
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url: chapter.url!,
+            source: chapter.manga.value!.source!.toLowerCase(),
+            resDom: true)
+        .future) as Document?;
     if (dom!.querySelectorAll('#all > .img-responsive').isNotEmpty) {
       pageUrls = dom.querySelectorAll('#all > .img-responsive').map((e) {
         final RegExp regexx = RegExp(r'data-src="([^"]+)"');

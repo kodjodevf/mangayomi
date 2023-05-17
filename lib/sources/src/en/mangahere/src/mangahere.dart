@@ -1,4 +1,5 @@
 import 'package:flutter_js/flutter_js.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
@@ -12,11 +13,13 @@ class Mangahere extends MangaYomiServices {
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,
-      required String source}) async {
-    final dom = await httpGet(
-        url: "http://www.mangahere.cc${manga.url}",
-        source: source,
-        resDom: true) as Document?;
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: "http://www.mangahere.cc${manga.url}",
+            source: source,
+            resDom: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             ' body > div > div > div.detail-info-right > p.detail-info-right-title > span.detail-info-right-title-tip')
@@ -107,11 +110,14 @@ class Mangahere extends MangaYomiServices {
 
   @override
   Future<List<GetManga?>> getPopularManga(
-      {required String source, required int page}) async {
-    final dom = await httpGet(
-        url: 'https://www.mangahere.cc/ranking/',
-        source: source,
-        resDom: true) as Document?;
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: 'https://www.mangahere.cc/ranking/',
+            source: source,
+            resDom: true)
+        .future) as Document?;
     if (dom!
         .querySelectorAll(
             'body > div.container.weekrank.ranking > div > div > ul > li > a')
@@ -142,13 +148,16 @@ class Mangahere extends MangaYomiServices {
   }
 
   @override
-  Future<List<GetManga?>>  searchManga(
-      {required String source, required String query}) async {
-    final dom = await httpGet(
-        url:
-            '${getMangaBaseUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
-        source: source,
-        resDom: true) as Document?;
+  Future<List<GetManga?>> searchManga(
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url:
+                '${getMangaBaseUrl(source)}/search?title=${query.trim()}&genres=&nogenres=&sort=&stype=1&name=&type=0&author_method=cw&author=&artist_method=cw&artist=&rating_method=eq&rating=&released_method=eq&released=&st=0',
+            source: source,
+            resDom: true)
+        .future) as Document?;
 
     if (dom!
         .querySelectorAll(
@@ -180,7 +189,9 @@ class Mangahere extends MangaYomiServices {
   }
 
   @override
-  Future<List<dynamic>> getChapterUrl({required Chapter chapter}) async {
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
     JavascriptRuntime? flutterJs;
     flutterJs = getJavascriptRuntime();
     extractSecretKey(String response, JavascriptRuntime? flutterJs) {
@@ -203,8 +214,9 @@ class Mangahere extends MangaYomiServices {
     }
 
     var link = "http://www.mangahere.cc${chapter.url!}";
-    final response =
-        await httpGet(url: link, source: "mangahere", resDom: false) as String?;
+    final response = await ref.watch(
+        httpGetProvider(url: link, source: "mangahere", resDom: false)
+            .future) as String?;
 
     dom.Document htmll = dom.Document.html(response!);
     int? pagesNumber = -1;

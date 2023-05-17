@@ -55,7 +55,7 @@ final isExtendedStateProvider =
 );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
-String _$sortChapterStateHash() => r'38b241e06866613a0c34d306da0d855f57af3862';
+String _$sortChapterStateHash() => r'ff796f8f8ef4bf1c5b07694d24a68f28284b441e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -79,10 +79,10 @@ class _SystemHash {
 }
 
 abstract class _$SortChapterState
-    extends BuildlessAutoDisposeNotifier<dynamic> {
+    extends BuildlessAutoDisposeNotifier<SortChapter> {
   late final int mangaId;
 
-  dynamic build({
+  SortChapter build({
     required int mangaId,
   });
 }
@@ -92,7 +92,7 @@ abstract class _$SortChapterState
 const sortChapterStateProvider = SortChapterStateFamily();
 
 /// See also [SortChapterState].
-class SortChapterStateFamily extends Family<dynamic> {
+class SortChapterStateFamily extends Family<SortChapter> {
   /// See also [SortChapterState].
   const SortChapterStateFamily();
 
@@ -131,7 +131,7 @@ class SortChapterStateFamily extends Family<dynamic> {
 
 /// See also [SortChapterState].
 class SortChapterStateProvider
-    extends AutoDisposeNotifierProviderImpl<SortChapterState, dynamic> {
+    extends AutoDisposeNotifierProviderImpl<SortChapterState, SortChapter> {
   /// See also [SortChapterState].
   SortChapterStateProvider({
     required this.mangaId,
@@ -164,7 +164,7 @@ class SortChapterStateProvider
   }
 
   @override
-  dynamic runNotifierBuild(
+  SortChapter runNotifierBuild(
     covariant SortChapterState notifier,
   ) {
     return notifier.build(
@@ -174,7 +174,7 @@ class SortChapterStateProvider
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'a19a077ae1caa5bd5b4cdcded1c41960e6fa86f2';
+    r'3256f01a869af8c0681e1ff95ef6d942ca7f4f7b';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -274,7 +274,7 @@ class ChapterFilterDownloadedStateProvider
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'f7d0609cb5dd9809c0f9af1e7931ad02e34b7569';
+    r'edbd4bfa31345b1ecea561d46788b202aef8b646';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -373,7 +373,7 @@ class ChapterFilterUnreadStateProvider
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'b0b0865a5d093ad0da01ed6c2e374a05e460d14a';
+    r'45ccd61f2a2576ac20cc4ba275fad02b51568b8a';
 
 abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {

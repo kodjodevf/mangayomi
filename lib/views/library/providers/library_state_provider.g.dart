@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'746bd6dac3600802c3ab5751b3c1def881274b3a';
+    r'7686533c6ece9f6aa5fbcbc70854ffeae16c33f8';
 
 /// See also [LibraryDisplayTypeState].
 @ProviderFor(LibraryDisplayTypeState)
@@ -24,7 +24,7 @@ final libraryDisplayTypeStateProvider =
 
 typedef _$LibraryDisplayTypeState = AutoDisposeNotifier<String>;
 String _$mangaFilterDownloadedStateHash() =>
-    r'96066910b5ff9ca0efcfef7c1411b18e94b7b250';
+    r'35ddc6b776881939f168fc0ef78abdd7c954e56b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -144,7 +144,7 @@ class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'c6ae52956f7889ee70a640230993dc7b76f4e2f2';
+    r'53aef2b3df212d16f4798392245af418f211c8a2';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -243,7 +243,7 @@ class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'4adef7169a977bdc582ae38c7fd453f42775bcef';
+    r'15282a1a4ea9682b287adbd37ee9c62b439af457';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -342,7 +342,7 @@ class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'8379126605e9c4b05b52f254dd0d3d6a492b526c';
+    r'ab2c1228590fd320935db757559f1436f296ec5f';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -540,7 +540,7 @@ class MangasFilterResultStateProvider
 }
 
 String _$libraryShowCategoryTabsStateHash() =>
-    r'0ee90372d42a11638479aadcf8ea5e688bb48369';
+    r'58e5cd32e60902033a76935b0c710ba56a14e224';
 
 /// See also [LibraryShowCategoryTabsState].
 @ProviderFor(LibraryShowCategoryTabsState)
@@ -557,7 +557,7 @@ final libraryShowCategoryTabsStateProvider =
 
 typedef _$LibraryShowCategoryTabsState = AutoDisposeNotifier<bool>;
 String _$libraryDownloadedChaptersStateHash() =>
-    r'bdbb37edcd547e8f34df39d9221bb85051f765ae';
+    r'd79136babd57bf5b98609f1c21b9da046a0b884c';
 
 /// See also [LibraryDownloadedChaptersState].
 @ProviderFor(LibraryDownloadedChaptersState)
@@ -574,7 +574,7 @@ final libraryDownloadedChaptersStateProvider =
 
 typedef _$LibraryDownloadedChaptersState = AutoDisposeNotifier<bool>;
 String _$libraryLanguageStateHash() =>
-    r'b454724faeda5de41a67952cf9a80366fb72be9c';
+    r'fd83c5473d90b1ad43dc5182d9b739a6ed9202de';
 
 /// See also [LibraryLanguageState].
 @ProviderFor(LibraryLanguageState)
@@ -591,7 +591,7 @@ final libraryLanguageStateProvider =
 
 typedef _$LibraryLanguageState = AutoDisposeNotifier<bool>;
 String _$libraryShowNumbersOfItemsStateHash() =>
-    r'f6eeb5df01cee601f05e442229830f64891a5fe9';
+    r'ea02157581d2b08c944d692f0bb9154e843dd1f1';
 
 /// See also [LibraryShowNumbersOfItemsState].
 @ProviderFor(LibraryShowNumbersOfItemsState)
@@ -608,7 +608,7 @@ final libraryShowNumbersOfItemsStateProvider =
 
 typedef _$LibraryShowNumbersOfItemsState = AutoDisposeNotifier<bool>;
 String _$libraryShowContinueReadingButtonStateHash() =>
-    r'4d5553dc605e87714b3c23f54c52c1911910a8aa';
+    r'5e51fc2e1d8b098018abead4790c180256ab08a6';
 
 /// See also [LibraryShowContinueReadingButtonState].
 @ProviderFor(LibraryShowContinueReadingButtonState)
@@ -626,12 +626,12 @@ final libraryShowContinueReadingButtonStateProvider =
 
 typedef _$LibraryShowContinueReadingButtonState = AutoDisposeNotifier<bool>;
 String _$sortLibraryMangaStateHash() =>
-    r'81abfe6c2841cf7b25301928d88f8af80cd480fd';
+    r'0f23a413f94e254d2ba03166ab941e4d4eb67b41';
 
 /// See also [SortLibraryMangaState].
 @ProviderFor(SortLibraryMangaState)
-final sortLibraryMangaStateProvider =
-    AutoDisposeNotifierProvider<SortLibraryMangaState, dynamic>.internal(
+final sortLibraryMangaStateProvider = AutoDisposeNotifierProvider<
+    SortLibraryMangaState, SortLibraryManga>.internal(
   SortLibraryMangaState.new,
   name: r'sortLibraryMangaStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -641,7 +641,7 @@ final sortLibraryMangaStateProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$SortLibraryMangaState = AutoDisposeNotifier<dynamic>;
+typedef _$SortLibraryMangaState = AutoDisposeNotifier<SortLibraryManga>;
 String _$mangasListStateHash() => r'ad1cc419dfd3793bfc8c90f3ce8b7726561dd9ad';
 
 /// See also [MangasListState].

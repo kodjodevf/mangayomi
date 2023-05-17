@@ -22,7 +22,7 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /********/
 
   if (getMangaTypeSource(source) == TypeSource.comick) {
-    manga = await Comick().searchManga(source: source, query: query);
+    manga = await Comick().searchManga(source: source, query: query, ref: ref);
   }
 
   /***************/
@@ -30,7 +30,8 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***************/
 
   else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    manga = await MangaThemeSia().searchManga(source: source, query: query);
+    manga = await MangaThemeSia()
+        .searchManga(source: source, query: query, ref: ref);
   }
 
   /***********/
@@ -38,7 +39,8 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***********/
 
   else if (source == "mangakawaii") {
-    manga = await MangaKawaii().searchManga(source: source, query: query);
+    manga =
+        await MangaKawaii().searchManga(source: source, query: query, ref: ref);
   }
 
   /***********/
@@ -46,7 +48,7 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    manga = await Mmrcms().searchManga(source: source, query: query);
+    manga = await Mmrcms().searchManga(source: source, query: query, ref: ref);
   }
 
   /***********/
@@ -54,7 +56,8 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***********/
 
   else if (source == "mangahere") {
-    manga = await Mangahere().searchManga(source: source, query: query);
+    manga =
+        await Mangahere().searchManga(source: source, query: query, ref: ref);
   }
 
   /***********/
@@ -62,7 +65,7 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***********/
 
   else if (source == "japscan") {
-    manga = await Japscan().searchManga(source: source, query: query);
+    manga = await Japscan().searchManga(source: source, query: query, ref: ref);
   }
 
   /***********/
@@ -70,7 +73,7 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
   /***********/
 
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    manga = await HeanCms().searchManga(source: source, query: query);
+    manga = await HeanCms().searchManga(source: source, query: query, ref: ref);
   }
 
   return manga!;

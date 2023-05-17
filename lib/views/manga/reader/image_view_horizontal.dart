@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
-import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
-class ImageViewHorizontal extends StatelessWidget {
+class ImageViewHorizontal extends ConsumerWidget {
   final int length;
   final String url;
   final int index;
@@ -34,7 +34,7 @@ class ImageViewHorizontal extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return isLocale
         ? ExtendedImage.file(
             File("${path.path}" "${padIndex(index + 1)}.jpg"),
@@ -45,11 +45,12 @@ class ImageViewHorizontal extends StatelessWidget {
             onDoubleTap: onDoubleTap,
             loadStateChanged: loadStateChanged,
           )
-        : ExtendedImage(
-            image: FastCachedImageProvider(url, headers: headers(source)),
-            clearMemoryCacheWhenDispose: true,
-            enableMemoryCache: false,
+        : ExtendedImage.network(
+            url,
+            headers: ref.watch(headersProvider(source: source)),
+            enableMemoryCache: true,
             mode: ExtendedImageMode.gesture,
+            cacheMaxAge: const Duration(days: 7),
             initGestureConfigHandler: initGestureConfigHandler,
             onDoubleTap: onDoubleTap,
             handleLoadingProgress: true,

@@ -1,7 +1,7 @@
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
 
@@ -9,9 +9,7 @@ part 'library_state_provider.g.dart';
 class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   @override
   String build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('displayType', defaultValue: DisplayType.coverOnlyGrid.name)!;
+    return isar.settings.getSync(227)!.displayType.name;
   }
 
   DisplayType getLibraryDisplayTypeValue(String value) {
@@ -35,16 +33,12 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   }
 
   void setLibraryDisplayType(DisplayType displayType) {
+    final settings = isar.settings.getSync(227)!;
     state = displayType.name;
-    ref.watch(hiveBoxSettingsProvider).put('displayType', displayType.name);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..displayType = displayType);
+    });
   }
-}
-
-enum DisplayType {
-  compactGrid,
-  comfortableGrid,
-  coverOnlyGrid,
-  list,
 }
 
 @riverpod
@@ -56,13 +50,14 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("filterMangasDownload", defaultValue: 0);
+    return isar.settings.getSync(227)!.libraryFilterMangasDownloadType!;
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangasDownload", type);
+    final settings = isar.settings.getSync(227)!;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryFilterMangasDownloadType = type);
+    });
     state = type;
   }
 
@@ -86,13 +81,14 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("filterMangasUnread", defaultValue: 0);
+    return isar.settings.getSync(227)!.libraryFilterMangasUnreadType!;
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangasUnread", type);
+    final settings = isar.settings.getSync(227)!;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryFilterMangasUnreadType = type);
+    });
     state = type;
   }
 
@@ -165,13 +161,14 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("filterMangasStarted", defaultValue: 0);
+    return isar.settings.getSync(227)!.libraryFilterMangasStartedType!;
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangasStarted", type);
+    final settings = isar.settings.getSync(227)!;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryFilterMangasStartedType = type);
+    });
     state = type;
   }
 
@@ -244,13 +241,14 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   }
 
   int getType() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get("filterMangasBookMarked", defaultValue: 0);
+    return isar.settings.getSync(227)!.libraryFilterMangasBookMarkedType!;
   }
 
   void setType(int type) {
-    ref.watch(hiveBoxSettingsProvider).put("filterMangasBookMarked", type);
+    final settings = isar.settings.getSync(227)!;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryFilterMangasBookMarkedType = type);
+    });
     state = type;
   }
 
@@ -337,14 +335,15 @@ class MangasFilterResultState extends _$MangasFilterResultState {
 class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
   @override
   bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryShowCategoryTabs', defaultValue: false)!;
+    return isar.settings.getSync(227)!.libraryShowCategoryTabs!;
   }
 
   void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
     state = value;
-    ref.watch(hiveBoxSettingsProvider).put('libraryShowCategoryTabs', value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryShowCategoryTabs = value);
+    });
   }
 }
 
@@ -352,14 +351,15 @@ class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
 class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
   @override
   bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryDownloadedChapters', defaultValue: false)!;
+    return isar.settings.getSync(227)!.libraryDownloadedChapters!;
   }
 
   void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
     state = value;
-    ref.watch(hiveBoxSettingsProvider).put('libraryDownloadedChapters', value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryDownloadedChapters = value);
+    });
   }
 }
 
@@ -367,14 +367,15 @@ class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
 class LibraryLanguageState extends _$LibraryLanguageState {
   @override
   bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryLanguage', defaultValue: false)!;
+    return isar.settings.getSync(227)!.libraryShowLanguage!;
   }
 
   void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
     state = value;
-    ref.watch(hiveBoxSettingsProvider).put('libraryLanguage', value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryShowLanguage = value);
+    });
   }
 }
 
@@ -382,14 +383,15 @@ class LibraryLanguageState extends _$LibraryLanguageState {
 class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
   @override
   bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryShowNumbersOfItems', defaultValue: false)!;
+    return isar.settings.getSync(227)!.libraryShowNumbersOfItems!;
   }
 
   void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
     state = value;
-    ref.watch(hiveBoxSettingsProvider).put('libraryShowNumbersOfItems', value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryShowNumbersOfItems = value);
+    });
   }
 }
 
@@ -398,33 +400,34 @@ class LibraryShowContinueReadingButtonState
     extends _$LibraryShowContinueReadingButtonState {
   @override
   bool build() {
-    return ref
-        .watch(hiveBoxSettingsProvider)
-        .get('libraryShowContinueReadingButton', defaultValue: false)!;
+    return isar.settings.getSync(227)!.libraryShowContinueReadingButton!;
   }
 
   void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
     state = value;
-    ref
-        .watch(hiveBoxSettingsProvider)
-        .put('libraryShowContinueReadingButton', value);
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryShowContinueReadingButton = value);
+    });
   }
 }
 
 @riverpod
 class SortLibraryMangaState extends _$SortLibraryMangaState {
   @override
-  dynamic build() {
-    return ref.watch(hiveBoxSettingsProvider).get("sortLibraryMangaMap",
-        defaultValue: {"reverse": false, "index": 2});
+  SortLibraryManga build() {
+    return isar.settings.getSync(227)!.sortLibraryManga!;
   }
 
   void update(bool reverse, int index) {
-    var value = {
-      "reverse": state['index'] == index ? !reverse : reverse,
-      "index": index
-    };
-    ref.watch(hiveBoxSettingsProvider).put("sortLibraryMangaMap", value);
+    var value = SortLibraryManga()
+      ..index = index
+      ..reverse = state.index == index ? !reverse : reverse;
+
+    isar.writeTxnSync(() {
+      final settings = isar.settings.getSync(227)!;
+      isar.settings.putSync(settings..sortLibraryManga = value);
+    });
     state = value;
   }
 
@@ -434,7 +437,7 @@ class SortLibraryMangaState extends _$SortLibraryMangaState {
   }
 
   bool isReverse() {
-    return state["reverse"];
+    return state.reverse!;
   }
 }
 

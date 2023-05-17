@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_manga_detail.dart';
+part of 'headers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'938a051244e585f8350f95556bd3f94b9d0145c4';
+String _$headersHash() => r'13a50be589fe0038aa6195027eb8da260d3b127f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,37 +29,31 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<GetManga>;
+typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
 
-/// See also [getMangaDetail].
-@ProviderFor(getMangaDetail)
-const getMangaDetailProvider = GetMangaDetailFamily();
+/// See also [headers].
+@ProviderFor(headers)
+const headersProvider = HeadersFamily();
 
-/// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
-  /// See also [getMangaDetail].
-  const GetMangaDetailFamily();
+/// See also [headers].
+class HeadersFamily extends Family<Map<String, String>> {
+  /// See also [headers].
+  const HeadersFamily();
 
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider call({
-    required GetManga manga,
-    required String lang,
-    required String source,
+  /// See also [headers].
+  HeadersProvider call({
+    String source = "",
   }) {
-    return GetMangaDetailProvider(
-      manga: manga,
-      lang: lang,
+    return HeadersProvider(
       source: source,
     );
   }
 
   @override
-  GetMangaDetailProvider getProviderOverride(
-    covariant GetMangaDetailProvider provider,
+  HeadersProvider getProviderOverride(
+    covariant HeadersProvider provider,
   ) {
     return call(
-      manga: provider.manga,
-      lang: provider.lang,
       source: provider.source,
     );
   }
@@ -76,51 +70,39 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getMangaDetailProvider';
+  String? get name => r'headersProvider';
 }
 
-/// See also [getMangaDetail].
-class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider({
-    required this.manga,
-    required this.lang,
-    required this.source,
+/// See also [headers].
+class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
+  /// See also [headers].
+  HeadersProvider({
+    this.source = "",
   }) : super.internal(
-          (ref) => getMangaDetail(
+          (ref) => headers(
             ref,
-            manga: manga,
-            lang: lang,
             source: source,
           ),
-          from: getMangaDetailProvider,
-          name: r'getMangaDetailProvider',
+          from: headersProvider,
+          name: r'headersProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getMangaDetailHash,
-          dependencies: GetMangaDetailFamily._dependencies,
-          allTransitiveDependencies:
-              GetMangaDetailFamily._allTransitiveDependencies,
+                  : _$headersHash,
+          dependencies: HeadersFamily._dependencies,
+          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
         );
 
-  final GetManga manga;
-  final String lang;
   final String source;
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaDetailProvider &&
-        other.manga == manga &&
-        other.lang == lang &&
-        other.source == source;
+    return other is HeadersProvider && other.source == source;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, manga.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
 
     return _SystemHash.finish(hash);

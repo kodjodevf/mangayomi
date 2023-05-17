@@ -64,16 +64,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chaptersListStateProvider);
     bool reverse = ref
-        .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))["reverse"];
+        .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
+        .reverse!;
     final filterUnread =
         ref.watch(chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!));
     final filterBookmarked = ref.watch(
         chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!));
     final filterDownloaded = ref.watch(
         chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!));
-    final sortChapter =
-        ref.watch(sortChapterStateProvider(mangaId: widget.manga!.id!))['index']
-            as int;
+    final sortChapter = ref
+        .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
+        .index as int;
     final chapters =
         ref.watch(getChaptersStreamProvider(mangaId: widget.manga!.id!));
     return NotificationListener<UserScrollNotification>(
@@ -180,7 +181,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   ? Stack(
                       children: [
                         cachedNetworkImage(
-                            headers: headers(widget.manga!.source!),
+                            headers: ref.watch(
+                                headersProvider(source: widget.manga!.source!)),
                             imageUrl: widget.manga!.imageUrl!,
                             width: mediaWidth(context, 1),
                             height: 410,
@@ -568,7 +570,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     DraggableMenu.open(
       context,
       DraggableMenu(
-        ui: ClassicDraggableMenu(barItem: Container()),
+        ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
         expandable: false,
         maxHeight: 240,
         fastDrag: false,
@@ -576,114 +578,121 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         child: DefaultTabController(
             length: 3,
             child: Scaffold(
-              body: Column(
-                children: [
-                  TabBar(
-                    controller: tabBarController,
-                    tabs: const [
-                      Tab(text: "Filter"),
-                      Tab(text: "Sort"),
-                      Tab(text: "Display"),
-                    ],
-                  ),
-                  Flexible(
-                    child: TabBarView(controller: tabBarController, children: [
-                      Consumer(builder: (context, ref, chil) {
-                        return Column(
-                          children: [
-                            ListTileChapterFilter(
-                                label: "Downloaded",
-                                type: ref.watch(
-                                    chapterFilterDownloadedStateProvider(
-                                        mangaId: widget.manga!.id!)),
-                                onTap: () {
-                                  ref
-                                      .read(
-                                          chapterFilterDownloadedStateProvider(
-                                                  mangaId: widget.manga!.id!)
-                                              .notifier)
-                                      .update();
-                                }),
-                            ListTileChapterFilter(
-                                label: "Unread",
-                                type: ref.watch(
-                                    chapterFilterUnreadStateProvider(
-                                        mangaId: widget.manga!.id!)),
-                                onTap: () {
-                                  ref
-                                      .read(chapterFilterUnreadStateProvider(
-                                              mangaId: widget.manga!.id!)
-                                          .notifier)
-                                      .update();
-                                }),
-                            ListTileChapterFilter(
-                                label: "Bookmarked",
-                                type: ref.watch(
-                                    chapterFilterBookmarkedStateProvider(
-                                        mangaId: widget.manga!.id!)),
-                                onTap: () {
-                                  ref
-                                      .read(
-                                          chapterFilterBookmarkedStateProvider(
-                                                  mangaId: widget.manga!.id!)
-                                              .notifier)
-                                      .update();
-                                }),
-                          ],
-                        );
-                      }),
-                      Consumer(builder: (context, ref, chil) {
-                        final reverse = ref
-                            .read(sortChapterStateProvider(
-                                    mangaId: widget.manga!.id!)
-                                .notifier)
-                            .isReverse();
-                        final reverseChapter = ref.watch(
-                            sortChapterStateProvider(
-                                mangaId: widget.manga!.id!));
-                        return Column(
-                          children: [
-                            for (var i = 0; i < 3; i++)
-                              ListTileChapterSort(
-                                label: _getSortNameByIndex(i),
-                                reverse: reverse,
-                                onTap: () {
-                                  ref
-                                      .read(sortChapterStateProvider(
-                                              mangaId: widget.manga!.id!)
-                                          .notifier)
-                                      .set(i);
-                                },
-                                showLeading: reverseChapter['index'] == i,
+              backgroundColor: Colors.transparent,
+              body: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).scaffoldBackgroundColor),
+                child: Column(
+                  children: [
+                    TabBar(
+                      controller: tabBarController,
+                      tabs: const [
+                        Tab(text: "Filter"),
+                        Tab(text: "Sort"),
+                        Tab(text: "Display"),
+                      ],
+                    ),
+                    Flexible(
+                      child:
+                          TabBarView(controller: tabBarController, children: [
+                        Consumer(builder: (context, ref, chil) {
+                          return Column(
+                            children: [
+                              ListTileChapterFilter(
+                                  label: "Downloaded",
+                                  type: ref.watch(
+                                      chapterFilterDownloadedStateProvider(
+                                          mangaId: widget.manga!.id!)),
+                                  onTap: () {
+                                    ref
+                                        .read(
+                                            chapterFilterDownloadedStateProvider(
+                                                    mangaId: widget.manga!.id!)
+                                                .notifier)
+                                        .update();
+                                  }),
+                              ListTileChapterFilter(
+                                  label: "Unread",
+                                  type: ref.watch(
+                                      chapterFilterUnreadStateProvider(
+                                          mangaId: widget.manga!.id!)),
+                                  onTap: () {
+                                    ref
+                                        .read(chapterFilterUnreadStateProvider(
+                                                mangaId: widget.manga!.id!)
+                                            .notifier)
+                                        .update();
+                                  }),
+                              ListTileChapterFilter(
+                                  label: "Bookmarked",
+                                  type: ref.watch(
+                                      chapterFilterBookmarkedStateProvider(
+                                          mangaId: widget.manga!.id!)),
+                                  onTap: () {
+                                    ref
+                                        .read(
+                                            chapterFilterBookmarkedStateProvider(
+                                                    mangaId: widget.manga!.id!)
+                                                .notifier)
+                                        .update();
+                                  }),
+                            ],
+                          );
+                        }),
+                        Consumer(builder: (context, ref, chil) {
+                          final reverse = ref
+                              .read(sortChapterStateProvider(
+                                      mangaId: widget.manga!.id!)
+                                  .notifier)
+                              .isReverse();
+                          final reverseChapter = ref.watch(
+                              sortChapterStateProvider(
+                                  mangaId: widget.manga!.id!));
+                          return Column(
+                            children: [
+                              for (var i = 0; i < 3; i++)
+                                ListTileChapterSort(
+                                  label: _getSortNameByIndex(i),
+                                  reverse: reverse,
+                                  onTap: () {
+                                    ref
+                                        .read(sortChapterStateProvider(
+                                                mangaId: widget.manga!.id!)
+                                            .notifier)
+                                        .set(i);
+                                  },
+                                  showLeading: reverseChapter.index == i,
+                                ),
+                            ],
+                          );
+                        }),
+                        Consumer(builder: (context, ref, chil) {
+                          return Column(
+                            children: [
+                              RadioListTile(
+                                dense: true,
+                                title: const Text("Source title"),
+                                value: "e",
+                                groupValue: "e",
+                                selected: true,
+                                onChanged: (value) {},
                               ),
-                          ],
-                        );
-                      }),
-                      Consumer(builder: (context, ref, chil) {
-                        return Column(
-                          children: [
-                            RadioListTile(
-                              dense: true,
-                              title: const Text("Source title"),
-                              value: "e",
-                              groupValue: "e",
-                              selected: true,
-                              onChanged: (value) {},
-                            ),
-                            RadioListTile(
-                              dense: true,
-                              title: const Text("Chapter number"),
-                              value: "ej",
-                              groupValue: "e",
-                              selected: false,
-                              onChanged: (value) {},
-                            ),
-                          ],
-                        );
-                      }),
-                    ]),
-                  ),
-                ],
+                              RadioListTile(
+                                dense: true,
+                                title: const Text("Chapter number"),
+                                value: "ej",
+                                groupValue: "e",
+                                selected: false,
+                                onChanged: (value) {},
+                              ),
+                            ],
+                          );
+                        }),
+                      ]),
+                    ),
+                  ],
+                ),
               ),
             )),
       ),
@@ -706,7 +715,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         Positioned(
             top: 0,
             child: cachedNetworkImage(
-                headers: headers(widget.manga!.source!),
+                headers:
+                    ref.watch(headersProvider(source: widget.manga!.source!)),
                 imageUrl: widget.manga!.imageUrl!,
                 width: mediaWidth(context, 1),
                 height: 250,

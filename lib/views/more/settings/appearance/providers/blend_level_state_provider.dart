@@ -1,4 +1,5 @@
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'blend_level_state_provider.g.dart';
 
@@ -6,11 +7,13 @@ part 'blend_level_state_provider.g.dart';
 class BlendLevelState extends _$BlendLevelState {
   @override
   double build() {
-    return ref.watch(hiveBoxSettingsProvider).get('blendLevel', defaultValue: 10.0)!;
+    return isar.settings.getSync(227)!.flexColorSchemeBlendLevel!;
   }
 
   void setBlendLevel(double blendLevelValue) {
+    final settings = isar.settings.getSync(227);
     state = blendLevelValue;
-    ref.watch(hiveBoxSettingsProvider).put('blendLevel', state);
+    isar.writeTxnSync(() =>
+        isar.settings.putSync(settings!..flexColorSchemeBlendLevel = state));
   }
 }

@@ -1,18 +1,21 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:html/dom.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
-import 'package:mangayomi/utils/constant.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'cloudflare_bypass.g.dart';
 
-Future<dom.Document?> cloudflareBypassDom(
+@riverpod
+Future<dom.Document?> cloudflareBypassDom(CloudflareBypassDomRef ref,
     {required String url,
     required String source,
     required bool useUserAgent}) async {
   // log(source);
   bool isOk = false;
   dom.Document? htmll;
-  final ua = Hive.box(HiveConstant.hiveBoxAppSettings)
-      .get("ua", defaultValue: defaultUserAgent);
+  final ua = isar.settings.getSync(227)!.userAgent!;
   HeadlessInAppWebView? headlessWebViewJapScan;
   headlessWebViewJapScan = HeadlessInAppWebView(
     onLoadStop: (controller, u) async {
@@ -51,16 +54,16 @@ Future<dom.Document?> cloudflareBypassDom(
     }
     return true;
   });
-  await setCookie(source, url);
+  await ref.watch(setCookieProvider(source, url).future);
   return htmll;
 }
 
-Future<String> cloudflareBypassHtml(
+@riverpod
+Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
     {required String url,
     required String source,
     required bool useUserAgent}) async {
-  final ua = Hive.box(HiveConstant.hiveBoxAppSettings)
-      .get("ua", defaultValue: defaultUserAgent);
+  final ua = isar.settings.getSync(227)!.userAgent!;
   bool isOk = false;
   String? html;
   HeadlessInAppWebView? headlessWebViewJapScan;
@@ -98,6 +101,6 @@ Future<String> cloudflareBypassHtml(
     }
     return true;
   });
-  await setCookie(source, url);
+  await ref.watch(setCookieProvider(source, url).future);
   return html!;
 }

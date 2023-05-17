@@ -274,14 +274,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  dio:
-    dependency: transitive
-    description:
-      name: dio
-      sha256: "0894a098594263fe1caaba3520e3016d8a855caeb010a882273189cca10f11e9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.1.1"
   draggable_menu:
     dependency: "direct main"
     description:
@@ -330,14 +322,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
-  fast_cached_network_image:
-    dependency: "direct main"
-    description:
-      name: fast_cached_network_image
-      sha256: "78a2da7314008540fce494906d017adc7654edbd259dca24c0a9b5fd78cdcd5c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   ffi:
     dependency: transitive
     description:
@@ -392,7 +376,7 @@ packages:
     source: hosted
     version: "0.7.0"
   flutter_cache_manager:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: flutter_cache_manager
       sha256: "32cd900555219333326a2d0653aaaf8671264c29befa65bbd9856d204a4c9fb3"
@@ -526,30 +510,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.2"
-  hive:
-    dependency: "direct main"
-    description:
-      name: hive
-      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.3"
-  hive_flutter:
-    dependency: "direct main"
-    description:
-      name: hive_flutter
-      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
-  hive_generator:
-    dependency: "direct main"
-    description:
-      name: hive_generator
-      sha256: "65998cc4d2cd9680a3d9709d893d2f6bb15e6c1f92626c3f1fa650b4b3281521"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   html:
     dependency: "direct main"
     description:
@@ -910,14 +870,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.2"
-  random_string:
-    dependency: "direct main"
-    description:
-      name: random_string
-      sha256: "03b52435aae8cbdd1056cf91bfc5bf845e9706724dd35ae2e99fa14a1ef79d02"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.3.1"
   riverpod:
     dependency: transitive
     description:
@@ -995,14 +947,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.7"
-  source_helper:
-    dependency: transitive
-    description:
-      name: source_helper
-      sha256: "3b67aade1d52416149c633ba1bb36df44d97c6b51830c2198e934e3fca87ca1f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.3"
   source_span:
     dependency: transitive
     description:

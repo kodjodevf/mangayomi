@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_chapter_url.dart';
+part of 'cookie.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'7713a0aa89a528cf9aa90016fdebb63af89a2520';
+String _$setCookieHash() => r'e9519081f85b28e34d09466392e4e253cc51b9af';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,35 @@ class _SystemHash {
   }
 }
 
-typedef GetChapterUrlRef = AutoDisposeFutureProviderRef<GetChapterUrlModel>;
+typedef SetCookieRef = AutoDisposeFutureProviderRef<dynamic>;
 
-/// See also [getChapterUrl].
-@ProviderFor(getChapterUrl)
-const getChapterUrlProvider = GetChapterUrlFamily();
+/// See also [setCookie].
+@ProviderFor(setCookie)
+const setCookieProvider = SetCookieFamily();
 
-/// See also [getChapterUrl].
-class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
-  /// See also [getChapterUrl].
-  const GetChapterUrlFamily();
+/// See also [setCookie].
+class SetCookieFamily extends Family<AsyncValue<dynamic>> {
+  /// See also [setCookie].
+  const SetCookieFamily();
 
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider call({
-    required Chapter chapter,
-  }) {
-    return GetChapterUrlProvider(
-      chapter: chapter,
+  /// See also [setCookie].
+  SetCookieProvider call(
+    String source,
+    String url,
+  ) {
+    return SetCookieProvider(
+      source,
+      url,
     );
   }
 
   @override
-  GetChapterUrlProvider getProviderOverride(
-    covariant GetChapterUrlProvider provider,
+  SetCookieProvider getProviderOverride(
+    covariant SetCookieProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
+      provider.source,
+      provider.url,
     );
   }
 
@@ -70,42 +73,46 @@ class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getChapterUrlProvider';
+  String? get name => r'setCookieProvider';
 }
 
-/// See also [getChapterUrl].
-class GetChapterUrlProvider
-    extends AutoDisposeFutureProvider<GetChapterUrlModel> {
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider({
-    required this.chapter,
-  }) : super.internal(
-          (ref) => getChapterUrl(
+/// See also [setCookie].
+class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
+  /// See also [setCookie].
+  SetCookieProvider(
+    this.source,
+    this.url,
+  ) : super.internal(
+          (ref) => setCookie(
             ref,
-            chapter: chapter,
+            source,
+            url,
           ),
-          from: getChapterUrlProvider,
-          name: r'getChapterUrlProvider',
+          from: setCookieProvider,
+          name: r'setCookieProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getChapterUrlHash,
-          dependencies: GetChapterUrlFamily._dependencies,
-          allTransitiveDependencies:
-              GetChapterUrlFamily._allTransitiveDependencies,
+                  : _$setCookieHash,
+          dependencies: SetCookieFamily._dependencies,
+          allTransitiveDependencies: SetCookieFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
+  final String source;
+  final String url;
 
   @override
   bool operator ==(Object other) {
-    return other is GetChapterUrlProvider && other.chapter == chapter;
+    return other is SetCookieProvider &&
+        other.source == source &&
+        other.url == url;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
 
     return _SystemHash.finish(hash);
   }

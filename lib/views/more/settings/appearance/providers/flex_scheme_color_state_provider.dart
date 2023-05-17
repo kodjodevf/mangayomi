@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:mangayomi/providers/hive_provider.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'flex_scheme_color_state_provider.g.dart';
@@ -8,22 +9,18 @@ part 'flex_scheme_color_state_provider.g.dart';
 class FlexSchemeColorState extends _$FlexSchemeColorState {
   @override
   FlexSchemeColor build() {
+    final flexSchemeColorIndex =
+        isar.settings.getSync(227)!.flexSchemeColorIndex!;
     return ref.read(themeModeStateProvider)
-        ? ThemeAA
-            .schemes[ref
-                .watch(hiveBoxSettingsProvider)
-                .get('FlexColorIndex', defaultValue: 2)]
-            .light
-        : ThemeAA
-            .schemes[ref
-                .watch(hiveBoxSettingsProvider)
-                .get('FlexColorIndex', defaultValue: 2)]
-            .dark;
+        ? ThemeAA.schemes[flexSchemeColorIndex].light
+        : ThemeAA.schemes[flexSchemeColorIndex].dark;
   }
 
   void setTheme(FlexSchemeColor color, int index) {
+    final settings = isar.settings.getSync(227);
     state = color;
-    ref.watch(hiveBoxSettingsProvider).put('FlexColorIndex', index);
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..flexSchemeColorIndex = index));
   }
 }
 
