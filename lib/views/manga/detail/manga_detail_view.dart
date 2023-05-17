@@ -10,6 +10,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -930,8 +931,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0),
               onPressed: () {
+                String url = getMangaAPIUrl(widget.manga!.source!).isEmpty
+                    ? widget.manga!.link!
+                    : "${getMangaBaseUrl(widget.manga!.source!)}${widget.manga!.link!}";
                 Map<String, String> data = {
-                  'url': widget.manga!.link!,
+                  'url': url,
                   'source': widget.manga!.source!,
                 };
                 context.push("/mangawebview", extra: data);

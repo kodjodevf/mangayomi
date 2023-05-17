@@ -10,7 +10,6 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
-import 'package:mangayomi/models/reader_settings.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -20,9 +19,14 @@ import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_c
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:desktop_webview_window/desktop_webview_window.dart';
 
 late Isar isar;
-void main() async {
+void main(List<String> args) async {
+  debugPrint('args: $args');
+  if (runWebViewTitleBarWidget(args)) {
+    return;
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await _initDB();
   runApp(const ProviderScope(child: MyApp()));
@@ -39,8 +43,6 @@ _initDB() async {
         HistorySchema,
         DownloadSchema,
         SourceSchema,
-        PersonalReaderModeSchema,
-        ReaderSettingsSchema,
         SettingsSchema
       ],
       directory: dir.path,
@@ -55,8 +57,6 @@ _initDB() async {
       HistorySchema,
       DownloadSchema,
       SourceSchema,
-      PersonalReaderModeSchema,
-      ReaderSettingsSchema,
       SettingsSchema
     ], directory: dbDir, name: "mangayomiDb");
   }
@@ -71,7 +71,8 @@ _initDB() async {
           ..chapterFilterUnreadList = []
           ..chapterPageUrlsList = []
           ..chapterPageIndexList = []
-          ..cookiesList = []);
+          ..cookiesList = []
+          ..personalReaderModeList = []);
       },
     );
   }

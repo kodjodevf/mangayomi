@@ -60,6 +60,11 @@ class Settings {
 
   List<Cookie>? cookiesList;
 
+  @enumerated
+  ReaderMode defaultReaderMode;
+
+  List<PersonalReaderMode>? personalReaderModeList;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -85,7 +90,9 @@ class Settings {
       this.showPagesNumber = true,
       this.chapterPageIndexList,
       this.userAgent = defaultUserAgent,
-      this.cookiesList});
+      this.cookiesList,
+      this.defaultReaderMode = ReaderMode.vertical,
+      this.personalReaderModeList});
 }
 
 enum DisplayType {
@@ -148,3 +155,13 @@ class Cookie {
   String? source;
   String? cookie;
 }
+
+@embedded
+class PersonalReaderMode {
+  int? mangaId;
+
+  @enumerated
+  ReaderMode readerMode = ReaderMode.vertical;
+}
+
+enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/reader_settings.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
@@ -16,6 +16,7 @@ import 'package:mangayomi/views/manga/reader/image_view_horizontal.dart';
 import 'package:mangayomi/views/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -95,7 +96,7 @@ class MangaReaderView extends ConsumerWidget {
               Navigator.pop(context);
               return false;
             },
-            child: const Center(child: CircularProgressIndicator()),
+            child: const ProgressCenter(),
           ),
         );
       },
