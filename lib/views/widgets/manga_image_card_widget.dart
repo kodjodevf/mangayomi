@@ -71,12 +71,12 @@ void pushToMangaReaderDetail(
   if (empty) {
     isar.writeTxnSync(() {
       isar.mangas.putSync(manga);
-      for (var i = 0; i < manga.chapters.length; i++) {
+      for (var i = 0; i < getManga!.chapters.length; i++) {
         final chapters = Chapter(
-            name: manga.chapters.toList()[i].name,
-            url: manga.chapters.toList()[i].url,
-            dateUpload: manga.chapters.toList()[i].dateUpload,
-            scanlator: manga.chapters.toList()[i].scanlator,
+            name: getManga.chapters[i].name,
+            url: getManga.chapters[i].url,
+            dateUpload: getManga.chapters[i].dateUpload,
+            scanlator: getManga.chapters[i].scanlator,
             mangaId: manga.id)
           ..manga.value = manga;
         isar.chapters.putSync(chapters);

@@ -6,7 +6,7 @@ import 'package:mangayomi/views/browse/extension/extension_screen.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
 import 'package:mangayomi/views/browse/sources_screen.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
-import 'package:flutter/scheduler.dart';
+
 class BrowseScreen extends StatefulWidget {
   const BrowseScreen({super.key});
 
@@ -43,7 +43,6 @@ class _BrowseScreenState extends State<BrowseScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
-    timeDilation=0.5;
     return DefaultTabController(
       animationDuration: Duration.zero,
       length: 3,
