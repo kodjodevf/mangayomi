@@ -18,20 +18,23 @@ List<Source> _mangathemesiaSourcesList = [
       logoUrl: '',
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
-  // Source(
-  //     sourceName: "ArenaScans",
-  //     baseUrl: "https://arenascans.net",
-  //     lang: "en",
-  //     typeSource: TypeSource.mangathemesia,
-  //     logoUrl:
-  //         'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
-  //     isCloudflare: true),
-  // Source(
-  //     sourceName: "AzureScans",
-  //     baseUrl: "https://azuremanga.com",
-  //     lang: "en",
-  //     typeSource: TypeSource.mangathemesia,
-  //     logoUrl: ''),
+  Source(
+      sourceName: "ArenaScans",
+      baseUrl: "https://arenascans.net",
+      lang: "en",
+      typeSource: TypeSource.mangathemesia,
+      logoUrl:
+          'https://arenascans.net/wp-content/uploads/2023/02/arena-logo-1.png',
+      dateFormat: "MMMM dd, yyyy",
+      dateFormatLocale: "en"),
+  Source(
+      sourceName: "AzureScans",
+      baseUrl: "https://azuremanga.com",
+      lang: "en",
+      typeSource: TypeSource.mangathemesia,
+      logoUrl: '',
+      dateFormat: "MMMM dd, yyyy",
+      dateFormatLocale: "en"),
 
   Source(
       sourceName: "Boosei",
@@ -215,14 +218,14 @@ List<Source> _mangathemesiaSourcesList = [
   //     logoUrl: '',
   //     dateFormat: "MMMM dd, yyyy",
   //     dateFormatLocale: "en"),
-  // Source(
-  //     sourceName: "PhantomScans",
-  //     baseUrl: "https://phantomscans.com",
-  //     lang: "en",
-  //     typeSource: TypeSource.mangathemesia,
-  //     logoUrl: '',
-  //     dateFormat: "MMMM dd, yyyy",
-  //     dateFormatLocale: "en"),
+  Source(
+      sourceName: "PhantomScans",
+      baseUrl: "https://phantomscans.com",
+      lang: "en",
+      typeSource: TypeSource.mangathemesia,
+      logoUrl: '',
+      dateFormat: "MMMM dd, yyyy",
+      dateFormatLocale: "en"),
   // Source(
   //     sourceName: "PhoenixFansub",
   //     baseUrl: "https://phoenixfansub.com",
