@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/more/widgets/list_tile_widget.dart';
 
 class IncognitoModeWidget extends ConsumerWidget {

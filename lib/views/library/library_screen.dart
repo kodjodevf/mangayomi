@@ -19,7 +19,7 @@ import 'package:mangayomi/views/library/widgets/library_listview_widget.dart';
 import 'package:mangayomi/views/library/widgets/list_tile_manga_category.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
-import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
+import 'package:mangayomi/views/more/categoties/providers/isar_providers.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
 import 'package:mangayomi/views/widgets/progress_center.dart';
 

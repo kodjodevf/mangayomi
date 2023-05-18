@@ -7,18 +7,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/library/providers/library_state_provider.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 
-class GeneralScreen extends StatefulWidget {
-  const GeneralScreen({super.key, required this.child});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key, required this.child});
 
   final Widget child;
 
   @override
-  State<GeneralScreen> createState() => _GeneralScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _GeneralScreenState extends State<GeneralScreen> {
+class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final route = GoRouter.of(context);

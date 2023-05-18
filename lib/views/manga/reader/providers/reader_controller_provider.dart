@@ -4,7 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
 
@@ -49,18 +49,6 @@ class ReaderController extends _$ReaderController {
       return personalReaderMode.first.readerMode;
     }
     return isar.settings.getSync(227)!.defaultReaderMode;
-  }
-
-  String getReaderModeValue(ReaderMode readerMode) {
-    return readerMode == ReaderMode.vertical
-        ? 'Vertical'
-        : readerMode == ReaderMode.verticalContinuous
-            ? 'Verical continuous'
-            : readerMode == ReaderMode.ltr
-                ? 'Left to Right'
-                : readerMode == ReaderMode.rtl
-                    ? 'Right to Left'
-                    : 'Webtoon';
   }
 
   void setReaderMode(ReaderMode newReaderMode) {

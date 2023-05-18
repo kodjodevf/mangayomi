@@ -17,27 +17,27 @@ class SettingsScreen extends StatelessWidget {
               title: 'General',
               subtitle: 'App language',
               icon: Icons.tune_rounded,
-              onTap: () {}),
+              onTap: () => context.push('/general')),
           ListTileWidget(
               title: 'Appearance',
               subtitle: 'Theme',
               icon: Icons.color_lens_rounded,
               onTap: () => context.push('/appearance')),
-          ListTileWidget(
-              title: 'Library',
-              subtitle: 'Categories',
-              icon: Icons.collections_bookmark_rounded,
-              onTap: () {}),
+          // ListTileWidget(
+          //     title: 'Library',
+          //     subtitle: 'Categories',
+          //     icon: Icons.collections_bookmark_rounded,
+          //     onTap: () {}),
           ListTileWidget(
               title: 'Reader',
               subtitle: 'Reading mode, display, navigation',
               icon: Icons.chrome_reader_mode_rounded,
-              onTap: () {}),
+              onTap: () => context.push('/readerMode')),
           ListTileWidget(
               title: 'Browse',
-              subtitle: 'Sources, extensions, global search',
+              subtitle: 'Sources, global search',
               icon: Icons.explore_rounded,
-              onTap: () {}),
+              onTap: () => context.push('/browseS')),
           ListTileWidget(
             onTap: () {
               context.push('/about');

@@ -65,6 +65,14 @@ class Settings {
 
   List<PersonalReaderMode>? personalReaderModeList;
 
+  bool? animatePageTransitions;
+
+  int? doubleTapAnimationSpeed;
+
+  bool? showNSFW;
+
+  bool? onlyIncludePinnedSources;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -92,7 +100,11 @@ class Settings {
       this.userAgent = defaultUserAgent,
       this.cookiesList,
       this.defaultReaderMode = ReaderMode.vertical,
-      this.personalReaderModeList});
+      this.personalReaderModeList,
+      this.animatePageTransitions = true,
+      this.doubleTapAnimationSpeed = 1,
+      this.showNSFW = true,
+      this.onlyIncludePinnedSources = false});
 }
 
 enum DisplayType {

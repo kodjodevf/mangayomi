@@ -14,7 +14,7 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/views/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/views/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
 import 'package:mangayomi/views/widgets/progress_center.dart';
 

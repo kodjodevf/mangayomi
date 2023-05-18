@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/views/more/settings/categoties/providers/isar_providers.dart';
-import 'package:mangayomi/views/more/settings/categoties/widgets/custom_textfield.dart';
+import 'package:mangayomi/views/more/categoties/providers/isar_providers.dart';
+import 'package:mangayomi/views/more/categoties/widgets/custom_textfield.dart';
 import 'package:mangayomi/views/widgets/progress_center.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {

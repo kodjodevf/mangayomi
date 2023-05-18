@@ -10,6 +10,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
+import 'package:mangayomi/views/more/settings/browse/providers/browse_state_provider.dart';
 
 class SourcesScreen extends ConsumerWidget {
   const SourcesScreen({super.key});
@@ -30,7 +31,11 @@ class SourcesScreen extends ConsumerWidget {
             if (!snapshot.hasData) {
               return const Center(child: Text("Empty"));
             }
-            final entries = snapshot.data!;
+            final entries = snapshot.data!
+                .where((element) => ref.watch(showNSFWStateProvider)
+                    ? true
+                    : element.isNsfw == false)
+                .toList();
             return GroupedListView<Source, String>(
               elements: entries,
               groupBy: (element) => completeLang(element.lang!.toLowerCase()),

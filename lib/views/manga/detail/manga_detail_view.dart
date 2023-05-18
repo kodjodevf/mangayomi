@@ -931,12 +931,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0),
               onPressed: () {
-                String url = getMangaAPIUrl(widget.manga!.source!).isEmpty
-                    ? widget.manga!.link!
-                    : "${getMangaBaseUrl(widget.manga!.source!)}${widget.manga!.link!}";
+                final manga = widget.manga!;
+                String url = getMangaAPIUrl(manga.source!).isEmpty
+                    ? manga.link!
+                    : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
                 Map<String, String> data = {
                   'url': url,
-                  'source': widget.manga!.source!,
+                  'source': manga.source!,
                 };
                 context.push("/mangawebview", extra: data);
               },

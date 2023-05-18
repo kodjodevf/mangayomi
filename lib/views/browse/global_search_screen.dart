@@ -7,10 +7,12 @@ import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/service.dart';
+import 'package:mangayomi/sources/source_list.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
+import 'package:mangayomi/views/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/manga_image_card_widget.dart';
 
@@ -28,7 +30,9 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   final _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final sourceList = isar.sources.filter().isAddedEqualTo(true).findAllSync();
+    final sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
+        ? isar.sources.filter().isAddedEqualTo(true).findAllSync()
+        : sourcesList;
     return Scaffold(
       appBar: AppBar(
         leading: Container(),

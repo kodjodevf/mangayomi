@@ -15,7 +15,7 @@ import 'package:mangayomi/sources/multisrc/mangathemesia/src/mangathemesia.dart'
 import 'package:mangayomi/sources/multisrc/mmrcms/src/mmrcms.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_url.g.dart';
 

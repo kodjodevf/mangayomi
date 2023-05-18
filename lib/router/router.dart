@@ -7,7 +7,7 @@ import 'package:mangayomi/services/webviews/webview.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
 import 'package:mangayomi/views/browse/global_search_screen.dart';
-import 'package:mangayomi/views/general/general_screen.dart';
+import 'package:mangayomi/views/main_view/main_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';
 import 'package:mangayomi/views/manga/detail/manga_detail_main.dart';
@@ -18,7 +18,10 @@ import 'package:mangayomi/views/more/about_screen.dart';
 import 'package:mangayomi/views/more/download_queue/download_queue_screen.dart';
 import 'package:mangayomi/views/more/more_screen.dart';
 import 'package:mangayomi/views/more/settings/appearance/appearance_screen.dart';
-import 'package:mangayomi/views/more/settings/categoties/categories_screen.dart';
+import 'package:mangayomi/views/more/categoties/categories_screen.dart';
+import 'package:mangayomi/views/more/settings/browse/browse_screen.dart';
+import 'package:mangayomi/views/more/settings/general/general_screen.dart';
+import 'package:mangayomi/views/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/views/more/settings/settings_screen.dart';
 import 'package:mangayomi/views/updates/updates_screen.dart';
 
@@ -36,7 +39,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 class AsyncRouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
         ShellRoute(
-            builder: (context, state, child) => GeneralScreen(child: child),
+            builder: (context, state, child) => MainScreen(child: child),
             routes: [
               GoRoute(
                 name: "library",
@@ -273,6 +276,45 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const CategoriesScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/general",
+          name: "general",
+          builder: (context, state) {
+            return const GeneralScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const GeneralScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/readerMode",
+          name: "readerMode",
+          builder: (context, state) {
+            return const ReaderScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const ReaderScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/browseS",
+          name: "browseS",
+          builder: (context, state) {
+            return const BrowseSScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const BrowseSScreen(),
             );
           },
         ),

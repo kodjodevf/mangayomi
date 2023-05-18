@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -9,6 +7,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
 import 'package:mangayomi/views/browse/extension/widgets/extension_list_tile_widget.dart';
+import 'package:mangayomi/views/more/settings/browse/providers/browse_state_provider.dart';
 
 class ExtensionScreen extends ConsumerWidget {
   final Function(dynamic) entriesData;
@@ -30,7 +29,11 @@ class ExtensionScreen extends ConsumerWidget {
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              final entries = snapshot.data!;
+              final entries = snapshot.data!
+                  .where((element) => ref.watch(showNSFWStateProvider)
+                      ? true
+                      : element.isNsfw == false)
+                  .toList();
               entriesData(entries);
               return GroupedListView<Source, String>(
                 elements: entriesFilter.isNotEmpty ? entriesFilter : entries,
@@ -48,11 +51,6 @@ class ExtensionScreen extends ConsumerWidget {
                   ),
                 ),
                 itemBuilder: (context, Source element) {
-                  if (element.isCloudflare! && !Platform.isWindows ||
-                      element.isCloudflare! && !Platform.isLinux) {
-                    return Container();
-                  }
-
                   return ExtensionListTileWidget(
                     lang: element.lang!,
                     onChanged: (val) {

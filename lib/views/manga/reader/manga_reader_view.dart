@@ -6,8 +6,11 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/views/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
@@ -16,6 +19,7 @@ import 'package:mangayomi/views/manga/reader/image_view_horizontal.dart';
 import 'package:mangayomi/views/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/views/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/views/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/views/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/views/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -141,13 +145,26 @@ class _MangaChapterPageGalleryState
     super.dispose();
   }
 
+  bool animatePageTransitions =
+      isar.settings.getSync(227)!.animatePageTransitions!;
+  Duration? _doubleTapAnimationDuration() {
+    int doubleTapAnimationValue =
+        isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
+    if (doubleTapAnimationValue == 0) {
+      return const Duration(milliseconds: 10);
+    } else if (doubleTapAnimationValue == 1) {
+      return const Duration(milliseconds: 800);
+    }
+    return const Duration(milliseconds: 200);
+  }
+
   @override
   void initState() {
     _doubleClickAnimationController = AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
+        duration: _doubleTapAnimationDuration(), vsync: this);
 
     _scaleAnimationController = AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
+        duration: _doubleTapAnimationDuration(), vsync: this);
     _animation = Tween(begin: 1.0, end: 2.0).animate(
         CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
     _animation.addListener(() => _photoViewController.scale = _animation.value);
@@ -202,10 +219,14 @@ class _MangaChapterPageGalleryState
               index: index,
             );
           } else {
-            _itemScrollController.scrollTo(
-                curve: Curves.ease,
-                index: index,
-                duration: Duration(milliseconds: isSlide ? 2 : 150));
+            animatePageTransitions
+                ? _itemScrollController.scrollTo(
+                    curve: Curves.ease,
+                    index: index,
+                    duration: Duration(milliseconds: isSlide ? 2 : 150))
+                : _itemScrollController.jumpTo(
+                    index: index,
+                  );
           }
         }
       } else {
@@ -214,9 +235,11 @@ class _MangaChapterPageGalleryState
             setState(() {
               _isZoom = false;
             });
-            _extendedController.animateToPage(index,
-                duration: Duration(milliseconds: isSlide ? 2 : 150),
-                curve: Curves.ease);
+            animatePageTransitions
+                ? _extendedController.animateToPage(index,
+                    duration: Duration(milliseconds: isSlide ? 2 : 150),
+                    curve: Curves.ease)
+                : _extendedController.jumpToPage(index);
           }
         }
       }
@@ -229,10 +252,14 @@ class _MangaChapterPageGalleryState
               index: index,
             );
           } else {
-            _itemScrollController.scrollTo(
-                curve: Curves.ease,
-                index: index,
-                duration: Duration(milliseconds: isSlide ? 2 : 150));
+            animatePageTransitions
+                ? _itemScrollController.scrollTo(
+                    curve: Curves.ease,
+                    index: index,
+                    duration: Duration(milliseconds: isSlide ? 2 : 150))
+                : _itemScrollController.jumpTo(
+                    index: index,
+                  );
           }
         }
       } else {
@@ -241,9 +268,11 @@ class _MangaChapterPageGalleryState
             setState(() {
               _isZoom = false;
             });
-            _extendedController.animateToPage(index.toInt(),
-                duration: Duration(milliseconds: isSlide ? 2 : 150),
-                curve: Curves.ease);
+            animatePageTransitions
+                ? _extendedController.animateToPage(index,
+                    duration: Duration(milliseconds: isSlide ? 2 : 150),
+                    curve: Curves.ease)
+                : _extendedController.jumpToPage(index);
           }
         }
       }
@@ -418,7 +447,18 @@ class _MangaChapterPageGalleryState
                             ? Icons.bookmark
                             : Icons.bookmark_border_outlined)),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.public)),
+                        onPressed: () {
+                          final manga = widget.chapter.manga.value!;
+                          String url = getMangaAPIUrl(manga.source!).isEmpty
+                              ? manga.link!
+                              : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
+                          Map<String, String> data = {
+                            'url': url,
+                            'source': manga.source!,
+                          };
+                          context.push("/mangawebview", extra: data);
+                        },
+                        icon: const Icon(Icons.public)),
                   ],
                   backgroundColor: _backgroundColor(context),
                 ),
@@ -611,8 +651,7 @@ class _MangaChapterPageGalleryState
                                           width: 7,
                                         ),
                                         Text(
-                                          widget.readerController
-                                              .getReaderModeValue(readerMode),
+                                          getReaderModeName(readerMode),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 12,

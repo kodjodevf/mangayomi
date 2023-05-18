@@ -10,7 +10,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/views/more/settings/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/views/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/views/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/views/widgets/cover_view_widget.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
