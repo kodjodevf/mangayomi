@@ -24,6 +24,10 @@ import 'package:mangayomi/views/manga/detail/widgets/chapter_list_tile_widget.da
 import 'package:mangayomi/views/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/views/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/views/widgets/error_text.dart';
+import 'package:mangayomi/views/widgets/progress_center.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -325,6 +329,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               }, onSelected: (value) {
                                 if (value == 0) {
                                   context.push("/categories");
+                                } else if (value == 1) {
+                                } else if (value == 2) {
+                                  String url = getMangaAPIUrl(
+                                              widget.manga!.source!)
+                                          .isEmpty
+                                      ? widget.manga!.link!
+                                      : "${getMangaBaseUrl(widget.manga!.source!)}${widget.manga!.link!}";
+                                  Share.share(url);
                                 }
                               }),
                             ],
@@ -874,7 +886,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       top: 20,
       left: 13,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          _openImage(widget.manga!.imageUrl!);
+        },
         child: SizedBox(
           width: 65 * 1.5,
           height: 65 * 2.3,
@@ -938,6 +952,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 Map<String, String> data = {
                   'url': url,
                   'source': manga.source!,
+                  'title': manga.name!
                 };
                 context.push("/mangawebview", extra: data);
               },
@@ -963,5 +978,34 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         ],
       ),
     );
+  }
+
+  _openImage(String url) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+            ),
+            body: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: PhotoViewGallery.builder(
+                itemCount: 1,
+                builder: (context, index) {
+                  return PhotoViewGalleryPageOptions(
+                    imageProvider: CachedNetworkImageProvider(url),
+                    minScale: PhotoViewComputedScale.contained,
+                    maxScale: PhotoViewComputedScale.covered,
+                  );
+                },
+                loadingBuilder: (context, event) {
+                  return const ProgressCenter();
+                },
+              ),
+            ),
+          );
+        });
   }
 }

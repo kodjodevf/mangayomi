@@ -102,8 +102,7 @@ class AppearanceScreen extends ConsumerWidget {
                                       child: Text(
                                         "Cancel",
                                         style: TextStyle(
-                                            color: primaryColor(context)
-                                                .withOpacity(0.2)),
+                                            color: primaryColor(context)),
                                       )),
                                 ],
                               )
@@ -168,8 +167,7 @@ class AppearanceScreen extends ConsumerWidget {
                                       child: Text(
                                         "Cancel",
                                         style: TextStyle(
-                                            color: primaryColor(context)
-                                                .withOpacity(0.2)),
+                                            color: primaryColor(context)),
                                       )),
                                 ],
                               )

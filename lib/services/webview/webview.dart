@@ -1,0 +1,191 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+
+class MangaWebView extends ConsumerStatefulWidget {
+  final String url;
+  final String source;
+  final String title;
+  const MangaWebView({
+    super.key,
+    required this.url,
+    required this.source,
+    required this.title,
+  });
+
+  @override
+  ConsumerState<MangaWebView> createState() => _MangaWebViewState();
+}
+
+class _MangaWebViewState extends ConsumerState<MangaWebView> {
+  final GlobalKey webViewKey = GlobalKey();
+
+  double progress = 0;
+
+  InAppWebViewController? webViewController;
+  late String _url = widget.url;
+  late String _title = widget.title;
+  bool _canGoback = false;
+  bool _canGoForward = false;
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: () async {
+          webViewController?.goBack();
+          return false;
+        },
+        child: Column(
+          children: [
+            SizedBox(
+              height: AppBar().preferredSize.height,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      dense: true,
+                      subtitle: Text(
+                        _url,
+                        style: const TextStyle(
+                            fontSize: 10, overflow: TextOverflow.ellipsis),
+                      ),
+                      title: Text(
+                        _title,
+                        style: const TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      leading: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close)),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: _canGoback ? null : Colors.grey),
+                    onPressed: _canGoback
+                        ? () {
+                            webViewController?.goBack();
+                          }
+                        : null,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward,
+                        color: _canGoForward ? null : Colors.grey),
+                    onPressed: _canGoForward
+                        ? () {
+                            webViewController?.goForward();
+                          }
+                        : null,
+                  ),
+                  PopupMenuButton(itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem<int>(
+                          value: 0, child: Text("Refresh")),
+                      const PopupMenuItem<int>(value: 1, child: Text("Share")),
+                      const PopupMenuItem<int>(
+                          value: 2, child: Text("Open in browser")),
+                      const PopupMenuItem<int>(
+                          value: 3, child: Text("Clear cookie")),
+                    ];
+                  }, onSelected: (value) async {
+                    if (value == 0) {
+                      webViewController?.reload();
+                    } else if (value == 1) {
+                      Share.share(_url);
+                    } else if (value == 2) {
+                      await InAppBrowser.openWithSystemBrowser(
+                          url: WebUri.uri(Uri.parse(_url)));
+                    } else if (value == 3) {
+                      CookieManager.instance().getAllCookies();
+                    }
+                  }),
+                ],
+              ),
+            ),
+            progress < 1.0
+                ? LinearProgressIndicator(value: progress)
+                : Container(),
+            Expanded(
+              child: InAppWebView(
+                key: webViewKey,
+                onWebViewCreated: (controller) async {
+                  webViewController = controller;
+                },
+                onLoadStart: (controller, url) async {
+                  setState(() {
+                    _url = url.toString();
+                  });
+                },
+                onPermissionRequest: (controller, request) async {
+                  return PermissionResponse(
+                      resources: request.resources,
+                      action: PermissionResponseAction.GRANT);
+                },
+                shouldOverrideUrlLoading: (controller, navigationAction) async {
+                  var uri = navigationAction.request.url!;
+
+                  if (![
+                    "http",
+                    "https",
+                    "file",
+                    "chrome",
+                    "data",
+                    "javascript",
+                    "about"
+                  ].contains(uri.scheme)) {
+                    if (await canLaunchUrl(uri)) {
+                      // Launch the App
+                      await launchUrl(
+                        uri,
+                      );
+                      // and cancel the request
+                      return NavigationActionPolicy.CANCEL;
+                    }
+                  }
+
+                  return NavigationActionPolicy.ALLOW;
+                },
+                onLoadStop: (controller, url) async {
+                  setState(() {
+                    _url = url.toString();
+                  });
+                },
+                onReceivedError: (controller, request, error) {},
+                onProgressChanged: (controller, progress) async {
+                  setState(() {
+                    this.progress = progress / 100;
+                  });
+                },
+                onUpdateVisitedHistory: (controller, url, isReload) async {
+                  await ref.watch(
+                      setCookieProvider(widget.source, url.toString()).future);
+                  final canGoback = await controller.canGoBack();
+                  final canGoForward = await controller.canGoForward();
+                  final title = await controller.getTitle();
+                  setState(() {
+                    _url = url.toString();
+                    _title = title!;
+                    _canGoback = canGoback;
+                    _canGoForward = canGoForward;
+                  });
+                },
+                initialSettings: InAppWebViewSettings(
+                    userAgent: isar.settings.getSync(227)!.userAgent!),
+                initialUrlRequest:
+                    URLRequest(url: WebUri.uri(Uri.parse(widget.url))),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

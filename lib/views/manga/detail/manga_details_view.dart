@@ -204,7 +204,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     showDialog(
         context: context,
         builder: (context) {
-          return StatefulBuilder(
+          return 
+          
+          StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
                 title: const Text(

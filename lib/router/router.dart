@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga_type.dart';
-import 'package:mangayomi/services/webviews/webview.dart';
+import 'package:mangayomi/services/webview/webview.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
 import 'package:mangayomi/views/browse/global_search_screen.dart';
@@ -251,9 +251,9 @@ class AsyncRouterNotifier extends ChangeNotifier {
           builder: (context, state) {
             final data = state.extra as Map<String, String>;
             return MangaWebView(
-              url: data["url"]!,
-              source: data["source"]!,
-            );
+                url: data["url"]!,
+                source: data["source"]!,
+                title: data['title']!);
           },
           pageBuilder: (context, state) {
             final data = state.extra as Map<String, String>;
@@ -262,6 +262,7 @@ class AsyncRouterNotifier extends ChangeNotifier {
               child: MangaWebView(
                 url: data["url"]!,
                 source: data["source"]!,
+                title: data['title']!,
               ),
             );
           },

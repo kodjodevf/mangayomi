@@ -455,6 +455,7 @@ class _MangaChapterPageGalleryState
                           Map<String, String> data = {
                             'url': url,
                             'source': manga.source!,
+                            'title': widget.chapter.name!
                           };
                           context.push("/mangawebview", extra: data);
                         },
