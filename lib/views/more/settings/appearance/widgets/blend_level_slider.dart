@@ -13,7 +13,7 @@ class BlendLevelSlider extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.only(left: 22),
+          padding: EdgeInsets.only(left: 18),
           child: Text(
             'Color blend Level',
             style: TextStyle(fontWeight: FontWeight.bold),

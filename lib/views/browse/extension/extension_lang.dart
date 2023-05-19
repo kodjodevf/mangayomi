@@ -20,7 +20,7 @@ class ExtensionsLang extends ConsumerWidget {
           stream:
               isar.sources.filter().idIsNotNull().watch(fireImmediately: true),
           builder: (context, snapshot) {
-            List<Source>? entri = snapshot.hasData ? snapshot.data : [];
+            List<Source>? entries = snapshot.hasData ? snapshot.data : [];
             return ListView.builder(
               itemCount: language.length,
               itemBuilder: (context, index) {
@@ -28,22 +28,14 @@ class ExtensionsLang extends ConsumerWidget {
                   lang: lang(language[index]),
                   onChanged: (val) {
                     isar.writeTxnSync(() {
-                      if (val == true) {
-                        for (var source in entri) {
-                          if (source.lang == lang(language[index])) {
-                            isar.sources.putSync(source..isActive = true);
-                          }
-                        }
-                      } else {
-                        for (var source in entri) {
-                          if (source.lang == lang(language[index])) {
-                            isar.sources.putSync(source..isActive = false);
-                          }
+                      for (var source in entries) {
+                        if (source.lang == lang(language[index])) {
+                          isar.sources.putSync(source..isActive = val == true);
                         }
                       }
                     });
                   },
-                  value: entri!
+                  value: entries!
                       .where((element) =>
                           element.lang == "${lang(language[index])}")
                       .where((element) => element.isActive!)

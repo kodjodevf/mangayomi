@@ -16,6 +16,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -109,6 +110,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final isThemeLight = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
+    final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     ThemeData themeLight = FlexThemeData.light(
       colors: ref.watch(flexSchemeColorStateProvider),
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
@@ -132,6 +134,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       surfaceMode: FlexSurfaceMode.level,
       blendLevel: blendLevel.toInt(),
       appBarOpacity: 0.00,
+      scaffoldBackground: pureBlackDarkMode ? Colors.black : null,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 10,
         thinBorderWidth: 2.0,

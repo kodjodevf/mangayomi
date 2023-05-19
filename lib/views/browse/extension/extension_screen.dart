@@ -5,7 +5,6 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/lang.dart';
-import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
 import 'package:mangayomi/views/browse/extension/widgets/extension_list_tile_widget.dart';
 import 'package:mangayomi/views/more/settings/browse/providers/browse_state_provider.dart';
 
@@ -17,7 +16,6 @@ class ExtensionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(refreshFilterDataProvider);
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: StreamBuilder(

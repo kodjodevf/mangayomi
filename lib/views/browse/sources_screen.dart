@@ -9,7 +9,6 @@ import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
-import 'package:mangayomi/views/browse/extension/refresh_filter_data.dart';
 import 'package:mangayomi/views/more/settings/browse/providers/browse_state_provider.dart';
 
 class SourcesScreen extends ConsumerWidget {
@@ -17,8 +16,6 @@ class SourcesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(refreshFilterDataProvider);
-
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: StreamBuilder(
@@ -26,6 +23,8 @@ class SourcesScreen extends ConsumerWidget {
               .filter()
               .idIsNotNull()
               .isAddedEqualTo(true)
+              .and()
+              .isActiveEqualTo(true)
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {

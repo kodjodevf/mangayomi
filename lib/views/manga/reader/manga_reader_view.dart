@@ -46,7 +46,30 @@ class MangaReaderView extends ConsumerWidget {
     return chapterData.when(
       data: (data) {
         if (data.pageUrls.isEmpty) {
-          Navigator.pop(context);
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: AppBar(
+              title: const Text(''),
+              leading: BackButton(
+                onPressed: () {
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                      overlays: SystemUiOverlay.values);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: WillPopScope(
+              onWillPop: () async {
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                    overlays: SystemUiOverlay.values);
+                Navigator.pop(context);
+                return false;
+              },
+              child: const Center(
+                child: Text("Error"),
+              ),
+            ),
+          );
         }
         return MangaChapterPageGallery(
           path: data.path!,

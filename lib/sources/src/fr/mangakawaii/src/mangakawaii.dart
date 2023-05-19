@@ -14,11 +14,11 @@ class MangaKawaii extends MangaYomiServices {
       required String source,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: 'https://www.mangakawaii.io$url', source: source, resDom: true)
+            url: 'https://www.mangakawaii.io${manga.url}', source: source, resDom: true)
         .future) as Document?;
     List detail = [];
     manga.imageUrl =
-        "https://cdn.mangakawaii.pics/uploads$url/cover/cover_250x350.jpg";
+        "https://cdn.mangakawaii.pics/uploads${manga.url}/cover/cover_250x350.jpg";
     if (dom!.querySelectorAll('dd.text-justify.text-break').isNotEmpty) {
       final tt = dom
           .querySelectorAll('dd.text-justify.text-break')

@@ -16,29 +16,24 @@ class DarkModeButton extends ConsumerStatefulWidget {
 class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
   @override
   Widget build(BuildContext context) {
-    bool isDark = ref.watch(themeModeStateProvider);
-
-    return ListTile(
-        onTap: () {
-          if (!isDark) {
-            ref.read(themeModeStateProvider.notifier).setLightTheme();
-          } else {
-            ref.read(themeModeStateProvider.notifier).setDarkTheme();
-          }
-        },
-        title: const Text("Dark mode"),
-        subtitle: Text(
-          ref.watch(themeModeStateProvider) ? 'Off' : 'On',
-          style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-        ),
-        trailing: Switch(
-            value: !isDark,
-            onChanged: (dd) {
-              if (!isDark) {
-                ref.read(themeModeStateProvider.notifier).setLightTheme();
-              } else {
-                ref.read(themeModeStateProvider.notifier).setDarkTheme();
-              }
-            }));
+    bool isLight = ref.watch(themeModeStateProvider);
+    return SwitchListTile(
+      onChanged: (value) {
+        if (value) {
+          ref.read(themeModeStateProvider.notifier).setLightTheme();
+        } else {
+          ref.read(themeModeStateProvider.notifier).setDarkTheme();
+        }
+      },
+      title: const Text(
+        "Dark mode",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        isLight ? 'Off' : 'On',
+        style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+      ),
+      value: isLight,
+    );
   }
 }

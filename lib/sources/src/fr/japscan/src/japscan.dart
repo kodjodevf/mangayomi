@@ -106,7 +106,7 @@ class Japscan extends MangaYomiServices {
       {required String source,
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
-    final dom = ref.watch(httpGetProvider(
+    final dom = await ref.watch(httpGetProvider(
             url: "https://www.japscan.lol/", source: source, resDom: true)
         .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
@@ -236,9 +236,12 @@ class Japscan extends MangaYomiServices {
             .split('')
             .map((char) => lookupTable[char] ?? char)
             .join();
+
         final decoded = utf8.decode(base64.decode(unscrambledData));
         final data = jsonDecode(decoded);
-        pageUrls = data["imagesLink"].map((it) => it).toList();
+        for (var url in data["imagesLink"]) {
+          pageUrls.add(url);
+        }
       } catch (_) {}
     }
     isOk = true;

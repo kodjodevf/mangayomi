@@ -73,6 +73,8 @@ class Settings {
 
   bool? onlyIncludePinnedSources;
 
+  bool? pureBlackDarkMode;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -104,7 +106,8 @@ class Settings {
       this.animatePageTransitions = true,
       this.doubleTapAnimationSpeed = 1,
       this.showNSFW = true,
-      this.onlyIncludePinnedSources = false});
+      this.onlyIncludePinnedSources = false,
+      this.pureBlackDarkMode = false});
 }
 
 enum DisplayType {

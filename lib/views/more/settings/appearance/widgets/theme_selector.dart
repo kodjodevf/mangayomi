@@ -30,7 +30,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
     return SizedBox(
       height: 130,
       child: Row(
-        children: <Widget>[
+        children: [
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsetsDirectional.only(start: 8, end: 16),

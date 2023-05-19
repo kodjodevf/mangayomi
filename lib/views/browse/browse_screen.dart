@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/views/browse/extension/extension_screen.dart';
+import 'package:mangayomi/views/browse/extension/refresh_source_list_data.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
 import 'package:mangayomi/views/browse/sources_screen.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 
-class BrowseScreen extends StatefulWidget {
+class BrowseScreen extends ConsumerStatefulWidget {
   const BrowseScreen({super.key});
 
   @override
-  State<BrowseScreen> createState() => _BrowseScreenState();
+  ConsumerState<BrowseScreen> createState() => _BrowseScreenState();
 }
 
-class _BrowseScreenState extends State<BrowseScreen>
+class _BrowseScreenState extends ConsumerState<BrowseScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
 
@@ -43,6 +45,7 @@ class _BrowseScreenState extends State<BrowseScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
+    ref.watch(refreshSourceListDataProvider);
     return DefaultTabController(
       animationDuration: Duration.zero,
       length: 3,

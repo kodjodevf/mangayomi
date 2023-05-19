@@ -4,6 +4,7 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/views/more/settings/appearance/providers/date_format_state_provider.dart';
+import 'package:mangayomi/views/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/views/more/settings/appearance/widgets/blend_level_slider.dart';
 import 'package:mangayomi/views/more/settings/appearance/widgets/dark_mode_button.dart';
 import 'package:mangayomi/views/more/settings/appearance/widgets/theme_selector.dart';
@@ -15,6 +16,7 @@ class AppearanceScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dateFormatState = ref.watch(dateFormatStateProvider);
     final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
+    final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Appearance"),
@@ -37,7 +39,21 @@ class AppearanceScreen extends ConsumerWidget {
                 ),
                 const DarkModeButton(),
                 const ThemeSelector(),
-                const BlendLevelSlider()
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SwitchListTile(
+                      title: const Text(
+                        "Pure black dark mode",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      value: pureBlackDarkMode,
+                      onChanged: (value) {
+                        ref
+                            .read(pureBlackDarkModeStateProvider.notifier)
+                            .set(value);
+                      }),
+                ),
+                if (!pureBlackDarkMode) const BlendLevelSlider()
               ],
             ),
           ),
@@ -112,7 +128,7 @@ class AppearanceScreen extends ConsumerWidget {
                   },
                   title: const Text(
                     "Relative timestamps",
-                    style: TextStyle(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     relativeTimestampsList[relativeTimestamps],
@@ -177,7 +193,7 @@ class AppearanceScreen extends ConsumerWidget {
                   },
                   title: const Text(
                     "Date format",
-                    style: TextStyle(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     "$dateFormatState (${dateFormat(DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",

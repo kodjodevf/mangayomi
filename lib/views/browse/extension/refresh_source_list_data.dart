@@ -3,10 +3,10 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/source_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'refresh_filter_data.g.dart';
+part 'refresh_source_list_data.g.dart';
 
 @riverpod
-refreshFilterData(RefreshFilterDataRef ref) {
+refreshSourceListData(RefreshSourceListDataRef ref) {
   isar.writeTxnSync(() {
     for (var source in sourcesList) {
       final sourceF = isar.sources

@@ -27,7 +27,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   double progress = 0;
 
-  InAppWebViewController? webViewController;
+  InAppWebViewController? _webViewController;
   late String _url = widget.url;
   late String _title = widget.title;
   bool _canGoback = false;
@@ -37,7 +37,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async {
-          webViewController?.goBack();
+          _webViewController?.goBack();
           return false;
         },
         child: Column(
@@ -72,7 +72,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         color: _canGoback ? null : Colors.grey),
                     onPressed: _canGoback
                         ? () {
-                            webViewController?.goBack();
+                            _webViewController?.goBack();
                           }
                         : null,
                   ),
@@ -81,7 +81,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         color: _canGoForward ? null : Colors.grey),
                     onPressed: _canGoForward
                         ? () {
-                            webViewController?.goForward();
+                            _webViewController?.goForward();
                           }
                         : null,
                   ),
@@ -97,7 +97,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                     ];
                   }, onSelected: (value) async {
                     if (value == 0) {
-                      webViewController?.reload();
+                      _webViewController?.reload();
                     } else if (value == 1) {
                       Share.share(_url);
                     } else if (value == 2) {
@@ -117,7 +117,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               child: InAppWebView(
                 key: webViewKey,
                 onWebViewCreated: (controller) async {
-                  webViewController = controller;
+                  _webViewController = controller;
                 },
                 onLoadStart: (controller, url) async {
                   setState(() {
