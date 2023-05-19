@@ -358,9 +358,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 children: [
                   if (isTablet(context))
                     SizedBox(
-                        width: mediaWidth(context, 0.3),
+                        width: mediaWidth(context, 0.4),
                         height: mediaHeight(context, 1),
-                        child: _bodyContainer(chapterLength: chapters.length)),
+                        child: SingleChildScrollView(
+                            child: _bodyContainer(
+                                chapterLength: chapters.length))),
                   Expanded(
                     child: DraggableScrollbar(
                         padding: const EdgeInsets.only(right: 7),
@@ -828,7 +830,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     ),
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: _expanded
+                      child: _expanded || isTablet(context)
                           ? Wrap(
                               children: [
                                 for (var i = 0;
