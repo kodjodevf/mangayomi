@@ -200,8 +200,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   width: mediaWidth(context, 1),
                                   height: AppBar().preferredSize.height,
                                   color: Theme.of(context)
-                                      .scaffoldBackgroundColor
-                                      .withOpacity(0.9),
+                                      .scaffoldBackgroundColor,
                                 ),
                                 Container(
                                   width: mediaWidth(context, 1),

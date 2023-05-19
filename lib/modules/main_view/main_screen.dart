@@ -84,7 +84,7 @@ class _MainScreenState extends State<MainScreen> {
                                       route.location != '/browse' &&
                                       route.location != '/more'
                                   ? 0
-                                  : 80,
+                                  : 100,
                           child: NavigationRailTheme(
                             data: NavigationRailThemeData(
                               indicatorShape: RoundedRectangleBorder(
