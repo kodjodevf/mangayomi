@@ -14,10 +14,10 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/views/more/settings/appearance/providers/blend_level_state_provider.dart';
-import 'package:mangayomi/views/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'package:mangayomi/views/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
-import 'package:mangayomi/views/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 

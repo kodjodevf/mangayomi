@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:mangayomi/views/more/settings/appearance/providers/date_format_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 
 String dateFormat(String timestamp,
     {required WidgetRef ref,
