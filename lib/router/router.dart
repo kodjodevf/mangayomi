@@ -6,7 +6,7 @@ import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/views/webview/webview.dart';
 import 'package:mangayomi/views/browse/browse_screen.dart';
 import 'package:mangayomi/views/browse/extension/extension_lang.dart';
-import 'package:mangayomi/views/browse/global_search_screen.dart';
+import 'package:mangayomi/views/browse/global_search/global_search_screen.dart';
 import 'package:mangayomi/views/main_view/main_screen.dart';
 import 'package:mangayomi/views/history/history_screen.dart';
 import 'package:mangayomi/views/library/library_screen.dart';

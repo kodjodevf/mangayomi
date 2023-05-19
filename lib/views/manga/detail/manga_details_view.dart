@@ -120,7 +120,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         ),
         action: widget.manga.favorite
             ? SizedBox(
-                width: mediaWidth(context, 0.4),
+                width: isTablet(context) ? null : mediaWidth(context, 0.4),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
@@ -204,9 +204,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     showDialog(
         context: context,
         builder: (context) {
-          return 
-          
-          StatefulBuilder(
+          return StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
                 title: const Text(

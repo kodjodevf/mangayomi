@@ -194,12 +194,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             fit: BoxFit.cover),
                         Stack(
                           children: [
-                            Container(
-                              width: mediaWidth(context, 1),
-                              height: 465,
-                              color: Theme.of(context)
-                                  .scaffoldBackgroundColor
-                                  .withOpacity(0.9),
+                            Column(
+                              children: [
+                                Container(
+                                  width: mediaWidth(context, 1),
+                                  height: AppBar().preferredSize.height,
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor
+                                      .withOpacity(0.9),
+                                ),
+                                Container(
+                                  width: mediaWidth(context, 1),
+                                  height: 465,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                              ],
                             ),
                             Positioned(
                               bottom: 0,
@@ -344,45 +354,83 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   },
                 )),
             body: SafeArea(
-              child: DraggableScrollbar(
-                  padding: const EdgeInsets.only(right: 7),
-                  heightScrollThumb: 48.0,
-                  backgroundColor: primaryColor(context),
-                  scrollThumbBuilder:
-                      (backgroundColor, thumbAnimation, labelAnimation, height,
-                          {labelConstraints, labelText}) {
-                    return FadeTransition(
-                      opacity: thumbAnimation,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: backgroundColor,
-                            borderRadius: BorderRadius.circular(20)),
-                        height: height,
-                        width: 8.0,
-                      ),
-                    );
-                  },
-                  scrollbarTimeToFade: const Duration(seconds: 2),
-                  controller: _scrollController,
-                  child: ListView.builder(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(top: 0, bottom: 60),
-                      itemCount: chapters.length + 1,
-                      itemBuilder: (context, index) {
-                        int finalIndex = index - 1;
-                        if (index == 0) {
-                          return _bodyContainer(chapterLength: chapters.length);
-                        }
-                        int reverseIndex = chapters.length -
-                            chapters.reversed.toList().indexOf(
-                                chapters.reversed.toList()[finalIndex]) -
-                            1;
-                        final indexx = reverse ? reverseIndex : finalIndex;
-                        return ChapterListTileWidget(
-                          chapter: chapters[indexx],
-                          chapterList: chapterList,
-                        );
-                      })),
+              child: Row(
+                children: [
+                  if (isTablet(context))
+                    SizedBox(
+                        width: mediaWidth(context, 0.3),
+                        height: mediaHeight(context, 1),
+                        child: _bodyContainer(chapterLength: chapters.length)),
+                  Expanded(
+                    child: DraggableScrollbar(
+                        padding: const EdgeInsets.only(right: 7),
+                        heightScrollThumb: 48.0,
+                        backgroundColor: primaryColor(context),
+                        scrollThumbBuilder: (backgroundColor, thumbAnimation,
+                            labelAnimation, height,
+                            {labelConstraints, labelText}) {
+                          return FadeTransition(
+                            opacity: thumbAnimation,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: backgroundColor,
+                                  borderRadius: BorderRadius.circular(20)),
+                              height: height,
+                              width: 8.0,
+                            ),
+                          );
+                        },
+                        scrollbarTimeToFade: const Duration(seconds: 2),
+                        controller: _scrollController,
+                        child: ListView.builder(
+                            controller: _scrollController,
+                            padding: const EdgeInsets.only(top: 0, bottom: 60),
+                            itemCount: chapters.length + 1,
+                            itemBuilder: (context, index) {
+                              int finalIndex = index - 1;
+                              if (index == 0) {
+                                return isTablet(context)
+                                    ? Column(
+                                        children: [
+                                          //Description
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(horizontal: 8),
+                                                  child: Text(
+                                                    '${chapters.length} chapters',
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : _bodyContainer(
+                                        chapterLength: chapters.length);
+                              }
+                              int reverseIndex = chapters.length -
+                                  chapters.reversed.toList().indexOf(
+                                      chapters.reversed.toList()[finalIndex]) -
+                                  1;
+                              final indexx =
+                                  reverse ? reverseIndex : finalIndex;
+                              return ChapterListTileWidget(
+                                chapter: chapters[indexx],
+                                chapterList: chapterList,
+                              );
+                            })),
+                  ),
+                ],
+              ),
             ),
             bottomNavigationBar: Consumer(builder: (context, ref, child) {
               final chap = ref.watch(chaptersListStateProvider);
@@ -850,28 +898,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ],
                               ),
                             )),
-                  Column(
-                    children: [
-                      //Description
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                '$chapterLength chapters',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
+                  if (!isTablet(context))
+                    Column(
+                      children: [
+                        //Description
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  '$chapterLength chapters',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -939,7 +988,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             width: 5,
           ),
           SizedBox(
-            width: mediaWidth(context, 0.4),
+            width: isTablet(context) ? null : mediaWidth(context, 0.4),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,

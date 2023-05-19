@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 
-mediaHeight(BuildContext context, double data) {
+double mediaHeight(BuildContext context, double data) {
   return MediaQuery.of(context).size.height * data;
 }
 
-mediaWidth(BuildContext context, double data) {
+double mediaWidth(BuildContext context, double data) {
   return MediaQuery.of(context).size.width * data;
+}
+
+bool isDesktop(BuildContext context) {
+  return MediaQuery.of(context).size.width >= 1200;
+}
+
+bool isTablet(BuildContext context) {
+  return MediaQuery.of(context).size.width >= 600;
 }

@@ -6,7 +6,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/views/browse/extension/extension_screen.dart';
 import 'package:mangayomi/views/browse/extension/refresh_source_list_data.dart';
 import 'package:mangayomi/views/browse/migrate_screen.dart';
-import 'package:mangayomi/views/browse/sources_screen.dart';
+import 'package:mangayomi/views/browse/sources/sources_screen.dart';
 import 'package:mangayomi/views/library/search_text_form_field.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {

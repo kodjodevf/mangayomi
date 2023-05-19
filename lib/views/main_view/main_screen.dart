@@ -68,94 +68,203 @@ class _MainScreenState extends State<MainScreen> {
           }),
         Flexible(
           child: Scaffold(
-            body: widget.child,
-            bottomNavigationBar: Consumer(builder: (context, ref, child) {
-              final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: mediaWidth(context, 1),
-                height: isLongPressed
-                    ? 0
-                    : route.location != '/library' &&
-                            route.location != '/updates' &&
-                            route.location != '/history' &&
-                            route.location != '/browse' &&
-                            route.location != '/more'
-                        ? 0
-                        : 80,
-                child: NavigationBarTheme(
-                  data: NavigationBarThemeData(
-                    indicatorShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    height: 20,
-                  ),
-                  child: NavigationBar(
-                    animationDuration: const Duration(milliseconds: 500),
-                    selectedIndex: currentIndex,
-                    destinations: const [
-                      NavigationDestination(
-                          selectedIcon: Icon(
-                            Icons.collections_bookmark,
+            body: isTablet(context)
+                ? Row(
+                    children: [
+                      Consumer(builder: (context, ref, child) {
+                        final isLongPressed =
+                            ref.watch(isLongPressedMangaStateProvider);
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 0),
+                          width: isLongPressed
+                              ? 0
+                              : route.location != '/library' &&
+                                      route.location != '/updates' &&
+                                      route.location != '/history' &&
+                                      route.location != '/browse' &&
+                                      route.location != '/more'
+                                  ? 0
+                                  : 80,
+                          child: NavigationRailTheme(
+                            data: NavigationRailThemeData(
+                              indicatorShape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                            ),
+                            child: NavigationRail(
+                              labelType: NavigationRailLabelType.all,
+                              useIndicator: true,
+                              destinations: const [
+                                NavigationRailDestination(
+                                    selectedIcon: Icon(
+                                      Icons.collections_bookmark,
+                                    ),
+                                    icon: Icon(
+                                      Icons.collections_bookmark_outlined,
+                                    ),
+                                    label: Padding(
+                                        padding: EdgeInsets.only(top: 5),
+                                        child: Text('Library'))),
+                                NavigationRailDestination(
+                                    selectedIcon: Icon(
+                                      Icons.new_releases,
+                                    ),
+                                    icon: Icon(
+                                      Icons.new_releases_outlined,
+                                    ),
+                                    label: Padding(
+                                        padding: EdgeInsets.only(top: 5),
+                                        child: Text('Updates'))),
+                                NavigationRailDestination(
+                                    selectedIcon: Icon(
+                                      Icons.history,
+                                    ),
+                                    icon: Icon(
+                                      Icons.history_outlined,
+                                    ),
+                                    label: Padding(
+                                      padding: EdgeInsets.only(top: 5),
+                                      child: Text("History"),
+                                    )),
+                                NavigationRailDestination(
+                                    selectedIcon: Icon(
+                                      Icons.explore,
+                                    ),
+                                    icon: Icon(
+                                      Icons.explore_outlined,
+                                    ),
+                                    label: Padding(
+                                      padding: EdgeInsets.only(top: 5),
+                                      child: Text("Browse"),
+                                    )),
+                                NavigationRailDestination(
+                                    selectedIcon: Icon(
+                                      Icons.more_horiz,
+                                    ),
+                                    icon: Icon(
+                                      Icons.more_horiz_outlined,
+                                    ),
+                                    label: Padding(
+                                      padding: EdgeInsets.only(top: 5),
+                                      child: Text("More"),
+                                    )),
+                              ],
+                              selectedIndex: currentIndex,
+                              onDestinationSelected: (newIndex) {
+                                if (mounted) {
+                                  setState(() {
+                                    currentIndex = newIndex;
+                                  });
+                                }
+                                if (newIndex == 0) {
+                                  route.go('/library');
+                                } else if (newIndex == 1) {
+                                  route.go('/updates');
+                                } else if (newIndex == 2) {
+                                  route.go('/history');
+                                } else if (newIndex == 3) {
+                                  route.go('/browse');
+                                } else if (newIndex == 4) {
+                                  route.go('/more');
+                                }
+                              },
+                            ),
                           ),
-                          icon: Icon(
-                            Icons.collections_bookmark_outlined,
-                          ),
-                          label: 'Library'),
-                      NavigationDestination(
-                          selectedIcon: Icon(
-                            Icons.new_releases,
-                          ),
-                          icon: Icon(
-                            Icons.new_releases_outlined,
-                          ),
-                          label: 'Updates'),
-                      NavigationDestination(
-                          selectedIcon: Icon(
-                            Icons.history,
-                          ),
-                          icon: Icon(
-                            Icons.history_outlined,
-                          ),
-                          label: "History"),
-                      NavigationDestination(
-                          selectedIcon: Icon(
-                            Icons.explore,
-                          ),
-                          icon: Icon(
-                            Icons.explore_outlined,
-                          ),
-                          label: "Browse"),
-                      NavigationDestination(
-                          selectedIcon: Icon(
-                            Icons.more_horiz,
-                          ),
-                          icon: Icon(
-                            Icons.more_horiz_outlined,
-                          ),
-                          label: "More"),
+                        );
+                      }),
+                      Expanded(child: widget.child)
                     ],
-                    onDestinationSelected: (int newIndex) {
-                      if (mounted) {
-                        setState(() {
-                          currentIndex = newIndex;
-                        });
-                      }
-                      if (newIndex == 0) {
-                        route.go('/library');
-                      } else if (newIndex == 1) {
-                        route.go('/updates');
-                      } else if (newIndex == 2) {
-                        route.go('/history');
-                      } else if (newIndex == 3) {
-                        route.go('/browse');
-                      } else if (newIndex == 4) {
-                        route.go('/more');
-                      }
-                    },
-                  ),
-                ),
-              );
-            }),
+                  )
+                : widget.child,
+            bottomNavigationBar: isTablet(context)
+                ? null
+                : Consumer(builder: (context, ref, child) {
+                    final isLongPressed =
+                        ref.watch(isLongPressedMangaStateProvider);
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 0),
+                      width: mediaWidth(context, 1),
+                      height: isLongPressed
+                          ? 0
+                          : route.location != '/library' &&
+                                  route.location != '/updates' &&
+                                  route.location != '/history' &&
+                                  route.location != '/browse' &&
+                                  route.location != '/more'
+                              ? 0
+                              : 80,
+                      child: NavigationBarTheme(
+                        data: NavigationBarThemeData(
+                          indicatorShape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          height: 20,
+                        ),
+                        child: NavigationBar(
+                          animationDuration: const Duration(milliseconds: 500),
+                          selectedIndex: currentIndex,
+                          destinations: const [
+                            NavigationDestination(
+                                selectedIcon: Icon(
+                                  Icons.collections_bookmark,
+                                ),
+                                icon: Icon(
+                                  Icons.collections_bookmark_outlined,
+                                ),
+                                label: 'Library'),
+                            NavigationDestination(
+                                selectedIcon: Icon(
+                                  Icons.new_releases,
+                                ),
+                                icon: Icon(
+                                  Icons.new_releases_outlined,
+                                ),
+                                label: 'Updates'),
+                            NavigationDestination(
+                                selectedIcon: Icon(
+                                  Icons.history,
+                                ),
+                                icon: Icon(
+                                  Icons.history_outlined,
+                                ),
+                                label: "History"),
+                            NavigationDestination(
+                                selectedIcon: Icon(
+                                  Icons.explore,
+                                ),
+                                icon: Icon(
+                                  Icons.explore_outlined,
+                                ),
+                                label: "Browse"),
+                            NavigationDestination(
+                                selectedIcon: Icon(
+                                  Icons.more_horiz,
+                                ),
+                                icon: Icon(
+                                  Icons.more_horiz_outlined,
+                                ),
+                                label: "More"),
+                          ],
+                          onDestinationSelected: (newIndex) {
+                            if (mounted) {
+                              setState(() {
+                                currentIndex = newIndex;
+                              });
+                            }
+                            if (newIndex == 0) {
+                              route.go('/library');
+                            } else if (newIndex == 1) {
+                              route.go('/updates');
+                            } else if (newIndex == 2) {
+                              route.go('/history');
+                            } else if (newIndex == 3) {
+                              route.go('/browse');
+                            } else if (newIndex == 4) {
+                              route.go('/more');
+                            }
+                          },
+                        ),
+                      ),
+                    );
+                  }),
           ),
         ),
       ],
