@@ -199,14 +199,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 Container(
                                   width: mediaWidth(context, 1),
                                   height: AppBar().preferredSize.height,
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor,
+                                  color: isTablet(context)
+                                      ? Theme.of(context)
+                                          .scaffoldBackgroundColor
+                                      : Theme.of(context)
+                                          .scaffoldBackgroundColor
+                                          .withOpacity(0.9),
                                 ),
                                 Container(
                                   width: mediaWidth(context, 1),
                                   height: 465,
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
+                                  color: isTablet(context)
+                                      ? Theme.of(context)
+                                          .scaffoldBackgroundColor
+                                      : Theme.of(context)
+                                          .scaffoldBackgroundColor
+                                          .withOpacity(0.9),
                                 ),
                               ],
                             ),
