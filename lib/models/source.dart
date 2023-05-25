@@ -60,5 +60,7 @@ enum TypeSource {
 
   mmrcms,
 
-  heancms
+  heancms,
+
+  madara
 }

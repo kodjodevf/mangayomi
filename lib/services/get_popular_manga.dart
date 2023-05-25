@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
+import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
 import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
@@ -67,11 +68,18 @@ Future<List<GetManga?>> getPopularManga(GetPopularMangaRef ref,
   }
 
   /***********/
-  /*japscan*/
+  /*heancms*/
   /***********/
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
     popularManga =
         await HeanCms().getPopularManga(source: source, page: page, ref: ref);
+  }
+  /***********/
+  /*madara*/
+  /***********/
+  else if (getMangaTypeSource(source) == TypeSource.madara) {
+    popularManga =
+        await Madara().getPopularManga(source: source, page: page, ref: ref);
   }
   return popularManga!;
 }

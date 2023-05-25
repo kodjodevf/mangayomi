@@ -60,6 +60,7 @@ dependencies:
   isar: 3.1.0+1
   isar_flutter_libs: 3.1.0+1
   share_plus: ^7.0.0
+  xpath_selector_html_parser: ^3.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

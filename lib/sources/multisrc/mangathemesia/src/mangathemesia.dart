@@ -255,7 +255,7 @@ class MangaThemeSia extends MangaYomiServices {
       }
 
       final List<String?> urlss = matchess.map((m) => m.group(1)).toList();
-      if (urls.length == 1 && urls.isNotEmpty) {
+      if (urls.isNotEmpty && urls.length == 1) {
         for (var i = 0; i < urlss.length; i++) {
           if (urlss[i]!.length == 1) {
             pageUrls.add(

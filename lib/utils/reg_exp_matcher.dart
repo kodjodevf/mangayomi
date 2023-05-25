@@ -5,6 +5,13 @@ String regHrefMatcher(String input) {
   return firstMatch!;
 }
 
+String regDataSrcMatcher(String input) {
+  RegExp exp = RegExp(r'data-src="([^"]+)"');
+  Iterable<Match> matches = exp.allMatches(input);
+  String? firstMatch = matches.first.group(1);
+  return firstMatch!;
+}
+
 String regSrcMatcher(String input) {
   RegExp exp = RegExp(r'src="([^"]+)"');
   Iterable<Match> matches = exp.allMatches(input);

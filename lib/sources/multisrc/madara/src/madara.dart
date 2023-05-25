@@ -1,31 +1,193 @@
-// import 'package:mangayomi/models/chapter.dart';
-// import 'package:mangayomi/sources/service.dart';
+import 'dart:convert';
+import 'dart:developer';
 
-// class Madara extends MangaYomiServices {
-//   @override
-//   Future<List?> getChapterUrl({required Chapter chapter}) {
-//     // TODO: implement getChapterUrl
-//     throw UnimplementedError();
-//   }
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:html/dom.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/services/http_service/http_service.dart';
+import 'package:mangayomi/sources/service.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/xpath_selector.dart';
 
-//   @override
-//   Future<GetManga?> getMangaDetail(
-//       {required GetManga manga, required String lang, required String source}) {
-//     // TODO: implement getMangaDetail
-//     throw UnimplementedError();
-//   }
+class Madara extends MangaYomiServices {
+  @override
+  Future<List<String>> getChapterUrl(
+      {required Chapter chapter,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url: chapter.url!,
+            source: chapter.manga.value!.source!.toLowerCase(),
+            resDom: true)
+        .future) as Document?;
+    final res = dom!.querySelector(
+        "div.page-break, li.blocks-gallery-item, .reading-content, .text-left img");
+    final imgs = res!
+        .querySelectorAll('img')
+        .map((i) => regSrcMatcher(i.outerHtml).trim().trimLeft().trimRight())
+        .toList();
+    if (imgs.isNotEmpty && imgs.length == 1) {
+      final pagesNumber = dom
+          .querySelector("#single-pager")!
+          .querySelectorAll("option")
+          .map((e) => e.outerHtml)
+          .toList();
+      for (var i = 0; i < pagesNumber.length; i++) {
+        if (i.toString().length == 1) {
+          pageUrls.add(
+              imgs.first.replaceAll("01", '0${int.parse(i.toString()) + 1}'));
+        } else if (i.toString().length == 2) {
+          pageUrls.add(
+              imgs.first.replaceAll("01", '${int.parse(i.toString()) + 1}'));
+        } else if (i.toString().length == 3) {
+          pageUrls.add(
+              imgs.first.replaceAll("01", '${int.parse(i.toString()) + 1}'));
+        }
+      }
+    } else {
+      pageUrls = imgs;
+    }
+    log(pageUrls.toString());
 
-//   @override
-//   Future<List<GetManga?>> getPopularManga(
-//       {required String source, required int page}) {
-//     // TODO: implement getPopularManga
-//     throw UnimplementedError();
-//   }
+    return pageUrls;
+  }
 
-//   @override
-//   Future<List<GetManga?>> searchManga(
-//       {required String source, required String query}) {
-//     // TODO: implement searchManga
-//     throw UnimplementedError();
-//   }
-// }
+  @override
+  Future<GetManga?> getMangaDetail(
+      {required GetManga manga,
+      required String lang,
+      required String source,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(
+        httpGetProvider(url: manga.url!, source: source, resDom: true)
+            .future) as Document?;
+    author = dom!
+        .querySelectorAll("div.author-content > a")
+        .map((e) => e.text)
+        .toList()
+        .join(', ');
+    description = dom
+        .querySelectorAll(
+            "div.description-summary div.summary__content, div.summary_content div.post-content_item > h5 + div, div.summary_content div.manga-excerpt")
+        .map((e) => e.text)
+        .toList()
+        .first;
+    status = dom
+        .querySelectorAll("div.summary-content")
+        .map((e) => e.text.trim().trimLeft().trimRight())
+        .toList()
+        .last;
+
+    manga.imageUrl = dom
+        .querySelectorAll("div.summary_image img")
+        .map((e) => regSrcMatcher(e.outerHtml))
+        .toList()
+        .first;
+    genre = dom
+        .querySelectorAll("div.genres-content a")
+        .map((e) => e.text)
+        .toList();
+    bool isOk = false;
+    String? html;
+    HeadlessInAppWebView? headlessWebViewJapScan;
+    headlessWebViewJapScan = HeadlessInAppWebView(
+      onLoadStop: (controller, u) async {
+        html = await controller.evaluateJavascript(
+            source:
+                "window.document.getElementsByTagName('html')[0].outerHTML;");
+        await Future.doWhile(() async {
+          html = await controller.evaluateJavascript(
+              source:
+                  "window.document.getElementsByTagName('html')[0].outerHTML;");
+          if (xpathSelector(html!)
+              .query(
+                  "//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/@href")
+              .attrs
+              .isEmpty) {
+            html = await controller.evaluateJavascript(
+                source:
+                    "window.document.getElementsByTagName('html')[0].outerHTML;");
+            return true;
+          }
+          return false;
+        });
+        html = await controller.evaluateJavascript(
+            source:
+                "window.document.getElementsByTagName('html')[0].outerHTML;");
+        isOk = true;
+        headlessWebViewJapScan!.dispose();
+      },
+      initialUrlRequest: URLRequest(
+        url: WebUri.uri(Uri.parse(manga.url!)),
+      ),
+    );
+
+    headlessWebViewJapScan.run();
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      if (isOk == true) {
+        return false;
+      }
+      return true;
+    });
+    final xpath = xpathSelector(html!);
+    for (var url in xpath
+        .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/@href")
+        .attrs) {
+      chapterUrl.add(url!);
+    }
+    for (var title in xpath
+        .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/text()")
+        .attrs) {
+      chapterTitle.add(title!.trim().trimLeft().trimRight());
+    }
+    final dateF = xpath
+        .query(
+            "//*[@id='manga-chapters-holder']/div[2]/div/ul/li/span/i/text()")
+        .attrs;
+
+    if (dateF.length == chapterUrl.length) {
+      for (var date in dateF) {
+        chapterDate.add(parseDate(date!, source));
+      }
+    } else if (dateF.length < chapterUrl.length) {
+      final length = chapterUrl.length - dateF.length;
+      for (var i = 0; i < length; i++) {
+        chapterDate.add(DateTime.now().millisecondsSinceEpoch.toString());
+      }
+      for (var date in dateF) {
+        chapterDate.add(parseDate(date!, source));
+      }
+    }
+
+    return mangadetailRes(manga: manga, source: source);
+  }
+
+  @override
+  Future<List<GetManga?>> getPopularManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final html = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/manga/page/$page/?m_orderby=views',
+            source: source,
+            resDom: false)
+        .future) as String?;
+    final xpath = xpathSelector(html!);
+    name = xpath.query('//*[@id^="manga-item"]/a/@title').attrs;
+    url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
+    image = xpath.query('//*[@id^="manga-item"]/a/img/@data-src=').attrs;
+    return mangaRes();
+  }
+
+  @override
+  Future<List<GetManga?>> searchManga(
+      {required String source,
+      required String query,
+      required AutoDisposeFutureProviderRef ref}) {
+    // TODO: implement searchManga
+    throw UnimplementedError();
+  }
+}

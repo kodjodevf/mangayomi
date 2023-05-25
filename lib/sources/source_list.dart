@@ -6,7 +6,7 @@ import 'package:mangayomi/sources/src/fr/japscan/japscan_source.dart';
 import 'package:mangayomi/sources/src/fr/mangakawaii/mangakawaii_source.dart';
 import 'package:mangayomi/sources/multisrc/mangathemesia/mangathemesia_source_list.dart';
 import 'package:mangayomi/sources/multisrc/mmrcms/mmrcms_source_list.dart';
-
+import 'package:mangayomi/sources/multisrc/madara/madara_source_list.dart';
 List<Source> get sourcesList => _sourcesList;
 List<Source> _sourcesList = [
   mangahereSource,
@@ -15,5 +15,6 @@ List<Source> _sourcesList = [
   ...comickSourcesList,
   ...mmrcmsSourcesList,
   japscanSource,
-  ...heanCmsSourcesList
+  ...heanCmsSourcesList,
+  ...madaraSourcesList
 ];

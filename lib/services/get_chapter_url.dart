@@ -7,6 +7,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
+import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
 import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
 import 'package:mangayomi/sources/src/fr/japscan/src/japscan.dart';
@@ -103,6 +104,13 @@ Future<GetChapterUrlModel> getChapterUrl(
 
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
     pageUrls = await HeanCms().getChapterUrl(chapter: chapter, ref: ref);
+  }
+  /***********/
+  /*madara*/
+  /***********/
+
+  else if (getMangaTypeSource(source) == TypeSource.madara) {
+    pageUrls = await Madara().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   if (pageUrls.isNotEmpty) {
