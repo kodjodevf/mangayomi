@@ -282,6 +282,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  desktop_webview_window:
+    dependency: "direct main"
+    description:
+      name: desktop_webview_window
+      sha256: da2fc164b46257c7a8b88649d3f2b34b4d98e7b7c403fb9e4183ebe8ff008004
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   draggable_menu:
     dependency: "direct main"
     description:

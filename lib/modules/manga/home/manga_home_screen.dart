@@ -106,6 +106,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 Map<String, String> data = {
                   'url': getMangaBaseUrl(widget.mangaType.source!),
                   'source': widget.mangaType.source!,
+                  'title': ''
                 };
                 context.push("/mangawebview", extra: data);
               },

@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_webview_window
   flutter_js
   isar_flutter_libs
   permission_handler_windows

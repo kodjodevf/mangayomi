@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
+import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 late Isar isar;
-void main() async {
+void main(List<String> args) async {
+  if (runWebViewTitleBarWidget(args)) {
+    return;
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await _initDB();
   runApp(const ProviderScope(child: MyApp()));

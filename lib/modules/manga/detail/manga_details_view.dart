@@ -152,7 +152,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 ),
               )
             : SizedBox(
-                width: mediaWidth(context, 0.4),
+                width: isTablet(context) ? null : mediaWidth(context, 0.4),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
