@@ -72,6 +72,7 @@ completeLang(String lang) {
   } else if (lang == 'zh-hk') {
     return '繁體中文(Hong Kong)';
   }
+  return "unknown";
 }
 
 final List<String> language = [

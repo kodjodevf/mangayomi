@@ -8,6 +8,7 @@ import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
+import 'package:mangayomi/sources/multisrc/madara/src/utils.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -73,7 +74,7 @@ class Madara extends MangaYomiServices {
         .join(', ');
     description = dom
         .querySelectorAll(
-            "div.description-summary div.summary__content, div.summary_content div.post-content_item > h5 + div, div.summary_content div.manga-excerpt")
+            "div.description-summary div.summary__content, div.summary_content div.post-content_item > h5 + div, div.summary_content div.manga-excerpt, div.sinopsis div.contenedor")
         .map((e) => e.text)
         .toList()
         .first;
@@ -163,6 +164,14 @@ class Madara extends MangaYomiServices {
           url: WebUri.uri(Uri.parse(manga.url!)),
         ),
       );
+      headlessWebViewJapScan.run();
+      await Future.doWhile(() async {
+        await Future.delayed(const Duration(seconds: 1));
+        if (isOk == true) {
+          return false;
+        }
+        return true;
+      });
     }
     final xpath = xpathSelector(html!);
     for (var url in xpath
@@ -170,6 +179,7 @@ class Madara extends MangaYomiServices {
         .attrs) {
       chapterUrl.add(url!);
     }
+    log(chapterUrl.toString());
     for (var title in xpath
         .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/text()")
         .attrs) {
@@ -182,7 +192,7 @@ class Madara extends MangaYomiServices {
 
     if (dateF.length == chapterUrl.length) {
       for (var date in dateF) {
-        chapterDate.add(parseDate(date!, source));
+        chapterDate.add(parseChapterDate(date!, source).toString());
       }
     } else if (dateF.length < chapterUrl.length) {
       final length = chapterUrl.length - dateF.length;
@@ -190,7 +200,7 @@ class Madara extends MangaYomiServices {
         chapterDate.add(DateTime.now().millisecondsSinceEpoch.toString());
       }
       for (var date in dateF) {
-        chapterDate.add(parseDate(date!, source));
+        chapterDate.add(parseChapterDate(date!, source).toString());
       }
     }
 
@@ -202,15 +212,40 @@ class Madara extends MangaYomiServices {
       {required String source,
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
-    final html = await ref.watch(httpGetProvider(
+    String? html;
+    html = await ref.watch(httpGetProvider(
             url: '${getMangaBaseUrl(source)}/manga/page/$page/?m_orderby=views',
             source: source,
             resDom: false)
         .future) as String?;
+    if (xpathSelector(html!)
+        .query('//*[@id^="manga-item"]/a/@title')
+        .attrs
+        .isEmpty) {
+      html = await ref.watch(httpGetProvider(
+              url:
+                  '${getMangaBaseUrl(source)}/manga/page/$page/?m_orderby=trending',
+              source: source,
+              resDom: false)
+          .future) as String?;
+      if (xpathSelector(html!)
+          .query('//*[@id^="manga-item"]/a/@title')
+          .attrs
+          .isEmpty) {
+        html = await ref.watch(httpGetProvider(
+                url: getMangaBaseUrl(source), source: source, resDom: false)
+            .future) as String?;
+      }
+    }
     final xpath = xpathSelector(html!);
     name = xpath.query('//*[@id^="manga-item"]/a/@title').attrs;
+    // log(name.toString());
     url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
+    // log(url.toString());
+
     image = xpath.query('//*[@id^="manga-item"]/a/img/@data-src=').attrs;
+    // log(image.toString());
+
     return mangaRes();
   }
 
@@ -218,8 +253,20 @@ class Madara extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
-      required AutoDisposeFutureProviderRef ref}) {
-    // TODO: implement searchManga
-    throw UnimplementedError();
+      required AutoDisposeFutureProviderRef ref}) async {
+    final html = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/?s=$query&post_type=wp-manga',
+            source: source,
+            resDom: false)
+        .future) as String?;
+    log(html!);
+    final xpath = xpathSelector(html);
+    name = xpath.query('//*[@class^="post-title"]/h3/a/text()').attrs;
+    log(name.toString());
+    url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
+    log(url.toString());
+    image = name;
+
+    return mangaRes();
   }
 }

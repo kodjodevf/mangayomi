@@ -1,5 +1,6 @@
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
+import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
 import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
@@ -74,6 +75,14 @@ Future<List<GetManga?>> searchManga(SearchMangaRef ref,
 
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
     manga = await HeanCms().searchManga(source: source, query: query, ref: ref);
+  }
+
+  /***********/
+  /*madara*/
+  /***********/
+
+  else if (getMangaTypeSource(source) == TypeSource.madara) {
+    manga = await Madara().searchManga(source: source, query: query, ref: ref);
   }
 
   return manga!;

@@ -1,7 +1,8 @@
-
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/http_service/cloudflare/providers/cookie_providers.dart';
+import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'headers.g.dart';
 
@@ -18,23 +19,25 @@ Map<String, String> headers(HeadersRef ref, {String source = ""}) {
           'Accept-Language': 'fr'
         }
       : source == 'mangahere'
-          ? {"Referer": "https://www.mangahere.cc/", "Cookie": "isAdult=1"}
+          ? {"Referer": "${getMangaBaseUrl(source)}/", "Cookie": "isAdult=1"}
           : source == 'comick'
               ? {
-                  'Referer': 'https://comick.app/',
+                  'Referer': "${getMangaBaseUrl(source)}/",
                   'User-Agent': 'Tachiyomi $userAgent'
                 }
               : source == "japscan"
                   ? {
                       'User-Agent': userAgent,
-                      'Referer': "https://www.japscan.lol/",
+                      'Referer': "${getMangaBaseUrl(source)}/",
                       "Cookie": cookie
                     }
                   : source == 'sushiscan'
                       ? {
                           'User-Agent': userAgent,
-                          'Referer': "https://www.sushscan.net/",
+                          'Referer': "${getMangaBaseUrl(source)}/",
                           "Cookie": cookie
                         }
-                      : {};
+                      : getMangaTypeSource(source) == TypeSource.madara
+                          ? {"Referer": "${getMangaBaseUrl(source)}/"}
+                          : {};
 }

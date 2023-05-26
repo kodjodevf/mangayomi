@@ -36,15 +36,15 @@ List<Source> _mangathemesiaSourcesList = [
       dateFormat: "MMMM dd, yyyy",
       dateFormatLocale: "en"),
 
-  Source(
-      sourceName: "Boosei",
-      baseUrl: "https://boosei.net",
-      lang: "id",
-      typeSource: TypeSource.mangathemesia,
-      logoUrl:
-          'https://cdn.boosei.com/wp-content/uploads/2021/11/Logo-Darkmode.png.webp',
-      dateFormat: "MMMM dd, yyyy",
-      dateFormatLocale: "id"),
+  // Source(
+  //     sourceName: "Boosei",
+  //     baseUrl: "https://boosei.net",
+  //     lang: "id",
+  //     typeSource: TypeSource.mangathemesia,
+  //     logoUrl:
+  //         'https://cdn.boosei.com/wp-content/uploads/2021/11/Logo-Darkmode.png.webp',
+  //     dateFormat: "MMMM dd, yyyy",
+  //     dateFormatLocale: "id"),
   Source(
       sourceName: "Clayrer",
       baseUrl: "https://clayrer.net",

@@ -30,23 +30,25 @@ class ExtensionListTileWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
               borderRadius: BorderRadius.circular(5)),
-          child: logoUrl.isEmpty
-              ? const Icon(Icons.source_outlined)
-              : CachedNetworkImage(
-                  imageUrl: logoUrl,
-                  fit: BoxFit.contain,
-                  width: 37,
-                  height: 37,
-                  errorWidget: (context, url, error) {
-                    return const SizedBox(
-                      width: 37,
-                      height: 37,
-                      child: Center(
-                        child: Icon(Icons.source_outlined),
-                      ),
-                    );
-                  },
-                ),
+          child: 
+          // logoUrl.isEmpty
+          //     ? 
+              const Icon(Icons.source_outlined)
+              // : CachedNetworkImage(
+              //     imageUrl: logoUrl,
+              //     fit: BoxFit.contain,
+              //     width: 37,
+              //     height: 37,
+              //     errorWidget: (context, url, error) {
+              //       return const SizedBox(
+              //         width: 37,
+              //         height: 37,
+              //         child: Center(
+              //           child: Icon(Icons.source_outlined),
+              //         ),
+              //       );
+              //     },
+              //   ),
         ),
         title: Text(sourceName),
         subtitle: Row(
