@@ -18,7 +18,7 @@ class Mangahere extends MangaYomiServices {
       required String source,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: "http://www.mangahere.cc${manga.url}",
+            url: "${getMangaBaseUrl(source)}/${manga.url}",
             source: source,
             resDom: true)
         .future) as Document?;
@@ -120,32 +120,26 @@ class Mangahere extends MangaYomiServices {
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: 'https://www.mangahere.cc/ranking/',
+            url: '${getMangaBaseUrl(source)}/directory/$page.htm',
             source: source,
             resDom: true)
         .future) as Document?;
-    if (dom!
-        .querySelectorAll(
-            'body > div.container.weekrank.ranking > div > div > ul > li > a')
-        .isNotEmpty) {
+    if (dom!.querySelectorAll('.manga-list-1-list li').isNotEmpty) {
       url = dom
-          .querySelectorAll(
-              'body > div.container.weekrank.ranking > div > div > ul > li > a ')
+          .querySelectorAll('.manga-list-1-list li > a ')
           .where((e) => e.attributes.containsKey('href'))
           .map((e) => e.attributes['href'])
           .toList();
 
       image = dom
-          .querySelectorAll(
-              ' body > div.container.weekrank.ranking > div > div > ul > li > a > img')
+          .querySelectorAll('.manga-list-1-list li > a > img')
           .where((e) => e.attributes.containsKey('src'))
           .where((e) => e.attributes['src']!.contains("cover"))
           .map((e) => e.attributes['src'])
           .toList();
 
       name = dom
-          .querySelectorAll(
-              'body > div.container.weekrank.ranking > div > div > ul > li > a ')
+          .querySelectorAll('.manga-list-1-list li > a ')
           .where((e) => e.attributes.containsKey('title'))
           .map((e) => e.attributes['title'])
           .toList();
@@ -219,7 +213,8 @@ class Mangahere extends MangaYomiServices {
       return secretKeyResultScript;
     }
 
-    var link = "http://www.mangahere.cc${chapter.url!}";
+    var link =
+        "${getMangaBaseUrl(chapter.manga.value!.source!)}${chapter.url!}";
     final response = await ref.watch(
         httpGetProvider(url: link, source: "mangahere", resDom: false)
             .future) as String?;
@@ -306,6 +301,39 @@ class Mangahere extends MangaYomiServices {
       flutterJs.dispose();
     }
     return pageUrls;
+  }
+
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/directory/$page.htm?latest',
+            source: source,
+            resDom: true)
+        .future) as Document?;
+    if (dom!.querySelectorAll('.manga-list-1-list li').isNotEmpty) {
+      url = dom
+          .querySelectorAll('.manga-list-1-list li > a ')
+          .where((e) => e.attributes.containsKey('href'))
+          .map((e) => e.attributes['href'])
+          .toList();
+
+      image = dom
+          .querySelectorAll('.manga-list-1-list li > a > img')
+          .where((e) => e.attributes.containsKey('src'))
+          .where((e) => e.attributes['src']!.contains("cover"))
+          .map((e) => e.attributes['src'])
+          .toList();
+
+      name = dom
+          .querySelectorAll('.manga-list-1-list li > a ')
+          .where((e) => e.attributes.containsKey('title'))
+          .map((e) => e.attributes['title'])
+          .toList();
+    }
+    return mangaRes();
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga_type.dart';
+import 'package:mangayomi/services/get_latest_updates_manga.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/search_manga.dart';
@@ -54,7 +55,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
       _getManga = ref.watch(
           searchMangaProvider(source: widget.mangaType.source!, query: _query));
-    } else {
+    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+      _getManga = ref.watch(
+          getLatestUpdatesMangaProvider(source: widget.mangaType.source!, page: 1));
+    } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
       _getManga = ref.watch(
           getPopularMangaProvider(source: widget.mangaType.source!, page: 1));
     }

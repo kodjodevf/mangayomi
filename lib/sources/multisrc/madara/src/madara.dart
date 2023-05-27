@@ -179,7 +179,6 @@ class Madara extends MangaYomiServices {
         .attrs) {
       chapterUrl.add(url!);
     }
-    log(chapterUrl.toString());
     for (var title in xpath
         .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/text()")
         .attrs) {
@@ -239,12 +238,8 @@ class Madara extends MangaYomiServices {
     }
     final xpath = xpathSelector(html!);
     name = xpath.query('//*[@id^="manga-item"]/a/@title').attrs;
-    // log(name.toString());
     url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
-    // log(url.toString());
-
     image = xpath.query('//*[@id^="manga-item"]/a/img/@data-src=').attrs;
-    // log(image.toString());
 
     return mangaRes();
   }
@@ -259,14 +254,29 @@ class Madara extends MangaYomiServices {
             source: source,
             resDom: false)
         .future) as String?;
-    log(html!);
-    final xpath = xpathSelector(html);
+    final xpath = xpathSelector(html!);
     name = xpath.query('//*[@class^="post-title"]/h3/a/text()').attrs;
-    log(name.toString());
     url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
-    log(url.toString());
     image = name;
+    return mangaRes();
+  }
 
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    String? html;
+    html = await ref.watch(httpGetProvider(
+            url:
+                '${getMangaBaseUrl(source)}/manga/page/$page/?m_orderby=latest',
+            source: source,
+            resDom: false)
+        .future) as String?;
+    final xpath = xpathSelector(html!);
+    name = xpath.query('//*[@id^="manga-item"]/a/@title').attrs;
+    url = xpath.query('//*[@class^="post-title"]/h3/a/@href').attrs;
+    image = xpath.query('//*[@id^="manga-item"]/a/img/@data-src=').attrs;
     return mangaRes();
   }
 }

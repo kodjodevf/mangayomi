@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
@@ -192,5 +193,29 @@ class Mmrcms extends MangaYomiServices {
       }).toList();
     }
     return pageUrls;
+  }
+
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: '${getMangaBaseUrl(source)}/latest-release?page=$page',
+            source: source,
+            resDom: true)
+        .future) as Document?;
+    final urlElement = dom!.querySelectorAll("div.mangalist div.manga-item");
+
+    for (var e in urlElement) {
+      RegExp exp = RegExp(r'href="([^"]+)"');
+      Iterable<Match> matches = exp.allMatches(e.querySelector("a")!.outerHtml);
+      String? firstMatch = matches.first.group(1);
+      url.add(firstMatch);
+      name.add(e.querySelector("a")!.text);
+      image.add(
+          "${getMangaBaseUrl(source)}/uploads/manga/${firstMatch!.split('/').last}/cover/cover_250x350.jpg");
+    }
+    return mangaRes();
   }
 }

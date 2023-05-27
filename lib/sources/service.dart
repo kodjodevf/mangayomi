@@ -67,6 +67,10 @@ abstract class MangaYomiServices {
       {required String source,
       required int page,
       required AutoDisposeFutureProviderRef ref});
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref});
   Future<GetManga?> getMangaDetail(
       {required GetManga manga,
       required String lang,

@@ -8,7 +8,6 @@ Source _mangahereSource = Source(
   lang: "en",
   typeSource: TypeSource.single,
   logoUrl: 'http://static.mangahere.cc/v20210106/mangahere/images/logo.png',
-  isFullData: true,
   dateFormat: "MMM dd,yyyy",
   dateFormatLocale: "en",
 );

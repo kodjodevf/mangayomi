@@ -182,4 +182,52 @@ class HeanCms extends MangaYomiServices {
     }
     return mangaRes();
   }
+
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    var request = http.Request(
+        'POST', Uri.parse('${getMangaAPIUrl(source)}series/querysearch'));
+    request.body = json.encode({
+      "page": page,
+      "order": "desc",
+      "order_by": "latest",
+      "series_status": "Ongoing",
+      "series_type": "Comic"
+    });
+    request.headers.addAll(_headers(source));
+
+    http.StreamedResponse response = await request.send();
+    final res = await response.stream.bytesToString();
+    List<Data>? data;
+    if (res.startsWith("{")) {
+      var popularManga = jsonDecode(res) as Map<String, dynamic>;
+      var popularMangaList = HeanCmsSearchModel.fromJson(popularManga);
+      data = popularMangaList.data!;
+    } else {
+      var popularManga = jsonDecode(res) as List;
+      data = popularManga.map((e) => Data.fromJson(e)).toList();
+    }
+
+    for (var a in data) {
+      final status = (switch (a.status) {
+        "Ongoing" => Status.ongoing,
+        "Hiatus" => Status.onHiatus,
+        "Dropped" => Status.canceled,
+        "Completed" => Status.completed,
+        "Finished" => Status.completed,
+        _ => Status.unknown,
+      });
+      statusList.add(status);
+      image.add(a.thumbnail!.startsWith("https://")
+          ? a.thumbnail
+          : "${getMangaAPIUrl(source)}cover/${a.thumbnail}");
+      name.add(a.title);
+      url.add("/series/${a.seriesSlug!.replaceAll(timeStampRegex, '')}");
+    }
+
+    return mangaRes();
+  }
 }

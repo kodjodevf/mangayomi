@@ -277,6 +277,56 @@ class MangaThemeSia extends MangaYomiServices {
     }
     return pageUrls;
   }
+
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    source = source.toLowerCase();
+    final dom = await ref.watch(httpGetProvider(
+            useUserAgent: true,
+            url:
+                '${getMangaBaseUrl(source)}/manga/?title=&page=$page&order=update',
+            source: source,
+            resDom: true)
+        .future) as Document?;
+    if (dom!
+        .querySelectorAll(
+            '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx')
+        .isNotEmpty) {
+      url = dom
+          .querySelectorAll(
+              '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx')
+          .map((e) {
+        RegExp exp = RegExp(r'href="([^"]+)"');
+        Iterable<Match> matches = exp.allMatches(e.innerHtml);
+        String? firstMatch = matches.first.group(1);
+        return firstMatch;
+      }).toList();
+
+      image = dom
+          .querySelectorAll(
+              '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx')
+          .map((e) {
+        RegExp exp = RegExp(r'src="([^"]+)"');
+        Iterable<Match> matches = exp.allMatches(e.innerHtml);
+        String? firstMatch = matches.first.group(1);
+        return firstMatch;
+      }).toList();
+
+      name = dom
+          .querySelectorAll(
+              '.utao .uta .imgu, .listupd .bs .bsx, .listo .bs .bsx ')
+          .map((e) {
+        RegExp exp = RegExp(r'title="([^"]+)"');
+        Iterable<Match> matches = exp.allMatches(e.innerHtml);
+        String? firstMatch = matches.first.group(1);
+        return firstMatch;
+      }).toList();
+    }
+    return mangaRes();
+  }
 }
 
 mangathemesiaStatusParser(String status) {

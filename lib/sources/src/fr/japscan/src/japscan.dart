@@ -19,16 +19,18 @@ class Japscan extends MangaYomiServices {
       required String lang,
       required String source,
       required AutoDisposeFutureProviderRef ref}) async {
-    final dom = await ref.watch(
-        httpGetProvider(url: manga.url!, source: source, resDom: true)
-            .future) as Document?;
+    final dom = await ref.watch(httpGetProvider(
+      url: manga.url!,
+      source: source,
+      resDom: true,
+    ).future) as Document?;
     if (dom!.querySelectorAll('.col-7 > p').isNotEmpty) {
       final images =
           dom.querySelectorAll('.col-5 ').map((e) => e.outerHtml).toList();
       RegExp exp = RegExp(r'src="([^"]+)"');
 
       String? srcValue = exp.firstMatch(images[0])?.group(1);
-      manga.imageUrl = 'https://www.japscan.lol$srcValue';
+      manga.imageUrl = '${getMangaBaseUrl(source)}l$srcValue';
 
       if (dom.querySelectorAll('.col-7 > p').isNotEmpty) {
         final stat = dom
@@ -36,13 +38,16 @@ class Japscan extends MangaYomiServices {
             .where((element) => element.innerHtml.contains('Statut:'))
             .map((e) => e.text)
             .toList();
-        String sta = stat[0].replaceAll('Statut:', '').trim();
+
         if (stat.isNotEmpty) {
+          String sta = stat[0].replaceAll('Statut:', '').trim();
           status = (switch (sta) {
             "En Cours" => Status.ongoing,
             "Terminé" => Status.completed,
             _ => Status.unknown,
           });
+        } else {
+          status = Status.unknown;
         }
 
         final auth = dom
@@ -85,7 +90,7 @@ class Japscan extends MangaYomiServices {
       RegExp exp = RegExp(r'href="([^"]+)"');
 
       String? srcValue = exp.firstMatch(ok)?.group(1);
-      chapterUrl.add('https://www.japscan.lol$srcValue');
+      chapterUrl.add('${getMangaBaseUrl(source)}l$srcValue');
     }
 
     final chapterTitlee =
@@ -113,7 +118,7 @@ class Japscan extends MangaYomiServices {
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: "https://www.japscan.lol/", source: source, resDom: true)
+            url: "${getMangaBaseUrl(source)}l/", source: source, resDom: true)
         .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
       final urls = dom
@@ -122,7 +127,7 @@ class Japscan extends MangaYomiServices {
           .map((e) => e.attributes['href'])
           .toList();
       for (var ok in urls) {
-        url.add("https://www.japscan.lol$ok");
+        url.add("${getMangaBaseUrl(source)}l$ok");
       }
       name = dom
           .querySelectorAll(
@@ -194,7 +199,7 @@ class Japscan extends MangaYomiServices {
     Match? match = regex.firstMatch(response!);
     String zjsurl = match!.group(1)!;
     baseUrl = response;
-    zjsUrl = "https://www.japscan.lol/zjs/$zjsurl";
+    zjsUrl = "${getMangaBaseUrl(chapter.manga.value!.source!)}l/zjs/$zjsurl";
     zjs(ref);
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
@@ -251,5 +256,39 @@ class Japscan extends MangaYomiServices {
       } catch (_) {}
     }
     isOk = true;
+  }
+
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    final dom = await ref.watch(httpGetProvider(
+            url: "${getMangaBaseUrl(source)}l/", source: source, resDom: true)
+        .future) as Document?;
+    if (dom!
+        .querySelectorAll(
+            '#chapters h3.text-truncate, #chapters_list h3.text-truncate')
+        .isNotEmpty) {
+      final urls = dom
+          .querySelectorAll(
+              '#chapters h3.text-truncate, #chapters_list h3.text-truncate > a')
+          .where((e) => e.attributes['href'].toString().contains('manga'))
+          .map((e) => e.attributes['href'])
+          .toList();
+      for (var ok in urls) {
+        url.add("${getMangaBaseUrl(source)}l$ok");
+      }
+
+      name = dom
+          .querySelectorAll(
+              '#chapters h3.text-truncate, #chapters_list h3.text-truncate > a.text-dark.font-weight-bold')
+          .map((e) => e.innerHtml)
+          .toList();
+      for (var i = 0; i < name.length; i++) {
+        image.add("");
+      }
+    }
+    return mangaRes();
   }
 }

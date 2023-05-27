@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/chapter_page_comick.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/manga_chapter_detail.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/manga_detail_comick.dart';
@@ -11,8 +10,6 @@ import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/utils/utils.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
-import 'package:http/http.dart' as http;
-import 'package:mangayomi/utils/headers.dart';
 
 class Comick extends MangaYomiServices {
   @override
@@ -146,12 +143,37 @@ class Comick extends MangaYomiServices {
 
   Future<String> paginatedChapterListRequest(AutoDisposeFutureProviderRef ref,
       String mangaUrl, int page, String source, String lang) async {
-    final url = Uri.parse(
-        "${getMangaAPIUrl(source)}$mangaUrl/chapters?${lang != "all" ? 'lang=$lang' : ''}&tachiyomi=true&page=$page");
-    var request = http.Request('GET', url);
-    request.headers.addAll(ref.watch(headersProvider(source: source)));
-    http.StreamedResponse response = await request.send();
+    final response = await ref.watch(httpGetProvider(
+            url:
+                "${getMangaAPIUrl(source)}$mangaUrl/chapters?${lang != "all" ? 'lang=$lang' : ''}&tachiyomi=true&page=$page",
+            source: source,
+            resDom: false)
+        .future) as String?;
+    return response!;
+  }
 
-    return response.stream.bytesToString();
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga(
+      {required String source,
+      required int page,
+      required AutoDisposeFutureProviderRef ref}) async {
+    source = source.toLowerCase();
+    final response = await ref.watch(httpGetProvider(
+            url:
+                '${getMangaAPIUrl(source)}/v1.0/search?sort=uploaded&page=$page&tachiyomi=true',
+            source: source,
+            resDom: false)
+        .future) as String?;
+    var popularManga = jsonDecode(response!) as List;
+    var popularMangaList =
+        popularManga.map((e) => PopularMangaModelComick.fromJson(e)).toList();
+
+    for (var popular in popularMangaList) {
+      url.add("/comic/${popular.hid}#");
+      name.add(popular.title);
+      image.add(popular.coverUrl);
+    }
+
+    return mangaRes();
   }
 }

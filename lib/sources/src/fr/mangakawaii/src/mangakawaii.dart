@@ -212,4 +212,10 @@ class MangaKawaii extends MangaYomiServices {
     }
     return pageUrls;
   }
+  
+  @override
+  Future<List<GetManga?>> getLatestUpdatesManga({required String source, required int page, required AutoDisposeFutureProviderRef ref}) {
+    // TODO: implement getLatestUpdatesManga
+    throw UnimplementedError();
+  }
 }
