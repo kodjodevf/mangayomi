@@ -12,8 +12,8 @@ class FlexSchemeColorState extends _$FlexSchemeColorState {
     final flexSchemeColorIndex =
         isar.settings.getSync(227)!.flexSchemeColorIndex!;
     return ref.read(themeModeStateProvider)
-        ? ThemeAA.schemes[flexSchemeColorIndex].light
-        : ThemeAA.schemes[flexSchemeColorIndex].dark;
+        ? ThemeAA.schemes[flexSchemeColorIndex].dark
+        : ThemeAA.schemes[flexSchemeColorIndex].light;
   }
 
   void setTheme(FlexSchemeColor color, int index) {

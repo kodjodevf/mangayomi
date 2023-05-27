@@ -89,15 +89,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                   width: 15,
                                 ),
                                 TextButton(
-                                    onPressed: () async {
-                                      List<int> ids = [];
-                                      for (var i = 0;
-                                          i < entriesData.length;
-                                          i++) {
-                                        ids.add(entriesData[i].id!);
-                                      }
-                                      await isar.writeTxn(() async {
-                                        await isar.historys.deleteAll(ids);
+                                    onPressed: () {
+                                      isar.writeTxnSync(() {
+                                        isar.historys.clearSync();
                                       });
                                       if (mounted) {
                                         Navigator.pop(context);

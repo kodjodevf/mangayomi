@@ -112,7 +112,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final isThemeLight = ref.watch(themeModeStateProvider);
+    final isDarkTheme = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     ThemeData themeLight = FlexThemeData.light(
@@ -155,7 +155,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
       darkTheme: themeDark,
-      themeMode: isThemeLight ? ThemeMode.light : ThemeMode.dark,
+      themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: themeLight,
       debugShowCheckedModeBanner: false,
       routeInformationParser: router.routeInformationParser,

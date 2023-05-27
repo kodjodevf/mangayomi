@@ -33,7 +33,7 @@ class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
         !isDark ? 'Off' : 'On',
         style: TextStyle(fontSize: 11, color: secondaryColor(context)),
       ),
-      value: !isDark,
+      value: isDark,
     );
   }
 }

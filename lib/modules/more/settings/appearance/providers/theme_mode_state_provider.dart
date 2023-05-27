@@ -13,7 +13,7 @@ class ThemeModeState extends _$ThemeModeState {
 
   void setLightTheme() {
     final settings = isar.settings.getSync(227);
-    state = true;
+    state = false;
     ref.read(flexSchemeColorStateProvider.notifier).setTheme(
         ThemeAA.schemes[settings!.flexSchemeColorIndex!].light,
         settings.flexSchemeColorIndex!);
@@ -23,7 +23,7 @@ class ThemeModeState extends _$ThemeModeState {
 
   void setDarkTheme() {
     final settings = isar.settings.getSync(227);
-    state = false;
+    state = true;
     ref.read(flexSchemeColorStateProvider.notifier).setTheme(
         ThemeAA.schemes[settings!.flexSchemeColorIndex!].dark,
         settings.flexSchemeColorIndex!);

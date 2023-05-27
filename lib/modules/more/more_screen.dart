@@ -12,7 +12,15 @@ class MoreScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 150, child: Center(child: Text("LOGO"))),
+            SizedBox(
+                height: 200,
+                child: Center(
+                    child: Image.asset(
+                  "assets/icon.png",
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black
+                      : Colors.white,
+                ))),
             const Divider(),
             // ListTile(
             //   onTap: () {},
