@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
+import 'package:mangayomi/sources/multisrc/mmrcms/src/utils.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -23,7 +24,7 @@ class Mmrcms extends MangaYomiServices {
         .map((e) => e.text.trim())
         .toList()
         .first;
-    status = dom
+    status = mmrcmsStatusParser(dom
         .querySelectorAll('.row .dl-horizontal dt')
         .where((e) =>
             e.innerHtml.toString().toLowerCase().contains("status") ||
@@ -32,7 +33,7 @@ class Mmrcms extends MangaYomiServices {
             e.innerHtml.toString().toLowerCase().contains("durum"))
         .map((e) => e.nextElementSibling!.text.trim())
         .toList()
-        .first;
+        .first);
     if (dom.querySelectorAll(".row .dl-horizontal dt").isNotEmpty) {
       author = dom
           .querySelectorAll('.row .dl-horizontal dt')

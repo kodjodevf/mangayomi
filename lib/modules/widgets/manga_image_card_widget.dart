@@ -55,7 +55,7 @@ void pushToMangaReaderDetail(
           name: getManga.name,
           genre: getManga.genre,
           author: getManga.author,
-          status: getManga.status,
+          status: getManga.status!,
           description: getManga.description,
           link: getManga.url,
           source: getManga.source,

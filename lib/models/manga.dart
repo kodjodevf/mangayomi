@@ -17,7 +17,8 @@ class Manga {
 
   String? author;
 
-  String? status;
+  @enumerated
+  Status status;
 
   List<String>? genre;
 
@@ -56,3 +57,5 @@ class Manga {
     this.lastRead = 0,
   });
 }
+
+enum Status { ongoing, completed, canceled, unknown, onHiatus }

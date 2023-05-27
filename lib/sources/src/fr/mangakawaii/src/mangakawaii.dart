@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
@@ -14,7 +15,9 @@ class MangaKawaii extends MangaYomiServices {
       required String source,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: 'https://www.mangakawaii.io${manga.url}', source: source, resDom: true)
+            url: 'https://www.mangakawaii.io${manga.url}',
+            source: source,
+            resDom: true)
         .future) as Document?;
     List detail = [];
     manga.imageUrl =
@@ -58,7 +61,11 @@ class MangaKawaii extends MangaYomiServices {
       }
     }
     detail = detail.toSet().toList();
-    status = detail[0];
+    status = (switch (detail[0]) {
+      "En Cours" => Status.ongoing,
+      "Terminé" => Status.completed,
+      _ => Status.unknown,
+    });
     author = detail[1];
     if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
       final url = dom.querySelectorAll("tr[class*='volume-']").map((e) {
@@ -102,9 +109,7 @@ class MangaKawaii extends MangaYomiServices {
               .toList();
           if (urlz.length > url.length) {
             for (var _ in urlz) {
-              chapterDate.add(parseDate(
-                  "${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}",
-                  source));
+              chapterDate.add(DateTime.now().millisecondsSinceEpoch.toString());
             }
           } else {
             for (var ok in url) {

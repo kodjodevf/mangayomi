@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/chapter_page_comick.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/manga_chapter_detail.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/manga_detail_comick.dart';
@@ -35,7 +36,7 @@ class Comick extends MangaYomiServices {
       name.add(popular.title);
       image.add(popular.coverUrl);
     }
-    
+
     return mangaRes();
   }
 
@@ -57,8 +58,7 @@ class Comick extends MangaYomiServices {
     String authorr =
         regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
             '';
-    String statuss = parseStatut(mangaDetailLMap.comic!.status!);
-    status = statuss;
+    status = parseStatut(mangaDetailLMap.comic!.status!);
     author = authorr;
     RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
 

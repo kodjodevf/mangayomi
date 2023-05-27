@@ -1,19 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:http/http.dart' as http;
 
 parseStatut(int i) {
-  if (i == 1) {
-    return 'Ongoing';
-  } else if (i == 2) {
-    return 'Completed';
-  } else if (i == 3) {
-    return 'Canceled';
-  } else if (i == 4) {
-    return '';
-  } else {
-    return 'Unknown';
-  }
+  return (switch (i) {
+    1 => Status.ongoing,
+    2 => Status.completed,
+    3 => Status.canceled,
+    4 => Status.onHiatus,
+    _ => Status.unknown,
+  });
 }
 
 Future findCurrentSlug(String oldSlug, AutoDisposeFutureProviderRef ref) async {

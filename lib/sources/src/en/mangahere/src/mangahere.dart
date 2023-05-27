@@ -1,7 +1,9 @@
 import 'package:flutter_js/flutter_js.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
+import 'package:intl/intl.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:http/http.dart' as http;
@@ -30,9 +32,13 @@ class Mangahere extends MangaYomiServices {
           .map((e) => e.text.trim())
           .toList();
 
-      status = tt[0];
+      status = (switch (tt[0]) {
+        "ongoing" => Status.ongoing,
+        "completed" => Status.completed,
+        _ => Status.unknown,
+      });
     } else {
-      status = "";
+      status = Status.unknown;
     }
     if (dom
         .querySelectorAll(
@@ -88,7 +94,7 @@ class Mangahere extends MangaYomiServices {
           .map((e) => e.text.trim())
           .toList();
       for (var ok in tt) {
-        chapterDate.add(parseDate(ok, source));
+        chapterDate.add(parseMangaHereChapterDate(ok, source).toString());
       }
     }
     if (dom
@@ -300,5 +306,26 @@ class Mangahere extends MangaYomiServices {
       flutterJs.dispose();
     }
     return pageUrls;
+  }
+}
+
+int parseMangaHereChapterDate(String date, String source) {
+  if (date.contains('Today') || date.contains(' ago')) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return today.millisecondsSinceEpoch;
+  } else if (date.contains('Yesterday')) {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    return yesterday.millisecondsSinceEpoch;
+  } else {
+    try {
+      final dateFormat =
+          DateFormat(getFormatDate(source), getFormatDateLocale(source));
+      final parsedDate = dateFormat.parse(date);
+      return parsedDate.millisecondsSinceEpoch;
+    } catch (e) {
+      return 0;
+    }
   }
 }

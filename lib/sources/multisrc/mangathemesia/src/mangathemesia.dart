@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -22,7 +23,7 @@ class MangaThemeSia extends MangaYomiServices {
       final resHtml = dom.querySelector(
           'div.bigcontent, div.animefull, div.main-info, div.postbody');
       if (resHtml!.querySelectorAll('.tsinfo .imptdt').isNotEmpty) {
-        status = resHtml
+        status = mangathemesiaStatusParser(resHtml
             .querySelectorAll('.tsinfo .imptdt')
             .where((e) =>
                 e.innerHtml.contains("Status") ||
@@ -31,24 +32,24 @@ class MangaThemeSia extends MangaYomiServices {
                 ? e.text.replaceAll('Situação', '').trim()
                 : e.text.replaceAll('Status', '').trim())
             .toList()
-            .last;
+            .last);
       } else if (resHtml.querySelectorAll('.infotable tr').isNotEmpty) {
-        status = resHtml
+        status = mangathemesiaStatusParser(resHtml
             .querySelectorAll('.infotable tr')
             .where((e) =>
                 e.innerHtml.toLowerCase().contains('statut') ||
                 e.innerHtml.toLowerCase().contains('status'))
             .map((e) => e.querySelector('td:last-child')!.text)
             .toList()
-            .first;
+            .first);
       } else if (resHtml.querySelectorAll('.fmed').isNotEmpty) {
-        status = resHtml
+        status = mangathemesiaStatusParser(resHtml
             .querySelectorAll('.tsinfo .imptdt')
             .map((e) => e.text.replaceAll('Status', '').trim())
             .toList()
-            .first;
+            .first);
       } else {
-        status = "";
+        status = Status.unknown;
       }
 
       //2
@@ -276,4 +277,14 @@ class MangaThemeSia extends MangaYomiServices {
     }
     return pageUrls;
   }
+}
+
+mangathemesiaStatusParser(String status) {
+  return (switch (status) {
+    "ongoing" => Status.ongoing,
+    "publishing" => Status.ongoing,
+    "hiatus" => Status.onHiatus,
+    "completed" => Status.completed,
+    _ => Status.unknown,
+  });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 
 abstract class MangaYomiServices {
   List<String?> url = [];
@@ -7,8 +8,8 @@ abstract class MangaYomiServices {
   List<String?> image = [];
   List<String> genre = [];
   String? author = "";
-  String? status = "";
-  List<String> statusList = [];
+  Status? status;
+  List<Status> statusList = [];
   List<String> chapterTitle = [];
   List<String> chapterUrl = [];
   List<String> chapterDate = [];
@@ -22,7 +23,7 @@ abstract class MangaYomiServices {
       mangaList.add(GetManga(
           genre: genre,
           author: author,
-          status: statusList.isEmpty ? "" : statusList[i],
+          status: statusList.isEmpty ? Status.unknown : statusList[i],
           chapters: chapters,
           imageUrl: image[i],
           description: description,
@@ -83,7 +84,7 @@ class GetManga {
   List<String> genre = [];
   List<Chapter> chapters = [];
   String? author;
-  String? status;
+  Status? status;
   String? source;
   String? url;
   String? name;

@@ -85,7 +85,8 @@ const MangaSchema = CollectionSchema(
     r'status': PropertySchema(
       id: 13,
       name: r'status',
-      type: IsarType.string,
+      type: IsarType.byte,
+      enumMap: _MangastatusEnumValueMap,
     )
   },
   estimateSize: _mangaEstimateSize,
@@ -176,12 +177,6 @@ int _mangaEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  {
-    final value = object.status;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
   return bytesCount;
 }
 
@@ -204,7 +199,7 @@ void _mangaSerialize(
   writer.writeString(offsets[10], object.link);
   writer.writeString(offsets[11], object.name);
   writer.writeString(offsets[12], object.source);
-  writer.writeString(offsets[13], object.status);
+  writer.writeByte(offsets[13], object.status.index);
 }
 
 Manga _mangaDeserialize(
@@ -228,7 +223,8 @@ Manga _mangaDeserialize(
     link: reader.readStringOrNull(offsets[10]),
     name: reader.readStringOrNull(offsets[11]),
     source: reader.readStringOrNull(offsets[12]),
-    status: reader.readStringOrNull(offsets[13]),
+    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[13])] ??
+        Status.ongoing,
   );
   return object;
 }
@@ -267,11 +263,27 @@ P _mangaDeserializeProp<P>(
     case 12:
       return (reader.readStringOrNull(offset)) as P;
     case 13:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
+          Status.ongoing) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _MangastatusEnumValueMap = {
+  'ongoing': 0,
+  'completed': 1,
+  'canceled': 2,
+  'unknown': 3,
+  'onHiatus': 4,
+};
+const _MangastatusValueEnumMap = {
+  0: Status.ongoing,
+  1: Status.completed,
+  2: Status.canceled,
+  3: Status.unknown,
+  4: Status.onHiatus,
+};
 
 Id _mangaGetId(Manga object) {
   return object.id ?? Isar.autoIncrement;
@@ -2045,71 +2057,47 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'status',
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'status',
-      ));
-    });
-  }
-
   QueryBuilder<Manga, Manga, QAfterFilterCondition> statusEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+      Status value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'status',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> statusGreaterThan(
-    String? value, {
+    Status value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'status',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> statusLessThan(
-    String? value, {
+    Status value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'status',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<Manga, Manga, QAfterFilterCondition> statusBetween(
-    String? lower,
-    String? upper, {
+    Status lower,
+    Status upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -2118,74 +2106,6 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusContains(String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'status',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> statusIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'status',
-        value: '',
       ));
     });
   }
@@ -2641,10 +2561,9 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QDistinct> distinctByStatus(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Manga, Manga, QDistinct> distinctByStatus() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'status', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'status');
     });
   }
 }
@@ -2734,7 +2653,7 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Manga, String?, QQueryOperations> statusProperty() {
+  QueryBuilder<Manga, Status, QQueryOperations> statusProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'status');
     });

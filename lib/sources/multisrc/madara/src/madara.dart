@@ -78,11 +78,11 @@ class Madara extends MangaYomiServices {
         .map((e) => e.text)
         .toList()
         .first;
-    status = dom
+    status = madaraStatusParser(dom
         .querySelectorAll("div.summary-content")
         .map((e) => e.text.trim().trimLeft().trimRight())
         .toList()
-        .last;
+        .last);
 
     manga.imageUrl = dom
         .querySelectorAll("div.summary_image img")

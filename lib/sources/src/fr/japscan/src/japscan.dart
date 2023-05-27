@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
@@ -35,8 +36,13 @@ class Japscan extends MangaYomiServices {
             .where((element) => element.innerHtml.contains('Statut:'))
             .map((e) => e.text)
             .toList();
+        String sta = stat[0].replaceAll('Statut:', '').trim();
         if (stat.isNotEmpty) {
-          status = stat[0].replaceAll('Statut:', '').trim();
+          status = (switch (sta) {
+            "En Cours" => Status.ongoing,
+            "Terminé" => Status.completed,
+            _ => Status.unknown,
+          });
         }
 
         final auth = dom
@@ -49,7 +55,7 @@ class Japscan extends MangaYomiServices {
         }
       } else {
         author = "";
-        status = "";
+        status = Status.unknown;
       }
 
       final genres = dom

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -10,6 +9,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_bt
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -99,14 +99,14 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
             ),
             Row(
               children: [
-                const Icon(
-                  FontAwesomeIcons.clock,
+                 Icon(
+                  getMangaStatusIcon(widget.manga.status),
                   size: 12,
                 ),
                 const SizedBox(
                   width: 4,
                 ),
-                Text(widget.manga.status!),
+                Text(getMangaStatusName(widget.manga.status)),
                 const Text(' • '),
                 Row(
                   children: [

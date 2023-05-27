@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 
 class WordSet {
@@ -106,4 +107,68 @@ int parseChapterDate(String? date, String source) {
         .parse(date)
         .millisecondsSinceEpoch;
   }
+}
+
+List<String> completedStatusList = [
+  "Completed",
+  "Completo",
+  "Completado",
+  "Concluído",
+  "Concluido",
+  "Finalizado",
+  "Terminé",
+  "Hoàn Thành",
+  "مكتملة",
+  "مكتمل",
+  "已完结",
+];
+
+List<String> ongoingStatusList = [
+  "OnGoing",
+  "Продолжается",
+  "Updating",
+  "Em Lançamento",
+  "Em lançamento",
+  "Em andamento",
+  "Em Andamento",
+  "En cours",
+  "Ativo",
+  "Lançando",
+  "Đang Tiến Hành",
+  "Devam Ediyor",
+  "Devam ediyor",
+  "In Corso",
+  "In Arrivo",
+  "مستمرة",
+  "مستمر",
+  "En Curso",
+  "En curso",
+  "Emision",
+  "En marcha",
+  "Publicandose",
+  "En emision",
+  "连载中",
+];
+
+List<String> hiatusStatusList = [
+  "On Hold",
+  "Pausado",
+  "En espera",
+];
+
+List<String> canceledStatusList = [
+  "Canceled",
+  "Cancelado",
+];
+
+Status madaraStatusParser(String status) {
+  return canceledStatusList.contains(status)
+      ? Status.canceled
+      : completedStatusList.contains(status)
+          ? Status.completed
+          : ongoingStatusList.contains(status)
+              ? Status.ongoing
+              : hiatusStatusList.contains(status)
+                  ? Status.onHiatus
+                  : Status.unknown;
 }

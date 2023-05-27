@@ -7,7 +7,7 @@ part of 'cloudflare_bypass.dart';
 // **************************************************************************
 
 String _$cloudflareBypassDomHash() =>
-    r'f1307097afd3dd52318ecd83a4a979f4a6711aa2';
+    r'9329b2e079dda8e1ccdbccd41fe7370df1509953';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -129,7 +129,7 @@ class CloudflareBypassDomProvider extends AutoDisposeFutureProvider<Document?> {
 }
 
 String _$cloudflareBypassHtmlHash() =>
-    r'eb50578058f3b316fa07a01e336281931af55afb';
+    r'8c1d6820ba10fe5ddfe6ce532e1e4677b563ceee';
 typedef CloudflareBypassHtmlRef = AutoDisposeFutureProviderRef<String>;
 
 /// See also [cloudflareBypassHtml].

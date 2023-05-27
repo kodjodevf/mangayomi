@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/sources/multisrc/heancms/model/search.dart';
 import 'package:mangayomi/sources/multisrc/heancms/utils/utils.dart';
@@ -120,7 +121,15 @@ class HeanCms extends MangaYomiServices {
     }
 
     for (var a in data) {
-      statusList.add(a.status ?? "Unknown");
+      final status = (switch (a.status) {
+        "Ongoing" => Status.ongoing,
+        "Hiatus" => Status.onHiatus,
+        "Dropped" => Status.canceled,
+        "Completed" => Status.completed,
+        "Finished" => Status.completed,
+        _ => Status.unknown,
+      });
+      statusList.add(status);
       image.add(a.thumbnail!.startsWith("https://")
           ? a.thumbnail
           : "${getMangaAPIUrl(source)}cover/${a.thumbnail}");
@@ -156,7 +165,15 @@ class HeanCms extends MangaYomiServices {
     }
 
     for (var a in data) {
-      statusList.add(a.status ?? "Unknown");
+      final status = (switch (a.status) {
+        "Ongoing" => Status.ongoing,
+        "Hiatus" => Status.onHiatus,
+        "Dropped" => Status.canceled,
+        "Completed" => Status.completed,
+        "Finished" => Status.completed,
+        _ => Status.unknown,
+      });
+      statusList.add(status);
       image.add(a.thumbnail!.startsWith("https://")
           ? a.thumbnail
           : "${getMangaAPIUrl(source)}cover/${a.thumbnail}");
