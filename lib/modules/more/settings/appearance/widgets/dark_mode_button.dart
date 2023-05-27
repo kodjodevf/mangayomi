@@ -16,13 +16,13 @@ class DarkModeButton extends ConsumerStatefulWidget {
 class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
   @override
   Widget build(BuildContext context) {
-    bool isLight = ref.watch(themeModeStateProvider);
+    bool isDark = ref.watch(themeModeStateProvider);
     return SwitchListTile(
       onChanged: (value) {
         if (value) {
-          ref.read(themeModeStateProvider.notifier).setLightTheme();
-        } else {
           ref.read(themeModeStateProvider.notifier).setDarkTheme();
+        } else {
+          ref.read(themeModeStateProvider.notifier).setLightTheme();
         }
       },
       title: const Text(
@@ -30,10 +30,10 @@ class _DarkModeButtonState extends ConsumerState<DarkModeButton> {
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
-        isLight ? 'Off' : 'On',
+        !isDark ? 'Off' : 'On',
         style: TextStyle(fontSize: 11, color: secondaryColor(context)),
       ),
-      value: isLight,
+      value: !isDark,
     );
   }
 }

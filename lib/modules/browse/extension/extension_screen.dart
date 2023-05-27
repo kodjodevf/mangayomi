@@ -43,7 +43,7 @@ class ExtensionScreen extends ConsumerWidget {
                       Text(
                         groupByValue,
                         style: const TextStyle(
-                            fontWeight: FontWeight.w300, fontSize: 12),
+                            fontWeight: FontWeight.bold, fontSize: 13),
                       ),
                     ],
                   ),

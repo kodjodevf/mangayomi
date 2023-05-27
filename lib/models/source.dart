@@ -16,6 +16,8 @@ class Source {
 
   bool? isAdded;
 
+  bool? isPinned;
+
   bool? isNsfw;
 
   @enumerated
@@ -26,6 +28,8 @@ class Source {
   bool? isFullData;
 
   bool? isCloudflare;
+
+  bool? lastUsed;
 
   String? dateFormat;
 
@@ -47,6 +51,8 @@ class Source {
     this.isNsfw = false,
     this.isFullData = false,
     this.isCloudflare = false,
+    this.isPinned = false,
+    this.lastUsed = false,
     this.apiUrl = "",
   });
 }

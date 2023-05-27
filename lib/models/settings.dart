@@ -94,7 +94,7 @@ class Settings {
       this.dateFormat = "M/d/y",
       this.relativeTimesTamps = 2,
       this.flexSchemeColorIndex = 2,
-      this.themeIsDark = true,
+      this.themeIsDark = false,
       this.incognitoMode = false,
       this.chapterPageUrlsList,
       this.showPagesNumber = true,

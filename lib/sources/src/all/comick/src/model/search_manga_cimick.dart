@@ -32,6 +32,7 @@ class MangaSearchModelComick {
     title = json['title'];
 
     slug = json['slug'];
+    hid = json['hid'];
 
     coverUrl = json['cover_url'];
   }

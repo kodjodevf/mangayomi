@@ -28,6 +28,7 @@ refreshSourceListData(RefreshSourceListDataRef ref) {
           ..typeSource = source.typeSource
           ..isFullData = source.isFullData
           ..lang = source.lang
+          ..isNsfw = source.isNsfw
           ..sourceName = source.sourceName);
       }
     }

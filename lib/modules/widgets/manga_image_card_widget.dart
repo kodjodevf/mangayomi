@@ -8,6 +8,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
@@ -30,16 +31,50 @@ class MangaImageCardWidget extends ConsumerWidget {
         pushToMangaReaderDetail(
             context: context, getManga: getMangaDetail!, lang: lang);
       },
-      child: CoverViewWidget(children: [
-        cachedNetworkImage(
-            headers:
-                ref.watch(headersProvider(source: getMangaDetail!.source!)),
-            imageUrl: getMangaDetail!.imageUrl!,
-            width: 200,
-            height: 270,
-            fit: BoxFit.cover),
-        BottomTextWidget(text: getMangaDetail!.name!)
-      ]),
+      child: StreamBuilder(
+          stream: isar.mangas
+              .filter()
+              .langEqualTo(lang)
+              .nameEqualTo(getMangaDetail!.name)
+              .sourceEqualTo(getMangaDetail!.source)
+              .favoriteEqualTo(true)
+              .watch(fireImmediately: true),
+          builder: (context, snapshot) {
+            return CoverViewWidget(children: [
+              cachedNetworkImage(
+                  headers: ref
+                      .watch(headersProvider(source: getMangaDetail!.source!)),
+                  imageUrl: getMangaDetail!.imageUrl!,
+                  width: 200,
+                  height: 270,
+                  fit: BoxFit.cover),
+              Container(
+                color: snapshot.hasData && snapshot.data!.isNotEmpty
+                    ? Colors.black.withOpacity(0.7)
+                    : null,
+              ),
+              if (snapshot.hasData && snapshot.data!.isNotEmpty)
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: primaryColor(context),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: const Padding(
+                          padding: EdgeInsets.all(2),
+                          child: Text(
+                            "In library",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
+                    )),
+              BottomTextWidget(text: getMangaDetail!.name!)
+            ]);
+          }),
     );
   }
 }

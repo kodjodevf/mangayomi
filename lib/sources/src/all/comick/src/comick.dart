@@ -103,18 +103,18 @@ class Comick extends MangaYomiServices {
       required AutoDisposeFutureProviderRef ref}) async {
     final response = await ref.watch(httpGetProvider(
             url:
-                'https://api.comick.fun/search?q=${query.trim()}&tachiyomi=true&page=1',
+                '${getMangaAPIUrl(source)}/v1.0/search?q=${query.trim()}&tachiyomi=true&limit=50&page=1',
             source: source,
             resDom: false)
         .future) as String?;
-    var popularManga = jsonDecode(response!) as List;
-    var popularMangaList =
-        popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
+    var search = jsonDecode(response!) as List;
+    var searchList =
+        search.map((e) => MangaSearchModelComick.fromJson(e)).toList();
 
-    for (var popular in popularMangaList) {
-      url.add("/comic/${popular.slug}");
-      name.add(popular.title);
-      image.add(popular.coverUrl);
+    for (var search in searchList) {
+      url.add("/comic/${search.hid}#");
+      name.add(search.title);
+      image.add(search.coverUrl);
     }
 
     return mangaRes();

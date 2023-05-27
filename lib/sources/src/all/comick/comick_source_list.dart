@@ -4,7 +4,7 @@ const logoUrl =
     'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75';
 const apiUrl = 'https://api.comick.fun';
 const baseUrl = 'https://comick.app';
-
+const isNsfw = true;
 List<Source> get comickSourcesList => _comickSourcesList;
 List<Source> _comickSourcesList = [
   Source(
@@ -15,6 +15,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -24,6 +25,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -33,6 +35,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -42,6 +45,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -51,6 +55,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -60,6 +65,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -69,6 +75,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -78,6 +85,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -87,6 +95,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -96,6 +105,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -105,6 +115,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -114,6 +125,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -123,6 +135,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -132,6 +145,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -141,6 +155,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -150,6 +165,7 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
   Source(
       sourceName: 'Comick',
@@ -159,5 +175,6 @@ List<Source> _comickSourcesList = [
       typeSource: TypeSource.comick,
       logoUrl: logoUrl,
       dateFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'",
+      isNsfw: isNsfw,
       dateFormatLocale: "en"),
 ];

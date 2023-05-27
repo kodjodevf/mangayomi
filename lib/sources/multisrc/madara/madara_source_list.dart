@@ -84,19 +84,11 @@ List<Source> _madaraSourcesList = [
     dateFormat: "MMMM dd, yyyy",
     dateFormatLocale: "tr",
   ),
-  Source(
-    sourceName: "Comictoon",
-    baseUrl: "https://comictoonthaith-new.com",
-    lang: "th",
-    typeSource: TypeSource.madara,
-    logoUrl: '',
-    dateFormat: "MMMMM dd, yyyy",
-    dateFormatLocale: "th",
-  ),
+
   Source(
     sourceName: "CookieToon",
     baseUrl: "https://cookietoon.online",
-    lang: "pt-BR",
+    lang: "pt-br",
     typeSource: TypeSource.madara,
     logoUrl: '',
     dateFormat: "dd/MM/yyyy",
@@ -105,7 +97,7 @@ List<Source> _madaraSourcesList = [
   Source(
     sourceName: "Drope Scan",
     baseUrl: "https://dropescan.com",
-    lang: "pt-BR",
+    lang: "pt-br",
     typeSource: TypeSource.madara,
     logoUrl: '',
     dateFormat: "dd/MM/yyyy",
@@ -123,7 +115,7 @@ List<Source> _madaraSourcesList = [
   Source(
     sourceName: "Final Scans",
     baseUrl: "https://finalscans.com",
-    lang: "pt-BR",
+    lang: "pt-br",
     typeSource: TypeSource.madara,
     logoUrl: '',
     isNsfw: true,
@@ -190,7 +182,7 @@ List<Source> _madaraSourcesList = [
   Source(
     sourceName: "Kami Sama Explorer",
     baseUrl: "https://leitor.kamisama.com.br",
-    lang: "pt-BR",
+    lang: "pt-br",
     typeSource: TypeSource.madara,
     logoUrl: '',
     dateFormat: "dd 'de' MMMM 'de' yyyy",

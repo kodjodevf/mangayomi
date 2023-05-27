@@ -151,7 +151,7 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
           }
           return false;
         });
-        await Future.delayed(Duration(seconds: 10));
+        await Future.delayed(const Duration(seconds: 10));
         html = await controller.evaluateJavascript(
             source:
                 "window.document.getElementsByTagName('html')[0].outerHTML;");

@@ -62,23 +62,33 @@ const SourceSchema = CollectionSchema(
       name: r'isNsfw',
       type: IsarType.bool,
     ),
-    r'lang': PropertySchema(
+    r'isPinned': PropertySchema(
       id: 9,
+      name: r'isPinned',
+      type: IsarType.bool,
+    ),
+    r'lang': PropertySchema(
+      id: 10,
       name: r'lang',
       type: IsarType.string,
     ),
+    r'lastUsed': PropertySchema(
+      id: 11,
+      name: r'lastUsed',
+      type: IsarType.bool,
+    ),
     r'logoUrl': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'logoUrl',
       type: IsarType.string,
     ),
     r'sourceName': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'sourceName',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'typeSource',
       type: IsarType.byte,
       enumMap: _SourcetypeSourceEnumValueMap,
@@ -164,10 +174,12 @@ void _sourceSerialize(
   writer.writeBool(offsets[6], object.isCloudflare);
   writer.writeBool(offsets[7], object.isFullData);
   writer.writeBool(offsets[8], object.isNsfw);
-  writer.writeString(offsets[9], object.lang);
-  writer.writeString(offsets[10], object.logoUrl);
-  writer.writeString(offsets[11], object.sourceName);
-  writer.writeByte(offsets[12], object.typeSource.index);
+  writer.writeBool(offsets[9], object.isPinned);
+  writer.writeString(offsets[10], object.lang);
+  writer.writeBool(offsets[11], object.lastUsed);
+  writer.writeString(offsets[12], object.logoUrl);
+  writer.writeString(offsets[13], object.sourceName);
+  writer.writeByte(offsets[14], object.typeSource.index);
 }
 
 Source _sourceDeserialize(
@@ -187,11 +199,13 @@ Source _sourceDeserialize(
     isCloudflare: reader.readBoolOrNull(offsets[6]),
     isFullData: reader.readBoolOrNull(offsets[7]),
     isNsfw: reader.readBoolOrNull(offsets[8]),
-    lang: reader.readStringOrNull(offsets[9]),
-    logoUrl: reader.readStringOrNull(offsets[10]),
-    sourceName: reader.readStringOrNull(offsets[11]),
+    isPinned: reader.readBoolOrNull(offsets[9]),
+    lang: reader.readStringOrNull(offsets[10]),
+    lastUsed: reader.readBoolOrNull(offsets[11]),
+    logoUrl: reader.readStringOrNull(offsets[12]),
+    sourceName: reader.readStringOrNull(offsets[13]),
     typeSource:
-        _SourcetypeSourceValueEnumMap[reader.readByteOrNull(offsets[12])] ??
+        _SourcetypeSourceValueEnumMap[reader.readByteOrNull(offsets[14])] ??
             TypeSource.single,
   );
   return object;
@@ -223,12 +237,16 @@ P _sourceDeserializeProp<P>(
     case 8:
       return (reader.readBoolOrNull(offset)) as P;
     case 9:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 10:
       return (reader.readStringOrNull(offset)) as P;
     case 11:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 12:
+      return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readStringOrNull(offset)) as P;
+    case 14:
       return (_SourcetypeSourceValueEnumMap[reader.readByteOrNull(offset)] ??
           TypeSource.single) as P;
     default:
@@ -1128,6 +1146,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> isPinnedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isPinned',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isPinnedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isPinned',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isPinnedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isPinned',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> langIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1269,6 +1313,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'lang',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> lastUsedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lastUsed',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> lastUsedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lastUsed',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> lastUsedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastUsed',
+        value: value,
       ));
     });
   }
@@ -1732,6 +1802,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -1741,6 +1823,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
   QueryBuilder<Source, Source, QAfterSortBy> sortByLangDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByLastUsed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUsed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByLastUsedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUsed', Sort.desc);
     });
   }
 
@@ -1902,6 +1996,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsPinnedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isPinned', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -1911,6 +2017,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
   QueryBuilder<Source, Source, QAfterSortBy> thenByLangDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByLastUsed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUsed', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByLastUsedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUsed', Sort.desc);
     });
   }
 
@@ -2011,10 +2129,22 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByIsPinned() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isPinned');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByLang(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lang', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Source, Source, QDistinct> distinctByLastUsed() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastUsed');
     });
   }
 
@@ -2100,9 +2230,21 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Source, bool?, QQueryOperations> isPinnedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isPinned');
+    });
+  }
+
   QueryBuilder<Source, String?, QQueryOperations> langProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lang');
+    });
+  }
+
+  QueryBuilder<Source, bool?, QQueryOperations> lastUsedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastUsed');
     });
   }
 

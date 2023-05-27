@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/source_list.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/lang.dart';
 import 'package:mangayomi/modules/library/search_text_form_field.dart';
@@ -31,7 +33,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
-        ? isar.sources.filter().isAddedEqualTo(true).findAllSync()
+        ? isar.sources.filter().isPinnedEqualTo(true).findAllSync()
         : sourcesList;
     return Scaffold(
       appBar: AppBar(
@@ -62,7 +64,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
               children: [
                 for (var i = 0; i < sourceList.length; i++)
                   SizedBox(
-                    height: 230,
+                    height: 260,
                     child: SourceSearchScreen(
                       query: query,
                       source: sourceList[i],
@@ -91,7 +93,7 @@ class SourceSearchScreen extends ConsumerWidget {
         .watch(searchMangaProvider(source: source.sourceName!, query: query));
     return Scaffold(
         body: SizedBox(
-      height: 240,
+      height: 260,
       child: Column(
         children: [
           ListTile(
@@ -175,43 +177,93 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
             pushToMangaReaderDetail(
                 context: context, getManga: data, lang: widget.lang);
           },
-          child: SizedBox(
-            width: 90,
-            child: Column(children: [
-              cachedNetworkImage(
-                  headers: ref.watch(headersProvider(source: data.source!)),
-                  imageUrl: data.imageUrl!,
-                  width: 80,
-                  height: 120,
-                  fit: BoxFit.fill),
-              BottomTextWidget(
-                fontSize: 12.0,
-                text: widget.manga.name!,
-                isLoading: true,
-                isComfortableGrid: true,
-              )
-            ]),
-          ),
+          child: StreamBuilder(
+              stream: isar.mangas
+                  .filter()
+                  .langEqualTo(widget.lang)
+                  .nameEqualTo(data.name)
+                  .sourceEqualTo(data.source)
+                  .favoriteEqualTo(true)
+                  .watch(fireImmediately: true),
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: Column(children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: cachedNetworkImage(
+                                headers: ref.watch(
+                                    headersProvider(source: data.source!)),
+                                imageUrl: data.imageUrl!,
+                                width: 100,
+                                height: 140,
+                                fit: BoxFit.fill),
+                          ),
+                          BottomTextWidget(
+                            fontSize: 12.0,
+                            text: widget.manga.name!,
+                            isLoading: true,
+                            isComfortableGrid: true,
+                          )
+                        ]),
+                      ),
+                      Container(
+                        width: 100,
+                        height: 140,
+                        color: snapshot.hasData && snapshot.data!.isNotEmpty
+                            ? Colors.black.withOpacity(0.7)
+                            : null,
+                      ),
+                      if (snapshot.hasData && snapshot.data!.isNotEmpty)
+                        Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: primaryColor(context),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(2),
+                                  child: Text(
+                                    "In library",
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                              ),
+                            )),
+                    ],
+                  ),
+                );
+              }),
         );
       },
-      loading: () => SizedBox(
-        width: 60,
-        child: Column(children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Container(
-              color: Theme.of(context).cardColor,
-              width: 80,
-              height: 120,
+      loading: () => Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: SizedBox(
+          width: 100,
+          child: Column(children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                color: Theme.of(context).cardColor,
+                width: 100,
+                height: 140,
+              ),
             ),
-          ),
-          BottomTextWidget(
-            fontSize: 12.0,
-            text: widget.manga.name!,
-            isLoading: true,
-            isComfortableGrid: true,
-          )
-        ]),
+            BottomTextWidget(
+              fontSize: 12.0,
+              text: widget.manga.name!,
+              isLoading: true,
+              isComfortableGrid: true,
+            )
+          ]),
+        ),
       ),
       error: (error, stackTrace) => Center(child: Text(error.toString())),
     );

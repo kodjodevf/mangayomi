@@ -7,7 +7,7 @@ part of 'refresh_source_list_data.dart';
 // **************************************************************************
 
 String _$refreshSourceListDataHash() =>
-    r'f77838cebad50f030d2038d07584199b4509f407';
+    r'c6ab103b0519d79afc8530ab7027a988203de5d3';
 
 /// See also [refreshSourceListData].
 @ProviderFor(refreshSourceListData)
