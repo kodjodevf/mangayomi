@@ -2,8 +2,8 @@ import 'package:mangayomi/models/source.dart';
 
 const logoUrl =
     'https://comick.app/_next/image?url=%2Fstatic%2Ficons%2Funicorn-64.png&w=144&q=75';
-const apiUrl = 'https://api.comick.fun/';
-const baseUrl = 'https://comick.app/';
+const apiUrl = 'https://api.comick.fun';
+const baseUrl = 'https://comick.app';
 
 List<Source> get comickSourcesList => _comickSourcesList;
 List<Source> _comickSourcesList = [

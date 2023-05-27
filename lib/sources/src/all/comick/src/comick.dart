@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/sources/src/all/comick/src/model/chapter_page_comick.dart';
@@ -11,6 +10,8 @@ import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/src/all/comick/src/utils/utils.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:http/http.dart' as http;
+import 'package:mangayomi/utils/headers.dart';
 
 class Comick extends MangaYomiServices {
   @override
@@ -21,19 +22,20 @@ class Comick extends MangaYomiServices {
     source = source.toLowerCase();
     final response = await ref.watch(httpGetProvider(
             url:
-                'https://api.comick.fun/v1.0/search?sort=follow&page=$page&tachiyomi=true',
+                '${getMangaAPIUrl(source)}/v1.0/search?sort=follow&page=$page&tachiyomi=true',
             source: source,
             resDom: false)
         .future) as String?;
     var popularManga = jsonDecode(response!) as List;
-
     var popularMangaList =
         popularManga.map((e) => PopularMangaModelComick.fromJson(e)).toList();
+
     for (var popular in popularMangaList) {
-      url.add("/comic/${popular.slug}");
+      url.add("/comic/${popular.hid}#");
       name.add(popular.title);
       image.add(popular.coverUrl);
     }
+    
     return mangaRes();
   }
 
@@ -44,16 +46,14 @@ class Comick extends MangaYomiServices {
       required String source,
       required AutoDisposeFutureProviderRef ref}) async {
     final response = await ref.watch(httpGetProvider(
-            url: 'https://api.comick.fun${manga.url}?tachiyomi=true',
+            url:
+                '${getMangaAPIUrl(source)}${manga.url!.replaceAll("#", '')}?tachiyomi=true',
             source: source,
             resDom: false)
         .future) as String?;
     var mangaDetail = jsonDecode(response!) as Map<String, dynamic>;
-
     var mangaDetailLMap = MangaDetailModelComick.fromJson(mangaDetail);
-
     RegExp regExp = RegExp(r'name:\s*(.*?),');
-
     String authorr =
         regExp.firstMatch(mangaDetailLMap.authors![0].toString())?.group(1) ??
             '';
@@ -61,32 +61,37 @@ class Comick extends MangaYomiServices {
     status = statuss;
     author = authorr;
     RegExp regExp1 = RegExp(r'name:\s*(.*?)}');
+
     for (var ok in mangaDetailLMap.genres!) {
       genre.add(regExp1.firstMatch(ok.toString())!.group(1)!);
     }
+
     description = mangaDetailLMap.comic!.desc;
-    String tt = await findCurrentSlug(mangaDetailLMap.comic!.slug!, ref);
-    String mangaId = tt.split('":"').last.replaceAll('"}', '');
-    String limit = mangaDetailLMap.comic!.chapterCount.toString();
+    final request = await paginatedChapterListRequest(
+        ref, manga.url!.replaceAll("#", ''), 1, source, lang);
+    final chapterListResponse =
+        MangaChapterModelComick.fromJson(json.decode(request));
+    final mangaUrl = request.substring(request.indexOf(getMangaAPIUrl(source)) +
+        getMangaAPIUrl(source).length);
+    var resultSize = chapterListResponse.chapters!.length;
+    var page = 2;
 
-    final responsee = await ref.watch(httpGetProvider(
-            url:
-                'https://api.comick.fun/comic/$mangaId/chapters?lang=$lang&limit=$limit',
-            source: source,
-            resDom: false)
-        .future) as String?;
-    var chapterDetail = jsonDecode(responsee!) as Map<String, dynamic>;
-    var chapterDetailMap = MangaChapterModelComick.fromJson(chapterDetail);
-    for (var chapter in chapterDetailMap.chapters!) {
+    while (chapterListResponse.total! > resultSize) {
+      final newResponse = await paginatedChapterListRequest(
+          ref, manga.url!.replaceAll("#", ''), page, source, lang);
+      final newChapterListResponse =
+          MangaChapterModelComick.fromJson(json.decode(newResponse));
+      chapterListResponse.chapters!.addAll(newChapterListResponse.chapters!);
+      resultSize += newChapterListResponse.chapters!.length;
+      page += 1;
+    }
+
+    for (var chapter in chapterListResponse.chapters!) {
       scanlators.add(chapter.groupName!.isNotEmpty
-          ? chapter.groupName!.first.toString() != 'null'
-              ? chapter.groupName!.first
-              : ""
-          : "");
-      chapterUrl.add(
-          "/comic/${mangaDetailLMap.comic!.slug}/${chapter.hid}-chapter-${chapter.chap}-en");
+          ? chapter.groupName!.join()
+          : "Unknown");
+      chapterUrl.add("$mangaUrl/${chapter.hid}-chapter-${chapter.chap}-$lang");
       chapterDate.add(parseDate(chapter.createdAt!, source));
-
       chapterTitle.add(beautifyChapterName(
           chapter.vol ?? "", chapter.chap ?? "", chapter.title ?? "", lang));
     }
@@ -108,11 +113,13 @@ class Comick extends MangaYomiServices {
     var popularManga = jsonDecode(response!) as List;
     var popularMangaList =
         popularManga.map((e) => MangaSearchModelComick.fromJson(e)).toList();
+
     for (var popular in popularMangaList) {
       url.add("/comic/${popular.slug}");
       name.add(popular.title);
       image.add(popular.coverUrl);
     }
+
     return mangaRes();
   }
 
@@ -120,18 +127,31 @@ class Comick extends MangaYomiServices {
   Future<List<String>> getChapterUrl(
       {required Chapter chapter,
       required AutoDisposeFutureProviderRef ref}) async {
-    String mangaId = chapter.url!.split('/').last.split('-').first;
-
+    String mangaHid = chapter.url!.split('/').last.split('-').first;
+    String source = chapter.manga.value!.source!;
     final response = await ref.watch(httpGetProvider(
-            url: 'https://api.comick.fun/chapter/$mangaId?tachiyomi=true',
-            source: 'comick',
+            url: '${getMangaAPIUrl(source)}/chapter/$mangaHid?tachiyomi=true',
+            source: source,
             resDom: false)
         .future) as String?;
     var data = jsonDecode(response!) as Map<String, dynamic>;
     var page = ChapterPageComick.fromJson(data);
+
     for (var url in page.chapter!.images!) {
       pageUrls.add(url.url!);
     }
+
     return pageUrls;
+  }
+
+  Future<String> paginatedChapterListRequest(AutoDisposeFutureProviderRef ref,
+      String mangaUrl, int page, String source, String lang) async {
+    final url = Uri.parse(
+        "${getMangaAPIUrl(source)}$mangaUrl/chapters?${lang != "all" ? 'lang=$lang' : ''}&tachiyomi=true&page=$page");
+    var request = http.Request('GET', url);
+    request.headers.addAll(ref.watch(headersProvider(source: source)));
+    http.StreamedResponse response = await request.send();
+
+    return response.stream.bytesToString();
   }
 }
