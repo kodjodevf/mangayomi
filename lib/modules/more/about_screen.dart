@@ -52,7 +52,15 @@ class _AboutScreenState extends State<AboutScreen> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 150, child: Center(child: Text("LOGO"))),
+          SizedBox(
+              height: 150,
+              child: Center(
+                  child: Image.asset(
+                "assets/icon.png",
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+              ))),
           Flexible(
             flex: 3,
             child: Column(

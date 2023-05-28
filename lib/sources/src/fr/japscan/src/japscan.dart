@@ -41,11 +41,11 @@ class Japscan extends MangaYomiServices {
 
         if (stat.isNotEmpty) {
           String sta = stat[0].replaceAll('Statut:', '').trim();
-          status = (switch (sta) {
+          status = switch (sta) {
             "En Cours" => Status.ongoing,
             "Terminé" => Status.completed,
             _ => Status.unknown,
-          });
+          };
         } else {
           status = Status.unknown;
         }

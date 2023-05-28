@@ -141,16 +141,6 @@ class Comick extends MangaYomiServices {
     return pageUrls;
   }
 
-  Future<String> paginatedChapterListRequest(AutoDisposeFutureProviderRef ref,
-      String mangaUrl, int page, String source, String lang) async {
-    final response = await ref.watch(httpGetProvider(
-            url:
-                "${getMangaAPIUrl(source)}$mangaUrl/chapters?${lang != "all" ? 'lang=$lang' : ''}&tachiyomi=true&page=$page",
-            source: source,
-            resDom: false)
-        .future) as String?;
-    return response!;
-  }
 
   @override
   Future<List<GetManga?>> getLatestUpdatesManga(

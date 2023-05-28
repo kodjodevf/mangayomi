@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +52,6 @@ class Madara extends MangaYomiServices {
     } else {
       pageUrls = imgs;
     }
-    log(pageUrls.toString());
 
     return pageUrls;
   }

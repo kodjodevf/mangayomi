@@ -32,11 +32,11 @@ class Mangahere extends MangaYomiServices {
           .map((e) => e.text.trim())
           .toList();
 
-      status = (switch (tt[0]) {
+      status = switch (tt[0]) {
         "ongoing" => Status.ongoing,
         "completed" => Status.completed,
         _ => Status.unknown,
-      });
+      };
     } else {
       status = Status.unknown;
     }

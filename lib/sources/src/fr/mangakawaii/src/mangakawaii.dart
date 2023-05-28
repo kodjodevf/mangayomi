@@ -61,11 +61,11 @@ class MangaKawaii extends MangaYomiServices {
       }
     }
     detail = detail.toSet().toList();
-    status = (switch (detail[0]) {
+    status = switch (detail[0]) {
       "En Cours" => Status.ongoing,
       "Terminé" => Status.completed,
       _ => Status.unknown,
-    });
+    };
     author = detail[1];
     if (dom.querySelectorAll("tr[class*='volume-']").isNotEmpty) {
       final url = dom.querySelectorAll("tr[class*='volume-']").map((e) {
