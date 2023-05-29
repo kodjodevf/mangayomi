@@ -30,7 +30,7 @@ class Japscan extends MangaYomiServices {
       RegExp exp = RegExp(r'src="([^"]+)"');
 
       String? srcValue = exp.firstMatch(images[0])?.group(1);
-      manga.imageUrl = '${getMangaBaseUrl(source)}l$srcValue';
+      manga.imageUrl = '${getMangaBaseUrl(source)}$srcValue';
 
       if (dom.querySelectorAll('.col-7 > p').isNotEmpty) {
         final stat = dom
@@ -90,7 +90,7 @@ class Japscan extends MangaYomiServices {
       RegExp exp = RegExp(r'href="([^"]+)"');
 
       String? srcValue = exp.firstMatch(ok)?.group(1);
-      chapterUrl.add('${getMangaBaseUrl(source)}l$srcValue');
+      chapterUrl.add('${getMangaBaseUrl(source)}$srcValue');
     }
 
     final chapterTitlee =
@@ -118,7 +118,7 @@ class Japscan extends MangaYomiServices {
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: "${getMangaBaseUrl(source)}l/", source: source, resDom: true)
+            url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)
         .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
       final urls = dom
@@ -127,7 +127,7 @@ class Japscan extends MangaYomiServices {
           .map((e) => e.attributes['href'])
           .toList();
       for (var ok in urls) {
-        url.add("${getMangaBaseUrl(source)}l$ok");
+        url.add("${getMangaBaseUrl(source)}$ok");
       }
       name = dom
           .querySelectorAll(
@@ -199,7 +199,7 @@ class Japscan extends MangaYomiServices {
     Match? match = regex.firstMatch(response!);
     String zjsurl = match!.group(1)!;
     baseUrl = response;
-    zjsUrl = "${getMangaBaseUrl(chapter.manga.value!.source!)}l/zjs/$zjsurl";
+    zjsUrl = "${getMangaBaseUrl(chapter.manga.value!.source!)}/zjs/$zjsurl";
     zjs(ref);
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
@@ -264,7 +264,7 @@ class Japscan extends MangaYomiServices {
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: "${getMangaBaseUrl(source)}l/", source: source, resDom: true)
+            url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)
         .future) as Document?;
     if (dom!
         .querySelectorAll(
@@ -277,7 +277,7 @@ class Japscan extends MangaYomiServices {
           .map((e) => e.attributes['href'])
           .toList();
       for (var ok in urls) {
-        url.add("${getMangaBaseUrl(source)}l$ok");
+        url.add("${getMangaBaseUrl(source)}$ok");
       }
 
       name = dom

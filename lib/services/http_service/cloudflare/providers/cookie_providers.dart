@@ -10,10 +10,11 @@ class CookieState extends _$CookieState {
     final cookieList = isar.settings
         .getSync(227)!
         .cookiesList!
-        .where((element) => element.source == source);
+        .where((element) => element.source == source)
+        .toList();
     String cookie = "";
     if (cookieList.isNotEmpty) {
-      cookie = cookieList.first.cookie!;
+      cookie = cookieList.first.cookie!.toString();
     }
     return cookie;
   }
@@ -26,6 +27,7 @@ class CookieState extends _$CookieState {
         cookieList.add(cookie);
       }
     }
+    
     cookieList.add(Cookie()
       ..source = source
       ..cookie = newCookie);

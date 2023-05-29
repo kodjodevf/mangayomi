@@ -161,7 +161,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             await InAppBrowser.openWithSystemBrowser(
                                 url: WebUri.uri(Uri.parse(_url)));
                           } else if (value == 3) {
-                            CookieManager.instance().getAllCookies();
+                            CookieManager.instance().deleteAllCookies();
                           }
                         }),
                       ],

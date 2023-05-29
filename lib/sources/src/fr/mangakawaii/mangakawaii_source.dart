@@ -8,4 +8,5 @@ Source _mangakawaiiSource = Source(
     typeSource: TypeSource.single,
     logoUrl: 'https://www.mangakawaii.io/assets/img/logo.png',
     dateFormat: "dd.MM.yyyy",
+    isCloudflare: true,
     dateFormatLocale: "en_US");

@@ -141,8 +141,9 @@ class MangaKawaii extends MangaYomiServices {
           .querySelectorAll('a > div > div.hot-manga__item-name')
           .map((e) => e.innerHtml)
           .toList();
-      for (var i = 0; i < name.length; i++) {
-        image.add("");
+      for (var ur in url) {
+        image.add(
+        "https://cdn.mangakawaii.pics/uploads$ur/cover/cover_250x350.jpg");
       }
     }
     return mangaRes();
@@ -155,7 +156,7 @@ class MangaKawaii extends MangaYomiServices {
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url:
-                'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga',
+                'https://www.mangakawaii.io/search?query=${query.trim()}&search_type=manga&page=1',
             source: source,
             resDom: true)
         .future) as Document?;
