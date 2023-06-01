@@ -15,9 +15,8 @@ class StorageProvider {
         final result = await permission.request();
         if (result == PermissionStatus.granted) {
           return true;
-        } else {
-          return false;
         }
+        return false;
       }
     }
     return true;

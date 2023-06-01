@@ -14,6 +14,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
@@ -29,6 +30,7 @@ void main(List<String> args) async {
   }
   WidgetsFlutterBinding.ensureInitialized();
   await _initDB();
+  await StorageProvider().requestPermission();
   runApp(const ProviderScope(child: MyApp()));
 }
 

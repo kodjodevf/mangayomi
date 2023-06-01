@@ -72,7 +72,7 @@ class Madara extends MangaYomiServices {
         .join(', ');
     description = dom
         .querySelectorAll(
-            "div.description-summary div.summary__content, div.summary_content div.post-content_item > h5 + div, div.summary_content div.manga-excerpt, div.sinopsis div.contenedor")
+            "div.description-summary div.summary__content, div.summary_content div.post-content_item > h5 + div, div.summary_content div.manga-excerpt, div.sinopsis div.contenedor, .description-summary > p")
         .map((e) => e.text)
         .toList()
         .first;
