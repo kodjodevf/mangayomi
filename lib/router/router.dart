@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga_type.dart';
+import 'package:mangayomi/modules/local_reader/local_reader_screen.dart';
+import 'package:mangayomi/modules/local_reader/models/models.dart';
+import 'package:mangayomi/modules/local_reader/reader/local_reader_reader_view.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
@@ -23,7 +26,6 @@ import 'package:mangayomi/modules/more/settings/browse/browse_screen.dart';
 import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
-import 'package:mangayomi/modules/updates/updates_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final router = AsyncRouterNotifier();
@@ -51,12 +53,12 @@ class AsyncRouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "updates",
-                path: '/updates',
-                builder: (context, state) => const UpdatesScreen(),
+                name: "localReader",
+                path: '/localReader',
+                builder: (context, state) => const LocalReaderScreen(),
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
-                  child: const UpdatesScreen(),
+                  child: const LocalReaderScreen(),
                 ),
               ),
               GoRoute(
@@ -316,6 +318,25 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const BrowseSScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/localReaderReaderView",
+          name: "localReaderReaderView",
+          builder: (context, state) {
+            final localArchive = state.extra as LocalArchive;
+            return LocalReaderReaderView(
+              localArchive: localArchive,
+            );
+          },
+          pageBuilder: (context, state) {
+            final localArchive = state.extra as LocalArchive;
+            return CustomTransition(
+              key: state.pageKey,
+              child: LocalReaderReaderView(
+                localArchive: localArchive,
+              ),
             );
           },
         ),

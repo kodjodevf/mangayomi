@@ -50,7 +50,7 @@ dependencies:
   intl: ^0.18.0
   google_fonts: ^4.0.3
   url_launcher: ^6.1.10
-  package_info_plus: ^3.0.2
+  package_info_plus: ^4.0.2
   background_downloader:
     git:
       url: https://github.com/kodjodevf/background_downloader.git
@@ -62,6 +62,9 @@ dependencies:
   share_plus: ^7.0.0
   xpath_selector_html_parser: ^3.0.1
   desktop_webview_window: ^0.2.0
+  archive: ^3.3.7
+  file_picker: ^5.3.0
+  path_provider: ^2.0.15
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -72,7 +75,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.3.3
-  riverpod_generator: ^2.1.4
+  riverpod_generator: ^2.2.3
   flutter_launcher_icons: ^0.13.1
   isar_generator: 3.1.0+1
   flutter_lints: ^2.0.1

@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     final route = GoRouter.of(context);
     int currentIndex = route.location == '/library'
         ? 0
-        : route.location == '/updates'
+        : route.location == '/localReader'
             ? 1
             : route.location == '/history'
                 ? 2
@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
                           width: isLongPressed
                               ? 0
                               : route.location != '/library' &&
-                                      route.location != '/updates' &&
+                                      route.location != '/localReader' &&
                                       route.location != '/history' &&
                                       route.location != '/browse' &&
                                       route.location != '/more'
@@ -106,14 +106,14 @@ class _MainScreenState extends State<MainScreen> {
                                         child: Text('Library'))),
                                 NavigationRailDestination(
                                     selectedIcon: Icon(
-                                      Icons.new_releases,
+                                      Icons.library_books,
                                     ),
                                     icon: Icon(
-                                      Icons.new_releases_outlined,
+                                      Icons.library_books_outlined,
                                     ),
                                     label: Padding(
                                         padding: EdgeInsets.only(top: 5),
-                                        child: Text('Updates'))),
+                                        child: Text('Local Reader'))),
                                 NavigationRailDestination(
                                     selectedIcon: Icon(
                                       Icons.history,
@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                                 if (newIndex == 0) {
                                   route.go('/library');
                                 } else if (newIndex == 1) {
-                                  route.go('/updates');
+                                  route.go('/localReader');
                                 } else if (newIndex == 2) {
                                   route.go('/history');
                                 } else if (newIndex == 3) {
@@ -186,7 +186,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: isLongPressed
                           ? 0
                           : route.location != '/library' &&
-                                  route.location != '/updates' &&
+                                  route.location != '/localReader' &&
                                   route.location != '/history' &&
                                   route.location != '/browse' &&
                                   route.location != '/more'
@@ -212,12 +212,12 @@ class _MainScreenState extends State<MainScreen> {
                                 label: 'Library'),
                             NavigationDestination(
                                 selectedIcon: Icon(
-                                  Icons.new_releases,
+                                  Icons.library_books,
                                 ),
                                 icon: Icon(
-                                  Icons.new_releases_outlined,
+                                  Icons.library_books_outlined,
                                 ),
-                                label: 'Updates'),
+                                label: 'Local Reader'),
                             NavigationDestination(
                                 selectedIcon: Icon(
                                   Icons.history,
@@ -252,7 +252,7 @@ class _MainScreenState extends State<MainScreen> {
                             if (newIndex == 0) {
                               route.go('/library');
                             } else if (newIndex == 1) {
-                              route.go('/updates');
+                              route.go('/localReader');
                             } else if (newIndex == 2) {
                               route.go('/history');
                             } else if (newIndex == 3) {
