@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/local_reader/models/models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -87,11 +87,11 @@ LocalArchive _extractArchive(String path) {
       if (_isImageFile(filename)) {
         if (filename.contains("cover")) {
           final data = file.content as Uint8List;
-          localArchive.coverImage = Uint8List.fromList(data);
+          localArchive.coverImage = data;
         } else {
           final data = file.content as Uint8List;
           localArchive.images!.add(LocalImage()
-            ..image = Uint8List.fromList(data)
+            ..image = data
             ..name = filename.split('/').last.split("\\").last);
         }
       }
