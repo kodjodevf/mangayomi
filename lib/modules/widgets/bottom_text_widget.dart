@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/colors.dart';
 
 class BottomTextWidget extends StatelessWidget {
   final bool isLoading;
   final String text;
   final bool isComfortableGrid;
   final double? fontSize;
+  final int? maxLines;
   const BottomTextWidget(
       {super.key,
       required this.text,
       this.isLoading = false,
       this.isComfortableGrid = false,
-      this.fontSize = 13.0});
+      this.fontSize = 12.0,
+      this.maxLines = 2});
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +27,10 @@ class BottomTextWidget extends StatelessWidget {
                     text,
                     style: TextStyle(
                       fontSize: fontSize,
-                      color: Colors.white,
-                      shadows: const [
-                        Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0)
-                      ],
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor(context),
                     ),
-                    maxLines: 2,
+                    maxLines: maxLines,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.start,
                   ),
@@ -57,7 +58,7 @@ class BottomTextWidget extends StatelessWidget {
                               Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0)
                             ],
                           ),
-                          maxLines: 2,
+                          maxLines: maxLines,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                         ),
@@ -94,7 +95,7 @@ class BottomTextWidget extends StatelessWidget {
                                     offset: Offset(0.5, 0.9), blurRadius: 3.0)
                               ],
                             ),
-                            maxLines: 2,
+                            maxLines: maxLines,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
                           ),

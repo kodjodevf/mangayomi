@@ -17,6 +17,7 @@ class ListViewWidget extends StatelessWidget {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: ListView.builder(
+          padding: const EdgeInsets.only(top: 13),
           controller: controller,
           itemCount: itemCount,
           itemBuilder: itemBuilder),

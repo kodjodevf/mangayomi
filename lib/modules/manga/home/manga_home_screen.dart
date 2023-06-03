@@ -56,8 +56,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       _getManga = ref.watch(
           searchMangaProvider(source: widget.mangaType.source!, query: _query));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-      _getManga = ref.watch(
-          getLatestUpdatesMangaProvider(source: widget.mangaType.source!, page: 1));
+      _getManga = ref.watch(getLatestUpdatesMangaProvider(
+          source: widget.mangaType.source!, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
       _getManga = ref.watch(
           getPopularMangaProvider(source: widget.mangaType.source!, page: 1));
@@ -283,18 +283,15 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
           lang: widget.lang,
         );
       },
-      loading: () => CoverViewWidget(children: [
+      loading: () => CoverViewWidget(onTap: () {}, children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(5),
           child: Container(
             color: Theme.of(context).cardColor,
-            width: 200,
-            height: 270,
           ),
         ),
         BottomTextWidget(
           text: widget.manga.name!,
-          isLoading: true,
         )
       ]),
       error: (error, stackTrace) => Center(child: Text(error.toString())),
