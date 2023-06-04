@@ -101,7 +101,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
               children: [
                  Icon(
                   getMangaStatusIcon(widget.manga.status),
-                  size: 12,
+                  size: 14,
                 ),
                 const SizedBox(
                   width: 4,

@@ -117,8 +117,9 @@ Future<List<String>> downloadChapter(
         }
       }
     }
-
-    if (tasks.isEmpty && pageUrls.isNotEmpty) {
+    bool cbzFileExist =
+        await File("${mangaDir!.path}${chapter.name}.cbz").exists();
+    if (tasks.isEmpty && pageUrls.isNotEmpty || cbzFileExist) {
       final model = Download(
           succeeded: 0,
           failed: 0,
@@ -127,9 +128,12 @@ Future<List<String>> downloadChapter(
           taskIds: pageUrls,
           isStartDownload: false,
           chapterId: chapter.id);
-      await ref.watch(convertToCBZProvider(
-              path.path, mangaDir!.path, chapter.name!, pageUrls)
-          .future);
+      if (!cbzFileExist) {
+        await ref.watch(convertToCBZProvider(
+                path.path, mangaDir.path, chapter.name!, pageUrls)
+            .future);
+      }
+
       isar.writeTxnSync(() {
         isar.downloads.putSync(model..chapter.value = chapter);
       });
@@ -139,7 +143,7 @@ Future<List<String>> downloadChapter(
         batchProgressCallback: (succeeded, failed) async {
           if (succeeded == tasks.length) {
             await ref.watch(convertToCBZProvider(
-                    path!.path, mangaDir!.path, chapter.name!, pageUrls)
+                    path!.path, mangaDir.path, chapter.name!, pageUrls)
                 .future);
           }
           bool isEmpty = isar.downloads

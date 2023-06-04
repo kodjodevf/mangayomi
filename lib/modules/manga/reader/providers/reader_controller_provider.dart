@@ -124,6 +124,7 @@ class ReaderController extends _$ReaderController {
     if (!incognitoMode) {
       final chap = chapter;
       isar.writeTxnSync(() {
+        chap.isRead = (pageIndex + 1) == getPageLength([]);
         chap.lastPageRead = (pageIndex + 1).toString();
         isar.chapters.putSync(chap);
       });
