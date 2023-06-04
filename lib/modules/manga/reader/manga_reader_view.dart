@@ -38,7 +38,7 @@ class MangaReaderView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
-    final chapterData = ref.watch(GetChapterUrlProvider(
+    final chapterData = ref.watch(getChapterUrlProvider(
       chapter: chapter,
     ));
     final readerController =
@@ -77,6 +77,7 @@ class MangaReaderView extends ConsumerWidget {
           readerController: readerController,
           isLocaleList: data.isLocaleList,
           chapter: chapter,
+          localImages: data.localImages,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -138,12 +139,14 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       required this.url,
       required this.readerController,
       required this.isLocaleList,
-      required this.chapter});
+      required this.chapter,
+      required this.localImages});
   final ReaderController readerController;
   final Directory path;
   final List url;
   final List<bool> isLocaleList;
   final Chapter chapter;
+  final List<Uint8List> localImages;
 
   @override
   ConsumerState createState() {
@@ -921,6 +924,9 @@ class _MangaChapterPageGalleryState
                         },
                         onDoubleTap: () {},
                         child: ImageViewVertical(
+                          localImage: widget.localImages.isNotEmpty
+                              ? widget.localImages[index]
+                              : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController
                               .getSourceName()
@@ -960,6 +966,9 @@ class _MangaChapterPageGalleryState
                       },
                       itemBuilder: (BuildContext context, int index) {
                         return ImageViewHorizontal(
+                          localImage: widget.localImages.isNotEmpty
+                              ? widget.localImages[index]
+                              : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController
                               .getSourceName()

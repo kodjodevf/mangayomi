@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
@@ -24,6 +25,7 @@ Future<List<String>> downloadChapter(
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
   final tempDir = await getTemporaryDirectory();
+  final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   Directory? path;
   bool isOk = false;
@@ -125,14 +127,21 @@ Future<List<String>> downloadChapter(
           taskIds: pageUrls,
           isStartDownload: false,
           chapterId: chapter.id);
-
+      await ref.watch(convertToCBZProvider(
+              path.path, mangaDir!.path, chapter.name!, pageUrls)
+          .future);
       isar.writeTxnSync(() {
         isar.downloads.putSync(model..chapter.value = chapter);
       });
     } else {
       await FileDownloader().downloadBatch(
         tasks,
-        batchProgressCallback: (succeeded, failed) {
+        batchProgressCallback: (succeeded, failed) async {
+          if (succeeded == tasks.length) {
+            await ref.watch(convertToCBZProvider(
+                    path!.path, mangaDir!.path, chapter.name!, pageUrls)
+                .future);
+          }
           bool isEmpty = isar.downloads
               .filter()
               .chapterIdEqualTo(chapter.id!)
@@ -165,12 +174,14 @@ Future<List<String>> downloadChapter(
         },
         taskProgressCallback: (taskProgress) async {
           if (taskProgress.progress == 1.0) {
-            await File(
-                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                .copy("${path!.path}/${taskProgress.task.filename}");
-            await File(
-                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                .delete();
+            if (Platform.isAndroid) {
+              await File(
+                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                  .copy("${path!.path}/${taskProgress.task.filename}");
+              await File(
+                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                  .delete();
+            }
           }
         },
       );

@@ -1,10 +1,12 @@
 // ignore_for_file: depend_o
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/local_reader/providers/local_reader_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
@@ -24,8 +26,12 @@ class GetChapterUrlModel {
   Directory? path;
   List<String> pageUrls = [];
   List<bool> isLocaleList = [];
+  List<Uint8List> localImages = [];
   GetChapterUrlModel(
-      {required this.path, required this.pageUrls, required this.isLocaleList});
+      {required this.path,
+      required this.pageUrls,
+      required this.isLocaleList,
+      required this.localImages});
 }
 
 @riverpod
@@ -42,8 +48,11 @@ Future<GetChapterUrlModel> getChapterUrl(
   final isarPageUrls = settings!.chapterPageUrlsList!
       .where((element) => element.chapterId == chapter.id);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
-  path = await StorageProvider().getMangaChapterDirectory(chapter);
+  final storageProvider = StorageProvider();
+  path = await storageProvider.getMangaChapterDirectory(chapter);
+  final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
 
+  List<Uint8List> localImages = [];
   if (isarPageUrls.isNotEmpty &&
       isarPageUrls.first.urls != null &&
       isarPageUrls.first.urls!.isNotEmpty) {
@@ -105,6 +114,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   else if (getMangaTypeSource(source) == TypeSource.heancms) {
     pageUrls = await HeanCms().getChapterUrl(chapter: chapter, ref: ref);
   }
+
   /***********/
   /*madara*/
   /***********/
@@ -127,15 +137,29 @@ Future<GetChapterUrlModel> getChapterUrl(
       isar.writeTxnSync(() => isar.settings
           .putSync(settings..chapterPageUrlsList = chapterPageUrls));
     }
-    for (var i = 0; i < pageUrls.length; i++) {
-      if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {
+
+    if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists()) {
+      final local = await ref.watch(getArchiveDataFromFileProvider(
+              "${mangaDirectory.path}${chapter.name}.cbz")
+          .future);
+      for (var image in local.images!) {
+        localImages.add(image.image!);
         isLocaleList.add(true);
-      } else {
-        isLocaleList.add(false);
+      }
+    } else {
+      for (var i = 0; i < pageUrls.length; i++) {
+        if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {
+          isLocaleList.add(true);
+        } else {
+          isLocaleList.add(false);
+        }
       }
     }
   }
 
   return GetChapterUrlModel(
-      path: path, pageUrls: pageUrls, isLocaleList: isLocaleList);
+      path: path,
+      pageUrls: pageUrls,
+      isLocaleList: isLocaleList,
+      localImages: localImages);
 }

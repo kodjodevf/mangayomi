@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class ImageViewVertical extends ConsumerWidget {
   final String source;
   final String chapter;
   final Directory path;
+  final Uint8List? localImage;
 
   const ImageViewVertical({
     super.key,
@@ -28,6 +30,7 @@ class ImageViewVertical extends ConsumerWidget {
     required this.source,
     required this.length,
     required this.isLocale,
+    this.localImage,
   });
 
   @override
@@ -42,11 +45,18 @@ class ImageViewVertical extends ConsumerWidget {
               height: MediaQuery.of(context).padding.top,
             ),
           isLocale
-              ? ExtendedImage.file(
-                  fit: BoxFit.contain,
-                  clearMemoryCacheWhenDispose: true,
-                  enableMemoryCache: false,
-                  File('${path.path}${padIndex(index + 1)}.jpg'))
+              ? localImage != null
+                  ? ExtendedImage.memory(
+                      localImage!,
+                      fit: BoxFit.contain,
+                      clearMemoryCacheWhenDispose: true,
+                      enableMemoryCache: false,
+                    )
+                  : ExtendedImage.file(
+                      fit: BoxFit.contain,
+                      clearMemoryCacheWhenDispose: true,
+                      enableMemoryCache: false,
+                      File('${path.path}${padIndex(index + 1)}.jpg'))
               : ExtendedImage.network(url,
                   headers: ref.watch(headersProvider(source: source)),
                   handleLoadingProgress: true,

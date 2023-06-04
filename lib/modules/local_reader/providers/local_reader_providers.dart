@@ -50,10 +50,10 @@ bool _isImageFile(String path) {
 }
 
 bool _isArchiveFile(String path) {
-  List<String> imageExtensions = ['.cbz', '.zip', 'cbt', 'tar'];
+  List<String> archiveExtensions = ['.cbz', '.zip', 'cbt', 'tar'];
   String extension = path.toLowerCase();
-  for (String imageExtension in imageExtensions) {
-    if (extension.endsWith(imageExtension)) {
+  for (String archiveExtension in archiveExtensions) {
+    if (extension.endsWith(archiveExtension)) {
       return true;
     }
   }

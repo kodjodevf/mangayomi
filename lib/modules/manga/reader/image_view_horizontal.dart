@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,7 @@ class ImageViewHorizontal extends ConsumerWidget {
   final String chapter;
   final Directory path;
   final bool isLocale;
+  final Uint8List? localImage;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state) onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)
@@ -31,20 +33,31 @@ class ImageViewHorizontal extends ConsumerWidget {
     required this.onDoubleTap,
     required this.initGestureConfigHandler,
     required this.isLocale,
+    this.localImage,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return isLocale
-        ? ExtendedImage.file(
-            File("${path.path}" "${padIndex(index + 1)}.jpg"),
-            clearMemoryCacheWhenDispose: true,
-            enableMemoryCache: false,
-            mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: initGestureConfigHandler,
-            onDoubleTap: onDoubleTap,
-            loadStateChanged: loadStateChanged,
-          )
+        ? localImage != null
+            ? ExtendedImage.memory(
+                localImage!,
+                clearMemoryCacheWhenDispose: true,
+                enableMemoryCache: false,
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: initGestureConfigHandler,
+                onDoubleTap: onDoubleTap,
+                loadStateChanged: loadStateChanged,
+              )
+            : ExtendedImage.file(
+                File("${path.path}" "${padIndex(index + 1)}.jpg"),
+                clearMemoryCacheWhenDispose: true,
+                enableMemoryCache: false,
+                mode: ExtendedImageMode.gesture,
+                initGestureConfigHandler: initGestureConfigHandler,
+                onDoubleTap: onDoubleTap,
+                loadStateChanged: loadStateChanged,
+              )
         : ExtendedImage.network(
             url,
             headers: ref.watch(headersProvider(source: source)),
