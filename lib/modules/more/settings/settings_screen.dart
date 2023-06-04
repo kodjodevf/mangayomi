@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () => context.push('/general')),
             ListTileWidget(
                 title: 'Appearance',
-                subtitle: 'Theme',
+                subtitle: 'Theme, date & time format',
                 icon: Icons.color_lens_rounded,
                 onTap: () => context.push('/appearance')),
             // ListTileWidget(
@@ -34,6 +34,11 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: 'Reading mode, display, navigation',
                 icon: Icons.chrome_reader_mode_rounded,
                 onTap: () => context.push('/readerMode')),
+            ListTileWidget(
+                title: 'Downloads',
+                subtitle: 'Downloads settings',
+                icon: Icons.download_outlined,
+                onTap: () => context.push('/downloads')),
             ListTileWidget(
                 title: 'Browse',
                 subtitle: 'Sources, global search',

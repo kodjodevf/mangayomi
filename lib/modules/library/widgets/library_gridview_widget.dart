@@ -201,9 +201,8 @@ class LibraryGridViewWidget extends StatelessWidget {
                           )),
                   ],
                 ),
-                if (!isComfortableGrid)
-                  if (!isCoverOnlyGrid)
-                    BottomTextWidget(text: entriesManga[index].name!),
+                if (!isComfortableGrid && !isCoverOnlyGrid)
+                  BottomTextWidget(text: entriesManga[index].name!),
                 if (continueReaderBtn)
                   Positioned(
                       bottom: 0,

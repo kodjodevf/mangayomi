@@ -6,6 +6,7 @@ import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/modules/local_reader/local_reader_screen.dart';
 import 'package:mangayomi/modules/local_reader/models/models.dart';
 import 'package:mangayomi/modules/local_reader/reader/local_reader_reader_view.dart';
+import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
@@ -318,6 +319,19 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const BrowseSScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/downloads",
+          name: "downloads",
+          builder: (context, state) {
+            return const DownloadsScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const DownloadsScreen(),
             );
           },
         ),

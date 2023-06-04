@@ -62,10 +62,7 @@ class GeneralScreen extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text(
-              "App language",
-              style: TextStyle(),
-            ),
+            title: const Text("App language"),
             subtitle: Text(
               "English",
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),

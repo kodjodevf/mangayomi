@@ -33,7 +33,7 @@ class BrowseSScreen extends ConsumerWidget {
                 ),
                 SwitchListTile(
                     value: onlyIncludePinnedSource,
-                    title: const Text("Only inclued pinned sources"),
+                    title: const Text("Only include pinned sources"),
                     onChanged: (value) {
                       ref
                           .read(onlyIncludePinnedSourceStateProvider.notifier)

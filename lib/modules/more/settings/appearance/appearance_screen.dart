@@ -42,10 +42,7 @@ class AppearanceScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: SwitchListTile(
-                      title: const Text(
-                        "Pure black dark mode",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      title: const Text("Pure black dark mode"),
                       value: pureBlackDarkMode,
                       onChanged: (value) {
                         ref
@@ -126,10 +123,7 @@ class AppearanceScreen extends ConsumerWidget {
                           );
                         });
                   },
-                  title: const Text(
-                    "Relative timestamps",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  title: const Text("Relative timestamps"),
                   subtitle: Text(
                     relativeTimestampsList[relativeTimestamps],
                     style:
@@ -191,10 +185,7 @@ class AppearanceScreen extends ConsumerWidget {
                           );
                         });
                   },
-                  title: const Text(
-                    "Date format",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  title: const Text("Date format"),
                   subtitle: Text(
                     "$dateFormatState (${dateFormat(DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
                     style:

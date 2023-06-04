@@ -75,6 +75,12 @@ class Settings {
 
   bool? pureBlackDarkMode;
 
+  bool? downloadOnlyOnWifi;
+
+  bool? saveAsCBZArchive;
+
+  String? downloadLocation;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -107,7 +113,10 @@ class Settings {
       this.doubleTapAnimationSpeed = 1,
       this.showNSFW = true,
       this.onlyIncludePinnedSources = false,
-      this.pureBlackDarkMode = false});
+      this.pureBlackDarkMode = false,
+      this.downloadOnlyOnWifi = false,
+      this.saveAsCBZArchive = false,
+      this.downloadLocation = ""});
 }
 
 enum DisplayType {

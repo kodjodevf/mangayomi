@@ -76,10 +76,7 @@ class ReaderScreen extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text(
-              "Default reading mode",
-              style: TextStyle(),
-            ),
+            title: const Text("Default reading mode"),
             subtitle: Text(
               getReaderModeName(defaultReadingMode),
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
@@ -139,10 +136,7 @@ class ReaderScreen extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text(
-              "Double tap animation speed",
-              style: TextStyle(),
-            ),
+            title: const Text("Double tap animation speed"),
             subtitle: Text(
               getAnimationSpeedName(doubleTapAnimationSpeed),
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),

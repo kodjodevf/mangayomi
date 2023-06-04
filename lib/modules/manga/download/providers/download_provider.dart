@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
@@ -32,7 +31,6 @@ Future<List<String>> downloadChapter(
   final finalPath =
       "downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}/$scanlator${chapter.name!.replaceAll(regExp, '_')}";
   path = Directory("${path1!.path}$finalPath/");
-  log(scanlator);
   ref
       .read(getChapterUrlProvider(
     chapter: chapter,
