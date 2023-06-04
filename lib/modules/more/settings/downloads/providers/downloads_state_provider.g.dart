@@ -40,7 +40,7 @@ final saveAsCBZArchiveStateProvider =
 
 typedef _$SaveAsCBZArchiveState = AutoDisposeNotifier<bool>;
 String _$downloadLocationStateHash() =>
-    r'92db9558ed1275edfb1a6f8dca3d87905e985f95';
+    r'b883597443ed34622e20d20d51a1db56919f5362';
 
 /// See also [DownloadLocationState].
 @ProviderFor(DownloadLocationState)

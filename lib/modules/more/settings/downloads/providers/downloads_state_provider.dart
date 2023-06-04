@@ -53,7 +53,7 @@ class DownloadLocationState extends _$DownloadLocationState {
   Directory? _storageProvider;
 
   Future refresh() async {
-    _storageProvider = await StorageProvider().getDirectory();
+    _storageProvider = await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
     state = (
       "${_storageProvider!.path}downloads",

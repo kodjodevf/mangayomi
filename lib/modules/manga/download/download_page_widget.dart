@@ -27,9 +27,10 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
   List<String> _pageUrls = [];
 
   final StorageProvider _storageProvider = StorageProvider();
-  _startDownload() async {
-    final data = await ref
-        .watch(downloadChapterProvider(chapter: widget.chapter).future);
+  _startDownload(bool? useWifi) async {
+    final data = await ref.watch(
+        downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
+            .future);
     if (mounted) {
       setState(() {
         _pageUrls = data;
@@ -84,7 +85,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                             Theme.of(context).iconTheme.color!.withOpacity(0.7),
                       ),
                       onSelected: (value) {
-                        if (value.toString() == 'Delete') {
+                        if (value == 1) {
                           setState(() {
                             _isStarted = false;
                           });
@@ -92,9 +93,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(value: 'Send', child: Text("Send")),
-                        const PopupMenuItem(
-                            value: 'Delete', child: Text('Delete')),
+                        const PopupMenuItem(value: 0, child: Text("Send")),
+                        const PopupMenuItem(value: 1, child: Text('Delete')),
                       ],
                     )
                   : entries.first.isStartDownload! &&
@@ -105,13 +105,22 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                           child: PopupMenuButton(
                             child: _downloadWidget(context, true),
                             onSelected: (value) {
-                              if (value.toString() == 'Cancel') {
+                              if (value == 0) {
                                 _cancelTasks();
+                              }
+                              if (value == 0) {
+                                _cancelTasks();
+                              } else if (value == 1) {
+                                _cancelTasks();
+                                _startDownload(false);
                               }
                             },
                             itemBuilder: (context) => [
                               const PopupMenuItem(
-                                  value: 'Cancel', child: Text("Cancel")),
+                                  value: 1,
+                                  child: Text("Start downlading now")),
+                              const PopupMenuItem(
+                                  value: 0, child: Text("Cancel")),
                             ],
                           ))
                       : entries.first.succeeded != 0
@@ -164,13 +173,22 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                   ],
                                 ),
                                 onSelected: (value) {
-                                  if (value.toString() == 'Cancel') {
+                                  if (value == 0) {
                                     _cancelTasks();
+                                  }
+                                  if (value == 0) {
+                                    _cancelTasks();
+                                  } else if (value == 1) {
+                                    _cancelTasks();
+                                    _startDownload(false);
                                   }
                                 },
                                 itemBuilder: (context) => [
                                   const PopupMenuItem(
-                                      value: 'Cancel', child: Text("Cancel")),
+                                      value: 1,
+                                      child: Text("Start downlading now")),
+                                  const PopupMenuItem(
+                                      value: 0, child: Text("Cancel")),
                                 ],
                               ))
                           : entries.first.succeeded == 0
@@ -199,9 +217,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                       size: 25,
                                     ),
                                     onSelected: (value) {
-                                      if (value.toString() == 'Retry') {
+                                      if (value == 0) {
                                         _cancelTasks();
-                                        _startDownload();
+                                        _startDownload(null);
                                         setState(() {
                                           _isStarted = true;
                                         });
@@ -209,7 +227,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     },
                                     itemBuilder: (context) => [
                                       const PopupMenuItem(
-                                          value: 'Retry', child: Text("Retry")),
+                                          value: 0, child: Text("Retry")),
                                     ],
                                   ));
             }
@@ -220,20 +238,24 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                     child: PopupMenuButton(
                       child: _downloadWidget(context, true),
                       onSelected: (value) {
-                        if (value.toString() == 'Cancel') {
+                        if (value == 0) {
                           _cancelTasks();
+                        } else if (value == 1) {
+                          _cancelTasks();
+                          _startDownload(false);
                         }
                       },
                       itemBuilder: (context) => [
                         const PopupMenuItem(
-                            value: 'Cancel', child: Text("Cancel")),
+                            value: 1, child: Text("Start downlading now")),
+                        const PopupMenuItem(value: 0, child: Text("Cancel")),
                       ],
                     ))
                 : IconButton(
                     splashRadius: 5,
                     iconSize: 17,
                     onPressed: () {
-                      _startDownload();
+                      _startDownload(null);
                       setState(() {
                         _isStarted = true;
                       });

@@ -42,47 +42,41 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                             shrinkWrap: true,
                             children: [
                               RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: downloadLocationState.$2.isEmpty
-                                    ? downloadLocationState.$1
-                                    : downloadLocationState.$2,
-                                groupValue: downloadLocationState.$1,
-                                onChanged: (value) {
-                                  ref
-                                      .read(downloadLocationStateProvider
-                                          .notifier)
-                                      .set("");
-                                  Navigator.pop(context);
-                                },
-                                title: Row(
-                                  children: [Text(downloadLocationState.$1)],
-                                ),
-                              ),
-                              RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: downloadLocationState.$2.isEmpty
-                                    ? downloadLocationState.$1
-                                    : downloadLocationState.$2,
-                                groupValue: downloadLocationState.$2,
-                                onChanged: (value) async {
-                                  String? result = await FilePicker.platform
-                                      .getDirectoryPath();
-
-                                  if (result != null) {
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: downloadLocationState.$2.isEmpty
+                                      ? downloadLocationState.$1
+                                      : downloadLocationState.$2,
+                                  groupValue: downloadLocationState.$1,
+                                  onChanged: (value) {
                                     ref
                                         .read(downloadLocationStateProvider
                                             .notifier)
-                                        .set(result);
-                                  } else {}
-                                  if (!mounted) return;
-                                  Navigator.pop(context);
-                                },
-                                title: const Row(
-                                  children: [Text("Custom location")],
-                                ),
-                              ),
+                                        .set("");
+                                    Navigator.pop(context);
+                                  },
+                                  title: Text(downloadLocationState.$1)),
+                              RadioListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: downloadLocationState.$2.isEmpty
+                                      ? downloadLocationState.$1
+                                      : downloadLocationState.$2,
+                                  groupValue: downloadLocationState.$2,
+                                  onChanged: (value) async {
+                                    String? result = await FilePicker.platform
+                                        .getDirectoryPath();
+
+                                    if (result != null) {
+                                      ref
+                                          .read(downloadLocationStateProvider
+                                              .notifier)
+                                          .set(result);
+                                    } else {}
+                                    if (!mounted) return;
+                                    Navigator.pop(context);
+                                  },
+                                  title: const Text("Custom location")),
                             ],
                           )),
                       actions: [

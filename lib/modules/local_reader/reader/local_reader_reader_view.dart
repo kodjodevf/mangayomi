@@ -332,9 +332,9 @@ class _MangaChapterPageGalleryState
                     ),
                     subtitle: SizedBox(
                       width: mediaWidth(context, 0.8),
-                      child: Text(
+                      child: const Text(
                         "",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),

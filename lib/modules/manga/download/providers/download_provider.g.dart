@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'abdb9aa7362e0cc436ec56de57521fea203d3041';
+String _$downloadChapterHash() => r'07e6c9782618562329005e15ce973061bf70d441';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,9 +43,11 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
   /// See also [downloadChapter].
   DownloadChapterProvider call({
     required Chapter chapter,
+    bool? useWifi,
   }) {
     return DownloadChapterProvider(
       chapter: chapter,
+      useWifi: useWifi,
     );
   }
 
@@ -55,6 +57,7 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
   ) {
     return call(
       chapter: provider.chapter,
+      useWifi: provider.useWifi,
     );
   }
 
@@ -78,10 +81,12 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
     required this.chapter,
+    this.useWifi,
   }) : super.internal(
           (ref) => downloadChapter(
             ref,
             chapter: chapter,
+            useWifi: useWifi,
           ),
           from: downloadChapterProvider,
           name: r'downloadChapterProvider',
@@ -95,16 +100,20 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
         );
 
   final Chapter chapter;
+  final bool? useWifi;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider && other.chapter == chapter;
+    return other is DownloadChapterProvider &&
+        other.chapter == chapter &&
+        other.useWifi == useWifi;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, useWifi.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -51,9 +51,7 @@ dependencies:
   google_fonts: ^4.0.3
   url_launcher: ^6.1.10
   package_info_plus: ^4.0.2
-  background_downloader:
-    git:
-      url: https://github.com/kodjodevf/background_downloader.git
+  background_downloader: ^7.3.0
   permission_handler: ^10.2.0
   flutter_inappwebview: ^6.0.0-beta.22
   draggable_menu: ^2.0.2

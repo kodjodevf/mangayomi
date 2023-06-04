@@ -4,10 +4,12 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
@@ -15,11 +17,14 @@ part 'download_provider.g.dart';
 Future<List<String>> downloadChapter(
   DownloadChapterRef ref, {
   required Chapter chapter,
+  bool? useWifi,
 }) async {
   List<String> pageUrls = [];
   List<DownloadTask> tasks = [];
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
+  final tempDir = await getTemporaryDirectory();
+  bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   Directory? path;
   bool isOk = false;
   final manga = chapter.manga.value!;
@@ -65,7 +70,6 @@ Future<List<String>> downloadChapter(
           File("${path1.path}" ".nomedia").create();
         }
       }
-      // log(path2.path);
       if (!(await path2.exists())) {
         path2.create();
       }
@@ -80,46 +84,34 @@ Future<List<String>> downloadChapter(
         if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
         } else {
           tasks.add(DownloadTask(
-            taskId: pageUrls[index],
-            headers: ref.watch(headersProvider(source: manga.source!)),
-            url: pageUrls[index],
-            filename: "${padIndex(index + 1)}.jpg",
-            baseDirectory:
-                Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                    ? BaseDirectory.applicationDocuments
-                    : BaseDirectory.temporary,
-            directory:
-                Platform.isWindows || Platform.isMacOS || Platform.isLinux
-                    ? 'Mangayomi/$finalPath'
-                    : finalPath,
-            updates: Updates.statusAndProgress,
-            allowPause: true,
-          ));
+              taskId: pageUrls[index],
+              headers: ref.watch(headersProvider(source: manga.source!)),
+              url: pageUrls[index],
+              filename: "${padIndex(index + 1)}.jpg",
+              baseDirectory: Platform.isAndroid
+                  ? BaseDirectory.temporary
+                  : BaseDirectory.applicationDocuments,
+              directory: 'Mangayomi/$finalPath',
+              updates: Updates.statusAndProgress,
+              allowPause: true,
+              requiresWiFi: onlyOnWifi));
         }
       } else {
         path.create();
         if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
         } else {
           tasks.add(DownloadTask(
-            taskId: pageUrls[index],
-            headers: ref.watch(headersProvider(source: manga.source!)),
-            url: pageUrls[index],
-            filename: "${padIndex(index + 1)}.jpg",
-            baseDirectory: Platform.isWindows ||
-                    Platform.isMacOS ||
-                    Platform.isLinux ||
-                    Platform.isIOS
-                ? BaseDirectory.applicationDocuments
-                : BaseDirectory.temporary,
-            directory: Platform.isWindows ||
-                    Platform.isMacOS ||
-                    Platform.isLinux ||
-                    Platform.isIOS
-                ? 'Mangayomi/$finalPath'
-                : finalPath,
-            updates: Updates.statusAndProgress,
-            allowPause: true,
-          ));
+              taskId: pageUrls[index],
+              headers: ref.watch(headersProvider(source: manga.source!)),
+              url: pageUrls[index],
+              filename: "${padIndex(index + 1)}.jpg",
+              baseDirectory: Platform.isAndroid
+                  ? BaseDirectory.temporary
+                  : BaseDirectory.applicationDocuments,
+              directory: 'Mangayomi/$finalPath',
+              updates: Updates.statusAndProgress,
+              allowPause: true,
+              requiresWiFi: onlyOnWifi));
         }
       }
     }
@@ -173,22 +165,12 @@ Future<List<String>> downloadChapter(
         },
         taskProgressCallback: (taskProgress) async {
           if (taskProgress.progress == 1.0) {
-            final downloadTask = DownloadTask(
-              creationTime: taskProgress.task.creationTime,
-              taskId: taskProgress.task.taskId,
-              headers: taskProgress.task.headers,
-              url: taskProgress.task.url,
-              filename: taskProgress.task.filename,
-              baseDirectory: taskProgress.task.baseDirectory,
-              directory: taskProgress.task.directory,
-              updates: taskProgress.task.updates,
-              allowPause: taskProgress.task.allowPause,
-            );
-            if (Platform.isAndroid) {
-              await FileDownloader().moveToSharedStorage(
-                  downloadTask, SharedStorage.external,
-                  directory: finalPath);
-            }
+            await File(
+                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                .copy("${path!.path}/${taskProgress.task.filename}");
+            await File(
+                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                .delete();
           }
         },
       );

@@ -1,6 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,13 +24,27 @@ class StorageProvider {
     return true;
   }
 
-  Future<Directory?> getDirectory() async {
+  Future<Directory?> getDefaultDirectory() async {
     Directory? directory;
     if (Platform.isAndroid) {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
       directory = Directory("${dir.path}/Mangayomi/");
+    }
+    return directory;
+  }
+
+  Future<Directory?> getDirectory() async {
+    Directory? directory;
+    String path = isar.settings.getSync(227)!.downloadLocation ?? "";
+    if (Platform.isAndroid) {
+      directory =
+          Directory(path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/");
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      final p = path.isEmpty ? dir.path : path;
+      directory = Directory("$p/Mangayomi/");
     }
     return directory;
   }
