@@ -128,26 +128,26 @@ void pushToMangaReaderDetail(
       .findFirstSync()!
       .id!;
   final settings = isar.settings.getSync(227)!;
-  final checkIfExist = settings.sortChapterList!
-      .where((element) => element.mangaId == mangaId)
-      .toList();
+  final sortList = settings.sortChapterList ?? [];
+  final checkIfExist =
+      sortList.where((element) => element.mangaId == mangaId).toList();
   if (checkIfExist.isEmpty) {
     isar.writeTxnSync(
       () {
         List<SortChapter>? sortChapterList = [];
-        for (var sortChapter in settings.sortChapterList!) {
+        for (var sortChapter in settings.sortChapterList ?? []) {
           sortChapterList.add(sortChapter);
         }
         List<ChapterFilterBookmarked>? chapterFilterBookmarkedList = [];
-        for (var sortChapter in settings.chapterFilterBookmarkedList!) {
+        for (var sortChapter in settings.chapterFilterBookmarkedList ?? []) {
           chapterFilterBookmarkedList.add(sortChapter);
         }
         List<ChapterFilterDownloaded>? chapterFilterDownloadedList = [];
-        for (var sortChapter in settings.chapterFilterDownloadedList!) {
+        for (var sortChapter in settings.chapterFilterDownloadedList ?? []) {
           chapterFilterDownloadedList.add(sortChapter);
         }
         List<ChapterFilterUnread>? chapterFilterUnreadList = [];
-        for (var sortChapter in settings.chapterFilterUnreadList!) {
+        for (var sortChapter in settings.chapterFilterUnreadList ?? []) {
           chapterFilterUnreadList.add(sortChapter);
         }
         sortChapterList.add(SortChapter()..mangaId = mangaId);

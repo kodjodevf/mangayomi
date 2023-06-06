@@ -473,14 +473,14 @@ class ChapterFilterBookmarkedStateProvider
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'0ccd5617e876a3002bb0e6b7293e4c67bf35b1bd';
+    r'efd09e7ec1bc7f63ffdcc82c5c2760de94d704e6';
 
 abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final int mangaId;
+  late final Manga manga;
 
   bool build({
-    required int mangaId,
+    required Manga manga,
   });
 }
 
@@ -495,10 +495,10 @@ class ChapterFilterResultStateFamily extends Family<bool> {
 
   /// See also [ChapterFilterResultState].
   ChapterFilterResultStateProvider call({
-    required int mangaId,
+    required Manga manga,
   }) {
     return ChapterFilterResultStateProvider(
-      mangaId: mangaId,
+      manga: manga,
     );
   }
 
@@ -507,7 +507,7 @@ class ChapterFilterResultStateFamily extends Family<bool> {
     covariant ChapterFilterResultStateProvider provider,
   ) {
     return call(
-      mangaId: provider.mangaId,
+      manga: provider.manga,
     );
   }
 
@@ -531,9 +531,9 @@ class ChapterFilterResultStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterResultState, bool> {
   /// See also [ChapterFilterResultState].
   ChapterFilterResultStateProvider({
-    required this.mangaId,
+    required this.manga,
   }) : super.internal(
-          () => ChapterFilterResultState()..mangaId = mangaId,
+          () => ChapterFilterResultState()..manga = manga,
           from: chapterFilterResultStateProvider,
           name: r'chapterFilterResultStateProvider',
           debugGetCreateSourceHash:
@@ -545,18 +545,17 @@ class ChapterFilterResultStateProvider
               ChapterFilterResultStateFamily._allTransitiveDependencies,
         );
 
-  final int mangaId;
+  final Manga manga;
 
   @override
   bool operator ==(Object other) {
-    return other is ChapterFilterResultStateProvider &&
-        other.mangaId == mangaId;
+    return other is ChapterFilterResultStateProvider && other.manga == manga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaId.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -566,7 +565,7 @@ class ChapterFilterResultStateProvider
     covariant ChapterFilterResultState notifier,
   ) {
     return notifier.build(
-      mangaId: mangaId,
+      manga: manga,
     );
   }
 }
@@ -882,4 +881,102 @@ final chaptersListttStateProvider =
 );
 
 typedef _$ChaptersListttState = AutoDisposeNotifier<List<Chapter>>;
+String _$scanlatorsFilterStateHash() =>
+    r'56ba6cea4ec0948aeb6d10a205d0f9d783ce13bf';
+
+abstract class _$ScanlatorsFilterState extends BuildlessAutoDisposeNotifier<
+    (List<String>, List<String>, List<String>)> {
+  late final Manga manga;
+
+  (List<String>, List<String>, List<String>) build(
+    Manga manga,
+  );
+}
+
+/// See also [ScanlatorsFilterState].
+@ProviderFor(ScanlatorsFilterState)
+const scanlatorsFilterStateProvider = ScanlatorsFilterStateFamily();
+
+/// See also [ScanlatorsFilterState].
+class ScanlatorsFilterStateFamily
+    extends Family<(List<String>, List<String>, List<String>)> {
+  /// See also [ScanlatorsFilterState].
+  const ScanlatorsFilterStateFamily();
+
+  /// See also [ScanlatorsFilterState].
+  ScanlatorsFilterStateProvider call(
+    Manga manga,
+  ) {
+    return ScanlatorsFilterStateProvider(
+      manga,
+    );
+  }
+
+  @override
+  ScanlatorsFilterStateProvider getProviderOverride(
+    covariant ScanlatorsFilterStateProvider provider,
+  ) {
+    return call(
+      provider.manga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'scanlatorsFilterStateProvider';
+}
+
+/// See also [ScanlatorsFilterState].
+class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
+    ScanlatorsFilterState, (List<String>, List<String>, List<String>)> {
+  /// See also [ScanlatorsFilterState].
+  ScanlatorsFilterStateProvider(
+    this.manga,
+  ) : super.internal(
+          () => ScanlatorsFilterState()..manga = manga,
+          from: scanlatorsFilterStateProvider,
+          name: r'scanlatorsFilterStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$scanlatorsFilterStateHash,
+          dependencies: ScanlatorsFilterStateFamily._dependencies,
+          allTransitiveDependencies:
+              ScanlatorsFilterStateFamily._allTransitiveDependencies,
+        );
+
+  final Manga manga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is ScanlatorsFilterStateProvider && other.manga == manga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, manga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+
+  @override
+  (List<String>, List<String>, List<String>) runNotifierBuild(
+    covariant ScanlatorsFilterState notifier,
+  ) {
+    return notifier.build(
+      manga,
+    );
+  }
+}
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

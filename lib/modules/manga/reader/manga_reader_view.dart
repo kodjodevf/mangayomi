@@ -15,7 +15,7 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
-import 'package:mangayomi/modules/manga/reader/image_view_horizontal.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
@@ -77,7 +77,7 @@ class MangaReaderView extends ConsumerWidget {
           readerController: readerController,
           isLocaleList: data.isLocaleList,
           chapter: chapter,
-          localImages: data.localImages,
+          archiveImages: data.archiveImages,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -140,13 +140,13 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       required this.readerController,
       required this.isLocaleList,
       required this.chapter,
-      required this.localImages});
+      required this.archiveImages});
   final ReaderController readerController;
   final Directory path;
   final List url;
   final List<bool> isLocaleList;
   final Chapter chapter;
-  final List<Uint8List> localImages;
+  final List<Uint8List> archiveImages;
 
   @override
   ConsumerState createState() {
@@ -924,8 +924,8 @@ class _MangaChapterPageGalleryState
                         },
                         onDoubleTap: () {},
                         child: ImageViewVertical(
-                          localImage: widget.localImages.isNotEmpty
-                              ? widget.localImages[index]
+                          archiveImage: widget.archiveImages.isNotEmpty
+                              ? widget.archiveImages[index]
                               : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController
@@ -959,15 +959,16 @@ class _MangaChapterPageGalleryState
                       preloadPagesCount: _isZoom
                           ? 0
                           : widget.readerController.getPageLength(widget.url),
+                          pageSnapping: false,
                       canScrollPage: (GestureDetails? gestureDetails) {
                         return gestureDetails != null
                             ? !(gestureDetails.totalScale! > 1.0)
                             : true;
                       },
                       itemBuilder: (BuildContext context, int index) {
-                        return ImageViewHorizontal(
-                          localImage: widget.localImages.isNotEmpty
-                              ? widget.localImages[index]
+                        return ImageViewCenter(
+                          archiveImage: widget.archiveImages.isNotEmpty
+                              ? widget.archiveImages[index]
                               : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController

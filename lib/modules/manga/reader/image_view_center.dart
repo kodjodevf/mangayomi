@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
-class ImageViewHorizontal extends ConsumerWidget {
+class ImageViewCenter extends ConsumerWidget {
   final int length;
   final String url;
   final int index;
@@ -15,12 +15,12 @@ class ImageViewHorizontal extends ConsumerWidget {
   final String chapter;
   final Directory path;
   final bool isLocale;
-  final Uint8List? localImage;
+  final Uint8List? archiveImage;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state) onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)
       initGestureConfigHandler;
-  const ImageViewHorizontal({
+  const ImageViewCenter({
     super.key,
     required this.url,
     required this.chapter,
@@ -33,15 +33,15 @@ class ImageViewHorizontal extends ConsumerWidget {
     required this.onDoubleTap,
     required this.initGestureConfigHandler,
     required this.isLocale,
-    this.localImage,
+    this.archiveImage,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return isLocale
-        ? localImage != null
+        ? archiveImage != null
             ? ExtendedImage.memory(
-                localImage!,
+                archiveImage!,
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
                 mode: ExtendedImageMode.gesture,

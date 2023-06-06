@@ -66,15 +66,7 @@ _initDB() async {
     isar.writeTxnSync(
       () {
         isar.settings.putSync(Settings()
-          ..sortLibraryManga = SortLibraryManga()
-          ..sortChapterList = []
-          ..chapterFilterBookmarkedList = []
-          ..chapterFilterDownloadedList = []
-          ..chapterFilterUnreadList = []
-          ..chapterPageUrlsList = []
-          ..chapterPageIndexList = []
-          ..cookiesList = []
-          ..personalReaderModeList = []);
+          );
       },
     );
   }

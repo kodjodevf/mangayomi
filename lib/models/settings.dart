@@ -81,6 +81,8 @@ class Settings {
 
   String? downloadLocation;
 
+  List<FilterScanlator>? filterScanlatorList;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -189,3 +191,9 @@ class PersonalReaderMode {
 }
 
 enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }
+
+@embedded
+class FilterScanlator {
+  int? mangaId;
+  List<String>? scanlators;
+}

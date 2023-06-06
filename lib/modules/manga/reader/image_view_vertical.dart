@@ -18,7 +18,7 @@ class ImageViewVertical extends ConsumerWidget {
   final String source;
   final String chapter;
   final Directory path;
-  final Uint8List? localImage;
+  final Uint8List? archiveImage;
 
   const ImageViewVertical({
     super.key,
@@ -30,7 +30,7 @@ class ImageViewVertical extends ConsumerWidget {
     required this.source,
     required this.length,
     required this.isLocale,
-    this.localImage,
+    this.archiveImage,
   });
 
   @override
@@ -45,9 +45,9 @@ class ImageViewVertical extends ConsumerWidget {
               height: MediaQuery.of(context).padding.top,
             ),
           isLocale
-              ? localImage != null
+              ? archiveImage != null
                   ? ExtendedImage.memory(
-                      localImage!,
+                      archiveImage!,
                       fit: BoxFit.contain,
                       clearMemoryCacheWhenDispose: true,
                       enableMemoryCache: false,

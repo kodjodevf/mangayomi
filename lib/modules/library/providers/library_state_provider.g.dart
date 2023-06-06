@@ -626,7 +626,7 @@ final libraryShowContinueReadingButtonStateProvider =
 
 typedef _$LibraryShowContinueReadingButtonState = AutoDisposeNotifier<bool>;
 String _$sortLibraryMangaStateHash() =>
-    r'0f23a413f94e254d2ba03166ab941e4d4eb67b41';
+    r'badded29d1814cdf551db10bdbdafbe6f1f38210';
 
 /// See also [SortLibraryMangaState].
 @ProviderFor(SortLibraryMangaState)

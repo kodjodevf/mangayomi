@@ -26,12 +26,12 @@ class GetChapterUrlModel {
   Directory? path;
   List<String> pageUrls = [];
   List<bool> isLocaleList = [];
-  List<Uint8List> localImages = [];
+  List<Uint8List> archiveImages = [];
   GetChapterUrlModel(
       {required this.path,
       required this.pageUrls,
       required this.isLocaleList,
-      required this.localImages});
+      required this.archiveImages});
 }
 
 @riverpod
@@ -45,14 +45,16 @@ Future<GetChapterUrlModel> getChapterUrl(
   List<bool> isLocaleList = [];
   String source = manga.source!.toLowerCase();
   final settings = isar.settings.getSync(227);
-  final isarPageUrls = settings!.chapterPageUrlsList!
-      .where((element) => element.chapterId == chapter.id);
+  List<ChapterPageurls>? chapterPageUrlsList =
+      settings!.chapterPageUrlsList ?? [];
+  final isarPageUrls =
+      chapterPageUrlsList.where((element) => element.chapterId == chapter.id);
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
 
-  List<Uint8List> localImages = [];
+  List<Uint8List> archiveImages = [];
   if (isarPageUrls.isNotEmpty &&
       isarPageUrls.first.urls != null &&
       isarPageUrls.first.urls!.isNotEmpty) {
@@ -126,7 +128,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   if (pageUrls.isNotEmpty) {
     if (!incognitoMode) {
       List<ChapterPageurls>? chapterPageUrls = [];
-      for (var chapterPageUrl in settings.chapterPageUrlsList!) {
+      for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
         if (chapterPageUrl.chapterId != chapter.id) {
           chapterPageUrls.add(chapterPageUrl);
         }
@@ -143,7 +145,7 @@ Future<GetChapterUrlModel> getChapterUrl(
               "${mangaDirectory.path}${chapter.name}.cbz")
           .future);
       for (var image in local.images!) {
-        localImages.add(image.image!);
+        archiveImages.add(image.image!);
         isLocaleList.add(true);
       }
     } else {
@@ -161,5 +163,5 @@ Future<GetChapterUrlModel> getChapterUrl(
       path: path,
       pageUrls: pageUrls,
       isLocaleList: isLocaleList,
-      localImages: localImages);
+      archiveImages: archiveImages);
 }

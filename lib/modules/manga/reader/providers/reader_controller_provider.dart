@@ -42,8 +42,9 @@ class ReaderController extends _$ReaderController {
   }
 
   ReaderMode getReaderMode() {
-    final personalReaderMode = getIsarSetting()
-        .personalReaderModeList!
+    final personalReaderModeList =
+        getIsarSetting().personalReaderModeList ?? [];
+    final personalReaderMode = personalReaderModeList
         .where((element) => element.mangaId == getManga().id);
     if (personalReaderMode.isNotEmpty) {
       return personalReaderMode.first.readerMode;
@@ -194,8 +195,8 @@ class ReaderController extends _$ReaderController {
 
   int getPageIndex() {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
-    final index = getIsarSetting()
-        .chapterPageIndexList!
+    final chapterPageIndexList = getIsarSetting().chapterPageIndexList ?? [];
+    final index = chapterPageIndexList
         .where((element) => element.chapterId == chapter.id);
     if (!incognitoMode) {
       return chapter.isRead!
@@ -224,7 +225,8 @@ class ReaderController extends _$ReaderController {
     final incognitoMode = ref.watch(incognitoModeStateProvider);
     if (!incognitoMode) {
       List<ChapterPageIndex>? chapterPageIndexs = [];
-      for (var chapterPageIndex in getIsarSetting().chapterPageIndexList!) {
+      for (var chapterPageIndex
+          in getIsarSetting().chapterPageIndexList ?? []) {
         if (chapterPageIndex.chapterId != chapter.id) {
           chapterPageIndexs.add(chapterPageIndex);
         }

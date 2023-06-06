@@ -416,7 +416,7 @@ class LibraryShowContinueReadingButtonState
 class SortLibraryMangaState extends _$SortLibraryMangaState {
   @override
   SortLibraryManga build() {
-    return isar.settings.getSync(227)!.sortLibraryManga!;
+    return isar.settings.getSync(227)!.sortLibraryManga ?? SortLibraryManga();
   }
 
   void update(bool reverse, int index) {

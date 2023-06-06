@@ -68,6 +68,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget build(BuildContext context) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chaptersListStateProvider);
+    final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
     bool reverse = ref
         .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
         .reverse!;
@@ -99,7 +100,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 filterUnread: filterUnread,
                 filterBookmarked: filterBookmarked,
                 filterDownloaded: filterDownloaded,
-                sortChapter: sortChapter);
+                sortChapter: sortChapter,
+                filterScanlator: scanlators.$2);
             ref.read(chaptersListttStateProvider.notifier).set(chapters);
             return _buildWidget(
                 chapters: chapters,
@@ -125,7 +127,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       required int filterUnread,
       required int filterBookmarked,
       required int filterDownloaded,
-      required int sortChapter}) {
+      required int sortChapter,
+      required List<String> filterScanlator}) {
     List<Chapter>? chapterList;
     chapterList = data
         .where((element) => filterUnread == 1
@@ -139,19 +142,21 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 ? element.isBookmarked == false
                 : true)
         .where((element) {
-      final modelChapDownload = isar.downloads
-          .filter()
-          .idIsNotNull()
-          .chapterIdEqualTo(element.id)
-          .findAllSync();
-      return filterDownloaded == 1
-          ? modelChapDownload.isNotEmpty &&
-              modelChapDownload.first.isDownload == true
-          : filterDownloaded == 2
-              ? !(modelChapDownload.isNotEmpty &&
-                  modelChapDownload.first.isDownload == true)
-              : true;
-    }).toList();
+          final modelChapDownload = isar.downloads
+              .filter()
+              .idIsNotNull()
+              .chapterIdEqualTo(element.id)
+              .findAllSync();
+          return filterDownloaded == 1
+              ? modelChapDownload.isNotEmpty &&
+                  modelChapDownload.first.isDownload == true
+              : filterDownloaded == 2
+                  ? !(modelChapDownload.isNotEmpty &&
+                      modelChapDownload.first.isDownload == true)
+                  : true;
+        })
+        .where((element) => !filterScanlator.contains(element.scanlator))
+        .toList();
     List<Chapter> chapters =
         sortChapter == 1 ? chapterList.reversed.toList() : chapterList;
     if (sortChapter == 0) {
@@ -242,8 +247,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 child: Consumer(
                   builder: (context, ref, child) {
                     final isNotFiltering = ref.watch(
-                        chapterFilterResultStateProvider(
-                            mangaId: widget.manga!.id!));
+                        chapterFilterResultStateProvider(manga: widget.manga!));
                     final isLongPressed = ref.watch(isLongPressedStateProvider);
                     return isLongPressed
                         ? Container(
@@ -639,133 +643,255 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     tabBarController.animateTo(0);
     DraggableMenu.open(
       context,
-      DraggableMenu(
-        ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
-        expandable: false,
-        maxHeight: 240,
-        fastDrag: false,
-        minimizeBeforeFastDrag: false,
-        child: DefaultTabController(
-            length: 3,
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Theme.of(context).scaffoldBackgroundColor),
-                child: Column(
-                  children: [
-                    TabBar(
-                      controller: tabBarController,
-                      tabs: const [
-                        Tab(text: "Filter"),
-                        Tab(text: "Sort"),
-                        Tab(text: "Display"),
-                      ],
-                    ),
-                    Flexible(
-                      child:
-                          TabBarView(controller: tabBarController, children: [
-                        Consumer(builder: (context, ref, chil) {
-                          return Column(
+      Consumer(builder: (context, ref, child) {
+        final scanlators =
+            ref.watch(scanlatorsFilterStateProvider(widget.manga!));
+
+        return DraggableMenu(
+          ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
+          expandable: false,
+          maxHeight: scanlators.$1.isEmpty ? 240 : 260,
+          fastDrag: false,
+          minimizeBeforeFastDrag: false,
+          child: DefaultTabController(
+              length: 3,
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Theme.of(context).scaffoldBackgroundColor),
+                  child: Column(
+                    children: [
+                      TabBar(
+                        controller: tabBarController,
+                        tabs: const [
+                          Tab(text: "Filter"),
+                          Tab(text: "Sort"),
+                          Tab(text: "Display"),
+                        ],
+                      ),
+                      Flexible(
+                        child: TabBarView(
+                            controller: tabBarController,
                             children: [
-                              ListTileChapterFilter(
-                                  label: "Downloaded",
-                                  type: ref.watch(
-                                      chapterFilterDownloadedStateProvider(
-                                          mangaId: widget.manga!.id!)),
-                                  onTap: () {
-                                    ref
-                                        .read(
+                              Consumer(builder: (context, ref, chil) {
+                                return Column(
+                                  children: [
+                                    ListTileChapterFilter(
+                                        label: "Downloaded",
+                                        type: ref.watch(
                                             chapterFilterDownloadedStateProvider(
-                                                    mangaId: widget.manga!.id!)
-                                                .notifier)
-                                        .update();
-                                  }),
-                              ListTileChapterFilter(
-                                  label: "Unread",
-                                  type: ref.watch(
-                                      chapterFilterUnreadStateProvider(
-                                          mangaId: widget.manga!.id!)),
-                                  onTap: () {
-                                    ref
-                                        .read(chapterFilterUnreadStateProvider(
-                                                mangaId: widget.manga!.id!)
-                                            .notifier)
-                                        .update();
-                                  }),
-                              ListTileChapterFilter(
-                                  label: "Bookmarked",
-                                  type: ref.watch(
-                                      chapterFilterBookmarkedStateProvider(
-                                          mangaId: widget.manga!.id!)),
-                                  onTap: () {
-                                    ref
-                                        .read(
+                                                mangaId: widget.manga!.id!)),
+                                        onTap: () {
+                                          ref
+                                              .read(
+                                                  chapterFilterDownloadedStateProvider(
+                                                          mangaId:
+                                                              widget.manga!.id!)
+                                                      .notifier)
+                                              .update();
+                                        }),
+                                    ListTileChapterFilter(
+                                        label: "Unread",
+                                        type: ref.watch(
+                                            chapterFilterUnreadStateProvider(
+                                                mangaId: widget.manga!.id!)),
+                                        onTap: () {
+                                          ref
+                                              .read(
+                                                  chapterFilterUnreadStateProvider(
+                                                          mangaId:
+                                                              widget.manga!.id!)
+                                                      .notifier)
+                                              .update();
+                                        }),
+                                    ListTileChapterFilter(
+                                        label: "Bookmarked",
+                                        type: ref.watch(
                                             chapterFilterBookmarkedStateProvider(
-                                                    mangaId: widget.manga!.id!)
-                                                .notifier)
-                                        .update();
-                                  }),
-                            ],
-                          );
-                        }),
-                        Consumer(builder: (context, ref, chil) {
-                          final reverse = ref
-                              .read(sortChapterStateProvider(
-                                      mangaId: widget.manga!.id!)
-                                  .notifier)
-                              .isReverse();
-                          final reverseChapter = ref.watch(
-                              sortChapterStateProvider(
-                                  mangaId: widget.manga!.id!));
-                          return Column(
-                            children: [
-                              for (var i = 0; i < 3; i++)
-                                ListTileChapterSort(
-                                  label: _getSortNameByIndex(i),
-                                  reverse: reverse,
-                                  onTap: () {
-                                    ref
-                                        .read(sortChapterStateProvider(
-                                                mangaId: widget.manga!.id!)
-                                            .notifier)
-                                        .set(i);
-                                  },
-                                  showLeading: reverseChapter.index == i,
-                                ),
-                            ],
-                          );
-                        }),
-                        Consumer(builder: (context, ref, chil) {
-                          return Column(
-                            children: [
-                              RadioListTile(
-                                dense: true,
-                                title: const Text("Source title"),
-                                value: "e",
-                                groupValue: "e",
-                                selected: true,
-                                onChanged: (value) {},
-                              ),
-                              RadioListTile(
-                                dense: true,
-                                title: const Text("Chapter number"),
-                                value: "ej",
-                                groupValue: "e",
-                                selected: false,
-                                onChanged: (value) {},
-                              ),
-                            ],
-                          );
-                        }),
-                      ]),
-                    ),
-                  ],
+                                                mangaId: widget.manga!.id!)),
+                                        onTap: () {
+                                          ref
+                                              .read(
+                                                  chapterFilterBookmarkedStateProvider(
+                                                          mangaId:
+                                                              widget.manga!.id!)
+                                                      .notifier)
+                                              .update();
+                                        }),
+                                    if (scanlators.$1.isNotEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 18),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return Consumer(
+                                                              builder: (context,
+                                                                  ref, child) {
+                                                            final scanlators =
+                                                                ref.watch(
+                                                                    scanlatorsFilterStateProvider(
+                                                                        widget
+                                                                            .manga!));
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                "Filter scanlator groups",
+                                                              ),
+                                                              content: SizedBox(
+                                                                  width:
+                                                                      mediaWidth(
+                                                                          context,
+                                                                          0.8),
+                                                                  child: ListView
+                                                                      .builder(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    itemCount:
+                                                                        scanlators
+                                                                            .$1
+                                                                            .length,
+                                                                    itemBuilder:
+                                                                        (context,
+                                                                            index) {
+                                                                      return ListTileChapterFilter(
+                                                                          label: scanlators.$1[
+                                                                              index],
+                                                                          type: scanlators.$3.contains(scanlators.$1[index])
+                                                                              ? 2
+                                                                              : 0,
+                                                                          onTap:
+                                                                              () {
+                                                                            ref.read(scanlatorsFilterStateProvider(widget.manga!).notifier).setFilteredList(scanlators.$1[index]);
+                                                                          });
+                                                                    },
+                                                                  )),
+                                                              actions: [
+                                                                Column(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              Row(
+                                                                            children: [
+                                                                              TextButton(
+                                                                                  onPressed: () {
+                                                                                    ref.read(scanlatorsFilterStateProvider(widget.manga!).notifier).set([]);
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                  child: Text(
+                                                                                    "Reset",
+                                                                                    style: TextStyle(color: primaryColor(context)),
+                                                                                  )),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            TextButton(
+                                                                                onPressed: () async {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Cancel",
+                                                                                  style: TextStyle(color: primaryColor(context)),
+                                                                                )),
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  ref.read(scanlatorsFilterStateProvider(widget.manga!).notifier).set(scanlators.$3);
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: Text(
+                                                                                  "Filter",
+                                                                                  style: TextStyle(color: primaryColor(context)),
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            );
+                                                          });
+                                                        });
+                                                  },
+                                                  child: const Text(
+                                                      "Filter scanlator groups")),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                  ],
+                                );
+                              }),
+                              Consumer(builder: (context, ref, chil) {
+                                final reverse = ref
+                                    .read(sortChapterStateProvider(
+                                            mangaId: widget.manga!.id!)
+                                        .notifier)
+                                    .isReverse();
+                                final reverseChapter = ref.watch(
+                                    sortChapterStateProvider(
+                                        mangaId: widget.manga!.id!));
+                                return Column(
+                                  children: [
+                                    for (var i = 0; i < 3; i++)
+                                      ListTileChapterSort(
+                                        label: _getSortNameByIndex(i),
+                                        reverse: reverse,
+                                        onTap: () {
+                                          ref
+                                              .read(sortChapterStateProvider(
+                                                      mangaId:
+                                                          widget.manga!.id!)
+                                                  .notifier)
+                                              .set(i);
+                                        },
+                                        showLeading: reverseChapter.index == i,
+                                      ),
+                                  ],
+                                );
+                              }),
+                              Consumer(builder: (context, ref, chil) {
+                                return Column(
+                                  children: [
+                                    RadioListTile(
+                                      dense: true,
+                                      title: const Text("Source title"),
+                                      value: "e",
+                                      groupValue: "e",
+                                      selected: true,
+                                      onChanged: (value) {},
+                                    ),
+                                    RadioListTile(
+                                      dense: true,
+                                      title: const Text("Chapter number"),
+                                      value: "ej",
+                                      groupValue: "e",
+                                      selected: false,
+                                      onChanged: (value) {},
+                                    ),
+                                  ],
+                                );
+                              }),
+                            ]),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )),
-      ),
+              )),
+        );
+      }),
       barrier: true,
     );
   }
@@ -810,10 +936,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           children: [
             SizedBox(
               height: 180,
-              child: Stack(
+              width: mediaWidth(context, 1),
+              child: Row(
                 children: [
-                  _titles(),
                   _coverCard(),
+                  Expanded(child: _titles()),
                 ],
               ),
             ),
@@ -940,9 +1067,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   Widget _coverCard() {
-    return Positioned(
-      top: 20,
-      left: 13,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 13),
       child: GestureDetector(
         onTap: () {
           _openImage(widget.manga!.imageUrl!);
@@ -965,24 +1091,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   Widget _titles() {
-    return Positioned(
-      top: 60,
-      left: 23,
-      child: Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 100),
-        width: MediaQuery.of(context).size.width * 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.manga!.name!,
-                style: const TextStyle(
-                  fontSize: 18,
-                )),
-            widget.titleDescription!,
-          ],
-        ),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(widget.manga!.name!,
+            style: const TextStyle(
+              fontSize: 20,
+            )),
+        widget.titleDescription!,
+      ],
     );
   }
 
