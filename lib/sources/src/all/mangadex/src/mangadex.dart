@@ -137,7 +137,6 @@ class MangaDex extends MangaYomiServices {
     var limit = chapterListResponse.limit!;
     var offset = chapterListResponse.offset!;
     var hasMoreResults = (limit + offset) < chapterListResponse.total!;
-
     while (hasMoreResults) {
       offset += limit;
       var newRequest =
@@ -150,6 +149,30 @@ class MangaDex extends MangaYomiServices {
     }
 
     for (var chapterData in chapterListResults!) {
+      List<String> scan = [];
+      var groups = chapterData.relationships!
+          .where((element) => element.id != legacyNoGroupId)
+          .toList();
+      for (var element in groups) {
+        scan.add(
+            element.attributes != null ? element.attributes!.name ?? "" : "");
+      }
+      final scann = scan.join(" ").trim();
+      if (scann.isEmpty) {
+        scan = [];
+        for (var element in groups) {
+          scan.add(element.attributes != null
+              ? element.attributes!.username != null
+                  ? "Uploaded by ${element.attributes!.username}"
+                  : ""
+              : "");
+        }
+      }
+      if (scann.isEmpty) {
+        scan = [];
+        scan.add("No Group");
+      }
+
       List<String> chapName = [];
       var chapAttr = chapterData.attributes!;
       if (chapAttr.volume != null && chapAttr.volume!.isNotEmpty) {
@@ -167,6 +190,7 @@ class MangaDex extends MangaYomiServices {
       if (chapName.isEmpty) {
         chapName.add("Oneshot");
       }
+      scanlators.add(scan.join(" ").trim());
       chapterUrl.add("/chapter/${chapterData.id}");
       chapterTitle.add(chapName.join(" "));
       chapterDate.add(parseDate(chapAttr.publishAt!, source));

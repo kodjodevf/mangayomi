@@ -87,3 +87,4 @@ Status getPublicationStatus(Aggregate? aggregate, mdx_detail.Attributes attr) {
 
 const tagAnthologyUuid = "51d83883-4103-437c-b4b1-731cb73d786c";
 const tagOneShotUuid = "0234a31e-a729-4e28-9d6a-3f87c4966b9e";
+const legacyNoGroupId = "00e03853-1b96-4f41-9542-c71b8692033b";

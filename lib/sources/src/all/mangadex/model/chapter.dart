@@ -95,14 +95,29 @@ class Attributes {
 class Relationships {
   String? id;
   String? type;
-
-  Relationships({
-    this.id,
-    this.type,
-  });
+  RAttributes? attributes;
+  Relationships({this.id, this.type, this.attributes});
 
   Relationships.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     type = json['type'];
+    // log(json['attributes'].toString());
+    attributes = json['attributes'] != null
+        ? RAttributes.fromJson(json['attributes'])
+        : null;
+  }
+}
+
+class RAttributes {
+  String? name;
+  String? username;
+  RAttributes({
+    this.name,
+    this.username,
+  });
+
+  RAttributes.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    username = json['username'];
   }
 }
