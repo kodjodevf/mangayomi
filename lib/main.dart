@@ -1,5 +1,4 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -7,21 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
-import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 
 late Isar isar;
 void main(List<String> args) async {
@@ -29,47 +19,9 @@ void main(List<String> args) async {
     return;
   }
   WidgetsFlutterBinding.ensureInitialized();
-  await _initDB();
+  isar = await StorageProvider().initDB(null);
   await StorageProvider().requestPermission();
   runApp(const ProviderScope(child: MyApp()));
-}
-
-_initDB() async {
-  final dir = await getApplicationDocumentsDirectory();
-  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-    isar = Isar.openSync(
-      [
-        MangaSchema,
-        ChapterSchema,
-        CategorySchema,
-        HistorySchema,
-        DownloadSchema,
-        SourceSchema,
-        SettingsSchema
-      ],
-      directory: dir.path,
-    );
-  } else {
-    String dbDir = path.join(dir.path, 'Mangayomi', 'databases');
-    await Directory(dbDir).create(recursive: true);
-    isar = await Isar.open([
-      MangaSchema,
-      ChapterSchema,
-      CategorySchema,
-      HistorySchema,
-      DownloadSchema,
-      SourceSchema,
-      SettingsSchema
-    ], directory: dbDir, name: "mangayomiDb");
-  }
-  if (isar.settings.filter().idEqualTo(227).isEmptySync()) {
-    isar.writeTxnSync(
-      () {
-        isar.settings.putSync(Settings()
-          );
-      },
-    );
-  }
 }
 
 _iniDateFormatting() {

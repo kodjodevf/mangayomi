@@ -1,4 +1,6 @@
 // ignore_for_file: implementation_imports, depend_on_referenced_packages
+import 'dart:io';
+
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,11 +42,16 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
   late final manga = widget.chapter.manga.value!;
   _deleteFile(List pageUrl) async {
+    final mangaDir =
+        await _storageProvider.getMangaMainDirectory(widget.chapter);
     final path = await _storageProvider.getMangaChapterDirectory(
       widget.chapter,
     );
 
     try {
+      if (await File("${mangaDir!.path}${widget.chapter.name}.cbz").exists()) {
+        File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
+      }
       path!.deleteSync(recursive: true);
     } catch (_) {}
     isar.writeTxnSync(() {

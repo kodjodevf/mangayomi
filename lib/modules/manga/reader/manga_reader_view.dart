@@ -1,15 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
@@ -206,15 +212,20 @@ class _MangaChapterPageGalleryState
         ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
               posIndex,
             );
-        widget.readerController.setMangaHistoryUpdate();
-        widget.readerController.setPageIndex(posIndex);
-        widget.readerController.setChapterPageLastRead(posIndex);
+        final datas = {
+          "chapterId": widget.chapter.id,
+          "pageIndex": posIndex,
+          "path": _dir!.path,
+        };
+        compute(_isolateService, jsonEncode(datas));
         _currentIndex = posIndex;
       }
     }
   }
 
+  Directory? _dir;
   _initCurrentIndex() async {
+    _dir = await StorageProvider().getDatabaseDirectory();
     widget.readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
     _selectedValue = widget.readerController.getReaderMode();
@@ -225,9 +236,12 @@ class _MangaChapterPageGalleryState
     ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
           index,
         );
-    widget.readerController.setMangaHistoryUpdate();
-    widget.readerController.setPageIndex(index);
-    widget.readerController.setChapterPageLastRead(index);
+    final datas = {
+      "chapterId": widget.chapter.id,
+      "pageIndex": index,
+      "path": _dir!.path,
+    };
+    compute(_isolateService, jsonEncode(datas));
     _currentIndex = index;
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
@@ -414,216 +428,107 @@ class _MangaChapterPageGalleryState
       Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
 
   Widget _showMore() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider(widget.chapter));
-        bool isNotFirstChapter =
-            widget.readerController.getChapterIndex() + 1 !=
-                widget.readerController.getChaptersLength();
-        bool isNotLastChapter = widget.readerController.getChapterIndex() != 0;
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            AnimatedContainer(
-              height: _isView ? 80 : 0,
-              curve: Curves.ease,
-              duration: const Duration(milliseconds: 200),
-              child: PreferredSize(
-                preferredSize: Size.fromHeight(_isView ? 80 : 0),
-                child: AppBar(
-                  centerTitle: false,
-                  automaticallyImplyLeading: false,
-                  titleSpacing: 0,
-                  leading: BackButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+    bool isNotFirstChapter = widget.readerController.getChapterIndex() + 1 !=
+        widget.readerController.getChaptersLength();
+    bool isNotLastChapter = widget.readerController.getChapterIndex() != 0;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        AnimatedContainer(
+          height: _isView ? 80 : 0,
+          curve: Curves.ease,
+          duration: const Duration(milliseconds: 200),
+          child: PreferredSize(
+            preferredSize: Size.fromHeight(_isView ? 80 : 0),
+            child: AppBar(
+              centerTitle: false,
+              automaticallyImplyLeading: false,
+              titleSpacing: 0,
+              leading: BackButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: ListTile(
+                dense: true,
+                title: SizedBox(
+                  width: mediaWidth(context, 0.8),
+                  child: Text(
+                    '${widget.readerController.getMangaName()} ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  title: ListTile(
-                    dense: true,
-                    title: SizedBox(
-                      width: mediaWidth(context, 0.8),
-                      child: Text(
-                        '${widget.readerController.getMangaName()} ',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                ),
+                subtitle: SizedBox(
+                  width: mediaWidth(context, 0.8),
+                  child: Text(
+                    widget.readerController.getChapterTitle(),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
                     ),
-                    subtitle: SizedBox(
-                      width: mediaWidth(context, 0.8),
-                      child: Text(
-                        widget.readerController.getChapterTitle(),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  actions: [
-                    IconButton(
-                        onPressed: () {
-                          widget.readerController.setChapterBookmarked();
-                          setState(() {
-                            _isBookmarked = !_isBookmarked;
-                          });
-                        },
-                        icon: Icon(_isBookmarked
-                            ? Icons.bookmark
-                            : Icons.bookmark_border_outlined)),
-                    IconButton(
-                        onPressed: () {
-                          final manga = widget.chapter.manga.value!;
-                          String url = getMangaAPIUrl(manga.source!).isEmpty
-                              ? manga.link!
-                              : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
-                          Map<String, String> data = {
-                            'url': url,
-                            'source': manga.source!,
-                            'title': widget.chapter.name!
-                          };
-                          context.push("/mangawebview", extra: data);
-                        },
-                        icon: const Icon(Icons.public)),
-                  ],
-                  backgroundColor: _backgroundColor(context),
                 ),
               ),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      widget.readerController.setChapterBookmarked();
+                      setState(() {
+                        _isBookmarked = !_isBookmarked;
+                      });
+                    },
+                    icon: Icon(_isBookmarked
+                        ? Icons.bookmark
+                        : Icons.bookmark_border_outlined)),
+                IconButton(
+                    onPressed: () {
+                      final manga = widget.chapter.manga.value!;
+                      String url = getMangaAPIUrl(manga.source!).isEmpty
+                          ? manga.link!
+                          : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
+                      Map<String, String> data = {
+                        'url': url,
+                        'source': manga.source!,
+                        'title': widget.chapter.name!
+                      };
+                      context.push("/mangawebview", extra: data);
+                    },
+                    icon: const Icon(Icons.public)),
+              ],
+              backgroundColor: _backgroundColor(context),
             ),
-            AnimatedContainer(
-              curve: Curves.ease,
-              duration: const Duration(milliseconds: 300),
-              width: mediaWidth(context, 1),
-              height: _isView ? 130 : 0,
-              child: Column(
-                children: [
-                  Flexible(
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            radius: 23,
-                            backgroundColor: _backgroundColor(context),
-                            child: IconButton(
-                                onPressed: isNotFirstChapter
-                                    ? () {
-                                        pushReplacementMangaReaderView(
-                                            context: context,
-                                            chapter: widget.readerController
-                                                .getNextChapter());
-                                      }
-                                    : null,
-                                icon: Transform.scale(
-                                  scaleX: 1,
-                                  child: Icon(Icons.skip_previous_rounded,
-                                      color: isNotFirstChapter
-                                          ? Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .color
-                                          : Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .color!
-                                              .withOpacity(0.4)),
-                                )),
-                          ),
-                        ),
-                        Expanded(
-                          child: Transform.scale(
-                            scaleX: !_isReversHorizontal ? 1 : -1,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Container(
-                                height: 70,
-                                decoration: BoxDecoration(
-                                    color: _backgroundColor(context),
-                                    borderRadius: BorderRadius.circular(25)),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 12),
-                                      child: Transform.scale(
-                                        scaleX: !_isReversHorizontal ? 1 : -1,
-                                        child: SizedBox(
-                                          width: 25,
-                                          child: Text(
-                                            "${currentIndex + 1} ",
-                                            style: const TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Flexible(
-                                      child: Slider(
-                                        onChanged: (newValue) {
-                                          _onBtnTapped(newValue.toInt(), true,
-                                              isSlide: true);
-                                        },
-                                        divisions: max(
-                                            widget.readerController
-                                                    .getPageLength(widget.url) -
-                                                1,
-                                            1),
-                                        value: min(
-                                            _currentIndex.toDouble(),
-                                            widget.readerController
-                                                .getPageLength(widget.url)
-                                                .toDouble()),
-                                        min: 0,
-                                        max: (widget.readerController
-                                                    .getPageLength(widget.url) -
-                                                1)
-                                            .toDouble(),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 12),
-                                      child: Transform.scale(
-                                        scaleX: !_isReversHorizontal ? 1 : -1,
-                                        child: SizedBox(
-                                          width: 25,
-                                          child: Text(
-                                            "${widget.readerController.getPageLength(widget.url)}",
-                                            style: const TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            radius: 23,
-                            backgroundColor: _backgroundColor(context),
-                            child: IconButton(
-                              onPressed: isNotLastChapter
-                                  ? () {
-                                      pushReplacementMangaReaderView(
+          ),
+        ),
+        AnimatedContainer(
+          curve: Curves.ease,
+          duration: const Duration(milliseconds: 300),
+          width: mediaWidth(context, 1),
+          height: _isView ? 130 : 0,
+          child: Column(
+            children: [
+              Flexible(
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                            onPressed: isNotFirstChapter
+                                ? () {
+                                    pushReplacementMangaReaderView(
                                         context: context,
                                         chapter: widget.readerController
-                                            .getPrevChapter(),
-                                      );
-                                    }
-                                  : null,
-                              icon: Transform.scale(
-                                scaleX: 1,
-                                child: Icon(
-                                  Icons.skip_next_rounded,
-                                  color: isNotLastChapter
+                                            .getNextChapter());
+                                  }
+                                : null,
+                            icon: Transform.scale(
+                              scaleX: 1,
+                              child: Icon(Icons.skip_previous_rounded,
+                                  color: isNotFirstChapter
                                       ? Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
@@ -632,113 +537,223 @@ class _MangaChapterPageGalleryState
                                           .textTheme
                                           .bodyLarge!
                                           .color!
-                                          .withOpacity(0.4),
-                                  // size: 17,
+                                          .withOpacity(0.4)),
+                            )),
+                      ),
+                    ),
+                    Expanded(
+                      child: Transform.scale(
+                        scaleX: !_isReversHorizontal ? 1 : -1,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Container(
+                            height: 70,
+                            decoration: BoxDecoration(
+                                color: _backgroundColor(context),
+                                borderRadius: BorderRadius.circular(25)),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Transform.scale(
+                                    scaleX: !_isReversHorizontal ? 1 : -1,
+                                    child: SizedBox(
+                                      width: 25,
+                                      child: Consumer(
+                                          builder: (context, ref, child) {
+                                        final currentIndex = ref.watch(
+                                            currentIndexProvider(
+                                                widget.chapter));
+                                        return Text(
+                                          "${currentIndex + 1} ",
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Flexible(
+                                  child:
+                                      Consumer(builder: (context, ref, child) {
+                                    final currentIndex = ref.watch(
+                                        currentIndexProvider(widget.chapter));
+                                    return Slider(
+                                      onChanged: (newValue) {
+                                        _onBtnTapped(newValue.toInt(), true,
+                                            isSlide: true);
+                                      },
+                                      divisions: max(
+                                          widget.readerController
+                                                  .getPageLength(widget.url) -
+                                              1,
+                                          1),
+                                      value: min(
+                                          currentIndex.toDouble(),
+                                          widget.readerController
+                                              .getPageLength(widget.url)
+                                              .toDouble()),
+                                      min: 0,
+                                      max: (widget.readerController
+                                                  .getPageLength(widget.url) -
+                                              1)
+                                          .toDouble(),
+                                    );
+                                  }),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 12),
+                                  child: Transform.scale(
+                                    scaleX: !_isReversHorizontal ? 1 : -1,
+                                    child: SizedBox(
+                                      width: 25,
+                                      child: Text(
+                                        "${widget.readerController.getPageLength(widget.url)}",
+                                        style: const TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Flexible(
-                    child: Container(
-                      height: 65,
-                      color: _backgroundColor(context),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          PopupMenuButton(
-                            color: Colors.black,
-                            child: const Icon(
-                              Icons.app_settings_alt_outlined,
-                            ),
-                            onSelected: (value) {
-                              if (mounted) {
-                                setState(() {
-                                  _selectedValue = value;
-                                });
-                              }
-                              _(value, true);
-                            },
-                            itemBuilder: (context) => [
-                              for (var readerMode in ReaderMode.values)
-                                PopupMenuItem(
-                                    value: readerMode,
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.check,
-                                          color: _selectedValue == readerMode
-                                              ? Colors.white
-                                              : Colors.transparent,
-                                        ),
-                                        const SizedBox(
-                                          width: 7,
-                                        ),
-                                        Text(
-                                          getReaderModeName(readerMode),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                            ],
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.screen_rotation,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              _showModalSettings();
-                            },
-                            icon: const Icon(
-                              Icons.settings_rounded,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                          onPressed: isNotLastChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: widget.readerController
+                                        .getPrevChapter(),
+                                  );
+                                }
+                              : null,
+                          icon: Transform.scale(
+                            scaleX: 1,
+                            child: Icon(
+                              Icons.skip_next_rounded,
+                              color: isNotLastChapter
+                                  ? Theme.of(context).textTheme.bodyLarge!.color
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color!
+                                      .withOpacity(0.4),
+                              // size: 17,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      },
+              Flexible(
+                child: Container(
+                  height: 65,
+                  color: _backgroundColor(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      PopupMenuButton(
+                        color: Colors.black,
+                        child: const Icon(
+                          Icons.app_settings_alt_outlined,
+                        ),
+                        onSelected: (value) {
+                          if (mounted) {
+                            setState(() {
+                              _selectedValue = value;
+                            });
+                          }
+                          _(value, true);
+                        },
+                        itemBuilder: (context) => [
+                          for (var readerMode in ReaderMode.values)
+                            PopupMenuItem(
+                                value: readerMode,
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check,
+                                      color: _selectedValue == readerMode
+                                          ? Colors.white
+                                          : Colors.transparent,
+                                    ),
+                                    const SizedBox(
+                                      width: 7,
+                                    ),
+                                    Text(
+                                      getReaderModeName(readerMode),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.screen_rotation,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _showModalSettings();
+                        },
+                        icon: const Icon(
+                          Icons.settings_rounded,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _showPage() {
-    return Consumer(
-      builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider(widget.chapter));
-        return _isView
-            ? Container()
-            : _showPagesNumber
-                ? Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      '${currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.0,
-                        shadows: <Shadow>[
-                          Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0)
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
+    return _isView
+        ? Container()
+        : _showPagesNumber
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                child: Consumer(builder: (context, ref, child) {
+                  final currentIndex =
+                      ref.watch(currentIndexProvider(widget.chapter));
+                  return Text(
+                    '${currentIndex + 1} / ${widget.readerController.getPageLength(widget.url)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.0,
+                      shadows: <Shadow>[
+                        Shadow(offset: Offset(0.0, 0.0), blurRadius: 10.0)
+                      ],
                     ),
-                  )
-                : Container();
-      },
-    );
+                    textAlign: TextAlign.center,
+                  );
+                }),
+              )
+            : Container();
   }
 
   _isViewFunction() {
@@ -1182,5 +1197,78 @@ class _MangaChapterPageGalleryState
                 );
               },
             )));
+  }
+}
+
+_isolateService(String data) async {
+  late Isar isarIsolate;
+  isarIsolate = await StorageProvider().initDB(jsonDecode(data)["path"]);
+  Chapter? chapter =
+      isarIsolate.chapters.getSync(jsonDecode(data)["chapterId"]);
+  Manga? manga = chapter!.manga.value!;
+  Settings? isarIsolateSettings = isarIsolate.settings.getSync(227)!;
+  bool incognitoMode = isarIsolate.settings.getSync(227)!.incognitoMode!;
+  int pageIndex = jsonDecode(data)["pageIndex"];
+
+  //setMangaHistoryUpdate
+  if (!incognitoMode) {
+    isarIsolate.writeTxnSync(() {
+      Manga? manga = chapter.manga.value;
+      manga!.lastRead = DateTime.now().millisecondsSinceEpoch;
+      isarIsolate.mangas.putSync(manga);
+    });
+    History? history;
+
+    final empty =
+        isarIsolate.historys.filter().mangaIdEqualTo(manga.id).isEmptySync();
+
+    if (empty) {
+      history = History(
+          mangaId: manga.id,
+          date: DateTime.now().millisecondsSinceEpoch.toString())
+        ..chapter.value = chapter;
+    } else {
+      history = (isarIsolate.historys
+          .filter()
+          .mangaIdEqualTo(manga.id)
+          .findFirstSync())!
+        ..chapter.value = chapter
+        ..date = DateTime.now().millisecondsSinceEpoch.toString();
+    }
+    isarIsolate.writeTxnSync(() {
+      isarIsolate.historys.putSync(history!);
+      history.chapter.saveSync();
+    });
+  }
+
+  //setPageIndex
+  if (!incognitoMode) {
+    List<ChapterPageIndex>? chapterPageIndexs = [];
+    for (var chapterPageIndex
+        in isarIsolateSettings.chapterPageIndexList ?? []) {
+      if (chapterPageIndex.chapterId != chapter.id) {
+        chapterPageIndexs.add(chapterPageIndex);
+      }
+    }
+    chapterPageIndexs.add(ChapterPageIndex()
+      ..chapterId = chapter.id
+      ..index = pageIndex);
+    isarIsolate.writeTxnSync(() => isarIsolate.settings.putSync(
+        isarIsolateSettings..chapterPageIndexList = chapterPageIndexs));
+  }
+  //setChapterPageLastRead
+  if (!incognitoMode) {
+    final chap = chapter;
+    isarIsolate.writeTxnSync(() {
+      chap.isRead = (pageIndex + 1) ==
+          isarIsolateSettings.chapterPageUrlsList!
+              .where((element) => element.chapterId == chapter.id)
+              .first
+              .urls!
+              .length;
+
+      chap.lastPageRead = (pageIndex + 1).toString();
+      isarIsolate.chapters.putSync(chap);
+    });
   }
 }
