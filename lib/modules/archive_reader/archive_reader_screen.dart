@@ -2,8 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/local_reader/models/models.dart';
-import 'package:mangayomi/modules/local_reader/providers/local_reader_providers.dart';
+import 'package:mangayomi/modules/archive_reader/models/models.dart';
+import 'package:mangayomi/modules/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
@@ -23,7 +23,7 @@ class _LocalReaderScreenState extends ConsumerState<LocalReaderScreen> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: const Text('Local Reader'),
+            title: const Text('Archive Reader'),
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,7 +31,7 @@ class _LocalReaderScreenState extends ConsumerState<LocalReaderScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(
+                  ElevatedButton.icon(
                       onPressed: () async {
                         setState(() {
                           isLoading = true;
@@ -63,8 +63,9 @@ class _LocalReaderScreenState extends ConsumerState<LocalReaderScreen> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.file_open)),
-                  IconButton(
+                      label: const Text("Load cbz file"),
+                      icon: const Icon(Icons.archive_rounded)),
+                  ElevatedButton.icon(
                       onPressed: () async {
                         setState(() {
                           isLoading = true;
@@ -88,6 +89,7 @@ class _LocalReaderScreenState extends ConsumerState<LocalReaderScreen> {
                           });
                         }
                       },
+                      label: const Text("Load from directory"),
                       icon: const Icon(Icons.create_new_folder_rounded)),
                 ],
               ),
@@ -104,7 +106,7 @@ class _LocalReaderScreenState extends ConsumerState<LocalReaderScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: InkWell(
                           onTap: () {
-                            context.push("/localReaderReaderView",
+                            context.push("/archiveReaderReaderView",
                                 extra: images[index]);
                           },
                           child: Ink.image(

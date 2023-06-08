@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/local_reader/models/models.dart';
+import 'package:mangayomi/modules/archive_reader/models/models.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
@@ -18,9 +18,9 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
-class LocalReaderReaderView extends ConsumerWidget {
+class ArchiveReaderReaderView extends ConsumerWidget {
   final LocalArchive localArchive;
-  const LocalReaderReaderView({
+  const ArchiveReaderReaderView({
     super.key,
     required this.localArchive,
   });

@@ -24,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     final route = GoRouter.of(context);
     int currentIndex = route.location == '/library'
         ? 0
-        : route.location == '/localReader'
+        : route.location == '/archiveReader'
             ? 1
             : route.location == '/history'
                 ? 2
@@ -79,7 +79,7 @@ class _MainScreenState extends State<MainScreen> {
                           width: isLongPressed
                               ? 0
                               : route.location != '/library' &&
-                                      route.location != '/localReader' &&
+                                      route.location != '/archiveReader' &&
                                       route.location != '/history' &&
                                       route.location != '/browse' &&
                                       route.location != '/more'
@@ -113,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
                                     ),
                                     label: Padding(
                                         padding: EdgeInsets.only(top: 5),
-                                        child: Text('Local Reader'))),
+                                        child: Text('A-Reader'))),
                                 NavigationRailDestination(
                                     selectedIcon: Icon(
                                       Icons.history,
@@ -158,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                                 if (newIndex == 0) {
                                   route.go('/library');
                                 } else if (newIndex == 1) {
-                                  route.go('/localReader');
+                                  route.go('/archiveReader');
                                 } else if (newIndex == 2) {
                                   route.go('/history');
                                 } else if (newIndex == 3) {
@@ -186,7 +186,7 @@ class _MainScreenState extends State<MainScreen> {
                       height: isLongPressed
                           ? 0
                           : route.location != '/library' &&
-                                  route.location != '/localReader' &&
+                                  route.location != '/archiveReader' &&
                                   route.location != '/history' &&
                                   route.location != '/browse' &&
                                   route.location != '/more'
@@ -217,7 +217,7 @@ class _MainScreenState extends State<MainScreen> {
                                 icon: Icon(
                                   Icons.library_books_outlined,
                                 ),
-                                label: 'Local Reader'),
+                                label: 'A-Reader'),
                             NavigationDestination(
                                 selectedIcon: Icon(
                                   Icons.history,
@@ -252,7 +252,7 @@ class _MainScreenState extends State<MainScreen> {
                             if (newIndex == 0) {
                               route.go('/library');
                             } else if (newIndex == 1) {
-                              route.go('/localReader');
+                              route.go('/archiveReader');
                             } else if (newIndex == 2) {
                               route.go('/history');
                             } else if (newIndex == 3) {

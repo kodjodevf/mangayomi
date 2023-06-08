@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga_type.dart';
-import 'package:mangayomi/modules/local_reader/local_reader_screen.dart';
-import 'package:mangayomi/modules/local_reader/models/models.dart';
-import 'package:mangayomi/modules/local_reader/reader/local_reader_reader_view.dart';
+import 'package:mangayomi/modules/archive_reader/archive_reader_screen.dart';
+import 'package:mangayomi/modules/archive_reader/models/models.dart';
+import 'package:mangayomi/modules/archive_reader/reader/archive_reader_reader_view.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
@@ -54,8 +54,8 @@ class AsyncRouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "localReader",
-                path: '/localReader',
+                name: "archiveReader",
+                path: '/archiveReader',
                 builder: (context, state) => const LocalReaderScreen(),
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
@@ -336,11 +336,11 @@ class AsyncRouterNotifier extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: "/localReaderReaderView",
-          name: "localReaderReaderView",
+          path: "/archiveReaderReaderView",
+          name: "archiveReaderReaderView",
           builder: (context, state) {
             final localArchive = state.extra as LocalArchive;
-            return LocalReaderReaderView(
+            return ArchiveReaderReaderView(
               localArchive: localArchive,
             );
           },
@@ -348,7 +348,7 @@ class AsyncRouterNotifier extends ChangeNotifier {
             final localArchive = state.extra as LocalArchive;
             return CustomTransition(
               key: state.pageKey,
-              child: LocalReaderReaderView(
+              child: ArchiveReaderReaderView(
                 localArchive: localArchive,
               ),
             );
