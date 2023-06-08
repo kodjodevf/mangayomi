@@ -58,4 +58,11 @@ class Manga {
   });
 }
 
-enum Status { ongoing, completed, canceled, unknown, onHiatus }
+enum Status {
+  ongoing,
+  completed,
+  canceled,
+  unknown,
+  onHiatus,
+  publishingFinished
+}

@@ -54,14 +54,20 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
-      _getManga = ref.watch(
-          searchMangaProvider(source: widget.mangaType.source!, query: _query));
+      _getManga = ref.watch(searchMangaProvider(
+          source: widget.mangaType.source!,
+          query: _query,
+          lang: widget.mangaType.lang!));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       _getManga = ref.watch(getLatestUpdatesMangaProvider(
-          source: widget.mangaType.source!, page: 1));
+          source: widget.mangaType.source!,
+          page: 1,
+          lang: widget.mangaType.lang!));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-      _getManga = ref.watch(
-          getPopularMangaProvider(source: widget.mangaType.source!, page: 1));
+      _getManga = ref.watch(getPopularMangaProvider(
+          source: widget.mangaType.source!,
+          page: 1,
+          lang: widget.mangaType.lang!));
     }
 
     return Scaffold(
@@ -205,7 +211,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           .watch(getPopularMangaProvider(
                                                   source:
                                                       widget.mangaType.source!,
-                                                  page: _page)
+                                                  page: _page,
+                                                  lang: widget.mangaType.lang!)
                                               .future)
                                           .then(
                                         (value) {
@@ -270,7 +277,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       }
                       ref
                           .watch(getPopularMangaProvider(
-                                  source: widget.mangaType.source!, page: _page)
+                                  source: widget.mangaType.source!,
+                                  page: _page,
+                                  lang: widget.mangaType.lang!)
                               .future)
                           .then(
                         (value) {

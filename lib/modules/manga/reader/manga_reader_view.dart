@@ -959,7 +959,6 @@ class _MangaChapterPageGalleryState
                       preloadPagesCount: _isZoom
                           ? 0
                           : widget.readerController.getPageLength(widget.url),
-                          pageSnapping: false,
                       canScrollPage: (GestureDetails? gestureDetails) {
                         return gestureDetails != null
                             ? !(gestureDetails.totalScale! > 1.0)

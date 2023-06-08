@@ -10,6 +10,7 @@ String getMangaStatusName(Status status) {
     Status.onHiatus => "On hiatus",
     Status.canceled => "Canceled",
     Status.completed => "Completed",
+    Status.publishingFinished => "Publishing finished",
     _ => "Unknown",
   };
 }
@@ -19,7 +20,8 @@ IconData getMangaStatusIcon(Status status) {
     Status.ongoing => Icons.schedule_rounded,
     Status.onHiatus => Icons.pause_circle_rounded,
     Status.canceled => Icons.cancel_rounded,
-    Status.completed => Icons.done_all_rounded,
+    Status.completed => Icons.done,
+    Status.publishingFinished => Icons.done,
     _ => Icons.block_outlined,
   };
 }

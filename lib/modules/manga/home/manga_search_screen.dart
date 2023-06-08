@@ -101,7 +101,8 @@ class SearchResultScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final search = ref.watch(searchMangaProvider(source: source, query: query));
+    final search = ref
+        .watch(searchMangaProvider(source: source, query: query, lang: lang));
     return Scaffold(
         appBar: viewOnly
             ? AppBar(

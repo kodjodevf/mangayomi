@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'e973741f7105e38032412a7ae160003565779463';
+String _$getPopularMangaHash() => r'4fe87d57b93957bbc848b9b814dd3c9aa94b89c5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,10 +44,12 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
   GetPopularMangaProvider call({
     required String source,
     required int page,
+    required String lang,
   }) {
     return GetPopularMangaProvider(
       source: source,
       page: page,
+      lang: lang,
     );
   }
 
@@ -58,6 +60,7 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       page: provider.page,
+      lang: provider.lang,
     );
   }
 
@@ -83,11 +86,13 @@ class GetPopularMangaProvider
   GetPopularMangaProvider({
     required this.source,
     required this.page,
+    required this.lang,
   }) : super.internal(
           (ref) => getPopularManga(
             ref,
             source: source,
             page: page,
+            lang: lang,
           ),
           from: getPopularMangaProvider,
           name: r'getPopularMangaProvider',
@@ -102,12 +107,14 @@ class GetPopularMangaProvider
 
   final String source;
   final int page;
+  final String lang;
 
   @override
   bool operator ==(Object other) {
     return other is GetPopularMangaProvider &&
         other.source == source &&
-        other.page == page;
+        other.page == page &&
+        other.lang == lang;
   }
 
   @override
@@ -115,6 +122,7 @@ class GetPopularMangaProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
+    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

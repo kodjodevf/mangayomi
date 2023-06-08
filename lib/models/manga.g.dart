@@ -276,6 +276,7 @@ const _MangastatusEnumValueMap = {
   'canceled': 2,
   'unknown': 3,
   'onHiatus': 4,
+  'publishingFinished': 5,
 };
 const _MangastatusValueEnumMap = {
   0: Status.ongoing,
@@ -283,6 +284,7 @@ const _MangastatusValueEnumMap = {
   2: Status.canceled,
   3: Status.unknown,
   4: Status.onHiatus,
+  5: Status.publishingFinished,
 };
 
 Id _mangaGetId(Manga object) {

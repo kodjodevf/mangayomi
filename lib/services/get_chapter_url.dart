@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
 import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
+import 'package:mangayomi/sources/src/all/mangadex/src/mangadex.dart';
 import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
 import 'package:mangayomi/sources/src/fr/japscan/src/japscan.dart';
 import 'package:mangayomi/sources/src/fr/mangakawaii/src/mangakawaii.dart';
@@ -123,6 +124,14 @@ Future<GetChapterUrlModel> getChapterUrl(
 
   else if (getMangaTypeSource(source) == TypeSource.madara) {
     pageUrls = await Madara().getChapterUrl(chapter: chapter, ref: ref);
+  }
+
+  /***********/
+  /*mangadex*/
+  /***********/
+
+  else if (getMangaTypeSource(source) == TypeSource.mangadex) {
+    pageUrls = await MangaDex().getChapterUrl(chapter: chapter, ref: ref);
   }
 
   if (pageUrls.isNotEmpty) {

@@ -261,6 +261,7 @@ const _SourcetypeSourceEnumValueMap = {
   'mmrcms': 3,
   'heancms': 4,
   'madara': 5,
+  'mangadex': 6,
 };
 const _SourcetypeSourceValueEnumMap = {
   0: TypeSource.single,
@@ -269,6 +270,7 @@ const _SourcetypeSourceValueEnumMap = {
   3: TypeSource.mmrcms,
   4: TypeSource.heancms,
   5: TypeSource.madara,
+  6: TypeSource.mangadex,
 };
 
 Id _sourceGetId(Source object) {

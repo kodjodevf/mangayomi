@@ -95,6 +95,7 @@ class HeanCms extends MangaYomiServices {
   Future<List<GetManga>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     var request = http.Request(
         'POST', Uri.parse('${getMangaAPIUrl(source)}series/querysearch'));
@@ -136,6 +137,7 @@ class HeanCms extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     var request = http.Request(
         'POST', Uri.parse('${getMangaAPIUrl(source)}series/search'));
@@ -172,6 +174,7 @@ class HeanCms extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     var request = http.Request(
         'POST', Uri.parse('${getMangaAPIUrl(source)}series/querysearch'));

@@ -14,23 +14,29 @@ Map<String, String> headers(HeadersRef ref, {String source = ""}) {
   final baseUrl = getMangaBaseUrl(source);
   return getMangaTypeSource(source) == TypeSource.madara
       ? {"Referer": "$baseUrl/"}
-      : switch (source) {
-          "mangakawaii" => {
-              'Referer': '$baseUrl/',
-              'User-Agent': userAgent,
-              'Accept-Language': 'fr'
-            },
-          "mangahere" => {"Referer": "$baseUrl/", "Cookie": "isAdult=1"},
-          "japscan" => {
-              'User-Agent': userAgent,
-              'Referer': "$baseUrl/",
-              "Cookie": cookie
-            },
-          "sushiscan" => {
-              'User-Agent': userAgent,
-              'Referer': "$baseUrl/",
-              "Cookie": cookie
-            },
-          _ => {},
-        };
+      : getMangaTypeSource(source) == TypeSource.mangadex ||
+              getMangaTypeSource(source) == TypeSource.comick
+          ? {
+              "Referer": "$baseUrl/",
+              'User-Agent': "Tachiyomi $userAgent",
+            }
+          : switch (source) {
+              "mangakawaii" => {
+                  'Referer': '$baseUrl/',
+                  'User-Agent': userAgent,
+                  'Accept-Language': 'fr'
+                },
+              "mangahere" => {"Referer": "$baseUrl/", "Cookie": "isAdult=1"},
+              "japscan" => {
+                  'User-Agent': userAgent,
+                  'Referer': "$baseUrl/",
+                  "Cookie": cookie
+                },
+              "sushiscan" => {
+                  'User-Agent': userAgent,
+                  'Referer': "$baseUrl/",
+                  "Cookie": cookie
+                },
+              _ => {},
+            };
 }

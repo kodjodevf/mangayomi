@@ -12,6 +12,7 @@ Future<dynamic> httpGet(HttpGetRef ref,
     {required String url,
     required String source,
     required bool resDom,
+    Map<String, String>? headers,
     bool useUserAgent = false}) async {
   bool isCloudflaree = isCloudflare(source);
   if (resDom) {
@@ -22,7 +23,8 @@ Future<dynamic> httpGet(HttpGetRef ref,
           .future);
     } else {
       dom = await httpResToDom(
-          url: url, headers: ref.watch(headersProvider(source: source)));
+          url: url,
+          headers: headers ?? ref.watch(headersProvider(source: source)));
     }
     return dom;
   } else {
@@ -34,7 +36,7 @@ Future<dynamic> httpGet(HttpGetRef ref,
     } else {
       try {
         final response = await http.get(Uri.parse(url),
-            headers: ref.watch(headersProvider(source: source)));
+            headers: headers ?? ref.watch(headersProvider(source: source)));
         resHtml = response.body;
       } catch (e) {
         rethrow;

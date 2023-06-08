@@ -208,6 +208,7 @@ class Madara extends MangaYomiServices {
   Future<List<GetManga?>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     String? html;
     html = await ref.watch(httpGetProvider(
@@ -246,6 +247,7 @@ class Madara extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final html = await ref.watch(httpGetProvider(
             url: '${getMangaBaseUrl(source)}/?s=$query&post_type=wp-manga',
@@ -263,6 +265,7 @@ class Madara extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     String? html;
     html = await ref.watch(httpGetProvider(

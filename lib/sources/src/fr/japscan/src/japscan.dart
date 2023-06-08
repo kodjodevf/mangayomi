@@ -116,6 +116,7 @@ class Japscan extends MangaYomiServices {
   Future<List<GetManga?>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)
@@ -145,6 +146,7 @@ class Japscan extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url:
@@ -262,6 +264,7 @@ class Japscan extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)

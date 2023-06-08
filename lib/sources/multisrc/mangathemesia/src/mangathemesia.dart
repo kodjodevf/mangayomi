@@ -144,6 +144,7 @@ class MangaThemeSia extends MangaYomiServices {
   Future<List<GetManga?>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
     final dom = await ref.watch(httpGetProvider(
@@ -194,6 +195,7 @@ class MangaThemeSia extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url: '${getMangaBaseUrl(source)}/?s=${query.trim()}',
@@ -282,6 +284,7 @@ class MangaThemeSia extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
     final dom = await ref.watch(httpGetProvider(

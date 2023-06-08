@@ -15,6 +15,7 @@ class Comick extends MangaYomiServices {
   @override
   Future<List<GetManga?>> getPopularManga(
       {required String source,
+      required String lang,
       required int page,
       required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
@@ -100,6 +101,7 @@ class Comick extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final response = await ref.watch(httpGetProvider(
             url:
@@ -141,11 +143,11 @@ class Comick extends MangaYomiServices {
     return pageUrls;
   }
 
-
   @override
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     source = source.toLowerCase();
     final response = await ref.watch(httpGetProvider(

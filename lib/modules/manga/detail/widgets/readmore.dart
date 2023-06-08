@@ -51,7 +51,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                 left: 0,
                 child: Container(
                   width: mediaWidth(context, 1),
-                  height: 20,
+                  height: 30,
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     gradient: LinearGradient(

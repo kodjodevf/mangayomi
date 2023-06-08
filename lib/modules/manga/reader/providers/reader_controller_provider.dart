@@ -54,7 +54,8 @@ class ReaderController extends _$ReaderController {
 
   void setReaderMode(ReaderMode newReaderMode) {
     List<PersonalReaderMode>? personalReaderModeLists = [];
-    for (var personalReaderMode in getIsarSetting().personalReaderModeList!) {
+    for (var personalReaderMode
+        in getIsarSetting().personalReaderModeList ?? []) {
       if (personalReaderMode.mangaId != getManga().id) {
         personalReaderModeLists.add(personalReaderMode);
       }

@@ -109,6 +109,7 @@ class Mmrcms extends MangaYomiServices {
   Future<List<GetManga?>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url:
@@ -138,6 +139,7 @@ class Mmrcms extends MangaYomiServices {
   Future<List<GetManga?>> searchManga(
       {required String source,
       required String query,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final response = await ref.watch(httpGetProvider(
             url: '${getMangaBaseUrl(source)}/search?query=${query.trim()}',
@@ -197,6 +199,7 @@ class Mmrcms extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url: '${getMangaBaseUrl(source)}/latest-release?page=$page',

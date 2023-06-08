@@ -127,6 +127,7 @@ class MangaKawaii extends MangaYomiServices {
   Future<List<GetManga?>> getPopularManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url: 'https://www.mangakawaii.io/', source: source, resDom: true)
@@ -143,7 +144,7 @@ class MangaKawaii extends MangaYomiServices {
           .toList();
       for (var ur in url) {
         image.add(
-        "https://cdn.mangakawaii.pics/uploads$ur/cover/cover_250x350.jpg");
+            "https://cdn.mangakawaii.pics/uploads$ur/cover/cover_250x350.jpg");
       }
     }
     return mangaRes();
@@ -152,7 +153,7 @@ class MangaKawaii extends MangaYomiServices {
   @override
   Future<List<GetManga?>> searchManga(
       {required String source,
-      required String query,
+      required String query, required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
             url:
@@ -218,6 +219,7 @@ class MangaKawaii extends MangaYomiServices {
   Future<List<GetManga?>> getLatestUpdatesManga(
       {required String source,
       required int page,
+      required String lang,
       required AutoDisposeFutureProviderRef ref}) {
     throw UnimplementedError();
   }

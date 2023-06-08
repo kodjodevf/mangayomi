@@ -22,6 +22,17 @@ String getMangaAPIUrl(String source) {
   return url;
 }
 
+String getMangaLang(String source) {
+
+  String lang = "";
+  for (var i = 0; i < sourcesList.length; i++) {
+    if (sourcesList[i].sourceName!.toLowerCase() == source.toLowerCase()) {
+      lang = sourcesList[i].lang!;
+    }
+  }
+  return lang;
+}
+
 TypeSource getMangaTypeSource(String source) {
   TypeSource? typeSource;
   for (var i = 0; i < sourcesList.length; i++) {

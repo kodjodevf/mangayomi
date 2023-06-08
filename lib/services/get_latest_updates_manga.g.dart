@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'2f6c7714feca588ada6c6dd98ad62849042e9bae';
+    r'c5ddc8739ee5b7c085cdeede7c55743bfc7f5120';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -46,10 +46,12 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
   GetLatestUpdatesMangaProvider call({
     required String source,
     required int page,
+    required String lang,
   }) {
     return GetLatestUpdatesMangaProvider(
       source: source,
       page: page,
+      lang: lang,
     );
   }
 
@@ -60,6 +62,7 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       page: provider.page,
+      lang: provider.lang,
     );
   }
 
@@ -85,11 +88,13 @@ class GetLatestUpdatesMangaProvider
   GetLatestUpdatesMangaProvider({
     required this.source,
     required this.page,
+    required this.lang,
   }) : super.internal(
           (ref) => getLatestUpdatesManga(
             ref,
             source: source,
             page: page,
+            lang: lang,
           ),
           from: getLatestUpdatesMangaProvider,
           name: r'getLatestUpdatesMangaProvider',
@@ -104,12 +109,14 @@ class GetLatestUpdatesMangaProvider
 
   final String source;
   final int page;
+  final String lang;
 
   @override
   bool operator ==(Object other) {
     return other is GetLatestUpdatesMangaProvider &&
         other.source == source &&
-        other.page == page;
+        other.page == page &&
+        other.lang == lang;
   }
 
   @override
@@ -117,6 +124,7 @@ class GetLatestUpdatesMangaProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
+    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

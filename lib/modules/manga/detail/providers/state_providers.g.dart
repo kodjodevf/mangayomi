@@ -473,7 +473,7 @@ class ChapterFilterBookmarkedStateProvider
 }
 
 String _$chapterFilterResultStateHash() =>
-    r'efd09e7ec1bc7f63ffdcc82c5c2760de94d704e6';
+    r'ed7adcf7a9d34c3614547735b48789bb004f49cd';
 
 abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<bool> {

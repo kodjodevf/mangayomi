@@ -6,7 +6,7 @@ part of 'search_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'5f2a70ca38af7448f546f70db81cbe55a79a5fba';
+String _$searchMangaHash() => r'0448881ce3785ac0c670a87914590008ae19fdd5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,10 +44,12 @@ class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
   SearchMangaProvider call({
     required String source,
     required String query,
+    required String lang,
   }) {
     return SearchMangaProvider(
       source: source,
       query: query,
+      lang: lang,
     );
   }
 
@@ -58,6 +60,7 @@ class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       query: provider.query,
+      lang: provider.lang,
     );
   }
 
@@ -82,11 +85,13 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
   SearchMangaProvider({
     required this.source,
     required this.query,
+    required this.lang,
   }) : super.internal(
           (ref) => searchManga(
             ref,
             source: source,
             query: query,
+            lang: lang,
           ),
           from: searchMangaProvider,
           name: r'searchMangaProvider',
@@ -101,12 +106,14 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
 
   final String source;
   final String query;
+  final String lang;
 
   @override
   bool operator ==(Object other) {
     return other is SearchMangaProvider &&
         other.source == source &&
-        other.query == query;
+        other.query == query &&
+        other.lang == lang;
   }
 
   @override
@@ -114,6 +121,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, query.hashCode);
+    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -6,7 +6,7 @@ part of 'http_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$httpGetHash() => r'57b50256bd7577a4d795cf74f9429d3a4434792f';
+String _$httpGetHash() => r'115d7fdde9392d32055ddefe661731c37b2b584e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -45,12 +45,14 @@ class HttpGetFamily extends Family<AsyncValue<dynamic>> {
     required String url,
     required String source,
     required bool resDom,
+    Map<String, String>? headers,
     bool useUserAgent = false,
   }) {
     return HttpGetProvider(
       url: url,
       source: source,
       resDom: resDom,
+      headers: headers,
       useUserAgent: useUserAgent,
     );
   }
@@ -63,6 +65,7 @@ class HttpGetFamily extends Family<AsyncValue<dynamic>> {
       url: provider.url,
       source: provider.source,
       resDom: provider.resDom,
+      headers: provider.headers,
       useUserAgent: provider.useUserAgent,
     );
   }
@@ -89,6 +92,7 @@ class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
     required this.url,
     required this.source,
     required this.resDom,
+    this.headers,
     this.useUserAgent = false,
   }) : super.internal(
           (ref) => httpGet(
@@ -96,6 +100,7 @@ class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
             url: url,
             source: source,
             resDom: resDom,
+            headers: headers,
             useUserAgent: useUserAgent,
           ),
           from: httpGetProvider,
@@ -111,6 +116,7 @@ class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
   final String url;
   final String source;
   final bool resDom;
+  final Map<String, String>? headers;
   final bool useUserAgent;
 
   @override
@@ -119,6 +125,7 @@ class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
         other.url == url &&
         other.source == source &&
         other.resDom == resDom &&
+        other.headers == headers &&
         other.useUserAgent == useUserAgent;
   }
 
@@ -128,6 +135,7 @@ class HttpGetProvider extends AutoDisposeFutureProvider<dynamic> {
     hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, resDom.hashCode);
+    hash = _SystemHash.combine(hash, headers.hashCode);
     hash = _SystemHash.combine(hash, useUserAgent.hashCode);
 
     return _SystemHash.finish(hash);

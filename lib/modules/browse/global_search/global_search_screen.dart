@@ -89,8 +89,8 @@ class SourceSearchScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final search = ref
-        .watch(searchMangaProvider(source: source.sourceName!, query: query));
+    final search = ref.watch(searchMangaProvider(
+        source: source.sourceName!, query: query, lang: source.lang!));
     return Scaffold(
         body: SizedBox(
       height: 260,

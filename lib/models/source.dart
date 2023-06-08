@@ -68,5 +68,7 @@ enum TypeSource {
 
   heancms,
 
-  madara
+  madara,
+
+  mangadex
 }
