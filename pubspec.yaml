@@ -63,6 +63,7 @@ dependencies:
   archive: ^3.3.7
   file_picker: ^5.3.0
   path_provider: ^2.0.15
+  image: ^3.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -74,22 +75,22 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.4.5
   riverpod_generator: ^2.2.3
-  flutter_launcher_icons: ^0.13.1
+  # flutter_launcher_icons: ^0.13.1
   isar_generator: 3.1.0+1
   flutter_lints: ^2.0.1
 
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  remove_alpha_ios: true
-  image_path: "assets/mangayomi_logo.png"
-  min_sdk_android: 24
-  windows:
-    generate: true
-    image_path: "assets/mangayomi_logo.png"
-  macos:
-    generate: true
-    image_path: "assets/mangayomi_logo.png"
+# flutter_launcher_icons:
+#   android: "launcher_icon"
+#   ios: true
+#   remove_alpha_ios: true
+#   image_path: "assets/mangayomi_logo.png"
+#   min_sdk_android: 24
+#   windows:
+#     generate: true
+#     image_path: "assets/mangayomi_logo.png"
+#   macos:
+#     generate: true
+#     image_path: "assets/mangayomi_logo.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

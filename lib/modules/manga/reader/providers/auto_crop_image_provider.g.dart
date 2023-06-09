@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'auto_crop_image_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'1ddc8d7c1d9b1f3fdea4ba1b4e8252a61597a616';
+String _$autoCropImageHash() => r'aae86e74203def1027400fa81e06e8e10344487d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,35 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
+typedef AutoCropImageRef = AutoDisposeFutureProviderRef<Uint8List?>;
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+/// See also [autoCropImage].
+@ProviderFor(autoCropImage)
+const autoCropImageProvider = AutoCropImageFamily();
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
+/// See also [autoCropImage].
+class AutoCropImageFamily extends Family<AsyncValue<Uint8List?>> {
+  /// See also [autoCropImage].
+  const AutoCropImageFamily();
 
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
-    required Chapter chapter,
-    bool? useWifi,
-  }) {
-    return DownloadChapterProvider(
-      chapter: chapter,
-      useWifi: useWifi,
+  /// See also [autoCropImage].
+  AutoCropImageProvider call(
+    String? url,
+    Uint8List? data,
+  ) {
+    return AutoCropImageProvider(
+      url,
+      data,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  AutoCropImageProvider getProviderOverride(
+    covariant AutoCropImageProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
-      useWifi: provider.useWifi,
+      provider.url,
+      provider.data,
     );
   }
 
@@ -73,47 +73,47 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'autoCropImageProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
-    required this.chapter,
-    this.useWifi,
-  }) : super.internal(
-          (ref) => downloadChapter(
+/// See also [autoCropImage].
+class AutoCropImageProvider extends AutoDisposeFutureProvider<Uint8List?> {
+  /// See also [autoCropImage].
+  AutoCropImageProvider(
+    this.url,
+    this.data,
+  ) : super.internal(
+          (ref) => autoCropImage(
             ref,
-            chapter: chapter,
-            useWifi: useWifi,
+            url,
+            data,
           ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          from: autoCropImageProvider,
+          name: r'autoCropImageProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$autoCropImageHash,
+          dependencies: AutoCropImageFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              AutoCropImageFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
-  final bool? useWifi;
+  final String? url;
+  final Uint8List? data;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is AutoCropImageProvider &&
+        other.url == url &&
+        other.data == data;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
+    hash = _SystemHash.combine(hash, data.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -45,18 +45,15 @@ class ImageViewVertical extends ConsumerWidget {
               height: MediaQuery.of(context).padding.top,
             ),
           isLocale
-              ? archiveImage != null
-                  ? ExtendedImage.memory(
-                      archiveImage!,
-                      fit: BoxFit.contain,
-                      clearMemoryCacheWhenDispose: true,
-                      enableMemoryCache: false,
-                    )
-                  : ExtendedImage.file(
-                      fit: BoxFit.contain,
-                      clearMemoryCacheWhenDispose: true,
-                      enableMemoryCache: false,
-                      File('${path.path}${padIndex(index + 1)}.jpg'))
+              ? ExtendedImage.memory(
+                  archiveImage != null
+                      ? archiveImage!
+                      : File('${path.path}${padIndex(index + 1)}.jpg')
+                          .readAsBytesSync(),
+                  fit: BoxFit.contain,
+                  clearMemoryCacheWhenDispose: true,
+                  enableMemoryCache: false,
+                )
               : ExtendedImage.network(url,
                   headers: ref.watch(headersProvider(source: source)),
                   handleLoadingProgress: true,

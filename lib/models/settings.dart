@@ -83,6 +83,8 @@ class Settings {
 
   List<FilterScanlator>? filterScanlatorList;
 
+  bool? cropBorders;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -118,7 +120,8 @@ class Settings {
       this.pureBlackDarkMode = false,
       this.downloadOnlyOnWifi = false,
       this.saveAsCBZArchive = false,
-      this.downloadLocation = ""});
+      this.downloadLocation = "",
+      this.cropBorders = false});
 }
 
 enum DisplayType {

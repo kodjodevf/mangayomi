@@ -13,6 +13,7 @@ class ReaderScreen extends ConsumerWidget {
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
     final animatePageTransitions =
         ref.watch(animatePageTransitionsStateProvider);
+    final cropBorders = ref.watch(cropBordersStateProvider);
     final doubleTapAnimationSpeed =
         ref.watch(doubleTapAnimationSpeedStateProvider);
     return Scaffold(
@@ -148,6 +149,14 @@ class ReaderScreen extends ConsumerWidget {
               onChanged: (value) {
                 ref
                     .read(animatePageTransitionsStateProvider.notifier)
+                    .set(value);
+              }),
+          SwitchListTile(
+              value: cropBorders,
+              title: const Text("Crop borders"),
+              onChanged: (value) {
+                ref
+                    .read(cropBordersStateProvider.notifier)
                     .set(value);
               }),
         ],

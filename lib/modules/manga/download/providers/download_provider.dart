@@ -57,70 +57,75 @@ Future<List<String>> downloadChapter(
   });
 
   if (pageUrls.isNotEmpty) {
-    for (var index = 0; index < pageUrls.length; index++) {
-      final path2 = Directory("${path1.path}downloads/");
-      final path4 = Directory(
-          "${path2.path}${manga.source} (${manga.lang!.toUpperCase()})/");
-      final path3 =
-          Directory("${path4.path}${manga.name!.replaceAll(regExp, '_')}/");
-
-      if (!(await path1.exists())) {
-        path1.create();
-      }
-      if (Platform.isAndroid) {
-        if (!(await File("${path1.path}" ".nomedia").exists())) {
-          File("${path1.path}" ".nomedia").create();
-        }
-      }
-      if (!(await path2.exists())) {
-        path2.create();
-      }
-      if (!(await path4.exists())) {
-        path4.create();
-      }
-      if (!(await path3.exists())) {
-        path3.create();
-      }
-
-      if ((await path.exists())) {
-        if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
-        } else {
-          tasks.add(DownloadTask(
-              taskId: pageUrls[index],
-              headers: ref.watch(headersProvider(source: manga.source!)),
-              url: pageUrls[index],
-              filename: "${padIndex(index + 1)}.jpg",
-              baseDirectory: Platform.isAndroid
-                  ? BaseDirectory.temporary
-                  : BaseDirectory.applicationDocuments,
-              directory: 'Mangayomi/$finalPath',
-              updates: Updates.statusAndProgress,
-              allowPause: true,
-              requiresWiFi: onlyOnWifi));
-        }
-      } else {
-        path.create();
-        if (await File("${path.path}" "${padIndex(index + 1)}.jpg").exists()) {
-        } else {
-          tasks.add(DownloadTask(
-              taskId: pageUrls[index],
-              headers: ref.watch(headersProvider(source: manga.source!)),
-              url: pageUrls[index],
-              filename: "${padIndex(index + 1)}.jpg",
-              baseDirectory: Platform.isAndroid
-                  ? BaseDirectory.temporary
-                  : BaseDirectory.applicationDocuments,
-              directory: 'Mangayomi/$finalPath',
-              updates: Updates.statusAndProgress,
-              allowPause: true,
-              requiresWiFi: onlyOnWifi));
-        }
-      }
-    }
     bool cbzFileExist =
         await File("${mangaDir!.path}${chapter.name}.cbz").exists() &&
             ref.watch(saveAsCBZArchiveStateProvider);
-    if (tasks.isEmpty && pageUrls.isNotEmpty || cbzFileExist) {
+    if (!cbzFileExist) {
+      for (var index = 0; index < pageUrls.length; index++) {
+        final path2 = Directory("${path1.path}downloads/");
+        final path4 = Directory(
+            "${path2.path}${manga.source} (${manga.lang!.toUpperCase()})/");
+        final path3 =
+            Directory("${path4.path}${manga.name!.replaceAll(regExp, '_')}/");
+
+        if (!(await path1.exists())) {
+          path1.create();
+        }
+        if (Platform.isAndroid) {
+          if (!(await File("${path1.path}" ".nomedia").exists())) {
+            File("${path1.path}" ".nomedia").create();
+          }
+        }
+        if (!(await path2.exists())) {
+          path2.create();
+        }
+        if (!(await path4.exists())) {
+          path4.create();
+        }
+        if (!(await path3.exists())) {
+          path3.create();
+        }
+
+        if ((await path.exists())) {
+          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
+              .exists()) {
+          } else {
+            tasks.add(DownloadTask(
+                taskId: pageUrls[index],
+                headers: ref.watch(headersProvider(source: manga.source!)),
+                url: pageUrls[index],
+                filename: "${padIndex(index + 1)}.jpg",
+                baseDirectory: Platform.isAndroid
+                    ? BaseDirectory.temporary
+                    : BaseDirectory.applicationDocuments,
+                directory: 'Mangayomi/$finalPath',
+                updates: Updates.statusAndProgress,
+                allowPause: true,
+                requiresWiFi: onlyOnWifi));
+          }
+        } else {
+          path.create();
+          if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
+              .exists()) {
+          } else {
+            tasks.add(DownloadTask(
+                taskId: pageUrls[index],
+                headers: ref.watch(headersProvider(source: manga.source!)),
+                url: pageUrls[index],
+                filename: "${padIndex(index + 1)}.jpg",
+                baseDirectory: Platform.isAndroid
+                    ? BaseDirectory.temporary
+                    : BaseDirectory.applicationDocuments,
+                directory: 'Mangayomi/$finalPath',
+                updates: Updates.statusAndProgress,
+                allowPause: true,
+                requiresWiFi: onlyOnWifi));
+          }
+        }
+      }
+    }
+
+    if (tasks.isEmpty && pageUrls.isNotEmpty) {
       final model = Download(
           succeeded: 0,
           failed: 0,
@@ -129,12 +134,6 @@ Future<List<String>> downloadChapter(
           taskIds: pageUrls,
           isStartDownload: false,
           chapterId: chapter.id);
-
-      if (!cbzFileExist) {
-        await ref.watch(convertToCBZProvider(
-                path.path, mangaDir.path, chapter.name!, pageUrls)
-            .future);
-      }
 
       isar.writeTxnSync(() {
         isar.downloads.putSync(model..chapter.value = chapter);

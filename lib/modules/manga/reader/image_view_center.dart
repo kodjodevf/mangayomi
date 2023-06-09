@@ -39,25 +39,18 @@ class ImageViewCenter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return isLocale
-        ? archiveImage != null
-            ? ExtendedImage.memory(
-                archiveImage!,
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap,
-                loadStateChanged: loadStateChanged,
-              )
-            : ExtendedImage.file(
-                File("${path.path}" "${padIndex(index + 1)}.jpg"),
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap,
-                loadStateChanged: loadStateChanged,
-              )
+        ? ExtendedImage.memory(
+            archiveImage != null
+                ? archiveImage!
+                : File("${path.path}" "${padIndex(index + 1)}.jpg")
+                    .readAsBytesSync(),
+            clearMemoryCacheWhenDispose: true,
+            enableMemoryCache: false,
+            mode: ExtendedImageMode.gesture,
+            initGestureConfigHandler: initGestureConfigHandler,
+            onDoubleTap: onDoubleTap,
+            loadStateChanged: loadStateChanged,
+          )
         : ExtendedImage.network(
             url,
             headers: ref.watch(headersProvider(source: source)),

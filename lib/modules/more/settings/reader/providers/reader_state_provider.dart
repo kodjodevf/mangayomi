@@ -47,3 +47,18 @@ class DoubleTapAnimationSpeedState extends _$DoubleTapAnimationSpeedState {
         isar.settings.putSync(settings!..doubleTapAnimationSpeed = value));
   }
 }
+
+@riverpod
+class CropBordersState extends _$CropBordersState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.cropBorders ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..cropBorders = value));
+  }
+}

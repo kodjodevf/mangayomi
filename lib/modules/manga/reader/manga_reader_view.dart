@@ -15,6 +15,8 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -27,6 +29,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -319,6 +322,48 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  Future _cropImageFuture(Uint8List? image, String? url) async {
+    final cropImage = await ref.watch(autoCropImageProvider(
+      url,
+      image,
+    ).future);
+    if (cropImage != null) {
+      cropImagesList.add(cropImage);
+    } else {
+      cropImagesList.add(null);
+    }
+  }
+
+  List<Uint8List?> cropImagesList = [];
+  bool isOk = false;
+  _cropImage() async {
+    List<Future> futures = [];
+    if (!isOk) {
+      isOk = true;
+      if (widget.archiveImages.isNotEmpty) {
+        for (var image in widget.archiveImages) {
+          futures.add(_cropImageFuture(image, null));
+        }
+      } else if (widget.isLocaleList.contains(true)) {
+        for (var i = 0; i < widget.isLocaleList.length; i++) {
+          if (widget.isLocaleList[i] == true) {
+            Uint8List? image = File('${widget.path.path}${padIndex(i + 1)}.jpg')
+                .readAsBytesSync();
+            futures.add(_cropImageFuture(image, null));
+          } else {
+            futures.add(_cropImageFuture(null, null));
+          }
+        }
+      } else {
+        for (var url in widget.url) {
+          futures.add(_cropImageFuture(null, url));
+        }
+      }
+      await Future.wait(futures);
+      setState(() {});
+    }
+  }
+
   ReaderMode? _selectedValue;
   bool _isView = false;
   Alignment _scalePosition = Alignment.center;
@@ -427,7 +472,7 @@ class _MangaChapterPageGalleryState
   Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
 
-  Widget _showMore() {
+  Widget _showMore(bool cropBorders) {
     bool isNotFirstChapter = widget.readerController.getChapterIndex() + 1 !=
         widget.readerController.getChaptersLength();
     bool isNotLastChapter = widget.readerController.getChapterIndex() != 0;
@@ -707,7 +752,11 @@ class _MangaChapterPageGalleryState
                         ],
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ref
+                              .read(cropBordersStateProvider.notifier)
+                              .set(!cropBorders);
+                        },
                         icon: const Icon(
                           Icons.screen_rotation,
                         ),
@@ -906,6 +955,8 @@ class _MangaChapterPageGalleryState
   double _imageDetailY = 0;
   @override
   Widget build(BuildContext context) {
+    final cropBorders = ref.watch(cropBordersStateProvider);
+    _cropImage();
     return WillPopScope(
       onWillPop: () async {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -971,9 +1022,7 @@ class _MangaChapterPageGalleryState
                       scrollDirection: _scrollDirection,
                       reverse: _isReversHorizontal,
                       physics: const ClampingScrollPhysics(),
-                      preloadPagesCount: _isZoom
-                          ? 0
-                          : widget.readerController.getPageLength(widget.url),
+                      preloadPagesCount: _isZoom ? 0 : 6,
                       canScrollPage: (GestureDetails? gestureDetails) {
                         return gestureDetails != null
                             ? !(gestureDetails.totalScale! > 1.0)
@@ -981,9 +1030,12 @@ class _MangaChapterPageGalleryState
                       },
                       itemBuilder: (BuildContext context, int index) {
                         return ImageViewCenter(
-                          archiveImage: widget.archiveImages.isNotEmpty
-                              ? widget.archiveImages[index]
-                              : null,
+                          archiveImage:
+                              cropImagesList.isNotEmpty && cropBorders == true
+                                  ? cropImagesList[index]
+                                  : widget.archiveImages.isNotEmpty
+                                      ? widget.archiveImages[index]
+                                      : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController
                               .getSourceName()
@@ -1129,9 +1181,12 @@ class _MangaChapterPageGalleryState
 
                             _doubleClickAnimationController.forward();
                           },
-                          isLocale: _isReversHorizontal
-                              ? widget.isLocaleList.reversed.toList()[index]
-                              : widget.isLocaleList[index],
+                          isLocale: cropImagesList.isNotEmpty &&
+                                  cropBorders == true
+                              ? true
+                              : _isReversHorizontal
+                                  ? widget.isLocaleList.reversed.toList()[index]
+                                  : widget.isLocaleList[index],
                         );
                       },
                       itemCount:
@@ -1139,7 +1194,7 @@ class _MangaChapterPageGalleryState
                       onPageChanged: _onPageChanged)),
           _gestureRightLeft(),
           _gestureTopBottom(),
-          _showMore(),
+          _showMore(cropBorders),
           _showPage(),
         ],
       ),

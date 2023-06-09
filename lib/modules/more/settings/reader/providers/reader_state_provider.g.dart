@@ -57,4 +57,20 @@ final doubleTapAnimationSpeedStateProvider =
 );
 
 typedef _$DoubleTapAnimationSpeedState = AutoDisposeNotifier<int>;
+String _$cropBordersStateHash() => r'65d636df7bebd9fb15b3915c1044c61f3479e806';
+
+/// See also [CropBordersState].
+@ProviderFor(CropBordersState)
+final cropBordersStateProvider =
+    AutoDisposeNotifierProvider<CropBordersState, bool>.internal(
+  CropBordersState.new,
+  name: r'cropBordersStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$cropBordersStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CropBordersState = AutoDisposeNotifier<bool>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
