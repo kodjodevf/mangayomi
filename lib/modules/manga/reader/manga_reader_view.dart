@@ -472,7 +472,7 @@ class _MangaChapterPageGalleryState
   Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
 
-  Widget _showMore(bool cropBorders) {
+  Widget _showMore() {
     bool isNotFirstChapter = widget.readerController.getChapterIndex() + 1 !=
         widget.readerController.getChaptersLength();
     bool isNotLastChapter = widget.readerController.getChapterIndex() != 0;
@@ -751,16 +751,41 @@ class _MangaChapterPageGalleryState
                                 )),
                         ],
                       ),
-                      IconButton(
-                        onPressed: () {
-                          ref
-                              .read(cropBordersStateProvider.notifier)
-                              .set(!cropBorders);
-                        },
-                        icon: const Icon(
-                          Icons.screen_rotation,
-                        ),
-                      ),
+                      Consumer(builder: (context, ref, child) {
+                        final cropBorders = ref.watch(cropBordersStateProvider);
+                        return IconButton(
+                          onPressed: () {
+                            ref
+                                .read(cropBordersStateProvider.notifier)
+                                .set(!cropBorders);
+                          },
+                          icon: Stack(
+                            children: [
+                              const Icon(
+                                Icons.crop_rounded,
+                              ),
+                              if (cropBorders)
+                                Positioned(
+                                  left: 3,
+                                  right: 0,
+                                  child: Transform.scale(
+                                    scaleX: 2.5,
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '\\',
+                                          style: TextStyle(fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      }),
                       IconButton(
                         onPressed: () {
                           _showModalSettings();
@@ -990,9 +1015,12 @@ class _MangaChapterPageGalleryState
                         },
                         onDoubleTap: () {},
                         child: ImageViewVertical(
-                          archiveImage: widget.archiveImages.isNotEmpty
-                              ? widget.archiveImages[index]
-                              : null,
+                          archiveImage:
+                              cropImagesList.isNotEmpty && cropBorders == true
+                                  ? cropImagesList[index]
+                                  : widget.archiveImages.isNotEmpty
+                                      ? widget.archiveImages[index]
+                                      : null,
                           titleManga: widget.readerController.getMangaName(),
                           source: widget.readerController
                               .getSourceName()
@@ -1005,7 +1033,10 @@ class _MangaChapterPageGalleryState
                           chapter: widget.readerController.getChapterTitle(),
                           length:
                               widget.readerController.getPageLength(widget.url),
-                          isLocale: widget.isLocaleList[index],
+                          isLocale:
+                              cropImagesList.isNotEmpty && cropBorders == true
+                                  ? true
+                                  : widget.isLocaleList[index],
                         ),
                       ),
                       separatorBuilder: (_, __) => Divider(
@@ -1194,7 +1225,7 @@ class _MangaChapterPageGalleryState
                       onPageChanged: _onPageChanged)),
           _gestureRightLeft(),
           _gestureTopBottom(),
-          _showMore(cropBorders),
+          _showMore(),
           _showPage(),
         ],
       ),
