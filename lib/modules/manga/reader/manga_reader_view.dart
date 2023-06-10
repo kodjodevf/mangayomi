@@ -332,7 +332,9 @@ class _MangaChapterPageGalleryState
               path: widget.path,
               url: widget.url)
           .future);
-      // print(cropImage.length);
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -727,6 +729,7 @@ class _MangaChapterPageGalleryState
                         final cropBorders = ref.watch(cropBordersStateProvider);
                         return IconButton(
                           onPressed: () {
+                            _cropImage();
                             ref
                                 .read(cropBordersStateProvider.notifier)
                                 .set(!cropBorders);
@@ -952,7 +955,7 @@ class _MangaChapterPageGalleryState
   @override
   Widget build(BuildContext context) {
     final cropBorders = ref.watch(cropBordersStateProvider);
-    _cropImage();
+
     return WillPopScope(
       onWillPop: () async {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
