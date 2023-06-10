@@ -6,7 +6,7 @@ part of 'auto_crop_image_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$autoCropImageHash() => r'aae86e74203def1027400fa81e06e8e10344487d';
+String _$autoCropBorderHash() => r'3e283f997cd9de62a7cf39d2045c249b2a6c027e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,41 @@ class _SystemHash {
   }
 }
 
-typedef AutoCropImageRef = AutoDisposeFutureProviderRef<Uint8List?>;
+typedef AutoCropBorderRef = AutoDisposeFutureProviderRef<List<Uint8List?>>;
 
-/// See also [autoCropImage].
-@ProviderFor(autoCropImage)
-const autoCropImageProvider = AutoCropImageFamily();
+/// See also [autoCropBorder].
+@ProviderFor(autoCropBorder)
+const autoCropBorderProvider = AutoCropBorderFamily();
 
-/// See also [autoCropImage].
-class AutoCropImageFamily extends Family<AsyncValue<Uint8List?>> {
-  /// See also [autoCropImage].
-  const AutoCropImageFamily();
+/// See also [autoCropBorder].
+class AutoCropBorderFamily extends Family<AsyncValue<List<Uint8List?>>> {
+  /// See also [autoCropBorder].
+  const AutoCropBorderFamily();
 
-  /// See also [autoCropImage].
-  AutoCropImageProvider call(
-    String? url,
-    Uint8List? data,
-  ) {
-    return AutoCropImageProvider(
-      url,
-      data,
+  /// See also [autoCropBorder].
+  AutoCropBorderProvider call({
+    required List<String?> url,
+    required List<Uint8List?> archiveImages,
+    required List<bool> isLocaleList,
+    required Directory path,
+  }) {
+    return AutoCropBorderProvider(
+      url: url,
+      archiveImages: archiveImages,
+      isLocaleList: isLocaleList,
+      path: path,
     );
   }
 
   @override
-  AutoCropImageProvider getProviderOverride(
-    covariant AutoCropImageProvider provider,
+  AutoCropBorderProvider getProviderOverride(
+    covariant AutoCropBorderProvider provider,
   ) {
     return call(
-      provider.url,
-      provider.data,
+      url: provider.url,
+      archiveImages: provider.archiveImages,
+      isLocaleList: provider.isLocaleList,
+      path: provider.path,
     );
   }
 
@@ -73,47 +79,58 @@ class AutoCropImageFamily extends Family<AsyncValue<Uint8List?>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'autoCropImageProvider';
+  String? get name => r'autoCropBorderProvider';
 }
 
-/// See also [autoCropImage].
-class AutoCropImageProvider extends AutoDisposeFutureProvider<Uint8List?> {
-  /// See also [autoCropImage].
-  AutoCropImageProvider(
-    this.url,
-    this.data,
-  ) : super.internal(
-          (ref) => autoCropImage(
+/// See also [autoCropBorder].
+class AutoCropBorderProvider
+    extends AutoDisposeFutureProvider<List<Uint8List?>> {
+  /// See also [autoCropBorder].
+  AutoCropBorderProvider({
+    required this.url,
+    required this.archiveImages,
+    required this.isLocaleList,
+    required this.path,
+  }) : super.internal(
+          (ref) => autoCropBorder(
             ref,
-            url,
-            data,
+            url: url,
+            archiveImages: archiveImages,
+            isLocaleList: isLocaleList,
+            path: path,
           ),
-          from: autoCropImageProvider,
-          name: r'autoCropImageProvider',
+          from: autoCropBorderProvider,
+          name: r'autoCropBorderProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$autoCropImageHash,
-          dependencies: AutoCropImageFamily._dependencies,
+                  : _$autoCropBorderHash,
+          dependencies: AutoCropBorderFamily._dependencies,
           allTransitiveDependencies:
-              AutoCropImageFamily._allTransitiveDependencies,
+              AutoCropBorderFamily._allTransitiveDependencies,
         );
 
-  final String? url;
-  final Uint8List? data;
+  final List<String?> url;
+  final List<Uint8List?> archiveImages;
+  final List<bool> isLocaleList;
+  final Directory path;
 
   @override
   bool operator ==(Object other) {
-    return other is AutoCropImageProvider &&
+    return other is AutoCropBorderProvider &&
         other.url == url &&
-        other.data == data;
+        other.archiveImages == archiveImages &&
+        other.isLocaleList == isLocaleList &&
+        other.path == path;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, url.hashCode);
-    hash = _SystemHash.combine(hash, data.hashCode);
+    hash = _SystemHash.combine(hash, archiveImages.hashCode);
+    hash = _SystemHash.combine(hash, isLocaleList.hashCode);
+    hash = _SystemHash.combine(hash, path.hashCode);
 
     return _SystemHash.finish(hash);
   }

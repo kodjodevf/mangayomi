@@ -17,12 +17,12 @@ Future<LocalArchive> getArchiveDataFromFile(
   return compute(_extractArchive, path);
 }
 
-List<LocalArchive> _extract(String data) {
-  return _searchForArchive(Directory(data));
+Future<List<LocalArchive>> _extract(String data) async {
+  return await _searchForArchive(Directory(data));
 }
 
 List<LocalArchive> _list = [];
-List<LocalArchive> _searchForArchive(Directory dir) {
+Future<List<LocalArchive>> _searchForArchive(Directory dir) async {
   List<FileSystemEntity> entities = dir.listSync();
   for (FileSystemEntity entity in entities) {
     if (entity is Directory) {
@@ -30,7 +30,7 @@ List<LocalArchive> _searchForArchive(Directory dir) {
     } else if (entity is File) {
       String path = entity.path;
       if (_isArchiveFile(path)) {
-        final dd = _extractArchive(path);
+        final dd = await compute(_extractArchive, path);
         _list.add(dd);
       }
     }
@@ -61,7 +61,6 @@ bool _isArchiveFile(String path) {
 }
 
 LocalArchive _extractArchive(String path) {
-  final bytes = File(path).readAsBytesSync();
   final localArchive = LocalArchive()
     ..path = path
     ..extensionType =
@@ -73,15 +72,16 @@ LocalArchive _extractArchive(String path) {
         .last
         .replaceAll(RegExp(r'\.(cbz|zip|cbt|tar)'), '');
   Archive? archive;
+  final inputStream = InputFileStream(path);
   final extensionType = localArchive.extensionType;
   if (extensionType == LocalExtensionType.cbt ||
       extensionType == LocalExtensionType.tar) {
-    archive = TarDecoder().decodeBytes(bytes);
+    archive = TarDecoder().decodeBuffer(inputStream);
   } else {
-    archive = ZipDecoder().decodeBytes(bytes);
+    archive = ZipDecoder().decodeBuffer(inputStream);
   }
 
-  for (final file in archive) {
+  for (final file in archive.files) {
     final filename = file.name;
     if (file.isFile) {
       if (_isImageFile(filename)) {

@@ -14,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 
 class StorageProvider {
-  RegExp regExpChar = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
+  final RegExp _regExpChar = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   Future<bool> requestPermission() async {
     Permission permission = Permission.manageExternalStorage;
     if (Platform.isAndroid || Platform.isIOS) {
@@ -61,18 +61,18 @@ class StorageProvider {
   ) async {
     final manga = chapter.manga.value!;
     String scanlator = chapter.scanlator!.isNotEmpty
-        ? "${chapter.scanlator!.replaceAll(regExpChar, '_')}_"
+        ? "${chapter.scanlator!.replaceAll(_regExpChar, '_')}_"
         : "";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExpChar, '_')}/$scanlator${chapter.name!.replaceAll(regExpChar, '_')}/");
+        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/$scanlator${chapter.name!.replaceAll(_regExpChar, '_')}/");
   }
 
   Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
     final manga = chapter.manga.value!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExpChar, '_')}/");
+        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/");
   }
 
   Future<Directory?> getDatabaseDirectory() async {

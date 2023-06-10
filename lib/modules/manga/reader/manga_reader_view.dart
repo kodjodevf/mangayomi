@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 import 'dart:io';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,6 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -152,7 +151,7 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
       required this.archiveImages});
   final ReaderController readerController;
   final Directory path;
-  final List url;
+  final List<String> url;
   final List<bool> isLocaleList;
   final Chapter chapter;
   final List<Uint8List> archiveImages;
@@ -220,7 +219,7 @@ class _MangaChapterPageGalleryState
           "pageIndex": posIndex,
           "path": _dir!.path,
         };
-        compute(_isolateService, jsonEncode(datas));
+        Isolate.spawn(_isarIsolateService, jsonEncode(datas));
         _currentIndex = posIndex;
       }
     }
@@ -244,7 +243,7 @@ class _MangaChapterPageGalleryState
       "pageIndex": index,
       "path": _dir!.path,
     };
-    compute(_isolateService, jsonEncode(datas));
+    Isolate.spawn(_isarIsolateService, jsonEncode(datas));
     _currentIndex = index;
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
@@ -322,45 +321,18 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  Future _cropImageFuture(Uint8List? image, String? url) async {
-    final cropImage = await ref.watch(autoCropImageProvider(
-      url,
-      image,
-    ).future);
-    if (cropImage != null) {
-      cropImagesList.add(cropImage);
-    } else {
-      cropImagesList.add(null);
-    }
-  }
-
-  List<Uint8List?> cropImagesList = [];
+  List<Uint8List?> _cropImagesList = [];
   bool isOk = false;
   _cropImage() async {
-    List<Future> futures = [];
     if (!isOk) {
       isOk = true;
-      if (widget.archiveImages.isNotEmpty) {
-        for (var image in widget.archiveImages) {
-          futures.add(_cropImageFuture(image, null));
-        }
-      } else if (widget.isLocaleList.contains(true)) {
-        for (var i = 0; i < widget.isLocaleList.length; i++) {
-          if (widget.isLocaleList[i] == true) {
-            Uint8List? image = File('${widget.path.path}${padIndex(i + 1)}.jpg')
-                .readAsBytesSync();
-            futures.add(_cropImageFuture(image, null));
-          } else {
-            futures.add(_cropImageFuture(null, null));
-          }
-        }
-      } else {
-        for (var url in widget.url) {
-          futures.add(_cropImageFuture(null, url));
-        }
-      }
-      await Future.wait(futures);
-      setState(() {});
+      _cropImagesList = await ref.watch(autoCropBorderProvider(
+              archiveImages: widget.archiveImages,
+              isLocaleList: widget.isLocaleList,
+              path: widget.path,
+              url: widget.url)
+          .future);
+      // print(cropImage.length);
     }
   }
 
@@ -766,8 +738,7 @@ class _MangaChapterPageGalleryState
                               ),
                               if (cropBorders)
                                 Positioned(
-                                  left: 3,
-                                  right: 0,
+                                  right: 8,
                                   child: Transform.scale(
                                     scaleX: 2.5,
                                     child: const Row(
@@ -776,7 +747,7 @@ class _MangaChapterPageGalleryState
                                       children: [
                                         Text(
                                           '\\',
-                                          style: TextStyle(fontSize: 25),
+                                          style: TextStyle(fontSize: 17),
                                         ),
                                       ],
                                     ),
@@ -1016,8 +987,8 @@ class _MangaChapterPageGalleryState
                         onDoubleTap: () {},
                         child: ImageViewVertical(
                           archiveImage:
-                              cropImagesList.isNotEmpty && cropBorders == true
-                                  ? cropImagesList[index]
+                              _cropImagesList.isNotEmpty && cropBorders == true
+                                  ? _cropImagesList[index]
                                   : widget.archiveImages.isNotEmpty
                                       ? widget.archiveImages[index]
                                       : null,
@@ -1034,7 +1005,7 @@ class _MangaChapterPageGalleryState
                           length:
                               widget.readerController.getPageLength(widget.url),
                           isLocale:
-                              cropImagesList.isNotEmpty && cropBorders == true
+                              _cropImagesList.isNotEmpty && cropBorders == true
                                   ? true
                                   : widget.isLocaleList[index],
                         ),
@@ -1062,8 +1033,8 @@ class _MangaChapterPageGalleryState
                       itemBuilder: (BuildContext context, int index) {
                         return ImageViewCenter(
                           archiveImage:
-                              cropImagesList.isNotEmpty && cropBorders == true
-                                  ? cropImagesList[index]
+                              _cropImagesList.isNotEmpty && cropBorders == true
+                                  ? _cropImagesList[index]
                                   : widget.archiveImages.isNotEmpty
                                       ? widget.archiveImages[index]
                                       : null,
@@ -1212,7 +1183,7 @@ class _MangaChapterPageGalleryState
 
                             _doubleClickAnimationController.forward();
                           },
-                          isLocale: cropImagesList.isNotEmpty &&
+                          isLocale: _cropImagesList.isNotEmpty &&
                                   cropBorders == true
                               ? true
                               : _isReversHorizontal
@@ -1286,7 +1257,7 @@ class _MangaChapterPageGalleryState
   }
 }
 
-_isolateService(String data) async {
+_isarIsolateService(String data) async {
   late Isar isarIsolate;
   isarIsolate = await StorageProvider().initDB(jsonDecode(data)["path"]);
   Chapter? chapter =
