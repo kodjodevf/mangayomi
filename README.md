@@ -11,6 +11,7 @@ Mangayomi is free and open source manga reader cross-plateform app inspired by T
 Features include:
 * Online reading from a variety of sources
 * Local reading of downloaded content
+* Read local archives (.cbz, .zip)
 * A configurable reader with multiple viewers, reading directions.
 * Categories to organize your library
 * Light and dark themes
