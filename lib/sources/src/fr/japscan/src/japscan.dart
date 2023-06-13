@@ -10,7 +10,6 @@ import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dar
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
-import 'package:collection/collection.dart';
 
 class Japscan extends MangaYomiServices {
   @override
@@ -119,7 +118,10 @@ class Japscan extends MangaYomiServices {
       required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)
+            useUserAgent: true,
+            url: "${getMangaBaseUrl(source)}/",
+            source: source,
+            resDom: true)
         .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
       final urls = dom
@@ -149,6 +151,7 @@ class Japscan extends MangaYomiServices {
       required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
+            useUserAgent: true,
             url:
                 "https://www.google.com/search?q=${query.toLowerCase()}+japscan",
             source: source,
@@ -221,29 +224,23 @@ class Japscan extends MangaYomiServices {
             url: zjsUrl!, source: "japscan", useUserAgent: true)
         .future);
     dom.Document htmll = dom.Document.html(baseUrl!);
-    final strings = html
-        .replaceAll(RegExp(r'\\[(.*?)\\]'), '')
-        .split(",")
-        .map((s) => s.trim().replaceAll("'", "").split('').reversed.join());
-    final stringLookupTables = strings
-        .where((s) =>
-            s.length == 62 &&
-            s.split('').toSet().toList().sorted().join() ==
-                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-        .toList();
-
+    List<String?> stringLookupTables =
+        RegExp(r"'([\dA-Z]{62})'", caseSensitive: false)
+            .allMatches(html)
+            .map((match) => match.group(1))
+            .toList();
     if (stringLookupTables.length != 2) {
-      throw Exception("Expected only two lookup tables in ZJS");
+      throw Exception(
+          "Attendait 2 chaînes de recherche dans ZJS, a trouvé ${stringLookupTables.length}");
     }
-
     final scrambledData =
         htmll.getElementById("data")!.attributes['data-data']!;
 
     for (var i = 0; i <= 1; i++) {
       final otherIndex = i == 0 ? 1 : 0;
 
-      final lookupTable = Map.fromIterables(stringLookupTables[i].split(''),
-          stringLookupTables[otherIndex].split(''));
+      final lookupTable = Map.fromIterables(stringLookupTables[i]!.split(''),
+          stringLookupTables[otherIndex]!.split(''));
       try {
         final unscrambledData = scrambledData
             .split('')

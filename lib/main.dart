@@ -1,4 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:io';
+
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +17,12 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 
 late Isar isar;
 void main(List<String> args) async {
-  if (runWebViewTitleBarWidget(args)) {
-    return;
+  if (Platform.isLinux || Platform.isWindows) {
+    if (runWebViewTitleBarWidget(args)) {
+      return;
+    }
   }
+
   WidgetsFlutterBinding.ensureInitialized();
   isar = await StorageProvider().initDB(null);
   await StorageProvider().requestPermission();

@@ -57,7 +57,8 @@ class ImageViewCenter extends ConsumerWidget {
                 initGestureConfigHandler: initGestureConfigHandler,
                 onDoubleTap: onDoubleTap,
                 loadStateChanged: loadStateChanged,
-              ): ExtendedImage.network(
+              )
+        : ExtendedImage.network(
             url,
             headers: ref.watch(headersProvider(source: source)),
             enableMemoryCache: true,
