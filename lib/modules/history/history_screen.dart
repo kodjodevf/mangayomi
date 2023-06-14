@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -134,7 +133,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 ),
                 itemBuilder: (context, History element) {
                   final manga = element.chapter.value!.manga.value!;
-                  bool isLocalArchive = manga.isLocalArchive ?? false;
                   final chapter = element.chapter.value!;
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -169,9 +167,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(7),
-                                  child: isLocalArchive
-                                      ? Image.memory(base64
-                                          .decode(manga.customCoverImage!))
+                                  child: manga.customCoverImage != null
+                                      ? Image.memory(
+                                          manga.customCoverImage as Uint8List)
                                       : cachedNetworkImage(
                                           headers: ref.watch(headersProvider(
                                               source: manga.source!)),

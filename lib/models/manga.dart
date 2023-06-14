@@ -38,7 +38,7 @@ class Manga {
 
   bool? isLocalArchive;
 
-  String? customCoverImage;
+  List<byte>? customCoverImage;
 
   @Backlink(to: "manga")
   final chapters = IsarLinks<Chapter>();

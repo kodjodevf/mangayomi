@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -97,11 +96,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     width: 40,
                                     height: 45,
-                                    image: isLocalArchive
-                                        ? MemoryImage(base64.decode(
-                                                entriesManga[index]
-                                                    .customCoverImage!))
-                                            as ImageProvider
+                                    image: entriesManga[index]
+                                                .customCoverImage !=
+                                            null
+                                        ? MemoryImage(
+                                            entriesManga[index].customCoverImage
+                                                as Uint8List) as ImageProvider
                                         : CachedNetworkImageProvider(
                                             entriesManga[index].imageUrl!,
                                             headers: ref.watch(headersProvider(

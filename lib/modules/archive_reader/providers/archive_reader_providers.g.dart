@@ -7,7 +7,7 @@ part of 'archive_reader_providers.dart';
 // **************************************************************************
 
 String _$getArchivesDataFromDirectoryHash() =>
-    r'92989ce549951f237423efa91747560507c7b2d0';
+    r'7ca5e7d4a2a79745c92dd0370703c614406be2ad';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,7 +31,7 @@ class _SystemHash {
 }
 
 typedef GetArchivesDataFromDirectoryRef = AutoDisposeFutureProviderRef<
-    List<(String, LocalExtensionType, String, String)>>;
+    List<(String, LocalExtensionType, Uint8List, String)>>;
 
 /// See also [getArchivesDataFromDirectory].
 @ProviderFor(getArchivesDataFromDirectory)
@@ -40,7 +40,7 @@ const getArchivesDataFromDirectoryProvider =
 
 /// See also [getArchivesDataFromDirectory].
 class GetArchivesDataFromDirectoryFamily extends Family<
-    AsyncValue<List<(String, LocalExtensionType, String, String)>>> {
+    AsyncValue<List<(String, LocalExtensionType, Uint8List, String)>>> {
   /// See also [getArchivesDataFromDirectory].
   const GetArchivesDataFromDirectoryFamily();
 
@@ -79,7 +79,7 @@ class GetArchivesDataFromDirectoryFamily extends Family<
 
 /// See also [getArchivesDataFromDirectory].
 class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
-    List<(String, LocalExtensionType, String, String)>> {
+    List<(String, LocalExtensionType, Uint8List, String)>> {
   /// See also [getArchivesDataFromDirectory].
   GetArchivesDataFromDirectoryProvider(
     this.path,
@@ -202,17 +202,17 @@ class GetArchiveDataFromDirectoryProvider
 }
 
 String _$getArchivesDataFromFileHash() =>
-    r'b2f163e5deb0a4f344f6ce5e6aab0c226b644f3b';
+    r'f118f903a693c2f2ad5ec2452430a1eb10b661b2';
 typedef GetArchivesDataFromFileRef = AutoDisposeFutureProviderRef<
-    (String, LocalExtensionType, String, String)>;
+    (String, LocalExtensionType, Uint8List, String)>;
 
 /// See also [getArchivesDataFromFile].
 @ProviderFor(getArchivesDataFromFile)
 const getArchivesDataFromFileProvider = GetArchivesDataFromFileFamily();
 
 /// See also [getArchivesDataFromFile].
-class GetArchivesDataFromFileFamily
-    extends Family<AsyncValue<(String, LocalExtensionType, String, String)>> {
+class GetArchivesDataFromFileFamily extends Family<
+    AsyncValue<(String, LocalExtensionType, Uint8List, String)>> {
   /// See also [getArchivesDataFromFile].
   const GetArchivesDataFromFileFamily();
 
@@ -251,7 +251,7 @@ class GetArchivesDataFromFileFamily
 
 /// See also [getArchivesDataFromFile].
 class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
-    (String, LocalExtensionType, String, String)> {
+    (String, LocalExtensionType, Uint8List, String)> {
   /// See also [getArchivesDataFromFile].
   GetArchivesDataFromFileProvider(
     this.path,

@@ -502,20 +502,22 @@ class _MangaChapterPageGalleryState
                     icon: Icon(_isBookmarked
                         ? Icons.bookmark
                         : Icons.bookmark_border_outlined)),
-                IconButton(
-                    onPressed: () {
-                      final manga = widget.chapter.manga.value!;
-                      String url = getMangaAPIUrl(manga.source!).isEmpty
-                          ? manga.link!
-                          : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
-                      Map<String, String> data = {
-                        'url': url,
-                        'source': manga.source!,
-                        'title': widget.chapter.name!
-                      };
-                      context.push("/mangawebview", extra: data);
-                    },
-                    icon: const Icon(Icons.public)),
+                if ((widget.chapter.manga.value!.isLocalArchive ?? false) ==
+                    false)
+                  IconButton(
+                      onPressed: () {
+                        final manga = widget.chapter.manga.value!;
+                        String url = getMangaAPIUrl(manga.source!).isEmpty
+                            ? manga.link!
+                            : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
+                        Map<String, String> data = {
+                          'url': url,
+                          'source': manga.source!,
+                          'title': widget.chapter.name!
+                        };
+                        context.push("/mangawebview", extra: data);
+                      },
+                      icon: const Icon(Icons.public)),
               ],
               backgroundColor: _backgroundColor(context),
             ),
@@ -578,7 +580,7 @@ class _MangaChapterPageGalleryState
                                   child: Transform.scale(
                                     scaleX: !_isReversHorizontal ? 1 : -1,
                                     child: SizedBox(
-                                      width: 25,
+                                      width: 30,
                                       child: Consumer(
                                           builder: (context, ref, child) {
                                         final currentIndex = ref.watch(
@@ -628,7 +630,7 @@ class _MangaChapterPageGalleryState
                                   child: Transform.scale(
                                     scaleX: !_isReversHorizontal ? 1 : -1,
                                     child: SizedBox(
-                                      width: 25,
+                                      width: 30,
                                       child: Text(
                                         "${widget.readerController.getPageLength(widget.url)}",
                                         style: const TextStyle(
@@ -730,7 +732,7 @@ class _MangaChapterPageGalleryState
                         final cropBorders = ref.watch(cropBordersStateProvider);
                         return IconButton(
                           onPressed: () {
-                            _cropImage();
+                            // _cropImage();
                             ref
                                 .read(cropBordersStateProvider.notifier)
                                 .set(!cropBorders);

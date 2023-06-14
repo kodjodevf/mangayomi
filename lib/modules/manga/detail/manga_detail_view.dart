@@ -1,8 +1,9 @@
-import 'dart:convert';
-
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -65,7 +67,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   final offetProvider = StateProvider((ref) => 0.0);
   bool _expanded = false;
   ScrollController _scrollController = ScrollController();
-
+  late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
   @override
   Widget build(BuildContext context) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
@@ -192,9 +194,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               child: ref.watch(offetProvider) == 0.0
                   ? Stack(
                       children: [
-                        widget.manga!.isLocalArchive ?? false
+                        widget.manga!.customCoverImage != null
                             ? Image.memory(
-                                base64Decode(widget.manga!.customCoverImage!),
+                                widget.manga!.customCoverImage as Uint8List,
                                 width: mediaWidth(context, 1),
                                 height: 300,
                                 fit: BoxFit.cover)
@@ -327,12 +329,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ? Colors.transparent
                                 : Theme.of(context).scaffoldBackgroundColor,
                             actions: [
-                              IconButton(
-                                  splashRadius: 20,
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.download_outlined,
-                                  )),
+                              if (!isLocalArchive)
+                                IconButton(
+                                    splashRadius: 20,
+                                    onPressed: () {},
+                                    icon: const Icon(
+                                      Icons.download_outlined,
+                                    )),
                               IconButton(
                                   splashRadius: 20,
                                   onPressed: () {
@@ -349,11 +352,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     const PopupMenuItem<int>(
                                         value: 0,
                                         child: Text("Edit categories")),
-                                  if (widget.manga!.favorite)
+                                  if (!isLocalArchive)
+                                    if (widget.manga!.favorite)
+                                      const PopupMenuItem<int>(
+                                          value: 1, child: Text("Migrate")),
+                                  if (!isLocalArchive)
                                     const PopupMenuItem<int>(
-                                        value: 1, child: Text("Migrate")),
-                                  const PopupMenuItem<int>(
-                                      value: 2, child: Text("Share")),
+                                        value: 2, child: Text("Share")),
                                 ];
                               }, onSelected: (value) {
                                 if (value == 0) {
@@ -413,12 +418,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 return isTablet(context)
                                     ? Column(
                                         children: [
-                                          //Description
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              mainAxisAlignment: isLocalArchive
+                                                  ? MainAxisAlignment
+                                                      .spaceBetween
+                                                  : MainAxisAlignment.start,
                                               children: [
                                                 Padding(
                                                   padding: const EdgeInsets
@@ -429,7 +435,36 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                         fontWeight:
                                                             FontWeight.bold),
                                                   ),
-                                                )
+                                                ),
+                                                if (isLocalArchive)
+                                                  ElevatedButton.icon(
+                                                    style: ElevatedButton.styleFrom(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5))),
+                                                    icon: Icon(Icons.add,
+                                                        color: secondaryColor(
+                                                            context)),
+                                                    label: Text(
+                                                      'Add chapters',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: secondaryColor(
+                                                              context)),
+                                                    ),
+                                                    onPressed: () async {
+                                                      await ref.watch(
+                                                          importArchivesFromFileProvider(
+                                                                  widget.manga)
+                                                              .future);
+                                                    },
+                                                  )
                                               ],
                                             ),
                                           ),
@@ -597,46 +632,120 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               )),
                         ),
                       ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 70,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                            ),
-                            onPressed: () {
-                              isar.txnSync(() {
-                                for (var chapter
-                                    in ref.watch(chaptersListStateProvider)) {
-                                  final entries = isar.downloads
-                                      .filter()
-                                      .idIsNotNull()
-                                      .chapterIdEqualTo(chapter.id)
-                                      .findAllSync();
-                                  if (entries.isEmpty ||
-                                      !entries.first.isDownload!) {
-                                    ref.watch(downloadChapterProvider(
-                                        chapter: chapter));
+                    if (!isLocalArchive)
+                      Expanded(
+                        child: SizedBox(
+                          height: 70,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                              ),
+                              onPressed: () {
+                                isar.txnSync(() {
+                                  for (var chapter
+                                      in ref.watch(chaptersListStateProvider)) {
+                                    final entries = isar.downloads
+                                        .filter()
+                                        .idIsNotNull()
+                                        .chapterIdEqualTo(chapter.id)
+                                        .findAllSync();
+                                    if (entries.isEmpty ||
+                                        !entries.first.isDownload!) {
+                                      ref.watch(downloadChapterProvider(
+                                          chapter: chapter));
+                                    }
                                   }
-                                }
-                              });
-
-                              ref
-                                  .read(isLongPressedStateProvider.notifier)
-                                  .update(false);
-                              ref
-                                  .read(chaptersListStateProvider.notifier)
-                                  .clear();
-                            },
-                            child: Icon(
-                              Icons.download_outlined,
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge!.color!,
-                            )),
+                                });
+                                ref
+                                    .read(isLongPressedStateProvider.notifier)
+                                    .update(false);
+                                ref
+                                    .read(chaptersListStateProvider.notifier)
+                                    .clear();
+                              },
+                              child: Icon(
+                                Icons.download_outlined,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .color!,
+                              )),
+                        ),
                       ),
-                    )
+                    if (isLocalArchive)
+                      Expanded(
+                        child: SizedBox(
+                          height: 70,
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                          "Delete chapters ?",
+                                        ),
+                                        actions: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("Cancel")),
+                                              const SizedBox(
+                                                width: 15,
+                                              ),
+                                              TextButton(
+                                                  onPressed: () async {
+                                                    isar.writeTxnSync(() {
+                                                      for (var chapter in ref.watch(
+                                                          chaptersListStateProvider)) {
+                                                        isar.chapters
+                                                            .deleteSync(
+                                                                chapter.id!);
+                                                      }
+                                                    });
+
+                                                    ref
+                                                        .read(
+                                                            isLongPressedStateProvider
+                                                                .notifier)
+                                                        .update(false);
+                                                    ref
+                                                        .read(
+                                                            chaptersListStateProvider
+                                                                .notifier)
+                                                        .clear();
+                                                    if (mounted) {
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: const Text("Delete")),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: Icon(
+                                Icons.delete_outline_outlined,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .color!,
+                              )),
+                        ),
+                      )
                   ],
                 ),
               );
@@ -686,20 +795,21 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               Consumer(builder: (context, ref, chil) {
                                 return Column(
                                   children: [
-                                    ListTileChapterFilter(
-                                        label: "Downloaded",
-                                        type: ref.watch(
-                                            chapterFilterDownloadedStateProvider(
-                                                mangaId: widget.manga!.id!)),
-                                        onTap: () {
-                                          ref
-                                              .read(
-                                                  chapterFilterDownloadedStateProvider(
-                                                          mangaId:
-                                                              widget.manga!.id!)
-                                                      .notifier)
-                                              .update();
-                                        }),
+                                    if (!isLocalArchive)
+                                      ListTileChapterFilter(
+                                          label: "Downloaded",
+                                          type: ref.watch(
+                                              chapterFilterDownloadedStateProvider(
+                                                  mangaId: widget.manga!.id!)),
+                                          onTap: () {
+                                            ref
+                                                .read(
+                                                    chapterFilterDownloadedStateProvider(
+                                                            mangaId: widget
+                                                                .manga!.id!)
+                                                        .notifier)
+                                                .update();
+                                          }),
                                     ListTileChapterFilter(
                                         label: "Unread",
                                         type: ref.watch(
@@ -932,20 +1042,31 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         ),
         Column(
           children: [
-            SizedBox(
-              height: 180,
-              width: mediaWidth(context, 1),
-              child: Row(
-                children: [
-                  _coverCard(),
-                  Expanded(child: _titles()),
-                ],
-              ),
+            Stack(
+              children: [
+                SizedBox(
+                  height: 180,
+                  width: mediaWidth(context, 1),
+                  child: Row(
+                    children: [
+                      _coverCard(),
+                      Expanded(child: _titles()),
+                    ],
+                  ),
+                ),
+                if (isLocalArchive)
+                  Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                          onPressed: () {
+                            _editLocaleArchiveInfos();
+                          },
+                          icon: const CircleAvatar(
+                              child: Icon(Icons.edit_outlined))))
+              ],
             ),
-            if (widget.manga!.isLocalArchive != null
-                ? !widget.manga!.isLocalArchive!
-                : false)
-              _actionFavouriteAndWebview(),
+            if (!isLocalArchive) _actionFavouriteAndWebview(),
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
@@ -1047,7 +1168,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: isLocalArchive
+                                ? MainAxisAlignment.spaceBetween
+                                : MainAxisAlignment.start,
                             children: [
                               Padding(
                                 padding:
@@ -1057,7 +1180,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
-                              )
+                              ),
+                              if (isLocalArchive)
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.all(5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5))),
+                                  icon: Icon(Icons.add,
+                                      color: secondaryColor(context)),
+                                  label: Text(
+                                    'Add chapters',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: secondaryColor(context)),
+                                  ),
+                                  onPressed: () async {
+                                    await ref.watch(
+                                        importArchivesFromFileProvider(
+                                                widget.manga)
+                                            .future);
+                                  },
+                                )
                             ],
                           ),
                         ),
@@ -1073,11 +1218,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   Widget _coverCard() {
+    final imageProvider = widget.manga!.customCoverImage != null
+        ? MemoryImage(widget.manga!.customCoverImage as Uint8List)
+            as ImageProvider
+        : CachedNetworkImageProvider(widget.manga!.imageUrl!);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13),
       child: GestureDetector(
         onTap: () {
-          _openImage(widget.manga!.imageUrl!);
+          _openImage(imageProvider);
         },
         child: SizedBox(
           width: 65 * 1.5,
@@ -1086,10 +1235,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               image: DecorationImage(
-                image: widget.manga!.isLocalArchive ?? false
-                    ? MemoryImage(base64Decode(widget.manga!.customCoverImage!))
-                        as ImageProvider
-                    : CachedNetworkImageProvider(widget.manga!.imageUrl!),
+                image: imageProvider,
                 fit: BoxFit.cover,
               ),
             ),
@@ -1165,31 +1311,218 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  _openImage(String url) {
+  _openImage(ImageProvider imageProvider) {
     showDialog(
         context: context,
         builder: (context) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
+            body: Stack(
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: PhotoViewGallery.builder(
+                    backgroundDecoration:
+                        const BoxDecoration(color: Colors.transparent),
+                    itemCount: 1,
+                    builder: (context, index) {
+                      return PhotoViewGalleryPageOptions(
+                        imageProvider: imageProvider,
+                        minScale: PhotoViewComputedScale.contained,
+                        maxScale: 2.0,
+                      );
+                    },
+                    loadingBuilder: (context, event) {
+                      return const ProgressCenter();
+                    },
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Row(
+                    children: [
+                      if (!isLocalArchive)
+                        if (widget.manga!.customCoverImage != null)
+                          PopupMenuButton(
+                            itemBuilder: (context) {
+                              return [
+                                const PopupMenuItem<int>(
+                                    value: 0, child: Text("Delete")),
+                                const PopupMenuItem<int>(
+                                    value: 1, child: Text("Edit")),
+                              ];
+                            },
+                            onSelected: (value) async {
+                              final manga = widget.manga!;
+                              if (value == 0) {
+                                isar.writeTxnSync(() {
+                                  isar.mangas
+                                      .putSync(manga..customCoverImage = null);
+                                });
+                              } else if (value == 1) {
+                                FilePickerResult? result =
+                                    await FilePicker.platform.pickFiles(
+                                        type: FileType.custom,
+                                        allowedExtensions: [
+                                      'png',
+                                      'jpg',
+                                      'jpeg'
+                                    ]);
+                                if (result != null) {
+                                  if (result.files.first.size < 5000000) {
+                                    final customCoverImage =
+                                        File(result.files.first.path!)
+                                            .readAsBytesSync();
+                                    isar.writeTxnSync(() {
+                                      isar.mangas.putSync(manga
+                                        ..customCoverImage = customCoverImage);
+                                    });
+                                  }
+                                }
+                              }
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                  child: Icon(Icons.edit_outlined)),
+                            ),
+                          ),
+                      // IconButton(
+                      //     onPressed: () async {
+                      //       Uint8List? bytes;
+                      //       if (isLocalArchive) {
+                      //         bytes =
+                      //             widget.manga!.customCoverImage as Uint8List?;
+                      //       }
+                      //       await Share.shareXFiles([
+                      //         XFile.fromData(bytes!,
+                      //             name: widget.manga!.name,
+                      //             mimeType: 'image/jpeg')
+                      //       ]);
+                      //     },
+                      //     icon: const CircleAvatar(child: Icon(Icons.share))),
+
+                      if (isLocalArchive ||
+                          widget.manga!.customCoverImage == null)
+                        IconButton(
+                            onPressed: () async {
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles(
+                                      type: FileType.custom,
+                                      allowedExtensions: [
+                                    'png',
+                                    'jpg',
+                                    'jpeg'
+                                  ]);
+                              if (result != null) {
+                                if (result.files.first.size < 5000000) {
+                                  final manga = widget.manga!;
+                                  final customCoverImage =
+                                      File(result.files.first.path!)
+                                          .readAsBytesSync();
+                                  isar.writeTxnSync(() {
+                                    isar.mangas.putSync(manga
+                                      ..customCoverImage = customCoverImage);
+                                  });
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                }
+                              }
+                            },
+                            icon: const CircleAvatar(
+                                child: Icon(Icons.edit_outlined))),
+                    ],
+                  ),
+                )
+              ],
             ),
-            body: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: PhotoViewGallery.builder(
-                itemCount: 1,
-                builder: (context, index) {
-                  return PhotoViewGalleryPageOptions(
-                    imageProvider: CachedNetworkImageProvider(url),
-                    minScale: PhotoViewComputedScale.contained,
-                    maxScale: PhotoViewComputedScale.covered,
-                  );
-                },
-                loadingBuilder: (context, event) {
-                  return const ProgressCenter();
-                },
+          );
+        });
+  }
+
+  _editLocaleArchiveInfos() {
+    TextEditingController? name =
+        TextEditingController(text: widget.manga!.name!);
+    TextEditingController? description =
+        TextEditingController(text: widget.manga!.description!);
+    // TextEditingController? tag;
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              "Edit",
+            ),
+            content: SizedBox(
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: Text("Name"),
+                        ),
+                        TextFormField(
+                          controller: name,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: Text("Description"),
+                        ),
+                        TextFormField(
+                          controller: description,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Cancel")),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        isar.writeTxnSync(() {
+                          final manga = widget.manga!;
+                          manga.description = description.text;
+                          manga.name = name.text;
+                          isar.mangas.putSync(manga);
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Edit")),
+                ],
+              )
+            ],
           );
         });
   }

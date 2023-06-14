@@ -14,7 +14,7 @@ class ReadMoreWidget extends StatefulWidget {
 
 class ReadMoreWidgetState extends State<ReadMoreWidget>
     with TickerProviderStateMixin {
-  bool expanded = false;
+  late bool expanded = widget.text.trim().length < 232;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,11 +33,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                 widget.text.trim(),
                 expandText: '',
                 maxLines: 3,
-                expanded: false,
-                onPrefixTap: () {
-                  setState(() => expanded = !expanded);
-                  widget.onChanged(expanded);
-                },
+                expanded: expanded,
                 linkColor: Theme.of(context).scaffoldBackgroundColor,
                 animation: true,
                 collapseOnTextTap: true,
