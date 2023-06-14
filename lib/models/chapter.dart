@@ -7,8 +7,6 @@ part 'chapter.g.dart';
 class Chapter {
   Id? id;
 
-  int? mangaId;
-
   String? name;
 
   String? url;
@@ -23,16 +21,19 @@ class Chapter {
 
   String? lastPageRead;
 
+  ///Only for local archive BD
+  String? archivePath;
+
   final manga = IsarLink<Manga>();
 
   Chapter(
       {this.id = Isar.autoIncrement,
-      required this.mangaId,
       required this.name,
-      required this.url,
-      required this.dateUpload,
+      this.url = '',
+      this.dateUpload = '',
       this.isBookmarked = false,
-      required this.scanlator,
+      this.scanlator = '',
       this.isRead = false,
-      this.lastPageRead = ''});
+      this.lastPageRead = '',
+      this.archivePath = ''});
 }

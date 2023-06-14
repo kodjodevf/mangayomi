@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
@@ -190,13 +192,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               child: ref.watch(offetProvider) == 0.0
                   ? Stack(
                       children: [
-                        cachedNetworkImage(
-                            headers: ref.watch(
-                                headersProvider(source: widget.manga!.source!)),
-                            imageUrl: widget.manga!.imageUrl!,
-                            width: mediaWidth(context, 1),
-                            height: 410,
-                            fit: BoxFit.cover),
+                        widget.manga!.isLocalArchive ?? false
+                            ? Image.memory(
+                                base64Decode(widget.manga!.customCoverImage!),
+                                width: mediaWidth(context, 1),
+                                height: 300,
+                                fit: BoxFit.cover)
+                            : cachedNetworkImage(
+                                headers: ref.watch(headersProvider(
+                                    source: widget.manga!.source!)),
+                                imageUrl: widget.manga!.imageUrl!,
+                                width: mediaWidth(context, 1),
+                                height: 300,
+                                fit: BoxFit.cover),
                         Stack(
                           children: [
                             Column(
@@ -908,27 +916,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _bodyContainer({required int chapterLength}) {
     return Stack(
       children: [
-        Positioned(
-            top: 0,
-            child: cachedNetworkImage(
-                headers:
-                    ref.watch(headersProvider(source: widget.manga!.source!)),
-                imageUrl: widget.manga!.imageUrl!,
-                width: mediaWidth(context, 1),
-                height: 250,
-                fit: BoxFit.cover)),
         Container(
           height: 300,
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-                Color(Theme.of(context).scaffoldBackgroundColor.value)
+                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.05),
+                Theme.of(context).scaffoldBackgroundColor
               ],
-              stops: const [0, .35],
+              stops: const [0, .3],
             ),
           ),
         ),
@@ -944,7 +942,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 ],
               ),
             ),
-            _actionFavouriteAndWebview(),
+            if (widget.manga!.isLocalArchive != null
+                ? !widget.manga!.isLocalArchive!
+                : false)
+              _actionFavouriteAndWebview(),
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
@@ -964,76 +965,81 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     ),
                   Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: _expanded || isTablet(context)
-                          ? Wrap(
-                              children: [
-                                for (var i = 0;
-                                    i < widget.manga!.genre!.length;
-                                    i++)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 2, right: 2, bottom: 5),
-                                    child: SizedBox(
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor:
-                                                Colors.grey.withOpacity(0.2),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5))),
-                                        onPressed: () {},
-                                        child: Text(
-                                          widget.manga!.genre![i],
-                                          style: TextStyle(
-                                              fontSize: 11.5,
-                                              color: isLight(context)
-                                                  ? Colors.black
-                                                  : Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                      child: widget.manga!.genre!.isEmpty
+                          ? const SizedBox(
+                              height: 30,
                             )
-                          : SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  for (var i = 0;
-                                      i < widget.manga!.genre!.length;
-                                      i++)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 2, right: 2, bottom: 5),
-                                      child: SizedBox(
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              backgroundColor:
-                                                  Colors.grey.withOpacity(0.2),
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5))),
-                                          onPressed: () {},
-                                          child: Text(
-                                            widget.manga!.genre![i],
-                                            style: TextStyle(
-                                                fontSize: 11.5,
-                                                color: isLight(context)
-                                                    ? Colors.black
-                                                    : Colors.white),
+                          : _expanded || isTablet(context)
+                              ? Wrap(
+                                  children: [
+                                    for (var i = 0;
+                                        i < widget.manga!.genre!.length;
+                                        i++)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 2, right: 2, bottom: 5),
+                                        child: SizedBox(
+                                          height: 30,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor: Colors.grey
+                                                    .withOpacity(0.2),
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5))),
+                                            onPressed: () {},
+                                            child: Text(
+                                              widget.manga!.genre![i],
+                                              style: TextStyle(
+                                                  fontSize: 11.5,
+                                                  color: isLight(context)
+                                                      ? Colors.black
+                                                      : Colors.white),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                            )),
+                                  ],
+                                )
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      for (var i = 0;
+                                          i < widget.manga!.genre!.length;
+                                          i++)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 2, right: 2, bottom: 5),
+                                          child: SizedBox(
+                                            height: 30,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                  elevation: 0,
+                                                  backgroundColor: Colors.grey
+                                                      .withOpacity(0.2),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5))),
+                                              onPressed: () {},
+                                              child: Text(
+                                                widget.manga!.genre![i],
+                                                style: TextStyle(
+                                                    fontSize: 11.5,
+                                                    color: isLight(context)
+                                                        ? Colors.black
+                                                        : Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                )),
                   if (!isTablet(context))
                     Column(
                       children: [
@@ -1080,7 +1086,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               image: DecorationImage(
-                image: CachedNetworkImageProvider(widget.manga!.imageUrl!),
+                image: widget.manga!.isLocalArchive ?? false
+                    ? MemoryImage(base64Decode(widget.manga!.customCoverImage!))
+                        as ImageProvider
+                    : CachedNetworkImageProvider(widget.manga!.imageUrl!),
                 fit: BoxFit.cover,
               ),
             ),

@@ -32,6 +32,7 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   @override
   Widget build(BuildContext context) {
+    bool? isLocalArchive = widget.manga.isLocalArchive ?? false;
     return Scaffold(
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
@@ -90,34 +91,36 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         },
       ),
       body: MangaDetailView(
-        titleDescription: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.manga.author!,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            Row(
-              children: [
-                 Icon(
-                  getMangaStatusIcon(widget.manga.status),
-                  size: 14,
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-                Text(getMangaStatusName(widget.manga.status)),
-                const Text(' • '),
-                Row(
-                  children: [
-                    Text(widget.manga.source!),
-                    Text(' (${widget.manga.lang!.toUpperCase()})'),
-                  ],
-                )
-              ],
-            )
-          ],
-        ),
+        titleDescription: isLocalArchive
+            ? Container()
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.manga.author!,
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        getMangaStatusIcon(widget.manga.status),
+                        size: 14,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(getMangaStatusName(widget.manga.status)),
+                      const Text(' • '),
+                      Row(
+                        children: [
+                          Text(widget.manga.source!),
+                          Text(' (${widget.manga.lang!.toUpperCase()})'),
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
         action: widget.manga.favorite
             ? SizedBox(
                 width: isTablet(context) ? null : mediaWidth(context, 0.4),

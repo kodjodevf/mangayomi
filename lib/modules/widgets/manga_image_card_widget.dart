@@ -83,50 +83,56 @@ void pushToMangaReaderDetail(
     {GetManga? getManga,
     required String lang,
     required BuildContext context,
+    int? archiveId,
     Manga? mangaM}) {
-  final manga = mangaM ??
-      Manga(
-          imageUrl: getManga!.imageUrl,
-          name: getManga.name,
-          genre: getManga.genre,
-          author: getManga.author,
-          status: getManga.status!,
-          description: getManga.description,
-          link: getManga.url,
-          source: getManga.source,
-          lang: lang,
-          lastUpdate: DateTime.now().millisecondsSinceEpoch);
+  int? mangaId;
+  if (archiveId == null) {
+    final manga = mangaM ??
+        Manga(
+            imageUrl: getManga!.imageUrl,
+            name: getManga.name,
+            genre: getManga.genre,
+            author: getManga.author,
+            status: getManga.status!,
+            description: getManga.description,
+            link: getManga.url,
+            source: getManga.source,
+            lang: lang,
+            lastUpdate: DateTime.now().millisecondsSinceEpoch);
 
-  final empty = isar.mangas
-      .filter()
-      .langEqualTo(lang)
-      .nameEqualTo(manga.name)
-      .sourceEqualTo(manga.source)
-      .isEmptySync();
-  if (empty) {
-    isar.writeTxnSync(() {
-      isar.mangas.putSync(manga);
-      for (var i = 0; i < getManga!.chapters.length; i++) {
-        final chapters = Chapter(
+    final empty = isar.mangas
+        .filter()
+        .langEqualTo(lang)
+        .nameEqualTo(manga.name)
+        .sourceEqualTo(manga.source)
+        .isEmptySync();
+    if (empty) {
+      isar.writeTxnSync(() {
+        isar.mangas.putSync(manga);
+        for (var i = 0; i < getManga!.chapters.length; i++) {
+          final chapters = Chapter(
             name: getManga.chapters[i].name,
             url: getManga.chapters[i].url,
             dateUpload: getManga.chapters[i].dateUpload,
             scanlator: getManga.chapters[i].scanlator,
-            mangaId: manga.id)
-          ..manga.value = manga;
-        isar.chapters.putSync(chapters);
-        chapters.manga.saveSync();
-      }
-    });
+          )..manga.value = manga;
+          isar.chapters.putSync(chapters);
+          chapters.manga.saveSync();
+        }
+      });
+    }
+
+    mangaId = isar.mangas
+        .filter()
+        .langEqualTo(lang)
+        .nameEqualTo(manga.name)
+        .sourceEqualTo(manga.source)
+        .findFirstSync()!
+        .id!;
+  } else {
+    mangaId = archiveId;
   }
 
-  final mangaId = isar.mangas
-      .filter()
-      .langEqualTo(lang)
-      .nameEqualTo(manga.name)
-      .sourceEqualTo(manga.source)
-      .findFirstSync()!
-      .id!;
   final settings = isar.settings.getSync(227)!;
   final sortList = settings.sortChapterList ?? [];
   final checkIfExist =

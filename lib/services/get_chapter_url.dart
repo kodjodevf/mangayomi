@@ -56,103 +56,96 @@ Future<GetChapterUrlModel> getChapterUrl(
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
 
   List<Uint8List> archiveImages = [];
-  if (isarPageUrls.isNotEmpty &&
-      isarPageUrls.first.urls != null &&
-      isarPageUrls.first.urls!.isNotEmpty) {
-    pageUrls = isarPageUrls.first.urls!;
-  }
-
-  /*********/
-  /*comick*/
-  /********/
-
-  else if (getMangaTypeSource(source) == TypeSource.comick) {
-    pageUrls = await Comick().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /*************/
-  /*mangathemesia*/
-  /**************/
-
-  else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    pageUrls = await MangaThemeSia().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*mangakawaii*/
-  /***********/
-
-  else if (source == 'mangakawaii') {
-    pageUrls = await MangaKawaii().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*mmrcms*/
-  /***********/
-
-  else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    pageUrls = await Mmrcms().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*mangahere*/
-  /***********/
-
-  else if (source == 'mangahere') {
-    pageUrls = await Mangahere().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*japscan*/
-  /***********/
-
-  else if (source == 'japscan') {
-    pageUrls = await Japscan().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*heancms*/
-  /***********/
-
-  else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    pageUrls = await HeanCms().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*madara*/
-  /***********/
-
-  else if (getMangaTypeSource(source) == TypeSource.madara) {
-    pageUrls = await Madara().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  /***********/
-  /*mangadex*/
-  /***********/
-
-  else if (getMangaTypeSource(source) == TypeSource.mangadex) {
-    pageUrls = await MangaDex().getChapterUrl(chapter: chapter, ref: ref);
-  }
-
-  if (pageUrls.isNotEmpty) {
-    if (!incognitoMode) {
-      List<ChapterPageurls>? chapterPageUrls = [];
-      for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
-        if (chapterPageUrl.chapterId != chapter.id) {
-          chapterPageUrls.add(chapterPageUrl);
-        }
-      }
-      chapterPageUrls.add(ChapterPageurls()
-        ..chapterId = chapter.id
-        ..urls = pageUrls);
-      isar.writeTxnSync(() => isar.settings
-          .putSync(settings..chapterPageUrlsList = chapterPageUrls));
+  final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
+  if (!chapter.manga.value!.isLocalArchive!) {
+    if (isarPageUrls.isNotEmpty &&
+        isarPageUrls.first.urls != null &&
+        isarPageUrls.first.urls!.isNotEmpty) {
+      pageUrls = isarPageUrls.first.urls!;
     }
 
-    if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists()) {
-      final local = await ref.watch(getArchiveDataFromFileProvider(
-              "${mangaDirectory.path}${chapter.name}.cbz")
-          .future);
+    /*********/
+    /*comick*/
+    /********/
+
+    else if (getMangaTypeSource(source) == TypeSource.comick) {
+      pageUrls = await Comick().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /*************/
+    /*mangathemesia*/
+    /**************/
+
+    else if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
+      pageUrls =
+          await MangaThemeSia().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*mangakawaii*/
+    /***********/
+
+    else if (source == 'mangakawaii') {
+      pageUrls = await MangaKawaii().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*mmrcms*/
+    /***********/
+
+    else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
+      pageUrls = await Mmrcms().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*mangahere*/
+    /***********/
+
+    else if (source == 'mangahere') {
+      pageUrls = await Mangahere().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*japscan*/
+    /***********/
+
+    else if (source == 'japscan') {
+      pageUrls = await Japscan().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*heancms*/
+    /***********/
+
+    else if (getMangaTypeSource(source) == TypeSource.heancms) {
+      pageUrls = await HeanCms().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*madara*/
+    /***********/
+
+    else if (getMangaTypeSource(source) == TypeSource.madara) {
+      pageUrls = await Madara().getChapterUrl(chapter: chapter, ref: ref);
+    }
+
+    /***********/
+    /*mangadex*/
+    /***********/
+
+    else if (getMangaTypeSource(source) == TypeSource.mangadex) {
+      pageUrls = await MangaDex().getChapterUrl(chapter: chapter, ref: ref);
+    }
+  }
+
+  if (pageUrls.isNotEmpty || isLocalArchive) {
+    if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists() ||
+        isLocalArchive) {
+      final path = isLocalArchive
+          ? chapter.archivePath
+          : "${mangaDirectory.path}${chapter.name}.cbz";
+      final local =
+          await ref.watch(getArchiveDataFromFileProvider(path!).future);
       for (var image in local.images!) {
         archiveImages.add(image.image!);
         isLocaleList.add(true);
@@ -165,6 +158,24 @@ Future<GetChapterUrlModel> getChapterUrl(
           isLocaleList.add(false);
         }
       }
+    }
+    if (isLocalArchive) {
+      for (var i = 0; i < archiveImages.length; i++) {
+        pageUrls.add("");
+      }
+    }
+    if (!incognitoMode) {
+      List<ChapterPageurls>? chapterPageUrls = [];
+      for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
+        if (chapterPageUrl.chapterId != chapter.id) {
+          chapterPageUrls.add(chapterPageUrl);
+        }
+      }
+      chapterPageUrls.add(ChapterPageurls()
+        ..chapterId = chapter.id
+        ..urls = pageUrls);
+      isar.writeTxnSync(() => isar.settings
+          .putSync(settings..chapterPageUrlsList = chapterPageUrls));
     }
   }
 

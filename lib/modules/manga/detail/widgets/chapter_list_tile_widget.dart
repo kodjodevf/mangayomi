@@ -71,25 +71,27 @@ class ChapterListTileWidget extends ConsumerWidget {
         ),
         subtitle: Row(
           children: [
-            Text(
-              dateFormat(chapter.dateUpload!, ref: ref),
-              style: const TextStyle(fontSize: 11),
-            ),
-            if(!chapter.isRead!)
-            if (chapter.lastPageRead!.isNotEmpty && chapter.lastPageRead != "1")
-              Row(
-                children: [
-                  const Text(' • '),
-                  Text(
-                    "Page ${chapter.lastPageRead}",
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: isLight(context)
-                            ? Colors.black.withOpacity(0.4)
-                            : Colors.white.withOpacity(0.3)),
-                  ),
-                ],
+            if ((chapter.manga.value!.isLocalArchive ?? false) == false)
+              Text(
+                dateFormat(chapter.dateUpload!, ref: ref),
+                style: const TextStyle(fontSize: 11),
               ),
+            if (!chapter.isRead!)
+              if (chapter.lastPageRead!.isNotEmpty &&
+                  chapter.lastPageRead != "1")
+                Row(
+                  children: [
+                    const Text(' • '),
+                    Text(
+                      "Page ${chapter.lastPageRead}",
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: isLight(context)
+                              ? Colors.black.withOpacity(0.4)
+                              : Colors.white.withOpacity(0.3)),
+                    ),
+                  ],
+                ),
             if (chapter.scanlator!.isNotEmpty)
               Row(
                 children: [
@@ -108,7 +110,9 @@ class ChapterListTileWidget extends ConsumerWidget {
               )
           ],
         ),
-        trailing: ChapterPageDownload(chapter: chapter),
+        trailing: chapter.manga.value!.isLocalArchive ?? false
+            ? null
+            : ChapterPageDownload(chapter: chapter),
       ),
     );
   }

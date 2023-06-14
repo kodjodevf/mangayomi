@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
@@ -6,9 +7,22 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'archive_reader_providers.g.dart';
 
 @riverpod
+Future<List<(String, LocalExtensionType, String, String)>>
+    getArchivesDataFromDirectory(
+        GetArchivesDataFromDirectoryRef ref, String path) async {
+  return compute(_extractOnly, path);
+}
+
+@riverpod
 Future<List<LocalArchive>> getArchiveDataFromDirectory(
     GetArchiveDataFromDirectoryRef ref, String path) async {
   return compute(_extract, path);
+}
+
+@riverpod
+Future<(String, LocalExtensionType, String, String)> getArchivesDataFromFile(
+    GetArchivesDataFromFileRef ref, String path) async {
+  return compute(_extractArchiveOnly, path);
 }
 
 @riverpod
@@ -21,7 +35,13 @@ Future<List<LocalArchive>> _extract(String data) async {
   return await _searchForArchive(Directory(data));
 }
 
+Future<List<(String, LocalExtensionType, String, String)>> _extractOnly(
+    String data) async {
+  return await _searchForArchiveOnly(Directory(data));
+}
+
 List<LocalArchive> _list = [];
+List<(String, LocalExtensionType, String, String)> _listOnly = [];
 Future<List<LocalArchive>> _searchForArchive(Directory dir) async {
   List<FileSystemEntity> entities = dir.listSync();
   for (FileSystemEntity entity in entities) {
@@ -36,6 +56,23 @@ Future<List<LocalArchive>> _searchForArchive(Directory dir) async {
     }
   }
   return _list;
+}
+
+Future<List<(String, LocalExtensionType, String, String)>>
+    _searchForArchiveOnly(Directory dir) async {
+  List<FileSystemEntity> entities = dir.listSync();
+  for (FileSystemEntity entity in entities) {
+    if (entity is Directory) {
+      _searchForArchive(entity);
+    } else if (entity is File) {
+      String path = entity.path;
+      if (_isArchiveFile(path)) {
+        final dd = await compute(_extractArchiveOnly, path);
+        _listOnly.add(dd);
+      }
+    }
+  }
+  return _listOnly;
 }
 
 bool _isImageFile(String path) {
@@ -100,6 +137,44 @@ LocalArchive _extractArchive(String path) {
   localArchive.images!.sort((a, b) => a.name!.compareTo(b.name!));
   localArchive.coverImage ??= localArchive.images!.first.image;
   return localArchive;
+}
+
+(String, LocalExtensionType, String, String) _extractArchiveOnly(String path) {
+  final extensionType =
+      setTypeExtension(path.split('/').last.split("\\").last.split(".").last);
+  final name = path
+      .split('/')
+      .last
+      .split("\\")
+      .last
+      .replaceAll(RegExp(r'\.(cbz|zip|cbt|tar)'), '');
+  String? coverImage;
+
+  Archive? archive;
+  final inputStream = InputFileStream(path);
+
+  if (extensionType == LocalExtensionType.cbt ||
+      extensionType == LocalExtensionType.tar) {
+    archive = TarDecoder().decodeBuffer(inputStream);
+  } else {
+    archive = ZipDecoder().decodeBuffer(inputStream);
+  }
+
+  final cover = archive.files.where((file) =>
+      file.isFile && _isImageFile(file.name) && file.name.contains("cover"));
+
+  final coverImg = cover.isNotEmpty
+      ? cover.first.content as Uint8List
+      : archive.files
+          .where((file) =>
+              file.isFile &&
+              _isImageFile(file.name) &&
+              !file.name.contains("cover"))
+          .first
+          .content as Uint8List;
+  coverImage = base64.encode(coverImg);
+
+  return (name, extensionType, coverImage, path);
 }
 
 String getTypeExtension(LocalExtensionType type) {

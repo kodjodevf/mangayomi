@@ -53,7 +53,8 @@ class MangaReaderView extends ConsumerWidget {
         ref.read(readerControllerProvider(chapter: chapter).notifier);
     return chapterData.when(
       data: (data) {
-        if (data.pageUrls.isEmpty) {
+        if (data.pageUrls.isEmpty &&
+            (chapter.manga.value!.isLocalArchive ?? false) == false) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(

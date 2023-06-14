@@ -1,13 +1,18 @@
+import 'dart:developer';
+
 import 'package:draggable_menu/draggable_menu.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -1484,15 +1489,176 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     return [
                       const PopupMenuItem<int>(
                           value: 0, child: Text("Open random entry")),
+                      const PopupMenuItem<int>(value: 1, child: Text("Import")),
                     ];
                   }, onSelected: (value) {
-                    manga.whenData((value) {
-                      var randomManga = (value..shuffle()).first;
-                      context.push('/manga-reader/detail',
-                          extra: randomManga.id);
-                    });
+                    if (value == 0) {
+                      manga.whenData((value) {
+                        var randomManga = (value..shuffle()).first;
+                        context.push('/manga-reader/detail',
+                            extra: randomManga.id);
+                      });
+                    } else {
+                      _importArchiveBD(context);
+                    }
                   }),
                 ],
               ));
   }
+}
+
+_importArchiveBD(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Import Archive BD",
+          ),
+          content: Consumer(builder: (context, ref, child) {
+            return SizedBox(
+              height: 100,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        onPressed: () async {
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(
+                                  type: FileType.custom,
+                                  allowedExtensions: [
+                                'cbz',
+                                'zip',
+                              ]);
+                          if (result != null) {
+                            for (var file in result.files) {
+                              final data = await ref.watch(
+                                  getArchivesDataFromFileProvider(file.path!)
+                                      .future);
+                              final manga = Manga(
+                                  favorite: true,
+                                  source: 'archive',
+                                  author: '',
+                                  genre: [],
+                                  imageUrl: '',
+                                  lang: '',
+                                  link: '',
+                                  name: data.$1,
+                                  dateAdded:
+                                      DateTime.now().millisecondsSinceEpoch,
+                                  lastUpdate:
+                                      DateTime.now().millisecondsSinceEpoch,
+                                  status: Status.unknown,
+                                  description: '',
+                                  isLocalArchive: true,
+                                  customCoverImage: data.$3);
+                              isar.writeTxnSync(() {
+                                isar.mangas.putSync(manga);
+                                final chapters =
+                                    Chapter(name: data.$1, archivePath: data.$4)
+                                      ..manga.value = manga;
+                                isar.chapters.putSync(chapters);
+                                chapters.manga.saveSync();
+                              });
+                            }
+                          } else {}
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.archive_outlined),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(".cbz or .zip",
+                                style: Theme.of(context).textTheme.bodySmall)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        onPressed: () async {
+                          String? result =
+                              await FilePicker.platform.getDirectoryPath();
+
+                          if (result != null) {
+                            final datas = await ref.watch(
+                                getArchivesDataFromDirectoryProvider(result)
+                                    .future);
+                            for (var data in datas) {
+                              final manga = Manga(
+                                  favorite: true,
+                                  source: 'archive',
+                                  author: '',
+                                  genre: [],
+                                  imageUrl: '',
+                                  lang: '',
+                                  link: '',
+                                  name: data.$1,
+                                  dateAdded:
+                                      DateTime.now().millisecondsSinceEpoch,
+                                  lastUpdate:
+                                      DateTime.now().millisecondsSinceEpoch,
+                                  status: Status.unknown,
+                                  description: '',
+                                  isLocalArchive: true,
+                                  customCoverImage: data.$3);
+                              isar.writeTxnSync(() {
+                                isar.mangas.putSync(manga);
+                                final chapters =
+                                    Chapter(name: data.$1, archivePath: data.$4)
+                                      ..manga.value = manga;
+                                isar.chapters.putSync(chapters);
+                                chapters.manga.saveSync();
+                              });
+                            }
+                          }
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.folder),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text("From folder",
+                                style: Theme.of(context).textTheme.bodySmall)
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          }),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Cancel")),
+                const SizedBox(
+                  width: 15,
+                ),
+              ],
+            )
+          ],
+        );
+      });
 }

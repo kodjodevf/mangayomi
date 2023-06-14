@@ -40,14 +40,14 @@ abstract class MangaYomiServices {
         chapterUrl.isNotEmpty) {
       for (var i = 0; i < chapterUrl.length; i++) {
         chapters.add(Chapter(
-            name: chapterTitle[i],
-            url: chapterUrl[i],
-            dateUpload: chapterDate[i],
-            isBookmarked: false,
-            scanlator: scanlators.isEmpty ? "" : scanlators[i],
-            isRead: false,
-            lastPageRead: '',
-            mangaId: null));
+          name: chapterTitle[i],
+          url: chapterUrl[i],
+          dateUpload: chapterDate[i],
+          isBookmarked: false,
+          scanlator: scanlators.isEmpty ? "" : scanlators[i],
+          isRead: false,
+          lastPageRead: '',
+        ));
       }
     }
     return GetManga(

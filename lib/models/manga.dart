@@ -36,26 +36,31 @@ class Manga {
 
   List<int>? categories;
 
+  bool? isLocalArchive;
+
+  String? customCoverImage;
+
   @Backlink(to: "manga")
   final chapters = IsarLinks<Chapter>();
 
-  Manga({
-    this.id = Isar.autoIncrement,
-    required this.source,
-    required this.author,
-    this.favorite = false,
-    required this.genre,
-    required this.imageUrl,
-    required this.lang,
-    required this.link,
-    required this.name,
-    required this.status,
-    required this.description,
-    this.dateAdded,
-    this.lastUpdate,
-    this.categories,
-    this.lastRead = 0,
-  });
+  Manga(
+      {this.id = Isar.autoIncrement,
+      required this.source,
+      required this.author,
+      this.favorite = false,
+      required this.genre,
+      required this.imageUrl,
+      required this.lang,
+      required this.link,
+      required this.name,
+      required this.status,
+      required this.description,
+      this.dateAdded,
+      this.lastUpdate,
+      this.categories,
+      this.lastRead = 0,
+      this.isLocalArchive = false,
+      this.customCoverImage});
 }
 
 enum Status {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,6 +44,7 @@ class LibraryGridViewWidget extends StatelessWidget {
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
         return Consumer(builder: (context, ref, child) {
+          bool isLocalArchive = entriesManga[index].isLocalArchive ?? false;
           final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
           return Padding(
             padding: const EdgeInsets.all(2),
@@ -54,11 +56,15 @@ class LibraryGridViewWidget extends StatelessWidget {
                 isComfortableGrid: isComfortableGrid,
               ),
               isComfortableGrid: isComfortableGrid,
-              image: CachedNetworkImageProvider(
-                entriesManga[index].imageUrl!,
-                headers: ref.watch(
-                    headersProvider(source: entriesManga[index].source!)),
-              ),
+              image: isLocalArchive
+                  ? MemoryImage(
+                          base64.decode(entriesManga[index].customCoverImage!))
+                      as ImageProvider
+                  : CachedNetworkImageProvider(
+                      entriesManga[index].imageUrl!,
+                      headers: ref.watch(
+                          headersProvider(source: entriesManga[index].source!)),
+                    ),
               onTap: () {
                 if (isLongPressed) {
                   ref
@@ -66,6 +72,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                       .update(entriesManga[index]);
                 } else {
                   pushToMangaReaderDetail(
+                      archiveId: isLocalArchive ? entriesManga[index].id : null,
                       context: context,
                       lang: entriesManga[index].lang!,
                       mangaM: entriesManga[index]);

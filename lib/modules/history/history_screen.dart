@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -132,6 +134,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 ),
                 itemBuilder: (context, History element) {
                   final manga = element.chapter.value!.manga.value!;
+                  bool isLocalArchive = manga.isLocalArchive ?? false;
                   final chapter = element.chapter.value!;
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -166,13 +169,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                 },
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(7),
-                                  child: cachedNetworkImage(
-                                      headers: ref.watch(headersProvider(
-                                          source: manga.source!)),
-                                      imageUrl: manga.imageUrl!,
-                                      width: 60,
-                                      height: 90,
-                                      fit: BoxFit.cover),
+                                  child: isLocalArchive
+                                      ? Image.memory(base64
+                                          .decode(manga.customCoverImage!))
+                                      : cachedNetworkImage(
+                                          headers: ref.watch(headersProvider(
+                                              source: manga.source!)),
+                                          imageUrl: manga.imageUrl!,
+                                          width: 60,
+                                          height: 90,
+                                          fit: BoxFit.cover),
                                 ),
                               ),
                             ),

@@ -6,8 +6,8 @@ part of 'archive_reader_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getArchiveDataFromDirectoryHash() =>
-    r'fb85bd2b43ae73f083bdfa0760d8185ef989dd09';
+String _$getArchivesDataFromDirectoryHash() =>
+    r'92989ce549951f237423efa91747560507c7b2d0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,6 +30,93 @@ class _SystemHash {
   }
 }
 
+typedef GetArchivesDataFromDirectoryRef = AutoDisposeFutureProviderRef<
+    List<(String, LocalExtensionType, String, String)>>;
+
+/// See also [getArchivesDataFromDirectory].
+@ProviderFor(getArchivesDataFromDirectory)
+const getArchivesDataFromDirectoryProvider =
+    GetArchivesDataFromDirectoryFamily();
+
+/// See also [getArchivesDataFromDirectory].
+class GetArchivesDataFromDirectoryFamily extends Family<
+    AsyncValue<List<(String, LocalExtensionType, String, String)>>> {
+  /// See also [getArchivesDataFromDirectory].
+  const GetArchivesDataFromDirectoryFamily();
+
+  /// See also [getArchivesDataFromDirectory].
+  GetArchivesDataFromDirectoryProvider call(
+    String path,
+  ) {
+    return GetArchivesDataFromDirectoryProvider(
+      path,
+    );
+  }
+
+  @override
+  GetArchivesDataFromDirectoryProvider getProviderOverride(
+    covariant GetArchivesDataFromDirectoryProvider provider,
+  ) {
+    return call(
+      provider.path,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getArchivesDataFromDirectoryProvider';
+}
+
+/// See also [getArchivesDataFromDirectory].
+class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
+    List<(String, LocalExtensionType, String, String)>> {
+  /// See also [getArchivesDataFromDirectory].
+  GetArchivesDataFromDirectoryProvider(
+    this.path,
+  ) : super.internal(
+          (ref) => getArchivesDataFromDirectory(
+            ref,
+            path,
+          ),
+          from: getArchivesDataFromDirectoryProvider,
+          name: r'getArchivesDataFromDirectoryProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getArchivesDataFromDirectoryHash,
+          dependencies: GetArchivesDataFromDirectoryFamily._dependencies,
+          allTransitiveDependencies:
+              GetArchivesDataFromDirectoryFamily._allTransitiveDependencies,
+        );
+
+  final String path;
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetArchivesDataFromDirectoryProvider && other.path == path;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, path.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+String _$getArchiveDataFromDirectoryHash() =>
+    r'fb85bd2b43ae73f083bdfa0760d8185ef989dd09';
 typedef GetArchiveDataFromDirectoryRef
     = AutoDisposeFutureProviderRef<List<LocalArchive>>;
 
@@ -103,6 +190,92 @@ class GetArchiveDataFromDirectoryProvider
   @override
   bool operator ==(Object other) {
     return other is GetArchiveDataFromDirectoryProvider && other.path == path;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, path.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+String _$getArchivesDataFromFileHash() =>
+    r'b2f163e5deb0a4f344f6ce5e6aab0c226b644f3b';
+typedef GetArchivesDataFromFileRef = AutoDisposeFutureProviderRef<
+    (String, LocalExtensionType, String, String)>;
+
+/// See also [getArchivesDataFromFile].
+@ProviderFor(getArchivesDataFromFile)
+const getArchivesDataFromFileProvider = GetArchivesDataFromFileFamily();
+
+/// See also [getArchivesDataFromFile].
+class GetArchivesDataFromFileFamily
+    extends Family<AsyncValue<(String, LocalExtensionType, String, String)>> {
+  /// See also [getArchivesDataFromFile].
+  const GetArchivesDataFromFileFamily();
+
+  /// See also [getArchivesDataFromFile].
+  GetArchivesDataFromFileProvider call(
+    String path,
+  ) {
+    return GetArchivesDataFromFileProvider(
+      path,
+    );
+  }
+
+  @override
+  GetArchivesDataFromFileProvider getProviderOverride(
+    covariant GetArchivesDataFromFileProvider provider,
+  ) {
+    return call(
+      provider.path,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getArchivesDataFromFileProvider';
+}
+
+/// See also [getArchivesDataFromFile].
+class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
+    (String, LocalExtensionType, String, String)> {
+  /// See also [getArchivesDataFromFile].
+  GetArchivesDataFromFileProvider(
+    this.path,
+  ) : super.internal(
+          (ref) => getArchivesDataFromFile(
+            ref,
+            path,
+          ),
+          from: getArchivesDataFromFileProvider,
+          name: r'getArchivesDataFromFileProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getArchivesDataFromFileHash,
+          dependencies: GetArchivesDataFromFileFamily._dependencies,
+          allTransitiveDependencies:
+              GetArchivesDataFromFileFamily._allTransitiveDependencies,
+        );
+
+  final String path;
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetArchivesDataFromFileProvider && other.path == path;
   }
 
   @override

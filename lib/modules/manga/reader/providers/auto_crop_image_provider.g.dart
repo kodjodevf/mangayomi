@@ -6,7 +6,7 @@ part of 'auto_crop_image_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$autoCropBorderHash() => r'3e283f997cd9de62a7cf39d2045c249b2a6c027e';
+String _$autoCropBorderHash() => r'42f55a8c0704730e69055f914fc1b9766776dd64';
 
 /// Copied from Dart SDK
 class _SystemHash {

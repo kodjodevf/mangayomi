@@ -18,6 +18,6 @@ Stream<List<Chapter>> getChaptersStream(
 }) async* {
   yield* isar.chapters
       .filter()
-      .mangaIdEqualTo(mangaId)
+      .manga((q) => q.idEqualTo(mangaId))
       .watch(fireImmediately: true);
 }

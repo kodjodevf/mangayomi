@@ -53,15 +53,14 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                   manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
                   for (var i = 0; i < newChapsIndex; i++) {
                     final chapters = Chapter(
-                        name: value.chapters[i].name,
-                        url: value.chapters[i].url,
-                        dateUpload: value.chapters[i].dateUpload,
-                        isBookmarked: false,
-                        scanlator: value.chapters[i].scanlator,
-                        isRead: false,
-                        lastPageRead: '',
-                        mangaId: manga.id)
-                      ..manga.value = manga;
+                      name: value.chapters[i].name,
+                      url: value.chapters[i].url,
+                      dateUpload: value.chapters[i].dateUpload,
+                      isBookmarked: false,
+                      scanlator: value.chapters[i].scanlator,
+                      isRead: false,
+                      lastPageRead: '',
+                    )..manga.value = manga;
                     await isar.chapters.put(chapters);
                     await chapters.manga.save();
                   }

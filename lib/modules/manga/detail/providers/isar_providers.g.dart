@@ -111,7 +111,7 @@ class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   }
 }
 
-String _$getChaptersStreamHash() => r'ab0f88b1db530c5f24bd3c518b8bd0691388239c';
+String _$getChaptersStreamHash() => r'31879a8ff45e1cd61255de50d030a0141450180d';
 typedef GetChaptersStreamRef = AutoDisposeStreamProviderRef<List<Chapter>>;
 
 /// See also [getChaptersStream].
