@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
 import 'dart:math';
 import 'dart:io';
@@ -215,12 +214,8 @@ class _MangaChapterPageGalleryState
         ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
               posIndex,
             );
-        final datas = {
-          "chapterId": widget.chapter.id,
-          "pageIndex": posIndex,
-          "path": _dir!.path,
-        };
-        Isolate.spawn(_isarIsolateService, jsonEncode(datas));
+        (int, int, String) datas = (widget.chapter.id!, posIndex, _dir!.path);
+        Isolate.spawn(_isarIsolateService, datas);
         _currentIndex = posIndex;
       }
     }
@@ -239,12 +234,9 @@ class _MangaChapterPageGalleryState
     ref.read(currentIndexProvider(widget.chapter).notifier).setCurrentIndex(
           index,
         );
-    final datas = {
-      "chapterId": widget.chapter.id,
-      "pageIndex": index,
-      "path": _dir!.path,
-    };
-    Isolate.spawn(_isarIsolateService, jsonEncode(datas));
+    (int, int, String) datas = (widget.chapter.id!, index, _dir!.path);
+
+    Isolate.spawn(_isarIsolateService, datas);
     _currentIndex = index;
     if (_imageDetailY != 0) {
       _imageDetailY = 0;
@@ -274,15 +266,19 @@ class _MangaChapterPageGalleryState
         }
       } else {
         if (index != -1) {
+          setState(() {
+            _isZoom = false;
+          });
           if (_extendedController.hasClients) {
-            setState(() {
-              _isZoom = false;
-            });
-            animatePageTransitions
-                ? _extendedController.animateToPage(index,
-                    duration: Duration(milliseconds: isSlide ? 2 : 150),
-                    curve: Curves.ease)
-                : _extendedController.jumpToPage(index);
+            if (isSlide) {
+              _extendedController.jumpToPage(index);
+            } else {
+              animatePageTransitions
+                  ? _extendedController.animateToPage(index,
+                      duration: Duration(milliseconds: isSlide ? 2 : 150),
+                      curve: Curves.ease)
+                  : _extendedController.jumpToPage(index);
+            }
           }
         }
       }
@@ -311,11 +307,17 @@ class _MangaChapterPageGalleryState
             setState(() {
               _isZoom = false;
             });
-            animatePageTransitions
-                ? _extendedController.animateToPage(index,
-                    duration: Duration(milliseconds: isSlide ? 2 : 150),
-                    curve: Curves.ease)
-                : _extendedController.jumpToPage(index);
+            if (isSlide) {
+              _itemScrollController.jumpTo(
+                index: index,
+              );
+            } else {
+              animatePageTransitions
+                  ? _extendedController.animateToPage(index,
+                      duration: Duration(milliseconds: isSlide ? 2 : 150),
+                      curve: Curves.ease)
+                  : _extendedController.jumpToPage(index);
+            }
           }
         }
       }
@@ -1263,15 +1265,14 @@ class _MangaChapterPageGalleryState
   }
 }
 
-_isarIsolateService(String data) async {
+_isarIsolateService((int, int, String) data) async {
   late Isar isarIsolate;
-  isarIsolate = await StorageProvider().initDB(jsonDecode(data)["path"]);
-  Chapter? chapter =
-      isarIsolate.chapters.getSync(jsonDecode(data)["chapterId"]);
+  isarIsolate = await StorageProvider().initDB(data.$3, inspector: false);
+  Chapter? chapter = isarIsolate.chapters.getSync(data.$1);
   Manga? manga = chapter!.manga.value!;
   Settings? isarIsolateSettings = isarIsolate.settings.getSync(227)!;
   bool incognitoMode = isarIsolate.settings.getSync(227)!.incognitoMode!;
-  int pageIndex = jsonDecode(data)["pageIndex"];
+  int pageIndex = data.$2;
 
   //setMangaHistoryUpdate
   if (!incognitoMode) {

@@ -590,6 +590,23 @@ final libraryLanguageStateProvider =
 );
 
 typedef _$LibraryLanguageState = AutoDisposeNotifier<bool>;
+String _$libraryLocalSourceStateHash() =>
+    r'aa49c666e43f832f46fc21ba8eb22d9c97c498e6';
+
+/// See also [LibraryLocalSourceState].
+@ProviderFor(LibraryLocalSourceState)
+final libraryLocalSourceStateProvider =
+    AutoDisposeNotifierProvider<LibraryLocalSourceState, bool>.internal(
+  LibraryLocalSourceState.new,
+  name: r'libraryLocalSourceStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$libraryLocalSourceStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LibraryLocalSourceState = AutoDisposeNotifier<bool>;
 String _$libraryShowNumbersOfItemsStateHash() =>
     r'ea02157581d2b08c944d692f0bb9154e843dd1f1';
 

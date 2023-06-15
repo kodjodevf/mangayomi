@@ -23,13 +23,15 @@ class LibraryListViewWidget extends StatelessWidget {
   final bool downloadedChapter;
   final List<int> mangaIdsList;
   final bool continueReaderBtn;
+  final bool localSource;
   const LibraryListViewWidget(
       {super.key,
       required this.entriesManga,
       required this.language,
       required this.downloadedChapter,
       required this.continueReaderBtn,
-      required this.mangaIdsList});
+      required this.mangaIdsList,
+      required this.localSource});
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +141,23 @@ class LibraryListViewWidget extends StatelessWidget {
                               height: 22,
                               child: Row(
                                 children: [
+                                  if (localSource && isLocalArchive)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(3),
+                                            bottomLeft: Radius.circular(3)),
+                                        color: Theme.of(context).hintColor,
+                                      ),
+                                      child: const Padding(
+                                        padding:
+                                            EdgeInsets.only(left: 3, right: 3),
+                                        child: Text(
+                                          "Local",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
                                   if (downloadedChapter)
                                     Padding(
                                       padding: const EdgeInsets.only(right: 5),
@@ -207,7 +226,8 @@ class LibraryListViewWidget extends StatelessWidget {
                                           const TextStyle(color: Colors.white),
                                     ),
                                   ),
-                                  if (language)
+                                  if (language &&
+                                      entriesManga[index].lang!.isNotEmpty)
                                     Container(
                                       color: primaryColor(context),
                                       child: Container(

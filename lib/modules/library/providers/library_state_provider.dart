@@ -380,6 +380,22 @@ class LibraryLanguageState extends _$LibraryLanguageState {
 }
 
 @riverpod
+class LibraryLocalSourceState extends _$LibraryLocalSourceState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.libraryLocalSource ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227)!;
+    state = value;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings..libraryShowLanguage = value);
+    });
+  }
+}
+
+@riverpod
 class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
   @override
   bool build() {

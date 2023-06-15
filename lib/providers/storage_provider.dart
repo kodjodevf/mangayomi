@@ -86,7 +86,7 @@ class StorageProvider {
     }
   }
 
-  Future<Isar> initDB(String? path) async {
+  Future<Isar> initDB(String? path, {bool? inspector = true}) async {
     Directory? dir;
     if (path == null) {
       dir = await getDatabaseDirectory();
@@ -102,7 +102,7 @@ class StorageProvider {
       DownloadSchema,
       SourceSchema,
       SettingsSchema
-    ], directory: dir!.path, name: "mangayomiDb");
+    ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);
 
     if (isar.settings.filter().idEqualTo(227).isEmptySync()) {
       isar.writeTxnSync(

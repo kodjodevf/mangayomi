@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,10 +8,13 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -73,6 +79,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             libraryShowContinueReadingButtonStateProvider);
                         final showNumbersOfItems =
                             ref.watch(libraryShowNumbersOfItemsStateProvider);
+                        final localSource =
+                            ref.watch(libraryLocalSourceStateProvider);
                         final downloadedChapter =
                             ref.watch(libraryDownloadedChaptersStateProvider);
                         final language =
@@ -242,7 +250,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                       continueReaderBtn,
                                                   language: language,
                                                   displayType: displayType,
-                                                  ref: ref)
+                                                  ref: ref,
+                                                  localSource: localSource)
                                               : _bodyWithCatories(
                                                   categoryId: entr[i - 1].id!,
                                                   downloadFilterType:
@@ -260,7 +269,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                       continueReaderBtn,
                                                   language: language,
                                                   displayType: displayType,
-                                                  ref: ref),
+                                                  ref: ref,
+                                                  localSource: localSource),
                                       if (withoutCategory.isEmpty)
                                         for (var i = 0; i < entr.length; i++)
                                           _bodyWithCatories(
@@ -280,7 +290,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                   continueReaderBtn,
                                               language: language,
                                               displayType: displayType,
-                                              ref: ref)
+                                              ref: ref,
+                                              localSource: localSource)
                                     ]))
                               ],
                             ),
@@ -295,6 +306,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           .watch(libraryShowContinueReadingButtonStateProvider);
                       final showNumbersOfItems =
                           ref.watch(libraryShowNumbersOfItemsStateProvider);
+                      final localSource =
+                          ref.watch(libraryLocalSourceStateProvider);
                       final downloadedChapter =
                           ref.watch(libraryDownloadedChaptersStateProvider);
                       final language = ref.watch(libraryLanguageStateProvider);
@@ -342,7 +355,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               continueReaderBtn: continueReaderBtn,
                               language: language,
                               displayType: displayType,
-                              ref: ref));
+                              ref: ref,
+                              localSource: localSource));
                     });
                   },
                   error: (Object error, StackTrace stackTrace) {
@@ -535,6 +549,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool reverse,
       required bool downloadedChapter,
       required bool continueReaderBtn,
+      required bool localSource,
       required bool language,
       required WidgetRef ref,
       required DisplayType displayType}) {
@@ -560,6 +575,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   downloadedChapter: downloadedChapter,
                   language: language,
                   mangaIdsList: mangaIdsList,
+                  localSource: localSource,
                 )
               : LibraryGridViewWidget(
                   entriesManga: entriesManga,
@@ -571,6 +587,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   downloadedChapter: downloadedChapter,
                   language: language,
                   mangaIdsList: mangaIdsList,
+                  localSource: localSource,
                 );
         }
         return const Center(child: Text("Empty Library"));
@@ -592,6 +609,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool reverse,
       required bool downloadedChapter,
       required bool continueReaderBtn,
+      required bool localSource,
       required bool language,
       required DisplayType displayType,
       required WidgetRef ref,
@@ -619,6 +637,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   downloadedChapter: downloadedChapter,
                   language: language,
                   mangaIdsList: mangaIdsList,
+                  localSource: localSource,
                 )
               : LibraryGridViewWidget(
                   entriesManga: entriesManga,
@@ -630,6 +649,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   downloadedChapter: downloadedChapter,
                   language: language,
                   mangaIdsList: mangaIdsList,
+                  localSource: localSource,
                 );
         }
         return const Center(child: Text("Empty Library"));
@@ -965,28 +985,59 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               if (fromLibList.isNotEmpty) {
                                 isar.writeTxnSync(() {
                                   for (var manga in mangasList) {
-                                    manga.favorite = false;
-                                    isar.mangas.putSync(manga);
+                                    if (manga.isLocalArchive ?? false) {
+                                      final histories = isar.historys
+                                          .filter()
+                                          .mangaIdEqualTo(manga.id)
+                                          .findAllSync();
+                                      for (var history in histories) {
+                                        isar.historys.deleteSync(history.id!);
+                                      }
+
+                                      for (var chapter in manga.chapters) {
+                                        isar.chapters.deleteSync(chapter.id!);
+                                      }
+                                      isar.mangas.deleteSync(manga.id!);
+                                    } else {
+                                      manga.favorite = false;
+                                      isar.mangas.putSync(manga);
+                                    }
                                   }
                                 });
                               }
                               if (downloadedChapsList.isNotEmpty) {
                                 isar.writeTxnSync(() async {
                                   for (var manga in mangasList) {
-                                    for (var chapter in manga.chapters) {
-                                      final path = await StorageProvider()
-                                          .getMangaChapterDirectory(
-                                        chapter,
-                                      );
-                                      try {
-                                        path!.deleteSync(recursive: true);
-                                      } catch (e) {
-                                        int id = isar.downloads
-                                            .filter()
-                                            .chapterIdEqualTo(chapter.id!)
-                                            .findFirstSync()!
-                                            .id!;
-                                        isar.downloads.deleteSync(id);
+                                    if (manga.isLocalArchive ?? false) {
+                                      for (var chapter in manga.chapters) {
+                                        final storageProvider =
+                                            StorageProvider();
+                                        final mangaDir = await storageProvider
+                                            .getMangaMainDirectory(chapter);
+                                        final path = await storageProvider
+                                            .getMangaChapterDirectory(
+                                          chapter,
+                                        );
+
+                                        try {
+                                          if (await File(
+                                                  "${mangaDir!.path}${chapter.name}.cbz")
+                                              .exists()) {
+                                            File("${mangaDir.path}${chapter.name}.cbz")
+                                                .deleteSync();
+                                          }
+                                          path!.deleteSync(recursive: true);
+                                        } catch (_) {}
+                                        isar.writeTxnSync(() {
+                                          final download = isar.downloads
+                                              .filter()
+                                              .chapterIdEqualTo(chapter.id!)
+                                              .findAllSync();
+                                          if (download.isNotEmpty) {
+                                            isar.downloads
+                                                .deleteSync(download.first.id!);
+                                          }
+                                        });
                                       }
                                     }
                                   }
@@ -1152,6 +1203,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                       libraryDownloadedChaptersStateProvider);
                                   final language =
                                       ref.watch(libraryLanguageStateProvider);
+                                  final localSource = ref
+                                      .watch(libraryLocalSourceStateProvider);
                                   return SingleChildScrollView(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
@@ -1231,6 +1284,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                             libraryLanguageStateProvider
                                                                 .notifier)
                                                         .set(!language);
+                                                  }),
+                                              ListTileChapterFilter(
+                                                  label: "Local source",
+                                                  type: localSource ? 1 : 0,
+                                                  onTap: () {
+                                                    ref
+                                                        .read(
+                                                            libraryLocalSourceStateProvider
+                                                                .notifier)
+                                                        .set(!localSource);
                                                   }),
                                             ],
                                           ),
@@ -1491,8 +1554,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     if (value == 0) {
                       manga.whenData((value) {
                         var randomManga = (value..shuffle()).first;
-                        context.push('/manga-reader/detail',
-                            extra: randomManga.id);
+                        pushToMangaReaderDetail(
+                            archiveId: randomManga.isLocalArchive ?? false
+                                ? randomManga.id
+                                : null,
+                            context: context,
+                            lang: randomManga.lang!,
+                            mangaM: randomManga);
                       });
                     } else {
                       _importArchiveBD(context);
@@ -1504,6 +1572,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 }
 
 _importArchiveBD(BuildContext context) {
+  bool isLoading = false;
   showDialog(
       context: context,
       builder: (context) {
@@ -1511,72 +1580,110 @@ _importArchiveBD(BuildContext context) {
           title: const Text(
             "Import Archive BD",
           ),
-          content: Consumer(builder: (context, ref, child) {
-            return SizedBox(
-              height: 100,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        onPressed: () async {
-                          await ref.watch(
-                              importArchivesFromFileProvider(null).future);
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.archive_outlined),
-                            Text(".cbz or .zip files",
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .color,
-                                    fontSize: 10))
-                          ],
-                        ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Consumer(builder: (context, ref, child) {
+                return SizedBox(
+                  height: 100,
+                  child: Stack(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(3),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
+                                onPressed: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  await ref.watch(
+                                      importArchivesFromFileProvider(null)
+                                          .future);
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Icon(Icons.archive_outlined),
+                                    Text(".cbz or .zip files",
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .color,
+                                            fontSize: 10))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(3),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
+                                onPressed: () async {
+                                  await ref.watch(
+                                      importArchivesFromDirectoryProvider
+                                          .future);
+                                },
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Icon(Icons.folder),
+                                    Text(
+                                      "From folder (.cbz or .zip files) ",
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall!
+                                              .color,
+                                          fontSize: 10),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ),
+                      if (isLoading)
+                        Container(
+                          width: mediaWidth(context, 1),
+                          height: mediaHeight(context, 1),
+                          color: Colors.transparent,
+                          child: UnconstrainedBox(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                                height: 50,
+                                width: 50,
+                                child: const Center(child: ProgressCenter())),
+                          ),
+                        )
+                    ],
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10))),
-                        onPressed: () async {
-                          await ref.watch(
-                              importArchivesFromDirectoryProvider.future);
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.folder),
-                            Text(
-                              "From folder (.cbz or .zip files) ",
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall!
-                                      .color,
-                                  fontSize: 10),
-                              textAlign: TextAlign.center,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            );
-          }),
+                );
+              });
+            },
+          ),
           actions: [
             Row(
               mainAxisAlignment: MainAxisAlignment.end,

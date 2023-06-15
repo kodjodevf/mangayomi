@@ -28,6 +28,8 @@ class Settings {
 
   bool? libraryShowContinueReadingButton;
 
+  bool? libraryLocalSource;
+
   SortLibraryManga? sortLibraryManga;
 
   List<SortChapter>? sortChapterList;
@@ -121,7 +123,8 @@ class Settings {
       this.downloadOnlyOnWifi = false,
       this.saveAsCBZArchive = false,
       this.downloadLocation = "",
-      this.cropBorders = false});
+      this.cropBorders = false,
+      this.libraryLocalSource});
 }
 
 enum DisplayType {
