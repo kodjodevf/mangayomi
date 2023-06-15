@@ -11,7 +11,7 @@ Mangayomi is free and open source manga reader cross-plateform app inspired by T
 Features include:
 * Online reading from a variety of sources
 * Local reading of downloaded content
-* Read local archives (.cbz, .zip)
+* Read and manage local archives (.cbz, .zip)
 * A configurable reader with multiple viewers, reading directions.
 * Categories to organize your library
 * Light and dark themes
@@ -19,26 +19,6 @@ Features include:
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
 
-
-### Building
-
-1.  Clone the repository:
-
-```
-  $ git clone https://github.com/kodjodevf/mangayomi.git
-  $ cd mangayomi/
-```
-2.  You can install all dependencies by running this command in terminal:
-
-```
-  $ flutter pub get
-```
-
-3.  Now enter the following command to start debugging the app:
-
-```
-  $ flutter run
-```
 ## License
 
     Copyright 2023 Moustapha Kodjo Amadou
