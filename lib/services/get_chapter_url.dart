@@ -7,6 +7,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/archive_reader/providers/archive_reader_providers.dart';
+import 'package:mangayomi/modules/manga/reader/manga_reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
 import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
@@ -28,11 +29,13 @@ class GetChapterUrlModel {
   List<String> pageUrls = [];
   List<bool> isLocaleList = [];
   List<Uint8List> archiveImages = [];
+  List<UChapDataPreload> uChapDataPreload;
   GetChapterUrlModel(
       {required this.path,
       required this.pageUrls,
       required this.isLocaleList,
-      required this.archiveImages});
+      required this.archiveImages,
+      required this.uChapDataPreload});
 }
 
 @riverpod
@@ -40,6 +43,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   GetChapterUrlRef ref, {
   required Chapter chapter,
 }) async {
+  List<UChapDataPreload> uChapDataPreloadp = [];
   Directory? path;
   List<String> pageUrls = [];
   final manga = chapter.manga.value!;
@@ -177,11 +181,29 @@ Future<GetChapterUrlModel> getChapterUrl(
       isar.writeTxnSync(() => isar.settings
           .putSync(settings..chapterPageUrlsList = chapterPageUrls));
     }
+    for (var i = 0; i < pageUrls.length; i++) {
+      uChapDataPreloadp.add(UChapDataPreload(
+          chapter,
+          path,
+          pageUrls[i],
+          isLocaleList[i],
+          archiveImages[i],
+          i,
+          false,
+          false,
+          GetChapterUrlModel(
+              path: path,
+              pageUrls: pageUrls,
+              isLocaleList: isLocaleList,
+              archiveImages: archiveImages,
+              uChapDataPreload: uChapDataPreloadp)));
+    }
   }
 
   return GetChapterUrlModel(
       path: path,
       pageUrls: pageUrls,
       isLocaleList: isLocaleList,
-      archiveImages: archiveImages);
+      archiveImages: archiveImages,
+      uChapDataPreload: uChapDataPreloadp);
 }

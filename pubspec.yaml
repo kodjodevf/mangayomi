@@ -64,6 +64,7 @@ dependencies:
   file_picker: ^5.3.0
   path_provider: ^2.0.15
   image: ^3.3.0
+  scrollview_observer: ^1.14.0
 
 
   # The following adds the Cupertino Icons font to your application.

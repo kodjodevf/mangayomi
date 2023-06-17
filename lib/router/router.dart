@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga_type.dart';
-import 'package:mangayomi/modules/archive_reader/archive_reader_screen.dart';
-import 'package:mangayomi/modules/archive_reader/models/models.dart';
-import 'package:mangayomi/modules/archive_reader/reader/archive_reader_reader_view.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
+import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
@@ -54,15 +52,6 @@ class AsyncRouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "archiveReader",
-                path: '/archiveReader',
-                builder: (context, state) => const LocalReaderScreen(),
-                pageBuilder: (context, state) => CustomTransition(
-                  key: state.pageKey,
-                  child: const LocalReaderScreen(),
-                ),
-              ),
-              GoRoute(
                 name: "history",
                 path: '/history',
                 builder: (context, state) => const HistoryScreen(),
@@ -78,6 +67,15 @@ class AsyncRouterNotifier extends ChangeNotifier {
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
                   child: const BrowseScreen(),
+                ),
+              ),
+              GoRoute(
+                name: "updates",
+                path: '/updates',
+                builder: (context, state) => const UpdatesScreen(),
+                pageBuilder: (context, state) => CustomTransition(
+                  key: state.pageKey,
+                  child: const UpdatesScreen(),
                 ),
               ),
               GoRoute(
@@ -332,25 +330,6 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const DownloadsScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          path: "/archiveReaderReaderView",
-          name: "archiveReaderReaderView",
-          builder: (context, state) {
-            final localArchive = state.extra as LocalArchive;
-            return ArchiveReaderReaderView(
-              localArchive: localArchive,
-            );
-          },
-          pageBuilder: (context, state) {
-            final localArchive = state.extra as LocalArchive;
-            return CustomTransition(
-              key: state.pageKey,
-              child: ArchiveReaderReaderView(
-                localArchive: localArchive,
-              ),
             );
           },
         ),
