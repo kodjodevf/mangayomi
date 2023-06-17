@@ -85,7 +85,7 @@ class ChapterIntervalPageView extends ConsumerWidget {
             ),
           if (noMoreChapter)
             Text(
-              "There is no $noMore chapter",
+              "There's no $noMore chapter",
               style: const TextStyle(color: Colors.white, fontSize: 14),
               textAlign: TextAlign.center,
             ),

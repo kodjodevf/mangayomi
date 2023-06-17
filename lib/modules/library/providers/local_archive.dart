@@ -42,13 +42,15 @@ Future importArchivesFromDirectory(ImportArchivesFromDirectoryRef ref) async {
 }
 
 @riverpod
-Future importArchivesFromFile(ImportArchivesFromFileRef ref,
-    Manga? mManga) async {
-  FilePickerResult? result = await FilePicker.platform
-      .pickFiles(type: FileType.custom, allowedExtensions: [
-    'cbz',
-    'zip',
-  ]);
+Future importArchivesFromFile(
+    ImportArchivesFromFileRef ref, Manga? mManga) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'cbz',
+        'zip',
+      ]);
   if (result != null) {
     for (var file in result.files) {
       final data =

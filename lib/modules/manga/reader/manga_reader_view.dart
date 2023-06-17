@@ -463,7 +463,11 @@ class _MangaChapterPageGalleryState
 
   late bool _showPagesNumber = _readerController.getShowPageNumber();
   _setReaderMode(ReaderMode value, bool isInit) async {
-    final indexPos = isInit ? _posIndex ?? _currentIndex : _posIndex;
+    final indexPos = _posIndex == null
+        ? _currentIndex
+        : isInit
+            ? _currentIndex
+            : _posIndex;
     _readerController.setReaderMode(value);
     if (value == ReaderMode.vertical) {
       if (mounted) {

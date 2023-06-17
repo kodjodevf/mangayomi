@@ -122,12 +122,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             if (entries.isNotEmpty) {
               return GroupedListView<History, String>(
                 elements: entries,
-                groupBy: (element) => dateFormat(element.date!, ref: ref),
+                groupBy: (element) => element.date!,
                 groupSeparatorBuilder: (String groupByValue) => Padding(
                   padding: const EdgeInsets.only(bottom: 8, left: 12),
                   child: Row(
                     children: [
-                      Text(groupByValue),
+                      Text(dateFormat(groupByValue, ref: ref)),
                     ],
                   ),
                 ),

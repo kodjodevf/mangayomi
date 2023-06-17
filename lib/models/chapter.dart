@@ -21,7 +21,7 @@ class Chapter {
 
   String? lastPageRead;
 
-  ///Only for local archive BD
+  ///Only for local archive Comic
   String? archivePath;
 
   final manga = IsarLink<Manga>();
