@@ -28,7 +28,7 @@ class GetChapterUrlModel {
   Directory? path;
   List<String> pageUrls = [];
   List<bool> isLocaleList = [];
-  List<Uint8List> archiveImages = [];
+  List<Uint8List?> archiveImages = [];
   List<UChapDataPreload> uChapDataPreload;
   GetChapterUrlModel(
       {required this.path,
@@ -59,7 +59,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   path = await storageProvider.getMangaChapterDirectory(chapter);
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
 
-  List<Uint8List> archiveImages = [];
+  List<Uint8List?> archiveImages = [];
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
   if (!chapter.manga.value!.isLocalArchive!) {
     if (isarPageUrls.isNotEmpty &&
@@ -156,6 +156,7 @@ Future<GetChapterUrlModel> getChapterUrl(
       }
     } else {
       for (var i = 0; i < pageUrls.length; i++) {
+        archiveImages.add(null);
         if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {
           isLocaleList.add(true);
         } else {
