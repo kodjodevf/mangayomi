@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,11 +38,17 @@ class MangaImageCardWidget extends ConsumerWidget {
             .watch(fireImmediately: true),
         builder: (context, snapshot) {
           return CoverViewWidget(
-              image: CachedNetworkImageProvider(
-                getMangaDetail!.imageUrl!,
-                headers:
-                    ref.watch(headersProvider(source: getMangaDetail!.source!)),
-              ),
+              image: snapshot.hasData &&
+                      snapshot.data!.isNotEmpty &&
+                      snapshot.data!.first.customCoverImage != null
+                  ? MemoryImage(
+                          snapshot.data!.first.customCoverImage as Uint8List)
+                      as ImageProvider
+                  : CachedNetworkImageProvider(
+                      getMangaDetail!.imageUrl!,
+                      headers: ref.watch(
+                          headersProvider(source: getMangaDetail!.source!)),
+                    ),
               onTap: () {
                 pushToMangaReaderDetail(
                     context: context, getManga: getMangaDetail!, lang: lang);
