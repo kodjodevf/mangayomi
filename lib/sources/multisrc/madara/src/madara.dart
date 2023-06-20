@@ -1,18 +1,14 @@
-import 'dart:io';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
+import 'package:http/http.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/multisrc/madara/src/utils.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
+import 'package:http/http.dart' as http;
 
 class Madara extends MangaYomiServices {
   @override
@@ -91,101 +87,34 @@ class Madara extends MangaYomiServices {
         .querySelectorAll("div.genres-content a")
         .map((e) => e.text)
         .toList();
-    bool isOk = false;
-    String? html;
-    if (Platform.isWindows || Platform.isLinux) {
-      final webview = await WebviewWindow.create(
-        configuration: CreateConfiguration(
-          windowHeight: 500,
-          windowWidth: 500,
-          userDataFolderWindows: await getWebViewPath(),
-        ),
-      );
-      webview
-        ..setBrightness(Brightness.dark)
-        ..setApplicationNameForUserAgent(defaultUserAgent)
-        ..launch(manga.url!);
+    final mangaId = dom
+        .querySelectorAll("div[id^=manga-chapters-holder]")
+        .map((e) => e.attributes['data-id'])
+        .first;
+    Response? mangaResponse;
+    final headers = {
+      "Referer": "${getMangaBaseUrl(source)}/",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "X-Requested-With": "XMLHttpRequest"
+    };
+    mangaResponse = await http.post(
+        Uri.parse(
+            "${getMangaBaseUrl(source)}/wp-admin/admin-ajax.php?action=manga_get_chapters&manga=$mangaId"),
+        headers: headers);
 
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 10));
-        html = await decodeHtml(webview);
-        if (xpathSelector(html!)
-            .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/@href")
-            .attrs
-            .isEmpty) {
-          html = await decodeHtml(webview);
-          return true;
-        }
-        return false;
-      });
-      html = await decodeHtml(webview);
-      isOk = true;
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        if (isOk == true) {
-          return false;
-        }
-        return true;
-      });
-      html = await decodeHtml(webview);
-      webview.close();
-    } else {
-      HeadlessInAppWebView? headlessWebViewJapScan;
-      headlessWebViewJapScan = HeadlessInAppWebView(
-        onLoadStop: (controller, u) async {
-          html = await controller.evaluateJavascript(
-              source:
-                  "window.document.getElementsByTagName('html')[0].outerHTML;");
-          await Future.doWhile(() async {
-            html = await controller.evaluateJavascript(
-                source:
-                    "window.document.getElementsByTagName('html')[0].outerHTML;");
-            if (xpathSelector(html!)
-                .query(
-                    "//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/@href")
-                .attrs
-                .isEmpty) {
-              html = await controller.evaluateJavascript(
-                  source:
-                      "window.document.getElementsByTagName('html')[0].outerHTML;");
-              return true;
-            }
-            return false;
-          });
-          html = await controller.evaluateJavascript(
-              source:
-                  "window.document.getElementsByTagName('html')[0].outerHTML;");
-          isOk = true;
-          headlessWebViewJapScan!.dispose();
-        },
-        initialUrlRequest: URLRequest(
-          url: WebUri.uri(Uri.parse(manga.url!)),
-        ),
-      );
-      headlessWebViewJapScan.run();
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        if (isOk == true) {
-          return false;
-        }
-        return true;
-      });
+    if (mangaResponse.statusCode == 400) {
+      mangaResponse = await http.post(Uri.parse("${manga.url}ajax/chapters"),
+          headers: headers);
     }
-    final xpath = xpathSelector(html!);
-    for (var url in xpath
-        .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/@href")
-        .attrs) {
+
+    final xpath = xpathSelector(mangaResponse.body);
+    for (var url in xpath.query("//li/a/@href").attrs) {
       chapterUrl.add(url!);
     }
-    for (var title in xpath
-        .query("//*[@id='manga-chapters-holder']/div[2]/div/ul/li/a/text()")
-        .attrs) {
+    for (var title in xpath.query("//li/a/text()").attrs) {
       chapterTitle.add(title!.trim().trimLeft().trimRight());
     }
-    final dateF = xpath
-        .query(
-            "//*[@id='manga-chapters-holder']/div[2]/div/ul/li/span/i/text()")
-        .attrs;
+    final dateF = xpath.query("//li/span/i/text()").attrs;
 
     if (dateF.length == chapterUrl.length) {
       for (var date in dateF) {
@@ -200,7 +129,6 @@ class Madara extends MangaYomiServices {
         chapterDate.add(parseChapterDate(date!, source).toString());
       }
     }
-
     return mangadetailRes(manga: manga, source: source);
   }
 

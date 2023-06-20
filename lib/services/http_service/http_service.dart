@@ -1,6 +1,5 @@
 import 'package:html/dom.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -44,4 +43,10 @@ Future<dynamic> httpGet(HttpGetRef ref,
     }
     return resHtml;
   }
+}
+
+Future<Document> httpResToDom(
+    {required String url, required Map<String, String>? headers}) async {
+  final response = await http.get(Uri.parse(url), headers: headers);
+  return Document.html(response.body);
 }

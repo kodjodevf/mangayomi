@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
+import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/multisrc/heancms/model/search.dart';
 import 'package:mangayomi/sources/multisrc/heancms/utils/utils.dart';
 import 'package:mangayomi/sources/service.dart';

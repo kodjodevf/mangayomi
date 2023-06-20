@@ -45,18 +45,10 @@ Future<dom.Document?> cloudflareBypassDom(CloudflareBypassDomRef ref,
     });
     html = await decodeHtml(webview);
     htmll = dom.Document.html(html!);
-    isOk = true;
     webview.close();
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (isOk == true) {
-        return false;
-      }
-      return true;
-    });
   } else {
-    HeadlessInAppWebView? headlessWebViewJapScan;
-    headlessWebViewJapScan = HeadlessInAppWebView(
+    HeadlessInAppWebView? headlessWebView;
+    headlessWebView = HeadlessInAppWebView(
       onLoadStop: (controller, u) async {
         String? html;
         html = await controller.evaluateJavascript(
@@ -65,6 +57,7 @@ Future<dom.Document?> cloudflareBypassDom(CloudflareBypassDomRef ref,
         await Future.doWhile(() async {
           if (html == null ||
               html!.contains("Just a moment") ||
+              html!.contains("Un instant…") ||
               html!.contains("https://challenges.cloudflare.com")) {
             html = await controller.evaluateJavascript(
                 source:
@@ -78,16 +71,17 @@ Future<dom.Document?> cloudflareBypassDom(CloudflareBypassDomRef ref,
                 "window.document.getElementsByTagName('html')[0].outerHTML;");
         htmll = dom.Document.html(html!);
         isOk = true;
-        headlessWebViewJapScan!.dispose();
+        headlessWebView!.dispose();
       },
-      initialSettings:
-          useUserAgent ? InAppWebViewSettings(userAgent: ua) : null,
+      initialSettings: InAppWebViewSettings(
+        userAgent: useUserAgent ? ua : "",
+      ),
       initialUrlRequest: URLRequest(
         url: WebUri.uri(Uri.parse(url)),
       ),
     );
 
-    headlessWebViewJapScan.run();
+    headlessWebView.run();
 
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
@@ -134,8 +128,8 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
     isOk = true;
     webview.close();
   } else {
-    HeadlessInAppWebView? headlessWebViewJapScan;
-    headlessWebViewJapScan = HeadlessInAppWebView(
+    HeadlessInAppWebView? headlessWebView;
+    headlessWebView = HeadlessInAppWebView(
       onLoadStop: (controller, u) async {
         html = await controller.evaluateJavascript(
             source:
@@ -143,7 +137,8 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
         await Future.doWhile(() async {
           if (html == null ||
               html!.contains("Just a moment") ||
-              html!.contains("Un instant…")) {
+              html!.contains("Un instant…") ||
+              html!.contains("https://challenges.cloudflare.com")) {
             html = await controller.evaluateJavascript(
                 source:
                     "window.document.getElementsByTagName('html')[0].outerHTML;");
@@ -156,16 +151,17 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
             source:
                 "window.document.getElementsByTagName('html')[0].outerHTML;");
         isOk = true;
-        headlessWebViewJapScan!.dispose();
+        headlessWebView!.dispose();
       },
-      initialSettings:
-          useUserAgent ? InAppWebViewSettings(userAgent: ua) : null,
+      initialSettings: InAppWebViewSettings(
+        userAgent: useUserAgent ? ua : "",
+      ),
       initialUrlRequest: URLRequest(
         url: WebUri.uri(Uri.parse(url)),
       ),
     );
 
-    headlessWebViewJapScan.run();
+    headlessWebView.run();
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
       if (isOk == true) {
@@ -176,4 +172,43 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
     await ref.watch(setCookieProvider(source, url).future);
   }
   return html!;
+}
+
+List<ContentBlocker> adsContentBlockers() {
+  final List<ContentBlocker> contentBlockers = [];
+  // list of Ad URL filters to be used to block ads loading.
+  final adUrlFilters = [
+    ".*.doubleclick.net/.*",
+    ".*.ads.pubmatic.com/.*",
+    ".*.googlesyndication.com/.*",
+    ".*.google-analytics.com/.*",
+    ".*.adservice.google.*/.*",
+    ".*.adbrite.com/.*",
+    ".*.exponential.com/.*",
+    ".*.quantserve.com/.*",
+    ".*.scorecardresearch.com/.*",
+    ".*.zedo.com/.*",
+    ".*.adsafeprotected.com/.*",
+    ".*.teads.tv/.*",
+    ".*.outbrain.com/.*"
+  ];
+  for (final adUrlFilter in adUrlFilters) {
+    contentBlockers.add(ContentBlocker(
+        trigger: ContentBlockerTrigger(
+          urlFilter: adUrlFilter,
+        ),
+        action: ContentBlockerAction(
+          type: ContentBlockerActionType.BLOCK,
+        )));
+  }
+
+  // apply the "display: none" style to some HTML elements
+  contentBlockers.add(ContentBlocker(
+      trigger: ContentBlockerTrigger(
+        urlFilter: ".*",
+      ),
+      action: ContentBlockerAction(
+          type: ContentBlockerActionType.CSS_DISPLAY_NONE,
+          selector: ".banner, .banners, .ads, .ad, .advert")));
+  return contentBlockers;
 }

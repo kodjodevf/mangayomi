@@ -9,6 +9,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -238,6 +239,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         });
                       },
                       initialSettings: InAppWebViewSettings(
+                          contentBlockers: adsContentBlockers(),
                           userAgent: isar.settings.getSync(227)!.userAgent!),
                       initialUrlRequest:
                           URLRequest(url: WebUri.uri(Uri.parse(widget.url))),

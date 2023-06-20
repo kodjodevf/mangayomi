@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/dom.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/services/http_service/http_res_to_dom_html.dart';
 import 'package:mangayomi/services/http_service/http_service.dart';
 import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/sources/utils/utils.dart';

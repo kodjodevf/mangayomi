@@ -118,10 +118,7 @@ class Japscan extends MangaYomiServices {
       required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            useUserAgent: true,
-            url: "${getMangaBaseUrl(source)}/",
-            source: source,
-            resDom: true)
+            url: "${getMangaBaseUrl(source)}/", source: source, resDom: true)
         .future) as Document?;
     if (dom!.querySelectorAll('#top_mangas_week > ul > li ').isNotEmpty) {
       final urls = dom
@@ -129,6 +126,7 @@ class Japscan extends MangaYomiServices {
           .where((e) => e.attributes['href'].toString().contains('manga'))
           .map((e) => e.attributes['href'])
           .toList();
+      print(urls);
       for (var ok in urls) {
         url.add("${getMangaBaseUrl(source)}$ok");
       }
@@ -151,7 +149,6 @@ class Japscan extends MangaYomiServices {
       required String lang,
       required AutoDisposeFutureProviderRef ref}) async {
     final dom = await ref.watch(httpGetProvider(
-            useUserAgent: true,
             url:
                 "https://www.google.com/search?q=${query.toLowerCase()}+japscan",
             source: source,

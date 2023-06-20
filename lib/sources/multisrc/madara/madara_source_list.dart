@@ -77,15 +77,15 @@ List<Source> _madaraSourcesList = [
     dateFormat: "MMM dd, yyyy",
     dateFormatLocale: defaultDateFormatLocale,
   ),
-  Source(
-    sourceName: "Clover Manga",
-    baseUrl: "https://clover-manga.com",
-    lang: "tr",
-    typeSource: TypeSource.madara,
-    logoUrl: '',
-    dateFormat: defaultDateFormat,
-    dateFormatLocale: "tr",
-  ),
+  // Source(
+  //   sourceName: "Clover Manga",
+  //   baseUrl: "https://clover-manga.com",
+  //   lang: "tr",
+  //   typeSource: TypeSource.madara,
+  //   logoUrl: '',
+  //   dateFormat: defaultDateFormat,
+  //   dateFormatLocale: "tr",
+  // ),
   Source(
     sourceName: "CookieToon",
     baseUrl: "https://cookietoon.online",
@@ -374,7 +374,7 @@ List<Source> _madaraSourcesList = [
     dateFormat: "MMMM d, yyyy",
     dateFormatLocale: defaultDateFormatLocale,
   ),
-  
+
   Source(
     sourceName: "Manhwua.fans",
     baseUrl: "https://manhwua.fans",
@@ -525,15 +525,15 @@ List<Source> _madaraSourcesList = [
     dateFormat: "dd/MM/yyyy",
     dateFormatLocale: "pt-BR",
   ),
-  Source(
-    sourceName: "365Manga",
-    baseUrl: "https://365manga.com",
-    lang: "en",
-    typeSource: TypeSource.madara,
-    logoUrl: '',
-    dateFormat: defaultDateFormat,
-    dateFormatLocale: defaultDateFormatLocale,
-  ),
+  // Source(
+  //   sourceName: "365Manga",
+  //   baseUrl: "https://365manga.com",
+  //   lang: "en",
+  //   typeSource: TypeSource.madara,
+  //   logoUrl: '',
+  //   dateFormat: defaultDateFormat,
+  //   dateFormatLocale: defaultDateFormatLocale,
+  // ),
   Source(
     sourceName: "Tortuga Ceviri",
     baseUrl: "https://tortuga-ceviri.com",
@@ -581,4 +581,14 @@ List<Source> _madaraSourcesList = [
     dateFormat: "dd/MM/yyyy",
     dateFormatLocale: "pt-BR",
   ),
+  // Source(
+  //   sourceName: "مانجا ليك",
+  //   baseUrl: "https://mangalek.com",
+  //   lang: "ar",
+   
+  //   typeSource: TypeSource.madara,
+  //   logoUrl: '',
+  //   dateFormat: "MMMM dd, yyyy",
+  //   dateFormatLocale: "ar",
+  // ),
 ];
