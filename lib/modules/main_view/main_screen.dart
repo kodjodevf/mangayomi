@@ -106,10 +106,10 @@ class _MainScreenState extends State<MainScreen> {
                                         child: Text('Library'))),
                                 NavigationRailDestination(
                                     selectedIcon: Icon(
-                                      Icons.library_books,
+                                      Icons.new_releases,
                                     ),
                                     icon: Icon(
-                                      Icons.library_books_outlined,
+                                      Icons.new_releases_outlined,
                                     ),
                                     label: Padding(
                                         padding: EdgeInsets.only(top: 5),

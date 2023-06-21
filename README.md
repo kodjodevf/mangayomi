@@ -16,6 +16,24 @@ Features include:
 * Categories to organize your library
 * Light and dark themes
 
+## Screenshots :camera:
+
+### Mobile Screenshots                                                                                                                
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Views    |  Light                                                     |  Dark                                                        |
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Library  |  ![mobile_library_light](screenshots/mobile library light.png) |![mobile_library_dark](screenshots/mobile library dark.png)  |
+| Manga    |  ![mobile_manga_light](screenshots/mobile manga light.png)     |![mobile_manga_dark](screenshots/mobile manga dark.png)      |
+| Reader   |  ![mobile_reader_light](screenshots/mobile reader light.png)   |![mobile_reader_dark](screenshots/mobile reader dark.png) |
+
+### Desktop Screenshots                                                                                                                
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Views    |  Light                                                     |  Dark                                                        |
+| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
+| Library  |  ![desktop_library_light](screenshots/desktop library light.png) |![desktop_library_dark](screenshots/desktop library dark.png)  |
+| Manga    |  ![desktop_manga_light](screenshots/desktop manga light.png)     |![desktop_manga_dark](screenshots/desktop manga dark.png)      |
+| Reader   |  ![desktop_reader_light](screenshots/desktop reader light.png)   |![desktop_reader_dark](screenshots/desktop reader dark.png) |
+
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
 
