@@ -326,7 +326,7 @@ class _MangaChapterPageGalleryState
                 ? _observerController.animateTo(
                     curve: Curves.ease,
                     index: index,
-                    duration: Duration(milliseconds: isSlide ? 2 : 150))
+                    duration: const Duration(milliseconds: 150))
                 : _observerController.jumpTo(
                     index: index,
                   );
@@ -343,7 +343,7 @@ class _MangaChapterPageGalleryState
             } else {
               animatePageTransitions
                   ? _extendedController.animateToPage(index,
-                      duration: Duration(milliseconds: isSlide ? 2 : 150),
+                      duration: const Duration(milliseconds: 150),
                       curve: Curves.ease)
                   : _extendedController.jumpToPage(index);
             }
@@ -362,7 +362,7 @@ class _MangaChapterPageGalleryState
               ? _observerController.animateTo(
                   curve: Curves.ease,
                   index: index,
-                  duration: Duration(milliseconds: isSlide ? 2 : 150))
+                  duration: const Duration(milliseconds: 150))
               : _observerController.jumpTo(
                   index: index,
                 );
@@ -379,7 +379,7 @@ class _MangaChapterPageGalleryState
           } else {
             animatePageTransitions
                 ? _extendedController.animateToPage(index,
-                    duration: Duration(milliseconds: isSlide ? 2 : 150),
+                    duration: const Duration(milliseconds: 150),
                     curve: Curves.ease)
                 : _extendedController.jumpToPage(index);
           }

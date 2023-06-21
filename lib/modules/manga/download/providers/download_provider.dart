@@ -28,6 +28,9 @@ Future<List<String>> downloadChapter(
   final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   Directory? path;
+  final getDownloadLocation = ref.watch(downloadLocationStateProvider).$2;
+  final desktopCustomDownloadLocation =
+      Platform.isWindows && getDownloadLocation.isNotEmpty;
   bool isOk = false;
   final manga = chapter.manga.value!;
   final path1 = await storageProvider.getDirectory();
@@ -95,9 +98,10 @@ Future<List<String>> downloadChapter(
                 headers: ref.watch(headersProvider(source: manga.source!)),
                 url: pageUrls[index],
                 filename: "${padIndex(index + 1)}.jpg",
-                baseDirectory: Platform.isAndroid
-                    ? BaseDirectory.temporary
-                    : BaseDirectory.applicationDocuments,
+                baseDirectory:
+                    Platform.isAndroid || desktopCustomDownloadLocation
+                        ? BaseDirectory.temporary
+                        : BaseDirectory.applicationDocuments,
                 directory: 'Mangayomi/$finalPath',
                 updates: Updates.statusAndProgress,
                 allowPause: true,
@@ -113,9 +117,10 @@ Future<List<String>> downloadChapter(
                 headers: ref.watch(headersProvider(source: manga.source!)),
                 url: pageUrls[index],
                 filename: "${padIndex(index + 1)}.jpg",
-                baseDirectory: Platform.isAndroid
-                    ? BaseDirectory.temporary
-                    : BaseDirectory.applicationDocuments,
+                baseDirectory:
+                    Platform.isAndroid || desktopCustomDownloadLocation
+                        ? BaseDirectory.temporary
+                        : BaseDirectory.applicationDocuments,
                 directory: 'Mangayomi/$finalPath',
                 updates: Updates.statusAndProgress,
                 allowPause: true,
@@ -181,7 +186,7 @@ Future<List<String>> downloadChapter(
         },
         taskProgressCallback: (taskProgress) async {
           if (taskProgress.progress == 1.0) {
-            if (Platform.isAndroid) {
+            if (Platform.isAndroid || desktopCustomDownloadLocation) {
               await File(
                       "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
                   .copy("${path!.path}/${taskProgress.task.filename}");

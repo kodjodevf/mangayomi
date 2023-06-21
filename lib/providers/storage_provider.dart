@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:developer';
 import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -45,6 +46,7 @@ class StorageProvider {
   Future<Directory?> getDirectory() async {
     Directory? directory;
     String path = isar.settings.getSync(227)!.downloadLocation ?? "";
+    log(path);
     if (Platform.isAndroid) {
       directory =
           Directory(path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/");

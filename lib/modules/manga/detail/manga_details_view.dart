@@ -100,7 +100,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     widget.manga.author!,
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Icon(
                         getMangaStatusIcon(widget.manga.status),
@@ -111,12 +112,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       ),
                       Text(getMangaStatusName(widget.manga.status)),
                       const Text(' • '),
-                      Row(
-                        children: [
-                          Text(widget.manga.source!),
-                          Text(' (${widget.manga.lang!.toUpperCase()})'),
-                        ],
-                      )
+                      Text(widget.manga.source!),
+                      Text(' (${widget.manga.lang!.toUpperCase()})')
                     ],
                   )
                 ],
