@@ -19,7 +19,6 @@ Features include:
 ## Screenshots :camera:
 
 ### Mobile Screenshots                                                                                                                
-| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Views    |  Light                                                     |  Dark                                                        |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Library  |  ![mobile_library_light](screenshots/mobile library light.png) |![mobile_library_dark](screenshots/mobile library dark.png)  |
@@ -27,7 +26,6 @@ Features include:
 | Reader   |  ![mobile_reader_light](screenshots/mobile reader light.png)   |![mobile_reader_dark](screenshots/mobile reader dark.png) |
 
 ### Desktop Screenshots                                                                                                                
-| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Views    |  Light                                                     |  Dark                                                        |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Library  |  ![desktop_library_light](screenshots/desktop library light.png) |![desktop_library_dark](screenshots/desktop library dark.png)  |
