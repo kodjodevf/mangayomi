@@ -17,63 +17,65 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
   late bool expanded = widget.text.trim().length < 232;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: ExpandableText(
-                animationDuration: const Duration(milliseconds: 500),
-                onExpandedChanged: (value) {
-                  setState(() => expanded = value);
-                  widget.onChanged(value);
-                },
-                expandOnTextTap: true,
-                widget.text.trim(),
-                expandText: '',
-                maxLines: 3,
-                expanded: expanded,
-                linkColor: Theme.of(context).scaffoldBackgroundColor,
-                animation: true,
-                collapseOnTextTap: true,
-                prefixText: '',
-              ),
-            ),
-            if (!expanded)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                left: 0,
-                child: Container(
-                  width: mediaWidth(context, 1),
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.2),
-                        Theme.of(context).scaffoldBackgroundColor
-                      ],
-                      stops: const [0, .9],
+    return widget.text.isEmpty
+        ? const Text("No description")
+        : Column(
+            children: [
+              Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: ExpandableText(
+                      animationDuration: const Duration(milliseconds: 500),
+                      onExpandedChanged: (value) {
+                        setState(() => expanded = value);
+                        widget.onChanged(value);
+                      },
+                      expandOnTextTap: true,
+                      widget.text.trim(),
+                      expandText: '',
+                      maxLines: 3,
+                      expanded: expanded,
+                      linkColor: Theme.of(context).scaffoldBackgroundColor,
+                      animation: true,
+                      collapseOnTextTap: true,
+                      prefixText: '',
                     ),
                   ),
-                  child: const Icon(Icons.keyboard_arrow_down_sharp),
-                ),
+                  if (!expanded)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Container(
+                        width: mediaWidth(context, 1),
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(0.2),
+                              Theme.of(context).scaffoldBackgroundColor
+                            ],
+                            stops: const [0, .9],
+                          ),
+                        ),
+                        child: const Icon(Icons.keyboard_arrow_down_sharp),
+                      ),
+                    ),
+                ],
               ),
-          ],
-        ),
-        if (expanded)
-          SizedBox(
-            width: mediaWidth(context, 1),
-            height: 20,
-            child: const Icon(Icons.keyboard_arrow_up_sharp),
-          )
-      ],
-    );
+              if (expanded)
+                SizedBox(
+                  width: mediaWidth(context, 1),
+                  height: 20,
+                  child: const Icon(Icons.keyboard_arrow_up_sharp),
+                )
+            ],
+          );
   }
 }

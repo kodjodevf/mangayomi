@@ -107,8 +107,10 @@ class LibraryListViewWidget extends StatelessWidget {
                                         : CachedNetworkImageProvider(
                                             entriesManga[index].imageUrl!,
                                             headers: ref.watch(headersProvider(
-                                                source: entriesManga[index]
-                                                    .source!)),
+                                                source:
+                                                    entriesManga[index].source!,
+                                                lang:
+                                                    entriesManga[index].lang!)),
                                           ),
                                     child: InkWell(
                                         child: Container(

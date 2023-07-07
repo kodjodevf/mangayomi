@@ -23,19 +23,19 @@ class ChapterIntervalPageView extends ConsumerWidget {
     final readerController =
         ReaderController(chapter: uChapDataPreload.chapter!);
 
-    String text = uChapDataPreload.isPrevPrePage && hasPrevChapter
+    String text = uChapDataPreload.hasPrevPrePage && hasPrevChapter
         ? "Current:"
         : "Finished:";
-    final noMoreChapter = uChapDataPreload.isNextPrePage && !hasNextChapter ||
-        uChapDataPreload.isPrevPrePage && !hasPrevChapter;
+    final noMoreChapter = uChapDataPreload.hasNextPrePage && !hasNextChapter ||
+        uChapDataPreload.hasPrevPrePage && !hasPrevChapter;
     String noMore =
-        uChapDataPreload.isNextPrePage && !hasNextChapter ? "Next" : "Previous";
+        uChapDataPreload.hasNextPrePage && !hasNextChapter ? "Next" : "Previous";
     return SizedBox(
       height: mediaHeight(context, 0.27),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (uChapDataPreload.isPrevPrePage && hasPrevChapter)
+          if (uChapDataPreload.hasPrevPrePage && hasPrevChapter)
             Column(
               children: [
                 const Text(
@@ -89,7 +89,7 @@ class ChapterIntervalPageView extends ConsumerWidget {
               style: const TextStyle(color: Colors.white, fontSize: 14),
               textAlign: TextAlign.center,
             ),
-          if (uChapDataPreload.isNextPrePage && hasNextChapter)
+          if (uChapDataPreload.hasNextPrePage && hasNextChapter)
             Column(
               children: [
                 Column(

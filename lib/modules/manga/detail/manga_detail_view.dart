@@ -202,7 +202,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 fit: BoxFit.cover)
                             : cachedNetworkImage(
                                 headers: ref.watch(headersProvider(
-                                    source: widget.manga!.source!)),
+                                    source: widget.manga!.source!,
+                                    lang: widget.manga!.lang!)),
                                 imageUrl: widget.manga!.imageUrl!,
                                 width: mediaWidth(context, 1),
                                 height: 300,
@@ -365,11 +366,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   context.push("/categories");
                                 } else if (value == 1) {
                                 } else if (value == 2) {
-                                  String url = getMangaAPIUrl(
-                                              widget.manga!.source!)
-                                          .isEmpty
+                                  final source = getSource(widget.manga!.lang!,
+                                      widget.manga!.source!);
+                                  String url = source.apiUrl!.isEmpty
                                       ? widget.manga!.link!
-                                      : "${getMangaBaseUrl(widget.manga!.source!)}${widget.manga!.link!}";
+                                      : "${source.baseUrl}${widget.manga!.link!}";
+
                                   Share.share(url);
                                 }
                               }),
@@ -426,14 +428,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       .spaceBetween
                                                   : MainAxisAlignment.start,
                                               children: [
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 8),
-                                                  child: Text(
-                                                    '${chapters.length} chapters',
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                Container(
+                                                  height: chapters.isEmpty
+                                                      ? mediaHeight(context, 1)
+                                                      : null,
+                                                  color: Theme.of(context)
+                                                      .scaffoldBackgroundColor,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 8),
+                                                    child: Text(
+                                                      '${chapters.length} chapters',
+                                                      style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                   ),
                                                 ),
                                                 if (isLocalArchive)
@@ -1045,7 +1055,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             Stack(
               children: [
                 SizedBox(
-                  height: 180,
                   width: mediaWidth(context, 1),
                   child: Row(
                     children: [
@@ -1211,6 +1220,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 ],
               ),
             ),
+            if (chapterLength == 0)
+              Container(
+                  width: mediaWidth(context, 1),
+                  height: mediaHeight(context, 1),
+                  color: Theme.of(context).scaffoldBackgroundColor)
           ],
         ),
       ],
@@ -1223,7 +1237,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             as ImageProvider
         : CachedNetworkImageProvider(widget.manga!.imageUrl!);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 13),
+      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
       child: GestureDetector(
         onTap: () {
           _openImage(imageProvider);
@@ -1277,12 +1291,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   elevation: 0),
               onPressed: () {
                 final manga = widget.manga!;
-                String url = getMangaAPIUrl(manga.source!).isEmpty
-                    ? manga.link!
-                    : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
+                final source =
+                    getSource(widget.manga!.lang!, widget.manga!.source!);
+                String url = source.apiUrl!.isEmpty
+                    ? widget.manga!.link!
+                    : "${source.baseUrl}${widget.manga!.link!}";
+
                 Map<String, String> data = {
                   'url': url,
-                  'source': manga.source!,
+                  'sourceId': source.id.toString(),
                   'title': manga.name!
                 };
                 context.push("/mangawebview", extra: data);

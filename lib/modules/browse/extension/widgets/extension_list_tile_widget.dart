@@ -1,63 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/browse/extension/providers/fetch_sources.dart';
 import 'package:mangayomi/utils/lang.dart';
 
-class ExtensionListTileWidget extends StatelessWidget {
-  final String sourceName;
-  final String lang;
-  final bool value;
-  final String logoUrl;
-  final bool isNsfw;
-  final Function(bool) onChanged;
-  const ExtensionListTileWidget(
-      {super.key,
-      required this.sourceName,
-      required this.lang,
-      required this.value,
-      required this.onChanged,
-      required this.logoUrl,
-      required this.isNsfw});
+class ExtensionListTileWidget extends ConsumerStatefulWidget {
+  final Source source;
+  const ExtensionListTileWidget({
+    super.key,
+    required this.source,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  ConsumerState<ExtensionListTileWidget> createState() =>
+      _ExtensionListTileWidgetState();
+}
+
+class _ExtensionListTileWidgetState
+    extends ConsumerState<ExtensionListTileWidget> {
+  bool _isLoading = false;
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
+    final updateAivalable =
+        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
+    final sourceNotEmpty = widget.source.sourceCode != null &&
+        widget.source.sourceCode!.isNotEmpty;
+
     return ListTile(
         onTap: () {
-          onChanged(!value);
+          // onChanged(!value);
         },
         leading: Container(
-          height: 37,
-          width: 37,
-          decoration: BoxDecoration(
-              color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(5)),
-          child: 
-          // logoUrl.isEmpty
-          //     ? 
-              const Icon(Icons.source_outlined)
-              // : CachedNetworkImage(
-              //     imageUrl: logoUrl,
-              //     fit: BoxFit.contain,
-              //     width: 37,
-              //     height: 37,
-              //     errorWidget: (context, url, error) {
-              //       return const SizedBox(
-              //         width: 37,
-              //         height: 37,
-              //         child: Center(
-              //           child: Icon(Icons.source_outlined),
-              //         ),
-              //       );
-              //     },
-              //   ),
-        ),
-        title: Text(sourceName),
+            height: 37,
+            width: 37,
+            decoration: BoxDecoration(
+                color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(5)),
+            child:
+                // iconUrl.isEmpty
+                //     ?
+                const Icon(Icons.source_outlined)
+            // : CachedNetworkImage(
+            //     imageUrl: iconUrl,
+            //     fit: BoxFit.contain,
+            //     width: 37,
+            //     height: 37,
+            //     errorWidget: (context, url, error) {
+            //       return const SizedBox(
+            //         width: 37,
+            //         height: 37,
+            //         child: Center(
+            //           child: Icon(Icons.source_outlined),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            ),
+        title: Text(widget.source.name!),
         subtitle: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              completeLang(lang.toLowerCase()),
+              completeLang(widget.source.lang!.toLowerCase()),
               style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
             ),
-            if (isNsfw)
+            if (widget.source.isNsfw!)
               Row(
                 children: [
                   const SizedBox(
@@ -74,10 +83,33 @@ class ExtensionListTileWidget extends StatelessWidget {
               )
           ],
         ),
-        trailing: Switch(
-            value: value,
-            onChanged: (value) {
-              onChanged(value);
-            }));
+        trailing: TextButton(
+          onPressed: !updateAivalable && sourceNotEmpty
+              ? null
+              : () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await ref.watch(
+                      fetchSourcesListProvider(id: widget.source.id).future);
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                },
+          child: _isLoading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                  ))
+              : Text(!sourceNotEmpty
+                  ? "Install"
+                  : updateAivalable
+                      ? "Update"
+                      : "Latest"),
+        ));
   }
 }

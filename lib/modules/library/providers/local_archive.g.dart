@@ -24,7 +24,7 @@ final importArchivesFromDirectoryProvider =
 
 typedef ImportArchivesFromDirectoryRef = AutoDisposeFutureProviderRef<dynamic>;
 String _$importArchivesFromFileHash() =>
-    r'bc892e1fb32c5d5ec639ad5f76c27996605181f5';
+    r'ee38771c056b3f15d856ed0b91cd559ab22dc236';
 
 /// Copied from Dart SDK
 class _SystemHash {

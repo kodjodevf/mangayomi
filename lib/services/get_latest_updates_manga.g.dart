@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'c5ddc8739ee5b7c085cdeede7c55743bfc7f5120';
+    r'6ad1f68ce7a320c661817e5d5ff1bbf8d68b3948';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,27 +31,26 @@ class _SystemHash {
 }
 
 typedef GetLatestUpdatesMangaRef
-    = AutoDisposeFutureProviderRef<List<GetManga?>>;
+    = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [getLatestUpdatesManga].
 @ProviderFor(getLatestUpdatesManga)
 const getLatestUpdatesMangaProvider = GetLatestUpdatesMangaFamily();
 
 /// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
+class GetLatestUpdatesMangaFamily
+    extends Family<AsyncValue<List<MangaModel?>>> {
   /// See also [getLatestUpdatesManga].
   const GetLatestUpdatesMangaFamily();
 
   /// See also [getLatestUpdatesManga].
   GetLatestUpdatesMangaProvider call({
-    required String source,
+    required Source source,
     required int page,
-    required String lang,
   }) {
     return GetLatestUpdatesMangaProvider(
       source: source,
       page: page,
-      lang: lang,
     );
   }
 
@@ -62,7 +61,6 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       page: provider.page,
-      lang: provider.lang,
     );
   }
 
@@ -83,18 +81,16 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
 
 /// See also [getLatestUpdatesManga].
 class GetLatestUpdatesMangaProvider
-    extends AutoDisposeFutureProvider<List<GetManga?>> {
+    extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [getLatestUpdatesManga].
   GetLatestUpdatesMangaProvider({
     required this.source,
     required this.page,
-    required this.lang,
   }) : super.internal(
           (ref) => getLatestUpdatesManga(
             ref,
             source: source,
             page: page,
-            lang: lang,
           ),
           from: getLatestUpdatesMangaProvider,
           name: r'getLatestUpdatesMangaProvider',
@@ -107,16 +103,14 @@ class GetLatestUpdatesMangaProvider
               GetLatestUpdatesMangaFamily._allTransitiveDependencies,
         );
 
-  final String source;
+  final Source source;
   final int page;
-  final String lang;
 
   @override
   bool operator ==(Object other) {
     return other is GetLatestUpdatesMangaProvider &&
         other.source == source &&
-        other.page == page &&
-        other.lang == lang;
+        other.page == page;
   }
 
   @override
@@ -124,7 +118,6 @@ class GetLatestUpdatesMangaProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

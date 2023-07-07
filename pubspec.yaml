@@ -64,6 +64,9 @@ dependencies:
   path_provider: ^2.0.15
   image: ^3.3.0
   scrollview_observer: ^1.14.0
+  dart_eval: ^0.6.0
+  json_path: ^0.6.0
+  bot_toast: ^4.0.4
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'009422e0d88c595e2a8183e2360708ad2e13a955';
+String _$getMangaDetailHash() => r'e5c9845c4481eb584cbd899dacaaceda8167ae44';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,26 +29,24 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<GetManga>;
+typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<MangaModel>;
 
 /// See also [getMangaDetail].
 @ProviderFor(getMangaDetail)
 const getMangaDetailProvider = GetMangaDetailFamily();
 
 /// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
+class GetMangaDetailFamily extends Family<AsyncValue<MangaModel>> {
   /// See also [getMangaDetail].
   const GetMangaDetailFamily();
 
   /// See also [getMangaDetail].
   GetMangaDetailProvider call({
-    required GetManga manga,
-    required String lang,
-    required String source,
+    required MangaModel manga,
+    required Source source,
   }) {
     return GetMangaDetailProvider(
       manga: manga,
-      lang: lang,
       source: source,
     );
   }
@@ -59,7 +57,6 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
   ) {
     return call(
       manga: provider.manga,
-      lang: provider.lang,
       source: provider.source,
     );
   }
@@ -80,17 +77,15 @@ class GetMangaDetailFamily extends Family<AsyncValue<GetManga>> {
 }
 
 /// See also [getMangaDetail].
-class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
+class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
   /// See also [getMangaDetail].
   GetMangaDetailProvider({
     required this.manga,
-    required this.lang,
     required this.source,
   }) : super.internal(
           (ref) => getMangaDetail(
             ref,
             manga: manga,
-            lang: lang,
             source: source,
           ),
           from: getMangaDetailProvider,
@@ -104,15 +99,13 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
               GetMangaDetailFamily._allTransitiveDependencies,
         );
 
-  final GetManga manga;
-  final String lang;
-  final String source;
+  final MangaModel manga;
+  final Source source;
 
   @override
   bool operator ==(Object other) {
     return other is GetMangaDetailProvider &&
         other.manga == manga &&
-        other.lang == lang &&
         other.source == source;
   }
 
@@ -120,7 +113,6 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<GetManga> {
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, manga.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
 
     return _SystemHash.finish(hash);

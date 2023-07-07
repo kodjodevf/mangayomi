@@ -1,105 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:html/dom.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'cloudflare_bypass.g.dart';
+import 'package:mangayomi/utils/constant.dart';
 
-@riverpod
-Future<dom.Document?> cloudflareBypassDom(CloudflareBypassDomRef ref,
+Future<String> cloudflareBypass(
     {required String url,
-    required String source,
-    required bool useUserAgent}) async {
-  final ua = isar.settings.getSync(227)!.userAgent!;
-  bool isOk = false;
-  dom.Document? htmll;
-  if (Platform.isWindows || Platform.isLinux) {
-    String? html;
-    final webview = await WebviewWindow.create(
-      configuration: CreateConfiguration(
-        windowHeight: 500,
-        windowWidth: 500,
-        userDataFolderWindows: await getWebViewPath(),
-      ),
-    );
-    webview
-      ..setBrightness(Brightness.dark)
-      ..setApplicationNameForUserAgent(useUserAgent ? ua : '')
-      ..launch(url);
-
-    await Future.delayed(const Duration(seconds: 10));
-    html = await decodeHtml(webview);
-    isOk = true;
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (isOk == true) {
-        return false;
-      }
-      return true;
-    });
-    html = await decodeHtml(webview);
-    htmll = dom.Document.html(html!);
-    webview.close();
-  } else {
-    HeadlessInAppWebView? headlessWebView;
-    headlessWebView = HeadlessInAppWebView(
-      onLoadStop: (controller, u) async {
-        String? html;
-        html = await controller.evaluateJavascript(
-            source:
-                "window.document.getElementsByTagName('html')[0].outerHTML;");
-        await Future.doWhile(() async {
-          if (html == null ||
-              html!.contains("Just a moment") ||
-              html!.contains("Un instant…") ||
-              html!.contains("https://challenges.cloudflare.com")) {
-            html = await controller.evaluateJavascript(
-                source:
-                    "window.document.getElementsByTagName('html')[0].outerHTML;");
-            return true;
-          }
-          return false;
-        });
-        html = await controller.evaluateJavascript(
-            source:
-                "window.document.getElementsByTagName('html')[0].outerHTML;");
-        htmll = dom.Document.html(html!);
-        isOk = true;
-        headlessWebView!.dispose();
-      },
-      initialSettings: InAppWebViewSettings(
-        userAgent: useUserAgent ? ua : "",
-      ),
-      initialUrlRequest: URLRequest(
-        url: WebUri.uri(Uri.parse(url)),
-      ),
-    );
-
-    headlessWebView.run();
-
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (isOk == true) {
-        return false;
-      }
-      return true;
-    });
-    await ref.watch(setCookieProvider(source, url).future);
-  }
-  return htmll;
-}
-
-@riverpod
-Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
-    {required String url,
-    required String source,
-    required bool useUserAgent}) async {
+    required String sourceId,
+    required int method}) async {
   final ua = isar.settings.getSync(227)!.userAgent!;
   bool isOk = false;
   String? html;
@@ -113,7 +27,7 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
     );
     webview
       ..setBrightness(Brightness.dark)
-      ..setApplicationNameForUserAgent(useUserAgent ? ua : '')
+      ..setApplicationNameForUserAgent(ua)
       ..launch(url);
 
     await Future.doWhile(() async {
@@ -137,8 +51,7 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
         await Future.doWhile(() async {
           if (html == null ||
               html!.contains("Just a moment") ||
-              html!.contains("Un instant…") ||
-              html!.contains("https://challenges.cloudflare.com")) {
+              html!.contains("challenges.cloudflare.com")) {
             html = await controller.evaluateJavascript(
                 source:
                     "window.document.getElementsByTagName('html')[0].outerHTML;");
@@ -146,7 +59,6 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
           }
           return false;
         });
-        await Future.delayed(const Duration(seconds: 10));
         html = await controller.evaluateJavascript(
             source:
                 "window.document.getElementsByTagName('html')[0].outerHTML;");
@@ -154,9 +66,17 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
         headlessWebView!.dispose();
       },
       initialSettings: InAppWebViewSettings(
-        userAgent: useUserAgent ? ua : "",
+        userAgent: defaultUserAgent,
       ),
       initialUrlRequest: URLRequest(
+        headers: headers(sourceId: sourceId),
+        method: method == 0
+            ? 'GET'
+            : method == 1
+                ? 'POST'
+                : method == 2
+                    ? 'PUT'
+                    : 'DELETE',
         url: WebUri.uri(Uri.parse(url)),
       ),
     );
@@ -169,46 +89,21 @@ Future<String> cloudflareBypassHtml(CloudflareBypassHtmlRef ref,
       }
       return true;
     });
-    await ref.watch(setCookieProvider(source, url).future);
+    await setCookieB(sourceId, url);
   }
   return html!;
 }
 
-List<ContentBlocker> adsContentBlockers() {
-  final List<ContentBlocker> contentBlockers = [];
-  // list of Ad URL filters to be used to block ads loading.
-  final adUrlFilters = [
-    ".*.doubleclick.net/.*",
-    ".*.ads.pubmatic.com/.*",
-    ".*.googlesyndication.com/.*",
-    ".*.google-analytics.com/.*",
-    ".*.adservice.google.*/.*",
-    ".*.adbrite.com/.*",
-    ".*.exponential.com/.*",
-    ".*.quantserve.com/.*",
-    ".*.scorecardresearch.com/.*",
-    ".*.zedo.com/.*",
-    ".*.adsafeprotected.com/.*",
-    ".*.teads.tv/.*",
-    ".*.outbrain.com/.*"
-  ];
-  for (final adUrlFilter in adUrlFilters) {
-    contentBlockers.add(ContentBlocker(
-        trigger: ContentBlockerTrigger(
-          urlFilter: adUrlFilter,
-        ),
-        action: ContentBlockerAction(
-          type: ContentBlockerActionType.BLOCK,
-        )));
+Map<String, String> headers({required String sourceId}) {
+  final source = isar.sources.getSync(int.parse(sourceId))!;
+  if (source.headers!.isEmpty) {
+    return {};
   }
 
-  // apply the "display: none" style to some HTML elements
-  contentBlockers.add(ContentBlocker(
-      trigger: ContentBlockerTrigger(
-        urlFilter: ".*",
-      ),
-      action: ContentBlockerAction(
-          type: ContentBlockerActionType.CSS_DISPLAY_NONE,
-          selector: ".banner, .banners, .ads, .ad, .advert")));
-  return contentBlockers;
+  Map<String, String> newHeaders = {};
+  final headers = jsonDecode(source.headers!) as Map;
+  newHeaders =
+      headers.map((key, value) => MapEntry(key.toString(), value.toString()));
+
+  return newHeaders;
 }

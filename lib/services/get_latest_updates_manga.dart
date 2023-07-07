@@ -1,99 +1,59 @@
 import 'dart:async';
+import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/sources/multisrc/heancms/heancms.dart';
-import 'package:mangayomi/sources/multisrc/madara/src/madara.dart';
-import 'package:mangayomi/sources/service.dart';
-import 'package:mangayomi/sources/src/all/comick/src/comick.dart';
-import 'package:mangayomi/sources/src/all/mangadex/src/mangadex.dart';
-import 'package:mangayomi/sources/src/en/mangahere/src/mangahere.dart';
-import 'package:mangayomi/sources/src/fr/japscan/src/japscan.dart';
-import 'package:mangayomi/sources/src/fr/mangakawaii/src/mangakawaii.dart';
-import 'package:mangayomi/sources/multisrc/mangathemesia/src/mangathemesia.dart';
-import 'package:mangayomi/sources/multisrc/mmrcms/src/mmrcms.dart';
-import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:mangayomi/eval/bridge_class/manga_model.dart';
+import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_latest_updates_manga.g.dart';
 
 @riverpod
-Future<List<GetManga?>> getLatestUpdatesManga(
+Future<List<MangaModel?>> getLatestUpdatesManga(
   GetLatestUpdatesMangaRef ref, {
-  required String source,
+  required Source source,
   required int page,
-  required String lang,
 }) async {
-  List<GetManga?>? latestUpdatesManga;
-  source = source.toLowerCase();
+  List<MangaModel?>? latestUpdatesManga = [];
+  final bytecode = compilerEval(source.sourceCode!);
 
-  /*********/
-  /*comick*/
-  /*******/
-  if (getMangaTypeSource(source) == TypeSource.comick) {
-    latestUpdatesManga = await Comick().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
+  final runtime = runtimeEval(bytecode);
+  runtime.args = [
+    $MangaModel.wrap(MangaModel(
+        page: page,
+        lang: source.lang,
+        baseUrl: source.baseUrl,
+        apiUrl: source.apiUrl,
+        sourceId: source.id,
+        source: source.name,
+        dateFormat: source.dateFormat,
+        dateFormatLocale: source.dateFormatLocale))
+  ];
+  var result2 = await runtime.executeLib(
+    'package:package:mangayomi/main.dart',
+    'getLatestUpdatesManga',
+  );
+  try {
+    if (result2 is $MangaModel) {
+      final value = result2.$reified;
+      List<MangaModel> newManga = [];
+      for (var i = 0; i < value.names!.length; i++) {
+        MangaModel newMangaa = MangaModel(
+            name: value.names![i],
+            link: value.urls![i],
+            imageUrl: value.images![i],
+            baseUrl: value.baseUrl,
+            apiUrl: value.apiUrl,
+            lang: value.lang,
+            sourceId: value.sourceId,
+            dateFormat: value.dateFormat,
+            dateFormatLocale: value.dateFormatLocale);
+        newManga.add(newMangaa);
+      }
+      latestUpdatesManga = newManga;
+    }
+  } catch (_) {
+    throw Exception("");
   }
 
-  /***************/
-  /*mangathemesia*/
-  /**************/
-  if (getMangaTypeSource(source) == TypeSource.mangathemesia) {
-    latestUpdatesManga = await MangaThemeSia().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*mangakawaii*/
-  /***********/
-  if (source == "mangakawaii") {
-    latestUpdatesManga = await MangaKawaii().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*mmrcms*/
-  /***********/
-
-  else if (getMangaTypeSource(source) == TypeSource.mmrcms) {
-    latestUpdatesManga = await Mmrcms().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*mangahere*/
-  /***********/
-  else if (source == "mangahere") {
-    latestUpdatesManga = await Mangahere().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-  /***********/
-  /*japscan*/
-  /***********/
-  else if (source == "japscan") {
-    latestUpdatesManga = await Japscan().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*heancms*/
-  /***********/
-  else if (getMangaTypeSource(source) == TypeSource.heancms) {
-    latestUpdatesManga = await HeanCms().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*madara*/
-  /***********/
-  else if (getMangaTypeSource(source) == TypeSource.madara) {
-    latestUpdatesManga = await Madara().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-
-  /***********/
-  /*mangadex*/
-  /***********/
-  else if (getMangaTypeSource(source) == TypeSource.mangadex) {
-    latestUpdatesManga = await MangaDex().getLatestUpdatesManga(
-        source: source, page: page, ref: ref, lang: lang);
-  }
-  return latestUpdatesManga!;
+  return latestUpdatesManga;
 }

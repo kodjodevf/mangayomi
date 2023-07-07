@@ -95,8 +95,9 @@ Future<List<String>> downloadChapter(
           } else {
             tasks.add(DownloadTask(
                 taskId: pageUrls[index],
-                headers: ref.watch(headersProvider(source: manga.source!)),
-                url: pageUrls[index],
+                headers: ref.watch(
+                    headersProvider(source: manga.source!, lang: manga.lang!)),
+                url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
                 baseDirectory:
                     Platform.isAndroid || desktopCustomDownloadLocation
@@ -114,8 +115,9 @@ Future<List<String>> downloadChapter(
           } else {
             tasks.add(DownloadTask(
                 taskId: pageUrls[index],
-                headers: ref.watch(headersProvider(source: manga.source!)),
-                url: pageUrls[index],
+                headers: ref.watch(
+                    headersProvider(source: manga.source!, lang: manga.lang!)),
+                url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
                 baseDirectory:
                     Platform.isAndroid || desktopCustomDownloadLocation

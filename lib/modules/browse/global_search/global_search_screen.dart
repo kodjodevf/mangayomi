@@ -4,11 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/sources/service.dart';
-import 'package:mangayomi/sources/source_list.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -34,7 +33,12 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   Widget build(BuildContext context) {
     final sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
         ? isar.sources.filter().isPinnedEqualTo(true).findAllSync()
-        : sourcesList;
+        : isar.sources
+            .filter()
+            .idIsNotNull()
+            .and()
+            .isAddedEqualTo(true)
+            .findAllSync();
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -90,7 +94,10 @@ class SourceSearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final search = ref.watch(searchMangaProvider(
-        source: source.sourceName!, query: query, lang: source.lang!));
+      source: source,
+      page: 1,
+      query: query,
+    ));
     return Scaffold(
         body: SizedBox(
       height: 260,
@@ -101,13 +108,12 @@ class SourceSearchScreen extends ConsumerWidget {
             onTap: () {
               Map<String, dynamic> data = {
                 'query': query,
-                'source': source.sourceName,
-                'lang': source.lang,
+                'source': source,
                 'viewOnly': true,
               };
               context.push('/searchResult', extra: data);
             },
-            title: Text(source.sourceName!),
+            title: Text(source.name!),
             subtitle: Text(
               completeLang(source.lang!),
               style: const TextStyle(fontSize: 10),
@@ -129,8 +135,7 @@ class SourceSearchScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         return MangaGlobalImageCard(
                           manga: data[index]!,
-                          source: source.sourceName!,
-                          lang: source.lang!,
+                          source: source,
                         );
                       },
                     );
@@ -147,14 +152,13 @@ class SourceSearchScreen extends ConsumerWidget {
 }
 
 class MangaGlobalImageCard extends ConsumerStatefulWidget {
-  final GetManga manga;
-  final String source;
-  final String lang;
+  final MangaModel manga;
+  final Source source;
+
   const MangaGlobalImageCard({
     super.key,
     required this.manga,
     required this.source,
-    required this.lang,
   });
 
   @override
@@ -168,19 +172,22 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
   Widget build(BuildContext context) {
     super.build(context);
     final getMangaDetail = ref.watch(getMangaDetailProvider(
-        source: widget.source, manga: widget.manga, lang: widget.lang));
+        manga: widget.manga
+          ..lang = widget.source.lang
+          ..source = widget.source.name,
+        source: widget.source));
 
     return getMangaDetail.when(
       data: (data) {
         return GestureDetector(
           onTap: () async {
             pushToMangaReaderDetail(
-                context: context, getManga: data, lang: widget.lang);
+                context: context, getManga: data, lang: widget.source.lang!);
           },
           child: StreamBuilder(
               stream: isar.mangas
                   .filter()
-                  .langEqualTo(widget.lang)
+                  .langEqualTo(widget.source.lang)
                   .nameEqualTo(data.name)
                   .sourceEqualTo(data.source)
                   .favoriteEqualTo(true)
@@ -196,8 +203,8 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                           ClipRRect(
                             borderRadius: BorderRadius.circular(2),
                             child: cachedNetworkImage(
-                                headers: ref.watch(
-                                    headersProvider(source: data.source!)),
+                                headers: ref.watch(headersProvider(
+                                    source: data.source!, lang: data.lang!)),
                                 imageUrl: data.imageUrl!,
                                 width: 100,
                                 height: 140,

@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'4fe87d57b93957bbc848b9b814dd3c9aa94b89c5';
+String _$getPopularMangaHash() => r'f0999a803936680db27e22750a620566c25ae69e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,25 @@ class _SystemHash {
   }
 }
 
-typedef GetPopularMangaRef = AutoDisposeFutureProviderRef<List<GetManga?>>;
+typedef GetPopularMangaRef = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [getPopularManga].
 @ProviderFor(getPopularManga)
 const getPopularMangaProvider = GetPopularMangaFamily();
 
 /// See also [getPopularManga].
-class GetPopularMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
+class GetPopularMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
   /// See also [getPopularManga].
   const GetPopularMangaFamily();
 
   /// See also [getPopularManga].
   GetPopularMangaProvider call({
-    required String source,
+    required Source source,
     required int page,
-    required String lang,
   }) {
     return GetPopularMangaProvider(
       source: source,
       page: page,
-      lang: lang,
     );
   }
 
@@ -60,7 +58,6 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       page: provider.page,
-      lang: provider.lang,
     );
   }
 
@@ -81,18 +78,16 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
 
 /// See also [getPopularManga].
 class GetPopularMangaProvider
-    extends AutoDisposeFutureProvider<List<GetManga?>> {
+    extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [getPopularManga].
   GetPopularMangaProvider({
     required this.source,
     required this.page,
-    required this.lang,
   }) : super.internal(
           (ref) => getPopularManga(
             ref,
             source: source,
             page: page,
-            lang: lang,
           ),
           from: getPopularMangaProvider,
           name: r'getPopularMangaProvider',
@@ -105,16 +100,14 @@ class GetPopularMangaProvider
               GetPopularMangaFamily._allTransitiveDependencies,
         );
 
-  final String source;
+  final Source source;
   final int page;
-  final String lang;
 
   @override
   bool operator ==(Object other) {
     return other is GetPopularMangaProvider &&
         other.source == source &&
-        other.page == page &&
-        other.lang == lang;
+        other.page == page;
   }
 
   @override
@@ -122,7 +115,6 @@ class GetPopularMangaProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

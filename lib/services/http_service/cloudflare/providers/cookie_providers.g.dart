@@ -6,7 +6,7 @@ part of 'cookie_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cookieStateHash() => r'10a8c516aead11fc1820ae11549c33bc7b82fc39';
+String _$cookieStateHash() => r'37608903bb251f586fea7458dd4762160c456868';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,10 +30,10 @@ class _SystemHash {
 }
 
 abstract class _$CookieState extends BuildlessAutoDisposeNotifier<String> {
-  late final String source;
+  late final String idSource;
 
   String build(
-    String source,
+    String idSource,
   );
 }
 
@@ -48,10 +48,10 @@ class CookieStateFamily extends Family<String> {
 
   /// See also [CookieState].
   CookieStateProvider call(
-    String source,
+    String idSource,
   ) {
     return CookieStateProvider(
-      source,
+      idSource,
     );
   }
 
@@ -60,7 +60,7 @@ class CookieStateFamily extends Family<String> {
     covariant CookieStateProvider provider,
   ) {
     return call(
-      provider.source,
+      provider.idSource,
     );
   }
 
@@ -84,9 +84,9 @@ class CookieStateProvider
     extends AutoDisposeNotifierProviderImpl<CookieState, String> {
   /// See also [CookieState].
   CookieStateProvider(
-    this.source,
+    this.idSource,
   ) : super.internal(
-          () => CookieState()..source = source,
+          () => CookieState()..idSource = idSource,
           from: cookieStateProvider,
           name: r'cookieStateProvider',
           debugGetCreateSourceHash:
@@ -98,17 +98,17 @@ class CookieStateProvider
               CookieStateFamily._allTransitiveDependencies,
         );
 
-  final String source;
+  final String idSource;
 
   @override
   bool operator ==(Object other) {
-    return other is CookieStateProvider && other.source == source;
+    return other is CookieStateProvider && other.idSource == idSource;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, idSource.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -118,7 +118,7 @@ class CookieStateProvider
     covariant CookieState notifier,
   ) {
     return notifier.build(
-      source,
+      idSource,
     );
   }
 }

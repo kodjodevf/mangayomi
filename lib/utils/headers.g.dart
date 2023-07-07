@@ -6,7 +6,7 @@ part of 'headers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'77be1cf7504cf673ff5da1646a367e2d21f2893a';
+String _$headersHash() => r'7c58206c3909221fabe109144db054ddf516a41f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,10 +42,12 @@ class HeadersFamily extends Family<Map<String, String>> {
 
   /// See also [headers].
   HeadersProvider call({
-    String source = "",
+    required String source,
+    required String lang,
   }) {
     return HeadersProvider(
       source: source,
+      lang: lang,
     );
   }
 
@@ -55,6 +57,7 @@ class HeadersFamily extends Family<Map<String, String>> {
   ) {
     return call(
       source: provider.source,
+      lang: provider.lang,
     );
   }
 
@@ -77,11 +80,13 @@ class HeadersFamily extends Family<Map<String, String>> {
 class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   /// See also [headers].
   HeadersProvider({
-    this.source = "",
+    required this.source,
+    required this.lang,
   }) : super.internal(
           (ref) => headers(
             ref,
             source: source,
+            lang: lang,
           ),
           from: headersProvider,
           name: r'headersProvider',
@@ -94,16 +99,20 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
         );
 
   final String source;
+  final String lang;
 
   @override
   bool operator ==(Object other) {
-    return other is HeadersProvider && other.source == source;
+    return other is HeadersProvider &&
+        other.source == source &&
+        other.lang == lang;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, lang.hashCode);
 
     return _SystemHash.finish(hash);
   }

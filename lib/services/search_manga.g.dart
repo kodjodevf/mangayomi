@@ -6,7 +6,7 @@ part of 'search_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'0448881ce3785ac0c670a87914590008ae19fdd5';
+String _$searchMangaHash() => r'6e039e81e4764f69dca9a3ed133a76331d291b68';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-typedef SearchMangaRef = AutoDisposeFutureProviderRef<List<GetManga?>>;
+typedef SearchMangaRef = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [searchManga].
 @ProviderFor(searchManga)
 const searchMangaProvider = SearchMangaFamily();
 
 /// See also [searchManga].
-class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
+class SearchMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
   /// See also [searchManga].
   const SearchMangaFamily();
 
   /// See also [searchManga].
   SearchMangaProvider call({
-    required String source,
+    required Source source,
     required String query,
-    required String lang,
+    required int page,
   }) {
     return SearchMangaProvider(
       source: source,
       query: query,
-      lang: lang,
+      page: page,
     );
   }
 
@@ -60,7 +60,7 @@ class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
     return call(
       source: provider.source,
       query: provider.query,
-      lang: provider.lang,
+      page: provider.page,
     );
   }
 
@@ -80,18 +80,18 @@ class SearchMangaFamily extends Family<AsyncValue<List<GetManga?>>> {
 }
 
 /// See also [searchManga].
-class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
+class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [searchManga].
   SearchMangaProvider({
     required this.source,
     required this.query,
-    required this.lang,
+    required this.page,
   }) : super.internal(
           (ref) => searchManga(
             ref,
             source: source,
             query: query,
-            lang: lang,
+            page: page,
           ),
           from: searchMangaProvider,
           name: r'searchMangaProvider',
@@ -104,16 +104,16 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
               SearchMangaFamily._allTransitiveDependencies,
         );
 
-  final String source;
+  final Source source;
   final String query;
-  final String lang;
+  final int page;
 
   @override
   bool operator ==(Object other) {
     return other is SearchMangaProvider &&
         other.source == source &&
         other.query == query &&
-        other.lang == lang;
+        other.page == page;
   }
 
   @override
@@ -121,7 +121,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<GetManga?>> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, query.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, page.hashCode);
 
     return _SystemHash.finish(hash);
   }

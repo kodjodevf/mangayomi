@@ -62,7 +62,7 @@ class SourcesScreen extends ConsumerWidget {
                       groupComparator: (group1, group2) =>
                           group1.compareTo(group2),
                       itemComparator: (item1, item2) =>
-                          item1.sourceName!.compareTo(item2.sourceName!),
+                          item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
                     );
                   }),
@@ -110,7 +110,7 @@ class SourcesScreen extends ConsumerWidget {
                       groupComparator: (group1, group2) =>
                           group1.compareTo(group2),
                       itemComparator: (item1, item2) =>
-                          item1.sourceName!.compareTo(item2.sourceName!),
+                          item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
                     );
                   }),
@@ -158,7 +158,7 @@ class SourcesScreen extends ConsumerWidget {
                       groupComparator: (group1, group2) =>
                           group1.compareTo(group2),
                       itemComparator: (item1, item2) =>
-                          item1.sourceName!.compareTo(item2.sourceName!),
+                          item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
                     );
                   }),

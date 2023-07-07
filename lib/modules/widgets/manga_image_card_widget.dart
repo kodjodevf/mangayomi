@@ -1,15 +1,13 @@
 import 'dart:typed_data';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/sources/service.dart';
+import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
@@ -18,7 +16,7 @@ import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 class MangaImageCardWidget extends ConsumerWidget {
   final String lang;
 
-  final GetManga? getMangaDetail;
+  final MangaModel? getMangaDetail;
 
   const MangaImageCardWidget({
     required this.lang,
@@ -46,8 +44,9 @@ class MangaImageCardWidget extends ConsumerWidget {
                       as ImageProvider
                   : CachedNetworkImageProvider(
                       getMangaDetail!.imageUrl!,
-                      headers: ref.watch(
-                          headersProvider(source: getMangaDetail!.source!)),
+                      headers: ref.watch(headersProvider(
+                          source: getMangaDetail!.source!,
+                          lang: getMangaDetail!.lang!)),
                     ),
               onTap: () {
                 pushToMangaReaderDetail(
@@ -88,7 +87,7 @@ class MangaImageCardWidget extends ConsumerWidget {
 }
 
 void pushToMangaReaderDetail(
-    {GetManga? getManga,
+    {MangaModel? getManga,
     required String lang,
     required BuildContext context,
     int? archiveId,
@@ -98,16 +97,15 @@ void pushToMangaReaderDetail(
     final manga = mangaM ??
         Manga(
             imageUrl: getManga!.imageUrl,
-            name: getManga.name,
-            genre: getManga.genre,
-            author: getManga.author,
-            status: getManga.status!,
-            description: getManga.description,
-            link: getManga.url,
+            name: getManga.name!.trim().trimLeft().trimRight(),
+            genre: [],
+            author: "",
+            status: Status.unknown,
+            description: "",
+            link: getManga.link,
             source: getManga.source,
             lang: lang,
-            lastUpdate: DateTime.now().millisecondsSinceEpoch);
-
+            lastUpdate: 0);
     final empty = isar.mangas
         .filter()
         .langEqualTo(lang)
@@ -117,16 +115,6 @@ void pushToMangaReaderDetail(
     if (empty) {
       isar.writeTxnSync(() {
         isar.mangas.putSync(manga);
-        for (var i = 0; i < getManga!.chapters.length; i++) {
-          final chapters = Chapter(
-            name: getManga.chapters[i].name,
-            url: getManga.chapters[i].url,
-            dateUpload: getManga.chapters[i].dateUpload,
-            scanlator: getManga.chapters[i].scanlator,
-          )..manga.value = manga;
-          isar.chapters.putSync(chapters);
-          chapters.manga.saveSync();
-        }
       });
     }
 
@@ -181,3 +169,4 @@ void pushToMangaReaderDetail(
 
   context.push('/manga-reader/detail', extra: mangaId);
 }
+

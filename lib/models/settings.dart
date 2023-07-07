@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/constant.dart';
 part 'settings.g.dart';
 
@@ -85,6 +86,10 @@ class Settings {
 
   List<FilterScanlator>? filterScanlatorList;
 
+  final sources = IsarLinks<Source>();
+
+  bool? autoUpdateExtensions;
+
   bool? cropBorders;
 
   Settings(
@@ -124,7 +129,8 @@ class Settings {
       this.saveAsCBZArchive = false,
       this.downloadLocation = "",
       this.cropBorders = false,
-      this.libraryLocalSource});
+      this.libraryLocalSource,
+      this.autoUpdateExtensions = false});
 }
 
 enum DisplayType {
@@ -184,7 +190,7 @@ class ChapterPageIndex {
 
 @embedded
 class Cookie {
-  String? source;
+  String? idSource;
   String? cookie;
 }
 

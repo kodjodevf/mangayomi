@@ -1,8 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/manga_type.dart';
+import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
@@ -30,6 +32,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final router = AsyncRouterNotifier();
 
   return GoRouter(
+    observers: [BotToastNavigatorObserver()],
     initialLocation: '/library',
     debugLogDiagnostics: false,
     refreshListenable: router,
@@ -92,17 +95,17 @@ class AsyncRouterNotifier extends ChangeNotifier {
             path: "/mangaHome",
             name: "mangaHome",
             builder: (context, state) {
-              final mangaType = state.extra as MangaType?;
+              final source = state.extra as Source?;
               return MangaHomeScreen(
-                mangaType: mangaType!,
+                source: source!,
               );
             },
             pageBuilder: (context, state) {
-              final mangaType = state.extra as MangaType?;
+              final source = state.extra as Source?;
               return CustomTransition(
                 key: state.pageKey,
                 child: MangaHomeScreen(
-                  mangaType: mangaType!,
+                  source: source!,
                 ),
               );
             }),
@@ -202,7 +205,6 @@ class AsyncRouterNotifier extends ChangeNotifier {
             final data = state.extra as Map<String, dynamic>;
             return SearchResultScreen(
               query: data['query']!,
-              lang: data['lang']!,
               source: data['source']!,
               viewOnly: data['viewOnly'],
             );
@@ -213,7 +215,6 @@ class AsyncRouterNotifier extends ChangeNotifier {
               key: state.pageKey,
               child: SearchResultScreen(
                 query: data['query']!,
-                lang: data['lang']!,
                 source: data['source']!,
                 viewOnly: data['viewOnly'],
               ),
@@ -230,6 +231,19 @@ class AsyncRouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const AboutScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/sourceFilter",
+          name: "sourceFilter",
+          builder: (context, state) {
+            return const SourcesFilterScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const SourcesFilterScreen(),
             );
           },
         ),
@@ -253,7 +267,7 @@ class AsyncRouterNotifier extends ChangeNotifier {
             final data = state.extra as Map<String, String>;
             return MangaWebView(
                 url: data["url"]!,
-                source: data["source"]!,
+                sourceId: data["sourceId"]!,
                 title: data['title']!);
           },
           pageBuilder: (context, state) {
@@ -262,7 +276,7 @@ class AsyncRouterNotifier extends ChangeNotifier {
               key: state.pageKey,
               child: MangaWebView(
                 url: data["url"]!,
-                source: data["source"]!,
+                sourceId: data["sourceId"]!,
                 title: data['title']!,
               ),
             );

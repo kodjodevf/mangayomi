@@ -64,8 +64,9 @@ class LibraryGridViewWidget extends StatelessWidget {
                       as ImageProvider
                   : CachedNetworkImageProvider(
                       entriesManga[index].imageUrl!,
-                      headers: ref.watch(
-                          headersProvider(source: entriesManga[index].source!)),
+                      headers: ref.watch(headersProvider(
+                          source: entriesManga[index].source!,
+                          lang: entriesManga[index].lang!)),
                     ),
               onTap: () {
                 if (isLongPressed) {

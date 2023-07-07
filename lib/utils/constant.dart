@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/models/manga.dart';
 
 const defaultUserAgent =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:110.0) Gecko/20100101 Firefox/110.0";
+    "Mozilla/5.0 (Linux; Android 13; 22081212UG Build/TKQ1.220829.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.131 Mobile Safari/537.36";
 
 String getMangaStatusName(Status status) {
   return switch (status) {

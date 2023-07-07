@@ -17,6 +17,7 @@ class ImageViewVertical extends ConsumerWidget {
   final String source;
   final String chapter;
   final Directory path;
+  final String lang;
   final Uint8List? archiveImage;
 
   const ImageViewVertical({
@@ -29,6 +30,7 @@ class ImageViewVertical extends ConsumerWidget {
     required this.source,
     required this.length,
     required this.isLocale,
+    required this.lang,
     this.archiveImage,
   });
 
@@ -46,8 +48,7 @@ class ImageViewVertical extends ConsumerWidget {
           isLocale
               ? archiveImage != null
                   ? ExtendedImage.memory(archiveImage!,
-                      fit: BoxFit.contain,
-                      enableMemoryCache: false,
+                      fit: BoxFit.contain, enableMemoryCache: false,
                       loadStateChanged: (ExtendedImageState state) {
                       if (state.extendedImageLoadState == LoadState.loading) {
                         return Container(
@@ -70,8 +71,9 @@ class ImageViewVertical extends ConsumerWidget {
                       }
                       return null;
                     })
-              : ExtendedImage.network(url,
-                  headers: ref.watch(headersProvider(source: source)),
+              : ExtendedImage.network(url.trim().trimLeft().trimRight(),
+                  headers:
+                      ref.watch(headersProvider(source: source, lang: lang)),
                   handleLoadingProgress: true,
                   cacheMaxAge: const Duration(days: 7),
                   fit: BoxFit.contain,

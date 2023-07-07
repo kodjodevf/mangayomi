@@ -6,7 +6,7 @@ part of 'cookie.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$setCookieHash() => r'e9519081f85b28e34d09466392e4e253cc51b9af';
+String _$setCookieHash() => r'3e91a1c44ab0e597cebb55bf50d3a5a29d1eb29b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,11 +42,11 @@ class SetCookieFamily extends Family<AsyncValue<dynamic>> {
 
   /// See also [setCookie].
   SetCookieProvider call(
-    String source,
+    String sourceId,
     String url,
   ) {
     return SetCookieProvider(
-      source,
+      sourceId,
       url,
     );
   }
@@ -56,7 +56,7 @@ class SetCookieFamily extends Family<AsyncValue<dynamic>> {
     covariant SetCookieProvider provider,
   ) {
     return call(
-      provider.source,
+      provider.sourceId,
       provider.url,
     );
   }
@@ -80,12 +80,12 @@ class SetCookieFamily extends Family<AsyncValue<dynamic>> {
 class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [setCookie].
   SetCookieProvider(
-    this.source,
+    this.sourceId,
     this.url,
   ) : super.internal(
           (ref) => setCookie(
             ref,
-            source,
+            sourceId,
             url,
           ),
           from: setCookieProvider,
@@ -98,20 +98,20 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
           allTransitiveDependencies: SetCookieFamily._allTransitiveDependencies,
         );
 
-  final String source;
+  final String sourceId;
   final String url;
 
   @override
   bool operator ==(Object other) {
     return other is SetCookieProvider &&
-        other.source == source &&
+        other.sourceId == sourceId &&
         other.url == url;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, sourceId.hashCode);
     hash = _SystemHash.combine(hash, url.hashCode);
 
     return _SystemHash.finish(hash);

@@ -273,8 +273,8 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    if (!(_uChapDataPreload[index].isNextPrePage ||
-        _uChapDataPreload[index].isPrevPrePage)) {
+    if (!(_uChapDataPreload[index].hasNextPrePage ||
+        _uChapDataPreload[index].hasPrevPrePage)) {
       _readerController =
           ReaderController(chapter: _uChapDataPreload[index].chapter!);
       _chapterUrlModel = _uChapDataPreload[_posIndex ?? 0].chapterUrlModel!;
@@ -572,12 +572,13 @@ class _MangaChapterPageGalleryState
                   IconButton(
                       onPressed: () {
                         final manga = chapter.manga.value!;
-                        String url = getMangaAPIUrl(manga.source!).isEmpty
-                            ? manga.link!
-                            : "${getMangaBaseUrl(manga.source!)}${manga.link!}";
+                        final source = getSource(manga.lang!, manga.source!);
+                        String url = source.apiUrl!.isEmpty
+                            ? chapter.url!
+                            : "${source.baseUrl}/${chapter.url!}";
                         Map<String, String> data = {
                           'url': url,
-                          'source': manga.source!,
+                          'sourceId': source.id.toString(),
                           'title': chapter.name!
                         };
                         context.push("/mangawebview", extra: data);
@@ -1063,8 +1064,8 @@ class _MangaChapterPageGalleryState
                         final model = resultMap[_listViewContext];
                         if (model == null) return;
                         _posIndex = model.firstChild?.index ?? 0;
-                        if (!(_uChapDataPreload[_posIndex ?? 0].isNextPrePage ||
-                            _uChapDataPreload[_posIndex ?? 0].isPrevPrePage)) {
+                        if (!(_uChapDataPreload[_posIndex ?? 0].hasNextPrePage ||
+                            _uChapDataPreload[_posIndex ?? 0].hasPrevPrePage)) {
                           _readerController = ReaderController(
                               chapter:
                                   _uChapDataPreload[_posIndex ?? 0].chapter!);
@@ -1100,18 +1101,18 @@ class _MangaChapterPageGalleryState
                           _scrollController.addListener(() {
                             if (_scrollController.position.pixels ==
                                 _scrollController.position.maxScrollExtent) {
-                              if (_uChapDataPreload[index].isNextPrePage ||
-                                  _uChapDataPreload[index].isPrevPrePage) {
+                              if (_uChapDataPreload[index].hasNextPrePage ||
+                                  _uChapDataPreload[index].hasPrevPrePage) {
                                 bool hasPrevChapter =
                                     _readerController.getChapterIndex() + 1 !=
                                         _readerController.getChaptersLength();
                                 bool hasNextChapter =
                                     _readerController.getChapterIndex() != 0;
                                 final chapter = _uChapDataPreload[index]
-                                            .isNextPrePage &&
+                                            .hasNextPrePage &&
                                         hasNextChapter
                                     ? _readerController.getNextChapter()
-                                    : _uChapDataPreload[index].isPrevPrePage &&
+                                    : _uChapDataPreload[index].hasPrevPrePage &&
                                             hasPrevChapter
                                         ? _readerController.getPrevChapter()
                                         : null;
@@ -1122,7 +1123,7 @@ class _MangaChapterPageGalleryState
                                   ).future)
                                       .then((value) {
                                     if (_uChapDataPreload[index]
-                                        .isNextPrePage) {
+                                        .hasNextPrePage) {
                                       _preloadNextChapter(value, chapter);
                                     } else {
                                       _preloadPrevChapter(value, chapter);
@@ -1132,18 +1133,18 @@ class _MangaChapterPageGalleryState
                               }
                             }
                           });
-                          if (_uChapDataPreload[index].isNextPrePage ||
-                              _uChapDataPreload[index].isPrevPrePage) {
+                          if (_uChapDataPreload[index].hasNextPrePage ||
+                              _uChapDataPreload[index].hasPrevPrePage) {
                             bool hasPrevChapter =
                                 _readerController.getChapterIndex() + 1 !=
                                     _readerController.getChaptersLength();
                             bool hasNextChapter =
                                 _readerController.getChapterIndex() != 0;
                             final chapter =
-                                _uChapDataPreload[index].isNextPrePage &&
+                                _uChapDataPreload[index].hasNextPrePage &&
                                         hasNextChapter
                                     ? _readerController.getNextChapter()
-                                    : _uChapDataPreload[index].isPrevPrePage &&
+                                    : _uChapDataPreload[index].hasPrevPrePage &&
                                             hasPrevChapter
                                         ? _readerController.getPrevChapter()
                                         : null;
@@ -1186,6 +1187,11 @@ class _MangaChapterPageGalleryState
                                       cropBorders == true
                                   ? true
                                   : _uChapDataPreload[index].isLocale!,
+                              lang: _uChapDataPreload[index]
+                                  .chapter!
+                                  .manga
+                                  .value!
+                                  .lang!,
                             ),
                           );
                         },
@@ -1212,18 +1218,18 @@ class _MangaChapterPageGalleryState
                             : true;
                       },
                       itemBuilder: (BuildContext context, int index) {
-                        if (_uChapDataPreload[index].isNextPrePage ||
-                            _uChapDataPreload[index].isPrevPrePage) {
+                        if (_uChapDataPreload[index].hasNextPrePage ||
+                            _uChapDataPreload[index].hasPrevPrePage) {
                           bool hasPrevChapter =
                               _readerController.getChapterIndex() + 1 !=
                                   _readerController.getChaptersLength();
                           bool hasNextChapter =
                               _readerController.getChapterIndex() != 0;
                           final chapter =
-                              _uChapDataPreload[index].isNextPrePage &&
+                              _uChapDataPreload[index].hasNextPrePage &&
                                       hasNextChapter
                                   ? _readerController.getNextChapter()
-                                  : _uChapDataPreload[index].isPrevPrePage &&
+                                  : _uChapDataPreload[index].hasPrevPrePage &&
                                           hasPrevChapter
                                       ? _readerController.getPrevChapter()
                                       : null;
@@ -1393,6 +1399,11 @@ class _MangaChapterPageGalleryState
                               _cropImagesList.isNotEmpty && cropBorders == true
                                   ? true
                                   : _uChapDataPreload[index].isLocale!,
+                          lang: _uChapDataPreload[index]
+                              .chapter!
+                              .manga
+                              .value!
+                              .lang!,
                         );
                       },
                       itemCount: _uChapDataPreload.length,
@@ -1466,8 +1477,8 @@ class UChapDataPreload {
   final bool? isLocale;
   final Uint8List? archiveImage;
   final int? index;
-  final bool isNextPrePage;
-  final bool isPrevPrePage;
+  final bool hasNextPrePage;
+  final bool hasPrevPrePage;
   final GetChapterUrlModel? chapterUrlModel;
   UChapDataPreload(
     this.chapter,
@@ -1476,8 +1487,8 @@ class UChapDataPreload {
     this.isLocale,
     this.archiveImage,
     this.index,
-    this.isNextPrePage,
-    this.isPrevPrePage,
+    this.hasNextPrePage,
+    this.hasPrevPrePage,
     this.chapterUrlModel,
   );
 }

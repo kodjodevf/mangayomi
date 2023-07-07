@@ -7,6 +7,7 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewCenter extends ConsumerWidget {
+  final String lang;
   final int length;
   final String url;
   final int index;
@@ -33,6 +34,7 @@ class ImageViewCenter extends ConsumerWidget {
     required this.onDoubleTap,
     required this.initGestureConfigHandler,
     required this.isLocale,
+    required this.lang,
     this.archiveImage,
   });
 
@@ -59,8 +61,8 @@ class ImageViewCenter extends ConsumerWidget {
                 loadStateChanged: loadStateChanged,
               )
         : ExtendedImage.network(
-            url,
-            headers: ref.watch(headersProvider(source: source)),
+            url.trim().trimLeft().trimRight(),
+            headers: ref.watch(headersProvider(source: source, lang: lang)),
             enableMemoryCache: true,
             mode: ExtendedImageMode.gesture,
             cacheMaxAge: const Duration(days: 7),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/manga_type.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/lang.dart';
@@ -23,11 +22,7 @@ class SourceListTile extends StatelessWidget {
           }
         });
 
-        context.push('/mangaHome',
-            extra: MangaType(
-                isFullData: source.isFullData,
-                lang: source.lang,
-                source: source.sourceName));
+        context.push('/mangaHome', extra: source);
       },
       leading: Container(
           height: 37,
@@ -41,7 +36,7 @@ class SourceListTile extends StatelessWidget {
               const Icon(Icons.source_outlined)
           // : CachedNetworkImage(
           //     httpHeaders: ref.watch(
-          //         headersProvider(source: source.sourceName!)),
+          //         headersProvider(source: source.name!)),
           //     imageUrl: source.logoUrl!,
           //     fit: BoxFit.contain,
           //     width: 37,
@@ -80,7 +75,7 @@ class SourceListTile extends StatelessWidget {
             )
         ],
       ),
-      title: Text(source.sourceName!),
+      title: Text(source.name!),
       trailing: IconButton(
           onPressed: () {
             isar.writeTxnSync(() =>

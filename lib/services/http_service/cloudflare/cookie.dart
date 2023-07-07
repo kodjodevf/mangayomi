@@ -4,20 +4,28 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'cookie.g.dart';
 
 @riverpod
-Future setCookie(SetCookieRef ref, String source, String url) async {
-  source = source.toLowerCase();
-  final cookieS = ref.watch(cookieStateProvider(source));
-
-  List<Cookie> cookies = [];
+Future setCookie(SetCookieRef ref, String sourceId, String url) async {
   CookieManager cookie = CookieManager.instance();
-  cookies = await cookie.getCookies(url: WebUri.uri(Uri.parse(url.toString())));
-  final cfClearance =
+
+  final cookies =
+      await cookie.getCookies(url: WebUri.uri(Uri.parse(url.toString())));
+  final newCookie =
       cookies.where((element) => element.name == "cf_clearance").toList();
-  String newCookie = "";
-  if (cfClearance.isNotEmpty && cfClearance.first.name != cookieS) {
-    for (var i = 0; i < cookies.length; i++) {
-      newCookie = "$newCookie ${cookies[i].name}=${cookies[i].value};";
-    }
-    ref.read(cookieStateProvider(source).notifier).setCookie(newCookie);
+  if (newCookie.isNotEmpty) {
+    ref
+        .read(cookieStateProvider(sourceId).notifier)
+        .setCookie("cf_clearance=${newCookie.first.value};");
+  }
+}
+
+Future setCookieB(String sourceId, String url) async {
+  CookieManager cookie = CookieManager.instance();
+  
+  final cookies =
+      await cookie.getCookies(url: WebUri.uri(Uri.parse(url.toString())));
+  final newCookie =
+      cookies.where((element) => element.name == "cf_clearance").toList();
+  if (newCookie.isNotEmpty) {
+    setCookieB("cf_clearance=${newCookie.first.value};", sourceId);
   }
 }

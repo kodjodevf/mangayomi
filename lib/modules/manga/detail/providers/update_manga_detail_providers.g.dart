@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'update_manga_detail_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'2af3ee0a570e8521336179f60dc1f9f2be919b9b';
+String _$updateMangaDetailHash() => r'80479a109b0beb0e0d57d93a32a587bbf41d5bc0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,35 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
+typedef UpdateMangaDetailRef = AutoDisposeFutureProviderRef<dynamic>;
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+/// See also [updateMangaDetail].
+@ProviderFor(updateMangaDetail)
+const updateMangaDetailProvider = UpdateMangaDetailFamily();
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
+/// See also [updateMangaDetail].
+class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
+  /// See also [updateMangaDetail].
+  const UpdateMangaDetailFamily();
 
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
-    required Chapter chapter,
-    bool? useWifi,
+  /// See also [updateMangaDetail].
+  UpdateMangaDetailProvider call({
+    required int? mangaId,
+    required bool isInit,
   }) {
-    return DownloadChapterProvider(
-      chapter: chapter,
-      useWifi: useWifi,
+    return UpdateMangaDetailProvider(
+      mangaId: mangaId,
+      isInit: isInit,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  UpdateMangaDetailProvider getProviderOverride(
+    covariant UpdateMangaDetailProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
-      useWifi: provider.useWifi,
+      mangaId: provider.mangaId,
+      isInit: provider.isInit,
     );
   }
 
@@ -73,47 +73,47 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'updateMangaDetailProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
-    required this.chapter,
-    this.useWifi,
+/// See also [updateMangaDetail].
+class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
+  /// See also [updateMangaDetail].
+  UpdateMangaDetailProvider({
+    required this.mangaId,
+    required this.isInit,
   }) : super.internal(
-          (ref) => downloadChapter(
+          (ref) => updateMangaDetail(
             ref,
-            chapter: chapter,
-            useWifi: useWifi,
+            mangaId: mangaId,
+            isInit: isInit,
           ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          from: updateMangaDetailProvider,
+          name: r'updateMangaDetailProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$updateMangaDetailHash,
+          dependencies: UpdateMangaDetailFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              UpdateMangaDetailFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
-  final bool? useWifi;
+  final int? mangaId;
+  final bool isInit;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is UpdateMangaDetailProvider &&
+        other.mangaId == mangaId &&
+        other.isInit == isInit;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
+    hash = _SystemHash.combine(hash, mangaId.hashCode);
+    hash = _SystemHash.combine(hash, isInit.hashCode);
 
     return _SystemHash.finish(hash);
   }

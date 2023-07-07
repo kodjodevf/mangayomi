@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bot_toast:
+    dependency: "direct main"
+    description:
+      name: bot_toast
+      sha256: db6950851aab00ef04b386eb3c76c83739eaffcb6b80d0dc42a675ef7584623b
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.4"
   build:
     dependency: transitive
     description:
@@ -265,6 +273,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.0"
+  dart_eval:
+    dependency: "direct main"
+    description:
+      name: dart_eval
+      sha256: "9d11db96f2b396d0ad09504182e6e17d05e2fb22e92ec3aa21d4fde744c83171"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
   dart_style:
     dependency: transitive
     description:
@@ -289,6 +305,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  directed_graph:
+    dependency: transitive
+    description:
+      name: directed_graph
+      sha256: "82061c9ce3ac74d9c4c173fb03daac515d503a0f9f77c0010a872f8c344a4f03"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.9"
   draggable_menu:
     dependency: "direct main"
     description:
@@ -305,6 +329,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0"
+  exception_templates:
+    dependency: transitive
+    description:
+      name: exception_templates
+      sha256: e9303fd16ecdb845a14b397cb93476f807dd2b4706f5ee44f708dbc95c256c33
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.4"
   expandable_text:
     dependency: "direct main"
     description:
@@ -605,6 +637,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  iregexp:
+    dependency: transitive
+    description:
+      name: iregexp
+      sha256: "0bab197b31adad22c32eef580cda11338dad24ee0e46187d994baef9acee7564"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   isar:
     dependency: "direct main"
     description:
@@ -645,6 +685,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.0"
+  json_path:
+    dependency: "direct main"
+    description:
+      name: json_path
+      sha256: "28e1e2e7204c0645d73285a1b1765273e3fc5826122a47b0fd61221ceb385e02"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
+  lazy_memo:
+    dependency: transitive
+    description:
+      name: lazy_memo
+      sha256: ca4be412d65726f79a30ba6e40b7056f1dbefbb35ec42913365b3f3e86d49279
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.9"
   lints:
     dependency: transitive
     description:
@@ -677,6 +733,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
+  maybe_just_nothing:
+    dependency: transitive
+    description:
+      name: maybe_just_nothing
+      sha256: "0c06326e26d08f6ed43247404376366dc4d756cef23a4f1db765f546224c35e0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.3"
   meta:
     dependency: transitive
     description:
@@ -833,10 +897,10 @@ packages:
     dependency: transitive
     description:
       name: petitparser
-      sha256: "49392a45ced973e8d94a85fdb21293fbb40ba805fc49f2965101ae748a3683b4"
+      sha256: cb3798bef7fc021ac45b308f4b51208a152792445cce0448c9a4ba5879dd8750
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "5.4.0"
   photo_view:
     dependency: "direct main"
     description:
@@ -893,6 +957,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  pubspec2:
+    dependency: transitive
+    description:
+      name: pubspec2
+      sha256: "7b1fd81927f1da6d88457c83b51134e1bc8cb07638bd8d9e205b2ce1cd9ec091"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2"
   pubspec_parse:
     dependency: transitive
     description:
@@ -909,6 +981,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  quote_buffer:
+    dependency: transitive
+    description:
+      name: quote_buffer
+      sha256: a9eefd3ddc63bb310ffbc855b6ebe0363d925235485bc5778e28c492b1224b31
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.5"
+  rfc_6901:
+    dependency: transitive
+    description:
+      name: rfc_6901
+      sha256: "8d97680dada633146cf75ab9382f2ce2b7e4bd63ceecd867416cf43b5832b988"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   riverpod:
     dependency: transitive
     description:

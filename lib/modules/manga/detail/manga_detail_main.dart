@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/services/get_manga_detail.dart';
-import 'package:mangayomi/sources/service.dart';
 import 'package:mangayomi/modules/manga/detail/manga_details_view.dart';
+import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -19,6 +16,23 @@ class MangaReaderDetail extends ConsumerStatefulWidget {
 
 class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   @override
+  void initState() {
+    _init();
+    super.initState();
+  }
+
+  _init() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    await ref.read(
+        updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true)
+            .future);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  bool _isLoading = true;
+  @override
   Widget build(BuildContext context) {
     final manga =
         ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
@@ -27,61 +41,25 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
       data: (manga) {
         return RefreshIndicator(
           onRefresh: () async {
-            final mangaS = GetManga(
-                genre: manga.genre!,
-                author: manga.author,
-                status: manga.status,
-                chapters: manga.chapters.toList(),
-                imageUrl: manga.imageUrl,
-                description: manga.description,
-                url: manga.link,
-                name: manga.name,
-                source: manga.source);
-            bool isOk = false;
-            ref
-                .watch(getMangaDetailProvider(
-              manga: mangaS,
-              lang: manga.lang!,
-              source: manga.source!,
-            ).future)
-                .then((value) async {
-              if (value.chapters.isNotEmpty &&
-                  value.chapters.length > manga.chapters.length) {
-                await isar.writeTxn(() async {
-                  int newChapsIndex =
-                      value.chapters.length - manga.chapters.length;
-                  manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
-                  for (var i = 0; i < newChapsIndex; i++) {
-                    final chapters = Chapter(
-                      name: value.chapters[i].name,
-                      url: value.chapters[i].url,
-                      dateUpload: value.chapters[i].dateUpload,
-                      isBookmarked: false,
-                      scanlator: value.chapters[i].scanlator,
-                      isRead: false,
-                      lastPageRead: '',
-                    )..manga.value = manga;
-                    await isar.chapters.put(chapters);
-                    await chapters.manga.save();
-                  }
-                });
-              }
-              if (mounted) {
-                setState(() {
-                  isOk = true;
-                });
-              }
-            });
-            await Future.doWhile(() async {
-              await Future.delayed(const Duration(seconds: 1));
-              if (isOk == true) {
-                return false;
-              }
-              return true;
-            });
+            await ref.read(
+                updateMangaDetailProvider(mangaId: manga.id, isInit: false)
+                    .future);
           },
-          child: MangaDetailsView(
-            manga: manga!,
+          child: Stack(
+            children: [
+              MangaDetailsView(
+                manga: manga!,
+              ),
+              if (_isLoading)
+                const Positioned(
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    )),
+            ],
           ),
         );
       },

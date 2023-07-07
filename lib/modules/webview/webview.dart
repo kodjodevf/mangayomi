@@ -2,14 +2,12 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,12 +17,12 @@ import 'package:path_provider/path_provider.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
   final String url;
-  final String source;
+  final String sourceId;
   final String title;
   const MangaWebView({
     super.key,
     required this.url,
-    required this.source,
+    required this.sourceId,
     required this.title,
   });
 
@@ -226,7 +224,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                       onUpdateVisitedHistory:
                           (controller, url, isReload) async {
                         await ref.watch(
-                            setCookieProvider(widget.source, url.toString())
+                            setCookieProvider(widget.sourceId, url.toString())
                                 .future);
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
@@ -239,7 +237,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         });
                       },
                       initialSettings: InAppWebViewSettings(
-                          contentBlockers: adsContentBlockers(),
+                          // contentBlockers: adsContentBlockers(),
                           userAgent: isar.settings.getSync(227)!.userAgent!),
                       initialUrlRequest:
                           URLRequest(url: WebUri.uri(Uri.parse(widget.url))),

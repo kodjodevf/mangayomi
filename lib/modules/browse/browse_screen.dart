@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/browse/extension/providers/refresh_source_list_data.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/migrate_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
@@ -28,7 +26,6 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       _chekPermission();
       setState(() {
         _textEditingController.clear();
-        _entriesFilter = [];
         _isSearch = false;
       });
     });
@@ -39,13 +36,10 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     await StorageProvider().requestPermission();
   }
 
-  List<Source> _entries = [];
-  List<Source> _entriesFilter = [];
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
-    ref.watch(refreshSourceListDataProvider);
     return DefaultTabController(
       animationDuration: Duration.zero,
       length: 3,
@@ -61,13 +55,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             _isSearch
                 ? SeachFormTextField(
                     onChanged: (value) {
-                      setState(() {
-                        _entriesFilter = _entries
-                            .where((element) => element.sourceName!
-                                .toLowerCase()
-                                .contains(value.toLowerCase()))
-                            .toList();
-                      });
+                      setState(() {});
                     },
                     onSuffixPressed: () {
                       _textEditingController.clear();
@@ -77,7 +65,6 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                         _isSearch = false;
                       });
                       _textEditingController.clear();
-                      _entriesFilter = _entries;
                     },
                     controller: _textEditingController,
                   )
@@ -105,6 +92,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                 splashRadius: 20,
                 onPressed: () {
                   if (_tabBarController.index == 0) {
+                    context.push('/sourceFilter');
                   } else if (_tabBarController.index == 1) {
                     _textEditingController.clear();
                     context.push('/extensionLang');
@@ -131,10 +119,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
         body: TabBarView(controller: _tabBarController, children: [
           const SourcesScreen(),
           ExtensionScreen(
-            entriesData: (val) {
-              _entries = val as List<Source>;
-            },
-            entriesFilter: _entriesFilter,
+            query: _textEditingController.text,
           ),
           const MigrateScreen()
         ]),

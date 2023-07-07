@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'fetch_sources.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'2af3ee0a570e8521336179f60dc1f9f2be919b9b';
+String _$fetchSourcesListHash() => r'5cb7bececf304fc891319051c39cbf4566127a14';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,32 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
+typedef FetchSourcesListRef = AutoDisposeFutureProviderRef<dynamic>;
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+/// See also [fetchSourcesList].
+@ProviderFor(fetchSourcesList)
+const fetchSourcesListProvider = FetchSourcesListFamily();
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
+/// See also [fetchSourcesList].
+class FetchSourcesListFamily extends Family<AsyncValue<dynamic>> {
+  /// See also [fetchSourcesList].
+  const FetchSourcesListFamily();
 
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
-    required Chapter chapter,
-    bool? useWifi,
+  /// See also [fetchSourcesList].
+  FetchSourcesListProvider call({
+    int? id,
   }) {
-    return DownloadChapterProvider(
-      chapter: chapter,
-      useWifi: useWifi,
+    return FetchSourcesListProvider(
+      id: id,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  FetchSourcesListProvider getProviderOverride(
+    covariant FetchSourcesListProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
-      useWifi: provider.useWifi,
+      id: provider.id,
     );
   }
 
@@ -73,47 +70,41 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'fetchSourcesListProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
-    required this.chapter,
-    this.useWifi,
+/// See also [fetchSourcesList].
+class FetchSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
+  /// See also [fetchSourcesList].
+  FetchSourcesListProvider({
+    this.id,
   }) : super.internal(
-          (ref) => downloadChapter(
+          (ref) => fetchSourcesList(
             ref,
-            chapter: chapter,
-            useWifi: useWifi,
+            id: id,
           ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          from: fetchSourcesListProvider,
+          name: r'fetchSourcesListProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$fetchSourcesListHash,
+          dependencies: FetchSourcesListFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              FetchSourcesListFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
-  final bool? useWifi;
+  final int? id;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is FetchSourcesListProvider && other.id == id;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
 
     return _SystemHash.finish(hash);
   }

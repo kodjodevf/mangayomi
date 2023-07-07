@@ -179,7 +179,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                           manga.customCoverImage as Uint8List)
                                       : cachedNetworkImage(
                                           headers: ref.watch(headersProvider(
-                                              source: manga.source!)),
+                                              source: manga.source!,
+                                              lang: manga.lang!)),
                                           imageUrl: manga.imageUrl!,
                                           width: 60,
                                           height: 90,

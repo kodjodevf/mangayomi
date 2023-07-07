@@ -1,6 +1,5 @@
-// ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
-
+import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,18 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 
 late Isar isar;
+
+class MyHttpoverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main(List<String> args) async {
+  HttpOverrides.global = MyHttpoverrides();
   if (Platform.isLinux || Platform.isWindows) {
     if (runWebViewTitleBarWidget(args)) {
       return;
@@ -44,6 +54,7 @@ _iniDateFormatting() {
   initializeDateFormatting("zh", null);
   initializeDateFormatting("pl", null);
   initializeDateFormatting("tr", null);
+  initializeDateFormatting("bg", null);
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -109,6 +120,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: themeLight,
       debugShowCheckedModeBanner: false,
+      builder: BotToastInit(),
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,

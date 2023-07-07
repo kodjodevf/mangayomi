@@ -11,7 +11,8 @@ class ExtensionsLang extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    language.sort((a, b) => a.compareTo(b));
+    final languages = languagesMap.entries.map((e) => e.value).toList();
+    languages.sort((a, b) => a.compareTo(b));
     return Scaffold(
       appBar: AppBar(
         title: const Text("Extensions"),
@@ -22,22 +23,22 @@ class ExtensionsLang extends ConsumerWidget {
           builder: (context, snapshot) {
             List<Source>? entries = snapshot.hasData ? snapshot.data : [];
             return ListView.builder(
-              itemCount: language.length,
+              itemCount: languages.length,
               itemBuilder: (context, index) {
+                final lang = languages[index];
                 return ExtensionLangListTileWidget(
-                  lang: lang(language[index]),
+                  lang: lang,
                   onChanged: (val) {
                     isar.writeTxnSync(() {
                       for (var source in entries) {
-                        if (source.lang == lang(language[index])) {
+                        if (source.lang == lang) {
                           isar.sources.putSync(source..isActive = val == true);
                         }
                       }
                     });
                   },
                   value: entries!
-                      .where((element) =>
-                          element.lang == "${lang(language[index])}")
+                      .where((element) => element.lang == lang)
                       .where((element) => element.isActive!)
                       .isNotEmpty,
                 );
