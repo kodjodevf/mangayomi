@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
@@ -40,21 +41,11 @@ void main(List<String> args) async {
 }
 
 _iniDateFormatting() {
-  initializeDateFormatting("en", null);
-  initializeDateFormatting("fr", null);
-  initializeDateFormatting("ar", null);
-  initializeDateFormatting("es", null);
-  initializeDateFormatting("pt", null);
-  initializeDateFormatting("ru", null);
-  initializeDateFormatting("hi", null);
-  initializeDateFormatting("id", null);
-  initializeDateFormatting("it", null);
-  initializeDateFormatting("de", null);
-  initializeDateFormatting("ja", null);
-  initializeDateFormatting("zh", null);
-  initializeDateFormatting("pl", null);
-  initializeDateFormatting("tr", null);
-  initializeDateFormatting("bg", null);
+  initializeDateFormatting();
+  final supportedLocales = DateFormat.allLocalesWithSymbols();
+  for (var locale in supportedLocales) {
+    initializeDateFormatting(locale);
+  }
 }
 
 class MyApp extends ConsumerStatefulWidget {

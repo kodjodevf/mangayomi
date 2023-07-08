@@ -8,6 +8,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_js/flutter_js.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/main.dart';
@@ -403,8 +404,6 @@ class MBridge {
     for (var date in val) {
       if (date.toString().isNotEmpty) {
         valD.add(parseChapterDate(date, dateFormat, dateFormatLocale));
-      } else {
-        valD.add("");
       }
     }
     return valD;
@@ -589,11 +588,93 @@ class MBridge {
             .toString();
       }
     } catch (e) {
+      final supportedLocales = DateFormat.allLocalesWithSymbols();
+
+      for (var locale in supportedLocales) {
+        for (var dateFormat in _dateFormats) {
+          try {
+            initializeDateFormatting(locale);
+            if (WordSet(["yesterday", "يوم واحد"]).startsWith(date)) {
+              DateTime cal = DateTime.now().subtract(const Duration(days: 1));
+              cal = DateTime(cal.year, cal.month, cal.day);
+              return cal.millisecondsSinceEpoch.toString();
+            } else if (WordSet(["today"]).startsWith(date)) {
+              DateTime cal = DateTime.now();
+              cal = DateTime(cal.year, cal.month, cal.day);
+              return cal.millisecondsSinceEpoch.toString();
+            } else if (WordSet(["يومين"]).startsWith(date)) {
+              DateTime cal = DateTime.now().subtract(const Duration(days: 2));
+              cal = DateTime(cal.year, cal.month, cal.day);
+              return cal.millisecondsSinceEpoch.toString();
+            } else if (WordSet(["ago", "atrás", "önce", "قبل"])
+                .endsWith(date)) {
+              return parseRelativeDate(date).toString();
+            } else if (WordSet(["hace"]).startsWith(date)) {
+              return parseRelativeDate(date).toString();
+            } else if (date.contains(RegExp(r"\d(st|nd|rd|th)"))) {
+              final cleanedDate = date
+                  .split(" ")
+                  .map((it) => it.contains(RegExp(r"\d\D\D"))
+                      ? it.replaceAll(RegExp(r"\D"), "")
+                      : it)
+                  .join(" ");
+              return DateFormat(dateFormat, locale)
+                  .parse(cleanedDate)
+                  .millisecondsSinceEpoch
+                  .toString();
+            } else {
+              return DateFormat(dateFormat, locale)
+                  .parse(date)
+                  .millisecondsSinceEpoch
+                  .toString();
+            }
+          } catch (_) {}
+        }
+      }
       _botToast(e.toString());
       throw Exception(e);
     }
   }
 }
+
+final List<String> _dateFormats = [
+  'dd/MM/yyyy',
+  'MM/dd/yyyy',
+  'yyyy/MM/dd',
+  'dd-MM-yyyy',
+  'MM-dd-yyyy',
+  'yyyy-MM-dd',
+  'dd.MM.yyyy',
+  'MM.dd.yyyy',
+  'yyyy.MM.dd',
+  'dd MMMM yyyy',
+  'MMMM dd, yyyy',
+  'yyyy MMMM dd',
+  'dd MMM yyyy',
+  'MMM dd yyyy',
+  'yyyy MMM dd',
+  'dd MMMM, yyyy',
+  'yyyy, MMMM dd',
+  'MMMM dd yyyy',
+  'MMM dd, yyyy',
+  'dd LLLL yyyy',
+  'LLLL dd, yyyy',
+  'yyyy LLLL dd',
+  'LLLL dd yyyy',
+  "MMMMM dd, yyyy",
+  "MMM d, yyy",
+  "MMM d, yyyy",
+  "dd/mm/yyyy",
+  "d MMMM yyyy",
+  "dd 'de' MMMM 'de' yyyy",
+  "d MMMM'،' yyyy",
+  "yyyy'年'M'月'd",
+  "d MMMM, yyyy",
+  "dd 'de' MMMMM 'de' yyyy",
+  "dd MMMMM, yyyy",
+  "MMMM d, yyyy",
+  "MMM dd,yyyy"
+];
 
 class $MBridge extends MBridge with $Bridge {
   static const $type = BridgeTypeRef(

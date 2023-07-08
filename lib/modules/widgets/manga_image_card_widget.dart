@@ -32,7 +32,6 @@ class MangaImageCardWidget extends ConsumerWidget {
             .langEqualTo(lang)
             .nameEqualTo(getMangaDetail!.name)
             .sourceEqualTo(getMangaDetail!.source)
-            .favoriteEqualTo(true)
             .watch(fireImmediately: true),
         builder: (context, snapshot) {
           return CoverViewWidget(
@@ -43,7 +42,11 @@ class MangaImageCardWidget extends ConsumerWidget {
                           snapshot.data!.first.customCoverImage as Uint8List)
                       as ImageProvider
                   : CachedNetworkImageProvider(
-                      getMangaDetail!.imageUrl!,
+                      snapshot.hasData &&
+                              snapshot.data!.isNotEmpty &&
+                              snapshot.data!.first.imageUrl != null
+                          ? snapshot.data!.first.imageUrl!
+                          : getMangaDetail!.imageUrl!,
                       headers: ref.watch(headersProvider(
                           source: getMangaDetail!.source!,
                           lang: getMangaDetail!.lang!)),
@@ -54,11 +57,15 @@ class MangaImageCardWidget extends ConsumerWidget {
               },
               children: [
                 Container(
-                  color: snapshot.hasData && snapshot.data!.isNotEmpty
+                  color: snapshot.hasData &&
+                          snapshot.data!.isNotEmpty &&
+                          snapshot.data!.first.favorite
                       ? Colors.black.withOpacity(0.7)
                       : null,
                 ),
-                if (snapshot.hasData && snapshot.data!.isNotEmpty)
+                if (snapshot.hasData &&
+                    snapshot.data!.isNotEmpty &&
+                    snapshot.data!.first.favorite)
                   Positioned(
                       top: 0,
                       left: 0,
@@ -169,4 +176,3 @@ void pushToMangaReaderDetail(
 
   context.push('/manga-reader/detail', extra: mangaId);
 }
-
