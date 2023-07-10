@@ -111,32 +111,35 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
 
 String beautifyChapterName(String vol, String chap, String title, String lang) {
   String result = "";
+  vol = vol.trim().trimLeft().trimRight();
+  chap = chap.trim().trimLeft().trimRight();
+  title = title.trim().trimLeft().trimRight();
 
-  if (vol.trim().trimLeft().trimRight() != "null" && vol.isNotEmpty) {
-    if (chap.trim().trimLeft().trimRight() != "null" && chap.isEmpty) {
-      result += "Volume ${vol.trim().trimLeft().trimRight()} ";
+  if (vol != "null" && vol.isNotEmpty) {
+    if (chap != "null" && chap.isEmpty) {
+      result += "Volume $vol ";
     } else {
-      result += "Vol. ${vol.trim().trimLeft().trimRight()} ";
+      result += "Vol. $vol ";
     }
   }
 
-  if (chap.trim().trimLeft().trimRight() != "null" && chap.isNotEmpty) {
-    if (vol.trim().trimLeft().trimRight() != "null" && vol.isEmpty) {
-      if (lang.trim().trimLeft().trimRight() != "null" && lang == "fr") {
-        result += "Chapitre ${chap.trim().trimLeft().trimRight()}";
+  if (chap != "null" && chap.isNotEmpty) {
+    if (vol != "null" && vol.isEmpty) {
+      if (lang != "null" && lang == "fr") {
+        result += "Chapitre $chap";
       } else {
-        result += "Chapter ${chap.trim().trimLeft().trimRight()}";
+        result += "Chapter $chap";
       }
     } else {
-      result += "Ch. ${chap.trim().trimLeft().trimRight()} ";
+      result += "Ch. $chap ";
     }
   }
 
-  if (title.trim().trimLeft().trimRight() != "null" && title.isNotEmpty) {
-    if (chap.trim().trimLeft().trimRight() != "null" && chap.isEmpty) {
-      result += title.trim().trimLeft().trimRight();
+  if (title != "null" && title.isNotEmpty) {
+    if (chap != "null" && chap.isEmpty) {
+      result += title;
     } else {
-      result += " : ${title.trim().trimLeft().trimRight()}";
+      result += " : $title";
     }
   }
 
