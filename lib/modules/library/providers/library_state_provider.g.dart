@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'7686533c6ece9f6aa5fbcbc70854ffeae16c33f8';
+    r'fae6a2a9b18910c9d8843e74b5fe7e7e2fbec6f1';
 
 /// See also [LibraryDisplayTypeState].
 @ProviderFor(LibraryDisplayTypeState)

@@ -4,7 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/utils/language.dart';
 
 class SourceListTile extends StatelessWidget {
   final Source source;
@@ -55,7 +55,7 @@ class SourceListTile extends StatelessWidget {
       subtitle: Row(
         children: [
           Text(
-            completeLang(source.lang!.toLowerCase()),
+            completeLanguageName(source.lang!.toLowerCase()),
             style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
           ),
           if (source.isNsfw!)

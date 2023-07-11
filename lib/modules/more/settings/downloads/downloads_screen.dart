@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
@@ -21,9 +22,10 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     final onlyOnWifiState = ref.watch(onlyOnWifiStateProvider);
     final downloadLocationState = ref.watch(downloadLocationStateProvider);
     ref.read(downloadLocationStateProvider.notifier).refresh();
+    final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Downloads"),
+        title: Text(l10n!.downloads),
       ),
       body: Column(
         children: [
@@ -33,8 +35,8 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text(
-                        "Download location",
+                      title: Text(
+                        l10n.download_location,
                       ),
                       content: SizedBox(
                           width: mediaWidth(context, 0.8),
@@ -76,7 +78,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                     if (!mounted) return;
                                     Navigator.pop(context);
                                   },
-                                  title: const Text("Custom location")),
+                                  title: Text(l10n.custom_location)),
                             ],
                           )),
                       actions: [
@@ -88,7 +90,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                   Navigator.pop(context);
                                 },
                                 child: Text(
-                                  "Cancel",
+                                  l10n.cancel,
                                   style:
                                       TextStyle(color: primaryColor(context)),
                                 )),
@@ -98,7 +100,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     );
                   });
             },
-            title: const Text("Download location"),
+            title: Text(l10n.download_location),
             subtitle: Text(
               downloadLocationState.$2.isEmpty
                   ? downloadLocationState.$1
@@ -108,13 +110,13 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
           ),
           SwitchListTile(
               value: onlyOnWifiState,
-              title: const Text("Only on wifi"),
+              title: Text(l10n.only_on_wifi),
               onChanged: (value) {
                 ref.read(onlyOnWifiStateProvider.notifier).set(value);
               }),
           SwitchListTile(
               value: saveAsCBZArchiveState,
-              title: const Text("Save as CBZ archive"),
+              title: Text(l10n.save_as_cbz_archive),
               onChanged: (value) {
                 ref.read(saveAsCBZArchiveStateProvider.notifier).set(value);
               }),

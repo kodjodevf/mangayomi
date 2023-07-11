@@ -5,16 +5,18 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/language.dart';
 
 class SourcesFilterScreen extends ConsumerWidget {
   const SourcesFilterScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sources"),
+        title: Text(l10n.sources),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
@@ -40,12 +42,13 @@ class SourcesFilterScreen extends ConsumerWidget {
                       SwitchListTile(
                     value: entries
                         .where((element) =>
-                            element.lang == groupByValue && element.isActive!)
+                            element.lang!.toLowerCase() == groupByValue &&
+                            element.isActive!)
                         .isNotEmpty,
                     onChanged: (val) {
                       isar.writeTxnSync(() {
                         for (var source in entries) {
-                          if (source.lang == groupByValue) {
+                          if (source.lang!.toLowerCase() == groupByValue) {
                             isar.sources
                                 .putSync(source..isActive = val == true);
                           }
@@ -53,15 +56,16 @@ class SourcesFilterScreen extends ConsumerWidget {
                       });
                     },
                     title: Text(
-                      completeLang(groupByValue),
+                      completeLanguageName(groupByValue),
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 13),
                     ),
                   ),
                   itemBuilder: (context, Source element) {
                     if (entries
-                        .where(
-                            (ele) => ele.lang == element.lang && ele.isActive!)
+                        .where((s) =>
+                            s.lang!.toLowerCase() == element.lang &&
+                            s.isActive!)
                         .isEmpty) {
                       return Container();
                     }

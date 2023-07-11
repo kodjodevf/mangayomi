@@ -6,7 +6,7 @@ part of 'fetch_sources.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchSourcesListHash() => r'5cb7bececf304fc891319051c39cbf4566127a14';
+String _$fetchSourcesListHash() => r'151bfddc9daf2cde079bf0f98f523d92b7e6ab00';
 
 /// Copied from Dart SDK
 class _SystemHash {

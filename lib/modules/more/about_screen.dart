@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -46,9 +47,10 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text(l10n!.about),
       ),
       body: Column(
         children: [
@@ -78,7 +80,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
                 ListTile(
                   onTap: () {},
-                  title: const Text('Check for update'),
+                  title: Text(l10n.check_for_update),
                 ),
                 // ListTile(
                 //   onTap: () {},

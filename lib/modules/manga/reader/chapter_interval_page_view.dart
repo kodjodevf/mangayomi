@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/modules/manga/reader/manga_reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class ChapterIntervalPageView extends ConsumerWidget {
@@ -20,16 +21,18 @@ class ChapterIntervalPageView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
     final readerController =
         ReaderController(chapter: uChapDataPreload.chapter!);
 
     String text = uChapDataPreload.hasPrevPrePage && hasPrevChapter
-        ? "Current:"
-        : "Finished:";
+        ? l10n.current(":")
+        : l10n.finished(":");
     final noMoreChapter = uChapDataPreload.hasNextPrePage && !hasNextChapter ||
         uChapDataPreload.hasPrevPrePage && !hasPrevChapter;
-    String noMore =
-        uChapDataPreload.hasNextPrePage && !hasNextChapter ? "Next" : "Previous";
+    // String noMore = uChapDataPreload.hasNextPrePage && !hasNextChapter
+    //     ? l10n.next("")
+    //     : l10n.previous("");
     return SizedBox(
       height: mediaHeight(context, 0.27),
       child: Column(
@@ -38,9 +41,9 @@ class ChapterIntervalPageView extends ConsumerWidget {
           if (uChapDataPreload.hasPrevPrePage && hasPrevChapter)
             Column(
               children: [
-                const Text(
-                  "Previous:",
-                  style: TextStyle(
+                Text(
+                  l10n.previous(":"),
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontSize: 12),
@@ -85,7 +88,7 @@ class ChapterIntervalPageView extends ConsumerWidget {
             ),
           if (noMoreChapter)
             Text(
-              "There's no $noMore chapter",
+              l10n.no_more_chapter,
               style: const TextStyle(color: Colors.white, fontSize: 14),
               textAlign: TextAlign.center,
             ),
@@ -123,9 +126,9 @@ class ChapterIntervalPageView extends ConsumerWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      "Next:",
-                      style: TextStyle(
+                    Text(
+                      l10n.next(":"),
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                     Text(

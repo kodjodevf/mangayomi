@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
@@ -18,6 +19,7 @@ class SearchResultScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
     final search =
         ref.watch(searchMangaProvider(source: source, query: query, page: 1));
     return Scaffold(
@@ -43,8 +45,8 @@ class SearchResultScreen extends ConsumerWidget {
                   },
                 );
               }
-              return const Center(
-                child: Text("Empty"),
+              return Center(
+                child: Text(l10n.no_result),
               );
             }));
   }

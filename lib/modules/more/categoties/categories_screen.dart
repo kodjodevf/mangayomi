@@ -5,6 +5,7 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/modules/more/categoties/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/categoties/widgets/custom_textfield.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
@@ -17,20 +18,21 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   List<Category> _entries = [];
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     final categories = ref.watch(getMangaCategorieStreamProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit categories"),
+        title: Text(l10n!.edit_categories),
       ),
       body: categories.when(
         data: (data) {
           if (data.isEmpty) {
             _entries = [];
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "You have no categories. Tap the plus button to create one for organizing your library",
+                  l10n.edit_categories_description,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -96,12 +98,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                           return StatefulBuilder(
                                             builder: (context, setState) {
                                               return AlertDialog(
-                                                title: const Text(
-                                                  "Delete category",
+                                                title: Text(
+                                                  l10n.delete_category,
                                                 ),
                                                 content: Text(
-                                                    "Do you wish to delete the category"
-                                                    ' "${_entries[index].name}"?'),
+                                                    l10n.delete_category_msg(
+                                                        _entries[index].name!)),
                                                 actions: [
                                                   Row(
                                                     mainAxisAlignment:
@@ -112,8 +114,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                                             Navigator.pop(
                                                                 context);
                                                           },
-                                                          child: const Text(
-                                                              "Cancel")),
+                                                          child: Text(
+                                                              l10n.cancel)),
                                                       const SizedBox(
                                                         width: 15,
                                                       ),
@@ -132,8 +134,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                                                   context);
                                                             }
                                                           },
-                                                          child: const Text(
-                                                            "OK",
+                                                          child: Text(
+                                                            l10n.ok,
                                                           )),
                                                     ],
                                                   )
@@ -157,11 +159,11 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         },
         error: (Object error, StackTrace stackTrace) {
           _entries = [];
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
-                "You have no categories. Tap the plus button to create one for organizing your library",
+                l10n.edit_categories_description,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -182,9 +184,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     child: StatefulBuilder(
                       builder: (context, setState) {
                         return AlertDialog(
-                          title: const Text(
-                            "Add category",
-                          ),
+                          title: Text(l10n.add_category),
                           content: CustomTextFormField(
                               controller: controller,
                               entries: _entries,
@@ -204,27 +204,26 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Cancel")),
+                                    child: Text(l10n.cancel)),
                                 const SizedBox(
                                   width: 15,
                                 ),
                                 TextButton(
-                                    onPressed:
-                                        controller.text.isEmpty || isExist
-                                            ? null
-                                            : () async {
-                                                await isar.writeTxn(() async {
-                                                  await isar.categorys
-                                                      .put(Category(
-                                                    name: controller.text,
-                                                  ));
-                                                });
-                                                if (mounted) {
-                                                  Navigator.pop(context);
-                                                }
-                                              },
+                                    onPressed: controller.text.isEmpty ||
+                                            isExist
+                                        ? null
+                                        : () async {
+                                            await isar.writeTxn(() async {
+                                              await isar.categorys.put(Category(
+                                                name: controller.text,
+                                              ));
+                                            });
+                                            if (mounted) {
+                                              Navigator.pop(context);
+                                            }
+                                          },
                                     child: Text(
-                                      "Add",
+                                      l10n.add,
                                       style: TextStyle(
                                           color:
                                               controller.text.isEmpty || isExist
@@ -242,13 +241,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   );
                 });
           },
-          label: const Row(
+          label: Row(
             children: [
-              Icon(Icons.add),
-              SizedBox(
+              const Icon(Icons.add),
+              const SizedBox(
                 width: 10,
               ),
-              Text("Add")
+              Text(l10n.add)
             ],
           )),
     );
@@ -263,9 +262,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setState) {
+              final l10n = l10nLocalizations(context);
               return AlertDialog(
-                title: const Text(
-                  "Rename category",
+                title: Text(
+                  l10n!.rename_category,
                 ),
                 content: CustomTextFormField(
                     controller: controller,
@@ -291,26 +291,25 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: const Text("Cancel")),
+                          child: Text(l10n.cancel)),
                       const SizedBox(
                         width: 15,
                       ),
                       TextButton(
-                          onPressed: controller.text.isEmpty ||
-                                  isExist ||
-                                  isSameName
-                              ? null
-                              : () async {
-                                  await isar.writeTxn(() async {
-                                    category.name = controller.text;
-                                    await isar.categorys.put(category);
-                                  });
-                                  if (mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                },
+                          onPressed:
+                              controller.text.isEmpty || isExist || isSameName
+                                  ? null
+                                  : () async {
+                                      await isar.writeTxn(() async {
+                                        category.name = controller.text;
+                                        await isar.categorys.put(category);
+                                      });
+                                      if (mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
                           child: Text(
-                            "OK",
+                            l10n.ok,
                             style: TextStyle(
                                 color: controller.text.isEmpty ||
                                         isExist ||

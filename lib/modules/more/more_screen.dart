@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -40,14 +42,14 @@ class MoreScreen extends StatelessWidget {
                 context.push('/downloadQueue');
               },
               icon: Icons.download_outlined,
-              title: 'Donwload queue',
+              title: l10n!.download_queue,
             ),
             ListTileWidget(
               onTap: () {
                 context.push('/categories');
               },
               icon: Icons.label_outline_rounded,
-              title: 'Categories',
+              title: l10n.categories,
             ),
             const Divider(),
             // ListTile(
@@ -74,19 +76,18 @@ class MoreScreen extends StatelessWidget {
                 context.push('/settings');
               },
               icon: Icons.settings_outlined,
-              title: 'Settings',
+              title: l10n.settings,
             ),
             ListTileWidget(
-              onTap: () {
-                context.push('/about');
-              },
-              icon: Icons.info_outline,
-              title: 'About',
-            ),
+                onTap: () {
+                  context.push('/about');
+                },
+                icon: Icons.info_outline,
+                title: l10n.about),
             ListTileWidget(
               onTap: () {},
               icon: Icons.help_outline,
-              title: 'Help',
+              title: l10n.help,
             ),
           ],
         ),

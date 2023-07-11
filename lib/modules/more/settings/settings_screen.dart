@@ -1,47 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        title: Text(l10n!.settings),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             ListTileWidget(
-                title: 'General',
-                subtitle: 'App language',
+                title: l10n.general,
+                subtitle: l10n.general_subtitle,
                 icon: Icons.tune_rounded,
                 onTap: () => context.push('/general')),
             ListTileWidget(
-                title: 'Appearance',
-                subtitle: 'Theme, date & time format',
+                title: l10n.appearance,
+                subtitle: l10n.appearance_subtitle,
                 icon: Icons.color_lens_rounded,
                 onTap: () => context.push('/appearance')),
             // ListTileWidget(
-            //     title: 'Library',
+            //     title: l10n.library,
             //     subtitle: 'Categories',
             //     icon: Icons.collections_bookmark_rounded,
             //     onTap: () {}),
             ListTileWidget(
-                title: 'Reader',
-                subtitle: 'Reading mode, display, navigation',
+                title: l10n.reader,
+                subtitle: l10n.reader_subtitle,
                 icon: Icons.chrome_reader_mode_rounded,
                 onTap: () => context.push('/readerMode')),
             ListTileWidget(
-                title: 'Downloads',
-                subtitle: 'Downloads settings',
+                title: l10n.downloads,
+                subtitle: l10n.downloads_subtitle,
                 icon: Icons.download_outlined,
                 onTap: () => context.push('/downloads')),
             ListTileWidget(
-                title: 'Browse',
-                subtitle: 'Sources, global search',
+                title: l10n.browse,
+                subtitle: l10n.browse_subtitle,
                 icon: Icons.explore_rounded,
                 onTap: () => context.push('/browseS')),
             ListTileWidget(
@@ -49,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                 context.push('/about');
               },
               icon: Icons.info_outline,
-              title: 'About',
+              title: l10n.about,
             ),
           ],
         ),

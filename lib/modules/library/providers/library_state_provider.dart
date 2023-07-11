@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
 
@@ -22,14 +24,15 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
                 : DisplayType.coverOnlyGrid;
   }
 
-  String getLibraryDisplayTypeName(String displayType) {
+  String getLibraryDisplayTypeName(String displayType, BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return displayType == DisplayType.compactGrid.name
-        ? 'Compact grid'
+        ? l10n.compact_grid
         : displayType == DisplayType.list.name
-            ? 'List'
+            ? l10n.list
             : displayType == DisplayType.comfortableGrid.name
-                ? 'Comfortable grid'
-                : 'Cover-only grid';
+                ? l10n.comfortable_grid
+                : l10n.cover_only_grid;
   }
 
   void setLibraryDisplayType(DisplayType displayType) {

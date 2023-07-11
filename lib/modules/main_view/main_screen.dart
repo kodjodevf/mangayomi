@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
@@ -21,6 +22,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
     int currentIndex = route.location == '/library'
         ? 0
@@ -54,7 +56,7 @@ class _MainScreenState extends State<MainScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Incognito mode',
+                        l10n.incognito_mode,
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: GoogleFonts.aBeeZee().fontFamily,
@@ -93,59 +95,59 @@ class _MainScreenState extends State<MainScreen> {
                             child: NavigationRail(
                               labelType: NavigationRailLabelType.all,
                               useIndicator: true,
-                              destinations: const [
+                              destinations: [
                                 NavigationRailDestination(
-                                    selectedIcon: Icon(
+                                    selectedIcon: const Icon(
                                       Icons.collections_bookmark,
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.collections_bookmark_outlined,
                                     ),
                                     label: Padding(
-                                        padding: EdgeInsets.only(top: 5),
-                                        child: Text('Library'))),
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(l10n.library))),
                                 NavigationRailDestination(
-                                    selectedIcon: Icon(
+                                    selectedIcon: const Icon(
                                       Icons.new_releases,
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.new_releases_outlined,
                                     ),
                                     label: Padding(
-                                        padding: EdgeInsets.only(top: 5),
-                                        child: Text('Updates'))),
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(l10n.updates))),
                                 NavigationRailDestination(
-                                    selectedIcon: Icon(
+                                    selectedIcon: const Icon(
                                       Icons.history,
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.history_outlined,
                                     ),
                                     label: Padding(
-                                      padding: EdgeInsets.only(top: 5),
-                                      child: Text("History"),
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(l10n.history),
                                     )),
                                 NavigationRailDestination(
-                                    selectedIcon: Icon(
+                                    selectedIcon: const Icon(
                                       Icons.explore,
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.explore_outlined,
                                     ),
                                     label: Padding(
-                                      padding: EdgeInsets.only(top: 5),
-                                      child: Text("Browse"),
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(l10n.browse),
                                     )),
                                 NavigationRailDestination(
-                                    selectedIcon: Icon(
+                                    selectedIcon: const Icon(
                                       Icons.more_horiz,
                                     ),
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.more_horiz_outlined,
                                     ),
                                     label: Padding(
-                                      padding: EdgeInsets.only(top: 5),
-                                      child: Text("More"),
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(l10n.more),
                                     )),
                               ],
                               selectedIndex: currentIndex,
@@ -201,47 +203,47 @@ class _MainScreenState extends State<MainScreen> {
                         child: NavigationBar(
                           animationDuration: const Duration(milliseconds: 500),
                           selectedIndex: currentIndex,
-                          destinations: const [
+                          destinations: [
                             NavigationDestination(
-                                selectedIcon: Icon(
+                                selectedIcon: const Icon(
                                   Icons.collections_bookmark,
                                 ),
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.collections_bookmark_outlined,
                                 ),
-                                label: 'Library'),
+                                label: l10n.library),
                             NavigationDestination(
-                                selectedIcon: Icon(
+                                selectedIcon: const Icon(
                                   Icons.new_releases,
                                 ),
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.new_releases_outlined,
                                 ),
-                                label: 'Updates'),
+                                label: l10n.updates),
                             NavigationDestination(
-                                selectedIcon: Icon(
+                                selectedIcon: const Icon(
                                   Icons.history,
                                 ),
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.history_outlined,
                                 ),
-                                label: "History"),
+                                label: l10n.history),
                             NavigationDestination(
-                                selectedIcon: Icon(
+                                selectedIcon: const Icon(
                                   Icons.explore,
                                 ),
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.explore_outlined,
                                 ),
-                                label: "Browse"),
+                                label: l10n.browse),
                             NavigationDestination(
-                                selectedIcon: Icon(
+                                selectedIcon: const Icon(
                                   Icons.more_horiz,
                                 ),
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.more_horiz_outlined,
                                 ),
-                                label: "More"),
+                                label: l10n.more),
                           ],
                           onDestinationSelected: (newIndex) {
                             if (mounted) {

@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -71,6 +72,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     return !isNotDesktop
         ? Scaffold(
             appBar: AppBar(
@@ -142,14 +144,14 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         ),
                         PopupMenuButton(itemBuilder: (context) {
                           return [
-                            const PopupMenuItem<int>(
-                                value: 0, child: Text("Refresh")),
-                            const PopupMenuItem<int>(
-                                value: 1, child: Text("Share")),
-                            const PopupMenuItem<int>(
-                                value: 2, child: Text("Open in browser")),
-                            const PopupMenuItem<int>(
-                                value: 3, child: Text("Clear cookie")),
+                            PopupMenuItem<int>(
+                                value: 0, child: Text(l10n!.refresh)),
+                            PopupMenuItem<int>(
+                                value: 1, child: Text(l10n.share)),
+                            PopupMenuItem<int>(
+                                value: 2, child: Text(l10n.open_in_browser)),
+                            PopupMenuItem<int>(
+                                value: 3, child: Text(l10n.clear_cookie)),
                           ];
                         }, onSelected: (value) async {
                           if (value == 0) {

@@ -1,5 +1,6 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class ReadMoreWidget extends StatefulWidget {
@@ -17,8 +18,14 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
   late bool expanded = widget.text.trim().length < 232;
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return widget.text.isEmpty
-        ? const Text("No description")
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(l10n.no_description),
+            ],
+          )
         : Column(
             children: [
               Stack(

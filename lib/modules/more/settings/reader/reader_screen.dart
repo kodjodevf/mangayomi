@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -10,6 +11,7 @@ class ReaderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context);
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
     final animatePageTransitions =
         ref.watch(animatePageTransitionsStateProvider);
@@ -18,7 +20,7 @@ class ReaderScreen extends ConsumerWidget {
         ref.watch(doubleTapAnimationSpeedStateProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Reader"),
+        title: Text(l10n!.reader),
       ),
       body: Column(
         children: [
@@ -28,9 +30,7 @@ class ReaderScreen extends ConsumerWidget {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text(
-                        "Default reading mode",
-                      ),
+                      title: Text(l10n.default_reading_mode),
                       content: SizedBox(
                           width: mediaWidth(context, 0.8),
                           child: ListView.builder(
@@ -52,7 +52,7 @@ class ReaderScreen extends ConsumerWidget {
                                 title: Row(
                                   children: [
                                     Text(getReaderModeName(
-                                        ReaderMode.values[index]))
+                                        ReaderMode.values[index], context))
                                   ],
                                 ),
                               );
@@ -67,7 +67,7 @@ class ReaderScreen extends ConsumerWidget {
                                   Navigator.pop(context);
                                 },
                                 child: Text(
-                                  "Cancel",
+                                  l10n.cancel,
                                   style:
                                       TextStyle(color: primaryColor(context)),
                                 )),
@@ -77,9 +77,9 @@ class ReaderScreen extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text("Default reading mode"),
+            title: Text(l10n.default_reading_mode),
             subtitle: Text(
-              getReaderModeName(defaultReadingMode),
+              getReaderModeName(defaultReadingMode, context),
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
@@ -89,8 +89,8 @@ class ReaderScreen extends ConsumerWidget {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: const Text(
-                        "Double tap animation speed",
+                      title: Text(
+                        l10n.double_tap_animation_speed,
                       ),
                       content: SizedBox(
                           width: mediaWidth(context, 0.8),
@@ -112,7 +112,7 @@ class ReaderScreen extends ConsumerWidget {
                                 },
                                 title: Row(
                                   children: [
-                                    Text(getAnimationSpeedName(index))
+                                    Text(getAnimationSpeedName(index, context))
                                   ],
                                 ),
                               );
@@ -127,7 +127,7 @@ class ReaderScreen extends ConsumerWidget {
                                   Navigator.pop(context);
                                 },
                                 child: Text(
-                                  "Cancel",
+                                  l10n.cancel,
                                   style:
                                       TextStyle(color: primaryColor(context)),
                                 )),
@@ -137,15 +137,15 @@ class ReaderScreen extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text("Double tap animation speed"),
+            title: Text(l10n.double_tap_animation_speed),
             subtitle: Text(
-              getAnimationSpeedName(doubleTapAnimationSpeed),
+              getAnimationSpeedName(doubleTapAnimationSpeed, context),
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
           SwitchListTile(
               value: animatePageTransitions,
-              title: const Text("Animate page transitions"),
+              title: Text(l10n.animate_page_transitions),
               onChanged: (value) {
                 ref
                     .read(animatePageTransitionsStateProvider.notifier)
@@ -153,11 +153,9 @@ class ReaderScreen extends ConsumerWidget {
               }),
           SwitchListTile(
               value: cropBorders,
-              title: const Text("Crop borders"),
+              title: Text(l10n.crop_borders),
               onChanged: (value) {
-                ref
-                    .read(cropBordersStateProvider.notifier)
-                    .set(value);
+                ref.read(cropBordersStateProvider.notifier).set(value);
               }),
         ],
       ),
@@ -165,22 +163,24 @@ class ReaderScreen extends ConsumerWidget {
   }
 }
 
-String getReaderModeName(ReaderMode readerMode) {
+String getReaderModeName(ReaderMode readerMode, BuildContext context) {
+  final l10n = l10nLocalizations(context);
   return readerMode == ReaderMode.vertical
-      ? 'Vertical'
+      ? l10n!.reading_mode_vertical
       : readerMode == ReaderMode.verticalContinuous
-          ? 'Verical continuous'
+          ? l10n!.reading_mode_vertical_continuous
           : readerMode == ReaderMode.ltr
-              ? 'Left to Right'
+              ? l10n!.reading_mode_left_to_right
               : readerMode == ReaderMode.rtl
-                  ? 'Right to Left'
-                  : 'Webtoon';
+                  ? l10n!.reading_mode_right_to_left
+                  : l10n!.reading_mode_webtoon;
 }
 
-String getAnimationSpeedName(int type) {
+String getAnimationSpeedName(int type, BuildContext context) {
+  final l10n = l10nLocalizations(context);
   return type == 0
-      ? 'No animation'
+      ? l10n!.no_animation
       : type == 1
-          ? 'Normal'
-          : "Fast";
+          ? l10n!.normal
+          : l10n!.fast;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -20,7 +21,7 @@ class ChapterListTileWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
-
+    final l10n = l10nLocalizations(context)!;
     return Container(
       color: chapterList.contains(chapter)
           ? primaryColor(context).withOpacity(0.4)
@@ -73,7 +74,7 @@ class ChapterListTileWidget extends ConsumerWidget {
           children: [
             if ((chapter.manga.value!.isLocalArchive ?? false) == false)
               Text(
-                dateFormat(chapter.dateUpload!, ref: ref),
+                dateFormat(chapter.dateUpload!, ref: ref, context: context),
                 style: const TextStyle(fontSize: 11),
               ),
             if (!chapter.isRead!)
@@ -83,7 +84,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                   children: [
                     const Text(' • '),
                     Text(
-                      "Page ${chapter.lastPageRead}",
+                      l10n.page(chapter.lastPageRead!),
                       style: TextStyle(
                           fontSize: 11,
                           color: isLight(context)

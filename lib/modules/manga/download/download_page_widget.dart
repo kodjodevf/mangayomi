@@ -9,6 +9,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 
@@ -67,6 +68,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
   bool _isStarted = false;
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     super.build(context);
     return SizedBox(
       height: 41,
@@ -100,8 +102,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(value: 0, child: Text("Send")),
-                        const PopupMenuItem(value: 1, child: Text('Delete')),
+                        PopupMenuItem(value: 0, child: Text(l10n.send)),
+                        PopupMenuItem(value: 1, child: Text(l10n.delete)),
                       ],
                     )
                   : entries.first.isStartDownload! &&
@@ -123,11 +125,10 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                               }
                             },
                             itemBuilder: (context) => [
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                   value: 1,
-                                  child: Text("Start downlading now")),
-                              const PopupMenuItem(
-                                  value: 0, child: Text("Cancel")),
+                                  child: Text(l10n.start_downloading)),
+                              PopupMenuItem(value: 0, child: Text(l10n.cancel)),
                             ],
                           ))
                       : entries.first.succeeded != 0
@@ -191,11 +192,11 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                   }
                                 },
                                 itemBuilder: (context) => [
-                                  const PopupMenuItem(
+                                  PopupMenuItem(
                                       value: 1,
-                                      child: Text("Start downlading now")),
-                                  const PopupMenuItem(
-                                      value: 0, child: Text("Cancel")),
+                                      child: Text(l10n.start_downloading)),
+                                  PopupMenuItem(
+                                      value: 0, child: Text(l10n.cancel)),
                                 ],
                               ))
                           : entries.first.succeeded == 0
@@ -233,8 +234,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                       }
                                     },
                                     itemBuilder: (context) => [
-                                      const PopupMenuItem(
-                                          value: 0, child: Text("Retry")),
+                                      PopupMenuItem(
+                                          value: 0, child: Text(l10n.retry)),
                                     ],
                                   ));
             }
@@ -253,9 +254,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
-                            value: 1, child: Text("Start downlading now")),
-                        const PopupMenuItem(value: 0, child: Text("Cancel")),
+                        PopupMenuItem(
+                            value: 1, child: Text(l10n.start_downloading)),
+                        PopupMenuItem(value: 0, child: Text(l10n.cancel)),
                       ],
                     ))
                 : IconButton(

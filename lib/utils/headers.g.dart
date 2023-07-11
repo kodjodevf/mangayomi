@@ -6,7 +6,7 @@ part of 'headers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'7c58206c3909221fabe109144db054ddf516a41f';
+String _$headersHash() => r'bb9238fcab606b6fe4ae2d2dab249820d7b4e2ff';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class SeachFormTextField extends StatelessWidget {
   final Function(String)? onChanged;
@@ -16,6 +17,7 @@ class SeachFormTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return Flexible(
       child: TextFormField(
         autofocus: true,
@@ -25,7 +27,7 @@ class SeachFormTextField extends StatelessWidget {
         onFieldSubmitted: onFieldSubmitted,
         decoration: InputDecoration(
             isDense: true,
-            hintText: 'Search...',
+            hintText: l10n.search,
             filled: true,
             fillColor: Colors.transparent,
             prefixIcon: IconButton(

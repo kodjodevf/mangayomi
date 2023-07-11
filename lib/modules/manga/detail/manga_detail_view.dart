@@ -14,6 +14,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -257,6 +258,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 preferredSize: Size.fromHeight(AppBar().preferredSize.height),
                 child: Consumer(
                   builder: (context, ref, child) {
+                    final l10n = l10nLocalizations(context)!;
                     final isNotFiltering = ref.watch(
                         chapterFilterResultStateProvider(manga: widget.manga!));
                     final isLongPressed = ref.watch(isLongPressedStateProvider);
@@ -350,16 +352,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               PopupMenuButton(itemBuilder: (context) {
                                 return [
                                   if (widget.manga!.favorite)
-                                    const PopupMenuItem<int>(
+                                    PopupMenuItem<int>(
                                         value: 0,
-                                        child: Text("Edit categories")),
+                                        child: Text(l10n.edit_categories)),
                                   if (!isLocalArchive)
                                     if (widget.manga!.favorite)
-                                      const PopupMenuItem<int>(
-                                          value: 1, child: Text("Migrate")),
+                                      PopupMenuItem<int>(
+                                          value: 1, child: Text(l10n.migrate)),
                                   if (!isLocalArchive)
-                                    const PopupMenuItem<int>(
-                                        value: 2, child: Text("Share")),
+                                    PopupMenuItem<int>(
+                                        value: 2, child: Text(l10n.share)),
                                 ];
                               }, onSelected: (value) {
                                 if (value == 0) {
@@ -415,6 +417,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             padding: const EdgeInsets.only(top: 0, bottom: 60),
                             itemCount: chapters.length + 1,
                             itemBuilder: (context, index) {
+                              final l10n = l10nLocalizations(context)!;
                               int finalIndex = index - 1;
                               if (index == 0) {
                                 return isTablet(context)
@@ -439,7 +442,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                             .symmetric(
                                                         horizontal: 8),
                                                     child: Text(
-                                                      '${chapters.length} chapters',
+                                                      l10n.n_chapters(
+                                                          chapters.length),
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold),
@@ -461,7 +465,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                         color: secondaryColor(
                                                             context)),
                                                     label: Text(
-                                                      'Add chapters',
+                                                      l10n.add_chapters,
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -505,7 +509,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   chap.isNotEmpty && chap.first.isBookmarked! && getLength1;
               bool checkReadBookmarked =
                   chap.isNotEmpty && chap.first.isRead! && getLength1;
-
+              final l10n = l10nLocalizations(context)!;
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
@@ -699,8 +703,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     context: context,
                                     builder: (context) {
                                       return AlertDialog(
-                                        title: const Text(
-                                          "Delete chapters ?",
+                                        title: Text(
+                                          l10n.delete_chapters,
                                         ),
                                         actions: [
                                           Row(
@@ -711,7 +715,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: const Text("Cancel")),
+                                                  child: Text(l10n.cancel)),
                                               const SizedBox(
                                                 width: 15,
                                               ),
@@ -740,7 +744,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       Navigator.pop(context);
                                                     }
                                                   },
-                                                  child: const Text("Delete")),
+                                                  child: Text(l10n.delete)),
                                             ],
                                           )
                                         ],
@@ -773,7 +777,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       Consumer(builder: (context, ref, child) {
         final scanlators =
             ref.watch(scanlatorsFilterStateProvider(widget.manga!));
-
+        final l10n = l10nLocalizations(context)!;
         return DraggableMenu(
           ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
           expandable: false,
@@ -792,10 +796,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     children: [
                       TabBar(
                         controller: tabBarController,
-                        tabs: const [
-                          Tab(text: "Filter"),
-                          Tab(text: "Sort"),
-                          Tab(text: "Display"),
+                        tabs: [
+                          Tab(text: l10n.filter),
+                          Tab(text: l10n.sort),
+                          Tab(text: l10n.display),
                         ],
                       ),
                       Flexible(
@@ -807,7 +811,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   children: [
                                     if (!isLocalArchive)
                                       ListTileChapterFilter(
-                                          label: "Downloaded",
+                                          label: l10n.downloaded,
                                           type: ref.watch(
                                               chapterFilterDownloadedStateProvider(
                                                   mangaId: widget.manga!.id!)),
@@ -821,7 +825,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                 .update();
                                           }),
                                     ListTileChapterFilter(
-                                        label: "Unread",
+                                        label: l10n.unread,
                                         type: ref.watch(
                                             chapterFilterUnreadStateProvider(
                                                 mangaId: widget.manga!.id!)),
@@ -835,7 +839,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               .update();
                                         }),
                                     ListTileChapterFilter(
-                                        label: "Bookmarked",
+                                        label: l10n.bookmarked,
                                         type: ref.watch(
                                             chapterFilterBookmarkedStateProvider(
                                                 mangaId: widget.manga!.id!)),
@@ -869,8 +873,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                         widget
                                                                             .manga!));
                                                             return AlertDialog(
-                                                              title: const Text(
-                                                                "Filter scanlator groups",
+                                                              title: Text(
+                                                                l10n.filter_scanlator_groups,
                                                               ),
                                                               content: SizedBox(
                                                                   width:
@@ -915,7 +919,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                     Navigator.pop(context);
                                                                                   },
                                                                                   child: Text(
-                                                                                    "Reset",
+                                                                                    l10n.reset,
                                                                                     style: TextStyle(color: primaryColor(context)),
                                                                                   )),
                                                                             ],
@@ -930,7 +934,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                   Navigator.pop(context);
                                                                                 },
                                                                                 child: Text(
-                                                                                  "Cancel",
+                                                                                  l10n.cancel,
                                                                                   style: TextStyle(color: primaryColor(context)),
                                                                                 )),
                                                                             TextButton(
@@ -939,7 +943,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                   Navigator.pop(context);
                                                                                 },
                                                                                 child: Text(
-                                                                                  "Filter",
+                                                                                  l10n.filter,
                                                                                   style: TextStyle(color: primaryColor(context)),
                                                                                 )),
                                                                           ],
@@ -953,8 +957,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                           });
                                                         });
                                                   },
-                                                  child: const Text(
-                                                      "Filter scanlator groups")),
+                                                  child: Text(l10n
+                                                      .filter_scanlator_groups)),
                                             ),
                                           ],
                                         ),
@@ -975,7 +979,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   children: [
                                     for (var i = 0; i < 3; i++)
                                       ListTileChapterSort(
-                                        label: _getSortNameByIndex(i),
+                                        label: _getSortNameByIndex(i, context),
                                         reverse: reverse,
                                         onTap: () {
                                           ref
@@ -995,7 +999,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   children: [
                                     RadioListTile(
                                       dense: true,
-                                      title: const Text("Source title"),
+                                      title: Text(l10n.source_title),
                                       value: "e",
                                       groupValue: "e",
                                       selected: true,
@@ -1003,7 +1007,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ),
                                     RadioListTile(
                                       dense: true,
-                                      title: const Text("Chapter number"),
+                                      title: Text(l10n.chapter_number),
                                       value: "ej",
                                       groupValue: "e",
                                       selected: false,
@@ -1024,16 +1028,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  String _getSortNameByIndex(int index) {
+  String _getSortNameByIndex(int index, BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     if (index == 0) {
-      return "By source";
+      return l10n.by_source;
     } else if (index == 1) {
-      return "By chapter number";
+      return l10n.by_chapter_number;
     }
-    return "By upload date";
+    return l10n.by_upload_date;
   }
 
   Widget _bodyContainer({required int chapterLength}) {
+    final l10n = l10nLocalizations(context)!;
     return Stack(
       children: [
         Container(
@@ -1185,7 +1191,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
-                                  '$chapterLength chapters',
+                                  l10n.n_chapters(chapterLength),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -1200,7 +1206,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   icon: Icon(Icons.add,
                                       color: secondaryColor(context)),
                                   label: Text(
-                                    'Add chapters',
+                                    l10n.add_chapters,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: secondaryColor(context)),

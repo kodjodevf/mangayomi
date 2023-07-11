@@ -795,7 +795,7 @@ class _MangaChapterPageGalleryState
                                       width: 7,
                                     ),
                                     Text(
-                                      getReaderModeName(readerMode),
+                                      getReaderModeName(readerMode, context),
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
@@ -1064,7 +1064,8 @@ class _MangaChapterPageGalleryState
                         final model = resultMap[_listViewContext];
                         if (model == null) return;
                         _posIndex = model.firstChild?.index ?? 0;
-                        if (!(_uChapDataPreload[_posIndex ?? 0].hasNextPrePage ||
+                        if (!(_uChapDataPreload[_posIndex ?? 0]
+                                .hasNextPrePage ||
                             _uChapDataPreload[_posIndex ?? 0].hasPrevPrePage)) {
                           _readerController = ReaderController(
                               chapter:

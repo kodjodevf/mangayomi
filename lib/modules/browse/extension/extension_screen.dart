@@ -5,7 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_sources.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
@@ -45,7 +45,7 @@ class ExtensionScreen extends ConsumerWidget {
                 return GroupedListView<Source, String>(
                   elements: entries,
                   groupBy: (element) =>
-                      completeLang(element.lang!.toLowerCase()),
+                      completeLanguageName(element.lang!.toLowerCase()),
                   groupSeparatorBuilder: (String groupByValue) => Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: Row(

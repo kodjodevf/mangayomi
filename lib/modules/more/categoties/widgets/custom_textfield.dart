@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
     return TextFormField(
       autofocus: true,
       controller: controller,
@@ -38,11 +40,11 @@ class CustomTextFormField extends StatelessWidget {
       onFieldSubmitted: (s) {},
       decoration: InputDecoration(
           helperText: isExist == true
-              ? "A category with this name already exist!"
-              : "*required",
+              ? l10n!.add_category_error_exist
+              : l10n!.category_name_required,
           helperStyle: TextStyle(color: isExist == true ? Colors.red : null),
           isDense: true,
-          label: Text("Name",
+          label: Text(l10n.name,
               style: TextStyle(color: isExist == true ? Colors.red : null)),
           filled: true,
           fillColor: Colors.transparent,

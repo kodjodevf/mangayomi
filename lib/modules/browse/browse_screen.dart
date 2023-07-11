@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/migrate_screen.dart';
@@ -40,6 +41,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
       length: 3,
@@ -48,7 +50,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           elevation: 0,
           backgroundColor: Colors.transparent,
           title: Text(
-            'Browse',
+            l10n.browse,
             style: TextStyle(color: Theme.of(context).hintColor),
           ),
           actions: [
@@ -109,10 +111,10 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
-            tabs: const [
-              Tab(text: "Sources"),
-              Tab(text: "Extension"),
-              Tab(text: "Migrate"),
+            tabs: [
+              Tab(text: l10n.sources),
+              Tab(text: l10n.extensions),
+              Tab(text: l10n.migrate),
             ],
           ),
         ),

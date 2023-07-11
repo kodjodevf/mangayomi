@@ -5,7 +5,8 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class SourcesScreen extends ConsumerWidget {
@@ -13,6 +14,7 @@ class SourcesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
     return Padding(
         padding: const EdgeInsets.only(top: 10),
         child: SingleChildScrollView(
@@ -40,14 +42,13 @@ class SourcesScreen extends ConsumerWidget {
                     return GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => "",
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          const Padding(
-                        padding: EdgeInsets.only(left: 12),
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(left: 12),
                         child: Row(
                           children: [
                             Text(
-                              "Last used",
-                              style: TextStyle(
+                              l10n.last_used,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ],
@@ -88,14 +89,13 @@ class SourcesScreen extends ConsumerWidget {
                     return GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => "",
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          const Padding(
-                        padding: EdgeInsets.only(left: 12),
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(left: 12),
                         child: Row(
                           children: [
                             Text(
-                              "Pinned",
-                              style: TextStyle(
+                              l10n.pinned,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ],
@@ -126,7 +126,7 @@ class SourcesScreen extends ConsumerWidget {
                       .watch(fireImmediately: true),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return const Center(child: Text("Empty"));
+                      return Center(child: Text(l10n.no_result));
                     }
                     final entries = snapshot.data!
                         .where((element) => ref.watch(showNSFWStateProvider)
@@ -136,7 +136,7 @@ class SourcesScreen extends ConsumerWidget {
                     return GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) =>
-                          completeLang(element.lang!.toLowerCase()),
+                          completeLanguageName(element.lang!.toLowerCase()),
                       groupSeparatorBuilder: (String groupByValue) => Padding(
                         padding: const EdgeInsets.only(left: 12),
                         child: Row(

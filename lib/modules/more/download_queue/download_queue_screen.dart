@@ -5,12 +5,14 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context);
     return StreamBuilder(
       stream:
           isar.downloads.filter().idIsNotNull().watch(fireImmediately: true),
@@ -27,7 +29,7 @@ class DownloadQueueScreen extends ConsumerWidget {
             appBar: AppBar(
               title: Row(
                 children: [
-                  const Text('Download queue'),
+                  Text(l10n!.download_queue),
                   const SizedBox(
                     width: 10,
                   ),
@@ -139,8 +141,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                             }
                           },
                           itemBuilder: (context) => [
-                            const PopupMenuItem(
-                                value: 'Cancel', child: Text("Cancel")),
+                            PopupMenuItem(
+                                value: 'Cancel', child: Text(l10n.cancel)),
                           ],
                         ),
                       )
@@ -157,9 +159,9 @@ class DownloadQueueScreen extends ConsumerWidget {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Download queue'),
+            title: Text(l10n!.download_queue),
           ),
-          body: const Center(child: Text('No downloads')),
+          body: Center(child: Text(l10n.no_downloads)),
         );
       },
     );

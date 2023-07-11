@@ -7,6 +7,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -27,6 +28,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     final history = ref.watch(getAllHistoryStreamProvider);
     return Scaffold(
         appBar: AppBar(
@@ -35,7 +37,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           title: _isSearch
               ? null
               : Text(
-                  'History',
+                  l10n.history,
                   style: TextStyle(color: Theme.of(context).hintColor),
                 ),
           actions: [
@@ -72,11 +74,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: const Text(
-                            "Remove everything",
+                          title: Text(
+                            l10n.remove_everything,
                           ),
-                          content: const Text(
-                              'Are you sure? All history will be lost.'),
+                          content: Text(l10n.remove_everything_msg),
                           actions: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -85,7 +86,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text("Cancel")),
+                                    child: Text(l10n.cancel)),
                                 const SizedBox(
                                   width: 15,
                                 ),
@@ -98,7 +99,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                         Navigator.pop(context);
                                       }
                                     },
-                                    child: const Text("Ok")),
+                                    child: Text(l10n.ok)),
                               ],
                             )
                           ],
@@ -123,6 +124,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               return GroupedListView<History, String>(
                 elements: entries,
                 groupBy: (element) => dateFormat(element.date!,
+                    context: context,
                     ref: ref,
                     forHistoryValue: true,
                     useRelativeTimesTamps: false),
@@ -132,6 +134,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     children: [
                       Text(dateFormat(
                         null,
+                        context: context,
                         stringDate: groupByValue,
                         ref: ref,
                       )),
@@ -228,7 +231,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  " - ${dateFormatHour(element.date!)}",
+                                                  " - ${dateFormatHour(element.date!, context)}",
                                                   style: TextStyle(
                                                       fontSize: 11,
                                                       color: Theme.of(context)
@@ -251,11 +254,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                             context: context,
                                             builder: (context) {
                                               return AlertDialog(
-                                                title: const Text(
-                                                  "Remove",
+                                                title: Text(
+                                                  l10n.remove,
                                                 ),
-                                                content: const Text(
-                                                    'This will remove the read date of this chapter. Are you sure?'),
+                                                content: Text(
+                                                    l10n.remove_history_msg),
                                                 actions: [
                                                   Row(
                                                     mainAxisAlignment:
@@ -266,8 +269,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                             Navigator.pop(
                                                                 context);
                                                           },
-                                                          child: const Text(
-                                                              "Cancel")),
+                                                          child: Text(
+                                                              l10n.cancel)),
                                                       const SizedBox(
                                                         width: 15,
                                                       ),
@@ -286,8 +289,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                                                                   context);
                                                             }
                                                           },
-                                                          child: const Text(
-                                                              "Remove")),
+                                                          child: Text(
+                                                              l10n.remove)),
                                                     ],
                                                   )
                                                 ],
@@ -316,8 +319,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 order: GroupedListOrder.DESC,
               );
             }
-            return const Center(
-              child: Text('Nothing read recently'),
+            return Center(
+              child: Text(l10n.nothing_read_recently),
             );
           },
           error: (Object error, StackTrace stackTrace) {

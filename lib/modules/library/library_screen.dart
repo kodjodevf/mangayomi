@@ -15,6 +15,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -51,7 +52,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         ref.watch(getAllMangaWithoutCategoriesStreamProvider);
     final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider);
     final mangaAll = ref.watch(getAllMangaStreamProvider(categoryId: null));
-
+    final l10n = l10nLocalizations(context)!;
     return Scaffold(
         body: mangaAll.when(
           data: (man) {
@@ -107,7 +108,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         final sortType = ref
                             .watch(sortLibraryMangaStateProvider)
                             .index as int;
-                        final numberOfItemsList = _filterAndSortMangas(
+                        final numberOfItemsList = _filterAndSortManga(
                             data: man,
                             downloadFilterType: downloadFilterType,
                             unreadFilterType: unreadFilterType,
@@ -115,7 +116,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             bookmarkedFilterType: bookmarkedFilterType,
                             sortType: sortType);
                         final withoutCategoryNumberOfItemsList =
-                            _filterAndSortMangas(
+                            _filterAndSortManga(
                                 data: withoutCategory,
                                 downloadFilterType: downloadFilterType,
                                 unreadFilterType: unreadFilterType,
@@ -154,7 +155,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             children: [
                                               Tab(
                                                   text: i == 0
-                                                      ? "Default"
+                                                      ? l10n.default0
                                                       : entr[i - 1].name),
                                               const SizedBox(
                                                 width: 4,
@@ -329,7 +330,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               mangaList: _entries));
                       final sortType =
                           ref.watch(sortLibraryMangaStateProvider).index;
-                      final numberOfItemsList = _filterAndSortMangas(
+                      final numberOfItemsList = _filterAndSortManga(
                           data: man,
                           downloadFilterType: downloadFilterType,
                           unreadFilterType: unreadFilterType,
@@ -513,7 +514,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final sortType = ref.watch(sortLibraryMangaStateProvider).index;
     return mangas.when(
       data: (data) {
-        final categoriNumberOfItemsList = _filterAndSortMangas(
+        final categoriNumberOfItemsList = _filterAndSortManga(
             data: data,
             downloadFilterType: downloadFilterType,
             unreadFilterType: unreadFilterType,
@@ -553,13 +554,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool language,
       required WidgetRef ref,
       required DisplayType displayType}) {
+    final l10n = l10nLocalizations(context)!;
     final mangas = ref.watch(getAllMangaStreamProvider(categoryId: categoryId));
     final sortType = ref.watch(sortLibraryMangaStateProvider).index;
     final mangaIdsList = ref.watch(mangasListStateProvider);
     return Scaffold(
         body: mangas.when(
       data: (data) {
-        final entries = _filterAndSortMangas(
+        final entries = _filterAndSortManga(
             data: data,
             downloadFilterType: downloadFilterType,
             unreadFilterType: unreadFilterType,
@@ -590,7 +592,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   localSource: localSource,
                 );
         }
-        return const Center(child: Text("Empty Library"));
+        return Center(child: Text(l10n.empty_library));
       },
       error: (Object error, StackTrace stackTrace) {
         return ErrorText(error);
@@ -619,9 +621,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         ? ref.watch(getAllMangaWithoutCategoriesStreamProvider)
         : ref.watch(getAllMangaStreamProvider(categoryId: null));
     final mangaIdsList = ref.watch(mangasListStateProvider);
+    final l10n = l10nLocalizations(context)!;
     return manga.when(
       data: (data) {
-        final entries = _filterAndSortMangas(
+        final entries = _filterAndSortManga(
             data: data,
             downloadFilterType: downloadFilterType,
             unreadFilterType: unreadFilterType,
@@ -652,7 +655,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   localSource: localSource,
                 );
         }
-        return const Center(child: Text("Empty Library"));
+        return Center(child: Text(l10n.empty_library));
       },
       error: (Object error, StackTrace stackTrace) {
         return ErrorText(error);
@@ -663,7 +666,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     );
   }
 
-  List<Manga> _filterAndSortMangas(
+  List<Manga> _filterAndSortManga(
       {required List<Manga> data,
       required int downloadFilterType,
       required int unreadFilterType,
@@ -812,6 +815,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         builder: (context) {
           return Consumer(builder: (context, ref, child) {
             final mangaIdsList = ref.watch(mangasListStateProvider);
+            final l10n = l10nLocalizations(context)!;
             final List<Manga> mangasList = [];
             for (var id in mangaIdsList) {
               mangasList.add(isar.mangas.getSync(id)!);
@@ -819,8 +823,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             return StatefulBuilder(
               builder: (context, setState) {
                 return AlertDialog(
-                  title: const Text(
-                    "Set categories",
+                  title: Text(
+                    l10n.set_categories,
                   ),
                   content: SizedBox(
                     width: mediaWidth(context, 0.8),
@@ -871,14 +875,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               context.push("/categories");
                               Navigator.pop(context);
                             },
-                            child: const Text("Edit")),
+                            child: Text(l10n.edit)),
                         Row(
                           children: [
                             TextButton(
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text("Cancel")),
+                                child: Text(l10n.cancel)),
                             const SizedBox(
                               width: 15,
                             ),
@@ -902,8 +906,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                     Navigator.pop(context);
                                   }
                                 },
-                                child: const Text(
-                                  "OK",
+                                child: Text(
+                                  l10n.ok,
                                 )),
                           ],
                         ),
@@ -925,6 +929,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         builder: (context) {
           return Consumer(builder: (context, ref, child) {
             final mangaIdsList = ref.watch(mangasListStateProvider);
+            final l10n = l10nLocalizations(context)!;
             final List<Manga> mangasList = [];
             for (var id in mangaIdsList) {
               mangasList.add(isar.mangas.getSync(id)!);
@@ -932,8 +937,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             return StatefulBuilder(
               builder: (context, setState) {
                 return AlertDialog(
-                  title: const Text(
-                    "Remove",
+                  title: Text(
+                    l10n.remove,
                   ),
                   content: SizedBox(
                       height: 100,
@@ -941,7 +946,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       child: Column(
                         children: [
                           ListTileChapterFilter(
-                            label: "From library",
+                            label: l10n.from_library,
                             onTap: () {
                               setState(() {
                                 if (fromLibList == mangaIdsList) {
@@ -954,7 +959,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             type: fromLibList.isNotEmpty ? 1 : 0,
                           ),
                           ListTileChapterFilter(
-                            label: "Downloaded chapters",
+                            label: l10n.downloaded_chapters,
                             onTap: () {
                               setState(() {
                                 if (downloadedChapsList == mangaIdsList) {
@@ -976,7 +981,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text("Cancel")),
+                            child: Text(l10n.cancel)),
                         const SizedBox(
                           width: 15,
                         ),
@@ -1055,8 +1060,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 Navigator.pop(context);
                               }
                             },
-                            child: const Text(
-                              "OK",
+                            child: Text(
+                              l10n.ok,
                             )),
                       ],
                     ),
@@ -1071,6 +1076,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   _showDraggableMenu() {
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
+    final l10n = l10nLocalizations(context)!;
     DraggableMenu.open(
         context,
         DraggableMenu(
@@ -1091,10 +1097,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       children: [
                         TabBar(
                           controller: tabBarController,
-                          tabs: const [
-                            Tab(text: "Filter"),
-                            Tab(text: "Sort"),
-                            Tab(text: "Display"),
+                          tabs: [
+                            Tab(text: l10n.filter),
+                            Tab(text: l10n.sort),
+                            Tab(text: l10n.display),
                           ],
                         ),
                         Flexible(
@@ -1105,7 +1111,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   return Column(
                                     children: [
                                       ListTileChapterFilter(
-                                          label: "Downloaded",
+                                          label: l10n.downloaded,
                                           type: ref.watch(
                                               mangaFilterDownloadedStateProvider(
                                                   mangaList: _entries)),
@@ -1118,7 +1124,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .update();
                                           }),
                                       ListTileChapterFilter(
-                                          label: "Unread",
+                                          label: l10n.unread,
                                           type: ref.watch(
                                               mangaFilterUnreadStateProvider(
                                                   mangaList: _entries)),
@@ -1131,7 +1137,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .update();
                                           }),
                                       ListTileChapterFilter(
-                                          label: "Started",
+                                          label: l10n.started,
                                           type: ref.watch(
                                               mangaFilterStartedStateProvider(
                                                   mangaList: _entries)),
@@ -1144,7 +1150,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .update();
                                           }),
                                       ListTileChapterFilter(
-                                          label: "Bookmarked",
+                                          label: l10n.bookmarked,
                                           type: ref.watch(
                                               mangaFilterBookmarkedStateProvider(
                                                   mangaList: _entries)),
@@ -1173,7 +1179,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                     children: [
                                       for (var i = 0; i < 7; i++)
                                         ListTileChapterSort(
-                                          label: _getSortNameByIndex(i),
+                                          label:
+                                              _getSortNameByIndex(i, context),
                                           reverse: reverse,
                                           onTap: () {
                                             ref
@@ -1210,12 +1217,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         const NeverScrollableScrollPhysics(),
                                     child: Column(
                                       children: [
-                                        const Padding(
-                                          padding: EdgeInsets.only(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Row(
                                             children: [
-                                              Text("Display mode"),
+                                              Text(l10n.display_mode),
                                             ],
                                           ),
                                         ),
@@ -1227,7 +1234,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     title: Text(
                                                       displayV
                                                           .getLibraryDisplayTypeName(
-                                                              e.name),
+                                                              e.name, context),
                                                       style: TextStyle(
                                                           color:
                                                               Theme.of(context)
@@ -1249,12 +1256,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                   ),
                                                 )
                                                 .toList()),
-                                        const Padding(
-                                          padding: EdgeInsets.only(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Row(
                                             children: [
-                                              Text("Badges"),
+                                              Text(l10n.badges),
                                             ],
                                           ),
                                         ),
@@ -1264,7 +1271,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(
-                                                  label: "Downloaded chapters",
+                                                  label:
+                                                      l10n.downloaded_chapters,
                                                   type:
                                                       downloadedChapter ? 1 : 0,
                                                   onTap: () {
@@ -1276,7 +1284,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                             !downloadedChapter);
                                                   }),
                                               ListTileChapterFilter(
-                                                  label: "Language",
+                                                  label: l10n.language,
                                                   type: language ? 1 : 0,
                                                   onTap: () {
                                                     ref
@@ -1286,7 +1294,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                         .set(!language);
                                                   }),
                                               ListTileChapterFilter(
-                                                  label: "Local source",
+                                                  label: l10n.local_source,
                                                   type: localSource ? 1 : 0,
                                                   onTap: () {
                                                     ref
@@ -1298,12 +1306,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             ],
                                           ),
                                         ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Row(
                                             children: [
-                                              Text("Tabs"),
+                                              Text(l10n.tabs),
                                             ],
                                           ),
                                         ),
@@ -1313,7 +1321,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(
-                                                  label: "Show category tabs",
+                                                  label:
+                                                      l10n.show_category_tabs,
                                                   type:
                                                       showCategoryTabs ? 1 : 0,
                                                   onTap: () {
@@ -1324,8 +1333,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                         .set(!showCategoryTabs);
                                                   }),
                                               ListTileChapterFilter(
-                                                  label:
-                                                      "Show numbers of items",
+                                                  label: l10n
+                                                      .show_numbers_of_items,
                                                   type: showNumbersOfItems
                                                       ? 1
                                                       : 0,
@@ -1340,12 +1349,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             ],
                                           ),
                                         ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(
+                                        Padding(
+                                          padding: const EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Row(
                                             children: [
-                                              Text("Others"),
+                                              Text(l10n.other),
                                             ],
                                           ),
                                         ),
@@ -1355,8 +1364,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(
-                                                  label:
-                                                      "Show continue reading button",
+                                                  label: l10n
+                                                      .show_continue_reading_buttons,
                                                   type:
                                                       continueReaderBtn ? 1 : 0,
                                                   onTap: () {
@@ -1382,21 +1391,22 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 ))));
   }
 
-  String _getSortNameByIndex(int index) {
+  String _getSortNameByIndex(int index, BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     if (index == 0) {
-      return "AlphabeticalLy";
+      return l10n.alphabetically;
     } else if (index == 1) {
-      return "Last read";
+      return l10n.last_read;
     } else if (index == 2) {
-      return "Last update check";
+      return l10n.last_update_check;
     } else if (index == 3) {
-      return "Unread count";
+      return l10n.unread_count;
     } else if (index == 4) {
-      return "Total chapters";
+      return l10n.total_chapters;
     } else if (index == 5) {
-      return "Latest chapter";
+      return l10n.latest_chapter;
     }
-    return "Date added";
+    return l10n.date_added;
   }
 
   PreferredSize _appBar(
@@ -1412,7 +1422,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final manga = categoryId == null
         ? ref.watch(getAllMangaWithoutCategoriesStreamProvider)
         : ref.watch(getAllMangaStreamProvider(categoryId: categoryId));
-
+    final l10n = l10nLocalizations(context)!;
     return PreferredSize(
         preferredSize: Size.fromHeight(AppBar().preferredSize.height),
         child: isLongPressed
@@ -1480,7 +1490,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     : Row(
                         children: [
                           Text(
-                            'Library',
+                            l10n.library,
                             style:
                                 TextStyle(color: Theme.of(context).hintColor),
                           ),
@@ -1546,9 +1556,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       )),
                   PopupMenuButton(itemBuilder: (context) {
                     return [
-                      const PopupMenuItem<int>(
-                          value: 0, child: Text("Open random entry")),
-                      const PopupMenuItem<int>(value: 1, child: Text("Import")),
+                      PopupMenuItem<int>(
+                          value: 0, child: Text(l10n.open_random_entry)),
+                      PopupMenuItem<int>(value: 1, child: Text(l10n.import)),
                     ];
                   }, onSelected: (value) {
                     if (value == 0) {
@@ -1572,13 +1582,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 }
 
 _importArchiveBD(BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
   bool isLoading = false;
   showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            "Import Archive BD",
+          title: Text(
+            l10n.import_archive_bd,
           ),
           content: StatefulBuilder(
             builder: (context, setState) {
@@ -1614,7 +1625,7 @@ _importArchiveBD(BuildContext context) {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     const Icon(Icons.archive_outlined),
-                                    Text(".cbz or .zip files",
+                                    Text(l10n.import_archive_from_file,
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .textTheme
@@ -1645,7 +1656,7 @@ _importArchiveBD(BuildContext context) {
                                   children: [
                                     const Icon(Icons.folder),
                                     Text(
-                                      "From folder (.cbz or .zip files) ",
+                                      l10n.import_archive_from_folder,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .textTheme
@@ -1692,7 +1703,7 @@ _importArchiveBD(BuildContext context) {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text("Cancel")),
+                    child: Text(l10n.cancel)),
                 const SizedBox(
                   width: 15,
                 ),

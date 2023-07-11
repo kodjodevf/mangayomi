@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class BlendLevelSlider extends ConsumerWidget {
   const BlendLevelSlider({super.key});
@@ -9,14 +10,15 @@ class BlendLevelSlider extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final blendLevel = ref.watch(blendLevelStateProvider);
+    final l10n = l10nLocalizations(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 18),
+        Padding(
+          padding: const EdgeInsets.only(left: 18),
           child: Text(
-            'Color blend Level',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            l10n!.color_blend_level,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         Slider(

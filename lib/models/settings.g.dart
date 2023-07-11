@@ -171,61 +171,67 @@ const SettingsSchema = CollectionSchema(
       name: r'libraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
-    r'onlyIncludePinnedSources': PropertySchema(
+    r'locale': PropertySchema(
       id: 29,
+      name: r'locale',
+      type: IsarType.object,
+      target: r'L10nLocale',
+    ),
+    r'onlyIncludePinnedSources': PropertySchema(
+      id: 30,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
       target: r'PersonalReaderMode',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'showNSFW': PropertySchema(
-      id: 34,
+      id: 35,
       name: r'showNSFW',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 35,
+      id: 36,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 36,
+      id: 37,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 37,
+      id: 38,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'themeIsDark': PropertySchema(
-      id: 38,
+      id: 39,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 39,
+      id: 40,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -254,7 +260,8 @@ const SettingsSchema = CollectionSchema(
     r'ChapterPageIndex': ChapterPageIndexSchema,
     r'Cookie': CookieSchema,
     r'PersonalReaderMode': PersonalReaderModeSchema,
-    r'FilterScanlator': FilterScanlatorSchema
+    r'FilterScanlator': FilterScanlatorSchema,
+    r'L10nLocale': L10nLocaleSchema
   },
   getId: _settingsGetId,
   getLinks: _settingsGetLinks,
@@ -378,6 +385,14 @@ int _settingsEstimateSize(
     }
   }
   {
+    final value = object.locale;
+    if (value != null) {
+      bytesCount += 3 +
+          L10nLocaleSchema.estimateSize(
+              value, allOffsets[L10nLocale]!, allOffsets);
+    }
+  }
+  {
     final list = object.personalReaderModeList;
     if (list != null) {
       bytesCount += 3 + list.length * 3;
@@ -492,32 +507,38 @@ void _settingsSerialize(
   writer.writeBool(offsets[26], object.libraryShowContinueReadingButton);
   writer.writeBool(offsets[27], object.libraryShowLanguage);
   writer.writeBool(offsets[28], object.libraryShowNumbersOfItems);
-  writer.writeBool(offsets[29], object.onlyIncludePinnedSources);
+  writer.writeObject<L10nLocale>(
+    offsets[29],
+    allOffsets,
+    L10nLocaleSchema.serialize,
+    object.locale,
+  );
+  writer.writeBool(offsets[30], object.onlyIncludePinnedSources);
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[30],
+    offsets[31],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
-  writer.writeBool(offsets[31], object.pureBlackDarkMode);
-  writer.writeLong(offsets[32], object.relativeTimesTamps);
-  writer.writeBool(offsets[33], object.saveAsCBZArchive);
-  writer.writeBool(offsets[34], object.showNSFW);
-  writer.writeBool(offsets[35], object.showPagesNumber);
+  writer.writeBool(offsets[32], object.pureBlackDarkMode);
+  writer.writeLong(offsets[33], object.relativeTimesTamps);
+  writer.writeBool(offsets[34], object.saveAsCBZArchive);
+  writer.writeBool(offsets[35], object.showNSFW);
+  writer.writeBool(offsets[36], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[36],
+    offsets[37],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[37],
+    offsets[38],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
-  writer.writeBool(offsets[38], object.themeIsDark);
-  writer.writeString(offsets[39], object.userAgent);
+  writer.writeBool(offsets[39], object.themeIsDark);
+  writer.writeString(offsets[40], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -578,31 +599,31 @@ Settings _settingsDeserialize(
     libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[26]),
     libraryShowLanguage: reader.readBoolOrNull(offsets[27]),
     libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[28]),
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[29]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[30]),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[30],
+      offsets[31],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[31]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[32]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[33]),
-    showNSFW: reader.readBoolOrNull(offsets[34]),
-    showPagesNumber: reader.readBoolOrNull(offsets[35]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[32]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[33]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[34]),
+    showNSFW: reader.readBoolOrNull(offsets[35]),
+    showPagesNumber: reader.readBoolOrNull(offsets[36]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[36],
+      offsets[37],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[37],
+      offsets[38],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    themeIsDark: reader.readBoolOrNull(offsets[38]),
-    userAgent: reader.readStringOrNull(offsets[39]),
+    themeIsDark: reader.readBoolOrNull(offsets[39]),
+    userAgent: reader.readStringOrNull(offsets[40]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -622,6 +643,11 @@ Settings _settingsDeserialize(
     FilterScanlatorSchema.deserialize,
     allOffsets,
     FilterScanlator(),
+  );
+  object.locale = reader.readObjectOrNull<L10nLocale>(
+    offsets[29],
+    L10nLocaleSchema.deserialize,
+    allOffsets,
   );
   return object;
 }
@@ -730,40 +756,46 @@ P _settingsDeserializeProp<P>(
     case 28:
       return (reader.readBoolOrNull(offset)) as P;
     case 29:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readObjectOrNull<L10nLocale>(
+        offset,
+        L10nLocaleSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 30:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 31:
       return (reader.readObjectList<PersonalReaderMode>(
         offset,
         PersonalReaderModeSchema.deserialize,
         allOffsets,
         PersonalReaderMode(),
       )) as P;
-    case 31:
-      return (reader.readBoolOrNull(offset)) as P;
     case 32:
-      return (reader.readLongOrNull(offset)) as P;
-    case 33:
       return (reader.readBoolOrNull(offset)) as P;
+    case 33:
+      return (reader.readLongOrNull(offset)) as P;
     case 34:
       return (reader.readBoolOrNull(offset)) as P;
     case 35:
       return (reader.readBoolOrNull(offset)) as P;
     case 36:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 37:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
       )) as P;
-    case 37:
+    case 38:
       return (reader.readObjectOrNull<SortLibraryManga>(
         offset,
         SortLibraryMangaSchema.deserialize,
         allOffsets,
       )) as P;
-    case 38:
-      return (reader.readBoolOrNull(offset)) as P;
     case 39:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 40:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2949,6 +2981,22 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> localeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'locale',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> localeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'locale',
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       onlyIncludePinnedSourcesIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -3618,6 +3666,13 @@ extension SettingsQueryObject
       filterScanlatorListElement(FilterQuery<FilterScanlator> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'filterScanlatorList');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> locale(
+      FilterQuery<L10nLocale> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'locale');
     });
   }
 
@@ -4900,6 +4955,12 @@ extension SettingsQueryProperty
       libraryShowNumbersOfItemsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'libraryShowNumbersOfItems');
+    });
+  }
+
+  QueryBuilder<Settings, L10nLocale?, QQueryOperations> localeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'locale');
     });
   }
 
@@ -7736,3 +7797,401 @@ extension FilterScanlatorQueryFilter
 
 extension FilterScanlatorQueryObject
     on QueryBuilder<FilterScanlator, FilterScanlator, QFilterCondition> {}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const L10nLocaleSchema = Schema(
+  name: r'L10nLocale',
+  id: -880412678425487799,
+  properties: {
+    r'countryCode': PropertySchema(
+      id: 0,
+      name: r'countryCode',
+      type: IsarType.string,
+    ),
+    r'languageCode': PropertySchema(
+      id: 1,
+      name: r'languageCode',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _l10nLocaleEstimateSize,
+  serialize: _l10nLocaleSerialize,
+  deserialize: _l10nLocaleDeserialize,
+  deserializeProp: _l10nLocaleDeserializeProp,
+);
+
+int _l10nLocaleEstimateSize(
+  L10nLocale object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.countryCode;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.languageCode;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _l10nLocaleSerialize(
+  L10nLocale object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.countryCode);
+  writer.writeString(offsets[1], object.languageCode);
+}
+
+L10nLocale _l10nLocaleDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = L10nLocale(
+    countryCode: reader.readStringOrNull(offsets[0]),
+    languageCode: reader.readStringOrNull(offsets[1]),
+  );
+  return object;
+}
+
+P _l10nLocaleDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension L10nLocaleQueryFilter
+    on QueryBuilder<L10nLocale, L10nLocale, QFilterCondition> {
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'countryCode',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'countryCode',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'countryCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'countryCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'countryCode',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'countryCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      countryCodeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'countryCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'languageCode',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'languageCode',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'languageCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'languageCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'languageCode',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'languageCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<L10nLocale, L10nLocale, QAfterFilterCondition>
+      languageCodeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'languageCode',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension L10nLocaleQueryObject
+    on QueryBuilder<L10nLocale, L10nLocale, QFilterCondition> {}

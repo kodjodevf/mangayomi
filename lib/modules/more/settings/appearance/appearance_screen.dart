@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -14,12 +15,13 @@ class AppearanceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context);
     final dateFormatState = ref.watch(dateFormatStateProvider);
     final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Appearance"),
+        title: Text(l10n!.appearance),
       ),
       body: Column(
         children: [
@@ -31,7 +33,7 @@ class AppearanceScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     children: [
-                      Text("Theme",
+                      Text(l10n.theme,
                           style: TextStyle(
                               fontSize: 13, color: primaryColor(context))),
                     ],
@@ -42,7 +44,7 @@ class AppearanceScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: SwitchListTile(
-                      title: const Text("Pure black dark mode"),
+                      title: Text(l10n.pure_black_dark_mode),
                       value: pureBlackDarkMode,
                       onChanged: (value) {
                         ref
@@ -62,7 +64,7 @@ class AppearanceScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     children: [
-                      Text("Timestamps",
+                      Text(l10n.timestamp,
                           style: TextStyle(
                               fontSize: 13, color: primaryColor(context))),
                     ],
@@ -74,14 +76,15 @@ class AppearanceScreen extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: const Text(
-                              "Relative timestamps",
+                            title: Text(
+                              l10n.relative_timestamp,
                             ),
                             content: SizedBox(
                                 width: mediaWidth(context, 0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: relativeTimestampsList.length,
+                                  itemCount:
+                                      relativeTimestampsList(context).length,
                                   itemBuilder: (context, index) {
                                     return RadioListTile(
                                       dense: true,
@@ -98,7 +101,8 @@ class AppearanceScreen extends ConsumerWidget {
                                       },
                                       title: Row(
                                         children: [
-                                          Text(relativeTimestampsList[index])
+                                          Text(relativeTimestampsList(
+                                              context)[index])
                                         ],
                                       ),
                                     );
@@ -113,7 +117,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
-                                        "Cancel",
+                                        l10n.cancel,
                                         style: TextStyle(
                                             color: primaryColor(context)),
                                       )),
@@ -123,9 +127,9 @@ class AppearanceScreen extends ConsumerWidget {
                           );
                         });
                   },
-                  title: const Text("Relative timestamps"),
+                  title: Text(l10n.relative_timestamp),
                   subtitle: Text(
-                    relativeTimestampsList[relativeTimestamps],
+                    relativeTimestampsList(context)[relativeTimestamps],
                     style:
                         TextStyle(fontSize: 11, color: secondaryColor(context)),
                   ),
@@ -136,8 +140,8 @@ class AppearanceScreen extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: const Text(
-                              "Date format",
+                            title: Text(
+                              l10n.date_format,
                             ),
                             content: SizedBox(
                                 width: mediaWidth(context, 0.8),
@@ -160,7 +164,7 @@ class AppearanceScreen extends ConsumerWidget {
                                       title: Row(
                                         children: [
                                           Text(
-                                              "${dateFormatsList[index]} (${dateFormat(DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatsList[index], ref: ref)})")
+                                              "${dateFormatsList[index]} (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatsList[index], ref: ref)})")
                                         ],
                                       ),
                                     );
@@ -175,7 +179,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         Navigator.pop(context);
                                       },
                                       child: Text(
-                                        "Cancel",
+                                        l10n.cancel,
                                         style: TextStyle(
                                             color: primaryColor(context)),
                                       )),
@@ -185,9 +189,9 @@ class AppearanceScreen extends ConsumerWidget {
                           );
                         });
                   },
-                  title: const Text("Date format"),
+                  title: Text(l10n.date_format),
                   subtitle: Text(
-                    "$dateFormatState (${dateFormat(DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
+                    "$dateFormatState (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
                     style:
                         TextStyle(fontSize: 11, color: secondaryColor(context)),
                   ),

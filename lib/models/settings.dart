@@ -92,6 +92,8 @@ class Settings {
 
   bool? cropBorders;
 
+  L10nLocale? locale;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -208,4 +210,11 @@ enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }
 class FilterScanlator {
   int? mangaId;
   List<String>? scanlators;
+}
+
+@embedded
+class L10nLocale {
+  String? languageCode;
+  String? countryCode;
+  L10nLocale({this.languageCode,this.countryCode});
 }

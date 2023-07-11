@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_sources.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
@@ -63,7 +63,7 @@ class _ExtensionListTileWidgetState
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              completeLang(widget.source.lang!.toLowerCase()),
+              completeLanguageName(widget.source.lang!.toLowerCase()),
               style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
             ),
             if (widget.source.isNsfw!)

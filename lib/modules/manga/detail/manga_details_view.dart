@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -32,6 +33,7 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     bool? isLocalArchive = widget.manga.isLocalArchive ?? false;
     return Scaffold(
       floatingActionButton: Consumer(
@@ -57,7 +59,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         if (entries.isNotEmpty && !incognitoMode) {
                           return CustomFloatingActionBtn(
                             isExtended: !isExtended,
-                            label: 'Resume',
+                            label: l10n.resume,
                             onPressed: () {
                               pushMangaReaderView(
                                 context: context,
@@ -70,7 +72,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         }
                         return CustomFloatingActionBtn(
                           isExtended: !isExtended,
-                          label: 'Read',
+                          label: l10n.read,
                           onPressed: () {
                             pushMangaReaderView(
                                 context: context,
@@ -110,7 +112,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       const SizedBox(
                         width: 4,
                       ),
-                      Text(getMangaStatusName(widget.manga.status)),
+                      Text(getMangaStatusName(widget.manga.status, context)),
                       const Text(' • '),
                       Text(widget.manga.source!),
                       Text(' (${widget.manga.lang!.toUpperCase()})')
@@ -134,18 +136,19 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       isar.mangas.putSync(model);
                     });
                   },
-                  child: const Column(
+                  child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.favorite,
                         size: 22,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 4,
                       ),
                       Text(
-                        'In library',
-                        style: TextStyle(fontSize: 13),
+                        l10n.in_library,
+                        style: const TextStyle(fontSize: 13),
+                        textAlign: TextAlign.center,
                       )
                     ],
                   ),
@@ -183,7 +186,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         height: 4,
                       ),
                       Text(
-                        'Add to library',
+                        l10n.add_to_library,
                         style: TextStyle(
                             color: secondaryColor(context), fontSize: 13),
                       )
@@ -206,9 +209,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setState) {
+              final l10n = l10nLocalizations(context)!;
               return AlertDialog(
-                title: const Text(
-                  "Set categories",
+                title: Text(
+                  l10n.set_categories,
                 ),
                 content: SizedBox(
                   width: mediaWidth(context, 0.8),
@@ -255,14 +259,14 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             context.push("/categories");
                             Navigator.pop(context);
                           },
-                          child: const Text("Edit")),
+                          child: Text(l10n.edit)),
                       Row(
                         children: [
                           TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text("Cancel")),
+                              child: Text(l10n.cancel)),
                           const SizedBox(
                             width: 15,
                           ),
@@ -280,8 +284,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   Navigator.pop(context);
                                 }
                               },
-                              child: const Text(
-                                "OK",
+                              child: Text(
+                                l10n.ok,
                               )),
                         ],
                       ),

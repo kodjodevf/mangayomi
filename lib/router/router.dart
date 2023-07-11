@@ -1,6 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
@@ -27,9 +26,12 @@ import 'package:mangayomi/modules/more/settings/browse/browse_screen.dart';
 import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'router.g.dart';
 
-final routerProvider = Provider<GoRouter>((ref) {
-  final router = AsyncRouterNotifier();
+@riverpod
+GoRouter router(RouterRef ref) {
+  final router = RouterNotifier();
 
   return GoRouter(
     observers: [BotToastNavigatorObserver()],
@@ -38,9 +40,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: router,
     routes: router._routes,
   );
-});
+}
 
-class AsyncRouterNotifier extends ChangeNotifier {
+class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
         ShellRoute(
             builder: (context, state, child) => MainScreen(child: child),

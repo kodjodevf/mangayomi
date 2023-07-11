@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
@@ -11,9 +12,10 @@ class BrowseSScreen extends ConsumerWidget {
     final showNSFWS = ref.watch(showNSFWStateProvider);
     final onlyIncludePinnedSource =
         ref.watch(onlyIncludePinnedSourceStateProvider);
+    final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Browse"),
+        title: Text(l10n!.browse),
       ),
       body: Column(
         children: [
@@ -25,7 +27,7 @@ class BrowseSScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     children: [
-                      Text("Global search",
+                      Text(l10n.global_search,
                           style: TextStyle(
                               fontSize: 13, color: primaryColor(context))),
                     ],
@@ -33,7 +35,7 @@ class BrowseSScreen extends ConsumerWidget {
                 ),
                 SwitchListTile(
                     value: onlyIncludePinnedSource,
-                    title: const Text("Only include pinned sources"),
+                    title: Text(l10n.only_include_pinned_sources),
                     onChanged: (value) {
                       ref
                           .read(onlyIncludePinnedSourceStateProvider.notifier)
@@ -50,7 +52,7 @@ class BrowseSScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: Row(
                     children: [
-                      Text("NSFW (18+) sources",
+                      Text(l10n.nsfw_sources,
                           style: TextStyle(
                               fontSize: 13, color: primaryColor(context))),
                     ],
@@ -58,7 +60,7 @@ class BrowseSScreen extends ConsumerWidget {
                 ),
                 SwitchListTile(
                     value: showNSFWS,
-                    title: const Text("Show in sources and extensions lists"),
+                    title: Text(l10n.nsfw_sources_show),
                     onChanged: (value) {
                       ref.read(showNSFWStateProvider.notifier).set(value);
                     }),
@@ -74,8 +76,7 @@ class BrowseSScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  subtitle: Text(
-                      "This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app",
+                  subtitle: Text(l10n.nsfw_sources_info,
                       style: TextStyle(
                           fontSize: 11, color: secondaryColor(context))),
                 )

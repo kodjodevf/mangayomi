@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_latest_updates_manga.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/search_manga.dart';
@@ -37,11 +38,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   int _fullDataLength = 20;
   int _page = 1;
   int _selectedIndex = 0;
-  final List<TypeMangaSelector> _types = [
-    TypeMangaSelector(Icons.favorite, 'Popular'),
-    TypeMangaSelector(Icons.new_releases_outlined, 'Latest'),
-    TypeMangaSelector(Icons.filter_list_outlined, 'Filter'),
-  ];
+  List<TypeMangaSelector> _types(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+    return [
+      TypeMangaSelector(Icons.favorite, l10n.popular),
+      TypeMangaSelector(Icons.new_releases_outlined, l10n.latest),
+      TypeMangaSelector(Icons.filter_list_outlined, l10n.filter),
+    ];
+  }
+
   final _textEditingController = TextEditingController();
   String _query = "";
   bool _isSearch = false;
@@ -61,7 +66,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         page: 1,
       ));
     }
-
+    final l10n = l10nLocalizations(context)!;
     return Scaffold(
         appBar: AppBar(
           title: _isSearch ? null : Text('${widget.source.name}'),
@@ -136,9 +141,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       return MangasCardSelector(
-                        icon: _types[index].icon,
+                        icon: _types(context)[index].icon,
                         selected: _selectedIndex == index,
-                        text: _types[index].title,
+                        text: _types(context)[index].title,
                         onPressed: () {
                           setState(() {
                             _selectedIndex = index;
@@ -283,7 +288,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             }
 
             if (data.isEmpty) {
-              return const Center(child: Text("No result"));
+              return Center(child: Text(l10n.no_result));
             }
             if (!_isSearch) {
               _scrollController.addListener(() {

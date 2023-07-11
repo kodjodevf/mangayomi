@@ -8,6 +8,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
@@ -26,6 +27,7 @@ class MangaImageCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context);
     return StreamBuilder(
         stream: isar.mangas
             .filter()
@@ -78,7 +80,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(2),
                             child: Text(
-                              "In library",
+                              l10n!.in_library,
                               style: TextStyle(
                                   fontSize: 12,
                                   color: Theme.of(context)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/lang.dart';
+import 'package:mangayomi/utils/language.dart';
 
 class ExtensionLangListTileWidget extends StatelessWidget {
   final String lang;
@@ -17,7 +17,7 @@ class ExtensionLangListTileWidget extends StatelessWidget {
         onTap: () {
           onChanged(!value);
         },
-        title: Text(completeLang(lang.toLowerCase())),
+        title: Text(completeLanguageName(lang.toLowerCase())),
         trailing: Switch(
             value: value,
             onChanged: (value) {
