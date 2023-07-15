@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 const defaultUserAgent =
@@ -27,3 +28,15 @@ IconData getMangaStatusIcon(Status status) {
     _ => Icons.block_outlined,
   };
 }
+
+String getTrackStatus(TrackStatus status) {
+  return switch (status) {
+    TrackStatus.reading => "Reading",
+    TrackStatus.completed => "Completed",
+    TrackStatus.onHold => "On Hold",
+    TrackStatus.dropped => "Dropped",
+    TrackStatus.planToRead => "Plan To Read",
+    TrackStatus.rereading => "Rereading",
+  };
+}
+

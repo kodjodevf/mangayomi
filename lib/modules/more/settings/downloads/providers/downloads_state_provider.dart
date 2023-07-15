@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/storage_provider.dart';

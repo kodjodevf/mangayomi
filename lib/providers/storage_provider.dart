@@ -10,6 +10,8 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track.dart';
+import 'package:mangayomi/models/track_preference.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
@@ -103,7 +105,9 @@ class StorageProvider {
       HistorySchema,
       DownloadSchema,
       SourceSchema,
-      SettingsSchema
+      SettingsSchema,
+      TrackPreferenceSchema,
+      TrackSchema
     ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);
 
     if (isar.settings.filter().idEqualTo(227).isEmptySync()) {

@@ -42,6 +42,11 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.download_outlined,
                 onTap: () => context.push('/downloads')),
             ListTileWidget(
+                title: "Tracking",
+                subtitle: "",
+                icon: Icons.screen_rotation_alt_rounded,
+                onTap: () => context.push('/track')),
+            ListTileWidget(
                 title: l10n.browse,
                 subtitle: l10n.browse_subtitle,
                 icon: Icons.explore_rounded,

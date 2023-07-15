@@ -19,12 +19,12 @@ class ListTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            )
-          : null,
+      // subtitle: subtitle != null
+      //     ? Text(
+      //         subtitle!,
+      //         style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+      //       )
+      //     : null,
       leading: SizedBox(
           height: 40,
           child: Icon(

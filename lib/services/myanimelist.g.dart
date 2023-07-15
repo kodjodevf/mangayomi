@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'headers.dart';
+part of 'myanimelist.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'e154417a4c4e9416c52cb13060ffb04a07fd489e';
+String _$myAnimeListHash() => r'd3ec65023fe7f920fad11afa4866072fb75ee257';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,38 @@ class _SystemHash {
   }
 }
 
-typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
+abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final int syncId;
 
-/// See also [headers].
-@ProviderFor(headers)
-const headersProvider = HeadersFamily();
+  dynamic build({
+    required int syncId,
+  });
+}
 
-/// See also [headers].
-class HeadersFamily extends Family<Map<String, String>> {
-  /// See also [headers].
-  const HeadersFamily();
+/// See also [MyAnimeList].
+@ProviderFor(MyAnimeList)
+const myAnimeListProvider = MyAnimeListFamily();
 
-  /// See also [headers].
-  HeadersProvider call({
-    required String source,
-    required String lang,
+/// See also [MyAnimeList].
+class MyAnimeListFamily extends Family<dynamic> {
+  /// See also [MyAnimeList].
+  const MyAnimeListFamily();
+
+  /// See also [MyAnimeList].
+  MyAnimeListProvider call({
+    required int syncId,
   }) {
-    return HeadersProvider(
-      source: source,
-      lang: lang,
+    return MyAnimeListProvider(
+      syncId: syncId,
     );
   }
 
   @override
-  HeadersProvider getProviderOverride(
-    covariant HeadersProvider provider,
+  MyAnimeListProvider getProviderOverride(
+    covariant MyAnimeListProvider provider,
   ) {
     return call(
-      source: provider.source,
-      lang: provider.lang,
+      syncId: provider.syncId,
     );
   }
 
@@ -73,48 +76,50 @@ class HeadersFamily extends Family<Map<String, String>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'headersProvider';
+  String? get name => r'myAnimeListProvider';
 }
 
-/// See also [headers].
-class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
-  /// See also [headers].
-  HeadersProvider({
-    required this.source,
-    required this.lang,
+/// See also [MyAnimeList].
+class MyAnimeListProvider
+    extends AutoDisposeNotifierProviderImpl<MyAnimeList, dynamic> {
+  /// See also [MyAnimeList].
+  MyAnimeListProvider({
+    required this.syncId,
   }) : super.internal(
-          (ref) => headers(
-            ref,
-            source: source,
-            lang: lang,
-          ),
-          from: headersProvider,
-          name: r'headersProvider',
+          () => MyAnimeList()..syncId = syncId,
+          from: myAnimeListProvider,
+          name: r'myAnimeListProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$headersHash,
-          dependencies: HeadersFamily._dependencies,
-          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+                  : _$myAnimeListHash,
+          dependencies: MyAnimeListFamily._dependencies,
+          allTransitiveDependencies:
+              MyAnimeListFamily._allTransitiveDependencies,
         );
 
-  final String source;
-  final String lang;
+  final int syncId;
 
   @override
   bool operator ==(Object other) {
-    return other is HeadersProvider &&
-        other.source == source &&
-        other.lang == lang;
+    return other is MyAnimeListProvider && other.syncId == syncId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, syncId.hashCode);
 
     return _SystemHash.finish(hash);
+  }
+
+  @override
+  dynamic runNotifierBuild(
+    covariant MyAnimeList notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+    );
   }
 }
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

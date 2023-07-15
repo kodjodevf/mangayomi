@@ -1,7 +1,7 @@
 completeLanguageName(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMap.entries) {
-    if (element.value.toString().toLowerCase() == lang) {
+    if (element.value.toLowerCase() == lang) {
       return element.key;
     }
   }
@@ -64,5 +64,4 @@ final languagesMap = {
   "čeština": "cs",
   "Kurdî": "ku",
   "Magyar": "hu",
-  "polski": "pl",
 };

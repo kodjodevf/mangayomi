@@ -47,6 +47,8 @@ dependencies:
   dart_eval: ^0.6.0
   json_path: ^0.6.0
   bot_toast: ^4.0.4
+  flutter_web_auth_2: ^2.1.5
+  numberpicker: ^2.1.2
 
 
   cupertino_icons: ^1.0.2

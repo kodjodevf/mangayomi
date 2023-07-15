@@ -122,7 +122,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
               ),
         action: widget.manga.favorite
             ? SizedBox(
-                width: isTablet(context) ? null : mediaWidth(context, 0.4),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor:
@@ -154,46 +153,43 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   ),
                 ),
               )
-            : SizedBox(
-                width: isTablet(context) ? null : mediaWidth(context, 0.4),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      elevation: 0),
-                  onPressed: () {
-                    final checkCategoryList =
-                        isar.categorys.filter().idIsNotNull().isNotEmptySync();
-                    if (checkCategoryList) {
-                      _openCategory(widget.manga);
-                    } else {
-                      final model = widget.manga;
-                      isar.writeTxnSync(() {
-                        model.favorite = true;
-                        model.dateAdded = DateTime.now().millisecondsSinceEpoch;
-                        isar.mangas.putSync(model);
-                      });
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.favorite_border_rounded,
-                        size: 22,
-                        color: secondaryColor(context),
-                      ),
-                      const SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        l10n.add_to_library,
-                        style: TextStyle(
-                            color: secondaryColor(context), fontSize: 13),
-                      )
-                    ],
+            : ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(context).scaffoldBackgroundColor,
+                  elevation: 0),
+              onPressed: () {
+                final checkCategoryList =
+                    isar.categorys.filter().idIsNotNull().isNotEmptySync();
+                if (checkCategoryList) {
+                  _openCategory(widget.manga);
+                } else {
+                  final model = widget.manga;
+                  isar.writeTxnSync(() {
+                    model.favorite = true;
+                    model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                    isar.mangas.putSync(model);
+                  });
+                }
+              },
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.favorite_border_rounded,
+                    size: 22,
+                    color: secondaryColor(context),
                   ),
-                ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    l10n.add_to_library,
+                    style: TextStyle(
+                        color: secondaryColor(context), fontSize: 13),
+                  )
+                ],
               ),
+            ),
         manga: widget.manga,
         isExtended: (value) {
           ref.read(isExtendedStateProvider.notifier).update(value);

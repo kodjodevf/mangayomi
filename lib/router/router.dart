@@ -5,6 +5,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
+import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
@@ -233,6 +234,19 @@ class RouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const AboutScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/track",
+          name: "track",
+          builder: (context, state) {
+            return const TrackScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const TrackScreen(),
             );
           },
         ),

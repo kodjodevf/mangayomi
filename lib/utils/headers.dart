@@ -11,18 +11,21 @@ part 'headers.g.dart';
 Map<String, String> headers(HeadersRef ref,
     {required String source, required String lang}) {
   final sourceM = getSource(lang, source);
-  if (sourceM.headers!.isEmpty) {
+  if (sourceM.headers!.isEmpty && !sourceM.hasCloudflare!) {
     return {};
   }
   Map<String, String> newHeaders = {};
-  final headers = jsonDecode(sourceM.headers!) as Map;
-  newHeaders =
-      headers.map((key, value) => MapEntry(key.toString(), value.toString()));
+  if (sourceM.headers!.isNotEmpty) {
+    final headers = jsonDecode(sourceM.headers!) as Map;
+    newHeaders =
+        headers.map((key, value) => MapEntry(key.toString(), value.toString()));
+  }
+
   if (sourceM.hasCloudflare!) {
     final userAgent = isar.settings.getSync(227)!.userAgent!;
     final cookie = ref.watch(cookieStateProvider(source));
+
     newHeaders.addAll({'User-Agent': userAgent, "Cookie": cookie});
   }
-
   return newHeaders;
 }

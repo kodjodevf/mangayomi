@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'headers.dart';
+part of 'track_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'e154417a4c4e9416c52cb13060ffb04a07fd489e';
+String _$tracksHash() => r'11a1c74c458db7f5b790de1451d239662cec1ed3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,38 @@ class _SystemHash {
   }
 }
 
-typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
+abstract class _$Tracks extends BuildlessAutoDisposeNotifier<TrackPreference?> {
+  late final int? syncId;
 
-/// See also [headers].
-@ProviderFor(headers)
-const headersProvider = HeadersFamily();
+  TrackPreference? build({
+    required int? syncId,
+  });
+}
 
-/// See also [headers].
-class HeadersFamily extends Family<Map<String, String>> {
-  /// See also [headers].
-  const HeadersFamily();
+/// See also [Tracks].
+@ProviderFor(Tracks)
+const tracksProvider = TracksFamily();
 
-  /// See also [headers].
-  HeadersProvider call({
-    required String source,
-    required String lang,
+/// See also [Tracks].
+class TracksFamily extends Family<TrackPreference?> {
+  /// See also [Tracks].
+  const TracksFamily();
+
+  /// See also [Tracks].
+  TracksProvider call({
+    required int? syncId,
   }) {
-    return HeadersProvider(
-      source: source,
-      lang: lang,
+    return TracksProvider(
+      syncId: syncId,
     );
   }
 
   @override
-  HeadersProvider getProviderOverride(
-    covariant HeadersProvider provider,
+  TracksProvider getProviderOverride(
+    covariant TracksProvider provider,
   ) {
     return call(
-      source: provider.source,
-      lang: provider.lang,
+      syncId: provider.syncId,
     );
   }
 
@@ -73,48 +76,49 @@ class HeadersFamily extends Family<Map<String, String>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'headersProvider';
+  String? get name => r'tracksProvider';
 }
 
-/// See also [headers].
-class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
-  /// See also [headers].
-  HeadersProvider({
-    required this.source,
-    required this.lang,
+/// See also [Tracks].
+class TracksProvider
+    extends AutoDisposeNotifierProviderImpl<Tracks, TrackPreference?> {
+  /// See also [Tracks].
+  TracksProvider({
+    required this.syncId,
   }) : super.internal(
-          (ref) => headers(
-            ref,
-            source: source,
-            lang: lang,
-          ),
-          from: headersProvider,
-          name: r'headersProvider',
+          () => Tracks()..syncId = syncId,
+          from: tracksProvider,
+          name: r'tracksProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$headersHash,
-          dependencies: HeadersFamily._dependencies,
-          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+                  : _$tracksHash,
+          dependencies: TracksFamily._dependencies,
+          allTransitiveDependencies: TracksFamily._allTransitiveDependencies,
         );
 
-  final String source;
-  final String lang;
+  final int? syncId;
 
   @override
   bool operator ==(Object other) {
-    return other is HeadersProvider &&
-        other.source == source &&
-        other.lang == lang;
+    return other is TracksProvider && other.syncId == syncId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, syncId.hashCode);
 
     return _SystemHash.finish(hash);
+  }
+
+  @override
+  TrackPreference? runNotifierBuild(
+    covariant Tracks notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+    );
   }
 }
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

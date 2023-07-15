@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:mangayomi/eval/bridge_class/manga_model.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/main.dart';
@@ -16,8 +17,6 @@ import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../eval/bridge_class/manga_model.dart';
 part 'get_chapter_url.g.dart';
 
 class GetChapterUrlModel {
@@ -52,11 +51,12 @@ Future<GetChapterUrlModel> getChapterUrl(
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
-  final source =
-      getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+  
   List<Uint8List?> archiveImages = [];
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
   if (!chapter.manga.value!.isLocalArchive!) {
+    final source =
+        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
     if (isarPageUrls.isNotEmpty &&
         isarPageUrls.first.urls != null &&
         isarPageUrls.first.urls!.isNotEmpty) {

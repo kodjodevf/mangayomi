@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'headers.dart';
+part of 'track_state_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'e154417a4c4e9416c52cb13060ffb04a07fd489e';
+String _$trackStateHash() => r'3e7b916624f8035766d9a6408812bf1cc1247915';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,38 @@ class _SystemHash {
   }
 }
 
-typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
+abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
+  late final Track? track;
 
-/// See also [headers].
-@ProviderFor(headers)
-const headersProvider = HeadersFamily();
+  Track build({
+    Track? track,
+  });
+}
 
-/// See also [headers].
-class HeadersFamily extends Family<Map<String, String>> {
-  /// See also [headers].
-  const HeadersFamily();
+/// See also [TrackState].
+@ProviderFor(TrackState)
+const trackStateProvider = TrackStateFamily();
 
-  /// See also [headers].
-  HeadersProvider call({
-    required String source,
-    required String lang,
+/// See also [TrackState].
+class TrackStateFamily extends Family<Track> {
+  /// See also [TrackState].
+  const TrackStateFamily();
+
+  /// See also [TrackState].
+  TrackStateProvider call({
+    Track? track,
   }) {
-    return HeadersProvider(
-      source: source,
-      lang: lang,
+    return TrackStateProvider(
+      track: track,
     );
   }
 
   @override
-  HeadersProvider getProviderOverride(
-    covariant HeadersProvider provider,
+  TrackStateProvider getProviderOverride(
+    covariant TrackStateProvider provider,
   ) {
     return call(
-      source: provider.source,
-      lang: provider.lang,
+      track: provider.track,
     );
   }
 
@@ -73,48 +76,50 @@ class HeadersFamily extends Family<Map<String, String>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'headersProvider';
+  String? get name => r'trackStateProvider';
 }
 
-/// See also [headers].
-class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
-  /// See also [headers].
-  HeadersProvider({
-    required this.source,
-    required this.lang,
+/// See also [TrackState].
+class TrackStateProvider
+    extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
+  /// See also [TrackState].
+  TrackStateProvider({
+    this.track,
   }) : super.internal(
-          (ref) => headers(
-            ref,
-            source: source,
-            lang: lang,
-          ),
-          from: headersProvider,
-          name: r'headersProvider',
+          () => TrackState()..track = track,
+          from: trackStateProvider,
+          name: r'trackStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$headersHash,
-          dependencies: HeadersFamily._dependencies,
-          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+                  : _$trackStateHash,
+          dependencies: TrackStateFamily._dependencies,
+          allTransitiveDependencies:
+              TrackStateFamily._allTransitiveDependencies,
         );
 
-  final String source;
-  final String lang;
+  final Track? track;
 
   @override
   bool operator ==(Object other) {
-    return other is HeadersProvider &&
-        other.source == source &&
-        other.lang == lang;
+    return other is TrackStateProvider && other.track == track;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, track.hashCode);
 
     return _SystemHash.finish(hash);
+  }
+
+  @override
+  Track runNotifierBuild(
+    covariant TrackState notifier,
+  ) {
+    return notifier.build(
+      track: track,
+    );
   }
 }
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
