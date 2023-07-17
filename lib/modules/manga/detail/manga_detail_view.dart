@@ -1616,7 +1616,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           maxHeight: mediaHeight(context, 0.9),
           minHeight: 80,
           child: Material(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
             borderRadius: BorderRadius.circular(20),
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Padding(
@@ -1641,7 +1641,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ? TrackerWidget(
                                 mangaId: widget.manga!.id!,
                                 trackPreference: entries[index],
-                                trackRes: trackRes[index],
+                                trackRes: trackRes.first,
                               )
                             : TrackListile(
                                 onTap: () async {

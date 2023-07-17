@@ -38,13 +38,12 @@ class MyAnimeList extends _$MyAnimeList {
       if (queryParams['code'] == null) return null;
 
       final oAuth = await _getOAuth(queryParams['code']!);
-      final myAnimeListoAuth =
-          MyAnimeListOAuth.fromJson(oAuth as Map<String, dynamic>);
-      final username = await _getUserName(myAnimeListoAuth.accessToken!);
+      final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>);
+      final username = await _getUserName(mALOAuth.accessToken!);
       ref.read(tracksProvider(syncId: syncId).notifier).login(TrackPreference(
           syncId: syncId,
           username: username,
-          oAuth: jsonEncode(myAnimeListoAuth.toJson())));
+          oAuth: jsonEncode(mALOAuth.toJson())));
 
       return true;
     } catch (_) {
@@ -54,28 +53,28 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<String> _getAccesToken() async {
     final track = ref.watch(tracksProvider(syncId: syncId));
-    final myAnimeListoAuth = MyAnimeListOAuth.fromJson(
-        jsonDecode(track!.oAuth!) as Map<String, dynamic>);
-    final expiresIn =
-        DateTime.fromMillisecondsSinceEpoch(myAnimeListoAuth.expiresIn!);
+    final mALOAuth =
+        OAuth.fromJson(jsonDecode(track!.oAuth!) as Map<String, dynamic>);
+    final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
       final params = {
         'client_id': clientId,
         'grant_type': 'refresh_token',
-        'refresh_token': myAnimeListoAuth.refreshToken,
+        'refresh_token': mALOAuth.refreshToken,
       };
       final response =
           await http.post(Uri.parse('$baseOAuthUrl/token'), body: params);
-      final oAuth = MyAnimeListOAuth.fromJson(
-          jsonDecode(response.body) as Map<String, dynamic>);
+      final oAuth =
+          OAuth.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
       final username = await _getUserName(oAuth.accessToken!);
       ref.read(tracksProvider(syncId: syncId).notifier).login(TrackPreference(
           syncId: syncId,
           username: username,
+          prefs: "",
           oAuth: jsonEncode(oAuth.toJson())));
       return oAuth.accessToken!;
     }
-    return myAnimeListoAuth.accessToken!;
+    return mALOAuth.accessToken!;
   }
 
   Future<List<TrackSearch>> search(String query) async {

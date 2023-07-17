@@ -6,6 +6,8 @@ part 'track.g.dart';
 class Track {
   Id? id;
 
+  int? libraryId;
+
   int? mediaId;
 
   int? mangaId;
@@ -14,7 +16,7 @@ class Track {
 
   String? title;
 
-  int ?lastChapterRead;
+  int? lastChapterRead;
 
   int? totalChapter;
 
@@ -31,6 +33,7 @@ class Track {
 
   Track(
       {this.id = Isar.autoIncrement,
+      this.libraryId,
       this.mediaId,
       this.mangaId,
       this.syncId,

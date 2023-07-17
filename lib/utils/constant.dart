@@ -23,7 +23,7 @@ IconData getMangaStatusIcon(Status status) {
     Status.ongoing => Icons.schedule_rounded,
     Status.onHiatus => Icons.pause_circle_rounded,
     Status.canceled => Icons.cancel_rounded,
-    Status.completed => Icons.done,
+    Status.completed => Icons.done_all_outlined,
     Status.publishingFinished => Icons.done,
     _ => Icons.block_outlined,
   };
@@ -43,6 +43,6 @@ String getTrackStatus(TrackStatus status) {
 (String, String) trackInfos(int id) {
   return switch (id) {
     1 => ("assets/tracker_mal.webp", "MyAnimeList"),
-    _ => ("", ""),
+    _ => ("assets/tracker_anilist.webp", "Anilist"),
   };
 }

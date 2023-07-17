@@ -35,6 +35,7 @@ class Tracks extends _$Tracks {
         track.id = tra.first.id;
       }
     }
+
     isar.writeTxnSync(() => isar.tracks.putSync(track..syncId = syncId));
   }
 

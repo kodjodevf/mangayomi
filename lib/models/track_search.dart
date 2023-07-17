@@ -1,13 +1,15 @@
 class TrackSearch {
   int? id;
 
+  int? libraryId;
+
   int? mediaId;
 
   int? syncId;
 
   String? title;
 
-  String? lastChapterRead;
+  int? lastChapterRead;
 
   int? totalChapter;
 
@@ -33,6 +35,7 @@ class TrackSearch {
 
   TrackSearch(
       {this.id,
+      this.libraryId,
       this.mediaId,
       this.syncId,
       this.title,
@@ -43,9 +46,9 @@ class TrackSearch {
       this.startedReadingDate,
       this.finishedReadingDate,
       this.trackingUrl,
-      this.coverUrl= '',
-      this.publishingStatus= '',
-      this.publishingType= '',
-      this.startDate= '',
-      this.summary= ''});
+      this.coverUrl = '',
+      this.publishingStatus = '',
+      this.publishingType = '',
+      this.startDate = '',
+      this.summary = ''});
 }

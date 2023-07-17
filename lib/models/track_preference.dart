@@ -10,9 +10,12 @@ class TrackPreference {
 
   String? oAuth;
 
+  String? prefs;
+
   TrackPreference({
     this.syncId,
     this.username,
     this.oAuth,
+    this.prefs,
   });
 }

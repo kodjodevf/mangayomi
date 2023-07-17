@@ -27,49 +27,54 @@ const TrackSchema = CollectionSchema(
       name: r'lastChapterRead',
       type: IsarType.long,
     ),
-    r'mangaId': PropertySchema(
+    r'libraryId': PropertySchema(
       id: 2,
+      name: r'libraryId',
+      type: IsarType.long,
+    ),
+    r'mangaId': PropertySchema(
+      id: 3,
       name: r'mangaId',
       type: IsarType.long,
     ),
     r'mediaId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'mediaId',
       type: IsarType.long,
     ),
     r'score': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'score',
       type: IsarType.long,
     ),
     r'startedReadingDate': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'startedReadingDate',
       type: IsarType.long,
     ),
     r'status': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'status',
       type: IsarType.byte,
       enumMap: _TrackstatusEnumValueMap,
     ),
     r'syncId': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'syncId',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'title',
       type: IsarType.string,
     ),
     r'totalChapter': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'totalChapter',
       type: IsarType.long,
     ),
     r'trackingUrl': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'trackingUrl',
       type: IsarType.string,
     )
@@ -117,15 +122,16 @@ void _trackSerialize(
 ) {
   writer.writeLong(offsets[0], object.finishedReadingDate);
   writer.writeLong(offsets[1], object.lastChapterRead);
-  writer.writeLong(offsets[2], object.mangaId);
-  writer.writeLong(offsets[3], object.mediaId);
-  writer.writeLong(offsets[4], object.score);
-  writer.writeLong(offsets[5], object.startedReadingDate);
-  writer.writeByte(offsets[6], object.status.index);
-  writer.writeLong(offsets[7], object.syncId);
-  writer.writeString(offsets[8], object.title);
-  writer.writeLong(offsets[9], object.totalChapter);
-  writer.writeString(offsets[10], object.trackingUrl);
+  writer.writeLong(offsets[2], object.libraryId);
+  writer.writeLong(offsets[3], object.mangaId);
+  writer.writeLong(offsets[4], object.mediaId);
+  writer.writeLong(offsets[5], object.score);
+  writer.writeLong(offsets[6], object.startedReadingDate);
+  writer.writeByte(offsets[7], object.status.index);
+  writer.writeLong(offsets[8], object.syncId);
+  writer.writeString(offsets[9], object.title);
+  writer.writeLong(offsets[10], object.totalChapter);
+  writer.writeString(offsets[11], object.trackingUrl);
 }
 
 Track _trackDeserialize(
@@ -138,16 +144,17 @@ Track _trackDeserialize(
     finishedReadingDate: reader.readLongOrNull(offsets[0]),
     id: id,
     lastChapterRead: reader.readLongOrNull(offsets[1]),
-    mangaId: reader.readLongOrNull(offsets[2]),
-    mediaId: reader.readLongOrNull(offsets[3]),
-    score: reader.readLongOrNull(offsets[4]),
-    startedReadingDate: reader.readLongOrNull(offsets[5]),
-    status: _TrackstatusValueEnumMap[reader.readByteOrNull(offsets[6])] ??
+    libraryId: reader.readLongOrNull(offsets[2]),
+    mangaId: reader.readLongOrNull(offsets[3]),
+    mediaId: reader.readLongOrNull(offsets[4]),
+    score: reader.readLongOrNull(offsets[5]),
+    startedReadingDate: reader.readLongOrNull(offsets[6]),
+    status: _TrackstatusValueEnumMap[reader.readByteOrNull(offsets[7])] ??
         TrackStatus.reading,
-    syncId: reader.readLongOrNull(offsets[7]),
-    title: reader.readStringOrNull(offsets[8]),
-    totalChapter: reader.readLongOrNull(offsets[9]),
-    trackingUrl: reader.readStringOrNull(offsets[10]),
+    syncId: reader.readLongOrNull(offsets[8]),
+    title: reader.readStringOrNull(offsets[9]),
+    totalChapter: reader.readLongOrNull(offsets[10]),
+    trackingUrl: reader.readStringOrNull(offsets[11]),
   );
   return object;
 }
@@ -172,15 +179,17 @@ P _trackDeserializeProp<P>(
     case 5:
       return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readLongOrNull(offset)) as P;
+    case 7:
       return (_TrackstatusValueEnumMap[reader.readByteOrNull(offset)] ??
           TrackStatus.reading) as P;
-    case 7:
-      return (reader.readLongOrNull(offset)) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
-    case 9:
       return (reader.readLongOrNull(offset)) as P;
+    case 9:
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readLongOrNull(offset)) as P;
+    case 11:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -493,6 +502,75 @@ extension TrackQueryFilter on QueryBuilder<Track, Track, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'lastChapterRead',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryId',
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryId',
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> libraryIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryId',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1286,6 +1364,18 @@ extension TrackQuerySortBy on QueryBuilder<Track, Track, QSortBy> {
     });
   }
 
+  QueryBuilder<Track, Track, QAfterSortBy> sortByLibraryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> sortByLibraryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Track, Track, QAfterSortBy> sortByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mangaId', Sort.asc);
@@ -1432,6 +1522,18 @@ extension TrackQuerySortThenBy on QueryBuilder<Track, Track, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Track, Track, QAfterSortBy> thenByLibraryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> thenByLibraryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Track, Track, QAfterSortBy> thenByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mangaId', Sort.asc);
@@ -1554,6 +1656,12 @@ extension TrackQueryWhereDistinct on QueryBuilder<Track, Track, QDistinct> {
     });
   }
 
+  QueryBuilder<Track, Track, QDistinct> distinctByLibraryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryId');
+    });
+  }
+
   QueryBuilder<Track, Track, QDistinct> distinctByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mangaId');
@@ -1627,6 +1735,12 @@ extension TrackQueryProperty on QueryBuilder<Track, Track, QQueryProperty> {
   QueryBuilder<Track, int?, QQueryOperations> lastChapterReadProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastChapterRead');
+    });
+  }
+
+  QueryBuilder<Track, int?, QQueryOperations> libraryIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryId');
     });
   }
 

@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'track_state_providers.dart';
+part of 'anilist.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'7004528230213b458c7db417947eecfc700d44d7';
+String _$anilistHash() => r'd09ca797106b31f075d5ded66ae138639b6ca745';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,38 +29,38 @@ class _SystemHash {
   }
 }
 
-abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
-  late final Track? track;
+abstract class _$Anilist extends BuildlessAutoDisposeNotifier<dynamic> {
+  late final int syncId;
 
-  Track build({
-    Track? track,
+  dynamic build({
+    required int syncId,
   });
 }
 
-/// See also [TrackState].
-@ProviderFor(TrackState)
-const trackStateProvider = TrackStateFamily();
+/// See also [Anilist].
+@ProviderFor(Anilist)
+const anilistProvider = AnilistFamily();
 
-/// See also [TrackState].
-class TrackStateFamily extends Family<Track> {
-  /// See also [TrackState].
-  const TrackStateFamily();
+/// See also [Anilist].
+class AnilistFamily extends Family<dynamic> {
+  /// See also [Anilist].
+  const AnilistFamily();
 
-  /// See also [TrackState].
-  TrackStateProvider call({
-    Track? track,
+  /// See also [Anilist].
+  AnilistProvider call({
+    required int syncId,
   }) {
-    return TrackStateProvider(
-      track: track,
+    return AnilistProvider(
+      syncId: syncId,
     );
   }
 
   @override
-  TrackStateProvider getProviderOverride(
-    covariant TrackStateProvider provider,
+  AnilistProvider getProviderOverride(
+    covariant AnilistProvider provider,
   ) {
     return call(
-      track: provider.track,
+      syncId: provider.syncId,
     );
   }
 
@@ -76,49 +76,48 @@ class TrackStateFamily extends Family<Track> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'trackStateProvider';
+  String? get name => r'anilistProvider';
 }
 
-/// See also [TrackState].
-class TrackStateProvider
-    extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
-  /// See also [TrackState].
-  TrackStateProvider({
-    this.track,
+/// See also [Anilist].
+class AnilistProvider
+    extends AutoDisposeNotifierProviderImpl<Anilist, dynamic> {
+  /// See also [Anilist].
+  AnilistProvider({
+    required this.syncId,
   }) : super.internal(
-          () => TrackState()..track = track,
-          from: trackStateProvider,
-          name: r'trackStateProvider',
+          () => Anilist()..syncId = syncId,
+          from: anilistProvider,
+          name: r'anilistProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$trackStateHash,
-          dependencies: TrackStateFamily._dependencies,
-          allTransitiveDependencies:
-              TrackStateFamily._allTransitiveDependencies,
+                  : _$anilistHash,
+          dependencies: AnilistFamily._dependencies,
+          allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
         );
 
-  final Track? track;
+  final int syncId;
 
   @override
   bool operator ==(Object other) {
-    return other is TrackStateProvider && other.track == track;
+    return other is AnilistProvider && other.syncId == syncId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, track.hashCode);
+    hash = _SystemHash.combine(hash, syncId.hashCode);
 
     return _SystemHash.finish(hash);
   }
 
   @override
-  Track runNotifierBuild(
-    covariant TrackState notifier,
+  dynamic runNotifierBuild(
+    covariant Anilist notifier,
   ) {
     return notifier.build(
-      track: track,
+      syncId: syncId,
     );
   }
 }

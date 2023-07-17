@@ -22,13 +22,18 @@ class TrackListile extends ConsumerWidget {
         entries.where((element) => element.syncId == id).isNotEmpty;
     return ListTile(
       leading: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Image.asset(
-          trackInfos(id).$1,
-          height: 30,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          color: const Color.fromRGBO(18, 25, 35, 1),
+          width: 70,
+          child: Image.asset(
+            trackInfos(id).$1,
+            height: 30,
+          ),
         ),
       ),
-      trailing: trailing ?? (isLogged
+      trailing: trailing ??
+          (isLogged
               ? const Icon(
                   Icons.check,
                   size: 30,
@@ -75,4 +80,3 @@ class TrackListile extends ConsumerWidget {
     );
   }
 }
-

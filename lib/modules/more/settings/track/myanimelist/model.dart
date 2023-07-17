@@ -1,13 +1,13 @@
-class MyAnimeListOAuth {
+class OAuth {
   String? tokenType;
   int? expiresIn;
   String? accessToken;
   String? refreshToken;
 
-  MyAnimeListOAuth(
+  OAuth(
       {this.tokenType, this.expiresIn, this.accessToken, this.refreshToken});
 
-  MyAnimeListOAuth.fromJson(Map<String, dynamic> json) {
+  OAuth.fromJson(Map<String, dynamic> json) {
     tokenType = json['token_type'];
     expiresIn = (json['expires_in'] as int) * 1000 +
         DateTime.now().millisecondsSinceEpoch;

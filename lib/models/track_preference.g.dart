@@ -22,8 +22,13 @@ const TrackPreferenceSchema = CollectionSchema(
       name: r'oAuth',
       type: IsarType.string,
     ),
-    r'username': PropertySchema(
+    r'prefs': PropertySchema(
       id: 1,
+      name: r'prefs',
+      type: IsarType.string,
+    ),
+    r'username': PropertySchema(
+      id: 2,
       name: r'username',
       type: IsarType.string,
     )
@@ -55,6 +60,12 @@ int _trackPreferenceEstimateSize(
     }
   }
   {
+    final value = object.prefs;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.username;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -70,7 +81,8 @@ void _trackPreferenceSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.oAuth);
-  writer.writeString(offsets[1], object.username);
+  writer.writeString(offsets[1], object.prefs);
+  writer.writeString(offsets[2], object.username);
 }
 
 TrackPreference _trackPreferenceDeserialize(
@@ -81,8 +93,9 @@ TrackPreference _trackPreferenceDeserialize(
 ) {
   final object = TrackPreference(
     oAuth: reader.readStringOrNull(offsets[0]),
+    prefs: reader.readStringOrNull(offsets[1]),
     syncId: id,
-    username: reader.readStringOrNull(offsets[1]),
+    username: reader.readStringOrNull(offsets[2]),
   );
   return object;
 }
@@ -97,6 +110,8 @@ P _trackPreferenceDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -353,6 +368,160 @@ extension TrackPreferenceQueryFilter
   }
 
   QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'prefs',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'prefs',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'prefs',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'prefs',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'prefs',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'prefs',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+      prefsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'prefs',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
       syncIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -602,6 +771,19 @@ extension TrackPreferenceQuerySortBy
     });
   }
 
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy> sortByPrefs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prefs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+      sortByPrefsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prefs', Sort.desc);
+    });
+  }
+
   QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
       sortByUsername() {
     return QueryBuilder.apply(this, (query) {
@@ -629,6 +811,19 @@ extension TrackPreferenceQuerySortThenBy
       thenByOAuthDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oAuth', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy> thenByPrefs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prefs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+      thenByPrefsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'prefs', Sort.desc);
     });
   }
 
@@ -669,6 +864,13 @@ extension TrackPreferenceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TrackPreference, TrackPreference, QDistinct> distinctByPrefs(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'prefs', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<TrackPreference, TrackPreference, QDistinct> distinctByUsername(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -688,6 +890,12 @@ extension TrackPreferenceQueryProperty
   QueryBuilder<TrackPreference, String?, QQueryOperations> oAuthProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'oAuth');
+    });
+  }
+
+  QueryBuilder<TrackPreference, String?, QQueryOperations> prefsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'prefs');
     });
   }
 
