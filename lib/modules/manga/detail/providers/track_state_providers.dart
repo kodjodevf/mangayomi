@@ -12,10 +12,10 @@ class TrackState extends _$TrackState {
     return track!;
   }
 
-  Future updateItem() async {
+  Future updateManga() async {
     final updateTrack = await ref
         .read(myAnimeListProvider(syncId: 1).notifier)
-        .updateItem(track!);
+        .updateManga(track!);
 
     ref
         .read(tracksProvider(syncId: track!.syncId!).notifier)
@@ -24,7 +24,6 @@ class TrackState extends _$TrackState {
 
   Future setTrackSearch(
       TrackSearch trackSearch, int mangaId, int syncId) async {
-        
     final track = Track(
         mangaId: mangaId,
         score: 0,
@@ -36,13 +35,13 @@ class TrackState extends _$TrackState {
         status: TrackStatus.planToRead,
         startedReadingDate: 0,
         finishedReadingDate: 0);
-    final findTrack = await ref
+    final findManga = await ref
         .read(myAnimeListProvider(syncId: 1).notifier)
-        .findListItem(track);
+        .findManga(track);
 
     ref
         .read(tracksProvider(syncId: syncId).notifier)
-        .updateTrackManga(findTrack);
+        .updateTrackManga(findManga);
   }
 
   List<TrackStatus> getStatusList() {
@@ -59,5 +58,25 @@ class TrackState extends _$TrackState {
       }
     }
     return list;
+  }
+
+  Future<Track?> findManga() async {
+    Track? findManga;
+    if (track!.syncId == 1) {
+      findManga = await ref
+          .read(myAnimeListProvider(syncId: 1).notifier)
+          .findManga(track!);
+    }
+    return findManga;
+  }
+
+  Future<List<TrackSearch>?> search(String query) async {
+    List<TrackSearch>? tracks;
+    if (track!.syncId == 1) {
+      tracks = await ref
+          .read(myAnimeListProvider(syncId: track!.syncId!).notifier)
+          .search(query);
+    }
+    return tracks;
   }
 }

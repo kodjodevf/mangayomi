@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 class TrackListile extends ConsumerWidget {
   final VoidCallback onTap;
   final int id;
   final List<TrackPreference> entries;
+  final Widget? trailing;
   const TrackListile(
       {super.key,
       required this.onTap,
       required this.id,
-      required this.entries});
+      required this.entries,
+      this.trailing});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,17 +24,17 @@ class TrackListile extends ConsumerWidget {
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Image.asset(
-          _track(id).$1,
+          trackInfos(id).$1,
           height: 30,
         ),
       ),
-      trailing: isLogged
-          ? const Icon(
-              Icons.check,
-              size: 30,
-              color: Colors.green,
-            )
-          : null,
+      trailing: trailing ?? (isLogged
+              ? const Icon(
+                  Icons.check,
+                  size: 30,
+                  color: Colors.green,
+                )
+              : null),
       onTap: isLogged
           ? () {
               showDialog(
@@ -39,7 +42,7 @@ class TrackListile extends ConsumerWidget {
                   builder: (context) {
                     return AlertDialog(
                       title: Text(
-                        "Log out from ${_track(id).$2}",
+                        "Log out from ${trackInfos(id).$2}",
                       ),
                       actions: [
                         Row(
@@ -68,14 +71,8 @@ class TrackListile extends ConsumerWidget {
                   });
             }
           : onTap,
-      title: Text(_track(id).$2),
+      title: Text(trackInfos(id).$2),
     );
   }
 }
 
-(String, String) _track(int id) {
-  return switch (id) {
-    1 => ("assets/tracker_mal.webp", "MyAnimeList"),
-    _ => ("", ""),
-  };
-}

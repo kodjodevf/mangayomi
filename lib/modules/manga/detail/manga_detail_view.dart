@@ -18,15 +18,13 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/myanimelist.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -39,7 +37,6 @@ import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_wi
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
@@ -1314,7 +1311,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             Theme.of(context).scaffoldBackgroundColor,
                         elevation: 0),
                     onPressed: () {
-                      _trackingDialog(entries);
+                      _trackingDraggableMenu(entries);
                     },
                     child: StreamBuilder(
                         stream: isar.tracks
@@ -1536,8 +1533,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         TextEditingController(text: widget.manga!.name!);
     TextEditingController? description =
         TextEditingController(text: widget.manga!.description!);
-    // TextEditingController? tag;
-
     showDialog(
         context: context,
         builder: (context) {
@@ -1613,7 +1608,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         });
   }
 
-  _trackingDialog(List<TrackPreference>? entries) {
+  _trackingDraggableMenu(List<TrackPreference>? entries) {
     DraggableMenu.open(
         context,
         DraggableMenu(
@@ -1624,758 +1619,60 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(20),
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: ListView.separated(
-              padding: const EdgeInsets.all(0),
-              itemCount: entries!.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return StreamBuilder(
-                    stream: isar.tracks
-                        .filter()
-                        .idIsNotNull()
-                        .syncIdEqualTo(entries[index].syncId)
-                        .mangaIdEqualTo(widget.manga!.id!)
-                        .watch(fireImmediately: true),
-                    builder: (context, snapshot) {
-                      List<Track>? trackRes =
-                          snapshot.hasData ? snapshot.data : [];
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(0),
+                itemCount: entries!.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return StreamBuilder(
+                      stream: isar.tracks
+                          .filter()
+                          .idIsNotNull()
+                          .syncIdEqualTo(entries[index].syncId)
+                          .mangaIdEqualTo(widget.manga!.id!)
+                          .watch(fireImmediately: true),
+                      builder: (context, snapshot) {
+                        List<Track>? trackRes =
+                            snapshot.hasData ? snapshot.data : [];
 
-                      return trackRes!.isNotEmpty
-                          ? Container(
-                              decoration: BoxDecoration(border: Border.all()),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/tracker_mal.webp",
-                                        height: 30,
-                                      ),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              padding: const EdgeInsets.all(0),
-                                              
-                                              shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color:
-                                                          primaryColor(context),
-                                                      width: 0.2),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          0))),
-                                          onPressed: () async {
-                                            final trackSearch =
-                                                await trackersSearchraggableMenu(
-                                                        syncId: entries[index]
-                                                            .syncId!,
-                                                        query: trackRes
-                                                            .first.title!)
-                                                    as TrackSearch?;
-                                            if (trackSearch != null) {
-                                              await ref
-                                                  .read(trackStateProvider(
-                                                          track: null)
-                                                      .notifier)
-                                                  .setTrackSearch(
-                                                      trackSearch,
-                                                      widget.manga!.id!,
-                                                      entries[index].syncId!);
-                                            }
-                                          },
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8),
-                                                  child: Text(
-                                                    trackRes.first.title!,
-                                                    style: TextStyle(
-                                                        color: secondaryColor(
-                                                            context),fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              ),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    ref
-                                                        .read(tracksProvider(
-                                                                syncId: entries[
-                                                                        index]
-                                                                    .syncId!)
-                                                            .notifier)
-                                                        .deleteTrackManga(
-                                                            trackRes.first);
-                                                  },
-                                                  icon: const Icon(
-                                                      Icons.cancel_outlined))
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: primaryColor(
-                                                            context),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0))),
-                                            onPressed: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                        "Status",
-                                                      ),
-                                                      content: SizedBox(
-                                                          width: mediaWidth(
-                                                              context, 0.8),
-                                                          child:
-                                                              ListView.builder(
-                                                            shrinkWrap: true,
-                                                            itemCount: ref
-                                                                .read(trackStateProvider(
-                                                                        track: trackRes
-                                                                            .first)
-                                                                    .notifier)
-                                                                .getStatusList()
-                                                                .length,
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              final status = ref
-                                                                  .read(trackStateProvider(
-                                                                          track:
-                                                                              trackRes.first)
-                                                                      .notifier)
-                                                                  .getStatusList()[index];
-                                                              return RadioListTile(
-                                                                dense: true,
-                                                                contentPadding:
-                                                                    const EdgeInsets
-                                                                        .all(0),
-                                                                value: status,
-                                                                groupValue:
-                                                                    trackRes
-                                                                        .first
-                                                                        .status,
-                                                                onChanged:
-                                                                    (value) {
-                                                                  ref
-                                                                      .read(trackStateProvider(
-                                                                              track: trackRes.first..status = status)
-                                                                          .notifier)
-                                                                      .updateItem();
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                title: Text(
-                                                                    getTrackStatus(
-                                                                        status)),
-                                                              );
-                                                            },
-                                                          )),
-                                                      actions: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  "Cancel",
-                                                                  style: TextStyle(
-                                                                      color: primaryColor(
-                                                                          context)),
-                                                                )),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    );
-                                                  });
-                                            },
-                                            child: Text(getTrackStatus(
-                                                trackRes.first.status))),
-                                      ),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: primaryColor(
-                                                            context),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0))),
-                                            onPressed: () {
-                                              int currentIntValue = trackRes
-                                                  .first.lastChapterRead!;
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                        "Chapters",
-                                                      ),
-                                                      content: StatefulBuilder(
-                                                        builder: (context,
-                                                                setState) =>
-                                                            SizedBox(
-                                                          height: 200,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              NumberPicker(
-                                                                value:
-                                                                    currentIntValue,
-                                                                minValue: 0,
-                                                                maxValue: trackRes
-                                                                            .first
-                                                                            .totalChapter !=
-                                                                        0
-                                                                    ? trackRes
-                                                                        .first
-                                                                        .totalChapter!
-                                                                    : 10000,
-                                                                step: 1,
-                                                                haptics: true,
-                                                                onChanged: (value) =>
-                                                                    setState(() =>
-                                                                        currentIntValue =
-                                                                            value),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      actions: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  "Cancel",
-                                                                  style: TextStyle(
-                                                                      color: primaryColor(
-                                                                          context)),
-                                                                )),
-                                                            TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  ref
-                                                                      .read(trackStateProvider(
-                                                                              track: trackRes.first..lastChapterRead = currentIntValue)
-                                                                          .notifier)
-                                                                      .updateItem();
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  "OK",
-                                                                  style: TextStyle(
-                                                                      color: primaryColor(
-                                                                          context)),
-                                                                )),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    );
-                                                  });
-                                            },
-                                            child: Text(trackRes
-                                                        .first.totalChapter !=
-                                                    0
-                                                ? "${trackRes.first.lastChapterRead}/${trackRes.first.totalChapter}"
-                                                : "${trackRes.first.lastChapterRead == 0 ? "Not Started" : trackRes.first.lastChapterRead}")),
-                                      ),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: primaryColor(
-                                                            context),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0))),
-                                            onPressed: () {
-                                              int currentIntValue =
-                                                  trackRes.first.score!;
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                        "Score",
-                                                      ),
-                                                      content: StatefulBuilder(
-                                                        builder: (context,
-                                                                setState) =>
-                                                            SizedBox(
-                                                          height: 200,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            children: [
-                                                              NumberPicker(
-                                                                value:
-                                                                    currentIntValue,
-                                                                minValue: 0,
-                                                                maxValue: 10,
-                                                                step: 1,
-                                                                haptics: true,
-                                                                onChanged: (value) =>
-                                                                    setState(() =>
-                                                                        currentIntValue =
-                                                                            value),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      actions: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  "Cancel",
-                                                                  style: TextStyle(
-                                                                      color: primaryColor(
-                                                                          context)),
-                                                                )),
-                                                            TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  ref
-                                                                      .read(trackStateProvider(
-                                                                              track: trackRes.first..score = currentIntValue)
-                                                                          .notifier)
-                                                                      .updateItem();
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child: Text(
-                                                                  "OK",
-                                                                  style: TextStyle(
-                                                                      color: primaryColor(
-                                                                          context)),
-                                                                )),
-                                                          ],
-                                                        )
-                                                      ],
-                                                    );
-                                                  });
-                                            },
-                                            child: Text(
-                                                trackRes.first.score != 0
-                                                    ? trackRes.first.score
-                                                        .toString()
-                                                    : "Score")),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                side: BorderSide(
-                                                    color:
-                                                        primaryColor(context),
-                                                    width: 0.2),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0))),
-                                            onPressed: () async {
-                                              DateTime? newDate =
-                                                  await showDatePicker(
-                                                      helpText: 'Start date',
-                                                      locale: const Locale(
-                                                          "fr", "FR"),
-                                                      context: context,
-                                                      initialDate:
-                                                          DateTime.now(),
-                                                      firstDate: DateTime(1900),
-                                                      lastDate: DateTime(2100));
-                                              if (newDate == null) return;
-                                              ref
-                                                  .read(trackStateProvider(
-                                                          track: trackRes.first
-                                                            ..startedReadingDate =
-                                                                newDate
-                                                                    .millisecondsSinceEpoch)
-                                                      .notifier)
-                                                  .updateItem();
-                                            },
-                                            child: Text(trackRes.first
-                                                            .startedReadingDate !=
-                                                        null &&
-                                                    trackRes.first
-                                                            .startedReadingDate! >
-                                                        DateTime(1970)
-                                                            .millisecondsSinceEpoch
-                                                ? dateFormat(
-                                                    trackRes.first
-                                                        .startedReadingDate
-                                                        .toString(),
-                                                    ref: ref,
-                                                    useRelativeTimesTamps: false,
-                                                    context: context)
-                                                : "Start date")),
-                                      ),
-                                      Expanded(
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: primaryColor(
-                                                            context),
-                                                        width: 0.2),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            0))),
-                                            onPressed: () async {
-                                              DateTime? newDate =
-                                                  await showDatePicker(
-                                                      helpText: 'Finish date',
-                                                      locale: const Locale(
-                                                          "fr", "FR"),
-                                                      context: context,
-                                                      initialDate:
-                                                          DateTime.now(),
-                                                      firstDate: DateTime(1900),
-                                                      lastDate: DateTime(2100));
-                                              if (newDate == null) return;
-                                              ref
-                                                  .read(trackStateProvider(
-                                                          track: trackRes.first
-                                                            ..startedReadingDate =
-                                                                newDate
-                                                                    .millisecondsSinceEpoch)
-                                                      .notifier)
-                                                  .updateItem();
-                                            },
-                                            child: Text(trackRes.first
-                                                            .finishedReadingDate !=
-                                                        null &&
-                                                    trackRes.first.finishedReadingDate! >
-                                                        DateTime(1970)
-                                                            .millisecondsSinceEpoch
-                                                ? dateFormat(
-                                                    trackRes.first
-                                                        .finishedReadingDate
-                                                        .toString(),
-                                                    ref: ref,
-                                                    useRelativeTimesTamps: false,
-                                                    context: context)
-                                                : "Finish date")),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          : TrackListile(
-                              onTap: () async {
-                                final trackSearch =
-                                    await trackersSearchraggableMenu(
-                                            syncId: entries[index].syncId!,
-                                            query: widget.manga!.name!)
-                                        as TrackSearch?;
-                                if (trackSearch != null) {
-                                  await ref
-                                      .read(trackStateProvider(track: null)
-                                          .notifier)
-                                      .setTrackSearch(
-                                          trackSearch,
-                                          widget.manga!.id!,
-                                          entries[index].syncId!);
-                                }
-                              },
-                              id: entries[index].syncId!,
-                              entries: const []);
-                    });
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider();
-              },
+                        return trackRes!.isNotEmpty
+                            ? TrackerWidget(
+                                mangaId: widget.manga!.id!,
+                                trackPreference: entries[index],
+                                trackRes: trackRes[index],
+                              )
+                            : TrackListile(
+                                onTap: () async {
+                                  final trackSearch =
+                                      await trackersSearchraggableMenu(
+                                    context,
+                                    track: Track(
+                                        status: TrackStatus.planToRead,
+                                        syncId: entries[index].syncId!,
+                                        title: widget.manga!.name!),
+                                  ) as TrackSearch?;
+                                  if (trackSearch != null) {
+                                    await ref
+                                        .read(trackStateProvider(track: null)
+                                            .notifier)
+                                        .setTrackSearch(
+                                            trackSearch,
+                                            widget.manga!.id!,
+                                            entries[index].syncId!);
+                                  }
+                                },
+                                id: entries[index].syncId!,
+                                entries: const []);
+                      });
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Divider();
+                },
+              ),
             ),
           ),
         ));
-  }
-
-  trackersSearchraggableMenu(
-      {required int syncId, required String query}) async {
-    return await DraggableMenu.open(
-        context,
-        DraggableMenu(
-            blockMenuClosing: true,
-            ui: SoftModernDraggableMenu(
-                radius: 20,
-                barItem: Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20))),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.clear)),
-                      )
-                    ],
-                  ),
-                )),
-            maxHeight: mediaHeight(context, 0.9),
-            child: TrackerWidgetSearch(
-              query: query,
-              syncId: syncId,
-            )));
-  }
-}
-
-class TrackerWidgetSearch extends ConsumerStatefulWidget {
-  final int syncId;
-  final String query;
-  const TrackerWidgetSearch(
-      {required this.syncId, required this.query, super.key});
-
-  @override
-  ConsumerState<TrackerWidgetSearch> createState() =>
-      _TrackerWidgetSearchState();
-}
-
-class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
-  @override
-  initState() {
-    _init();
-    super.initState();
-  }
-
-  late List<TrackSearch> tracks = [];
-  _init() async {
-    await Future.delayed(const Duration(microseconds: 100));
-    tracks = await ref
-        .read(myAnimeListProvider(syncId: widget.syncId).notifier)
-        .search(widget.query);
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  late String query = widget.query;
-  late final _controller = TextEditingController(text: query);
-  bool _isLoading = true;
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: _isLoading
-          ? const ProgressCenter()
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SizedBox(
-                height: mediaHeight(context, 0.8),
-                child: Column(
-                  children: [
-                    Flexible(
-                      child: ListView.separated(
-                        padding: const EdgeInsets.only(top: 20),
-                        itemCount: tracks.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context, tracks[index]);
-                              },
-                              child: Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Material(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.transparent,
-                                        clipBehavior:
-                                            Clip.antiAliasWithSaveLayer,
-                                        child: Ink.image(
-                                          height: 120,
-                                          width: 80,
-                                          fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              tracks[index].coverUrl!),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: mediaWidth(context, 0.6),
-                                            child: Text(
-                                              tracks[index].title!,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                "Type : ",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12),
-                                              ),
-                                              Text(
-                                                tracks[index].publishingType!,
-                                                style: const TextStyle(
-                                                    fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                "Status : ",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12),
-                                              ),
-                                              Text(
-                                                tracks[index].publishingStatus!,
-                                                style: const TextStyle(
-                                                    fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                  Text(
-                                    tracks[index].summary!,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    maxLines: 3,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const Divider();
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        controller: _controller,
-                        keyboardType: TextInputType.text,
-                        onChanged: (d) {
-                          setState(() {
-                            query = d;
-                          });
-                        },
-                        onFieldSubmitted: (d) async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          tracks = await ref
-                              .read(myAnimeListProvider(syncId: widget.syncId)
-                                  .notifier)
-                              .search(d);
-                          if (mounted) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                            isDense: true,
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            suffixIcon: query.isEmpty
-                                ? null
-                                : IconButton(
-                                    onPressed: () {
-                                      _controller.clear();
-                                    },
-                                    icon: const Icon(Icons.clear)),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: primaryColor(context)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: primaryColor(context)),
-                            ),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: primaryColor(context)))),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-    );
   }
 }

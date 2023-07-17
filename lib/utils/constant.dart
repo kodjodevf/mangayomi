@@ -40,3 +40,9 @@ String getTrackStatus(TrackStatus status) {
   };
 }
 
+(String, String) trackInfos(int id) {
+  return switch (id) {
+    1 => ("assets/tracker_mal.webp", "MyAnimeList"),
+    _ => ("", ""),
+  };
+}
