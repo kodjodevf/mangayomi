@@ -29,14 +29,15 @@ IconData getMangaStatusIcon(Status status) {
   };
 }
 
-String getTrackStatus(TrackStatus status) {
+String getTrackStatus(TrackStatus status, BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
   return switch (status) {
-    TrackStatus.reading => "Reading",
-    TrackStatus.completed => "Completed",
-    TrackStatus.onHold => "On Hold",
-    TrackStatus.dropped => "Dropped",
-    TrackStatus.planToRead => "Plan To Read",
-    TrackStatus.rereading => "Rereading",
+    TrackStatus.reading => l10n.reading,
+    TrackStatus.completed => l10n.completed,
+    TrackStatus.onHold => l10n.on_hold,
+    TrackStatus.dropped => l10n.dropped,
+    TrackStatus.planToRead => l10n.plan_to_read,
+    TrackStatus.rereading => l10n.re_reading,
   };
 }
 

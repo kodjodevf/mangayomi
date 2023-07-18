@@ -8,19 +8,20 @@ class TrackListile extends ConsumerWidget {
   final VoidCallback onTap;
   final int id;
   final List<TrackPreference> entries;
-  final Widget? trailing;
+  final String? text;
   const TrackListile(
       {super.key,
       required this.onTap,
       required this.id,
       required this.entries,
-      this.trailing});
+      this.text});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isLogged =
         entries.where((element) => element.syncId == id).isNotEmpty;
     return ListTile(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Container(
@@ -32,14 +33,13 @@ class TrackListile extends ConsumerWidget {
           ),
         ),
       ),
-      trailing: trailing ??
-          (isLogged
-              ? const Icon(
-                  Icons.check,
-                  size: 30,
-                  color: Colors.green,
-                )
-              : null),
+      trailing: (isLogged
+          ? const Icon(
+              Icons.check,
+              size: 30,
+              color: Colors.green,
+            )
+          : null),
       onTap: isLogged
           ? () {
               showDialog(
@@ -76,7 +76,10 @@ class TrackListile extends ConsumerWidget {
                   });
             }
           : onTap,
-      title: Text(trackInfos(id).$2),
+      title: Text(
+        text ?? trackInfos(id).$2,
+        style: TextStyle(fontSize: text != null ? 13 : null),
+      ),
     );
   }
 }

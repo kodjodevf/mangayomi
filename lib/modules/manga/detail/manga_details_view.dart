@@ -139,14 +139,14 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     children: [
                       const Icon(
                         Icons.favorite,
-                        size: 22,
+                        size: 20,
                       ),
                       const SizedBox(
                         height: 4,
                       ),
                       Text(
                         l10n.in_library,
-                        style: const TextStyle(fontSize: 13),
+                        style: const TextStyle(fontSize: 11),
                         textAlign: TextAlign.center,
                       )
                     ],

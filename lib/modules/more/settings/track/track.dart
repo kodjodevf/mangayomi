@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 
@@ -14,7 +15,7 @@ class TrackScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tracking"),
+        title:  Text(l10nLocalizations(context)!.tracking),
       ),
       body: StreamBuilder(
           stream: isar.trackPreferences

@@ -6,10 +6,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/utils.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class TrackerWidget extends ConsumerStatefulWidget {
@@ -38,17 +40,22 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
     final findManga = await ref
         .read(trackStateProvider(track: widget.trackRes).notifier)
         .findManga();
-
-    ref
-        .read(tracksProvider(syncId: widget.trackPreference.syncId!).notifier)
-        .updateTrackManga(findManga!);
+    if (mounted) {
+      ref
+          .read(tracksProvider(syncId: widget.trackPreference.syncId!).notifier)
+          .updateTrackManga(findManga!);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
+    final l10nLocale = ref.watch(l10nLocaleStateProvider);
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: isLight(context)
+              ? Theme.of(context).scaffoldBackgroundColor
+              : Colors.black,
           borderRadius: BorderRadius.circular(20)),
       child: Column(
         children: [
@@ -92,7 +99,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                           child: Text(
                             widget.trackRes.title!,
                             style: TextStyle(
-                                color: secondaryColor(context),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .color,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -121,8 +131,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: const Text(
-                            "Status",
+                          title: Text(
+                            l10n!.status,
                           ),
                           content: SizedBox(
                               width: mediaWidth(context, 0.8),
@@ -154,7 +164,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                           .updateManga();
                                       Navigator.pop(context);
                                     },
-                                    title: Text(getTrackStatus(status)),
+                                    title:
+                                        Text(getTrackStatus(status, context)),
                                   );
                                 },
                               )),
@@ -167,7 +178,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                       Navigator.pop(context);
                                     },
                                     child: Text(
-                                      "Cancel",
+                                      l10n.cancel,
                                       style: TextStyle(
                                           color: primaryColor(context)),
                                     )),
@@ -176,7 +187,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                           ],
                         );
                       });
-                }, text: getTrackStatus(widget.trackRes.status)),
+                }, text: getTrackStatus(widget.trackRes.status, context)),
               ),
               Expanded(
                 child: _elevatedButton(context, onPressed: () {
@@ -185,8 +196,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: const Text(
-                            "Chapters",
+                          title: Text(
+                            l10n!.chapters,
                           ),
                           content: StatefulBuilder(
                             builder: (context, setState) => SizedBox(
@@ -218,7 +229,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                       Navigator.pop(context);
                                     },
                                     child: Text(
-                                      "Cancel",
+                                      l10n.cancel,
                                       style: TextStyle(
                                           color: primaryColor(context)),
                                     )),
@@ -234,7 +245,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                       Navigator.pop(context);
                                     },
                                     child: Text(
-                                      "OK",
+                                      l10n.ok,
                                       style: TextStyle(
                                           color: primaryColor(context)),
                                     )),
@@ -246,7 +257,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                 },
                     text: widget.trackRes.totalChapter != 0
                         ? "${widget.trackRes.lastChapterRead}/${widget.trackRes.totalChapter}"
-                        : "${widget.trackRes.lastChapterRead == 0 ? "Not Started" : widget.trackRes.lastChapterRead}"),
+                        : "${widget.trackRes.lastChapterRead == 0 ? l10n!.not_started : widget.trackRes.lastChapterRead}"),
               ),
               Expanded(
                 child: _elevatedButton(context, onPressed: () {
@@ -255,8 +266,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: const Text(
-                            "Score",
+                          title: Text(
+                            l10n!.score,
                           ),
                           content: StatefulBuilder(
                             builder: (context, setState) => SizedBox(
@@ -301,7 +312,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                       Navigator.pop(context);
                                     },
                                     child: Text(
-                                      "Cancel",
+                                      l10n.cancel,
                                       style: TextStyle(
                                           color: primaryColor(context)),
                                     )),
@@ -316,7 +327,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                       Navigator.pop(context);
                                     },
                                     child: Text(
-                                      "OK",
+                                      l10n.ok,
                                       style: TextStyle(
                                           color: primaryColor(context)),
                                     )),
@@ -331,7 +342,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                             .read(trackStateProvider(track: widget.trackRes)
                                 .notifier)
                             .displayScore(widget.trackRes.score!)
-                        : "Score"),
+                        : l10n!.score),
               )
             ],
           ),
@@ -342,8 +353,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(20)), onPressed: () async {
                   DateTime? newDate = await showDatePicker(
-                      helpText: 'Start date',
-                      locale: const Locale("fr", "FR"),
+                      helpText: l10n!.start_date,
+                      locale: l10nLocale,
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(1900),
@@ -365,15 +376,15 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                             ref: ref,
                             useRelativeTimesTamps: false,
                             context: context)
-                        : "Start date"),
+                        : l10n!.start_date),
               ),
               Expanded(
                 child: _elevatedButton(context,
                     borderRadius: const BorderRadius.only(
                         bottomRight: Radius.circular(20)), onPressed: () async {
                   DateTime? newDate = await showDatePicker(
-                      helpText: 'Finish date',
-                      locale: const Locale("fr", "FR"),
+                      helpText: l10n!.finish_date,
+                      locale: l10nLocale,
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(1900),
@@ -395,7 +406,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                             ref: ref,
                             useRelativeTimesTamps: false,
                             context: context)
-                        : "Finish date"),
+                        : l10n!.finish_date),
               )
             ],
           ),
@@ -413,17 +424,24 @@ Widget _elevatedButton(BuildContext context,
   return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: isLight(context)
+              ? Theme.of(context).scaffoldBackgroundColor
+              : Colors.black,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-              side: BorderSide(width: 0.05, color: secondaryColor(context)),
+              side: BorderSide(
+                  width: 0, color: secondaryColor(context).withOpacity(0.1)),
               borderRadius: borderRadius ?? BorderRadius.circular(0))),
       onPressed: onPressed,
       child: child ??
           Text(
             text,
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color),
+            style: TextStyle(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .color!
+                    .withOpacity(0.9)),
           ));
 }

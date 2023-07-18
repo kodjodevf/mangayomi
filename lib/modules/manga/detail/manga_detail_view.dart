@@ -13,6 +13,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -1290,102 +1291,108 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          widget.action!,
-          StreamBuilder(
-              stream: isar.trackPreferences
-                  .filter()
-                  .syncIdIsNotNull()
-                  .watch(fireImmediately: true),
-              builder: (context, snapshot) {
-                List<TrackPreference>? entries =
-                    snapshot.hasData ? snapshot.data! : [];
-                if (entries.isEmpty) {
-                  return Container();
-                }
-                return SizedBox(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).scaffoldBackgroundColor,
-                        elevation: 0),
-                    onPressed: () {
-                      _trackingDraggableMenu(entries);
-                    },
-                    child: StreamBuilder(
-                        stream: isar.tracks
-                            .filter()
-                            .idIsNotNull()
-                            .mangaIdEqualTo(widget.manga!.id!)
-                            .watch(fireImmediately: true),
-                        builder: (context, snapshot) {
-                          List<Track>? trackRes =
-                              snapshot.hasData ? snapshot.data : [];
-                          bool isNotEmpty = trackRes!.isNotEmpty;
-                          Color color = isNotEmpty
-                              ? primaryColor(context)
-                              : secondaryColor(context);
-                          return Column(
-                            children: [
-                              Icon(
-                                isNotEmpty
-                                    ? Icons.done
-                                    : Icons.screen_rotation_alt_rounded,
-                                size: 22,
-                                color: color,
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                isNotEmpty
-                                    ? '${trackRes.length} traker'
-                                    : 'Tracking',
-                                style: TextStyle(fontSize: 13, color: color),
-                              ),
-                            ],
-                          );
-                        }),
-                  ),
-                );
-              }),
-          SizedBox(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0),
-              onPressed: () {
-                final manga = widget.manga!;
-                final source =
-                    getSource(widget.manga!.lang!, widget.manga!.source!);
-                String url = source.apiUrl!.isEmpty
-                    ? widget.manga!.link!
-                    : "${source.baseUrl}${widget.manga!.link!}";
+          Expanded(child: widget.action!),
+          Expanded(
+            child: StreamBuilder(
+                stream: isar.trackPreferences
+                    .filter()
+                    .syncIdIsNotNull()
+                    .watch(fireImmediately: true),
+                builder: (context, snapshot) {
+                  List<TrackPreference>? entries =
+                      snapshot.hasData ? snapshot.data! : [];
+                  if (entries.isEmpty) {
+                    return Container();
+                  }
+                  return SizedBox(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          elevation: 0),
+                      onPressed: () {
+                        _trackingDraggableMenu(entries);
+                      },
+                      child: StreamBuilder(
+                          stream: isar.tracks
+                              .filter()
+                              .idIsNotNull()
+                              .mangaIdEqualTo(widget.manga!.id!)
+                              .watch(fireImmediately: true),
+                          builder: (context, snapshot) {
+                            final l10n = l10nLocalizations(context)!;
+                            List<Track>? trackRes =
+                                snapshot.hasData ? snapshot.data : [];
+                            bool isNotEmpty = trackRes!.isNotEmpty;
+                            Color color = isNotEmpty
+                                ? primaryColor(context)
+                                : secondaryColor(context);
+                            return Column(
+                              children: [
+                                Icon(
+                                  isNotEmpty
+                                      ? Icons.done
+                                      : Icons.screen_rotation_alt_rounded,
+                                  size: 22,
+                                  color: color,
+                                ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  isNotEmpty
+                                      ? trackRes.length == 1
+                                          ? l10n.one_tracker
+                                          : l10n.n_tracker(trackRes.length)
+                                      : l10n.tracking,
+                                  style: TextStyle(fontSize: 13, color: color),textAlign: TextAlign.center,
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  );
+                }),
+          ),
+          Expanded(
+            child: SizedBox(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    elevation: 0),
+                onPressed: () {
+                  final manga = widget.manga!;
+                  final source =
+                      getSource(widget.manga!.lang!, widget.manga!.source!);
+                  String url = source.apiUrl!.isEmpty
+                      ? widget.manga!.link!
+                      : "${source.baseUrl}${widget.manga!.link!}";
 
-                Map<String, String> data = {
-                  'url': url,
-                  'sourceId': source.id.toString(),
-                  'title': manga.name!
-                };
-                context.push("/mangawebview", extra: data);
-              },
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.public,
-                    size: 22,
-                    color: secondaryColor(context),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    'WebView',
-                    style:
-                        TextStyle(fontSize: 13, color: secondaryColor(context)),
-                  )
-                ],
+                  Map<String, String> data = {
+                    'url': url,
+                    'sourceId': source.id.toString(),
+                    'title': manga.name!
+                  };
+                  context.push("/mangawebview", extra: data);
+                },
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.public,
+                      size: 22,
+                      color: secondaryColor(context),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      'WebView',
+                      style: TextStyle(
+                          fontSize: 13, color: secondaryColor(context)),
+                    )
+                  ],
+                ),
               ),
             ),
           )
@@ -1616,7 +1623,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           maxHeight: mediaHeight(context, 0.9),
           minHeight: 80,
           child: Material(
-            color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            color: isLight(context)
+                ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
+                : !isar.settings.getSync(227)!.pureBlackDarkMode!
+                    ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
+                    : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Padding(
@@ -1644,6 +1655,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 trackRes: trackRes.first,
                               )
                             : TrackListile(
+                                text: l10nLocalizations(context)!.add_tracker,
                                 onTap: () async {
                                   final trackSearch =
                                       await trackersSearchraggableMenu(
