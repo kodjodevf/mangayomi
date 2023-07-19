@@ -340,13 +340,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ? Colors.transparent
                                 : Theme.of(context).scaffoldBackgroundColor,
                             actions: [
-                              if (!isLocalArchive)
-                                IconButton(
-                                    splashRadius: 20,
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.download_outlined,
-                                    )),
+                              // if (!isLocalArchive)
+                              //   IconButton(
+                              //       splashRadius: 20,
+                              //       onPressed: () {},
+                              //       icon: const Icon(
+                              //         Icons.download_outlined,
+                              //       )),
                               IconButton(
                                   splashRadius: 20,
                                   onPressed: () {
@@ -1334,7 +1334,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   isNotEmpty
                                       ? Icons.done
                                       : Icons.screen_rotation_alt_rounded,
-                                  size: 22,
+                                  size: 20,
                                   color: color,
                                 ),
                                 const SizedBox(
@@ -1346,7 +1346,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           ? l10n.one_tracker
                                           : l10n.n_tracker(trackRes.length)
                                       : l10n.tracking,
-                                  style: TextStyle(fontSize: 13, color: color),textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 11, color: color),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             );
@@ -1380,7 +1381,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   children: [
                     Icon(
                       Icons.public,
-                      size: 22,
+                      size: 20,
                       color: secondaryColor(context),
                     ),
                     const SizedBox(
@@ -1389,7 +1390,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     Text(
                       'WebView',
                       style: TextStyle(
-                          fontSize: 13, color: secondaryColor(context)),
+                          fontSize: 11, color: secondaryColor(context)),
                     )
                   ],
                 ),
@@ -1536,6 +1537,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   _editLocaleArchiveInfos() {
+    final l10n = l10nLocalizations(context)!;
     TextEditingController? name =
         TextEditingController(text: widget.manga!.name!);
     TextEditingController? description =
@@ -1544,8 +1546,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text(
-              "Edit",
+            title: Text(
+              l10n.edit,
             ),
             content: SizedBox(
               height: 200,
@@ -1557,9 +1559,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text("Name"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Text(l10n.name),
                         ),
                         TextFormField(
                           controller: name,
@@ -1572,9 +1574,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Text("Description"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Text(l10n.description),
                         ),
                         TextFormField(
                           controller: description,
@@ -1593,7 +1595,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text("Cancel")),
+                      child: Text(l10n.cancel)),
                   const SizedBox(
                     width: 15,
                   ),
@@ -1607,7 +1609,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text("Edit")),
+                      child: Text(l10n.edit)),
                 ],
               )
             ],
@@ -1635,6 +1637,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               child: ListView.separated(
                 padding: const EdgeInsets.all(0),
                 itemCount: entries!.length,
+                primary: false,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return StreamBuilder(

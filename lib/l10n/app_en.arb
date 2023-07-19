@@ -180,5 +180,6 @@
   "add_tracker": "Add tracking",
   "one_tracker":"1 tracker",
   "n_tracker":"{n} trackers",
-  "tracking": "Tracking"
+  "tracking": "Tracking",
+  "description": "Description"
 }

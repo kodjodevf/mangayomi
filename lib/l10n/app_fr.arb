@@ -136,8 +136,8 @@
   "share":"Partager",
   "n_chapters":"{number} chapitres",
   "no_description":"Aucune description",
-  "resume":"Peprendre",
-  "read":"Coomencer",
+  "resume":"Reprendre",
+  "read":"Commencer",
   "popular":"Populaire",
   "refresh":"Actualiser",
   "open_in_browser":"Ouvrir dans le navigateur",
@@ -180,5 +180,6 @@
   "add_tracker": "Ajouter le suivi",
   "one_tracker":"Suivi par 1 service",
   "n_tracker":"Suivi par {n} services",
-  "tracking": "Suivi"
+  "tracking": "Suivi",
+  "description": "Description"
 }

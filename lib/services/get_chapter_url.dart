@@ -10,7 +10,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/archive_reader/providers/archive_reader_providers.dart';
-import 'package:mangayomi/modules/manga/reader/manga_reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -51,7 +51,7 @@ Future<GetChapterUrlModel> getChapterUrl(
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
-  
+
   List<Uint8List?> archiveImages = [];
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
   if (!chapter.manga.value!.isLocalArchive!) {
@@ -145,14 +145,13 @@ Future<GetChapterUrlModel> getChapterUrl(
           isLocaleList[i],
           archiveImages[i],
           i,
-          false,
-          false,
           GetChapterUrlModel(
               path: path,
               pageUrls: pageUrls,
               isLocaleList: isLocaleList,
               archiveImages: archiveImages,
-              uChapDataPreload: uChapDataPreloadp)));
+              uChapDataPreload: uChapDataPreloadp),
+          i));
     }
   }
 

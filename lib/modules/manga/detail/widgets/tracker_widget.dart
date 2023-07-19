@@ -103,8 +103,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     .textTheme
                                     .bodyMedium!
                                     .color,
+                                overflow: TextOverflow.ellipsis,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
+                            maxLines: 2,
                           ),
                         ),
                       ),

@@ -15,7 +15,7 @@ class ReadMoreWidget extends StatefulWidget {
 
 class ReadMoreWidgetState extends State<ReadMoreWidget>
     with TickerProviderStateMixin {
-  late bool expanded = widget.text.trim().length < 232;
+  late bool expanded = true;
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;

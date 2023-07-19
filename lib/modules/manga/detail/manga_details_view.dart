@@ -56,6 +56,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             .where(
                                 (element) => element.mangaId == widget.manga.id)
                             .toList();
+                        final isFr =
+                            ref.watch(l10nLocaleStateProvider).languageCode ==
+                                "fr";
                         if (entries.isNotEmpty && !incognitoMode) {
                           return CustomFloatingActionBtn(
                             isExtended: !isExtended,
@@ -78,8 +81,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 context: context,
                                 chapter: widget.manga.chapters.last);
                           },
-                          textWidth: 40,
-                          width: 90,
+                          textWidth: isFr ? 80 : 40,
+                          width: isFr ? 130 : 90,
                         );
                       },
                       error: (Object error, StackTrace stackTrace) {
@@ -154,42 +157,42 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 ),
               )
             : ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0),
-              onPressed: () {
-                final checkCategoryList =
-                    isar.categorys.filter().idIsNotNull().isNotEmptySync();
-                if (checkCategoryList) {
-                  _openCategory(widget.manga);
-                } else {
-                  final model = widget.manga;
-                  isar.writeTxnSync(() {
-                    model.favorite = true;
-                    model.dateAdded = DateTime.now().millisecondsSinceEpoch;
-                    isar.mangas.putSync(model);
-                  });
-                }
-              },
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.favorite_border_rounded,
-                    size: 22,
-                    color: secondaryColor(context),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    l10n.add_to_library,
-                    style: TextStyle(
-                        color: secondaryColor(context), fontSize: 13),
-                  )
-                ],
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    elevation: 0),
+                onPressed: () {
+                  final checkCategoryList =
+                      isar.categorys.filter().idIsNotNull().isNotEmptySync();
+                  if (checkCategoryList) {
+                    _openCategory(widget.manga);
+                  } else {
+                    final model = widget.manga;
+                    isar.writeTxnSync(() {
+                      model.favorite = true;
+                      model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                      isar.mangas.putSync(model);
+                    });
+                  }
+                },
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.favorite_border_rounded,
+                      size: 20,
+                      color: secondaryColor(context),
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      l10n.add_to_library,
+                      style: TextStyle(
+                          color: secondaryColor(context), fontSize: 11),
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                ),
               ),
-            ),
         manga: widget.manga,
         isExtended: (value) {
           ref.read(isExtendedStateProvider.notifier).update(value);

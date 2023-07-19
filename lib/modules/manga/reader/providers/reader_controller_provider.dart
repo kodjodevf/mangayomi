@@ -115,17 +115,6 @@ class ReaderController {
     }
   }
 
-  void setChapterPageLastRead(int pageIndex) {
-    if (!incognitoMode) {
-      final chap = chapter;
-      isar.writeTxnSync(() {
-        chap.isRead = (pageIndex + 1) == getPageLength([]);
-        chap.lastPageRead = (pageIndex + 1).toString();
-        isar.chapters.putSync(chap);
-      });
-    }
-  }
-
   void setChapterBookmarked() {
     if (!incognitoMode) {
       final isBookmarked = getChapterBookmarked();
@@ -224,8 +213,14 @@ class ReaderController {
       chapterPageIndexs.add(ChapterPageIndex()
         ..chapterId = chapter.id
         ..index = newIndex);
-      isar.writeTxnSync(() => isar.settings
-          .putSync(getIsarSetting()..chapterPageIndexList = chapterPageIndexs));
+      final chap = chapter;
+      isar.writeTxnSync(() {
+        isar.settings.putSync(
+            getIsarSetting()..chapterPageIndexList = chapterPageIndexs);
+        chap.isRead = (newIndex + 1) == getPageLength([]);
+        chap.lastPageRead = (newIndex + 1).toString();
+        isar.chapters.putSync(chap);
+      });
     }
   }
 

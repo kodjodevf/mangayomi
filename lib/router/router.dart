@@ -17,7 +17,7 @@ import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/modules/manga/home/manga_search_screen.dart';
-import 'package:mangayomi/modules/manga/reader/manga_reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/about_screen.dart';
 import 'package:mangayomi/modules/more/download_queue/download_queue_screen.dart';
 import 'package:mangayomi/modules/more/more_screen.dart';
