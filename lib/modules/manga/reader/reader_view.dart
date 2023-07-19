@@ -1169,7 +1169,7 @@ class _MangaChapterPageGalleryState
                             );
                       },
                       child: ListView.separated(
-                        cacheExtent: 199 * mediaHeight(context, 1),
+                        cacheExtent: 15 * mediaHeight(context, 1),
                         itemCount: _uChapDataPreload.length,
                         controller: _scrollController,
                         itemBuilder: (context, index) {
