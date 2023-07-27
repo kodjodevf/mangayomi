@@ -161,7 +161,6 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                               isManga: widget.isManga)
                                           .notifier)
                                       .getStatusList()[index];
-                                  print(status);
                                   return RadioListTile(
                                     dense: true,
                                     contentPadding: const EdgeInsets.all(0),

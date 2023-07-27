@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
-import 'package:image/image.dart';
+// import 'package:image/image.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auto_crop_image_provider.g.dart';
@@ -85,7 +85,7 @@ class CropBorderClass {
 }
 
 void _autocropImageIsolate(CropBorderClass cropData) async {
-  Image? croppedImage;
+  // Image? croppedImage;
   // // Image? image = decodeImage(cropData.image!);
   // // final old = image;
   // // image = copyCrop(image!, 0, 0, image.width, image.height);

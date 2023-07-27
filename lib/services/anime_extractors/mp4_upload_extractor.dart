@@ -1,7 +1,7 @@
 import 'package:flutter_js/flutter_js.dart';
 import 'package:http/http.dart' as http;
-import 'package:mangayomi/services/anime_servers/gogo_cdn_extractor.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class Mp4uploadExtractor {

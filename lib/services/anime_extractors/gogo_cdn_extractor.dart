@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/video.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:html/parser.dart' as parser;
+import 'package:mangayomi/utils/extensions.dart';
 
 class GogoCdnExtractor {
   final http.Client client = http.Client();
@@ -148,19 +149,3 @@ class GogoCdnExtractor {
   return (encrypter, iv);
 }
 
-extension StringExtensions on String {
-  String substringAfter(String pattern) {
-    final startIndex = indexOf(pattern);
-    if (startIndex == -1) return substring(0);
-
-    final start = startIndex + pattern.length;
-    return substring(start);
-  }
-
-  String substringBefore(String pattern) {
-    final endIndex = indexOf(pattern);
-    if (endIndex == -1) return substring(0);
-
-    return substring(0, endIndex);
-  }
-}
