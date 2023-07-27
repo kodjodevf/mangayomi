@@ -47,4 +47,14 @@ class Track {
       this.trackingUrl});
 }
 
-enum TrackStatus { reading, completed, onHold, dropped, planToRead, rereading }
+enum TrackStatus {
+  reading,
+  completed,
+  onHold,
+  dropped,
+  planToRead,
+  rereading,
+  watching,
+  planToWatch,
+  reWatching
+}

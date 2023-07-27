@@ -8,7 +8,8 @@ import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 
 class ExtensionsLang extends ConsumerWidget {
-  const ExtensionsLang({super.key});
+  final bool isManga;
+  const ExtensionsLang({required this.isManga, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,8 +21,12 @@ class ExtensionsLang extends ConsumerWidget {
         title: Text(l10n.extensions),
       ),
       body: StreamBuilder(
-          stream:
-              isar.sources.filter().idIsNotNull().watch(fireImmediately: true),
+          stream: isar.sources
+              .filter()
+              .idIsNotNull()
+              .and()
+              .isMangaEqualTo(isManga)
+              .watch(fireImmediately: true),
           builder: (context, snapshot) {
             List<Source>? entries = snapshot.hasData ? snapshot.data : [];
             return ListView.builder(
@@ -33,15 +38,16 @@ class ExtensionsLang extends ConsumerWidget {
                   onChanged: (val) {
                     isar.writeTxnSync(() {
                       for (var source in entries) {
-                        if (source.lang!.toLowerCase() == lang) {
-                          isar.sources.putSync(source..isActive = val == true);
+                        if (source.lang!.toLowerCase() == lang.toLowerCase()) {
+                          isar.sources.putSync(source..isActive = val);
                         }
                       }
                     });
                   },
                   value: entries!
-                      .where((element) => element.lang!.toLowerCase() == lang)
-                      .where((element) => element.isActive!)
+                      .where((element) =>
+                          element.lang!.toLowerCase() == lang.toLowerCase() &&
+                          element.isActive!)
                       .isNotEmpty,
                 );
               },

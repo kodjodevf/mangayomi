@@ -6,7 +6,7 @@ part of 'update_manga_detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$updateMangaDetailHash() => r'7c8e4cae20be71b2cab42f7d784888fb4037aa00';
+String _$updateMangaDetailHash() => r'143fc36898ba2d83ee6d42d71b01077ce33dcb19';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -118,4 +118,5 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

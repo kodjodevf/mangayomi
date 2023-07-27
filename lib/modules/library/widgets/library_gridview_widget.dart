@@ -45,55 +45,48 @@ class LibraryGridViewWidget extends StatelessWidget {
       childAspectRatio: isComfortableGrid ? 0.642 : 0.69,
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
+        final entry = entriesManga[index];
         return Consumer(builder: (context, ref, child) {
-          bool isLocalArchive = entriesManga[index].isLocalArchive ?? false;
+          bool isLocalArchive = entry.isLocalArchive ?? false;
           final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
           return Padding(
             padding: const EdgeInsets.all(2),
             child: CoverViewWidget(
-              isLongPressed: mangaIdsList.contains(entriesManga[index].id),
+              isLongPressed: mangaIdsList.contains(entry.id),
               bottomTextWidget: BottomTextWidget(
                 maxLines: 1,
-                text: entriesManga[index].name!,
+                text: entry.name!,
                 isComfortableGrid: isComfortableGrid,
               ),
               isComfortableGrid: isComfortableGrid,
-              image: entriesManga[index].customCoverImage != null
-                  ? MemoryImage(
-                          entriesManga[index].customCoverImage as Uint8List)
+              image: entry.customCoverImage != null
+                  ? MemoryImage(entry.customCoverImage as Uint8List)
                       as ImageProvider
                   : CachedNetworkImageProvider(
-                      entriesManga[index].imageUrl!,
+                      entry.imageUrl!,
                       headers: ref.watch(headersProvider(
-                          source: entriesManga[index].source!,
-                          lang: entriesManga[index].lang!)),
+                          source: entry.source!, lang: entry.lang!)),
                     ),
               onTap: () {
                 if (isLongPressed) {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
                 } else {
                   pushToMangaReaderDetail(
-                      archiveId: isLocalArchive ? entriesManga[index].id : null,
+                      archiveId: isLocalArchive ? entry.id : null,
                       context: context,
-                      lang: entriesManga[index].lang!,
-                      mangaM: entriesManga[index]);
+                      lang: entry.lang!,
+                      mangaM: entry);
                 }
               },
               onLongPress: () {
                 if (!isLongPressed) {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
 
                   ref
                       .read(isLongPressedMangaStateProvider.notifier)
                       .update(!isLongPressed);
                 } else {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
                 }
               },
               children: [
@@ -136,19 +129,14 @@ class LibraryGridViewWidget extends StatelessWidget {
                                         List nbrDown = [];
                                         isar.txnSync(() {
                                           for (var i = 0;
-                                              i <
-                                                  entriesManga[index]
-                                                      .chapters
-                                                      .length;
+                                              i < entry.chapters.length;
                                               i++) {
                                             final entries = isar.downloads
                                                 .filter()
                                                 .idIsNotNull()
-                                                .chapterIdEqualTo(
-                                                    entriesManga[index]
-                                                        .chapters
-                                                        .toList()[i]
-                                                        .id)
+                                                .chapterIdEqualTo(entry.chapters
+                                                    .toList()[i]
+                                                    .id)
                                                 .findAllSync();
 
                                             if (entries.isNotEmpty &&
@@ -189,10 +177,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 3),
                                   child: Text(
-                                    entriesManga[index]
-                                        .chapters
-                                        .length
-                                        .toString(),
+                                    entry.chapters.length.toString(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -200,7 +185,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                             ),
                           ),
                         )),
-                    if (language && entriesManga[index].lang!.isNotEmpty)
+                    if (language && entry.lang!.isNotEmpty)
                       Positioned(
                           top: 0,
                           right: 0,
@@ -219,7 +204,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.only(left: 3, right: 3),
                                   child: Text(
-                                    entriesManga[index].lang!.toUpperCase(),
+                                    entry.lang!.toUpperCase(),
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -229,7 +214,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                   ],
                 ),
                 if (!isComfortableGrid && !isCoverOnlyGrid)
-                  BottomTextWidget(text: entriesManga[index].name!),
+                  BottomTextWidget(text: entry.name!),
                 if (continueReaderBtn)
                   Positioned(
                       bottom: 0,
@@ -238,16 +223,16 @@ class LibraryGridViewWidget extends StatelessWidget {
                           padding: const EdgeInsets.all(9),
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final history =
-                                  ref.watch(getAllHistoryStreamProvider);
+                              final history = ref.watch(
+                                  getAllHistoryStreamProvider(
+                                      isManga: entry.isManga!));
                               return history.when(
                                 data: (data) {
                                   final incognitoMode =
                                       ref.watch(incognitoModeStateProvider);
                                   final entries = data
                                       .where((element) =>
-                                          element.mangaId ==
-                                          entriesManga[index].id)
+                                          element.mangaId == entry.id)
                                       .toList();
                                   if (entries.isNotEmpty && !incognitoMode) {
                                     return GestureDetector(
@@ -278,9 +263,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                     onTap: () {
                                       pushMangaReaderView(
                                           context: context,
-                                          chapter: entriesManga[index]
-                                              .chapters
-                                              .last);
+                                          chapter: entry.chapters.last);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(

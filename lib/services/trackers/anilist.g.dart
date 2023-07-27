@@ -6,7 +6,7 @@ part of 'anilist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'd09ca797106b31f075d5ded66ae138639b6ca745';
+String _$anilistHash() => r'8a637a067e4c70f07fa18a97ed3dc364320569db';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,9 +31,11 @@ class _SystemHash {
 
 abstract class _$Anilist extends BuildlessAutoDisposeNotifier<dynamic> {
   late final int syncId;
+  late final bool? isManga;
 
   dynamic build({
     required int syncId,
+    bool? isManga,
   });
 }
 
@@ -49,9 +51,11 @@ class AnilistFamily extends Family<dynamic> {
   /// See also [Anilist].
   AnilistProvider call({
     required int syncId,
+    bool? isManga,
   }) {
     return AnilistProvider(
       syncId: syncId,
+      isManga: isManga,
     );
   }
 
@@ -61,6 +65,7 @@ class AnilistFamily extends Family<dynamic> {
   ) {
     return call(
       syncId: provider.syncId,
+      isManga: provider.isManga,
     );
   }
 
@@ -85,8 +90,11 @@ class AnilistProvider
   /// See also [Anilist].
   AnilistProvider({
     required this.syncId,
+    this.isManga,
   }) : super.internal(
-          () => Anilist()..syncId = syncId,
+          () => Anilist()
+            ..syncId = syncId
+            ..isManga = isManga,
           from: anilistProvider,
           name: r'anilistProvider',
           debugGetCreateSourceHash:
@@ -98,16 +106,20 @@ class AnilistProvider
         );
 
   final int syncId;
+  final bool? isManga;
 
   @override
   bool operator ==(Object other) {
-    return other is AnilistProvider && other.syncId == syncId;
+    return other is AnilistProvider &&
+        other.syncId == syncId &&
+        other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, syncId.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -118,7 +130,9 @@ class AnilistProvider
   ) {
     return notifier.build(
       syncId: syncId,
+      isManga: isManga,
     );
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

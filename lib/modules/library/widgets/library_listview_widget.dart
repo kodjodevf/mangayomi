@@ -38,7 +38,8 @@ class LibraryListViewWidget extends StatelessWidget {
     return ListViewWidget(
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
-        bool isLocalArchive = entriesManga[index].isLocalArchive ?? false;
+        final entry = entriesManga[index];
+        bool isLocalArchive = entry.isLocalArchive ?? false;
         return Consumer(builder: (context, ref, child) {
           final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
           return Material(
@@ -48,34 +49,28 @@ class LibraryListViewWidget extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (isLongPressed) {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
                 } else {
                   pushToMangaReaderDetail(
-                      archiveId: isLocalArchive ? entriesManga[index].id : null,
+                      archiveId: isLocalArchive ? entry.id : null,
                       context: context,
-                      lang: entriesManga[index].lang!,
-                      mangaM: entriesManga[index]);
+                      lang: entry.lang!,
+                      mangaM: entry);
                 }
               },
               onLongPress: () {
                 if (!isLongPressed) {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
 
                   ref
                       .read(isLongPressedMangaStateProvider.notifier)
                       .update(!isLongPressed);
                 } else {
-                  ref
-                      .read(mangasListStateProvider.notifier)
-                      .update(entriesManga[index]);
+                  ref.read(mangasListStateProvider.notifier).update(entry);
                 }
               },
               child: Container(
-                color: mangaIdsList.contains(entriesManga[index].id)
+                color: mangaIdsList.contains(entry.id)
                     ? primaryColor(context).withOpacity(0.4)
                     : Colors.transparent,
                 child: Padding(
@@ -98,24 +93,18 @@ class LibraryListViewWidget extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     width: 40,
                                     height: 45,
-                                    image: entriesManga[index]
-                                                .customCoverImage !=
-                                            null
-                                        ? MemoryImage(
-                                            entriesManga[index].customCoverImage
-                                                as Uint8List) as ImageProvider
+                                    image: entry.customCoverImage != null
+                                        ? MemoryImage(entry.customCoverImage
+                                            as Uint8List) as ImageProvider
                                         : CachedNetworkImageProvider(
-                                            entriesManga[index].imageUrl!,
+                                            entry.imageUrl!,
                                             headers: ref.watch(headersProvider(
-                                                source:
-                                                    entriesManga[index].source!,
-                                                lang:
-                                                    entriesManga[index].lang!)),
+                                                source: entry.source!,
+                                                lang: entry.lang!)),
                                           ),
                                     child: InkWell(
                                         child: Container(
-                                      color: mangaIdsList
-                                              .contains(entriesManga[index].id)
+                                      color: mangaIdsList.contains(entry.id)
                                           ? primaryColor(context)
                                               .withOpacity(0.4)
                                           : Colors.transparent,
@@ -127,7 +116,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10),
-                                  child: Text(entriesManga[index].name!),
+                                  child: Text(entry.name!),
                                 ),
                               )
                             ],
@@ -168,19 +157,15 @@ class LibraryListViewWidget extends StatelessWidget {
                                           List nbrDown = [];
                                           isar.txnSync(() {
                                             for (var i = 0;
-                                                i <
-                                                    entriesManga[index]
-                                                        .chapters
-                                                        .length;
+                                                i < entry.chapters.length;
                                                 i++) {
                                               final entries = isar.downloads
                                                   .filter()
                                                   .idIsNotNull()
-                                                  .chapterIdEqualTo(
-                                                      entriesManga[index]
-                                                          .chapters
-                                                          .toList()[i]
-                                                          .id)
+                                                  .chapterIdEqualTo(entry
+                                                      .chapters
+                                                      .toList()[i]
+                                                      .id)
                                                   .findAllSync();
 
                                               if (entries.isNotEmpty &&
@@ -220,16 +205,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(right: 3),
                                     child: Text(
-                                      entriesManga[index]
-                                          .chapters
-                                          .length
-                                          .toString(),
+                                      entry.chapters.length.toString(),
                                       style:
                                           const TextStyle(color: Colors.white),
                                     ),
                                   ),
-                                  if (language &&
-                                      entriesManga[index].lang!.isNotEmpty)
+                                  if (language && entry.lang!.isNotEmpty)
                                     Container(
                                       color: primaryColor(context),
                                       child: Container(
@@ -243,9 +224,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                           padding: const EdgeInsets.only(
                                               left: 3, right: 3),
                                           child: Text(
-                                            entriesManga[index]
-                                                .lang!
-                                                .toUpperCase(),
+                                            entry.lang!.toUpperCase(),
                                             style: const TextStyle(
                                                 color: Colors.white),
                                           ),
@@ -260,16 +239,16 @@ class LibraryListViewWidget extends StatelessWidget {
                         if (continueReaderBtn)
                           Consumer(
                             builder: (context, ref, child) {
-                              final history =
-                                  ref.watch(getAllHistoryStreamProvider);
+                              final history = ref.watch(
+                                  getAllHistoryStreamProvider(
+                                      isManga: entry.isManga!));
                               return history.when(
                                 data: (data) {
                                   final incognitoMode =
                                       ref.watch(incognitoModeStateProvider);
                                   final entries = data
                                       .where((element) =>
-                                          element.mangaId ==
-                                          entriesManga[index].id)
+                                          element.mangaId == entry.id)
                                       .toList();
                                   if (entries.isNotEmpty && !incognitoMode) {
                                     return GestureDetector(
@@ -300,9 +279,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                     onTap: () {
                                       pushMangaReaderView(
                                           context: context,
-                                          chapter: entriesManga[index]
-                                              .chapters
-                                              .last);
+                                          chapter: entry.chapters.last);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(

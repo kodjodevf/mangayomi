@@ -23,7 +23,7 @@ class MyAnimeList extends _$MyAnimeList {
   int listPaginationAmount = 250;
 
   @override
-  build({required int syncId}) {}
+  build({required int syncId, required bool? isManga}) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)
@@ -79,7 +79,8 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<List<TrackSearch>> search(String query) async {
     final accessToken = await _getAccesToken();
-    final url = Uri.parse('$baseApiUrl/manga').replace(queryParameters: {
+    final url = Uri.parse(isManga! ? '$baseApiUrl/manga' : '$baseApiUrl/anime')
+        .replace(queryParameters: {
       'q': query.trim(),
       'nsfw': 'true',
     });
@@ -91,7 +92,9 @@ class MyAnimeList extends _$MyAnimeList {
         (res['data'] as List).map((e) => e['node']["id"] as int).toList();
     List<TrackSearch> trackSearchResult = [];
     for (var mangaId in mangaIds) {
-      final trackSearch = await getMangaDetails(mangaId, accessToken);
+      final trackSearch = isManga!
+          ? await getMangaDetails(mangaId, accessToken)
+          : await getAnimeDetails(mangaId, accessToken);
       trackSearchResult.add(trackSearch);
     }
 
@@ -122,6 +125,28 @@ class MyAnimeList extends _$MyAnimeList {
         trackingUrl: "https://myanimelist.net/manga/${res["id"]}");
   }
 
+  Future<TrackSearch> getAnimeDetails(int id, String accessToken) async {
+    final url = Uri.parse('$baseApiUrl/anime/$id').replace(queryParameters: {
+      'fields':
+          'id,title,synopsis,num_episodes,main_picture,status,media_type,start_date',
+    });
+
+    final result =
+        await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
+    final res = jsonDecode(result.body) as Map<String, dynamic>;
+
+    return TrackSearch(
+        mediaId: res["id"],
+        summary: res["synopsis"] ?? "",
+        totalChapter: res["num_episodes"],
+        coverUrl: res["main_picture"]["large"] ?? "",
+        title: res["title"],
+        startDate: res["start_date"] ?? "",
+        publishingType: res["media_type"].toString().replaceAll("_", " "),
+        publishingStatus: res["status"].toString().replaceAll("_", " "),
+        trackingUrl: "https://myanimelist.net/anime/${res["id"]}");
+  }
+
   String _convertToIsoDate(int? epochTime) {
     String date = "";
     try {
@@ -143,7 +168,7 @@ class MyAnimeList extends _$MyAnimeList {
     return '$baseOAuthUrl/authorize?client_id=$clientId&code_challenge=$codeVerifier&response_type=code';
   }
 
-  TrackStatus _getMALTrackStatus(String status) {
+  TrackStatus _getMALTrackStatusManga(String status) {
     return switch (status) {
       "reading" => TrackStatus.reading,
       "completed" => TrackStatus.completed,
@@ -154,7 +179,17 @@ class MyAnimeList extends _$MyAnimeList {
     };
   }
 
-  List<TrackStatus> myAnimeListStatusList = [
+  TrackStatus _getMALTrackStatusAnime(String status) {
+    return switch (status) {
+      "watching" => TrackStatus.watching,
+      "completed" => TrackStatus.completed,
+      "on_hold" => TrackStatus.onHold,
+      "dropped" => TrackStatus.dropped,
+      _ => TrackStatus.planToWatch,
+    };
+  }
+
+  List<TrackStatus> myAnimeListStatusListManga = [
     TrackStatus.reading,
     TrackStatus.completed,
     TrackStatus.onHold,
@@ -162,15 +197,32 @@ class MyAnimeList extends _$MyAnimeList {
     TrackStatus.planToRead,
     TrackStatus.rereading
   ];
+  List<TrackStatus> myAnimeListStatusListAnime = [
+    TrackStatus.watching,
+    TrackStatus.completed,
+    TrackStatus.onHold,
+    TrackStatus.dropped,
+    TrackStatus.planToWatch
+  ];
 
-  String? toMyAnimeListStatus(TrackStatus status) {
+  String? toMyAnimeListStatusManga(TrackStatus status) {
     return switch (status) {
       TrackStatus.reading => "reading",
       TrackStatus.completed => "completed",
       TrackStatus.onHold => "on_hold",
       TrackStatus.dropped => "dropped",
       TrackStatus.planToRead => "plan_to_read",
-      TrackStatus.rereading => "reading",
+      _ => "reading",
+    };
+  }
+
+  String? toMyAnimeListStatusAnime(TrackStatus status) {
+    return switch (status) {
+      TrackStatus.watching => "watching",
+      TrackStatus.completed => "completed",
+      TrackStatus.onHold => "on_hold",
+      TrackStatus.dropped => "dropped",
+      _ => "plan_to_watch",
     };
   }
 
@@ -194,18 +246,25 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<Track> findManga(Track track) async {
     final accessToken = await _getAccesToken();
-    final uri = Uri.parse('$baseApiUrl/manga/${track.mediaId}')
+    final uri = Uri.parse(isManga!
+            ? '$baseApiUrl/manga/${track.mediaId}'
+            : '$baseApiUrl/anime/${track.mediaId}')
         .replace(queryParameters: {
-      'fields': 'num_chapters,my_list_status{start_date,finish_date}',
+      'fields': isManga!
+          ? 'num_chapters,my_list_status{start_date,finish_date}'
+          : 'num_episodes,my_list_status{start_date,finish_date}',
     });
     final response =
         await http.get(uri, headers: {'Authorization': 'Bearer $accessToken'});
     final mJson = jsonDecode(response.body);
-    track.totalChapter = mJson['num_chapters'] ?? 0;
+    track.totalChapter =
+        isManga! ? mJson['num_chapters'] ?? 0 : mJson['num_episodes'] ?? 0;
     if (mJson['my_list_status'] != null) {
-      track = _parseMangaItem(mJson["my_list_status"], track);
+      track = isManga!
+          ? _parseMangaItem(mJson["my_list_status"], track)
+          : _parseAnimeItem(mJson["my_list_status"], track);
     } else {
-      track = await updateManga(track);
+      track = isManga! ? await updateManga(track) : await updateAnime(track);
     }
     return track;
   }
@@ -214,8 +273,20 @@ class MyAnimeList extends _$MyAnimeList {
     bool isRereading = mJson["is_rereading"] ?? false;
     track.status = isRereading
         ? TrackStatus.rereading
-        : _getMALTrackStatus(mJson["status"]);
+        : _getMALTrackStatusManga(mJson["status"]);
     track.lastChapterRead = int.parse(mJson["num_chapters_read"].toString());
+    track.score = int.parse(mJson["score"].toString());
+    track.startedReadingDate = _parseDate(mJson["start_date"]);
+    track.finishedReadingDate = _parseDate(mJson["finish_date"]);
+    return track;
+  }
+
+  Track _parseAnimeItem(Map<String, dynamic> mJson, Track track) {
+    bool isReWatching = mJson["is_rewatching"] ?? false;
+    track.status = isReWatching
+        ? TrackStatus.reWatching
+        : _getMALTrackStatusAnime(mJson["status"]);
+    track.lastChapterRead = int.parse(mJson["num_episodes_watched"].toString());
     track.score = int.parse(mJson["score"].toString());
     track.startedReadingDate = _parseDate(mJson["start_date"]);
     track.finishedReadingDate = _parseDate(mJson["finish_date"]);
@@ -229,10 +300,33 @@ class MyAnimeList extends _$MyAnimeList {
     return date.millisecondsSinceEpoch;
   }
 
+  Future<Track> updateAnime(Track track) async {
+    final accessToken = await _getAccesToken();
+    final formBody = {
+      'status':
+          (toMyAnimeListStatusAnime(track.status) ?? 'watching').toString(),
+      'is_rewatching': (track.status == TrackStatus.reWatching).toString(),
+      'score': track.score.toString(),
+      'num_watched_episodes': track.lastChapterRead.toString(),
+      if (track.startedReadingDate != null)
+        'start_date': _convertToIsoDate(track.startedReadingDate),
+      if (track.finishedReadingDate != null)
+        'finish_date': _convertToIsoDate(track.finishedReadingDate)
+    };
+    final request = http.Request(
+        'PUT', Uri.parse('$baseApiUrl/anime/${track.mediaId}/my_list_status'));
+    request.bodyFields = formBody;
+    request.headers.addAll({'Authorization': 'Bearer $accessToken'});
+    final response = await http.Client().send(request);
+    final mJson = jsonDecode(await response.stream.bytesToString());
+    return _parseAnimeItem(mJson, track);
+  }
+
   Future<Track> updateManga(Track track) async {
     final accessToken = await _getAccesToken();
     final formBody = {
-      'status': (toMyAnimeListStatus(track.status) ?? 'reading').toString(),
+      'status':
+          (toMyAnimeListStatusManga(track.status) ?? 'reading').toString(),
       'is_rereading': (track.status == TrackStatus.rereading).toString(),
       'score': track.score.toString(),
       'num_chapters_read': track.lastChapterRead.toString(),

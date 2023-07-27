@@ -28,13 +28,13 @@ Future<List<MangaModel?>> getLatestUpdatesManga(
         dateFormat: source.dateFormat,
         dateFormatLocale: source.dateFormatLocale))
   ];
-  var result2 = await runtime.executeLib(
+  var res = await runtime.executeLib(
     'package:package:mangayomi/main.dart',
-    'getLatestUpdatesManga',
+    source.isManga! ? 'getLatestUpdatesManga' : 'getLatestUpdatesAnime',
   );
   try {
-    if (result2 is $MangaModel) {
-      final value = result2.$reified;
+    if (res is $MangaModel) {
+      final value = res.$reified;
       List<MangaModel> newManga = [];
       for (var i = 0; i < value.names!.length; i++) {
         MangaModel newMangaa = MangaModel(
@@ -57,3 +57,42 @@ Future<List<MangaModel?>> getLatestUpdatesManga(
 
   return latestUpdatesManga;
 }
+
+
+
+
+// import 'dart:convert';
+// import 'package:bridge_lib/bridge_lib.dart';
+
+// getPopularManga(MangaModel manga) async {
+//   final url = "https://animevostfr.tv/filter-advance/page/1";
+//   final data = {"url": url, "headers": null, "sourceId": manga.sourceId};
+//   final res = await MBridge.http(json.encode(data), 0);
+//   if (res.isEmpty) {
+//     return manga;
+//   }
+  
+//   return getPopularAnime(manga,res);
+// }
+// getLatestUpdatesManga(MangaModel manga) async {
+//   final url = "https://animevostfr.tv/filter-advance/page/1/?status=ongoing";
+//   final data = {"url": url, "headers": null, "sourceId": manga.sourceId};
+//   final res = await MBridge.http(json.encode(data), 0);
+//   if (res.isEmpty) {
+//     return manga;
+//   }
+  
+//   return getPopularAnime(manga,res);
+// }
+// MangaModel getPopularAnime(MangaModel manga,String res) async {
+//   manga.urls =
+//       MBridge.xpath(res, '//*[ @class="ml-item" ]/a/@href', '._')
+//           .split('._');
+//   manga.names =
+//       MBridge.xpath(res, '//*[ @class="ml-item"]/a/span/h2/text()', '._')
+//           .split('._');
+//   manga.images = MBridge.xpath(
+//           res, '//*[ @class="ml-item" ]/a/img/@data-original', '._')
+//       .split('._');
+//   return manga;
+// }

@@ -390,6 +390,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         return buildProgressIndicator();
                       }
                       return MangaHomeImageCard(
+                        isManga: widget.source.isManga ?? true,
                         manga: data[index]!,
                         source: widget.source,
                       );
@@ -409,11 +410,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
 class MangaHomeImageCard extends ConsumerStatefulWidget {
   final MangaModel manga;
+  final bool isManga;
   final Source source;
   const MangaHomeImageCard({
     super.key,
     required this.manga,
     required this.source,
+    required this.isManga,
   });
 
   @override
@@ -431,6 +434,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
         ..lang = widget.source.lang
         ..source = widget.source.name,
       lang: widget.source.lang!,
+      isManga: widget.isManga,
     );
   }
 

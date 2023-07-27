@@ -67,53 +67,58 @@ const SourceSchema = CollectionSchema(
       name: r'isFullData',
       type: IsarType.bool,
     ),
-    r'isNsfw': PropertySchema(
+    r'isManga': PropertySchema(
       id: 10,
+      name: r'isManga',
+      type: IsarType.bool,
+    ),
+    r'isNsfw': PropertySchema(
+      id: 11,
       name: r'isNsfw',
       type: IsarType.bool,
     ),
     r'isPinned': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'lang': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'name',
       type: IsarType.string,
     ),
     r'sourceCode': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -235,16 +240,17 @@ void _sourceSerialize(
   writer.writeBool(offsets[7], object.isActive);
   writer.writeBool(offsets[8], object.isAdded);
   writer.writeBool(offsets[9], object.isFullData);
-  writer.writeBool(offsets[10], object.isNsfw);
-  writer.writeBool(offsets[11], object.isPinned);
-  writer.writeString(offsets[12], object.lang);
-  writer.writeBool(offsets[13], object.lastUsed);
-  writer.writeString(offsets[14], object.name);
-  writer.writeString(offsets[15], object.sourceCode);
-  writer.writeString(offsets[16], object.sourceCodeUrl);
-  writer.writeString(offsets[17], object.typeSource);
-  writer.writeString(offsets[18], object.version);
-  writer.writeString(offsets[19], object.versionLast);
+  writer.writeBool(offsets[10], object.isManga);
+  writer.writeBool(offsets[11], object.isNsfw);
+  writer.writeBool(offsets[12], object.isPinned);
+  writer.writeString(offsets[13], object.lang);
+  writer.writeBool(offsets[14], object.lastUsed);
+  writer.writeString(offsets[15], object.name);
+  writer.writeString(offsets[16], object.sourceCode);
+  writer.writeString(offsets[17], object.sourceCodeUrl);
+  writer.writeString(offsets[18], object.typeSource);
+  writer.writeString(offsets[19], object.version);
+  writer.writeString(offsets[20], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -265,16 +271,17 @@ Source _sourceDeserialize(
     isActive: reader.readBoolOrNull(offsets[7]),
     isAdded: reader.readBoolOrNull(offsets[8]),
     isFullData: reader.readBoolOrNull(offsets[9]),
-    isNsfw: reader.readBoolOrNull(offsets[10]),
-    isPinned: reader.readBoolOrNull(offsets[11]),
-    lang: reader.readStringOrNull(offsets[12]),
-    lastUsed: reader.readBoolOrNull(offsets[13]),
-    name: reader.readStringOrNull(offsets[14]),
-    sourceCode: reader.readStringOrNull(offsets[15]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[16]),
-    typeSource: reader.readStringOrNull(offsets[17]),
-    version: reader.readStringOrNull(offsets[18]),
-    versionLast: reader.readStringOrNull(offsets[19]),
+    isManga: reader.readBoolOrNull(offsets[10]),
+    isNsfw: reader.readBoolOrNull(offsets[11]),
+    isPinned: reader.readBoolOrNull(offsets[12]),
+    lang: reader.readStringOrNull(offsets[13]),
+    lastUsed: reader.readBoolOrNull(offsets[14]),
+    name: reader.readStringOrNull(offsets[15]),
+    sourceCode: reader.readStringOrNull(offsets[16]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[17]),
+    typeSource: reader.readStringOrNull(offsets[18]),
+    version: reader.readStringOrNull(offsets[19]),
+    versionLast: reader.readStringOrNull(offsets[20]),
   );
   return object;
 }
@@ -311,11 +318,11 @@ P _sourceDeserializeProp<P>(
     case 11:
       return (reader.readBoolOrNull(offset)) as P;
     case 12:
-      return (reader.readStringOrNull(offset)) as P;
-    case 13:
       return (reader.readBoolOrNull(offset)) as P;
-    case 14:
+    case 13:
       return (reader.readStringOrNull(offset)) as P;
+    case 14:
+      return (reader.readBoolOrNull(offset)) as P;
     case 15:
       return (reader.readStringOrNull(offset)) as P;
     case 16:
@@ -325,6 +332,8 @@ P _sourceDeserializeProp<P>(
     case 18:
       return (reader.readStringOrNull(offset)) as P;
     case 19:
+      return (reader.readStringOrNull(offset)) as P;
+    case 20:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1467,6 +1476,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isFullData',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isMangaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isMangaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isMangaEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isManga',
         value: value,
       ));
     });
@@ -2697,6 +2732,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByIsNsfw() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNsfw', Sort.asc);
@@ -2951,6 +2998,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByIsNsfw() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNsfw', Sort.asc);
@@ -3140,6 +3199,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isManga');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByIsNsfw() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isNsfw');
@@ -3273,6 +3338,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, bool?, QQueryOperations> isFullDataProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isFullData');
+    });
+  }
+
+  QueryBuilder<Source, bool?, QQueryOperations> isMangaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isManga');
     });
   }
 

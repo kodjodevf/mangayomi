@@ -16,14 +16,15 @@ import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 
 class MangaImageCardWidget extends ConsumerWidget {
   final String lang;
+  final bool isManga;
 
   final MangaModel? getMangaDetail;
 
-  const MangaImageCardWidget({
-    required this.lang,
-    super.key,
-    required this.getMangaDetail,
-  });
+  const MangaImageCardWidget(
+      {required this.lang,
+      super.key,
+      required this.getMangaDetail,
+      required this.isManga});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,7 +56,10 @@ class MangaImageCardWidget extends ConsumerWidget {
                     ),
               onTap: () {
                 pushToMangaReaderDetail(
-                    context: context, getManga: getMangaDetail!, lang: lang);
+                    context: context,
+                    getManga: getMangaDetail!,
+                    lang: lang,
+                    isManga: isManga);
               },
               children: [
                 Container(
@@ -100,7 +104,8 @@ void pushToMangaReaderDetail(
     required String lang,
     required BuildContext context,
     int? archiveId,
-    Manga? mangaM}) {
+    Manga? mangaM,
+    bool? isManga}) {
   int? mangaId;
   if (archiveId == null) {
     final manga = mangaM ??
@@ -114,7 +119,8 @@ void pushToMangaReaderDetail(
             link: getManga.link,
             source: getManga.source,
             lang: lang,
-            lastUpdate: 0);
+            lastUpdate: 0,
+            isManga: isManga ?? true);
     final empty = isar.mangas
         .filter()
         .langEqualTo(lang)

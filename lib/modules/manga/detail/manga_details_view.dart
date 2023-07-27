@@ -38,7 +38,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     return Scaffold(
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
-          final history = ref.watch(getAllHistoryStreamProvider);
+          final history = ref.watch(
+              getAllHistoryStreamProvider(isManga: widget.manga.isManga!));
           final chaptersList = ref.watch(chaptersListttStateProvider);
           final isExtended = ref.watch(isExtendedStateProvider);
           return ref.watch(isLongPressedStateProvider) == true
@@ -161,8 +162,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0),
                 onPressed: () {
-                  final checkCategoryList =
-                      isar.categorys.filter().idIsNotNull().isNotEmptySync();
+                  final checkCategoryList = isar.categorys
+                      .filter()
+                      .idIsNotNull()
+                      .and()
+                      .forMangaEqualTo(widget.manga.isManga)
+                      .isNotEmptySync();
                   if (checkCategoryList) {
                     _openCategory(widget.manga);
                   } else {
@@ -219,6 +224,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       stream: isar.categorys
                           .filter()
                           .idIsNotNull()
+                          .and()
+                          .forMangaEqualTo(widget.manga.isManga)
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -255,7 +262,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     children: [
                       TextButton(
                           onPressed: () {
-                            context.push("/categories");
+                            context.push("/categories",
+                                extra: (true, widget.manga.isManga! ? 0 : 1));
                             Navigator.pop(context);
                           },
                           child: Text(l10n.edit)),

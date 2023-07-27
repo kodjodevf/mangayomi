@@ -24,11 +24,11 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
-    int currentIndex = route.location == '/library'
+    int currentIndex = route.location == '/MangaLibrary'
         ? 0
-        : route.location == '/updates'
+        : route.location == '/AnimeLibrary'
             ? 1
-            : route.location == '/history'
+            : route.location == '/updates'
                 ? 2
                 : route.location == '/browse'
                     ? 3
@@ -80,9 +80,9 @@ class _MainScreenState extends State<MainScreen> {
                           duration: const Duration(milliseconds: 0),
                           width: isLongPressed
                               ? 0
-                              : route.location != '/library' &&
+                              : route.location != '/MangaLibrary' &&
+                                      route.location != '/AnimeLibrary' &&
                                       route.location != '/updates' &&
-                                      route.location != '/history' &&
                                       route.location != '/browse' &&
                                       route.location != '/more'
                                   ? 0
@@ -105,7 +105,18 @@ class _MainScreenState extends State<MainScreen> {
                                     ),
                                     label: Padding(
                                         padding: const EdgeInsets.only(top: 5),
-                                        child: Text(l10n.library))),
+                                        child: Text(l10n.manga))),
+                                NavigationRailDestination(
+                                    selectedIcon: const Icon(
+                                      Icons.video_collection,
+                                    ),
+                                    icon: const Icon(
+                                      Icons.video_collection_outlined,
+                                    ),
+                                    label: Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(l10n.anime),
+                                    )),
                                 NavigationRailDestination(
                                     selectedIcon: const Icon(
                                       Icons.new_releases,
@@ -116,17 +127,6 @@ class _MainScreenState extends State<MainScreen> {
                                     label: Padding(
                                         padding: const EdgeInsets.only(top: 5),
                                         child: Text(l10n.updates))),
-                                NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.history,
-                                    ),
-                                    icon: const Icon(
-                                      Icons.history_outlined,
-                                    ),
-                                    label: Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Text(l10n.history),
-                                    )),
                                 NavigationRailDestination(
                                     selectedIcon: const Icon(
                                       Icons.explore,
@@ -158,11 +158,11 @@ class _MainScreenState extends State<MainScreen> {
                                   });
                                 }
                                 if (newIndex == 0) {
-                                  route.go('/library');
+                                  route.go('/MangaLibrary');
                                 } else if (newIndex == 1) {
-                                  route.go('/updates');
+                                  route.go('/AnimeLibrary');
                                 } else if (newIndex == 2) {
-                                  route.go('/history');
+                                  route.go('/updates');
                                 } else if (newIndex == 3) {
                                   route.go('/browse');
                                 } else if (newIndex == 4) {
@@ -187,9 +187,9 @@ class _MainScreenState extends State<MainScreen> {
                       width: mediaWidth(context, 1),
                       height: isLongPressed
                           ? 0
-                          : route.location != '/library' &&
+                          : route.location != '/MangaLibrary' &&
+                                  route.location != '/AnimeLibrary' &&
                                   route.location != '/updates' &&
-                                  route.location != '/history' &&
                                   route.location != '/browse' &&
                                   route.location != '/more'
                               ? 0
@@ -211,7 +211,15 @@ class _MainScreenState extends State<MainScreen> {
                                 icon: const Icon(
                                   Icons.collections_bookmark_outlined,
                                 ),
-                                label: l10n.library),
+                                label: l10n.manga),
+                            NavigationDestination(
+                                selectedIcon: const Icon(
+                                  Icons.video_collection,
+                                ),
+                                icon: const Icon(
+                                  Icons.video_collection_outlined,
+                                ),
+                                label: l10n.anime),
                             NavigationDestination(
                                 selectedIcon: const Icon(
                                   Icons.new_releases,
@@ -220,14 +228,6 @@ class _MainScreenState extends State<MainScreen> {
                                   Icons.new_releases_outlined,
                                 ),
                                 label: l10n.updates),
-                            NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.history,
-                                ),
-                                icon: const Icon(
-                                  Icons.history_outlined,
-                                ),
-                                label: l10n.history),
                             NavigationDestination(
                                 selectedIcon: const Icon(
                                   Icons.explore,
@@ -252,11 +252,11 @@ class _MainScreenState extends State<MainScreen> {
                               });
                             }
                             if (newIndex == 0) {
-                              route.go('/library');
+                              route.go('/MangaLibrary');
                             } else if (newIndex == 1) {
-                              route.go('/updates');
+                              route.go('/AnimeLibrary');
                             } else if (newIndex == 2) {
-                              route.go('/history');
+                              route.go('/updates');
                             } else if (newIndex == 3) {
                               route.go('/browse');
                             } else if (newIndex == 4) {

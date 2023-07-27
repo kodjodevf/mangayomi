@@ -11,9 +11,16 @@ import 'package:flutter_js/flutter_js.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:json_path/json_path.dart';
+import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge_class/video_model.dart';
+import 'package:mangayomi/services/anime_servers/dood_extractor.dart';
+import 'package:mangayomi/services/anime_servers/gogo_cdn_extractor.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
+import 'package:mangayomi/services/anime_servers/mp4_upload_extractor.dart';
+import 'package:mangayomi/services/anime_servers/stream_tape_extractor.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -499,6 +506,45 @@ class MBridge {
     }
   }
 
+  static Future<List<Video>> gogoCdnExtractor(String url) async {
+    return await GogoCdnExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static Future<List<Video>> doodExtractor(String url) async {
+    return await DoodExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static Future<List<Video>> mp4UploadExtractor(String url,
+      Map<String, String>? headers, String prefix, String suffix) async {
+    return await Mp4uploadExtractor()
+        .videosFromUrl(url, headers ?? {}, prefix: prefix, suffix: suffix);
+  }
+
+  static Future<List<Video>> streamTapeExtractor(String url) async {
+    return await StreamTapeExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static String subString(String text, String pattern, int type) {
+    String result = "";
+    //substring before
+    if (type == 0) {
+      result = text.split(pattern).first;
+    } else
+    // substring after last
+    if (type == 1) {
+      result = text.split(pattern).last;
+    } else if (type == 2) {
+      result = text.substring(text.lastIndexOf(pattern) + 1);
+    }
+    return result;
+  }
+
   static String parseChapterDate(
       String date, String dateFormat, String dateFormatLocale) {
     int parseRelativeDate(String date) {
@@ -686,6 +732,29 @@ class $MBridge extends MBridge with $Bridge {
             returns: BridgeTypeAnnotation($type), params: [], namedParams: []))
       },
       methods: {
+        'subString': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'text',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'pattern',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'listParse': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
@@ -988,6 +1057,74 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'gogoCdnExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'doodExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'streamTapeExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'mp4UploadExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'headers',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.mapType),
+                          nullable: true),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'suffix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'getHtmlViaWebview': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
@@ -1140,6 +1277,15 @@ class $MBridge extends MBridge with $Bridge {
     ));
   }
 
+  static $String $subString(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    return $String(MBridge.subString(
+      args[0]!.$value,
+      args[1]!.$value,
+      args[2]!.$value,
+    ));
+  }
+
   static $String $getMapValue(
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $String(MBridge.getMapValue(
@@ -1220,11 +1366,54 @@ class $MBridge extends MBridge with $Bridge {
   static $Future $http(Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.http(args[0]!.$value, args[1]!.$value)
           .then((value) => $String(value)));
+
   static $Future $getHtmlViaWebview(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.getHtmlViaWebview(args[0]!.$value, args[1]!.$value)
           .then((value) => $String(value)));
 
+  static $Future $gogoCdnExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.gogoCdnExtractor(args[0]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+
+  static $Future $doodExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.doodExtractor(args[0]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+  static $Future $streamTapeExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+  static $Future $mp4UploadExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value, args[1]!.$value,
+              args[2]!.$value, args[3]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
   @override
   $Value? $bridgeGet(String identifier) {
     throw UnimplementedError();

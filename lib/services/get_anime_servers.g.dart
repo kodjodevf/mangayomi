@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'fetch_sources.dart';
+part of 'get_anime_servers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchSourcesListHash() => r'151bfddc9daf2cde079bf0f98f523d92b7e6ab00';
+String _$getAnimeServersHash() => r'b8bc284660d0034cedff0cfd7d11bc62da9d2915';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,32 @@ class _SystemHash {
   }
 }
 
-typedef FetchSourcesListRef = AutoDisposeFutureProviderRef<dynamic>;
+typedef GetAnimeServersRef = AutoDisposeFutureProviderRef<List<Video>>;
 
-/// See also [fetchSourcesList].
-@ProviderFor(fetchSourcesList)
-const fetchSourcesListProvider = FetchSourcesListFamily();
+/// See also [getAnimeServers].
+@ProviderFor(getAnimeServers)
+const getAnimeServersProvider = GetAnimeServersFamily();
 
-/// See also [fetchSourcesList].
-class FetchSourcesListFamily extends Family<AsyncValue<dynamic>> {
-  /// See also [fetchSourcesList].
-  const FetchSourcesListFamily();
+/// See also [getAnimeServers].
+class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
+  /// See also [getAnimeServers].
+  const GetAnimeServersFamily();
 
-  /// See also [fetchSourcesList].
-  FetchSourcesListProvider call({
-    int? id,
+  /// See also [getAnimeServers].
+  GetAnimeServersProvider call({
+    required Chapter chapter,
   }) {
-    return FetchSourcesListProvider(
-      id: id,
+    return GetAnimeServersProvider(
+      chapter: chapter,
     );
   }
 
   @override
-  FetchSourcesListProvider getProviderOverride(
-    covariant FetchSourcesListProvider provider,
+  GetAnimeServersProvider getProviderOverride(
+    covariant GetAnimeServersProvider provider,
   ) {
     return call(
-      id: provider.id,
+      chapter: provider.chapter,
     );
   }
 
@@ -70,43 +70,44 @@ class FetchSourcesListFamily extends Family<AsyncValue<dynamic>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchSourcesListProvider';
+  String? get name => r'getAnimeServersProvider';
 }
 
-/// See also [fetchSourcesList].
-class FetchSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
-  /// See also [fetchSourcesList].
-  FetchSourcesListProvider({
-    this.id,
+/// See also [getAnimeServers].
+class GetAnimeServersProvider extends AutoDisposeFutureProvider<List<Video>> {
+  /// See also [getAnimeServers].
+  GetAnimeServersProvider({
+    required this.chapter,
   }) : super.internal(
-          (ref) => fetchSourcesList(
+          (ref) => getAnimeServers(
             ref,
-            id: id,
+            chapter: chapter,
           ),
-          from: fetchSourcesListProvider,
-          name: r'fetchSourcesListProvider',
+          from: getAnimeServersProvider,
+          name: r'getAnimeServersProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchSourcesListHash,
-          dependencies: FetchSourcesListFamily._dependencies,
+                  : _$getAnimeServersHash,
+          dependencies: GetAnimeServersFamily._dependencies,
           allTransitiveDependencies:
-              FetchSourcesListFamily._allTransitiveDependencies,
+              GetAnimeServersFamily._allTransitiveDependencies,
         );
 
-  final int? id;
+  final Chapter chapter;
 
   @override
   bool operator ==(Object other) {
-    return other is FetchSourcesListProvider && other.id == id;
+    return other is GetAnimeServersProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

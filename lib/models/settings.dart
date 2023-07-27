@@ -94,6 +94,31 @@ class Settings {
 
   L10nLocale? locale;
 
+  @enumerated
+  DisplayType animeDisplayType;
+
+  int? libraryFilterAnimeDownloadType;
+
+  int? libraryFilterAnimeUnreadType;
+
+  int? libraryFilterAnimeStartedType;
+
+  int? libraryFilterAnimeBookMarkedType;
+
+  bool? animeLibraryShowCategoryTabs;
+
+  bool? animeLibraryDownloadedChapters;
+
+  bool? animeLibraryShowLanguage;
+
+  bool? animeLibraryShowNumbersOfItems;
+
+  bool? animeLibraryShowContinueReadingButton;
+
+  bool? animeLibraryLocalSource;
+
+  SortLibraryManga? sortLibraryAnime;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -132,7 +157,19 @@ class Settings {
       this.downloadLocation = "",
       this.cropBorders = false,
       this.libraryLocalSource,
-      this.autoUpdateExtensions = false});
+      this.autoUpdateExtensions = false,
+      this.animeDisplayType = DisplayType.compactGrid,
+      this.libraryFilterAnimeDownloadType = 0,
+      this.libraryFilterAnimeUnreadType = 0,
+      this.libraryFilterAnimeStartedType = 0,
+      this.libraryFilterAnimeBookMarkedType = 0,
+      this.animeLibraryShowCategoryTabs = false,
+      this.animeLibraryDownloadedChapters = false,
+      this.animeLibraryShowLanguage = false,
+      this.animeLibraryShowNumbersOfItems = false,
+      this.animeLibraryShowContinueReadingButton = false,
+      this.animeLibraryLocalSource,
+      this.sortLibraryAnime});
 }
 
 enum DisplayType {
@@ -216,5 +253,5 @@ class FilterScanlator {
 class L10nLocale {
   String? languageCode;
   String? countryCode;
-  L10nLocale({this.languageCode,this.countryCode});
+  L10nLocale({this.languageCode, this.countryCode});
 }

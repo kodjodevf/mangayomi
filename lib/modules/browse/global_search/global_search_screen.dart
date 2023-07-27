@@ -21,7 +21,9 @@ import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 
 class GlobalSearchScreen extends ConsumerStatefulWidget {
+  final bool isManga;
   const GlobalSearchScreen({
+    required this.isManga,
     super.key,
   });
 
@@ -35,12 +37,19 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
-        ? isar.sources.filter().isPinnedEqualTo(true).findAllSync()
+        ? isar.sources
+            .filter()
+            .isPinnedEqualTo(true)
+            .and()
+            .isMangaEqualTo(widget.isManga)
+            .findAllSync()
         : isar.sources
             .filter()
             .idIsNotNull()
             .and()
             .isAddedEqualTo(true)
+            .and()
+            .isMangaEqualTo(widget.isManga)
             .findAllSync();
     return Scaffold(
       appBar: AppBar(
@@ -186,7 +195,10 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
         return GestureDetector(
           onTap: () async {
             pushToMangaReaderDetail(
-                context: context, getManga: data, lang: widget.source.lang!);
+                context: context,
+                getManga: data,
+                lang: widget.source.lang!,
+                isManga: widget.source.isManga ?? true);
           },
           child: StreamBuilder(
               stream: isar.mangas

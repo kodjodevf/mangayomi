@@ -373,7 +373,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ];
                               }, onSelected: (value) {
                                 if (value == 0) {
-                                  context.push("/categories");
+                                  context.push("/categories", extra: (
+                                    true,
+                                    widget.manga!.isManga! ? 0 : 1
+                                  ));
                                 } else if (value == 1) {
                                 } else if (value == 2) {
                                   final source = getSource(widget.manga!.lang!,
@@ -450,8 +453,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                             .symmetric(
                                                         horizontal: 8),
                                                     child: Text(
-                                                      l10n.n_chapters(
-                                                          chapters.length),
+                                                      widget.manga!.isManga!
+                                                          ? l10n.n_chapters(
+                                                              chapters.length)
+                                                          : l10n.n_episodes(
+                                                              chapters.length),
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold),
@@ -1199,7 +1205,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
-                                  l10n.n_chapters(chapterLength),
+                                  widget.manga!.isManga!
+                                      ? l10n.n_chapters(chapterLength)
+                                      : l10n.n_episodes(chapterLength),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -1656,13 +1664,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 mangaId: widget.manga!.id!,
                                 trackPreference: entries[index],
                                 trackRes: trackRes.first,
-                              )
+                                isManga: widget.manga!.isManga!)
                             : TrackListile(
                                 text: l10nLocalizations(context)!.add_tracker,
                                 onTap: () async {
                                   final trackSearch =
                                       await trackersSearchraggableMenu(
                                     context,
+                                    isManga: widget.manga!.isManga!,
                                     track: Track(
                                         status: TrackStatus.planToRead,
                                         syncId: entries[index].syncId!,
@@ -1670,7 +1679,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   ) as TrackSearch?;
                                   if (trackSearch != null) {
                                     await ref
-                                        .read(trackStateProvider(track: null)
+                                        .read(trackStateProvider(
+                                                track: null,
+                                                isManga: widget.manga!.isManga!)
                                             .notifier)
                                         .setTrackSearch(
                                             trackSearch,

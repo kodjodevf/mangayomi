@@ -17,8 +17,13 @@ const CategorySchema = CollectionSchema(
   name: r'Category',
   id: 5751694338128944171,
   properties: {
-    r'name': PropertySchema(
+    r'forManga': PropertySchema(
       id: 0,
+      name: r'forManga',
+      type: IsarType.bool,
+    ),
+    r'name': PropertySchema(
+      id: 1,
       name: r'name',
       type: IsarType.string,
     )
@@ -58,7 +63,8 @@ void _categorySerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.name);
+  writer.writeBool(offsets[0], object.forManga);
+  writer.writeString(offsets[1], object.name);
 }
 
 Category _categoryDeserialize(
@@ -68,8 +74,9 @@ Category _categoryDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Category(
+    forManga: reader.readBoolOrNull(offsets[0]),
     id: id,
-    name: reader.readStringOrNull(offsets[0]),
+    name: reader.readStringOrNull(offsets[1]),
   );
   return object;
 }
@@ -82,6 +89,8 @@ P _categoryDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 1:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -177,6 +186,32 @@ extension CategoryQueryWhere on QueryBuilder<Category, Category, QWhereClause> {
 
 extension CategoryQueryFilter
     on QueryBuilder<Category, Category, QFilterCondition> {
+  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'forManga',
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'forManga',
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'forManga',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -399,6 +434,18 @@ extension CategoryQueryLinks
     on QueryBuilder<Category, Category, QFilterCondition> {}
 
 extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
+  QueryBuilder<Category, Category, QAfterSortBy> sortByForManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'forManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> sortByForMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'forManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -414,6 +461,18 @@ extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
 
 extension CategoryQuerySortThenBy
     on QueryBuilder<Category, Category, QSortThenBy> {
+  QueryBuilder<Category, Category, QAfterSortBy> thenByForManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'forManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> thenByForMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'forManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -441,6 +500,12 @@ extension CategoryQuerySortThenBy
 
 extension CategoryQueryWhereDistinct
     on QueryBuilder<Category, Category, QDistinct> {
+  QueryBuilder<Category, Category, QDistinct> distinctByForManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'forManga');
+    });
+  }
+
   QueryBuilder<Category, Category, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -454,6 +519,12 @@ extension CategoryQueryProperty
   QueryBuilder<Category, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Category, bool?, QQueryOperations> forMangaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'forManga');
     });
   }
 

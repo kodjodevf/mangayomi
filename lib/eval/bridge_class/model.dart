@@ -65,3 +65,12 @@ class MangaModel {
       this.images,
       this.statusList});
 }
+
+class VideoModel {
+  String? url;
+  String? quality;
+  String? originalUrl;
+  Map<dynamic, dynamic>? headers;
+
+  VideoModel({this.url, this.quality, this.originalUrl, this.headers});
+}

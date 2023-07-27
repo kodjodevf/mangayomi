@@ -9,20 +9,34 @@ part 'track_state_providers.g.dart';
 @riverpod
 class TrackState extends _$TrackState {
   @override
-  Track build({Track? track}) {
+  Track build({Track? track, required bool? isManga}) {
     return track!;
   }
 
   Future updateManga() async {
     Track? updateTrack;
     if (track!.syncId == 1) {
-      updateTrack = await ref
-          .read(myAnimeListProvider(syncId: track!.syncId!).notifier)
-          .updateManga(track!);
+      updateTrack = isManga!
+          ? await ref
+              .read(
+                  myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+                      .notifier)
+              .updateManga(track!)
+          : await ref
+              .read(
+                  myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+                      .notifier)
+              .updateAnime(track!);
     } else if (track!.syncId == 2) {
-      updateTrack = await ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
-          .updateLibManga(track!);
+      updateTrack = isManga!
+          ? await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .updateLibManga(track!)
+          : await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .updateLibAnime(track!);
     }
 
     ref
@@ -36,7 +50,8 @@ class TrackState extends _$TrackState {
       maxValue = 10;
     } else if (track!.syncId == 2) {
       maxValue = ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
+          .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+              .notifier)
           .getScoreValue()
           .$1;
     }
@@ -47,7 +62,7 @@ class TrackState extends _$TrackState {
     if (track!.syncId == 1) {
     } else {
       numberText = ref
-          .read(anilistProvider(syncId: 2).notifier)
+          .read(anilistProvider(syncId: 2, isManga: isManga).notifier)
           .displayScore(int.parse(numberText));
     }
     return numberText;
@@ -59,7 +74,8 @@ class TrackState extends _$TrackState {
       step = 1;
     } else if (track!.syncId == 2) {
       step = ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
+          .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+              .notifier)
           .getScoreValue()
           .$2;
     }
@@ -71,8 +87,9 @@ class TrackState extends _$TrackState {
     if (track!.syncId == 1) {
       result = score.toString();
     } else {
-      result =
-          ref.read(anilistProvider(syncId: 2).notifier).displayScore(score);
+      result = ref
+          .read(anilistProvider(syncId: 2, isManga: isManga).notifier)
+          .displayScore(score);
     }
     return result;
   }
@@ -94,19 +111,35 @@ class TrackState extends _$TrackState {
         finishedReadingDate: 0);
     if (syncId == 1) {
       findManga = await ref
-          .read(myAnimeListProvider(syncId: syncId).notifier)
+          .read(myAnimeListProvider(syncId: syncId, isManga: isManga).notifier)
           .findManga(track);
     } else if (syncId == 2) {
-      findManga = findManga = await ref
-          .read(anilistProvider(syncId: syncId).notifier)
-          .findLibManga(track);
+      findManga = isManga!
+          ? await ref
+              .read(anilistProvider(syncId: syncId, isManga: isManga).notifier)
+              .findLibManga(track)
+          : await ref
+              .read(anilistProvider(syncId: syncId, isManga: isManga).notifier)
+              .findLibAnime(track);
       if (findManga == null) {
-        await ref
-            .read(anilistProvider(syncId: syncId).notifier)
-            .addLibManga(track);
-        findManga = await ref
-            .read(anilistProvider(syncId: syncId).notifier)
-            .findLibManga(track);
+        findManga = isManga!
+            ? await ref
+                .read(
+                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
+                .addLibManga(track)
+            : await ref
+                .read(
+                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
+                .addLibAnime(track);
+        findManga = isManga!
+            ? await ref
+                .read(
+                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
+                .findLibManga(track)
+            : await ref
+                .read(
+                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
+                .findLibAnime(track);
       }
     }
     ref
@@ -118,13 +151,27 @@ class TrackState extends _$TrackState {
     List<TrackStatus> statusList = [];
     List<TrackStatus> list = [];
     if (track!.syncId == 1) {
-      statusList = ref
-          .read(myAnimeListProvider(syncId: track!.syncId!).notifier)
-          .myAnimeListStatusList;
+      statusList = isManga!
+          ? ref
+              .read(
+                  myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+                      .notifier)
+              .myAnimeListStatusListManga
+          : ref
+              .read(
+                  myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+                      .notifier)
+              .myAnimeListStatusListAnime;
     } else if (track!.syncId == 2) {
-      statusList = ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
-          .aniListStatusList;
+      statusList = isManga!
+          ? ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .aniListStatusListManga
+          : ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .aniListStatusListAnime;
     }
     for (var element in TrackStatus.values) {
       if (statusList.contains(element)) {
@@ -138,12 +185,19 @@ class TrackState extends _$TrackState {
     Track? findManga;
     if (track!.syncId == 1) {
       findManga = await ref
-          .read(myAnimeListProvider(syncId: track!.syncId!).notifier)
+          .read(myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+              .notifier)
           .findManga(track!);
     } else if (track!.syncId == 2) {
-      findManga = findManga = await ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
-          .findLibManga(track!);
+      findManga = isManga!
+          ? await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .findLibManga(track!)
+          : await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .findLibAnime(track!);
     }
     return findManga;
   }
@@ -152,12 +206,19 @@ class TrackState extends _$TrackState {
     List<TrackSearch>? tracks;
     if (track!.syncId == 1) {
       tracks = await ref
-          .read(myAnimeListProvider(syncId: track!.syncId!).notifier)
+          .read(myAnimeListProvider(syncId: track!.syncId!, isManga: isManga)
+              .notifier)
           .search(query);
     } else if (track!.syncId == 2) {
-      tracks = await ref
-          .read(anilistProvider(syncId: track!.syncId!).notifier)
-          .search(query);
+      tracks = isManga!
+          ? await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .search(query)
+          : await ref
+              .read(anilistProvider(syncId: track!.syncId!, isManga: isManga)
+                  .notifier)
+              .searchAnime(query);
     }
     return tracks;
   }

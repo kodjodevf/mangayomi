@@ -20,6 +20,8 @@ class Manga {
   @enumerated
   Status status;
 
+  bool? isManga;
+
   List<String>? genre;
 
   bool favorite;
@@ -55,6 +57,7 @@ class Manga {
       required this.name,
       required this.status,
       required this.description,
+      this.isManga = true,
       this.dateAdded,
       this.lastUpdate,
       this.categories,
@@ -71,3 +74,4 @@ enum Status {
   onHiatus,
   publishingFinished
 }
+

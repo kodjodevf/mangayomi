@@ -6,7 +6,7 @@ part of 'track_state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'7004528230213b458c7db417947eecfc700d44d7';
+String _$trackStateHash() => r'eeca421125ff52ccf671d434c41e0198bb7b6fea';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,9 +31,11 @@ class _SystemHash {
 
 abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
   late final Track? track;
+  late final bool? isManga;
 
   Track build({
     Track? track,
+    required bool? isManga,
   });
 }
 
@@ -49,9 +51,11 @@ class TrackStateFamily extends Family<Track> {
   /// See also [TrackState].
   TrackStateProvider call({
     Track? track,
+    required bool? isManga,
   }) {
     return TrackStateProvider(
       track: track,
+      isManga: isManga,
     );
   }
 
@@ -61,6 +65,7 @@ class TrackStateFamily extends Family<Track> {
   ) {
     return call(
       track: provider.track,
+      isManga: provider.isManga,
     );
   }
 
@@ -85,8 +90,11 @@ class TrackStateProvider
   /// See also [TrackState].
   TrackStateProvider({
     this.track,
+    required this.isManga,
   }) : super.internal(
-          () => TrackState()..track = track,
+          () => TrackState()
+            ..track = track
+            ..isManga = isManga,
           from: trackStateProvider,
           name: r'trackStateProvider',
           debugGetCreateSourceHash:
@@ -99,16 +107,20 @@ class TrackStateProvider
         );
 
   final Track? track;
+  final bool? isManga;
 
   @override
   bool operator ==(Object other) {
-    return other is TrackStateProvider && other.track == track;
+    return other is TrackStateProvider &&
+        other.track == track &&
+        other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, track.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -119,7 +131,9 @@ class TrackStateProvider
   ) {
     return notifier.build(
       track: track,
+      isManga: isManga,
     );
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

@@ -32,13 +32,27 @@ IconData getMangaStatusIcon(Status status) {
 String getTrackStatus(TrackStatus status, BuildContext context) {
   final l10n = l10nLocalizations(context)!;
   return switch (status) {
+    TrackStatus.watching => l10n.watching,
+    TrackStatus.reWatching => l10n.re_watching,
+    TrackStatus.planToWatch => l10n.plan_to_watch,
     TrackStatus.reading => l10n.reading,
     TrackStatus.completed => l10n.completed,
     TrackStatus.onHold => l10n.on_hold,
     TrackStatus.dropped => l10n.dropped,
     TrackStatus.planToRead => l10n.plan_to_read,
-    TrackStatus.rereading => l10n.re_reading,
+    TrackStatus.rereading => l10n.re_reading
   };
+}
+
+TrackStatus toStatus(TrackStatus status, bool isManga, int syncId) {
+  return !isManga && syncId == 2
+      ? switch (status) {
+          TrackStatus.reading => TrackStatus.watching,
+          TrackStatus.planToRead => TrackStatus.planToWatch,
+          TrackStatus.rereading => TrackStatus.reWatching,
+          _ => status
+        }
+      : status;
 }
 
 (String, String) trackInfos(int id) {

@@ -6,8 +6,10 @@ part 'category.g.dart';
 class Category {
   Id? id;
   String? name;
+  bool? forManga;
   Category({
     this.id = Isar.autoIncrement,
     required this.name,
+    required this.forManga
   });
 }

@@ -26,6 +26,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
       dateFormatLocale: source.dateFormatLocale);
   final getManga = await ref
       .watch(getMangaDetailProvider(manga: mangaS, source: source).future);
+
   final imageUrl = getManga.imageUrl != null && getManga.imageUrl!.isNotEmpty
       ? getManga.imageUrl
       : manga.imageUrl ?? "";
@@ -39,6 +40,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
           .toSet()
           .toList()
       : manga.genre ?? [];
+
   final author = getManga.author != null && getManga.author!.isNotEmpty
       ? getManga.author!.trim().trimLeft().trimRight()
       : manga.author ?? "";
@@ -72,6 +74,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     ..link = link
     ..source = sourceA
     ..lang = lang
+    ..isManga = source.isManga
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
   isar.writeTxnSync(() {
@@ -99,7 +102,9 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
         final chapters = Chapter(
           name: title,
           url: getManga.urls![i].trim().trimLeft().trimRight(),
-          dateUpload: getManga.chaptersDateUploads![i],
+          dateUpload: getManga.chaptersDateUploads!.isEmpty
+              ? null
+              : getManga.chaptersDateUploads![i],
           scanlator: scanlator,
         )..manga.value = manga;
         isar.chapters.putSync(chapters);

@@ -41,6 +41,7 @@ class SearchResultScreen extends ConsumerWidget {
                     return MangaHomeImageCard(
                       manga: data[index]!,
                       source: source,
+                      isManga: source.isManga ?? true,
                     );
                   },
                 );

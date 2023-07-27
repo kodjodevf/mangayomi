@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_sources.dart';
+import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
+import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
@@ -90,8 +91,13 @@ class _ExtensionListTileWidgetState
                   setState(() {
                     _isLoading = true;
                   });
-                  await ref.watch(
-                      fetchSourcesListProvider(id: widget.source.id).future);
+                  widget.source.isManga!
+                      ? await ref.watch(
+                          fetchMangaSourcesListProvider(id: widget.source.id)
+                              .future)
+                      : await ref.watch(
+                          fetchAnimeSourcesListProvider(id: widget.source.id)
+                              .future);
                   if (mounted) {
                     setState(() {
                       _isLoading = false;

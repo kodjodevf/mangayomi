@@ -10,8 +10,10 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
+  final bool isManga;
   final Track track;
-  const TrackerWidgetSearch({required this.track, super.key});
+  const TrackerWidgetSearch(
+      {required this.isManga, required this.track, super.key});
 
   @override
   ConsumerState<TrackerWidgetSearch> createState() =>
@@ -30,7 +32,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   _init() async {
     await Future.delayed(const Duration(microseconds: 100));
     tracks = await ref
-        .read(trackStateProvider(track: widget.track).notifier)
+        .read(trackStateProvider(track: widget.track, isManga: widget.isManga)
+            .notifier)
         .search(query);
     if (mounted) {
       setState(() {
@@ -169,7 +172,9 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                             _isLoading = true;
                           });
                           tracks = await ref
-                              .read(trackStateProvider(track: widget.track)
+                              .read(trackStateProvider(
+                                      track: widget.track,
+                                      isManga: widget.isManga)
                                   .notifier)
                               .search(d.trim());
                           if (mounted) {
@@ -210,7 +215,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   }
 }
 
-trackersSearchraggableMenu(BuildContext context, {required Track track}) async {
+trackersSearchraggableMenu(BuildContext context,
+    {required Track track, required bool isManga}) async {
   return await DraggableMenu.open(
       context,
       DraggableMenu(
@@ -240,5 +246,6 @@ trackersSearchraggableMenu(BuildContext context, {required Track track}) async {
           maxHeight: mediaHeight(context, 0.9),
           child: TrackerWidgetSearch(
             track: track,
+            isManga: isManga,
           )));
 }

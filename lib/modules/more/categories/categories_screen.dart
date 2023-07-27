@@ -2,28 +2,82 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/modules/more/categoties/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/categoties/widgets/custom_textfield.dart';
+import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
+import 'package:mangayomi/modules/more/categories/widgets/custom_textfield.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({super.key});
+  final (bool, int) data;
+  const CategoriesScreen({required this.data, super.key});
 
   @override
   ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
+class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
+    with TickerProviderStateMixin {
+  late TabController _tabBarController;
+  @override
+  void initState() {
+    _tabBarController = TabController(length: 2, vsync: this);
+    _tabBarController.animateTo(widget.data.$2);
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+    return DefaultTabController(
+      animationDuration: Duration.zero,
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            widget.data.$1 ? l10n.edit_categories : l10n.categories,
+            style: TextStyle(color: Theme.of(context).hintColor),
+          ),
+          bottom: TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
+            controller: _tabBarController,
+            tabs: [
+              Tab(text: l10n.manga),
+              Tab(text: l10n.anime),
+            ],
+          ),
+        ),
+        body: TabBarView(controller: _tabBarController, children: const [
+          CategoriesTab(
+            isManga: true,
+          ),
+          CategoriesTab(
+            isManga: false,
+          )
+        ]),
+      ),
+    );
+  }
+}
+
+class CategoriesTab extends ConsumerStatefulWidget {
+  final bool isManga;
+  const CategoriesTab({required this.isManga, super.key});
+
+  @override
+  ConsumerState<CategoriesTab> createState() => _CategoriesTabState();
+}
+
+class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context);
-    final categories = ref.watch(getMangaCategorieStreamProvider);
+    final l10n = l10nLocalizations(context)!;
+    final categories =
+        ref.watch(getMangaCategorieStreamProvider(isManga: widget.isManga));
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n!.edit_categories),
-      ),
       body: categories.when(
         data: (data) {
           if (data.isEmpty) {
@@ -215,6 +269,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                                         : () async {
                                             await isar.writeTxn(() async {
                                               await isar.categorys.put(Category(
+                                                forManga: widget.isManga,
                                                 name: controller.text,
                                               ));
                                             });

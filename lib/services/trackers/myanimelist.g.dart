@@ -6,7 +6,7 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'f96b3d08fd5c59b0811a7bf42ab13211903fdd5a';
+String _$myAnimeListHash() => r'e5319db619172cd428a25174a8bb720c99a2a1b7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,9 +31,11 @@ class _SystemHash {
 
 abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<dynamic> {
   late final int syncId;
+  late final bool? isManga;
 
   dynamic build({
     required int syncId,
+    required bool? isManga,
   });
 }
 
@@ -49,9 +51,11 @@ class MyAnimeListFamily extends Family<dynamic> {
   /// See also [MyAnimeList].
   MyAnimeListProvider call({
     required int syncId,
+    required bool? isManga,
   }) {
     return MyAnimeListProvider(
       syncId: syncId,
+      isManga: isManga,
     );
   }
 
@@ -61,6 +65,7 @@ class MyAnimeListFamily extends Family<dynamic> {
   ) {
     return call(
       syncId: provider.syncId,
+      isManga: provider.isManga,
     );
   }
 
@@ -85,8 +90,11 @@ class MyAnimeListProvider
   /// See also [MyAnimeList].
   MyAnimeListProvider({
     required this.syncId,
+    required this.isManga,
   }) : super.internal(
-          () => MyAnimeList()..syncId = syncId,
+          () => MyAnimeList()
+            ..syncId = syncId
+            ..isManga = isManga,
           from: myAnimeListProvider,
           name: r'myAnimeListProvider',
           debugGetCreateSourceHash:
@@ -99,16 +107,20 @@ class MyAnimeListProvider
         );
 
   final int syncId;
+  final bool? isManga;
 
   @override
   bool operator ==(Object other) {
-    return other is MyAnimeListProvider && other.syncId == syncId;
+    return other is MyAnimeListProvider &&
+        other.syncId == syncId &&
+        other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, syncId.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -119,7 +131,9 @@ class MyAnimeListProvider
   ) {
     return notifier.build(
       syncId: syncId,
+      isManga: isManga,
     );
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

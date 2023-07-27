@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_meedu_videoplayer/init_meedu_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -29,6 +30,10 @@ class MyHttpoverrides extends HttpOverrides {
 }
 
 void main(List<String> args) async {
+  initMeeduPlayer(
+    androidUseMediaKit: true,
+    iosUseMediaKit: true,
+  );
   HttpOverrides.global = MyHttpoverrides();
   if (Platform.isLinux || Platform.isWindows) {
     if (runWebViewTitleBarWidget(args)) {
@@ -125,4 +130,3 @@ class _MyAppState extends ConsumerState<MyApp> {
     );
   }
 }
-

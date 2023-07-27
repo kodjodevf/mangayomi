@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/anime/anime_stream_view.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
@@ -22,7 +24,6 @@ import 'package:mangayomi/modules/more/about_screen.dart';
 import 'package:mangayomi/modules/more/download_queue/download_queue_screen.dart';
 import 'package:mangayomi/modules/more/more_screen.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart';
-import 'package:mangayomi/modules/more/categoties/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/browse/browse_screen.dart';
 import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
@@ -36,7 +37,7 @@ GoRouter router(RouterRef ref) {
 
   return GoRouter(
     observers: [BotToastNavigatorObserver()],
-    initialLocation: '/library',
+    initialLocation: '/MangaLibrary',
     debugLogDiagnostics: false,
     refreshListenable: router,
     routes: router._routes,
@@ -49,21 +50,29 @@ class RouterNotifier extends ChangeNotifier {
             builder: (context, state, child) => MainScreen(child: child),
             routes: [
               GoRoute(
-                name: "library",
-                path: '/library',
-                builder: (context, state) => const LibraryScreen(),
+                name: "MangaLibrary",
+                path: '/MangaLibrary',
+                builder: (context, state) => const LibraryScreen(
+                  isManga: true,
+                ),
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
-                  child: const LibraryScreen(),
+                  child: const LibraryScreen(
+                    isManga: true,
+                  ),
                 ),
               ),
               GoRoute(
-                name: "history",
-                path: '/history',
-                builder: (context, state) => const HistoryScreen(),
+                name: "AnimeLibrary",
+                path: '/AnimeLibrary',
+                builder: (context, state) => const LibraryScreen(
+                  isManga: false,
+                ),
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
-                  child: const HistoryScreen(),
+                  child: const LibraryScreen(
+                    isManga: false,
+                  ),
                 ),
               ),
               GoRoute(
@@ -94,6 +103,15 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
             ]),
+        GoRoute(
+          name: "history",
+          path: '/history',
+          builder: (context, state) => const HistoryScreen(),
+          pageBuilder: (context, state) => CustomTransition(
+            key: state.pageKey,
+            child: const HistoryScreen(),
+          ),
+        ),
         GoRoute(
             path: "/mangaHome",
             name: "mangaHome",
@@ -150,15 +168,40 @@ class RouterNotifier extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: "/extensionLang",
-          name: "extensionLang",
+          path: "/animestreamview",
+          name: "animestreamview",
           builder: (context, state) {
-            return const ExtensionsLang();
+            final episode = state.extra as Chapter;
+            return AnimeStreamView(
+              episode: episode,
+            );
           },
           pageBuilder: (context, state) {
+            final episode = state.extra as Chapter;
             return CustomTransition(
               key: state.pageKey,
-              child: const ExtensionsLang(),
+              child: AnimeStreamView(
+                episode: episode,
+              ),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/ExtensionLang",
+          name: "ExtensionLang",
+          builder: (context, state) {
+            final isManga = state.extra as bool;
+            return ExtensionsLang(
+              isManga: isManga,
+            );
+          },
+          pageBuilder: (context, state) {
+            final isManga = state.extra as bool;
+            return CustomTransition(
+              key: state.pageKey,
+              child: ExtensionsLang(
+                isManga: isManga,
+              ),
             );
           },
         ),
@@ -192,12 +235,18 @@ class RouterNotifier extends ChangeNotifier {
           path: "/globalSearch",
           name: "globalSearch",
           builder: (context, state) {
-            return const GlobalSearchScreen();
+            final isManga = state.extra as bool;
+            return GlobalSearchScreen(
+              isManga: isManga,
+            );
           },
           pageBuilder: (context, state) {
+            final isManga = state.extra as bool;
             return CustomTransition(
               key: state.pageKey,
-              child: const GlobalSearchScreen(),
+              child: GlobalSearchScreen(
+                isManga: isManga,
+              ),
             );
           },
         ),
@@ -254,12 +303,18 @@ class RouterNotifier extends ChangeNotifier {
           path: "/sourceFilter",
           name: "sourceFilter",
           builder: (context, state) {
-            return const SourcesFilterScreen();
+            final isManga = state.extra as bool;
+            return SourcesFilterScreen(
+              isManga: isManga,
+            );
           },
           pageBuilder: (context, state) {
+            final isManga = state.extra as bool;
             return CustomTransition(
               key: state.pageKey,
-              child: const SourcesFilterScreen(),
+              child: SourcesFilterScreen(
+                isManga: isManga,
+              ),
             );
           },
         ),
@@ -302,12 +357,16 @@ class RouterNotifier extends ChangeNotifier {
           path: "/categories",
           name: "categories",
           builder: (context, state) {
-            return const CategoriesScreen();
+            final data = state.extra as (bool, int);
+            return CategoriesScreen(data: data);
           },
           pageBuilder: (context, state) {
+            final data = state.extra as (bool, int);
             return CustomTransition(
               key: state.pageKey,
-              child: const CategoriesScreen(),
+              child: CategoriesScreen(
+                data: data,
+              ),
             );
           },
         ),

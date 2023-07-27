@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dart_eval/dart_eval.dart';
+import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/eval/bridge_class/manga_model.dart';
 
@@ -12,9 +13,19 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MangaModel.', $MangaModel.$new);
   runtime.registerBridgeFunc(
+      'package:bridge_lib/bridge_lib.dart', 'VideoModel.', $VideoModel.$new);
+  runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.http', $MBridge.$http);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.listParseDateTime', $MBridge.$listParseDateTime);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.gogoCdnExtractor', $MBridge.$gogoCdnExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.doodExtractor', $MBridge.$doodExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.streamTapeExtractor', $MBridge.$streamTapeExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.mp4UploadExtractor', $MBridge.$mp4UploadExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonPathToString', $MBridge.$jsonPathToString);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
@@ -35,6 +46,8 @@ Runtime runtimeEval(Uint8List bytecode) {
       'MBridge.parseChapterDate', $MBridge.$parseChapterDate);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.stringParse', $MBridge.$stringParse);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.subString', $MBridge.$subString);
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.evalJs', $MBridge.$evalJs);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

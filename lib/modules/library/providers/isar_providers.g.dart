@@ -6,7 +6,7 @@ part of 'isar_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAllMangaStreamHash() => r'880357b7617f6592cd453186336b8114982a081b';
+String _$getAllMangaStreamHash() => r'd06c3a94ba847055746f2d52566cc94db4c28b7e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,9 +43,11 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider call({
     required int? categoryId,
+    required bool? isManga,
   }) {
     return GetAllMangaStreamProvider(
       categoryId: categoryId,
+      isManga: isManga,
     );
   }
 
@@ -55,6 +57,7 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   ) {
     return call(
       categoryId: provider.categoryId,
+      isManga: provider.isManga,
     );
   }
 
@@ -78,10 +81,12 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider({
     required this.categoryId,
+    required this.isManga,
   }) : super.internal(
           (ref) => getAllMangaStream(
             ref,
             categoryId: categoryId,
+            isManga: isManga,
           ),
           from: getAllMangaStreamProvider,
           name: r'getAllMangaStreamProvider',
@@ -95,37 +100,111 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
         );
 
   final int? categoryId;
+  final bool? isManga;
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllMangaStreamProvider && other.categoryId == categoryId;
+    return other is GetAllMangaStreamProvider &&
+        other.categoryId == categoryId &&
+        other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, categoryId.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 String _$getAllMangaWithoutCategoriesStreamHash() =>
-    r'affd1fab4a6ab0e0bbc16b67384a0b17498fe209';
+    r'03581754f330a87894f953f8eaae528642b0afc2';
+typedef GetAllMangaWithoutCategoriesStreamRef
+    = AutoDisposeStreamProviderRef<List<Manga>>;
 
 /// See also [getAllMangaWithoutCategoriesStream].
 @ProviderFor(getAllMangaWithoutCategoriesStream)
-final getAllMangaWithoutCategoriesStreamProvider =
-    AutoDisposeStreamProvider<List<Manga>>.internal(
-  getAllMangaWithoutCategoriesStream,
-  name: r'getAllMangaWithoutCategoriesStreamProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getAllMangaWithoutCategoriesStreamHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const getAllMangaWithoutCategoriesStreamProvider =
+    GetAllMangaWithoutCategoriesStreamFamily();
 
-typedef GetAllMangaWithoutCategoriesStreamRef
-    = AutoDisposeStreamProviderRef<List<Manga>>;
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+/// See also [getAllMangaWithoutCategoriesStream].
+class GetAllMangaWithoutCategoriesStreamFamily
+    extends Family<AsyncValue<List<Manga>>> {
+  /// See also [getAllMangaWithoutCategoriesStream].
+  const GetAllMangaWithoutCategoriesStreamFamily();
+
+  /// See also [getAllMangaWithoutCategoriesStream].
+  GetAllMangaWithoutCategoriesStreamProvider call({
+    required bool? isManga,
+  }) {
+    return GetAllMangaWithoutCategoriesStreamProvider(
+      isManga: isManga,
+    );
+  }
+
+  @override
+  GetAllMangaWithoutCategoriesStreamProvider getProviderOverride(
+    covariant GetAllMangaWithoutCategoriesStreamProvider provider,
+  ) {
+    return call(
+      isManga: provider.isManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getAllMangaWithoutCategoriesStreamProvider';
+}
+
+/// See also [getAllMangaWithoutCategoriesStream].
+class GetAllMangaWithoutCategoriesStreamProvider
+    extends AutoDisposeStreamProvider<List<Manga>> {
+  /// See also [getAllMangaWithoutCategoriesStream].
+  GetAllMangaWithoutCategoriesStreamProvider({
+    required this.isManga,
+  }) : super.internal(
+          (ref) => getAllMangaWithoutCategoriesStream(
+            ref,
+            isManga: isManga,
+          ),
+          from: getAllMangaWithoutCategoriesStreamProvider,
+          name: r'getAllMangaWithoutCategoriesStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getAllMangaWithoutCategoriesStreamHash,
+          dependencies: GetAllMangaWithoutCategoriesStreamFamily._dependencies,
+          allTransitiveDependencies: GetAllMangaWithoutCategoriesStreamFamily
+              ._allTransitiveDependencies,
+        );
+
+  final bool? isManga;
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetAllMangaWithoutCategoriesStreamProvider &&
+        other.isManga == isManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

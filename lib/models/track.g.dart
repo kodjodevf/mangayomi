@@ -203,6 +203,9 @@ const _TrackstatusEnumValueMap = {
   'dropped': 3,
   'planToRead': 4,
   'rereading': 5,
+  'watching': 6,
+  'planToWatch': 7,
+  'reWatching': 8,
 };
 const _TrackstatusValueEnumMap = {
   0: TrackStatus.reading,
@@ -211,6 +214,9 @@ const _TrackstatusValueEnumMap = {
   3: TrackStatus.dropped,
   4: TrackStatus.planToRead,
   5: TrackStatus.rereading,
+  6: TrackStatus.watching,
+  7: TrackStatus.planToWatch,
+  8: TrackStatus.reWatching,
 };
 
 Id _trackGetId(Track object) {

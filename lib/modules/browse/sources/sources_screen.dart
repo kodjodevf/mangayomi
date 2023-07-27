@@ -10,7 +10,8 @@ import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class SourcesScreen extends ConsumerWidget {
-  const SourcesScreen({super.key});
+  final bool isManga;
+  const SourcesScreen({required this.isManga, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,6 +30,8 @@ class SourcesScreen extends ConsumerWidget {
                       .isActiveEqualTo(true)
                       .and()
                       .lastUsedEqualTo(true)
+                      .and()
+                      .isMangaEqualTo(isManga)
                       .watch(fireImmediately: true),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -76,6 +79,8 @@ class SourcesScreen extends ConsumerWidget {
                       .isActiveEqualTo(true)
                       .and()
                       .isPinnedEqualTo(true)
+                      .and()
+                      .isMangaEqualTo(isManga)
                       .watch(fireImmediately: true),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -123,6 +128,8 @@ class SourcesScreen extends ConsumerWidget {
                       .isActiveEqualTo(true)
                       .and()
                       .isPinnedEqualTo(false)
+                      .and()
+                      .isMangaEqualTo(isManga)
                       .watch(fireImmediately: true),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {

@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'004a790418e152205eb693fed82bf249b2347ca1';
+String _$getPopularMangaHash() => r'34fb3652db050366ced9f57dd1286d62f4b63fe4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -119,4 +119,5 @@ class GetPopularMangaProvider
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

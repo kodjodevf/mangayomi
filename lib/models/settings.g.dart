@@ -22,216 +22,278 @@ const SettingsSchema = CollectionSchema(
       name: r'animatePageTransitions',
       type: IsarType.bool,
     ),
-    r'autoUpdateExtensions': PropertySchema(
+    r'animeDisplayType': PropertySchema(
       id: 1,
+      name: r'animeDisplayType',
+      type: IsarType.byte,
+      enumMap: _SettingsanimeDisplayTypeEnumValueMap,
+    ),
+    r'animeLibraryDownloadedChapters': PropertySchema(
+      id: 2,
+      name: r'animeLibraryDownloadedChapters',
+      type: IsarType.bool,
+    ),
+    r'animeLibraryLocalSource': PropertySchema(
+      id: 3,
+      name: r'animeLibraryLocalSource',
+      type: IsarType.bool,
+    ),
+    r'animeLibraryShowCategoryTabs': PropertySchema(
+      id: 4,
+      name: r'animeLibraryShowCategoryTabs',
+      type: IsarType.bool,
+    ),
+    r'animeLibraryShowContinueReadingButton': PropertySchema(
+      id: 5,
+      name: r'animeLibraryShowContinueReadingButton',
+      type: IsarType.bool,
+    ),
+    r'animeLibraryShowLanguage': PropertySchema(
+      id: 6,
+      name: r'animeLibraryShowLanguage',
+      type: IsarType.bool,
+    ),
+    r'animeLibraryShowNumbersOfItems': PropertySchema(
+      id: 7,
+      name: r'animeLibraryShowNumbersOfItems',
+      type: IsarType.bool,
+    ),
+    r'autoUpdateExtensions': PropertySchema(
+      id: 8,
       name: r'autoUpdateExtensions',
       type: IsarType.bool,
     ),
     r'chapterFilterBookmarkedList': PropertySchema(
-      id: 2,
+      id: 9,
       name: r'chapterFilterBookmarkedList',
       type: IsarType.objectList,
       target: r'ChapterFilterBookmarked',
     ),
     r'chapterFilterDownloadedList': PropertySchema(
-      id: 3,
+      id: 10,
       name: r'chapterFilterDownloadedList',
       type: IsarType.objectList,
       target: r'ChapterFilterDownloaded',
     ),
     r'chapterFilterUnreadList': PropertySchema(
-      id: 4,
+      id: 11,
       name: r'chapterFilterUnreadList',
       type: IsarType.objectList,
       target: r'ChapterFilterUnread',
     ),
     r'chapterPageIndexList': PropertySchema(
-      id: 5,
+      id: 12,
       name: r'chapterPageIndexList',
       type: IsarType.objectList,
       target: r'ChapterPageIndex',
     ),
     r'chapterPageUrlsList': PropertySchema(
-      id: 6,
+      id: 13,
       name: r'chapterPageUrlsList',
       type: IsarType.objectList,
       target: r'ChapterPageurls',
     ),
     r'cookiesList': PropertySchema(
-      id: 7,
+      id: 14,
       name: r'cookiesList',
       type: IsarType.objectList,
       target: r'Cookie',
     ),
     r'cropBorders': PropertySchema(
-      id: 8,
+      id: 15,
       name: r'cropBorders',
       type: IsarType.bool,
     ),
     r'dateFormat': PropertySchema(
-      id: 9,
+      id: 16,
       name: r'dateFormat',
       type: IsarType.string,
     ),
     r'defaultReaderMode': PropertySchema(
-      id: 10,
+      id: 17,
       name: r'defaultReaderMode',
       type: IsarType.byte,
       enumMap: _SettingsdefaultReaderModeEnumValueMap,
     ),
     r'displayType': PropertySchema(
-      id: 11,
+      id: 18,
       name: r'displayType',
       type: IsarType.byte,
       enumMap: _SettingsdisplayTypeEnumValueMap,
     ),
     r'doubleTapAnimationSpeed': PropertySchema(
-      id: 12,
+      id: 19,
       name: r'doubleTapAnimationSpeed',
       type: IsarType.long,
     ),
     r'downloadLocation': PropertySchema(
-      id: 13,
+      id: 20,
       name: r'downloadLocation',
       type: IsarType.string,
     ),
     r'downloadOnlyOnWifi': PropertySchema(
-      id: 14,
+      id: 21,
       name: r'downloadOnlyOnWifi',
       type: IsarType.bool,
     ),
     r'filterScanlatorList': PropertySchema(
-      id: 15,
+      id: 22,
       name: r'filterScanlatorList',
       type: IsarType.objectList,
       target: r'FilterScanlator',
     ),
     r'flexColorSchemeBlendLevel': PropertySchema(
-      id: 16,
+      id: 23,
       name: r'flexColorSchemeBlendLevel',
       type: IsarType.double,
     ),
     r'flexSchemeColorIndex': PropertySchema(
-      id: 17,
+      id: 24,
       name: r'flexSchemeColorIndex',
       type: IsarType.long,
     ),
     r'incognitoMode': PropertySchema(
-      id: 18,
+      id: 25,
       name: r'incognitoMode',
       type: IsarType.bool,
     ),
     r'libraryDownloadedChapters': PropertySchema(
-      id: 19,
+      id: 26,
       name: r'libraryDownloadedChapters',
       type: IsarType.bool,
     ),
+    r'libraryFilterAnimeBookMarkedType': PropertySchema(
+      id: 27,
+      name: r'libraryFilterAnimeBookMarkedType',
+      type: IsarType.long,
+    ),
+    r'libraryFilterAnimeDownloadType': PropertySchema(
+      id: 28,
+      name: r'libraryFilterAnimeDownloadType',
+      type: IsarType.long,
+    ),
+    r'libraryFilterAnimeStartedType': PropertySchema(
+      id: 29,
+      name: r'libraryFilterAnimeStartedType',
+      type: IsarType.long,
+    ),
+    r'libraryFilterAnimeUnreadType': PropertySchema(
+      id: 30,
+      name: r'libraryFilterAnimeUnreadType',
+      type: IsarType.long,
+    ),
     r'libraryFilterMangasBookMarkedType': PropertySchema(
-      id: 20,
+      id: 31,
       name: r'libraryFilterMangasBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasDownloadType': PropertySchema(
-      id: 21,
+      id: 32,
       name: r'libraryFilterMangasDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasStartedType': PropertySchema(
-      id: 22,
+      id: 33,
       name: r'libraryFilterMangasStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasUnreadType': PropertySchema(
-      id: 23,
+      id: 34,
       name: r'libraryFilterMangasUnreadType',
       type: IsarType.long,
     ),
     r'libraryLocalSource': PropertySchema(
-      id: 24,
+      id: 35,
       name: r'libraryLocalSource',
       type: IsarType.bool,
     ),
     r'libraryShowCategoryTabs': PropertySchema(
-      id: 25,
+      id: 36,
       name: r'libraryShowCategoryTabs',
       type: IsarType.bool,
     ),
     r'libraryShowContinueReadingButton': PropertySchema(
-      id: 26,
+      id: 37,
       name: r'libraryShowContinueReadingButton',
       type: IsarType.bool,
     ),
     r'libraryShowLanguage': PropertySchema(
-      id: 27,
+      id: 38,
       name: r'libraryShowLanguage',
       type: IsarType.bool,
     ),
     r'libraryShowNumbersOfItems': PropertySchema(
-      id: 28,
+      id: 39,
       name: r'libraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
     r'locale': PropertySchema(
-      id: 29,
+      id: 40,
       name: r'locale',
       type: IsarType.object,
       target: r'L10nLocale',
     ),
     r'onlyIncludePinnedSources': PropertySchema(
-      id: 30,
+      id: 41,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 31,
+      id: 42,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
       target: r'PersonalReaderMode',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 32,
+      id: 43,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 33,
+      id: 44,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 34,
+      id: 45,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'showNSFW': PropertySchema(
-      id: 35,
+      id: 46,
       name: r'showNSFW',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 36,
+      id: 47,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 37,
+      id: 48,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
+    r'sortLibraryAnime': PropertySchema(
+      id: 49,
+      name: r'sortLibraryAnime',
+      type: IsarType.object,
+      target: r'SortLibraryManga',
+    ),
     r'sortLibraryManga': PropertySchema(
-      id: 38,
+      id: 50,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'themeIsDark': PropertySchema(
-      id: 39,
+      id: 51,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 40,
+      id: 52,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -421,6 +483,14 @@ int _settingsEstimateSize(
     }
   }
   {
+    final value = object.sortLibraryAnime;
+    if (value != null) {
+      bytesCount += 3 +
+          SortLibraryMangaSchema.estimateSize(
+              value, allOffsets[SortLibraryManga]!, allOffsets);
+    }
+  }
+  {
     final value = object.sortLibraryManga;
     if (value != null) {
       bytesCount += 3 +
@@ -444,101 +514,118 @@ void _settingsSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.animatePageTransitions);
-  writer.writeBool(offsets[1], object.autoUpdateExtensions);
+  writer.writeByte(offsets[1], object.animeDisplayType.index);
+  writer.writeBool(offsets[2], object.animeLibraryDownloadedChapters);
+  writer.writeBool(offsets[3], object.animeLibraryLocalSource);
+  writer.writeBool(offsets[4], object.animeLibraryShowCategoryTabs);
+  writer.writeBool(offsets[5], object.animeLibraryShowContinueReadingButton);
+  writer.writeBool(offsets[6], object.animeLibraryShowLanguage);
+  writer.writeBool(offsets[7], object.animeLibraryShowNumbersOfItems);
+  writer.writeBool(offsets[8], object.autoUpdateExtensions);
   writer.writeObjectList<ChapterFilterBookmarked>(
-    offsets[2],
+    offsets[9],
     allOffsets,
     ChapterFilterBookmarkedSchema.serialize,
     object.chapterFilterBookmarkedList,
   );
   writer.writeObjectList<ChapterFilterDownloaded>(
-    offsets[3],
+    offsets[10],
     allOffsets,
     ChapterFilterDownloadedSchema.serialize,
     object.chapterFilterDownloadedList,
   );
   writer.writeObjectList<ChapterFilterUnread>(
-    offsets[4],
+    offsets[11],
     allOffsets,
     ChapterFilterUnreadSchema.serialize,
     object.chapterFilterUnreadList,
   );
   writer.writeObjectList<ChapterPageIndex>(
-    offsets[5],
+    offsets[12],
     allOffsets,
     ChapterPageIndexSchema.serialize,
     object.chapterPageIndexList,
   );
   writer.writeObjectList<ChapterPageurls>(
-    offsets[6],
+    offsets[13],
     allOffsets,
     ChapterPageurlsSchema.serialize,
     object.chapterPageUrlsList,
   );
   writer.writeObjectList<Cookie>(
-    offsets[7],
+    offsets[14],
     allOffsets,
     CookieSchema.serialize,
     object.cookiesList,
   );
-  writer.writeBool(offsets[8], object.cropBorders);
-  writer.writeString(offsets[9], object.dateFormat);
-  writer.writeByte(offsets[10], object.defaultReaderMode.index);
-  writer.writeByte(offsets[11], object.displayType.index);
-  writer.writeLong(offsets[12], object.doubleTapAnimationSpeed);
-  writer.writeString(offsets[13], object.downloadLocation);
-  writer.writeBool(offsets[14], object.downloadOnlyOnWifi);
+  writer.writeBool(offsets[15], object.cropBorders);
+  writer.writeString(offsets[16], object.dateFormat);
+  writer.writeByte(offsets[17], object.defaultReaderMode.index);
+  writer.writeByte(offsets[18], object.displayType.index);
+  writer.writeLong(offsets[19], object.doubleTapAnimationSpeed);
+  writer.writeString(offsets[20], object.downloadLocation);
+  writer.writeBool(offsets[21], object.downloadOnlyOnWifi);
   writer.writeObjectList<FilterScanlator>(
-    offsets[15],
+    offsets[22],
     allOffsets,
     FilterScanlatorSchema.serialize,
     object.filterScanlatorList,
   );
-  writer.writeDouble(offsets[16], object.flexColorSchemeBlendLevel);
-  writer.writeLong(offsets[17], object.flexSchemeColorIndex);
-  writer.writeBool(offsets[18], object.incognitoMode);
-  writer.writeBool(offsets[19], object.libraryDownloadedChapters);
-  writer.writeLong(offsets[20], object.libraryFilterMangasBookMarkedType);
-  writer.writeLong(offsets[21], object.libraryFilterMangasDownloadType);
-  writer.writeLong(offsets[22], object.libraryFilterMangasStartedType);
-  writer.writeLong(offsets[23], object.libraryFilterMangasUnreadType);
-  writer.writeBool(offsets[24], object.libraryLocalSource);
-  writer.writeBool(offsets[25], object.libraryShowCategoryTabs);
-  writer.writeBool(offsets[26], object.libraryShowContinueReadingButton);
-  writer.writeBool(offsets[27], object.libraryShowLanguage);
-  writer.writeBool(offsets[28], object.libraryShowNumbersOfItems);
+  writer.writeDouble(offsets[23], object.flexColorSchemeBlendLevel);
+  writer.writeLong(offsets[24], object.flexSchemeColorIndex);
+  writer.writeBool(offsets[25], object.incognitoMode);
+  writer.writeBool(offsets[26], object.libraryDownloadedChapters);
+  writer.writeLong(offsets[27], object.libraryFilterAnimeBookMarkedType);
+  writer.writeLong(offsets[28], object.libraryFilterAnimeDownloadType);
+  writer.writeLong(offsets[29], object.libraryFilterAnimeStartedType);
+  writer.writeLong(offsets[30], object.libraryFilterAnimeUnreadType);
+  writer.writeLong(offsets[31], object.libraryFilterMangasBookMarkedType);
+  writer.writeLong(offsets[32], object.libraryFilterMangasDownloadType);
+  writer.writeLong(offsets[33], object.libraryFilterMangasStartedType);
+  writer.writeLong(offsets[34], object.libraryFilterMangasUnreadType);
+  writer.writeBool(offsets[35], object.libraryLocalSource);
+  writer.writeBool(offsets[36], object.libraryShowCategoryTabs);
+  writer.writeBool(offsets[37], object.libraryShowContinueReadingButton);
+  writer.writeBool(offsets[38], object.libraryShowLanguage);
+  writer.writeBool(offsets[39], object.libraryShowNumbersOfItems);
   writer.writeObject<L10nLocale>(
-    offsets[29],
+    offsets[40],
     allOffsets,
     L10nLocaleSchema.serialize,
     object.locale,
   );
-  writer.writeBool(offsets[30], object.onlyIncludePinnedSources);
+  writer.writeBool(offsets[41], object.onlyIncludePinnedSources);
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[31],
+    offsets[42],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
-  writer.writeBool(offsets[32], object.pureBlackDarkMode);
-  writer.writeLong(offsets[33], object.relativeTimesTamps);
-  writer.writeBool(offsets[34], object.saveAsCBZArchive);
-  writer.writeBool(offsets[35], object.showNSFW);
-  writer.writeBool(offsets[36], object.showPagesNumber);
+  writer.writeBool(offsets[43], object.pureBlackDarkMode);
+  writer.writeLong(offsets[44], object.relativeTimesTamps);
+  writer.writeBool(offsets[45], object.saveAsCBZArchive);
+  writer.writeBool(offsets[46], object.showNSFW);
+  writer.writeBool(offsets[47], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[37],
+    offsets[48],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[38],
+    offsets[49],
+    allOffsets,
+    SortLibraryMangaSchema.serialize,
+    object.sortLibraryAnime,
+  );
+  writer.writeObject<SortLibraryManga>(
+    offsets[50],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
-  writer.writeBool(offsets[39], object.themeIsDark);
-  writer.writeString(offsets[40], object.userAgent);
+  writer.writeBool(offsets[51], object.themeIsDark);
+  writer.writeString(offsets[52], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -549,103 +636,121 @@ Settings _settingsDeserialize(
 ) {
   final object = Settings(
     animatePageTransitions: reader.readBoolOrNull(offsets[0]),
-    autoUpdateExtensions: reader.readBoolOrNull(offsets[1]),
+    animeDisplayType: _SettingsanimeDisplayTypeValueEnumMap[
+            reader.readByteOrNull(offsets[1])] ??
+        DisplayType.compactGrid,
+    animeLibraryDownloadedChapters: reader.readBoolOrNull(offsets[2]),
+    animeLibraryLocalSource: reader.readBoolOrNull(offsets[3]),
+    animeLibraryShowCategoryTabs: reader.readBoolOrNull(offsets[4]),
+    animeLibraryShowContinueReadingButton: reader.readBoolOrNull(offsets[5]),
+    animeLibraryShowLanguage: reader.readBoolOrNull(offsets[6]),
+    animeLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[7]),
+    autoUpdateExtensions: reader.readBoolOrNull(offsets[8]),
     chapterFilterDownloadedList: reader.readObjectList<ChapterFilterDownloaded>(
-      offsets[3],
+      offsets[10],
       ChapterFilterDownloadedSchema.deserialize,
       allOffsets,
       ChapterFilterDownloaded(),
     ),
     chapterPageIndexList: reader.readObjectList<ChapterPageIndex>(
-      offsets[5],
+      offsets[12],
       ChapterPageIndexSchema.deserialize,
       allOffsets,
       ChapterPageIndex(),
     ),
     chapterPageUrlsList: reader.readObjectList<ChapterPageurls>(
-      offsets[6],
+      offsets[13],
       ChapterPageurlsSchema.deserialize,
       allOffsets,
       ChapterPageurls(),
     ),
     cookiesList: reader.readObjectList<Cookie>(
-      offsets[7],
+      offsets[14],
       CookieSchema.deserialize,
       allOffsets,
       Cookie(),
     ),
-    cropBorders: reader.readBoolOrNull(offsets[8]),
-    dateFormat: reader.readStringOrNull(offsets[9]),
+    cropBorders: reader.readBoolOrNull(offsets[15]),
+    dateFormat: reader.readStringOrNull(offsets[16]),
     defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
-            reader.readByteOrNull(offsets[10])] ??
+            reader.readByteOrNull(offsets[17])] ??
         ReaderMode.vertical,
     displayType:
-        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[11])] ??
+        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[18])] ??
             DisplayType.compactGrid,
-    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[12]),
-    downloadLocation: reader.readStringOrNull(offsets[13]),
-    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[14]),
-    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[16]),
-    flexSchemeColorIndex: reader.readLongOrNull(offsets[17]),
+    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[19]),
+    downloadLocation: reader.readStringOrNull(offsets[20]),
+    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[21]),
+    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[23]),
+    flexSchemeColorIndex: reader.readLongOrNull(offsets[24]),
     id: id,
-    incognitoMode: reader.readBoolOrNull(offsets[18]),
-    libraryDownloadedChapters: reader.readBoolOrNull(offsets[19]),
-    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[20]),
-    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[21]),
-    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[22]),
-    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[23]),
-    libraryLocalSource: reader.readBoolOrNull(offsets[24]),
-    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[25]),
-    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[26]),
-    libraryShowLanguage: reader.readBoolOrNull(offsets[27]),
-    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[28]),
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[30]),
+    incognitoMode: reader.readBoolOrNull(offsets[25]),
+    libraryDownloadedChapters: reader.readBoolOrNull(offsets[26]),
+    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[27]),
+    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[28]),
+    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[29]),
+    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[30]),
+    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[31]),
+    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[32]),
+    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[33]),
+    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[34]),
+    libraryLocalSource: reader.readBoolOrNull(offsets[35]),
+    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[36]),
+    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[37]),
+    libraryShowLanguage: reader.readBoolOrNull(offsets[38]),
+    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[39]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[41]),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[31],
+      offsets[42],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[32]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[33]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[34]),
-    showNSFW: reader.readBoolOrNull(offsets[35]),
-    showPagesNumber: reader.readBoolOrNull(offsets[36]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[43]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[44]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[45]),
+    showNSFW: reader.readBoolOrNull(offsets[46]),
+    showPagesNumber: reader.readBoolOrNull(offsets[47]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[37],
+      offsets[48],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
-    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[38],
+    sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[49],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    themeIsDark: reader.readBoolOrNull(offsets[39]),
-    userAgent: reader.readStringOrNull(offsets[40]),
+    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[50],
+      SortLibraryMangaSchema.deserialize,
+      allOffsets,
+    ),
+    themeIsDark: reader.readBoolOrNull(offsets[51]),
+    userAgent: reader.readStringOrNull(offsets[52]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
-    offsets[2],
+    offsets[9],
     ChapterFilterBookmarkedSchema.deserialize,
     allOffsets,
     ChapterFilterBookmarked(),
   );
   object.chapterFilterUnreadList = reader.readObjectList<ChapterFilterUnread>(
-    offsets[4],
+    offsets[11],
     ChapterFilterUnreadSchema.deserialize,
     allOffsets,
     ChapterFilterUnread(),
   );
   object.filterScanlatorList = reader.readObjectList<FilterScanlator>(
-    offsets[15],
+    offsets[22],
     FilterScanlatorSchema.deserialize,
     allOffsets,
     FilterScanlator(),
   );
   object.locale = reader.readObjectOrNull<L10nLocale>(
-    offsets[29],
+    offsets[40],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
@@ -662,146 +767,188 @@ P _settingsDeserializeProp<P>(
     case 0:
       return (reader.readBoolOrNull(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (_SettingsanimeDisplayTypeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          DisplayType.compactGrid) as P;
     case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 4:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 5:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 6:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 7:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 8:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 9:
       return (reader.readObjectList<ChapterFilterBookmarked>(
         offset,
         ChapterFilterBookmarkedSchema.deserialize,
         allOffsets,
         ChapterFilterBookmarked(),
       )) as P;
-    case 3:
+    case 10:
       return (reader.readObjectList<ChapterFilterDownloaded>(
         offset,
         ChapterFilterDownloadedSchema.deserialize,
         allOffsets,
         ChapterFilterDownloaded(),
       )) as P;
-    case 4:
+    case 11:
       return (reader.readObjectList<ChapterFilterUnread>(
         offset,
         ChapterFilterUnreadSchema.deserialize,
         allOffsets,
         ChapterFilterUnread(),
       )) as P;
-    case 5:
+    case 12:
       return (reader.readObjectList<ChapterPageIndex>(
         offset,
         ChapterPageIndexSchema.deserialize,
         allOffsets,
         ChapterPageIndex(),
       )) as P;
-    case 6:
+    case 13:
       return (reader.readObjectList<ChapterPageurls>(
         offset,
         ChapterPageurlsSchema.deserialize,
         allOffsets,
         ChapterPageurls(),
       )) as P;
-    case 7:
+    case 14:
       return (reader.readObjectList<Cookie>(
         offset,
         CookieSchema.deserialize,
         allOffsets,
         Cookie(),
       )) as P;
-    case 8:
+    case 15:
       return (reader.readBoolOrNull(offset)) as P;
-    case 9:
+    case 16:
       return (reader.readStringOrNull(offset)) as P;
-    case 10:
+    case 17:
       return (_SettingsdefaultReaderModeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ReaderMode.vertical) as P;
-    case 11:
+    case 18:
       return (_SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           DisplayType.compactGrid) as P;
-    case 12:
+    case 19:
       return (reader.readLongOrNull(offset)) as P;
-    case 13:
+    case 20:
       return (reader.readStringOrNull(offset)) as P;
-    case 14:
+    case 21:
       return (reader.readBoolOrNull(offset)) as P;
-    case 15:
+    case 22:
       return (reader.readObjectList<FilterScanlator>(
         offset,
         FilterScanlatorSchema.deserialize,
         allOffsets,
         FilterScanlator(),
       )) as P;
-    case 16:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 17:
-      return (reader.readLongOrNull(offset)) as P;
-    case 18:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 19:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 20:
-      return (reader.readLongOrNull(offset)) as P;
-    case 21:
-      return (reader.readLongOrNull(offset)) as P;
-    case 22:
-      return (reader.readLongOrNull(offset)) as P;
     case 23:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 24:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 25:
       return (reader.readBoolOrNull(offset)) as P;
     case 26:
       return (reader.readBoolOrNull(offset)) as P;
     case 27:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 28:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 29:
+      return (reader.readLongOrNull(offset)) as P;
+    case 30:
+      return (reader.readLongOrNull(offset)) as P;
+    case 31:
+      return (reader.readLongOrNull(offset)) as P;
+    case 32:
+      return (reader.readLongOrNull(offset)) as P;
+    case 33:
+      return (reader.readLongOrNull(offset)) as P;
+    case 34:
+      return (reader.readLongOrNull(offset)) as P;
+    case 35:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 36:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 37:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 38:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 39:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 40:
       return (reader.readObjectOrNull<L10nLocale>(
         offset,
         L10nLocaleSchema.deserialize,
         allOffsets,
       )) as P;
-    case 30:
+    case 41:
       return (reader.readBoolOrNull(offset)) as P;
-    case 31:
+    case 42:
       return (reader.readObjectList<PersonalReaderMode>(
         offset,
         PersonalReaderModeSchema.deserialize,
         allOffsets,
         PersonalReaderMode(),
       )) as P;
-    case 32:
+    case 43:
       return (reader.readBoolOrNull(offset)) as P;
-    case 33:
+    case 44:
       return (reader.readLongOrNull(offset)) as P;
-    case 34:
+    case 45:
       return (reader.readBoolOrNull(offset)) as P;
-    case 35:
+    case 46:
       return (reader.readBoolOrNull(offset)) as P;
-    case 36:
+    case 47:
       return (reader.readBoolOrNull(offset)) as P;
-    case 37:
+    case 48:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
       )) as P;
-    case 38:
+    case 49:
       return (reader.readObjectOrNull<SortLibraryManga>(
         offset,
         SortLibraryMangaSchema.deserialize,
         allOffsets,
       )) as P;
-    case 39:
+    case 50:
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 51:
       return (reader.readBoolOrNull(offset)) as P;
-    case 40:
+    case 52:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
+const _SettingsanimeDisplayTypeEnumValueMap = {
+  'compactGrid': 0,
+  'comfortableGrid': 1,
+  'coverOnlyGrid': 2,
+  'list': 3,
+};
+const _SettingsanimeDisplayTypeValueEnumMap = {
+  0: DisplayType.compactGrid,
+  1: DisplayType.comfortableGrid,
+  2: DisplayType.coverOnlyGrid,
+  3: DisplayType.list,
+};
 const _SettingsdefaultReaderModeEnumValueMap = {
   'vertical': 0,
   'ltr': 1,
@@ -942,6 +1089,230 @@ extension SettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'animatePageTransitions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeDisplayTypeEqualTo(DisplayType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeDisplayTypeGreaterThan(
+    DisplayType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'animeDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeDisplayTypeLessThan(
+    DisplayType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'animeDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeDisplayTypeBetween(
+    DisplayType lower,
+    DisplayType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'animeDisplayType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryDownloadedChaptersIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryDownloadedChapters',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryDownloadedChaptersIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryDownloadedChapters',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryDownloadedChaptersEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryDownloadedChapters',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryLocalSourceIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryLocalSource',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryLocalSourceIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryLocalSource',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryLocalSourceEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryLocalSource',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowCategoryTabsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryShowCategoryTabs',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowCategoryTabsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryShowCategoryTabs',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowCategoryTabsEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryShowCategoryTabs',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowContinueReadingButtonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryShowContinueReadingButton',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowContinueReadingButtonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryShowContinueReadingButton',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowContinueReadingButtonEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryShowContinueReadingButton',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowLanguageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryShowLanguage',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowLanguageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryShowLanguage',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowLanguageEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryShowLanguage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowNumbersOfItemsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'animeLibraryShowNumbersOfItems',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowNumbersOfItemsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'animeLibraryShowNumbersOfItems',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      animeLibraryShowNumbersOfItemsEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'animeLibraryShowNumbersOfItems',
         value: value,
       ));
     });
@@ -2546,6 +2917,302 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterAnimeBookMarkedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterAnimeBookMarkedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterAnimeBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterAnimeBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterAnimeBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeBookMarkedTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterAnimeBookMarkedType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterAnimeDownloadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterAnimeDownloadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterAnimeDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterAnimeDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterAnimeDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeDownloadTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterAnimeDownloadType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterAnimeStartedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterAnimeStartedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterAnimeStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterAnimeStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterAnimeStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeStartedTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterAnimeStartedType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterAnimeUnreadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterAnimeUnreadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterAnimeUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterAnimeUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterAnimeUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterAnimeUnreadTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterAnimeUnreadType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       libraryFilterMangasBookMarkedTypeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3424,6 +4091,24 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      sortLibraryAnimeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sortLibraryAnime',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      sortLibraryAnimeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sortLibraryAnime',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       sortLibraryMangaIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3690,6 +4375,13 @@ extension SettingsQueryObject
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> sortLibraryAnime(
+      FilterQuery<SortLibraryManga> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'sortLibraryAnime');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> sortLibraryManga(
       FilterQuery<SortLibraryManga> q) {
     return QueryBuilder.apply(this, (query) {
@@ -3770,6 +4462,104 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
       sortByAnimatePageTransitionsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'animatePageTransitions', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByAnimeDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeDisplayType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByAnimeDisplayTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeDisplayType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryDownloadedChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryDownloadedChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryLocalSource', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryLocalSourceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryLocalSource', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowCategoryTabs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowCategoryTabsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowCategoryTabs', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'animeLibraryShowContinueReadingButton', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowContinueReadingButtonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'animeLibraryShowContinueReadingButton', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowNumbersOfItems', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAnimeLibraryShowNumbersOfItemsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowNumbersOfItems', Sort.desc);
     });
   }
 
@@ -3923,6 +4713,62 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
       sortByLibraryDownloadedChaptersDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'libraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeBookMarkedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeBookMarkedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeBookMarkedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeDownloadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeDownloadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeDownloadType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeStartedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeStartedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeStartedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeUnreadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterAnimeUnreadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeUnreadType', Sort.desc);
     });
   }
 
@@ -4166,6 +5012,104 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByAnimeDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeDisplayType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByAnimeDisplayTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeDisplayType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryDownloadedChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryDownloadedChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryLocalSource', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryLocalSourceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryLocalSource', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowCategoryTabs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowCategoryTabsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowCategoryTabs', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'animeLibraryShowContinueReadingButton', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowContinueReadingButtonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'animeLibraryShowContinueReadingButton', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowNumbersOfItems', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAnimeLibraryShowNumbersOfItemsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'animeLibraryShowNumbersOfItems', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByAutoUpdateExtensions() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'autoUpdateExtensions', Sort.asc);
@@ -4328,6 +5272,62 @@ extension SettingsQuerySortThenBy
       thenByLibraryDownloadedChaptersDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'libraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeBookMarkedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeBookMarkedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeBookMarkedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeDownloadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeDownloadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeDownloadType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeStartedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeStartedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeStartedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeUnreadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterAnimeUnreadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterAnimeUnreadType', Sort.desc);
     });
   }
 
@@ -4564,6 +5564,54 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByAnimeDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeDisplayType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryDownloadedChapters');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryLocalSource');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryShowCategoryTabs');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryShowContinueReadingButton');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryShowLanguage');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByAnimeLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'animeLibraryShowNumbersOfItems');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByAutoUpdateExtensions() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'autoUpdateExtensions');
@@ -4639,6 +5687,34 @@ extension SettingsQueryWhereDistinct
       distinctByLibraryDownloadedChapters() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'libraryDownloadedChapters');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterAnimeBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterAnimeBookMarkedType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterAnimeDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterAnimeDownloadType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterAnimeStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterAnimeStartedType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterAnimeUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterAnimeUnreadType');
     });
   }
 
@@ -4766,6 +5842,55 @@ extension SettingsQueryProperty
       animatePageTransitionsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'animatePageTransitions');
+    });
+  }
+
+  QueryBuilder<Settings, DisplayType, QQueryOperations>
+      animeDisplayTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeDisplayType');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryDownloadedChaptersProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryDownloadedChapters');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryLocalSourceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryLocalSource');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryShowCategoryTabsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryShowCategoryTabs');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryShowContinueReadingButtonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryShowContinueReadingButton');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryShowLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryShowLanguage');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      animeLibraryShowNumbersOfItemsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'animeLibraryShowNumbersOfItems');
     });
   }
 
@@ -4897,6 +6022,34 @@ extension SettingsQueryProperty
   }
 
   QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterAnimeBookMarkedTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterAnimeBookMarkedType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterAnimeDownloadTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterAnimeDownloadType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterAnimeStartedTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterAnimeStartedType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterAnimeUnreadTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterAnimeUnreadType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
       libraryFilterMangasBookMarkedTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'libraryFilterMangasBookMarkedType');
@@ -5012,6 +6165,13 @@ extension SettingsQueryProperty
       sortChapterListProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sortChapterList');
+    });
+  }
+
+  QueryBuilder<Settings, SortLibraryManga?, QQueryOperations>
+      sortLibraryAnimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sortLibraryAnime');
     });
   }
 

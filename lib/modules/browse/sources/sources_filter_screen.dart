@@ -9,7 +9,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class SourcesFilterScreen extends ConsumerWidget {
-  const SourcesFilterScreen({super.key});
+  final bool isManga;
+  const SourcesFilterScreen({required this.isManga, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +27,8 @@ class SourcesFilterScreen extends ConsumerWidget {
                 .idIsNotNull()
                 .and()
                 .sourceCodeIsNotEmpty()
+                .and()
+                .isMangaEqualTo(isManga)
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -43,7 +46,8 @@ class SourcesFilterScreen extends ConsumerWidget {
                     value: entries
                         .where((element) =>
                             element.lang!.toLowerCase() == groupByValue &&
-                            element.isActive!)
+                            element.isActive! &&
+                            element.isManga == isManga)
                         .isNotEmpty,
                     onChanged: (val) {
                       isar.writeTxnSync(() {
@@ -65,7 +69,8 @@ class SourcesFilterScreen extends ConsumerWidget {
                     if (entries
                         .where((s) =>
                             s.lang!.toLowerCase() == element.lang &&
-                            s.isActive!)
+                            s.isActive! &&
+                            s.isManga == isManga)
                         .isEmpty) {
                       return Container();
                     }

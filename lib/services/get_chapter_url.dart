@@ -75,10 +75,10 @@ Future<GetChapterUrlModel> getChapterUrl(
           sourceId: source.id,
         ))
       ];
-      var result2 = await runtime.executeLib(
+      var res = await runtime.executeLib(
           'package:package:mangayomi/main.dart', 'getChapterUrl');
-      if (result2 is $List) {
-        for (var element in result2.$reified) {
+      if (res is $List) {
+        for (var element in res.$reified) {
           if (element is $Value) {
             pageUrls.add(element.$reified);
           } else {
@@ -86,7 +86,7 @@ Future<GetChapterUrlModel> getChapterUrl(
           }
         }
       } else {
-        for (var element in result2) {
+        for (var element in res) {
           if (element is $Value) {
             pageUrls.add(element.$reified);
           } else {
@@ -162,3 +162,38 @@ Future<GetChapterUrlModel> getChapterUrl(
       archiveImages: archiveImages,
       uChapDataPreload: uChapDataPreloadp);
 }
+// import 'dart:convert';
+// import 'package:bridge_lib/bridge_lib.dart';
+
+// getChapterUrl(MangaModel manga) async {
+//   final datas = {
+//     "url": manga.link,
+//     "headers": null,
+//     "sourceId": manga.sourceId
+//   };
+
+//   final res = await MBridge.http(json.encode(datas), 0);
+
+//   if (res.isEmpty) {
+//     return [];
+//   }
+//   final epPa = MBridge.querySelector(res, "link[rel=shortlink]", 4, "href");
+//       String epId = MBridge.subString(epPa,"?p=",1);
+//       final serverValue = MBridge.xpath(res, '//*[contains(@class, "list-server")]/select/option/@value', "._._")
+//         .split("._._");
+//   print(serverValue);
+//         final serverName = MBridge.xpath(res, '//*[contains(@class, "list-server")]/select/option/text()', "._._")
+//         .split("._._");
+//   print(epId);
+  
+//   final headers = {
+//     "X-Requested-With": "XMLHttpRequest"
+//   };
+//   final url =
+//       "https://animevostfr.tv/ajax-get-link-stream/?server=openloads&filmId=130473";
+//   final datasP = {"url": url, "headers": headers, "sourceId": manga.sourceId};
+// print(datasP);
+
+//   return [];
+// }
+

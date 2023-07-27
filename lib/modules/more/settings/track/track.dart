@@ -15,7 +15,7 @@ class TrackScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text(l10nLocalizations(context)!.tracking),
+        title: Text(l10nLocalizations(context)!.tracking),
       ),
       body: StreamBuilder(
           stream: isar.trackPreferences
@@ -30,14 +30,15 @@ class TrackScreen extends ConsumerWidget {
                 TrackListile(
                     onTap: () async {
                       await ref
-                          .read(myAnimeListProvider(syncId: 1).notifier)
+                          .read(myAnimeListProvider(syncId: 1, isManga: null)
+                              .notifier)
                           .login();
                     },
                     id: 1,
                     entries: entries!),
                 TrackListile(
                     onTap: () async {
-                       await ref
+                      await ref
                           .read(anilistProvider(syncId: 2).notifier)
                           .login();
                     },

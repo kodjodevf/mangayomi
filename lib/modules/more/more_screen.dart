@@ -46,21 +46,19 @@ class MoreScreen extends StatelessWidget {
             ),
             ListTileWidget(
               onTap: () {
-                context.push('/categories');
+                context.push('/categories', extra: (false, 0));
               },
               icon: Icons.label_outline_rounded,
               title: l10n.categories,
             ),
             const Divider(),
-            // ListTile(
-            //   onTap: () {},
-            //   leading: Container(
-            //     height: 20,
-            //     width: 20,
-            //     color: Colors.grey,
-            //   ),
-            //   title: const Text('Statistics'),
-            // ),
+            ListTileWidget(
+              onTap: () {
+                context.push('/history');
+              },
+              icon: Icons.history_outlined,
+              title: l10n.history,
+            ),
             // ListTile(
             //   onTap: () {},
             //   leading: const SizedBox(

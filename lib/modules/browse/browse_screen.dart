@@ -21,7 +21,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 3, vsync: this);
+    _tabBarController = TabController(length: 5, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -44,7 +44,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 3,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -70,22 +70,25 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     },
                     controller: _textEditingController,
                   )
-                : _tabBarController.index != 2
+                : _tabBarController.index != 4
                     ? IconButton(
                         splashRadius: 20,
                         onPressed: () {
-                          if (_tabBarController.index == 1) {
+                          if (_tabBarController.index != 1 &&
+                              _tabBarController.index != 0) {
                             setState(() {
                               _isSearch = true;
                             });
-                          } else if (_tabBarController.index == 0) {
-                            context.push(
-                              '/globalSearch',
-                            );
+                          } else {
+                            context.push('/globalSearch',
+                                extra: _tabBarController.index == 0
+                                    ? true
+                                    : false);
                           }
                         },
                         icon: Icon(
-                            _tabBarController.index == 0
+                            _tabBarController.index == 0 ||
+                                    _tabBarController.index == 1
                                 ? Icons.travel_explore_rounded
                                 : Icons.search_rounded,
                             color: Theme.of(context).hintColor))
@@ -94,34 +97,53 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                 splashRadius: 20,
                 onPressed: () {
                   if (_tabBarController.index == 0) {
-                    context.push('/sourceFilter');
+                    context.push('/sourceFilter', extra: true);
                   } else if (_tabBarController.index == 1) {
+                    context.push('/sourceFilter', extra: false);
+                  } else if (_tabBarController.index == 2) {
                     _textEditingController.clear();
-                    context.push('/extensionLang');
+                    context.push('/ExtensionLang', extra: true);
+                  } else if (_tabBarController.index == 3) {
+                    _textEditingController.clear();
+                    context.push('/ExtensionLang', extra: false);
                   } else {}
                 },
                 icon: Icon(
-                    _tabBarController.index == 0
+                    _tabBarController.index == 0 || _tabBarController.index == 1
                         ? Icons.filter_list_sharp
-                        : _tabBarController.index == 1
+                        : _tabBarController.index == 2 ||
+                                _tabBarController.index == 3
                             ? Icons.translate_rounded
                             : Icons.help_outline_outlined,
                     color: Theme.of(context).hintColor)),
           ],
           bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorSize: TabBarIndicatorSize.label,
+            isScrollable: true,
             controller: _tabBarController,
             tabs: [
-              Tab(text: l10n.sources),
-              Tab(text: l10n.extensions),
+              Tab(text: l10n.manga_sources),
+              Tab(text: l10n.anime_sources),
+              Tab(text: l10n.manga_extensions),
+              Tab(text: l10n.anime_extensions),
               Tab(text: l10n.migrate),
             ],
           ),
         ),
         body: TabBarView(controller: _tabBarController, children: [
-          const SourcesScreen(),
+          const SourcesScreen(
+            isManga: true,
+          ),
+          const SourcesScreen(
+            isManga: false,
+          ),
           ExtensionScreen(
             query: _textEditingController.text,
+            isManga: true,
+          ),
+          ExtensionScreen(
+            query: _textEditingController.text,
+            isManga: false,
           ),
           const MigrateScreen()
         ]),
