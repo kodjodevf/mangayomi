@@ -794,8 +794,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         final l10n = l10nLocalizations(context)!;
         return DraggableMenu(
           ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
-          expandable: false,
-          maxHeight: scanlators.$1.isEmpty ? 240 : 260,
+          levels: [
+            DraggableMenuLevel.ratio(
+                ratio: scanlators.$1.isEmpty ? 1 / 3.6 : 1 / 3.3),
+          ],
           fastDrag: false,
           minimizeBeforeFastDrag: false,
           child: DefaultTabController(
@@ -1630,8 +1632,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         context,
         DraggableMenu(
           ui: SoftModernDraggableMenu(radius: 20, barItem: Container()),
-          maxHeight: mediaHeight(context, 0.9),
-          minHeight: 80,
+          levels: [
+            DraggableMenuLevel.ratio(ratio: 0.9),
+          ],
           child: Material(
             color: isLight(context)
                 ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)

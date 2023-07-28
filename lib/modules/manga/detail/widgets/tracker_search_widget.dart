@@ -243,7 +243,10 @@ trackersSearchraggableMenu(BuildContext context,
                   ],
                 ),
               )),
-          maxHeight: mediaHeight(context, 0.9),
+          levels: [
+            DraggableMenuLevel.ratio(ratio: 0.9),
+          ],
+          minimizeBeforeFastDrag: true,
           child: TrackerWidgetSearch(
             track: track,
             isManga: isManga,

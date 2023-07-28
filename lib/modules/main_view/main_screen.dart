@@ -5,41 +5,44 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends StatelessWidget {
   const MainScreen({super.key, required this.child});
 
   final Widget child;
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
-    int currentIndex = route.location == '/MangaLibrary'
-        ? 0
-        : route.location == '/AnimeLibrary'
-            ? 1
-            : route.location == '/updates'
-                ? 2
-                : route.location == '/browse'
-                    ? 3
-                    : 4;
-    bool isReadingScreen = route.location == '/mangareaderview';
-    return Column(
-      children: [
-        if (!isReadingScreen)
-          Consumer(builder: (context, ref, child) {
-            final incognitoMode = ref.watch(incognitoModeStateProvider);
-            return Material(
+
+    return Consumer(builder: (context, ref, chuld) {
+      final location = ref.watch(
+        routerCurrentLocationStateProvider(context),
+      );
+      bool isReadingScreen = location == '/mangareaderview';
+      int currentIndex = location == null
+          ? 0
+          : location == '/MangaLibrary'
+              ? 0
+              : location == '/AnimeLibrary'
+                  ? 1
+                  : location == '/updates'
+                      ? 2
+                      : location == '/browse'
+                          ? 3
+                          : 4;
+      final incognitoMode = ref.watch(incognitoModeStateProvider);
+      final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+      return Column(
+        children: [
+          if (!isReadingScreen)
+            Material(
               child: AnimatedContainer(
                 height: incognitoMode
                     ? Platform.isAndroid || Platform.isIOS
@@ -66,27 +69,25 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
               ),
-            );
-          }),
-        Flexible(
-          child: Scaffold(
-            body: isTablet(context)
-                ? Row(
-                    children: [
-                      Consumer(builder: (context, ref, child) {
-                        final isLongPressed =
-                            ref.watch(isLongPressedMangaStateProvider);
-                        return AnimatedContainer(
+            ),
+          Flexible(
+            child: Scaffold(
+              body: isTablet(context)
+                  ? Row(
+                      children: [
+                        AnimatedContainer(
                           duration: const Duration(milliseconds: 0),
                           width: isLongPressed
                               ? 0
-                              : route.location != '/MangaLibrary' &&
-                                      route.location != '/AnimeLibrary' &&
-                                      route.location != '/updates' &&
-                                      route.location != '/browse' &&
-                                      route.location != '/more'
-                                  ? 0
-                                  : 100,
+                              : location == null
+                                  ? 100
+                                  : location != '/MangaLibrary' &&
+                                          location != '/AnimeLibrary' &&
+                                          location != '/updates' &&
+                                          location != '/browse' &&
+                                          location != '/more'
+                                      ? 0
+                                      : 100,
                           child: NavigationRailTheme(
                             data: NavigationRailThemeData(
                               indicatorShape: RoundedRectangleBorder(
@@ -152,11 +153,6 @@ class _MainScreenState extends State<MainScreen> {
                               ],
                               selectedIndex: currentIndex,
                               onDestinationSelected: (newIndex) {
-                                if (mounted) {
-                                  setState(() {
-                                    currentIndex = newIndex;
-                                  });
-                                }
                                 if (newIndex == 0) {
                                   route.go('/MangaLibrary');
                                 } else if (newIndex == 1) {
@@ -171,29 +167,27 @@ class _MainScreenState extends State<MainScreen> {
                               },
                             ),
                           ),
-                        );
-                      }),
-                      Expanded(child: widget.child)
-                    ],
-                  )
-                : widget.child,
-            bottomNavigationBar: isTablet(context)
-                ? null
-                : Consumer(builder: (context, ref, child) {
-                    final isLongPressed =
-                        ref.watch(isLongPressedMangaStateProvider);
-                    return AnimatedContainer(
+                        ),
+                        Expanded(child: child)
+                      ],
+                    )
+                  : child,
+              bottomNavigationBar: isTablet(context)
+                  ? null
+                  : AnimatedContainer(
                       duration: const Duration(milliseconds: 0),
                       width: mediaWidth(context, 1),
                       height: isLongPressed
                           ? 0
-                          : route.location != '/MangaLibrary' &&
-                                  route.location != '/AnimeLibrary' &&
-                                  route.location != '/updates' &&
-                                  route.location != '/browse' &&
-                                  route.location != '/more'
-                              ? 0
-                              : 80,
+                          : location == null
+                              ? 80
+                              : location != '/MangaLibrary' &&
+                                      location != '/AnimeLibrary' &&
+                                      location != '/updates' &&
+                                      location != '/browse' &&
+                                      location != '/more'
+                                  ? 0
+                                  : 80,
                       child: NavigationBarTheme(
                         data: NavigationBarThemeData(
                           indicatorShape: RoundedRectangleBorder(
@@ -246,11 +240,6 @@ class _MainScreenState extends State<MainScreen> {
                                 label: l10n.more),
                           ],
                           onDestinationSelected: (newIndex) {
-                            if (mounted) {
-                              setState(() {
-                                currentIndex = newIndex;
-                              });
-                            }
                             if (newIndex == 0) {
                               route.go('/MangaLibrary');
                             } else if (newIndex == 1) {
@@ -265,11 +254,11 @@ class _MainScreenState extends State<MainScreen> {
                           },
                         ),
                       ),
-                    );
-                  }),
+                    ),
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }

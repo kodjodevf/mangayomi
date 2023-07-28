@@ -44,6 +44,27 @@ GoRouter router(RouterRef ref) {
   );
 }
 
+@riverpod
+class RouterCurrentLocationState extends _$RouterCurrentLocationState {
+  @override
+  String? build(BuildContext context) {
+    _listener();
+    return null;
+  }
+
+  _listener() {
+    final router = GoRouter.of(context);
+    router.routerDelegate.addListener(() {
+      final RouteMatch lastMatch =
+          router.routerDelegate.currentConfiguration.last;
+      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+          ? lastMatch.matches
+          : router.routerDelegate.currentConfiguration;
+      state = matchList.uri.toString();
+    });
+  }
+}
+
 class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
         ShellRoute(

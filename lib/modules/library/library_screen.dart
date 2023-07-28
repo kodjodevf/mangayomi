@@ -1146,9 +1146,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         context,
         DraggableMenu(
             ui: SoftModernDraggableMenu(barItem: Container(), radius: 20),
-            expandable: true,
-            expandedHeight: mediaHeight(context, 0.8),
-            maxHeight: mediaHeight(context, 0.6),
+            minimizeThreshold: 0.6,
+            levels: [
+              DraggableMenuLevel.ratio(ratio: 1 / 3),
+              DraggableMenuLevel.ratio(ratio: 2 / 3),
+              DraggableMenuLevel.ratio(ratio: 0.9),
+            ],
             minimizeBeforeFastDrag: true,
             child: DefaultTabController(
                 length: 3,

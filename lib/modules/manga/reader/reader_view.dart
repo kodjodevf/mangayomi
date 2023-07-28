@@ -11,6 +11,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
@@ -1448,12 +1449,14 @@ class _MangaChapterPageGalleryState
         context,
         DraggableMenu(
             ui: ClassicDraggableMenu(barItem: Container()),
-            expandable: false,
-            maxHeight: mediaHeight(context, 0.4),
+            levels: [
+              DraggableMenuLevel.ratio(ratio: 0.4),
+            ],
             fastDrag: false,
             minimizeBeforeFastDrag: false,
             child: StatefulBuilder(
               builder: (context, setState) {
+                final l10n = l10nLocalizations(context)!;
                 return Scaffold(
                   body: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1461,11 +1464,11 @@ class _MangaChapterPageGalleryState
                       const SizedBox(
                         height: 10,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Settings',
-                          style: TextStyle(
+                          l10n.settings,
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -1476,7 +1479,7 @@ class _MangaChapterPageGalleryState
                           children: [
                             SwitchListTile(
                               dense: true,
-                              title: const Text('Show Page Number'),
+                              title: Text(l10n.show_page_number),
                               value: _showPagesNumber,
                               onChanged: (value) {
                                 setState(() {
