@@ -50,9 +50,12 @@ Future<List<MangaModel?>> getLatestUpdatesManga(
         newManga.add(newMangaa);
       }
       latestUpdatesManga = newManga;
+    } else {
+      latestUpdatesManga =
+          (res.$reified as List<dynamic>).map((e) => e as MangaModel).toList();
     }
-  } catch (_) {
-    throw Exception("");
+  } catch (e) {
+    throw Exception(e);
   }
 
   return latestUpdatesManga;

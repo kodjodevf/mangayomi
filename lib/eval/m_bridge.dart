@@ -15,12 +15,15 @@ import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/gogo_cdn_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/mp4_upload_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/my_tv_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/send_vid_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/stream_tape_extractor.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
-import 'package:mangayomi/services/anime_extractors/mp4_upload_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/stream_tape_extractor.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -188,6 +191,8 @@ class MBridge {
       return [val.last];
     } else if (type == 4) {
       return val.where((element) => element.toString().isNotEmpty).toList();
+    } else if (type == 5) {
+      return val.reversed.toList();
     }
     return val;
   }
@@ -288,8 +293,10 @@ class MBridge {
     return html!;
   }
 
-  static List<dynamic> jsonDecodeToList(String source) {
-    return jsonDecode(source) as List;
+  static List<dynamic> jsonDecodeToList(String source, int type) {
+    return type == 0
+        ? jsonDecode(source) as List
+        : (jsonDecode(source) as List).map((e) => jsonEncode(e)).toList();
   }
 
   static String evalJs(String code) {
@@ -305,7 +312,8 @@ class MBridge {
     }
   }
 
-  static List<String> jsonPathToList(String source, String expression) {
+  static List<String> jsonPathToList(
+      String source, String expression, int type) {
     try {
       if (jsonDecode(source) is List) {
         List<dynamic> values = [];
@@ -321,7 +329,13 @@ class MBridge {
         List<String> list = [];
         for (var data in values) {
           final jsonRes = JsonPath(expression).read(data);
-          list.add(jsonRes.first.value.toString());
+          String val = "";
+          if (type == 0) {
+            val = jsonRes.first.value.toString();
+          } else {
+            val = jsonEncode(jsonRes.first.value);
+          }
+          list.add(val);
         }
         return list;
       } else {
@@ -518,10 +532,15 @@ class MBridge {
     );
   }
 
-  static Future<List<Video>> mp4UploadExtractor(String url,
-      Map<String, String>? headers, String prefix, String suffix) async {
+  static Future<List<Video>> mp4UploadExtractor(
+      String url, String? headers, String prefix, String suffix) async {
+    Map<String, String> newHeaders = {};
+    if (headers != null) {
+      newHeaders = (jsonDecode(headers) as Map)
+          .map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
     return await Mp4uploadExtractor()
-        .videosFromUrl(url, headers ?? {}, prefix: prefix, suffix: suffix);
+        .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
   }
 
   static Future<List<Video>> streamTapeExtractor(String url) async {
@@ -681,6 +700,51 @@ class MBridge {
       throw Exception(e);
     }
   }
+
+  static Future<List<Video>> sibnetExtractor(String url) async {
+    return await SibnetExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static Future<List<Video>> sendVidExtractor(
+      String url, String? headers, String prefix) async {
+    Map<String, String> newHeaders = {};
+    if (headers != null) {
+      newHeaders = (jsonDecode(headers) as Map)
+          .map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
+
+    return await SendvidExtractor(newHeaders)
+        .videosFromUrl(url, prefix: prefix);
+  }
+
+  static Future<List<Video>> myTvExtractor(String url) async {
+    return await MytvExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static List<Video> toVideos(
+      String url, String quality, String originalUrl, String? headers) {
+    Map<String, String> newHeaders = {};
+    if (headers != null) {
+      newHeaders = (jsonDecode(headers) as Map)
+          .map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
+    return [Video(url, quality, originalUrl, headers: newHeaders)];
+  }
+
+  static bool isEmptyOrIsNotEmpty(dynamic value, int type) {
+    if (value is List) {
+      return type == 0 ? value.isEmpty : value.isNotEmpty;
+    }
+    if (value is String) {
+      return type == 0 ? value.isEmpty : value.isNotEmpty;
+    }
+
+    return type == 0 ? value.isEmpty : value.isNotEmpty;
+  }
 }
 
 final List<String> _dateFormats = [
@@ -732,6 +796,74 @@ class $MBridge extends MBridge with $Bridge {
             returns: BridgeTypeAnnotation($type), params: [], namedParams: []))
       },
       methods: {
+        'isEmptyOrIsNotEmpty': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.boolType)),
+                params: [
+                  BridgeParameter(
+                      'value',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.dynamicType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'sibnetExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'myTvExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'sendVidExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'headers',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'subString': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(
@@ -770,6 +902,35 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.intType)),
                       false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'toVideos': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'quality',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'originalUrl',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'headers',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      true),
                 ],
                 namedParams: []),
             isStatic: true),
@@ -834,6 +995,11 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
                 ],
                 namedParams: []),
             isStatic: true),
@@ -846,6 +1012,11 @@ class $MBridge extends MBridge with $Bridge {
                       'source',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
                       false),
                 ],
                 namedParams: []),
@@ -1109,7 +1280,7 @@ class $MBridge extends MBridge with $Bridge {
                   BridgeParameter(
                       'headers',
                       BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.mapType),
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
                           nullable: true),
                       false),
                   BridgeParameter(
@@ -1268,6 +1439,19 @@ class $MBridge extends MBridge with $Bridge {
         .toList());
   }
 
+  static $List $toVideos(Runtime runtime, $Value? target, List<$Value?> args) {
+    final value = MBridge.toVideos(
+        args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value);
+
+    return $List.wrap(value
+        .map((e) => $VideoModel.wrap(VideoModel()
+          ..headers = e.headers
+          ..originalUrl = e.originalUrl
+          ..quality = e.quality
+          ..url = e.url))
+        .toList());
+  }
+
   static $String $jsonPathToString(
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $String(MBridge.jsonPathToString(
@@ -1300,6 +1484,7 @@ class $MBridge extends MBridge with $Bridge {
     return $List.wrap(MBridge.jsonPathToList(
       args[0]!.$value,
       args[1]!.$value,
+      args[2]!.$value,
     ).map((e) => $String(e)).toList());
   }
 
@@ -1307,6 +1492,7 @@ class $MBridge extends MBridge with $Bridge {
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $List.wrap(MBridge.jsonDecodeToList(
       args[0]!.$value,
+      args[1]!.$value,
     ).map((e) => $String(e.toString())).toList());
   }
 
@@ -1327,7 +1513,7 @@ class $MBridge extends MBridge with $Bridge {
   static $Instance $stringParseValue(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.stringParseValue(
-        args[0]!.$value,
+        args[0]!.$value.toString(),
       ));
   static $String $regExp(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.regExp(
@@ -1414,6 +1600,45 @@ class $MBridge extends MBridge with $Bridge {
                 ..quality = e.quality
                 ..url = e.url))
               .toList())));
+  static $Future $sendVidExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.sendVidExtractor(
+              args[0]!.$value, args[1]!.$value, args[2]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+  static $Future $sibnetExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+  static $Future $myTvExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.myTvExtractor(args[0]!.$value)
+          .then((value) => $List.wrap(value
+              .map((e) => $VideoModel.wrap(VideoModel()
+                ..headers = e.headers
+                ..originalUrl = e.originalUrl
+                ..quality = e.quality
+                ..url = e.url))
+              .toList())));
+  static $bool $isEmptyOrIsNotEmpty(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    return $bool(MBridge.isEmptyOrIsNotEmpty(
+      args[0]!.$value,
+      args[1]!.$value,
+    ));
+  }
+
   @override
   $Value? $bridgeGet(String identifier) {
     throw UnimplementedError();

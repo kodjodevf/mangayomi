@@ -23,9 +23,9 @@ Future<MangaModel> getMangaDetail(
       ..lang = source.lang)
   ];
 
+  var result = await runtime.executeLib('package:package:mangayomi/main.dart',
+      source.isManga! ? 'getMangaDetail' : 'getAnimeDetail');
   try {
-    var result = await runtime.executeLib('package:package:mangayomi/main.dart',
-        source.isManga! ? 'getMangaDetail' : 'getAnimeDetail');
     if (result is $MangaModel) {
       final value = result.$reified;
       mangadetail = value;

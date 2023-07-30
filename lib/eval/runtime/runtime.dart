@@ -27,7 +27,17 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.mp4UploadExtractor', $MBridge.$mp4UploadExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.myTvExtractor', $MBridge.$myTvExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.sendVidExtractor', $MBridge.$sendVidExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.sibnetExtractor', $MBridge.$sibnetExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonPathToString', $MBridge.$jsonPathToString);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.toVideos', $MBridge.$toVideos);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.isEmptyOrIsNotEmpty', $MBridge.$isEmptyOrIsNotEmpty);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonPathToList', $MBridge.$jsonPathToList);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

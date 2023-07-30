@@ -112,10 +112,21 @@ void pushToMangaReaderDetail(
         Manga(
             imageUrl: getManga!.imageUrl,
             name: getManga.name!.trim().trimLeft().trimRight(),
-            genre: [],
-            author: "",
-            status: Status.unknown,
-            description: "",
+            genre: getManga.genre == null
+                ? []
+                : getManga.genre!.map((e) => e.toString()).toList(),
+            author: getManga.author ?? "",
+            status: getManga.status == null
+                ? Status.unknown
+                : switch (getManga.status) {
+                    0 => Status.ongoing,
+                    1 => Status.completed,
+                    2 => Status.onHiatus,
+                    3 => Status.canceled,
+                    4 => Status.publishingFinished,
+                    _ => Status.unknown,
+                  },
+            description: getManga.description ?? "",
             link: getManga.link,
             source: getManga.source,
             lang: lang,

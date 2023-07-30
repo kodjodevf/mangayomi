@@ -51,9 +51,12 @@ Future<List<MangaModel?>> searchManga(
         newManga.add(newMangaa);
       }
       manga = newManga;
+    } else {
+      manga =
+          (res.$reified as List<dynamic>).map((e) => e as MangaModel).toList();
     }
-  } catch (_) {
-    throw Exception("");
+  } catch (e) {
+    throw Exception(e);
   }
   return manga;
 }

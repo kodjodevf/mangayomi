@@ -70,7 +70,7 @@ class VideoModel {
   String? url;
   String? quality;
   String? originalUrl;
-  Map<dynamic, dynamic>? headers;
+  Map<String, String>? headers;
 
   VideoModel({this.url, this.quality, this.originalUrl, this.headers});
 }

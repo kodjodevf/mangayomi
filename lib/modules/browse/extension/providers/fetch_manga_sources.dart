@@ -44,7 +44,8 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref, {int? id}) async {
                 ..name = source.name
                 ..version = source.version
                 ..versionLast = source.version
-                ..isManga = source.isManga);
+                ..isManga = source.isManga
+                ..isFullData = source.isFullData);
             });
             // log("successfully installed");
           }
@@ -99,7 +100,8 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref, {int? id}) async {
             ..name = source.name
             ..version = source.version
             ..versionLast = source.version
-            ..isManga = source.isManga);
+            ..isManga = source.isManga
+            ..isFullData = source.isFullData);
           // log("new source");
         }
       }

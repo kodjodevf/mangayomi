@@ -93,7 +93,7 @@ class $VideoModel implements VideoModel, $Instance {
       case 'originalUrl':
         $value.originalUrl = value.$reified;
       case 'headers':
-        $value.headers = value.$reified as Map;
+        $value.headers = value.$reified as Map<String, String>;
 
       default:
         _superclass.$setProperty(runtime, identifier, value);
@@ -107,7 +107,7 @@ class $VideoModel implements VideoModel, $Instance {
   String? get quality => $value.quality;
 
   @override
-  Map? get headers => $value.headers;
+  Map<String, String>? get headers => $value.headers;
 
   @override
   String? get originalUrl => $value.originalUrl;

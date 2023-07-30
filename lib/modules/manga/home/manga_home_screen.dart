@@ -386,7 +386,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     controller: _scrollController,
                     itemCount: _length,
                     itemBuilder: (context, index) {
-                      if (index == _length - 1) {
+                      if (index == _length - 1 && _isLoading) {
                         return buildProgressIndicator();
                       }
                       return MangaHomeImageCard(
