@@ -14,18 +14,24 @@ import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/gogo_cdn_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/mp4_upload_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/my_tv_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/send_vid_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/mp4upload_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/mytv_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/okru_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/sendvid_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/stream_tape_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/streamtape_extractor.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
+import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
@@ -220,7 +226,7 @@ class MBridge {
   static Future<String> getHtmlViaWebview(String url, String rule) async {
     bool isOk = false;
     String? html;
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       final webview = await WebviewWindow.create(
         configuration: CreateConfiguration(
           windowHeight: 500,
@@ -551,15 +557,12 @@ class MBridge {
 
   static String subString(String text, String pattern, int type) {
     String result = "";
-    //substring before
     if (type == 0) {
-      result = text.split(pattern).first;
-    } else
-    // substring after last
-    if (type == 1) {
+      result = text.substringBefore(pattern);
+    } else if (type == 1) {
       result = text.split(pattern).last;
     } else if (type == 2) {
-      result = text.substring(text.lastIndexOf(pattern) + 1);
+      result = text.substringAfter(pattern);
     }
     return result;
   }
@@ -725,6 +728,39 @@ class MBridge {
     );
   }
 
+  static Future<List<Video>> okruExtractor(String url) async {
+    return await OkruExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static Future<List<Video>> yourUploadExtractor(
+      String url, String? headers, String? name, String prefix) async {
+    Map<String, String> newHeaders = {};
+    if (headers != null) {
+      newHeaders = (jsonDecode(headers) as Map)
+          .map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
+    return await YourUploadExtractor().videosFromUrl(url, newHeaders,
+        prefix: prefix, name: name ?? "YourUpload");
+  }
+
+  static Future<List<Video>> voeExtractor(String url, String? quality) async {
+    return await VoeExtractor().videosFromUrl(url, quality);
+  }
+
+  static Future<List<Video>> vidBomExtractor(String url) async {
+    return await VidBomExtractor().videosFromUrl(
+      url,
+    );
+  }
+
+  static Future<List<Video>> streamlareExtractor(
+      String url, String prefix, String suffix) async {
+    return await StreamlareExtractor()
+        .videosFromUrl(url, prefix: prefix, suffix: suffix);
+  }
+
   static List<Video> toVideos(
       String url, String quality, String originalUrl, String? headers) {
     Map<String, String> newHeaders = {};
@@ -840,6 +876,74 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'okruExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'voeExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'quality',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'vidBomExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'streamlareExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'suffix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'sendVidExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
@@ -852,6 +956,36 @@ class $MBridge extends MBridge with $Bridge {
                       false),
                   BridgeParameter(
                       'headers',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'yourUploadExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'headers',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      false),
+                  BridgeParameter(
+                      'name',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType),
                           nullable: true),
@@ -1560,77 +1694,62 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future $gogoCdnExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.gogoCdnExtractor(args[0]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+      $Future.wrap(MBridge.gogoCdnExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
   static $Future $doodExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.doodExtractor(args[0]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+      $Future.wrap(MBridge.doodExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $Future $streamTapeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+      $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $Future $mp4UploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $Future $sendVidExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.sendVidExtractor(
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+  static $Future $yourUploadExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.yourUploadExtractor(args[0]!.$value, args[1]!.$value,
+              args[2]!.$value, args[3]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $Future $sibnetExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+      $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $Future $myTvExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.myTvExtractor(args[0]!.$value)
-          .then((value) => $List.wrap(value
-              .map((e) => $VideoModel.wrap(VideoModel()
-                ..headers = e.headers
-                ..originalUrl = e.originalUrl
-                ..quality = e.quality
-                ..url = e.url))
-              .toList())));
+      $Future.wrap(MBridge.myTvExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+  static $Future $okruExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.okruExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
+  static $Future $voeExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.voeExtractor(args[0]!.$value, args[1]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+  static $Future $vidBomExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.vidBomExtractor(args[0]!.$value).then(
+          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+  static $Future $streamlareExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.streamlareExtractor(
+              args[0]!.$value, args[1]!.$value, args[2]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
   static $bool $isEmptyOrIsNotEmpty(
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $bool(MBridge.isEmptyOrIsNotEmpty(
@@ -1656,3 +1775,9 @@ void _botToast(String title) {
       duration: const Duration(seconds: 5),
       title: title);
 }
+
+$VideoModel _toVideoModel(Video e) => $VideoModel.wrap(VideoModel()
+  ..headers = e.headers
+  ..originalUrl = e.originalUrl
+  ..quality = e.quality
+  ..url = e.url);

@@ -87,5 +87,6 @@ class Source {
     apiUrl = json['apiUrl'];
     version = json['version'];
     isManga = json['isManga'] ?? true;
+    isFullData = json['isFullData'] ?? false;
   }
 }

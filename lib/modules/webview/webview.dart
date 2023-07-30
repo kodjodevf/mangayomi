@@ -37,7 +37,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   double progress = 0;
   @override
   void initState() {
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       _runWebViewDesktop();
     } else {
       setState(() {

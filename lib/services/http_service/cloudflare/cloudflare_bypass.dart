@@ -17,7 +17,7 @@ Future<String> cloudflareBypass(
   final ua = isar.settings.getSync(227)!.userAgent!;
   bool isOk = false;
   String? html;
-  if (Platform.isWindows || Platform.isLinux) {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     final webview = await WebviewWindow.create(
       configuration: CreateConfiguration(
         windowHeight: 500,

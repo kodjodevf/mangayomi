@@ -14,3 +14,9 @@ extension StringExtensions on String {
     return substring(0, endIndex);
   }
 }
+
+extension LetExtension<T> on T {
+  R let<R>(R Function(T) block) {
+    return block(this);
+  }
+}

@@ -384,7 +384,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   Flexible(
                       child: GridViewWidget(
                     controller: _scrollController,
-                    itemCount: _length,
+                    itemCount: data.length < _length ? data.length : _length,
                     itemBuilder: (context, index) {
                       if (index == _length - 1 && _isLoading) {
                         return buildProgressIndicator();
