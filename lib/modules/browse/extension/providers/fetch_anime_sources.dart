@@ -43,7 +43,7 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
                 ..version = source.version
                 ..versionLast = source.version
                 ..isManga = source.isManga
-                ..isFullData = source.isFullData);
+                ..isFullData = source.isFullData ?? false);
             });
             // log("successfully installed");
           }
@@ -68,7 +68,7 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
                   ..hasCloudflare = source.hasCloudflare
                   ..iconUrl = source.iconUrl
                   ..typeSource = source.typeSource
-                  ..isFullData = source.isFullData
+                  ..isFullData = source.isFullData ?? false
                   ..lang = source.lang
                   ..isNsfw = source.isNsfw
                   ..name = source.name
@@ -99,7 +99,7 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
             ..version = source.version
             ..versionLast = source.version
             ..isManga = source.isManga
-            ..isFullData = source.isFullData);
+            ..isFullData = source.isFullData ?? false);
           // log("new source");
         }
       }
