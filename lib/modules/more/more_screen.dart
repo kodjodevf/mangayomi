@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
@@ -61,53 +59,16 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.history_outlined,
               title: l10n.history,
             ),
-            ListTile(
-              onTap: () {
-                final data = {
-                  'variables': {
-                    'type': 'anime',
-                    'size': 26,
-                    'dateRange': 7,
-                    'page': 1,
-                  },
-                  'query': """
-        query(
-                %type: VaildPopularTypeEnumType!
-                %size: Int!
-                %page: Int
-                %dateRange: Int
-            ) {
-            queryPopular(
-                type: %type
-                size: %size
-                dateRange: %dateRange
-                page: %page
-            ) {
-                total
-                recommendations {
-                    anyCard {
-                        _id
-                        name
-                        thumbnail
-                        englishName
-                        nativeName
-                        slugTime
-                    }
-                }
-            }
-        }
-    """,
-                };
-                print(jsonEncode(data));
-                print(Uri.parse("https://api.allanime.day").host);
-              },
-              leading: const SizedBox(
-                  height: 40, child: Icon(Icons.settings_backup_restore_sharp)),
-              title: const Text('Backup and restore'),
-            ),
-            const Divider(
-              color: Colors.grey,
-            ),
+            // ListTile(
+            //   onTap: () {},
+            //   leading: const SizedBox(
+            //       height: 40,
+            //       child: Icon(Icons.settings_backup_restore_sharp)),
+            //   title: const Text('Backup and restore'),
+            // ),
+            // const Divider(
+            //   color: Colors.grey,
+            // ),
             ListTileWidget(
               onTap: () {
                 context.push('/settings');
