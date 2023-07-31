@@ -35,7 +35,7 @@ class TypeMangaSelector {
 class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  int _fullDataLength = 20;
+  int _fullDataLength = 50;
   int _page = 1;
   int _selectedIndex = 0;
   List<TypeMangaSelector> _types(BuildContext context) {
@@ -45,6 +45,41 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       TypeMangaSelector(Icons.new_releases_outlined, l10n.latest),
       TypeMangaSelector(Icons.filter_list_outlined, l10n.filter),
     ];
+  }
+
+  Future<List<MangaModel?>> _loadMore() async {
+    List<MangaModel?> mangaResList = [];
+
+    if (_isLoading) {
+      if (widget.source.isFullData!) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        _fullDataLength = _fullDataLength + 50;
+      } else {
+        if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
+          mangaResList = await ref.watch(getPopularMangaProvider(
+            source: widget.source,
+            page: _page + 1,
+          ).future);
+        } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+          mangaResList = await ref.watch(getLatestUpdatesMangaProvider(
+            source: widget.source,
+            page: _page + 1,
+          ).future);
+        } else if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
+          mangaResList = await ref.watch(searchMangaProvider(
+            source: widget.source,
+            query: _query,
+            page: _page + 1,
+          ).future);
+        }
+      }
+      if (mounted) {
+        setState(() {
+          _page = _page + 1;
+        });
+      }
+    }
+    return mangaResList;
   }
 
   final _textEditingController = TextEditingController();
@@ -74,18 +109,16 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             _isSearch
                 ? SeachFormTextField(
                     onFieldSubmitted: (submit) {
-                      if (submit.isNotEmpty) {
-                        setState(() {
+                      setState(() {
+                        if (submit.isNotEmpty) {
                           _selectedIndex = 2;
 
                           _query = submit;
-                        });
-                      } else {
-                        setState(() {
+                        } else {
                           _selectedIndex = 0;
-                        });
-                      }
-                      _page = 1;
+                        }
+                        _page = 1;
+                      });
                     },
                     onChanged: (value) {},
                     onSuffixPressed: () {
@@ -98,8 +131,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         _query = "";
                         _selectedIndex = 0;
                         _page = 1;
+                        _textEditingController.clear();
                       });
-                      _textEditingController.clear();
                     },
                     controller: _textEditingController,
                   )
@@ -184,94 +217,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(5))),
                               onPressed: () {
-                                if (!_isSearch) {
-                                  if (!_isLoading) {
-                                    if (mounted) {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-                                    }
-
-                                    if (widget.source.isFullData!) {
-                                      Future.delayed(const Duration(seconds: 1))
-                                          .then((value) {
-                                        _fullDataLength = _fullDataLength + 20;
-                                        if (mounted) {
-                                          setState(() {
-                                            _isLoading = false;
-                                          });
-                                        }
-                                      });
-                                    } else {
-                                      if (mounted) {
-                                        setState(() {
-                                          _page = _page + 1;
-                                        });
-                                      }
-                                      if (_selectedIndex == 0 &&
-                                          !_isSearch &&
-                                          _query.isEmpty) {
-                                        ref
-                                            .watch(getPopularMangaProvider(
-                                          source: widget.source,
-                                          page: _page,
-                                        ).future)
-                                            .then(
-                                          (value) {
-                                            if (mounted) {
-                                              setState(() {
-                                                data.addAll(value);
-                                                _isLoading = false;
-                                              });
-                                            }
-                                          },
-                                        );
-                                      } else if (_selectedIndex == 1 &&
-                                          !_isSearch &&
-                                          _query.isEmpty) {
-                                        ref
-                                            .watch(
-                                                getLatestUpdatesMangaProvider(
-                                          source: widget.source,
-                                          page: _page,
-                                        ).future)
-                                            .then(
-                                          (value) {
-                                            if (mounted) {
-                                              setState(() {
-                                                data.addAll(value);
-                                                _isLoading = false;
-                                              });
-                                            }
-                                          },
-                                        );
-                                      } else if (_selectedIndex == 2 &&
-                                          _isSearch &&
-                                          _query.isNotEmpty) {
-                                        ref
-                                            .watch(searchMangaProvider(
-                                          source: widget.source,
-                                          query: _query,
-                                          page: _page,
-                                        ).future)
-                                            .then(
-                                          (value) {
-                                            if (mounted) {
-                                              setState(() {
-                                                data.addAll(value);
-                                                _isLoading = false;
-                                              });
-                                            }
-                                          },
-                                        );
-                                      }
-                                    }
-                                  }
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
                                 }
-
-                                _length = widget.source.isFullData!
-                                    ? _fullDataLength
-                                    : data.length;
+                                _loadMore().then((value) {
+                                  if (mounted) {
+                                    setState(() {
+                                      data.addAll(value);
+                                      _isLoading = false;
+                                    });
+                                  }
+                                });
                               },
                               child: const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -290,93 +248,27 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             if (data.isEmpty) {
               return Center(child: Text(l10n.no_result));
             }
-            if (!_isSearch) {
-              _scrollController.addListener(() {
-                if (_scrollController.position.pixels ==
-                    _scrollController.position.maxScrollExtent) {
-                  if (!_isLoading) {
-                    if (mounted) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                    }
-
-                    if (widget.source.isFullData!) {
-                      Future.delayed(const Duration(seconds: 1)).then((value) {
-                        _fullDataLength = _fullDataLength + 10;
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      });
-                    } else {
-                      if (mounted) {
-                        setState(() {
-                          _page = _page + 1;
-                        });
-                      }
-                      if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-                        ref
-                            .watch(getPopularMangaProvider(
-                          source: widget.source,
-                          page: _page,
-                        ).future)
-                            .then(
-                          (value) {
-                            if (mounted) {
-                              setState(() {
-                                data.addAll(value);
-                                _isLoading = false;
-                              });
-                            }
-                          },
-                        );
-                      } else if (_selectedIndex == 1 &&
-                          !_isSearch &&
-                          _query.isEmpty) {
-                        ref
-                            .watch(getLatestUpdatesMangaProvider(
-                          source: widget.source,
-                          page: _page,
-                        ).future)
-                            .then(
-                          (value) {
-                            if (mounted) {
-                              setState(() {
-                                data.addAll(value);
-                                _isLoading = false;
-                              });
-                            }
-                          },
-                        );
-                      } else if (_selectedIndex == 2 &&
-                          _isSearch &&
-                          _query.isNotEmpty) {
-                        ref
-                            .watch(searchMangaProvider(
-                          source: widget.source,
-                          query: _query,
-                          page: _page,
-                        ).future)
-                            .then(
-                          (value) {
-                            if (mounted) {
-                              setState(() {
-                                data.addAll(value);
-                                _isLoading = false;
-                              });
-                            }
-                          },
-                        );
-                      }
-                    }
-                  }
+            _scrollController.addListener(() {
+              if (_scrollController.position.pixels ==
+                  _scrollController.position.maxScrollExtent) {
+                if (mounted) {
+                  setState(() {
+                    _isLoading = true;
+                  });
                 }
-              });
-            }
+                _loadMore().then((value) {
+                  if (mounted) {
+                    setState(() {
+                      data.addAll(value);
+                      _isLoading = false;
+                    });
+                  }
+                });
+              }
+            });
 
             _length = widget.source.isFullData! ? _fullDataLength : data.length;
+            _length = (data.length < _length ? data.length : _length);
             return Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Column(
@@ -384,9 +276,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   Flexible(
                       child: GridViewWidget(
                     controller: _scrollController,
-                    itemCount: data.length < _length ? data.length : _length,
+                    itemCount: _length + 1,
                     itemBuilder: (context, index) {
-                      if (index == _length - 1 && _isLoading) {
+                      if (index == _length) {
                         return buildProgressIndicator();
                       }
                       return MangaHomeImageCard(

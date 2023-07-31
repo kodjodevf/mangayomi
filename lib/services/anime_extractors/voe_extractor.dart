@@ -22,7 +22,7 @@ class VoeExtractor {
           script.first!.substringAfter("video_height': ").substringBefore(",");
       final qualityStr = quality ?? "VoeCDN(${resolution}p)";
 
-      return [Video(url, qualityStr, videoUrl)];
+      return [Video(videoUrl, qualityStr, videoUrl)];
     } catch (_) {
       return [];
     }

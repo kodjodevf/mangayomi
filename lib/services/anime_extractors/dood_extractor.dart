@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/utils/extensions.dart';
 
 class DoodExtractor {
   Future<List<Video>> videosFromUrl(
@@ -17,7 +18,7 @@ class DoodExtractor {
       final doodHost = RegExp('https://(.*?)/').firstMatch(newUrl)!.group(1)!;
       final content = response.body;
       if (!content.contains("'/pass_md5/")) return [];
-      final md5 = content.split("'/pass_md5/").last.split("',").first;
+      final md5 = content.substringAfter("'/pass_md5/").substringBefore("',");
       final token = md5.substring(md5.lastIndexOf('/') + 1);
       final randomString = getRandomString();
       final expiry = DateTime.now().millisecondsSinceEpoch;
@@ -32,7 +33,7 @@ class DoodExtractor {
       return [
         Video(newUrl, newQuality, videoUrl, headers: doodHeaders(doodHost))
       ];
-    } catch (e) {
+    } catch (_) {
       return [];
     }
   }

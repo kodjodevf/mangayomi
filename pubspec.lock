@@ -797,6 +797,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  loadmore:
+    dependency: "direct main"
+    description:
+      name: loadmore
+      sha256: "4a9d60cf1182f9a91449502b4ab2bad53aaf292124382c7e29e36a61468b027f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   logging:
     dependency: transitive
     description:

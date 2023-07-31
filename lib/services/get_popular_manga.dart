@@ -4,6 +4,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/bridge_class/manga_model.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_popular_manga.g.dart';
 
@@ -40,7 +41,7 @@ Future<List<MangaModel?>> getPopularManga(
         MangaModel newMangaa = MangaModel(
             name: value.names![i],
             link: value.urls![i],
-            imageUrl: value.images![i],
+            imageUrl: value.images!.isEmpty ? emptyImg : value.images![i],
             baseUrl: value.baseUrl,
             apiUrl: value.apiUrl,
             lang: value.lang,

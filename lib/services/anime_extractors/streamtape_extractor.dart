@@ -22,7 +22,7 @@ class StreamTapeExtractor {
         .toList();
     if (scri.isEmpty) {
       return [];
-    } else {}
+    }
     script = scri.first.split("$targetLine.innerHTML = '").last;
     final videoUrl =
         "https:${script.substringBefore("'")}${script.substringAfter("+ ('xcd").substringBefore("'")}";

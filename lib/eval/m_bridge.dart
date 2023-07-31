@@ -1545,6 +1545,7 @@ class $MBridge extends MBridge with $Bridge {
 
   static $String $xpath(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.xpath(args[0]!.$value, args[1]!.$value, args[2]!.$value));
+
   static $List $listParse(Runtime runtime, $Value? target, List<$Value?> args) {
     return $List.wrap(MBridge.listParse(
       args[0]!.$value,
@@ -1577,13 +1578,7 @@ class $MBridge extends MBridge with $Bridge {
     final value = MBridge.toVideos(
         args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value);
 
-    return $List.wrap(value
-        .map((e) => $VideoModel.wrap(VideoModel()
-          ..headers = e.headers
-          ..originalUrl = e.originalUrl
-          ..quality = e.quality
-          ..url = e.url))
-        .toList());
+    return $List.wrap(value.map((e) => _toVideoModel(e)).toList());
   }
 
   static $String $jsonPathToString(
@@ -1640,15 +1635,26 @@ class $MBridge extends MBridge with $Bridge {
       $String(MBridge.stringParse(
         args[0]!.$value,
       ));
+
   static $String $evalJs(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.evalJs(
         args[0]!.$value,
       ));
-  static $Instance $stringParseValue(
-          Runtime runtime, $Value? target, List<$Value?> args) =>
-      $String(MBridge.stringParseValue(
-        args[0]!.$value.toString(),
-      ));
+
+  static $String $stringParseValue(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    final value = args[0]!.$value;
+    String fVal = "";
+    if (value is List) {
+      fVal = value.toString();
+    } else {
+      fVal = value.toString();
+    }
+    return $String(MBridge.stringParseValue(
+      fVal,
+    ));
+  }
+
   static $String $regExp(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.regExp(
         args[0]!.$value,
@@ -1657,22 +1663,27 @@ class $MBridge extends MBridge with $Bridge {
         args[3]!.$value,
         args[4]!.$value,
       ));
+
   static $int $intParse(Runtime runtime, $Value? target, List<$Value?> args) =>
       $int(MBridge.intParse(
         args[0]!.$value,
       ));
+
   static $bool $listContain(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $bool(MBridge.listContain(
           args[0]!.$value as List<$Value>, args[1]!.$value));
+
   static $String $querySelector(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.querySelector(
           args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value));
+
   static $String $parseChapterDate(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.parseChapterDate(
           args[0]!.$value, args[1]!.$value, args[2]!.$value));
+
   static $String $querySelectorAll(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.querySelectorAll(
@@ -1701,36 +1712,43 @@ class $MBridge extends MBridge with $Bridge {
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.doodExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $streamTapeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $mp4UploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $sendVidExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.sendVidExtractor(
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $yourUploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.yourUploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $sibnetExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $myTvExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.myTvExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $okruExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.okruExtractor(args[0]!.$value).then(
@@ -1740,16 +1758,19 @@ class $MBridge extends MBridge with $Bridge {
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.voeExtractor(args[0]!.$value, args[1]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $vidBomExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.vidBomExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $Future $streamlareExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamlareExtractor(
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
   static $bool $isEmptyOrIsNotEmpty(
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $bool(MBridge.isEmptyOrIsNotEmpty(

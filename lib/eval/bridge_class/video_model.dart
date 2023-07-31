@@ -113,22 +113,14 @@ class $VideoModel implements VideoModel, $Instance {
   String? get originalUrl => $value.originalUrl;
 
   @override
-  set url(String? url) {
-    //  implement apiUrl
-  }
+  set url(String? url) {}
 
   @override
-  set quality(String? quality) {
-    //  implement baseUrl
-  }
+  set quality(String? quality) {}
 
   @override
-  set headers(Map? headers) {
-    //  implement dateFormat
-  }
+  set headers(Map? headers) {}
 
   @override
-  set originalUrl(String? originalUrl) {
-    //  implement dateFormatLocale
-  }
+  set originalUrl(String? originalUrl) {}
 }

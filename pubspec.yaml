@@ -53,7 +53,7 @@ dependencies:
   flutter_meedu_videoplayer: ^4.2.20
   media_kit_libs_android_video: ^1.0.6
   media_kit_libs_ios_video: ^1.0.4
-  # dio: ^5.3.0
+  loadmore: ^2.1.0
 
 
   cupertino_icons: ^1.0.2

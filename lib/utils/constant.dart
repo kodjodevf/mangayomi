@@ -61,3 +61,6 @@ TrackStatus toStatus(TrackStatus status, bool isManga, int syncId) {
     _ => ("assets/tracker_anilist.webp", "Anilist"),
   };
 }
+
+const emptyImg =
+    "https://upload.wikimedia.org/wikipedia/commons/1/12/White_background.png";
