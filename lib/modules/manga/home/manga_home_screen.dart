@@ -199,50 +199,53 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         body: _getManga!.when(
           data: (data) {
             Widget buildProgressIndicator() {
-              return _isLoading
-                  ? const Center(
-                      child: SizedBox(
-                        height: 100,
-                        width: 200,
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                    )
-                  : isTablet(context)
-                      ? Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5))),
-                              onPressed: () {
-                                if (mounted) {
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
-                                }
-                                _loadMore().then((value) {
-                                  if (mounted) {
-                                    setState(() {
-                                      data.addAll(value);
-                                      _isLoading = false;
-                                    });
-                                  }
-                                });
-                              },
-                              child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Load more"),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Icon(Icons.arrow_forward_outlined),
-                                ],
-                              )),
+              return !(data.isNotEmpty && (data.last!.hasNextPage ?? true))
+                  ? Container()
+                  : _isLoading
+                      ? const Center(
+                          child: SizedBox(
+                            height: 100,
+                            width: 200,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
                         )
-                      : Container();
+                      : isTablet(context)
+                          ? Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5))),
+                                  onPressed: () {
+                                    if (mounted) {
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                    }
+                                    _loadMore().then((value) {
+                                      if (mounted) {
+                                        setState(() {
+                                          data.addAll(value);
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    });
+                                  },
+                                  child: const Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("Load more"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Icon(Icons.arrow_forward_outlined),
+                                    ],
+                                  )),
+                            )
+                          : Container();
             }
 
             if (data.isEmpty) {
@@ -251,19 +254,21 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             _scrollController.addListener(() {
               if (_scrollController.position.pixels ==
                   _scrollController.position.maxScrollExtent) {
-                if (mounted) {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                }
-                _loadMore().then((value) {
+                if (data.isNotEmpty && (data.last!.hasNextPage ?? true)) {
                   if (mounted) {
                     setState(() {
-                      data.addAll(value);
-                      _isLoading = false;
+                      _isLoading = true;
                     });
                   }
-                });
+                  _loadMore().then((value) {
+                    if (mounted) {
+                      setState(() {
+                        data.addAll(value);
+                        _isLoading = false;
+                      });
+                    }
+                  });
+                }
               }
             });
 

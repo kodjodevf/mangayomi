@@ -47,6 +47,7 @@ Future<List<MangaModel?>> searchManga(
             apiUrl: value.apiUrl,
             lang: value.lang,
             sourceId: value.sourceId,
+            hasNextPage: value.hasNextPage ?? true,
             dateFormat: value.dateFormat,
             dateFormatLocale: value.dateFormatLocale);
         newManga.add(newMangaa);

@@ -211,7 +211,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
     await _controller.setDataSource(
       DataSource(
           type: DataSourceType.network,
-          source: _video.value!.url,
+          source: _video.value!.originalUrl,
           httpHeaders: _video.value!.headers),
       autoplay: true,
       seekTo: _currentPosition,

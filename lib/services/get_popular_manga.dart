@@ -47,6 +47,7 @@ Future<List<MangaModel?>> getPopularManga(
             lang: value.lang,
             status: value.status,
             dateFormat: value.dateFormat,
+            hasNextPage: value.hasNextPage ?? true,
             dateFormatLocale: value.dateFormatLocale);
         newManga.add(newMangaa);
       }

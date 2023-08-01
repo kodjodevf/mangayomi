@@ -153,6 +153,11 @@ class $MangaModel implements MangaModel, $Instance {
                         [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
                   ),
                   false),
+              BridgeParameter(
+                  'hasNextPage',
+                  BridgeTypeAnnotation(
+                      BridgeTypeRef.type(RuntimeTypes.boolType)),
+                  false),
             ]))
       },
       // Specify class fields
@@ -239,6 +244,11 @@ class $MangaModel implements MangaModel, $Instance {
           BridgeTypeAnnotation(
             BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+          ),
+        ),
+        'hasNextPage': BridgeFieldDef(
+          BridgeTypeAnnotation(
+            BridgeTypeRef.type(RuntimeTypes.boolType),
           ),
         ),
       },
@@ -357,7 +367,8 @@ class $MangaModel implements MangaModel, $Instance {
         return $List.wrap($value.statusList!.map((e) {
           return $int(e);
         }).toList());
-
+      case 'hasNextPage':
+        return $bool($value.hasNextPage!);
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -417,7 +428,8 @@ class $MangaModel implements MangaModel, $Instance {
         $value.images = value.$reified as List<dynamic>;
       case 'statusList':
         $value.statusList = value.$reified as List<dynamic>;
-
+      case 'hasNextPage':
+        $value.hasNextPage = value.$reified;
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -479,6 +491,10 @@ class $MangaModel implements MangaModel, $Instance {
   @override
   set source(String? source) {
     //  implement source
+  }
+  @override
+  set hasNextPage(bool? hasNextPage) {
+    //  implement hasNextPage
   }
 
   @override
@@ -550,6 +566,9 @@ class $MangaModel implements MangaModel, $Instance {
   String? get dateFormatLocale => $value.dateFormatLocale;
 
   @override
+  bool? get hasNextPage => $value.hasNextPage;
+
+  @override
   set apiUrl(String? apiUrl) {
     //  implement apiUrl
   }
@@ -581,7 +600,7 @@ class $MangaModel implements MangaModel, $Instance {
 
   @override
   set query(String? query) {
-    //  implement page
+    //  implement query
   }
 
   @override
@@ -599,7 +618,7 @@ class $MangaModel implements MangaModel, $Instance {
   }
   @override
   set statusList(List? images) {
-    //  implement statusList
+    //  implement images
   }
 
   @override

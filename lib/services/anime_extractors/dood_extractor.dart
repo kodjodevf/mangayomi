@@ -7,7 +7,7 @@ class DoodExtractor {
   Future<List<Video>> videosFromUrl(
     String url, {
     String? quality,
-    bool redirect = false,
+    bool redirect = true,
   }) async {
     final newQuality = quality ?? ('Doodstream${redirect ? ' mirror' : ''}');
 

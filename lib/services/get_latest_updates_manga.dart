@@ -47,6 +47,7 @@ Future<List<MangaModel?>> getLatestUpdatesManga(
             lang: value.lang,
             sourceId: value.sourceId,
             dateFormat: value.dateFormat,
+            hasNextPage: value.hasNextPage ?? true,
             dateFormatLocale: value.dateFormatLocale);
         newManga.add(newMangaa);
       }

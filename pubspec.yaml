@@ -54,6 +54,8 @@ dependencies:
   media_kit_libs_android_video: ^1.0.6
   media_kit_libs_ios_video: ^1.0.4
   loadmore: ^2.1.0
+  random_string: ^2.3.1
+  js_packer: ^0.0.5
 
 
   cupertino_icons: ^1.0.2

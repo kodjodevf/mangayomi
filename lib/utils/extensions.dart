@@ -13,6 +13,13 @@ extension StringExtensions on String {
 
     return substring(0, endIndex);
   }
+
+  String substringBeforeLast(String pattern) {
+    final endIndex = lastIndexOf(pattern);
+    if (endIndex == -1) return substring(0);
+
+    return substring(0, endIndex);
+  }
 }
 
 extension LetExtension<T> on T {

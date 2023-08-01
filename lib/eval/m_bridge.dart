@@ -26,6 +26,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
+import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
@@ -536,6 +537,11 @@ class MBridge {
     return await DoodExtractor().videosFromUrl(
       url,
     );
+  }
+
+  static Future<List<Video>> streamWishExtractor(
+      String url, String prefix) async {
+    return await StreamWishExtractor().videosFromUrl(url, prefix);
   }
 
   static Future<List<Video>> mp4UploadExtractor(
@@ -1430,6 +1436,24 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'streamWishExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'getHtmlViaWebview': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
@@ -1722,6 +1746,12 @@ class $MBridge extends MBridge with $Bridge {
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
+  static $Future $streamWishExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.streamWishExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 

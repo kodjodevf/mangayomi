@@ -17,7 +17,7 @@ class OkruExtractor {
       'lowest': '240p',
       'mobile': '144p',
     };
-    return qualities[quality] ?? quality;
+    return qualities[quality.toLowerCase()] ?? quality;
   }
 
   Future<List<Video>> videosFromUrl(String url,
@@ -27,17 +27,19 @@ class OkruExtractor {
     final videosString = document
             .querySelector('div[data-options]')
             ?.attributes['data-options']!
-            .substringAfter(
-                '''\\"videos\\":[{\\\\"name\\\\":\\\\"''').substringBefore(']') ??
+            .substringAfter("\\\"videos\\\":[{\\\"name\\\":\\\"")
+            .substringBefore(']') ??
         '';
+
     List<Video> videoList = [];
     List<String> values =
-        videosString.split('''{\\\\"name\\\\":\\\\"''').reversed.toList();
+        videosString.split("{\\\"name\\\":\\\"").reversed.toList();
     for (var value in values) {
       final videoUrl = value
-          .substringAfter('''url\\\\":\\\\"''').substringBefore(
-              '''\\"''').replaceAll(r'\\u0026', '&');
-      final quality = value.substringBefore('''\\"''');
+          .substringAfter("url\\\":\\\"")
+          .substringBefore("\\\"")
+          .replaceAll(r'\\\u0026', '&');
+      final quality = value.substringBefore("\\\"");
       final fixedQuality = fixQualities ? fixQuality(quality) : quality;
       final videoQuality =
           '${prefix.isNotEmpty ? '$prefix ' : ''}Okru:$fixedQuality';

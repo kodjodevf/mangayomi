@@ -31,6 +31,8 @@ class MangaModel {
 
   int? sourceId;
 
+  bool? hasNextPage;
+
   List<dynamic>? names;
   List<dynamic>? urls;
   List<dynamic>? chaptersScanlators;
@@ -63,7 +65,8 @@ class MangaModel {
       this.chaptersVolumes,
       this.chaptersChaps,
       this.images,
-      this.statusList});
+      this.statusList,
+      this.hasNextPage = true});
 }
 
 class VideoModel {

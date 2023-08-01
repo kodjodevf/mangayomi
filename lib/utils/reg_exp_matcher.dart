@@ -31,10 +31,14 @@ String regCustomMatcher(
   String source,
   int group,
 ) {
-  RegExp exp = RegExp(source);
-  Iterable<Match> matches = exp.allMatches(input);
-  String? firstMatch = matches.first.group(group);
-  return firstMatch!;
+  try {
+    RegExp exp = RegExp(source);
+    Iterable<Match> matches = exp.allMatches(input);
+    String? firstMatch = matches.first.group(group);
+    return firstMatch!;
+  } catch (_) {
+    return input;
+  }
 }
 
 String padIndex(int index) {
