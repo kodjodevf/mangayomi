@@ -34,7 +34,7 @@ Future<List<Video>> getAnimeServers(
       ))
     ];
     var res = await runtime.executeLib(
-        'package:package:mangayomi/main.dart', 'getVideoList');
+        'package:mangayomi/source_code.dart', 'getVideoList');
     if (res is $List) {
       video = res.$reified
           .map(

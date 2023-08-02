@@ -30,7 +30,7 @@ Future<List<MangaModel?>> getPopularManga(
         dateFormatLocale: source.dateFormatLocale))
   ];
   var res = await runtime.executeLib(
-    'package:package:mangayomi/main.dart',
+    'package:mangayomi/source_code.dart',
     source.isManga! ? 'getPopularManga' : 'getPopularAnime',
   );
   try {

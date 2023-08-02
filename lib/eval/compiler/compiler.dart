@@ -12,7 +12,7 @@ Uint8List compilerEval(String sourceCode) {
     $VideoModel.$declaration
   ]);
   final program = compiler.compile({
-    'package:mangayomi': {'main.dart': sourceCode}
+    'mangayomi': {'source_code.dart': sourceCode}
   });
 
   final bytecode = program.write();

@@ -31,7 +31,7 @@ Future<List<MangaModel?>> searchManga(
         dateFormatLocale: source.dateFormatLocale))
   ];
   var res = await runtime.executeLib(
-    'package:package:mangayomi/main.dart',
+    'package:mangayomi/source_code.dart',
     source.isManga! ? 'searchManga' : 'searchAnime',
   );
   try {

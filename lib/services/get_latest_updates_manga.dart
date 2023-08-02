@@ -30,7 +30,7 @@ Future<List<MangaModel?>> getLatestUpdatesManga(
         dateFormatLocale: source.dateFormatLocale))
   ];
   var res = await runtime.executeLib(
-    'package:package:mangayomi/main.dart',
+    'package:mangayomi/source_code.dart',
     source.isManga! ? 'getLatestUpdatesManga' : 'getLatestUpdatesAnime',
   );
   try {

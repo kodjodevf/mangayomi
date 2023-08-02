@@ -76,7 +76,7 @@ Future<GetChapterUrlModel> getChapterUrl(
         ))
       ];
       var res = await runtime.executeLib(
-          'package:package:mangayomi/main.dart', 'getChapterUrl');
+          'package:mangayomi/source_code.dart', 'getChapterUrl');
       if (res is $List) {
         for (var element in res.$reified) {
           if (element is $Value) {
