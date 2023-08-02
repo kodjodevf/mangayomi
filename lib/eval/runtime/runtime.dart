@@ -19,6 +19,10 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.listParseDateTime', $MBridge.$listParseDateTime);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.httpMultiparFormData', $MBridge.$httpMultiparFormData);
+  runtime.registerBridgeFunc(
+      'package:bridge_lib/bridge_lib.dart', 'MBridge.bAse64', $MBridge.$bAse64);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.gogoCdnExtractor', $MBridge.$gogoCdnExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.doodExtractor', $MBridge.$doodExtractor);
@@ -47,7 +51,7 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonPathToString', $MBridge.$jsonPathToString);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
-      'MBridge.toVideos', $MBridge.$toVideos);
+      'MBridge.toVideo', $MBridge.$toVideo);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.isEmptyOrIsNotEmpty', $MBridge.$isEmptyOrIsNotEmpty);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

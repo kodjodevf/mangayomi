@@ -200,6 +200,8 @@ class MBridge {
       return val.where((element) => element.toString().isNotEmpty).toList();
     } else if (type == 5) {
       return val.reversed.toList();
+    } else if (type == 6) {
+      return [val.join()];
     }
     return val;
   }
@@ -361,11 +363,15 @@ class MBridge {
   }
 
   static String getMapValue(String source, String attr, int type) {
-    var map = json.decode(source) as Map<String, dynamic>;
-    if (type == 0) {
-      return map[attr] != null ? map[attr].toString() : "";
+    try {
+      var map = json.decode(source) as Map<String, dynamic>;
+      if (type == 0) {
+        return map[attr] != null ? map[attr].toString() : "";
+      }
+      return map[attr] != null ? jsonEncode(map[attr]) : "";
+    } catch (_) {
+      return "";
     }
-    return map[attr] != null ? jsonEncode(map[attr]) : "";
   }
 
   static String jsonPathToString(
@@ -439,8 +445,14 @@ class MBridge {
     return valD;
   }
 
-  static String stringParse(String value) {
-    return value;
+  static String stringParse(String value, int type) {
+    if (type == 0) {
+      return value;
+    } else if (type == 1) {
+      return String.fromCharCode(int.parse(value));
+    }
+    return String.fromCharCodes(
+        value.split('.-').map((e) => int.parse(e)).toList());
   }
 
   static dynamic stringParseValue(dynamic value) {
@@ -470,6 +482,54 @@ class MBridge {
       val.add(element.$reified);
     }
     return val.contains(element);
+  }
+
+  static Future<String> httpMultiparFormData(String url, int method) async {
+    try {
+      hp.StreamedResponse? res;
+      String result = "";
+      final headersMap = jsonDecode(url)["headers"] as Map?;
+
+      final fieldsMap = jsonDecode(url)["fields"] as Map?;
+      Map<String, String> fields = {};
+      if (fieldsMap != null) {
+        fields = fieldsMap
+            .map((key, value) => MapEntry(key.toString(), value.toString()));
+      }
+      Map<String, String> headers = {};
+      if (headersMap != null) {
+        headers = headersMap
+            .map((key, value) => MapEntry(key.toString(), value.toString()));
+      }
+
+      var request = hp.MultipartRequest(
+          method == 0
+              ? 'GET'
+              : method == 1
+                  ? 'POST'
+                  : method == 2
+                      ? 'PUT'
+                      : 'DELETE',
+          Uri.parse(jsonDecode(url)["url"]));
+      request.fields.addAll(fields);
+
+      request.headers.addAll(headers);
+
+      res = await request.send();
+
+      if (res.statusCode != 200) {
+        result = "400";
+      } else if (res.statusCode == 200) {
+        result = await res.stream.bytesToString();
+      } else {
+        result = res.reasonPhrase!;
+      }
+
+      return result;
+    } catch (e) {
+      _botToast(e.toString());
+      return "";
+    }
   }
 
   static Future<String> http(String url, int method) async {
@@ -769,14 +829,18 @@ class MBridge {
         .videosFromUrl(url, prefix: prefix, suffix: suffix);
   }
 
-  static List<Video> toVideos(
+  static String bAse64(String text, int type) {
+    return utf8.decode(base64.decode(text));
+  }
+
+  static Video toVideo(
       String url, String quality, String originalUrl, String? headers) {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map)
           .map((key, value) => MapEntry(key.toString(), value.toString()));
     }
-    return [Video(url, quality, originalUrl, headers: newHeaders)];
+    return Video(url, quality, originalUrl, headers: newHeaders);
   }
 
   static bool isEmptyOrIsNotEmpty(dynamic value, int type) {
@@ -840,6 +904,24 @@ class $MBridge extends MBridge with $Bridge {
             returns: BridgeTypeAnnotation($type), params: [], namedParams: []))
       },
       methods: {
+        'bAse64': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'text',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'isEmptyOrIsNotEmpty': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(
@@ -1047,10 +1129,10 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
-        'toVideos': BridgeMethodDef(
+        'toVideo': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.dynamicType)),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1370,6 +1452,24 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'httpMultiparFormData': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'method',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'gogoCdnExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
@@ -1483,6 +1583,11 @@ class $MBridge extends MBridge with $Bridge {
                       'value',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
                       false),
                 ],
                 namedParams: []),
@@ -1600,11 +1705,12 @@ class $MBridge extends MBridge with $Bridge {
         .toList());
   }
 
-  static $List $toVideos(Runtime runtime, $Value? target, List<$Value?> args) {
-    final value = MBridge.toVideos(
+  static $VideoModel $toVideo(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    final value = MBridge.toVideo(
         args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value);
 
-    return $List.wrap(value.map((e) => _toVideoModel(e)).toList());
+    return _toVideoModel(value);
   }
 
   static $String $jsonPathToString(
@@ -1658,9 +1764,10 @@ class $MBridge extends MBridge with $Bridge {
 
   static $String $stringParse(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $String(MBridge.stringParse(
-        args[0]!.$value,
-      ));
+      $String(MBridge.stringParse(args[0]!.$value, args[1]!.$value));
+
+  static $String $bAse64(Runtime runtime, $Value? target, List<$Value?> args) =>
+      $String(MBridge.bAse64(args[0]!.$value, args[1]!.$value));
 
   static $String $evalJs(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.evalJs(
@@ -1723,6 +1830,12 @@ class $MBridge extends MBridge with $Bridge {
   static $Future $http(Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.http(args[0]!.$value, args[1]!.$value)
           .then((value) => $String(value)));
+
+  static $Future $httpMultiparFormData(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(
+          MBridge.httpMultiparFormData(args[0]!.$value, args[1]!.$value)
+              .then((value) => $String(value)));
 
   static $Future $getHtmlViaWebview(
           Runtime runtime, $Value? target, List<$Value?> args) =>

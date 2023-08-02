@@ -18,7 +18,6 @@ class AnimeStreamView extends riv.ConsumerWidget {
     super.key,
     required this.episode,
   });
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
@@ -55,6 +54,9 @@ class AnimeStreamView extends riv.ConsumerWidget {
             ),
           );
         }
+        data.sort(
+          (a, b) => a.quality.compareTo(b.quality),
+        );
         return AnimeStreamPage(
           episode: episode,
           videos: data,
