@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_webview_window
-  flutter_js
   flutter_meedu_videoplayer
   fullscreen_window
   isar_flutter_libs

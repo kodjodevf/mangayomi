@@ -7,9 +7,9 @@ import 'package:dart_eval/stdlib/core.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_js/flutter_js.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
@@ -308,11 +308,13 @@ class MBridge {
 
   static String evalJs(String code) {
     try {
-      JavascriptRuntime? flutterJs;
-      flutterJs = getJavascriptRuntime();
-      final res = flutterJs.evaluate(code).stringResult;
-      flutterJs.dispose();
-      return res;
+      //  JavascriptRuntime? flutterJs;
+      // flutterJs = getJavascriptRuntime();
+      // final res = flutterJs.evaluate(code).stringResult;
+      // flutterJs.dispose();
+      // return res;
+      final jsPacker = JSPacker(code);
+      return jsPacker.unpack() ?? "";
     } catch (e) {
       _botToast(e.toString());
       throw Exception(e);
