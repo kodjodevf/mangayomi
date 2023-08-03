@@ -20,6 +20,17 @@ extension StringExtensions on String {
 
     return substring(0, endIndex);
   }
+
+  String substringBetween(String left, String right) {
+    int startIndex = 0;
+    int index = indexOf(left, startIndex);
+    if (index == -1) return "";
+    int leftIndex = index + left.length;
+    int rightIndex = indexOf(right, leftIndex);
+    if (rightIndex == -1) return "";
+    startIndex = rightIndex + right.length;
+    return substring(leftIndex, rightIndex);
+  }
 }
 
 extension LetExtension<T> on T {

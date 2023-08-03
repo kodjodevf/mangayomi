@@ -14,6 +14,7 @@ import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/filemoon.dart';
 import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mp4upload_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mytv_extractor.dart';
@@ -604,6 +605,11 @@ class MBridge {
   static Future<List<Video>> streamWishExtractor(
       String url, String prefix) async {
     return await StreamWishExtractor().videosFromUrl(url, prefix);
+  }
+
+  static Future<List<Video>> filemoonExtractor(
+      String url, String prefix) async {
+    return await FilemoonExtractor().videosFromUrl(url, prefix);
   }
 
   static Future<List<Video>> mp4UploadExtractor(
@@ -1556,6 +1562,25 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'filemoonExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'prefix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
         'getHtmlViaWebview': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
@@ -1867,6 +1892,12 @@ class $MBridge extends MBridge with $Bridge {
   static $Future $streamWishExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamWishExtractor(args[0]!.$value, args[1]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+
+  static $Future $filemoonExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.filemoonExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
