@@ -60,6 +60,7 @@ class SourcesScreen extends ConsumerWidget {
                       itemBuilder: (context, Source element) {
                         return SourceListTile(
                           source: element,
+                          isManga: isManga,
                         );
                       },
                       shrinkWrap: true,
@@ -109,6 +110,7 @@ class SourcesScreen extends ConsumerWidget {
                       itemBuilder: (context, Source element) {
                         return SourceListTile(
                           source: element,
+                          isManga: isManga,
                         );
                       },
                       shrinkWrap: true,
@@ -159,6 +161,7 @@ class SourcesScreen extends ConsumerWidget {
                       itemBuilder: (context, Source element) {
                         return SourceListTile(
                           source: element,
+                          isManga: isManga,
                         );
                       },
                       shrinkWrap: true,

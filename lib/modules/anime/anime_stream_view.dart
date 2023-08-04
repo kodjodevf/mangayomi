@@ -111,6 +111,14 @@ class AnimeStreamView extends riv.ConsumerWidget {
                   ),
                   controller: MeeduPlayerController(
                     autoHideControls: false,
+                    responsive: Responsive(
+                      fontSizeRelativeToScreen: 2.0,
+                      maxFontSize: 12,
+                      iconsSizeRelativeToScreen: 10,
+                      maxIconsSize: 50,
+                      buttonsSizeRelativeToScreen: 10,
+                      maxButtonsSize: 50,
+                    ),
                     enabledButtons:
                         const EnabledButtons(playPauseAndRepeat: false),
                     screenManager: const ScreenManager(
@@ -140,9 +148,15 @@ class AnimeStreamPage extends StatefulWidget {
 
 class _AnimeStreamPageState extends State<AnimeStreamPage> {
   final _controller = MeeduPlayerController(
-    screenManager: const ScreenManager(
-      forceLandScapeInFullscreen: false,
+    responsive: Responsive(
+      fontSizeRelativeToScreen: 2.0,
+      maxFontSize: 12,
+      iconsSizeRelativeToScreen: 10,
+      maxIconsSize: 50,
+      buttonsSizeRelativeToScreen: 10,
+      maxButtonsSize: 50,
     ),
+    pipEnabled: true,
   );
   late final streamController = AnimeStreamController(episode: widget.episode);
 

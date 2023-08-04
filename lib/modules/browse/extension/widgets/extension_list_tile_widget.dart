@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
@@ -24,6 +25,7 @@ class _ExtensionListTileWidgetState
   Widget build(
     BuildContext context,
   ) {
+    final l10n = l10nLocalizations(context)!;
     final updateAivalable =
         compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
     final sourceNotEmpty = widget.source.sourceCode != null &&
@@ -112,10 +114,10 @@ class _ExtensionListTileWidgetState
                     strokeWidth: 2.0,
                   ))
               : Text(!sourceNotEmpty
-                  ? "Install"
+                  ? l10n.install
                   : updateAivalable
-                      ? "Update"
-                      : "Latest"),
+                      ? l10n.update
+                      : l10n.latest),
         ));
   }
 }

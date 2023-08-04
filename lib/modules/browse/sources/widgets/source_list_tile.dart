@@ -7,14 +7,21 @@ import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class SourceListTile extends StatelessWidget {
+  final bool isManga;
   final Source source;
-  const SourceListTile({super.key, required this.source});
+  const SourceListTile(
+      {super.key, required this.source, required this.isManga});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        final sources = isar.sources.filter().idIsNotNull().findAllSync();
+        final sources = isar.sources
+            .filter()
+            .idIsNotNull()
+            .and()
+            .isMangaEqualTo(isManga)
+            .findAllSync();
         isar.writeTxnSync(() {
           for (var src in sources) {
             isar.sources
