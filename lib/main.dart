@@ -35,7 +35,7 @@ void main(List<String> args) async {
     iosUseMediaKit: true,
   );
   HttpOverrides.global = MyHttpoverrides();
-  if (Platform.isLinux || Platform.isWindows) {
+  if (Platform.isLinux || Platform.isWindows|| Platform.isMacOS) {
     if (runWebViewTitleBarWidget(args)) {
       return;
     }

@@ -28,8 +28,6 @@ Future<List<String>> downloadChapter(
   final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   Directory? path;
-  final getDownloadLocation = ref.watch(downloadLocationStateProvider).$2;
-  final customDownloadLocation = getDownloadLocation.isNotEmpty;
   bool isOk = false;
   final manga = chapter.manga.value!;
   final path1 = await storageProvider.getDirectory();
@@ -98,9 +96,7 @@ Future<List<String>> downloadChapter(
                     headersProvider(source: manga.source!, lang: manga.lang!)),
                 url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
-                baseDirectory: customDownloadLocation
-                    ? BaseDirectory.temporary
-                    : BaseDirectory.applicationDocuments,
+                baseDirectory: BaseDirectory.temporary,
                 directory: 'Mangayomi/$finalPath',
                 updates: Updates.statusAndProgress,
                 allowPause: true,
@@ -117,9 +113,7 @@ Future<List<String>> downloadChapter(
                     headersProvider(source: manga.source!, lang: manga.lang!)),
                 url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
-                baseDirectory: customDownloadLocation
-                    ? BaseDirectory.temporary
-                    : BaseDirectory.applicationDocuments,
+                baseDirectory: BaseDirectory.temporary,
                 directory: 'Mangayomi/$finalPath',
                 updates: Updates.statusAndProgress,
                 allowPause: true,
@@ -185,14 +179,12 @@ Future<List<String>> downloadChapter(
         },
         taskProgressCallback: (taskProgress) async {
           if (taskProgress.progress == 1.0) {
-            if (customDownloadLocation) {
-              await File(
-                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                  .copy("${path!.path}/${taskProgress.task.filename}");
-              await File(
-                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                  .delete();
-            }
+            await File(
+                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                .copy("${path!.path}/${taskProgress.task.filename}");
+            await File(
+                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                .delete();
           }
         },
       );

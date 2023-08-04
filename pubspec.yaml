@@ -4,7 +4,7 @@ description: Free and open source manga reader multi plateform app inspired by T
 version: 0.0.2+5
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.0.6 <4.0.0'
 
 
 dependencies:
@@ -22,7 +22,7 @@ dependencies:
   font_awesome_flutter: ^10.5.0
   expandable_text: ^2.3.0
   flex_color_scheme: ^7.2.0
-  extended_image: ^ 8.0.2
+  extended_image: ^8.0.2
   photo_view: ^0.14.0
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
@@ -30,7 +30,7 @@ dependencies:
   google_fonts: ^5.1.0
   url_launcher: ^6.1.12
   package_info_plus: ^4.0.2
-  background_downloader: ^7.8.0
+  background_downloader: ^7.8.1
   permission_handler: ^10.4.3
   flutter_inappwebview: ^6.0.0-beta.24+1
   draggable_menu: ^4.1.3
@@ -53,8 +53,6 @@ dependencies:
   flutter_meedu_videoplayer: ^4.2.20
   media_kit_libs_android_video: ^1.0.6
   media_kit_libs_ios_video: ^1.0.4
-  loadmore: ^2.1.0
-  random_string: ^2.3.1
   js_packer: ^0.0.5
 
 
