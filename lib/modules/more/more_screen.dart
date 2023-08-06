@@ -16,13 +16,14 @@ class MoreScreen extends StatelessWidget {
           children: [
             SizedBox(
                 height: 200,
-                child: Center(
-                    child: Image.asset(
-                  "assets/icon.png",
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.black
-                      : Colors.white,
-                ))),
+                // child: Center(
+                //     child: Image.asset(
+                //   "assets/icon.png",
+                //   color: Theme.of(context).brightness == Brightness.light
+                //       ? Colors.black
+                //       : Colors.white,
+                // ))
+                ),
             const Divider(),
             // ListTile(
             //   onTap: () {},

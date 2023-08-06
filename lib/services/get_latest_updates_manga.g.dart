@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'acf967d75f5969d51eaa91c8d4efe99796c1e1b2';
+    r'ae5b5ed757a02801592ff62617d1bdea4f763cda';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -122,4 +122,5 @@ class GetLatestUpdatesMangaProvider
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

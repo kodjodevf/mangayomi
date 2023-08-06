@@ -65,16 +65,18 @@ class StorageProvider {
     String scanlator = chapter.scanlator!.isNotEmpty
         ? "${chapter.scanlator!.replaceAll(_regExpChar, '_')}_"
         : "";
+    final isManga = chapter.manga.value!.isManga!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/$scanlator${chapter.name!.replaceAll(_regExpChar, '_')}/");
+        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/$scanlator${chapter.name!.replaceAll(_regExpChar, '_')}/");
   }
 
   Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
     final manga = chapter.manga.value!;
+    final isManga = chapter.manga.value!.isManga!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/");
+        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(_regExpChar, '_')}/");
   }
 
   Future<Directory?> getDatabaseDirectory() async {

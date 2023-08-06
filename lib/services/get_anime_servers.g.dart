@@ -6,7 +6,7 @@ part of 'get_anime_servers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAnimeServersHash() => r'b8bc284660d0034cedff0cfd7d11bc62da9d2915';
+String _$getAnimeServersHash() => r'cd7f0fc4ee58ec02b015348aed60b1b0f2d1b300';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -109,4 +109,5 @@ class GetAnimeServersProvider extends AutoDisposeFutureProvider<List<Video>> {
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

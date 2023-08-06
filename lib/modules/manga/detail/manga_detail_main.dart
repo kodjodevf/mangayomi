@@ -26,9 +26,11 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
     await ref.read(
         updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true)
             .future);
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   bool _isLoading = true;

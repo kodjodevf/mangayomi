@@ -35,8 +35,9 @@ Future<List<String>> downloadChapter(
   String scanlator = chapter.scanlator!.isNotEmpty
       ? "${chapter.scanlator!.replaceAll(regExp, '_')}_"
       : "";
+  final isManga = chapter.manga.value!.isManga!;
   final finalPath =
-      "downloads/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}/$scanlator${chapter.name!.replaceAll(regExp, '_')}";
+      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}/$scanlator${chapter.name!.replaceAll(regExp, '_')}";
   path = Directory("${path1!.path}$finalPath/");
   ref
       .read(getChapterUrlProvider(
@@ -63,8 +64,10 @@ Future<List<String>> downloadChapter(
     if (!cbzFileExist) {
       for (var index = 0; index < pageUrls.length; index++) {
         final path2 = Directory("${path1.path}downloads/");
+        final path5 =
+            Directory("${path1.path}downloads/${isManga ? "Manga" : "Anime"}/");
         final path4 = Directory(
-            "${path2.path}${manga.source} (${manga.lang!.toUpperCase()})/");
+            "${path5.path}${manga.source} (${manga.lang!.toUpperCase()})/");
         final path3 =
             Directory("${path4.path}${manga.name!.replaceAll(regExp, '_')}/");
 
@@ -78,6 +81,9 @@ Future<List<String>> downloadChapter(
         }
         if (!(await path2.exists())) {
           path2.create();
+        }
+        if (!(await path5.exists())) {
+          path5.create();
         }
         if (!(await path4.exists())) {
           path4.create();

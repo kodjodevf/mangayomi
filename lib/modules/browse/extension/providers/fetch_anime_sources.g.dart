@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'1b16436684b132a5dc6db2159e38200f1dc9b11e';
+    r'c6d2c5cd85d0086160d7af66e9f7f07da7dcbc53';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -110,4 +110,5 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

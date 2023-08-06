@@ -57,8 +57,8 @@ TrackStatus toStatus(TrackStatus status, bool isManga, int syncId) {
 
 (String, String) trackInfos(int id) {
   return switch (id) {
-    1 => ("assets/tracker_mal.webp", "MyAnimeList"),
-    _ => ("assets/tracker_anilist.webp", "Anilist"),
+    1 => ("assets/trackers_icons/tracker_mal.webp", "MyAnimeList"),
+    _ => ("assets/trackers_icons/tracker_anilist.webp", "Anilist"),
   };
 }
 

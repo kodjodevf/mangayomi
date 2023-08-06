@@ -63,7 +63,7 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.4.5
   riverpod_generator: ^2.2.3
-  # flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.13.1
   isar_generator: 3.1.0+1
   flutter_lints: ^2.0.1
 
@@ -73,4 +73,15 @@ flutter:
 
   assets:
     - assets/
- 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/app_icons/icon-red.png"
+  min_sdk_android: 24
+  windows:
+    generate: true
+    image_path: "assets/app_icons/icon-red.png"
+  macos:
+    generate: true
+    image_path: "assets/app_icons/icon-red.png"

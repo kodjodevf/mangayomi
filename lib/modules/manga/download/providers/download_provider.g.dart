@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'20dc52124bda6a0d1bfeb675e9320917889fc108';
+String _$downloadChapterHash() => r'c9e99dfc6dac4d501611822490ee73f31270677c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -118,4 +118,5 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
     return _SystemHash.finish(hash);
   }
 }
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
