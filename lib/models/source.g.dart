@@ -22,103 +22,108 @@ const SourceSchema = CollectionSchema(
       name: r'apiUrl',
       type: IsarType.string,
     ),
-    r'baseUrl': PropertySchema(
+    r'appMinVerReq': PropertySchema(
       id: 1,
+      name: r'appMinVerReq',
+      type: IsarType.string,
+    ),
+    r'baseUrl': PropertySchema(
+      id: 2,
       name: r'baseUrl',
       type: IsarType.string,
     ),
     r'dateFormat': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'dateFormat',
       type: IsarType.string,
     ),
     r'dateFormatLocale': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'dateFormatLocale',
       type: IsarType.string,
     ),
     r'hasCloudflare': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'hasCloudflare',
       type: IsarType.bool,
     ),
     r'headers': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'headers',
       type: IsarType.string,
     ),
     r'iconUrl': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'iconUrl',
       type: IsarType.string,
     ),
     r'isActive': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'isActive',
       type: IsarType.bool,
     ),
     r'isAdded': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isAdded',
       type: IsarType.bool,
     ),
     r'isFullData': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'isFullData',
       type: IsarType.bool,
     ),
     r'isManga': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'isManga',
       type: IsarType.bool,
     ),
     r'isNsfw': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'isNsfw',
       type: IsarType.bool,
     ),
     r'isPinned': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'lang': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'name',
       type: IsarType.string,
     ),
     r'sourceCode': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -145,6 +150,12 @@ int _sourceEstimateSize(
   var bytesCount = offsets.last;
   {
     final value = object.apiUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.appMinVerReq;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -231,26 +242,27 @@ void _sourceSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.apiUrl);
-  writer.writeString(offsets[1], object.baseUrl);
-  writer.writeString(offsets[2], object.dateFormat);
-  writer.writeString(offsets[3], object.dateFormatLocale);
-  writer.writeBool(offsets[4], object.hasCloudflare);
-  writer.writeString(offsets[5], object.headers);
-  writer.writeString(offsets[6], object.iconUrl);
-  writer.writeBool(offsets[7], object.isActive);
-  writer.writeBool(offsets[8], object.isAdded);
-  writer.writeBool(offsets[9], object.isFullData);
-  writer.writeBool(offsets[10], object.isManga);
-  writer.writeBool(offsets[11], object.isNsfw);
-  writer.writeBool(offsets[12], object.isPinned);
-  writer.writeString(offsets[13], object.lang);
-  writer.writeBool(offsets[14], object.lastUsed);
-  writer.writeString(offsets[15], object.name);
-  writer.writeString(offsets[16], object.sourceCode);
-  writer.writeString(offsets[17], object.sourceCodeUrl);
-  writer.writeString(offsets[18], object.typeSource);
-  writer.writeString(offsets[19], object.version);
-  writer.writeString(offsets[20], object.versionLast);
+  writer.writeString(offsets[1], object.appMinVerReq);
+  writer.writeString(offsets[2], object.baseUrl);
+  writer.writeString(offsets[3], object.dateFormat);
+  writer.writeString(offsets[4], object.dateFormatLocale);
+  writer.writeBool(offsets[5], object.hasCloudflare);
+  writer.writeString(offsets[6], object.headers);
+  writer.writeString(offsets[7], object.iconUrl);
+  writer.writeBool(offsets[8], object.isActive);
+  writer.writeBool(offsets[9], object.isAdded);
+  writer.writeBool(offsets[10], object.isFullData);
+  writer.writeBool(offsets[11], object.isManga);
+  writer.writeBool(offsets[12], object.isNsfw);
+  writer.writeBool(offsets[13], object.isPinned);
+  writer.writeString(offsets[14], object.lang);
+  writer.writeBool(offsets[15], object.lastUsed);
+  writer.writeString(offsets[16], object.name);
+  writer.writeString(offsets[17], object.sourceCode);
+  writer.writeString(offsets[18], object.sourceCodeUrl);
+  writer.writeString(offsets[19], object.typeSource);
+  writer.writeString(offsets[20], object.version);
+  writer.writeString(offsets[21], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -261,27 +273,28 @@ Source _sourceDeserialize(
 ) {
   final object = Source(
     apiUrl: reader.readStringOrNull(offsets[0]),
-    baseUrl: reader.readStringOrNull(offsets[1]),
-    dateFormat: reader.readStringOrNull(offsets[2]),
-    dateFormatLocale: reader.readStringOrNull(offsets[3]),
-    hasCloudflare: reader.readBoolOrNull(offsets[4]),
-    headers: reader.readStringOrNull(offsets[5]),
-    iconUrl: reader.readStringOrNull(offsets[6]),
+    appMinVerReq: reader.readStringOrNull(offsets[1]),
+    baseUrl: reader.readStringOrNull(offsets[2]),
+    dateFormat: reader.readStringOrNull(offsets[3]),
+    dateFormatLocale: reader.readStringOrNull(offsets[4]),
+    hasCloudflare: reader.readBoolOrNull(offsets[5]),
+    headers: reader.readStringOrNull(offsets[6]),
+    iconUrl: reader.readStringOrNull(offsets[7]),
     id: id,
-    isActive: reader.readBoolOrNull(offsets[7]),
-    isAdded: reader.readBoolOrNull(offsets[8]),
-    isFullData: reader.readBoolOrNull(offsets[9]),
-    isManga: reader.readBoolOrNull(offsets[10]),
-    isNsfw: reader.readBoolOrNull(offsets[11]),
-    isPinned: reader.readBoolOrNull(offsets[12]),
-    lang: reader.readStringOrNull(offsets[13]),
-    lastUsed: reader.readBoolOrNull(offsets[14]),
-    name: reader.readStringOrNull(offsets[15]),
-    sourceCode: reader.readStringOrNull(offsets[16]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[17]),
-    typeSource: reader.readStringOrNull(offsets[18]),
-    version: reader.readStringOrNull(offsets[19]),
-    versionLast: reader.readStringOrNull(offsets[20]),
+    isActive: reader.readBoolOrNull(offsets[8]),
+    isAdded: reader.readBoolOrNull(offsets[9]),
+    isFullData: reader.readBoolOrNull(offsets[10]),
+    isManga: reader.readBoolOrNull(offsets[11]),
+    isNsfw: reader.readBoolOrNull(offsets[12]),
+    isPinned: reader.readBoolOrNull(offsets[13]),
+    lang: reader.readStringOrNull(offsets[14]),
+    lastUsed: reader.readBoolOrNull(offsets[15]),
+    name: reader.readStringOrNull(offsets[16]),
+    sourceCode: reader.readStringOrNull(offsets[17]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[18]),
+    typeSource: reader.readStringOrNull(offsets[19]),
+    version: reader.readStringOrNull(offsets[20]),
+    versionLast: reader.readStringOrNull(offsets[21]),
   );
   return object;
 }
@@ -302,13 +315,13 @@ P _sourceDeserializeProp<P>(
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 5:
       return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readBoolOrNull(offset)) as P;
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
       return (reader.readBoolOrNull(offset)) as P;
     case 9:
@@ -320,11 +333,11 @@ P _sourceDeserializeProp<P>(
     case 12:
       return (reader.readBoolOrNull(offset)) as P;
     case 13:
-      return (reader.readStringOrNull(offset)) as P;
-    case 14:
       return (reader.readBoolOrNull(offset)) as P;
-    case 15:
+    case 14:
       return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readBoolOrNull(offset)) as P;
     case 16:
       return (reader.readStringOrNull(offset)) as P;
     case 17:
@@ -334,6 +347,8 @@ P _sourceDeserializeProp<P>(
     case 19:
       return (reader.readStringOrNull(offset)) as P;
     case 20:
+      return (reader.readStringOrNull(offset)) as P;
+    case 21:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -569,6 +584,152 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'apiUrl',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'appMinVerReq',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'appMinVerReq',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'appMinVerReq',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'appMinVerReq',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'appMinVerReq',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'appMinVerReq',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> appMinVerReqIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'appMinVerReq',
         value: '',
       ));
     });
@@ -2624,6 +2785,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByAppMinVerReq() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'appMinVerReq', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByAppMinVerReqDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'appMinVerReq', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByBaseUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'baseUrl', Sort.asc);
@@ -2875,6 +3048,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
   QueryBuilder<Source, Source, QAfterSortBy> thenByApiUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'apiUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByAppMinVerReq() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'appMinVerReq', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByAppMinVerReqDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'appMinVerReq', Sort.desc);
     });
   }
 
@@ -3139,6 +3324,13 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByAppMinVerReq(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'appMinVerReq', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByBaseUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3284,6 +3476,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> apiUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'apiUrl');
+    });
+  }
+
+  QueryBuilder<Source, String?, QQueryOperations> appMinVerReqProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'appMinVerReq');
     });
   }
 

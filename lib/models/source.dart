@@ -48,30 +48,32 @@ class Source {
 
   bool? isManga;
 
-  Source({
-    this.id = 0,
-    this.name = '',
-    this.baseUrl = '',
-    this.lang = '',
-    this.typeSource = '',
-    this.iconUrl = '',
-    this.dateFormat = '',
-    this.dateFormatLocale = '',
-    this.isActive = true,
-    this.isAdded = false,
-    this.isNsfw = false,
-    this.isFullData = false,
-    this.hasCloudflare = false,
-    this.isPinned = false,
-    this.lastUsed = false,
-    this.apiUrl = "",
-    this.sourceCodeUrl = "",
-    this.version = "",
-    this.versionLast = "",
-    this.sourceCode = '',
-    this.headers = '',
-    this.isManga = true,
-  });
+  String? appMinVerReq;
+
+  Source(
+      {this.id = 0,
+      this.name = '',
+      this.baseUrl = '',
+      this.lang = '',
+      this.typeSource = '',
+      this.iconUrl = '',
+      this.dateFormat = '',
+      this.dateFormatLocale = '',
+      this.isActive = true,
+      this.isAdded = false,
+      this.isNsfw = false,
+      this.isFullData = false,
+      this.hasCloudflare = false,
+      this.isPinned = false,
+      this.lastUsed = false,
+      this.apiUrl = "",
+      this.sourceCodeUrl = "",
+      this.version = "",
+      this.versionLast = "",
+      this.sourceCode = '',
+      this.headers = '',
+      this.isManga = true,
+      this.appMinVerReq = ""});
   Source.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     id = json['id'];
@@ -88,5 +90,6 @@ class Source {
     version = json['version'];
     isManga = json['isManga'] ?? true;
     isFullData = json['isFullData'] ?? false;
+    appMinVerReq = json['appMinVerReq'];
   }
 }

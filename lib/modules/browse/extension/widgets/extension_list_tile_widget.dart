@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
@@ -36,31 +37,29 @@ class _ExtensionListTileWidgetState
           // onChanged(!value);
         },
         leading: Container(
-            height: 37,
-            width: 37,
-            decoration: BoxDecoration(
-                color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(5)),
-            child:
-                // iconUrl.isEmpty
-                //     ?
-                const Icon(Icons.source_outlined)
-            // : CachedNetworkImage(
-            //     imageUrl: iconUrl,
-            //     fit: BoxFit.contain,
-            //     width: 37,
-            //     height: 37,
-            //     errorWidget: (context, url, error) {
-            //       return const SizedBox(
-            //         width: 37,
-            //         height: 37,
-            //         child: Center(
-            //           child: Icon(Icons.source_outlined),
-            //         ),
-            //       );
-            //     },
-            //   ),
-            ),
+          height: 37,
+          width: 37,
+          decoration: BoxDecoration(
+              color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(5)),
+          child: widget.source.iconUrl!.isEmpty
+              ? const Icon(Icons.source_outlined)
+              : CachedNetworkImage(
+                  imageUrl: widget.source.iconUrl!,
+                  fit: BoxFit.contain,
+                  width: 37,
+                  height: 37,
+                  errorWidget: (context, url, error) {
+                    return const SizedBox(
+                      width: 37,
+                      height: 37,
+                      child: Center(
+                        child: Icon(Icons.source_outlined),
+                      ),
+                    );
+                  },
+                ),
+        ),
         title: Text(widget.source.name!),
         subtitle: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
