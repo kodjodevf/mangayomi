@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'check_for_update.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'f60e8bbbd4b1bd05f7cb52c08be0f2462d465e8e';
+String _$checkForUpdateHash() => r'15446e5da6f28a873be47b541a9c4f0f144520c5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,35 +29,35 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
+typedef CheckForUpdateRef = AutoDisposeProviderRef<dynamic>;
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+/// See also [checkForUpdate].
+@ProviderFor(checkForUpdate)
+const checkForUpdateProvider = CheckForUpdateFamily();
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
+/// See also [checkForUpdate].
+class CheckForUpdateFamily extends Family<dynamic> {
+  /// See also [checkForUpdate].
+  const CheckForUpdateFamily();
 
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
-    required Chapter chapter,
-    bool? useWifi,
+  /// See also [checkForUpdate].
+  CheckForUpdateProvider call({
+    BuildContext? context,
+    bool? manualUpdate,
   }) {
-    return DownloadChapterProvider(
-      chapter: chapter,
-      useWifi: useWifi,
+    return CheckForUpdateProvider(
+      context: context,
+      manualUpdate: manualUpdate,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  CheckForUpdateProvider getProviderOverride(
+    covariant CheckForUpdateProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
-      useWifi: provider.useWifi,
+      context: provider.context,
+      manualUpdate: provider.manualUpdate,
     );
   }
 
@@ -73,47 +73,47 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'checkForUpdateProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
-    required this.chapter,
-    this.useWifi,
+/// See also [checkForUpdate].
+class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
+  /// See also [checkForUpdate].
+  CheckForUpdateProvider({
+    this.context,
+    this.manualUpdate,
   }) : super.internal(
-          (ref) => downloadChapter(
+          (ref) => checkForUpdate(
             ref,
-            chapter: chapter,
-            useWifi: useWifi,
+            context: context,
+            manualUpdate: manualUpdate,
           ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          from: checkForUpdateProvider,
+          name: r'checkForUpdateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$checkForUpdateHash,
+          dependencies: CheckForUpdateFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              CheckForUpdateFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
-  final bool? useWifi;
+  final BuildContext? context;
+  final bool? manualUpdate;
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is CheckForUpdateProvider &&
+        other.context == context &&
+        other.manualUpdate == manualUpdate;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
+    hash = _SystemHash.combine(hash, context.hashCode);
+    hash = _SystemHash.combine(hash, manualUpdate.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -11,16 +12,16 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends ConsumerWidget {
   const MainScreen({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
-
+    ref.watch(checkForUpdateProvider(context: context));
     return Consumer(builder: (context, ref, chuld) {
       final location = ref.watch(
         routerCurrentLocationStateProvider(context),

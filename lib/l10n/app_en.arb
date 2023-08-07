@@ -193,6 +193,12 @@
   "library_no_category_exist":"You don't have any categories yet",
   "watching":"Watching",
   "plan_to_watch":"Plan to watch",
-  "re_watching":"Rewatching"
+  "re_watching":"Rewatching",
+  "episodes":"Episodes",
+  "download":"Download",
+  "new_update_available":"New update available",
+  "app_version":"App Version : v{v}",
+  "searching_for_updates":"Searching for updates...",
+  "no_new_updates_available":"No new updates available"
 
 }

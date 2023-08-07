@@ -1632,9 +1632,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         context,
         DraggableMenu(
           ui: SoftModernDraggableMenu(radius: 20, barItem: Container()),
-          levels: [
-            DraggableMenuLevel.ratio(ratio: 0.9),
-          ],
           child: Material(
             color: isLight(context)
                 ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)

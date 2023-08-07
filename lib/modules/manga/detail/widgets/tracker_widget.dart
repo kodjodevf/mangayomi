@@ -216,7 +216,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       builder: (context) {
                         return AlertDialog(
                           title: Text(
-                            l10n!.chapters,
+                            widget.isManga ? l10n!.chapters : l10n!.episodes,
                           ),
                           content: StatefulBuilder(
                             builder: (context, setState) => SizedBox(

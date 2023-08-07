@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-class AboutScreen extends StatefulWidget {
+class AboutScreen extends ConsumerStatefulWidget {
   const AboutScreen({super.key});
 
   @override
-  State<AboutScreen> createState() => _AboutScreenState();
+  ConsumerState<AboutScreen> createState() => _AboutScreenState();
 }
 
-class _AboutScreenState extends State<AboutScreen> {
+class _AboutScreenState extends ConsumerState<AboutScreen> {
   Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(
       url,
@@ -55,15 +57,15 @@ class _AboutScreenState extends State<AboutScreen> {
       body: Column(
         children: [
           SizedBox(
-              height: 150,
-              // child: Center(
-              //     child: Image.asset(
-              //   "assets/icon.png",
-              //   color: Theme.of(context).brightness == Brightness.light
-              //       ? Colors.black
-              //       : Colors.white,
-              // ))
-              ),
+            height: 150,
+            // child: Center(
+            //     child: Image.asset(
+            //   "assets/icon.png",
+            //   color: Theme.of(context).brightness == Brightness.light
+            //       ? Colors.black
+            //       : Colors.white,
+            // ))
+          ),
           Flexible(
             flex: 3,
             child: Column(
@@ -80,7 +82,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                 ),
                 ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    ref.read(checkForUpdateProvider(
+                        context: context, manualUpdate: true));
+                  },
                   title: Text(l10n.check_for_update),
                 ),
                 // ListTile(

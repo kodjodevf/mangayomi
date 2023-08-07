@@ -193,5 +193,11 @@
   "library_no_category_exist":"Vous n'avez pas encore de catégories",
   "watching":"En lecture",
   "plan_to_watch":"À regarder",
-  "re_watching":"Revisionnage"
+  "re_watching":"Revisionnage",
+  "episodes":"Épisodes",
+  "download":"Télécharger",
+  "new_update_available":"Une nouvelle version est disponible",
+  "app_version":"Version de l'application : v{v}",
+  "searching_for_updates":"Vérification des mise à jours",
+  "no_new_updates_available":"Aucune mise à jours disponible"
 }

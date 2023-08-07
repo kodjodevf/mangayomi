@@ -114,8 +114,14 @@ int compareVersions(String version1, String version2) {
   List<String> v2Components = version2.split('.');
 
   for (int i = 0; i < v1Components.length && i < v2Components.length; i++) {
-    int v1Value = int.parse(v1Components[i]);
-    int v2Value = int.parse(v2Components[i]);
+    int v1Value = int.parse(
+        v1Components.length == i + 1 && v1Components[i].length == 1
+            ? "${v1Components[i]}0"
+            : v1Components[i]);
+    int v2Value = int.parse(
+        v2Components.length == i + 1 && v2Components[i].length == 1
+            ? "${v2Components[i]}0"
+            : v2Components[i]);
 
     if (v1Value < v2Value) {
       return -1;
