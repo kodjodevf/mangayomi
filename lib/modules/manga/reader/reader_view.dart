@@ -156,6 +156,9 @@ class _MangaChapterPageGalleryState
 
   @override
   void dispose() {
+    _readerController.setMangaHistoryUpdate();
+    _readerController
+        .setPageIndex(_uChapDataPreload[_currentIndex ?? 0].index!);
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     clearGestureDetailsCache();
@@ -181,8 +184,6 @@ class _MangaChapterPageGalleryState
   }
 
   late int? _currentIndex = _readerController.getPageIndex();
-
-  T? ambiguate<T>(T? value) => value;
 
   late ListObserverController _observerController;
   final ScrollController _scrollController = ScrollController();
@@ -212,15 +213,15 @@ class _MangaChapterPageGalleryState
       List<UChapDataPreload> uChapDataPreloadP = [];
       List<UChapDataPreload> uChapDataPreloadL = _uChapDataPreload;
       List<UChapDataPreload> preChap = [];
-      for (var ee in _uChapDataPreload) {
+      for (var data in _uChapDataPreload) {
         if (chapterData.uChapDataPreload.first.chapter!.url ==
-            ee.chapter!.url) {
+            data.chapter!.url) {
           isExist = true;
         }
       }
       if (!isExist) {
-        for (var aa in chapterData.uChapDataPreload) {
-          preChap.add(aa);
+        for (var data in chapterData.uChapDataPreload) {
+          preChap.add(data);
         }
       }
 
@@ -229,15 +230,7 @@ class _MangaChapterPageGalleryState
         for (var i = 0; i < preChap.length; i++) {
           int index = i + length;
           final dataPreload = preChap[i];
-          uChapDataPreloadP.add(UChapDataPreload(
-              dataPreload.chapter,
-              dataPreload.path,
-              dataPreload.url,
-              dataPreload.isLocale,
-              dataPreload.archiveImage,
-              dataPreload.index,
-              dataPreload.chapterUrlModel,
-              index));
+          uChapDataPreloadP.add(dataPreload..index = index);
         }
         if (mounted) {
           uChapDataPreloadL.addAll(uChapDataPreloadP);
@@ -1419,14 +1412,14 @@ class _MangaChapterPageGalleryState
 }
 
 class UChapDataPreload {
-  final Chapter? chapter;
-  final Directory? path;
-  final String? url;
-  final bool? isLocale;
-  final Uint8List? archiveImage;
-  final int? index;
-  final GetChapterUrlModel? chapterUrlModel;
-  final int? pageIndex;
+  Chapter? chapter;
+  Directory? path;
+  String? url;
+  bool? isLocale;
+  Uint8List? archiveImage;
+  int? index;
+  GetChapterUrlModel? chapterUrlModel;
+  int? pageIndex;
   UChapDataPreload(
     this.chapter,
     this.path,

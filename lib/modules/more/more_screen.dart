@@ -53,13 +53,13 @@ class MoreScreen extends StatelessWidget {
               title: l10n.categories,
             ),
             const Divider(),
-            ListTileWidget(
-              onTap: () {
-                context.push('/history');
-              },
-              icon: Icons.history_outlined,
-              title: l10n.history,
-            ),
+            // ListTileWidget(
+            //   onTap: () {
+            //     context.push('/history');
+            //   },
+            //   icon: Icons.history_outlined,
+            //   title: l10n.history,
+            // ),
             // ListTile(
             //   onTap: () {},
             //   leading: const SizedBox(

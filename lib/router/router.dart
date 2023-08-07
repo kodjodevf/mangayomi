@@ -97,21 +97,21 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
+                name: "history",
+                path: '/history',
+                builder: (context, state) => const HistoryScreen(),
+                pageBuilder: (context, state) => CustomTransition(
+                  key: state.pageKey,
+                  child: const HistoryScreen(),
+                ),
+              ),
+              GoRoute(
                 name: "browse",
                 path: '/browse',
                 builder: (context, state) => const BrowseScreen(),
                 pageBuilder: (context, state) => CustomTransition(
                   key: state.pageKey,
                   child: const BrowseScreen(),
-                ),
-              ),
-              GoRoute(
-                name: "updates",
-                path: '/updates',
-                builder: (context, state) => const UpdatesScreen(),
-                pageBuilder: (context, state) => CustomTransition(
-                  key: state.pageKey,
-                  child: const UpdatesScreen(),
                 ),
               ),
               GoRoute(
@@ -125,12 +125,12 @@ class RouterNotifier extends ChangeNotifier {
               ),
             ]),
         GoRoute(
-          name: "history",
-          path: '/history',
-          builder: (context, state) => const HistoryScreen(),
+          name: "updates",
+          path: '/updates',
+          builder: (context, state) => const UpdatesScreen(),
           pageBuilder: (context, state) => CustomTransition(
             key: state.pageKey,
-            child: const HistoryScreen(),
+            child: const UpdatesScreen(),
           ),
         ),
         GoRoute(

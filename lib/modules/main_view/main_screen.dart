@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,17 +26,15 @@ class MainScreen extends ConsumerWidget {
         routerCurrentLocationStateProvider(context),
       );
       bool isReadingScreen = location == '/mangareaderview';
-      int currentIndex = location == null
-          ? 0
-          : location == '/MangaLibrary'
-              ? 0
-              : location == '/AnimeLibrary'
-                  ? 1
-                  : location == '/updates'
-                      ? 2
-                      : location == '/browse'
-                          ? 3
-                          : 4;
+      int currentIndex = switch (location) {
+        null => 0,
+        '/MangaLibrary' => 0,
+        '/AnimeLibrary' => 1,
+        '/history' => 2,
+        '/browse' => 3,
+        _ => 4,
+      };
+
       final incognitoMode = ref.watch(incognitoModeStateProvider);
       final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
       return Column(
@@ -84,7 +81,7 @@ class MainScreen extends ConsumerWidget {
                                   ? 100
                                   : location != '/MangaLibrary' &&
                                           location != '/AnimeLibrary' &&
-                                          location != '/updates' &&
+                                          location != '/history' &&
                                           location != '/browse' &&
                                           location != '/more'
                                       ? 0
@@ -128,13 +125,13 @@ class MainScreen extends ConsumerWidget {
                                     ),
                                     label: Padding(
                                         padding: const EdgeInsets.only(top: 5),
-                                        child: Text(l10n.updates))),
+                                        child: Text(l10n.history))),
                                 NavigationRailDestination(
                                     selectedIcon: const Icon(
-                                      Icons.explore,
+                                      Icons.history,
                                     ),
                                     icon: const Icon(
-                                      Icons.explore_outlined,
+                                      Icons.history_outlined,
                                     ),
                                     label: Padding(
                                       padding: const EdgeInsets.only(top: 5),
@@ -159,7 +156,7 @@ class MainScreen extends ConsumerWidget {
                                 } else if (newIndex == 1) {
                                   route.go('/AnimeLibrary');
                                 } else if (newIndex == 2) {
-                                  route.go('/updates');
+                                  route.go('/history');
                                 } else if (newIndex == 3) {
                                   route.go('/browse');
                                 } else if (newIndex == 4) {
@@ -184,7 +181,7 @@ class MainScreen extends ConsumerWidget {
                               ? 80
                               : location != '/MangaLibrary' &&
                                       location != '/AnimeLibrary' &&
-                                      location != '/updates' &&
+                                      location != '/history' &&
                                       location != '/browse' &&
                                       location != '/more'
                                   ? 0
@@ -222,13 +219,13 @@ class MainScreen extends ConsumerWidget {
                                 icon: const Icon(
                                   Icons.new_releases_outlined,
                                 ),
-                                label: l10n.updates),
+                                label: l10n.history),
                             NavigationDestination(
                                 selectedIcon: const Icon(
-                                  Icons.explore,
+                                  Icons.history,
                                 ),
                                 icon: const Icon(
-                                  Icons.explore_outlined,
+                                  Icons.history_outlined,
                                 ),
                                 label: l10n.browse),
                             NavigationDestination(
@@ -246,7 +243,7 @@ class MainScreen extends ConsumerWidget {
                             } else if (newIndex == 1) {
                               route.go('/AnimeLibrary');
                             } else if (newIndex == 2) {
-                              route.go('/updates');
+                              route.go('/history');
                             } else if (newIndex == 3) {
                               route.go('/browse');
                             } else if (newIndex == 4) {

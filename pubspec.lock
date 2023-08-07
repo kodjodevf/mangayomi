@@ -527,10 +527,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_meedu_videoplayer
-      sha256: "6849b2b05c8413f2efbb70cf5be759b2e6a978e373e58c8d8bb87414ba141e6c"
+      sha256: "5d687cca1681041b1ca078de3abd677b4e97d9a5b141009963927c43438b7ad9"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.21"
+    version: "4.2.22"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -857,10 +857,10 @@ packages:
     dependency: "direct main"
     description:
       name: media_kit_libs_ios_video
-      sha256: c691220334c1828e1fd24db4ebbdfdd6c576f0345bc6cc435b355798d6e4b7ed
+      sha256: b65d1f22442e6074948f501e7156c310fbf133cd63aa914c84d0d4db1c683ee0
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.1.1"
   media_kit_libs_linux:
     dependency: transitive
     description:
@@ -1606,10 +1606,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_media_kit
-      sha256: "2d1e2389db93b9cbeba05d8b88d5eec1273675c7904e00c56ea08c776c6977a9"
+      sha256: "7472fca414cfe372560d9328a3da9e57d9ba1de4af7ed8d887ce6a9868dc2430"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.21"
+    version: "0.0.22"
   video_player_platform_interface:
     dependency: transitive
     description:
