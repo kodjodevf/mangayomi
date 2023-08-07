@@ -45,7 +45,7 @@ class StreamWishExtractor {
       const separator = '#EXT-X-STREAM-INF:';
       masterPlaylist.substringAfter(separator).split(separator).forEach((it) {
         final quality =
-            '$prefix${it.substringAfter('RESOLUTION=').substringAfter('x').substringBefore(',')}p ';
+            '$prefix - ${it.substringAfter('RESOLUTION=').substringAfter('x').substringBefore(',')}p ';
         final videoUrl =
             masterBase + it.substringAfter('\n').substringBefore('\n');
         videoList

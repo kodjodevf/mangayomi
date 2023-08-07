@@ -54,7 +54,7 @@ class SendvidExtractor {
           });
 
         videoList.add(
-            Video(videoUrl, prefix + quality, videoUrl, headers: videoHeaders));
+            Video(videoUrl, "$prefix - $quality", videoUrl, headers: videoHeaders));
       });
 
       return videoList;

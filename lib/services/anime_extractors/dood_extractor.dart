@@ -9,7 +9,7 @@ class DoodExtractor {
     String? quality,
     bool redirect = true,
   }) async {
-    final newQuality = quality ?? ('Doodstream${redirect ? ' mirror' : ''}');
+    final newQuality = quality ?? ('Doodstream ${redirect ? ' mirror' : ''}');
 
     try {
       final response = await http.Client().get(Uri.parse(url));

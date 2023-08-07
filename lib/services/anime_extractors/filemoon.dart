@@ -44,7 +44,7 @@ class FilemoonExtractor {
 
         return Video(
           videoUrl,
-          prefix + resolution,
+          "$prefix - $resolution",
           videoUrl,
           headers: videoHeaders,
         );

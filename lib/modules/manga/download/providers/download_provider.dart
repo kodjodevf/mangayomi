@@ -7,6 +7,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/get_anime_servers.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -39,16 +40,34 @@ Future<List<String>> downloadChapter(
   final finalPath =
       "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}/$scanlator${chapter.name!.replaceAll(regExp, '_')}";
   path = Directory("${path1!.path}$finalPath/");
-  ref
-      .read(getChapterUrlProvider(
-    chapter: chapter,
-  ).future)
-      .then((value) {
-    if (value.pageUrls.isNotEmpty) {
-      pageUrls = value.pageUrls;
-      isOk = true;
-    }
-  });
+  Map<String, String> videoHeader = {};
+  if (isManga) {
+    ref
+        .read(getChapterUrlProvider(
+      chapter: chapter,
+    ).future)
+        .then((value) {
+      if (value.pageUrls.isNotEmpty) {
+        pageUrls = value.pageUrls;
+        isOk = true;
+      }
+    });
+  } else {
+    ref
+        .read(getAnimeServersProvider(
+      chapter: chapter,
+    ).future)
+        .then((value) {
+      final videosUrls =
+          value.where((element) => !element.url.contains(".m3u8")).toList();
+      if (videosUrls.isNotEmpty) {
+        pageUrls = [videosUrls.first.url];
+        videoHeader.addAll(videosUrls.first.headers!);
+        isOk = true;
+      }
+    });
+  }
+
   await Future.doWhile(() async {
     await Future.delayed(const Duration(seconds: 1));
     if (isOk == true) {
@@ -98,8 +117,10 @@ Future<List<String>> downloadChapter(
           } else {
             tasks.add(DownloadTask(
                 taskId: pageUrls[index],
-                headers: ref.watch(
-                    headersProvider(source: manga.source!, lang: manga.lang!)),
+                headers: isManga
+                    ? videoHeader
+                    : ref.watch(headersProvider(
+                        source: manga.source!, lang: manga.lang!)),
                 url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
                 baseDirectory: BaseDirectory.temporary,
@@ -115,8 +136,10 @@ Future<List<String>> downloadChapter(
           } else {
             tasks.add(DownloadTask(
                 taskId: pageUrls[index],
-                headers: ref.watch(
-                    headersProvider(source: manga.source!, lang: manga.lang!)),
+                headers: isManga
+                    ? videoHeader
+                    : ref.watch(headersProvider(
+                        source: manga.source!, lang: manga.lang!)),
                 url: pageUrls[index].trim().trimLeft().trimRight(),
                 filename: "${padIndex(index + 1)}.jpg",
                 baseDirectory: BaseDirectory.temporary,
@@ -143,57 +166,104 @@ Future<List<String>> downloadChapter(
         isar.downloads.putSync(model..chapter.value = chapter);
       });
     } else {
-      await FileDownloader().downloadBatch(
-        tasks,
-        batchProgressCallback: (succeeded, failed) async {
-          if (succeeded == tasks.length) {
-            if (ref.watch(saveAsCBZArchiveStateProvider)) {
-              await ref.watch(convertToCBZProvider(
-                      path!.path, mangaDir.path, chapter.name!, pageUrls)
-                  .future);
+      if (isManga) {
+        await FileDownloader().downloadBatch(
+          tasks,
+          batchProgressCallback: (succeeded, failed) async {
+            if (succeeded == tasks.length) {
+              if (ref.watch(saveAsCBZArchiveStateProvider)) {
+                await ref.watch(convertToCBZProvider(
+                        path!.path, mangaDir.path, chapter.name!, pageUrls)
+                    .future);
+              }
             }
-          }
-          bool isEmpty = isar.downloads
-              .filter()
-              .chapterIdEqualTo(chapter.id!)
-              .isEmptySync();
-          if (isEmpty) {
-            final model = Download(
-              succeeded: succeeded,
-              failed: failed,
-              total: tasks.length,
-              isDownload: (succeeded == tasks.length) ? true : false,
-              taskIds: pageUrls,
-              isStartDownload: true,
-              chapterId: chapter.id,
-            );
-            isar.writeTxnSync(() {
-              isar.downloads.putSync(model..chapter.value = chapter);
-            });
-          } else {
-            final model = isar.downloads
+            bool isEmpty = isar.downloads
                 .filter()
                 .chapterIdEqualTo(chapter.id!)
-                .findFirstSync()!;
-            isar.writeTxnSync(() {
-              isar.downloads.putSync(model
-                ..succeeded = succeeded
-                ..failed = failed
-                ..isDownload = (succeeded == tasks.length) ? true : false);
-            });
-          }
-        },
-        taskProgressCallback: (taskProgress) async {
-          if (taskProgress.progress == 1.0) {
-            await File(
-                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                .copy("${path!.path}/${taskProgress.task.filename}");
-            await File(
-                    "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                .delete();
-          }
-        },
-      );
+                .isEmptySync();
+            if (isEmpty) {
+              final model = Download(
+                succeeded: succeeded,
+                failed: failed,
+                total: tasks.length,
+                isDownload: (succeeded == tasks.length) ? true : false,
+                taskIds: pageUrls,
+                isStartDownload: true,
+                chapterId: chapter.id,
+              );
+              isar.writeTxnSync(() {
+                isar.downloads.putSync(model..chapter.value = chapter);
+              });
+            } else {
+              final model = isar.downloads
+                  .filter()
+                  .chapterIdEqualTo(chapter.id!)
+                  .findFirstSync()!;
+              isar.writeTxnSync(() {
+                isar.downloads.putSync(model
+                  ..succeeded = succeeded
+                  ..failed = failed
+                  ..isDownload = (succeeded == tasks.length) ? true : false);
+              });
+            }
+          },
+          taskProgressCallback: (taskProgress) async {
+            if (taskProgress.progress == 1.0) {
+              await File(
+                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                  .copy("${path!.path}/${taskProgress.task.filename}");
+              await File(
+                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
+                  .delete();
+            }
+          },
+        );
+      } else {
+        await FileDownloader().download(
+          tasks.first,
+          onProgress: (progress) async {
+            bool isEmpty = isar.downloads
+                .filter()
+                .chapterIdEqualTo(chapter.id!)
+                .isEmptySync();
+            if (isEmpty) {
+              final model = Download(
+                succeeded: (progress * 100).toInt(),
+                failed: 0,
+                total: 100,
+                isDownload: (progress == 1.0) ? true : false,
+                taskIds: pageUrls,
+                isStartDownload: true,
+                chapterId: chapter.id,
+              );
+              isar.writeTxnSync(() {
+                isar.downloads.putSync(model..chapter.value = chapter);
+              });
+            } else {
+              final model = isar.downloads
+                  .filter()
+                  .chapterIdEqualTo(chapter.id!)
+                  .findFirstSync()!;
+              isar.writeTxnSync(() {
+                isar.downloads.putSync(model
+                  ..succeeded = (progress * 100).toInt()
+                  ..failed = 0
+                  ..isDownload = (progress == 1.0) ? true : false);
+              });
+            }
+          },
+          onStatus: (status) async {
+            if (status == TaskStatus.complete) {
+              await File(
+                      "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}")
+                  .copy("${path!.path}/${tasks.first.filename}");
+              await File(
+                      "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}")
+                  .delete();
+            }
+          },
+        );
+      }
     }
   }
   return pageUrls;

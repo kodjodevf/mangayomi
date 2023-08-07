@@ -43,7 +43,7 @@ class OkruExtractor {
         final quality = value.substringBefore("\\\"");
         final fixedQuality = fixQualities ? fixQuality(quality) : quality;
         final videoQuality =
-            '${prefix.isNotEmpty ? '$prefix ' : ''}Okru:$fixedQuality';
+            '${prefix.isNotEmpty ? '$prefix ' : ''}Okru - $fixedQuality';
         if (videoUrl.startsWith('https://')) {
           videoList.add(Video(videoUrl, videoQuality, videoUrl));
         }

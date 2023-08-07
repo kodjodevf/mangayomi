@@ -1,6 +1,5 @@
 // ignore_for_file: implementation_imports, depend_on_referenced_packages
 import 'dart:io';
-
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,13 +30,15 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload(bool? useWifi) async {
-    final data = await ref.watch(
-        downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
-            .future);
-    if (mounted) {
-      setState(() {
-        _pageUrls = data;
-      });
+    if (widget.chapter.manga.value!.isManga!) {
+      final data = await ref.watch(
+          downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
+              .future);
+      if (mounted) {
+        setState(() {
+          _pageUrls = data;
+        });
+      }
     }
   }
 
@@ -283,15 +284,18 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     FileDownloader().cancelTasksWithIds(_pageUrls).then((value) async {
       await Future.delayed(const Duration(seconds: 1));
-      isar.writeTxnSync(() {
-        int id = isar.downloads
-            .filter()
-            .chapterIdEqualTo(widget.chapter.id!)
-            .findFirstSync()!
-            .id!;
-
-        isar.downloads.deleteSync(id);
-      });
+      final chapterD = isar.downloads
+          .filter()
+          .chapterIdEqualTo(widget.chapter.id!)
+          .findFirstSync();
+      if (chapterD != null) {
+        final verifyId = isar.downloads.getSync(chapterD.id!);
+        isar.writeTxnSync(() {
+          if (verifyId != null) {
+            isar.downloads.deleteSync(chapterD.id!);
+          }
+        });
+      }
     });
   }
 

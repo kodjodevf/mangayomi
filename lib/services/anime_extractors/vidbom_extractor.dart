@@ -19,9 +19,9 @@ class VidBomExtractor {
       return data.split('file:"').skip(1).map((source) {
         final src = source.substringBefore('"');
         var quality =
-            'Vidbom: ${source.substringAfter('label:"').substringBefore('"')}';
+            'Vidbom - ${source.substringAfter('label:"').substringBefore('"')}';
         if (quality.length > 15) {
-          quality = 'Vidshare: 480p';
+          quality = 'Vidshare - 480p';
         }
         return Video(src, quality, src);
       }).toList();

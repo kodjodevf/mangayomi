@@ -43,7 +43,7 @@ class MyStreamExtractor {
           .map((it) {
         final resolution =
             "${it.substringAfter("RESOLUTION=").substringBefore("\n").substringAfter("x").substringBefore(",")}p";
-        final quality = "MyStream: $resolution";
+        final quality = "MyStream - $resolution";
         final videoUrl = it.substringAfter("\n").substringBefore("\n");
         return Video(videoUrl, quality, videoUrl, headers: newHeaders);
       }).toList();

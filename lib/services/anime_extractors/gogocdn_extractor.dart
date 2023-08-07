@@ -49,7 +49,7 @@ class GogoCdnExtractor {
       );
 
       final token = httpUrl.queryParameters['token'];
-      final qualityPrefix = token != null ? "Gogostream: " : "Vidstreaming: ";
+      final qualityPrefix = token != null ? "Gogostream - " : "Vidstreaming - ";
 
       final encryptAjaxUrl =
           "${host}encrypt-ajax.php?id=$encryptedId&$encryptAjaxParams&alias=$id";
@@ -106,15 +106,6 @@ class GogoCdnExtractor {
           }
         }
       }
-      // videoList.sort((a, b) {
-      //   final aQuality =
-      //       a.quality.substring(qualityPrefix.length, a.quality.length - 1);
-      //   final bQuality =
-      //       b.quality.substring(qualityPrefix.length, b.quality.length - 1);
-      //   final aQualityInt = int.tryParse(aQuality) ?? -1;
-      //   final bQualityInt = int.tryParse(bQuality) ?? -1;
-      //   return bQualityInt.compareTo(aQualityInt);
-      // });
       return videoList + autoList;
     } catch (e) {
       return [];
@@ -148,4 +139,3 @@ class GogoCdnExtractor {
       encrypt.Encrypter(encrypt.AES(key, mode: AESMode.cbc, padding: 'PKCS7'));
   return (encrypter, iv);
 }
-
