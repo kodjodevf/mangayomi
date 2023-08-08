@@ -1,24 +1,25 @@
 <p align="center">
- <img width=200px height=200px src="assets/mangayomi_logo.png"/>
+ <img width=200px height=200px src="assets/app_icons/icon-red.png"/>
 </p>
 
 <h1 align="center"> Mangayomi </h1>
 
-Mangayomi is free and open source manga reader cross-plateform app inspired by Tachiyomi made with flutter. It allows users to read manga from a variety of sources.
+Mangayomi is free an open source manga reader and anime stream cross-plateform app inspired by Tachiyomi made with flutter. It allows users to read manga and watch anime from a variety of sources.
 
 ## Features
 
 Features include:
 * External sources
 * Online reading from a variety of sources
+* Stream anime from a variety of sources
 * Local reading of downloaded content
 * Read and manage local archives (.cbz, .zip)
 * A configurable reader with multiple viewers, reading directions.
-* Tracker support: [MyAnimeList](https://myanimelist.net/) and [AniList](https://anilist.co/) support
+* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/) and [AniList](https://anilist.co/) support
 * Categories to organize your library
 * Light and dark themes
 
-## Screenshots :camera:
+<!-- ## Screenshots :camera:
 
 ### Mobile Screenshots                                                                                                                
 | Views    |  Light                                                     |  Dark                                                        |
@@ -32,7 +33,7 @@ Features include:
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Library  |  ![desktop_library_light](screenshots/desktop_library_light.png) |![desktop_library_dark](screenshots/desktop_library_dark.png)  |
 | Manga    |  ![desktop_manga_light](screenshots/desktop_manga_light.png)     |![desktop_manga_dark](screenshots/desktop_manga_dark.png)      |
-| Reader   |  ![desktop_reader_light](screenshots/desktop_reader_light.png)   |![desktop_reader_dark](screenshots/desktop_reader_dark.png) |
+| Reader   |  ![desktop_reader_light](screenshots/desktop_reader_light.png)   |![desktop_reader_dark](screenshots/desktop_reader_dark.png) | -->
 
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
