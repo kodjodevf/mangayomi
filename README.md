@@ -11,7 +11,7 @@ Mangayomi is free an open source manga reader and anime stream cross-plateform a
 Features include:
 * External sources
 * Online reading from a variety of sources
-* Stream anime from a variety of sources
+* Watch anime from a variety of sources
 * Local reading of downloaded content
 * Read and manage local archives (.cbz, .zip)
 * A configurable reader with multiple viewers, reading directions.
