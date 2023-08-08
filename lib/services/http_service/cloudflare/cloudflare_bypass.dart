@@ -65,8 +65,10 @@ Future<String> cloudflareBypass(
         isOk = true;
         headlessWebView!.dispose();
       },
-      initialSettings: InAppWebViewSettings(
-        userAgent: defaultUserAgent,
+      initialOptions: InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(
+          userAgent: defaultUserAgent,
+        ),
       ),
       initialUrlRequest: URLRequest(
         headers: headers(sourceId: sourceId),
@@ -77,7 +79,7 @@ Future<String> cloudflareBypass(
                 : method == 2
                     ? 'PUT'
                     : 'DELETE',
-        url: WebUri.uri(Uri.parse(url)),
+        url: Uri.parse(url),
       ),
     );
 

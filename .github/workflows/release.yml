@@ -1,0 +1,185 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - v*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+
+  build-and-release-android:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: 3.10.6
+          channel: 'stable'
+
+      - name: Setup Android keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
+          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > android/key.properties
+
+      - name: flutter pub get
+        run: |
+          git config --global core.longpaths true
+          flutter pub get
+
+      - name: build android
+        run: |
+          flutter build apk --release --split-per-abi
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk Mangayomi-${{ github.ref_name }}-android-arm64-v8a.apk
+          mv app-armeabi-v7a-release.apk Mangayomi-${{ github.ref_name }}-android-armeabi-v7a.apk
+          mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-x86_64.apk
+
+      - name: upload artifact android
+        uses: actions/upload-artifact@v3
+        with:
+          path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
+
+      - name: release packages android
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
+          allowUpdates: true
+          omitBody: true
+
+
+  build-and-release-ios-ipa:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      # Checkout branch
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: 3.10.6
+          channel: 'stable'
+
+      - name: flutter pub get
+        run: |
+          git config --global core.longpaths true
+          flutter pub get
+
+      - name: build ios
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app-release.ipa Payload
+          mv app-release.ipa Mangayomi-${{ github.ref_name }}-ios.ipa
+
+      - name: upload artifact ios
+        uses: actions/upload-artifact@v3
+        with:
+          path: "build/ios/iphoneos/Mangayomi-*.ipa"
+
+      - name: release package ios
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/ios/iphoneos/Mangayomi-*.ipa"
+          allowUpdates: true
+          omitBody: true
+
+  build-and-release-macos-dmg:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: 3.10.6
+          channel: 'stable'
+
+      - name: flutter pub get
+        run: |
+          git config --global core.longpaths true
+          flutter pub get
+
+      - name: build macos
+        run: |
+          cd macos
+          pod update
+          cd ..
+          flutter build macos --release
+          brew install create-dmg 
+          create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
+
+      - name: upload artifact macos
+        uses: actions/upload-artifact@v3
+        with:
+          path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
+
+      - name: release package macos
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
+          allowUpdates: true
+          omitBody: true
+
+
+  build-and-release-windows-zip:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: 3.10.6
+          channel: 'stable'
+
+      - name: flutter pub get
+        run: |
+          git config --global core.longpaths true
+          flutter pub get
+
+      - name: build windows
+        run: |
+          flutter build windows --release
+          $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
+          $SrcDir = "build\windows\runner\Release"
+          New-Item -Path $DestDir -ItemType Directory
+          Copy-Item $SrcDir\* -Recurse $DestDir
+          Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
+          Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
+
+      - name: upload artifact windows
+        uses: actions/upload-artifact@v3
+        with:
+          path: build\windows\Mangayomi-*.zip
+
+      - name: release package windows
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build\windows\Mangayomi-*.zip
+          allowUpdates: true
+          omitBody: true

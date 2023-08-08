@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import desktop_webview_window
-import flutter_inappwebview
 import flutter_meedu_videoplayer
 import flutter_web_auth_2
 import isar_flutter_libs
@@ -26,7 +25,6 @@ import window_to_front
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   DesktopWebviewWindowPlugin.register(with: registry.registrar(forPlugin: "DesktopWebviewWindowPlugin"))
-  InAppWebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "InAppWebViewFlutterPlugin"))
   FlutterMeeduVideoplayerPlugin.register(with: registry.registrar(forPlugin: "FlutterMeeduVideoplayerPlugin"))
   FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))
   IsarFlutterLibsPlugin.register(with: registry.registrar(forPlugin: "IsarFlutterLibsPlugin"))

@@ -160,7 +160,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             Share.share(_url);
                           } else if (value == 2) {
                             await InAppBrowser.openWithSystemBrowser(
-                                url: WebUri.uri(Uri.parse(_url)));
+                                url: Uri.parse(_url));
                           } else if (value == 3) {
                             CookieManager.instance().deleteAllCookies();
                           }
@@ -182,11 +182,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _url = url.toString();
                         });
                       },
-                      onPermissionRequest: (controller, request) async {
-                        return PermissionResponse(
-                            resources: request.resources,
-                            action: PermissionResponseAction.GRANT);
-                      },
+                      
                       shouldOverrideUrlLoading:
                           (controller, navigationAction) async {
                         var uri = navigationAction.request.url!;
@@ -217,7 +213,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _url = url.toString();
                         });
                       },
-                      onReceivedError: (controller, request, error) {},
+                      
                       onProgressChanged: (controller, progress) async {
                         setState(() {
                           this.progress = progress / 100;
@@ -237,12 +233,12 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _canGoback = canGoback;
                           _canGoForward = canGoForward;
                         });
-                      },
-                      initialSettings: InAppWebViewSettings(
-                          // contentBlockers: adsContentBlockers(),
-                          userAgent: isar.settings.getSync(227)!.userAgent!),
+                      },initialOptions: InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(userAgent: isar.settings.getSync(227)!.userAgent!),
+      ),
+                      
                       initialUrlRequest:
-                          URLRequest(url: WebUri.uri(Uri.parse(widget.url))),
+                          URLRequest(url: Uri.parse(widget.url)),
                     ),
                   ),
                 ],

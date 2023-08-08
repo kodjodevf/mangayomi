@@ -491,11 +491,11 @@ class _MangaChapterPageGalleryState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         AnimatedContainer(
-          height: _isView ? 80 : 0,
+          height: _isView ? Platform.isIOS?120:80 : 0,
           curve: Curves.ease,
           duration: const Duration(milliseconds: 200),
           child: PreferredSize(
-            preferredSize: Size.fromHeight(_isView ? 80 : 0),
+            preferredSize: Size.fromHeight(_isView ?Platform.isIOS?120: 80 : 0),
             child: AppBar(
               centerTitle: false,
               automaticallyImplyLeading: false,

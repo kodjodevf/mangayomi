@@ -1,9 +1,6 @@
 PODS:
   - desktop_webview_window (0.0.1):
     - FlutterMacOS
-  - flutter_inappwebview (0.0.1):
-    - FlutterMacOS
-    - OrderedSet (~> 5.0)
   - flutter_meedu_videoplayer (0.0.1):
     - FlutterMacOS
   - flutter_web_auth_2 (1.1.1):
@@ -20,7 +17,6 @@ PODS:
     - FlutterMacOS
   - media_kit_video (0.0.1):
     - FlutterMacOS
-  - OrderedSet (5.0.0)
   - package_info_plus (0.0.1):
     - FlutterMacOS
   - path_provider_foundation (0.0.1):
@@ -49,7 +45,6 @@ PODS:
 
 DEPENDENCIES:
   - desktop_webview_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_webview_window/macos`)
-  - flutter_inappwebview (from `Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview/macos`)
   - flutter_meedu_videoplayer (from `Flutter/ephemeral/.symlinks/plugins/flutter_meedu_videoplayer/macos`)
   - flutter_web_auth_2 (from `Flutter/ephemeral/.symlinks/plugins/flutter_web_auth_2/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
@@ -72,13 +67,10 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - FMDB
-    - OrderedSet
 
 EXTERNAL SOURCES:
   desktop_webview_window:
     :path: Flutter/ephemeral/.symlinks/plugins/desktop_webview_window/macos
-  flutter_inappwebview:
-    :path: Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview/macos
   flutter_meedu_videoplayer:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_meedu_videoplayer/macos
   flutter_web_auth_2:
@@ -118,16 +110,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   desktop_webview_window: d4365e71bcd4e1aa0c14cf0377aa24db0c16a7e2
-  flutter_inappwebview: 62e949df616a9f6e1b0366326381f208c7fcad37
   flutter_meedu_videoplayer: fceb30a833044aaf6410c5da53c3d61ab3d6abbb
   flutter_web_auth_2: 6695649132b6c71ea17700703761c0d18fdb8cf6
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   isar_flutter_libs: 43385c99864c168fadba7c9adeddc5d38838ca6a
-  media_kit_libs_macos_video: 0a4a5bf21533cba968c0833f1b59e9af8b5847f1
-  media_kit_native_event_loop: 2d8c329aa5815d77a6f40623adeede4584307723
-  media_kit_video: 52e4128006f0e068b28ce70e9cdf06aa05e90fbc
-  OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
+  media_kit_libs_macos_video: b3e2bbec2eef97c285f2b1baa7963c67c753fb82
+  media_kit_native_event_loop: 81fd5b45192b72f8b5b69eaf5b540f45777eb8d5
+  media_kit_video: c75b07f14d59706c775778e4dd47dd027de8d1e5
   package_info_plus: 02d7a575e80f194102bef286361c6c326e4c29ce
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   screen_brightness_macos: 2d6d3af2165592d9a55ffcd95b7550970e41ebda

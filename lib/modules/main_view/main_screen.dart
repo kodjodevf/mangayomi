@@ -185,7 +185,7 @@ class MainScreen extends ConsumerWidget {
                                       location != '/browse' &&
                                       location != '/more'
                                   ? 0
-                                  : 80,
+                                  : Platform.isIOS? 110:80,
                       child: NavigationBarTheme(
                         data: NavigationBarThemeData(
                           indicatorShape: RoundedRectangleBorder(

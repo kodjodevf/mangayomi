@@ -5,6 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SourceListTile extends StatelessWidget {
   final bool isManga;
@@ -32,33 +33,29 @@ class SourceListTile extends StatelessWidget {
         context.push('/mangaHome', extra: source);
       },
       leading: Container(
-          height: 37,
-          width: 37,
-          decoration: BoxDecoration(
-              color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(5)),
-          child:
-              //  source.logoUrl!.isEmpty
-              //     ?
-              const Icon(Icons.source_outlined)
-          // : CachedNetworkImage(
-          //     httpHeaders: ref.watch(
-          //         headersProvider(source: source.name!)),
-          //     imageUrl: source.logoUrl!,
-          //     fit: BoxFit.contain,
-          //     width: 37,
-          //     height: 37,
-          //     errorWidget: (context, url, error) {
-          //       return const SizedBox(
-          //         width: 37,
-          //         height: 37,
-          //         child: Center(
-          //           child: Icon(Icons.source_outlined),
-          //         ),
-          //       );
-          //     },
-          //   ),
-          ),
+        height: 37,
+        width: 37,
+        decoration: BoxDecoration(
+            color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(5)),
+        child: source.iconUrl!.isEmpty
+            ? const Icon(Icons.source_outlined)
+            : CachedNetworkImage(
+                imageUrl: source.iconUrl!,
+                fit: BoxFit.contain,
+                width: 37,
+                height: 37,
+                errorWidget: (context, url, error) {
+                  return const SizedBox(
+                    width: 37,
+                    height: 37,
+                    child: Center(
+                      child: Icon(Icons.source_outlined),
+                    ),
+                  );
+                },
+              ),
+      ),
       subtitle: Row(
         children: [
           Text(
