@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
@@ -33,8 +34,24 @@ class _ExtensionListTileWidgetState
         widget.source.sourceCode!.isNotEmpty;
 
     return ListTile(
-        onTap: () {
-          // onChanged(!value);
+        onTap: () async {
+          if (sourceNotEmpty) {
+            context.push('/extension_detail', extra: widget.source);
+          } else {
+            setState(() {
+              _isLoading = true;
+            });
+            widget.source.isManga!
+                ? await ref.watch(
+                    fetchMangaSourcesListProvider(id: widget.source.id).future)
+                : await ref.watch(
+                    fetchAnimeSourcesListProvider(id: widget.source.id).future);
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
+          }
         },
         leading: Container(
           height: 37,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/anime/anime_stream_view.dart';
+import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
@@ -249,6 +250,25 @@ class RouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const AppearanceScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/extension_detail",
+          name: "extension_detail",
+          builder: (context, state) {
+            final source = state.extra as Source;
+            return ExtensionDetail(
+              source: source,
+            );
+          },
+          pageBuilder: (context, state) {
+            final source = state.extra as Source;
+            return CustomTransition(
+              key: state.pageKey,
+              child: ExtensionDetail(
+                source: source,
+              ),
             );
           },
         ),

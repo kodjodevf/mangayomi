@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
-import 'package:mangayomi/modules/browse/migrate_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
 import 'package:mangayomi/modules/library/search_text_form_field.dart';
 
@@ -21,7 +20,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 5, vsync: this);
+    _tabBarController = TabController(length: 4, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -44,7 +43,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 5,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -126,7 +125,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
               Tab(text: l10n.anime_sources),
               Tab(text: l10n.manga_extensions),
               Tab(text: l10n.anime_extensions),
-              Tab(text: l10n.migrate),
+              // Tab(text: l10n.migrate),
             ],
           ),
         ),
@@ -145,7 +144,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             query: _textEditingController.text,
             isManga: false,
           ),
-          const MigrateScreen()
+          // const MigrateScreen()
         ]),
       ),
     );
