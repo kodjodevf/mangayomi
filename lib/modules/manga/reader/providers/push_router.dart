@@ -22,7 +22,7 @@ pushMangaReaderView({
       .isAddedEqualTo(true)
       .findAllSync()
       .isNotEmpty;
-  if (sourceExist) {
+  if (sourceExist || chapter.manga.value!.isLocalArchive!) {
     if (chapter.manga.value!.isManga!) {
       context.push('/mangareaderview', extra: chapter);
     } else {
