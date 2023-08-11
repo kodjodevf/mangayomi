@@ -25,7 +25,7 @@ Features include:
 | Views    |  Light                                                     |  Dark                                                        |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | Manga    |  ![mobile_manga_light](screenshots/mobile_manga_light.png)     |![mobile_manga_dark](screenshots/mobile_manga_dark.png)      |
-| Anime    |  ![mobile_anime_light](screenshots/mobile_anime_light.png)     |![mobile_anime_dark](screenshots/desktop_anime_dark.png)      |
+| Anime    |  ![mobile_anime_light](screenshots/mobile_anime_light.png)     |![mobile_anime_dark](screenshots/mobile_anime_dark.png)      |
 | Reader   |  ![mobile_reader_light](screenshots/mobile_reader_light.png)   |![mobile_reader_dark](screenshots/mobile_reader_dark.png) |
 | Stream   |  ![mobile_anime_stream](screenshots/mobile_anime_stream.png)|
 
