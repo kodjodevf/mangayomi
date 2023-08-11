@@ -19,21 +19,23 @@ Features include:
 * Categories to organize your library
 * Light and dark themes
 
-<!-- ## Screenshots :camera:
+## Screenshots :camera:
 
 ### Mobile Screenshots                                                                                                                
 | Views    |  Light                                                     |  Dark                                                        |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| Library  |  ![mobile_library_light](screenshots/mobile_library_light.png) |![mobile_library_dark](screenshots/mobile_library_dark.png)  |
 | Manga    |  ![mobile_manga_light](screenshots/mobile_manga_light.png)     |![mobile_manga_dark](screenshots/mobile_manga_dark.png)      |
+| Anime    |  ![mobile_anime_light](screenshots/mobile_anime_light.png)     |![mobile_anime_dark](screenshots/desktop_anime_dark.png)      |
 | Reader   |  ![mobile_reader_light](screenshots/mobile_reader_light.png)   |![mobile_reader_dark](screenshots/mobile_reader_dark.png) |
+| Stream   |  ![mobile_anime_stream](screenshots/mobile_anime_stream.png)|
 
 ### Desktop Screenshots                                                                                                                
 | Views    |  Light                                                     |  Dark                                                        |
 | -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| Library  |  ![desktop_library_light](screenshots/desktop_library_light.png) |![desktop_library_dark](screenshots/desktop_library_dark.png)  |
 | Manga    |  ![desktop_manga_light](screenshots/desktop_manga_light.png)     |![desktop_manga_dark](screenshots/desktop_manga_dark.png)      |
-| Reader   |  ![desktop_reader_light](screenshots/desktop_reader_light.png)   |![desktop_reader_dark](screenshots/desktop_reader_dark.png) | -->
+| Anime    |  ![desktop_anime_light](screenshots/desktop_anime_light.png)     |![desktop_anime_dark](screenshots/desktop_anime_dark.png)      |
+| Reader   |  ![desktop_reader_light](screenshots/desktop_reader_light.png)   |![desktop_reader_dark](screenshots/desktop_reader_dark.png) |
+| Stream   |  ![desktop_anime_stream](screenshots/desktop_anime_stream.png)|
 
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
