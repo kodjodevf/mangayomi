@@ -13,9 +13,11 @@ import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
 class ChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
   final List<Chapter> chapterList;
+  final bool sourceExist;
   const ChapterListTileWidget({
     required this.chapterList,
     required this.chapter,
+    required this.sourceExist,
     super.key,
   });
 
@@ -123,7 +125,7 @@ class ChapterListTileWidget extends ConsumerWidget {
               )
           ],
         ),
-        trailing: chapter.manga.value!.isLocalArchive ?? false
+        trailing: !sourceExist || (chapter.manga.value!.isLocalArchive ?? false)
             ? null
             : ChapterPageDownload(chapter: chapter),
       ),

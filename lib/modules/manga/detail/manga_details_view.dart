@@ -21,8 +21,10 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
+  final bool sourceExist;
   const MangaDetailsView({
     super.key,
+    required this.sourceExist,
     required this.manga,
   });
 
@@ -119,7 +121,16 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       Text(getMangaStatusName(widget.manga.status, context)),
                       const Text(' • '),
                       Text(widget.manga.source!),
-                      Text(' (${widget.manga.lang!.toUpperCase()})')
+                      Text(' (${widget.manga.lang!.toUpperCase()})'),
+                      if (!widget.sourceExist)
+                        const Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Icon(
+                            Icons.warning_amber,
+                            color: Colors.deepOrangeAccent,
+                            size: 14,
+                          ),
+                        )
                     ],
                   )
                 ],
@@ -202,6 +213,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         isExtended: (value) {
           ref.read(isExtendedStateProvider.notifier).update(value);
         },
+        sourceExist: widget.sourceExist,
       ),
     );
   }

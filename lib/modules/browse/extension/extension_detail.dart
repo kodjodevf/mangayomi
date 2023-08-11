@@ -90,7 +90,7 @@ class ExtensionDetail extends ConsumerWidget {
                         title: Text(
                           source.name!,
                         ),
-                        content: Text("Uninstall ${source.name} extension ?"),
+                        content: Text(l10n.uninstall_extension(source.name!)),
                         actions: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -105,8 +105,12 @@ class ExtensionDetail extends ConsumerWidget {
                               ),
                               TextButton(
                                   onPressed: () {
-                                    isar.writeTxnSync(() =>
-                                        isar.sources.deleteSync(source.id!));
+                                    isar.writeTxnSync(
+                                        () => isar.sources.putSync(source
+                                          ..sourceCode = ""
+                                          ..isAdded = false
+                                          ..isPinned = false
+                                          ..isNsfw = false));
                                     Navigator.pop(ctx);
                                     Navigator.pop(context);
                                   },
@@ -118,7 +122,7 @@ class ExtensionDetail extends ConsumerWidget {
                     });
                 // if (res != null && res == true) {}
               },
-              child: const Text("Uninstall"))
+              child: Text(l10n.uninstall))
         ],
       ),
     );

@@ -49,12 +49,14 @@ class MangaDetailView extends ConsumerStatefulWidget {
   final List<Color>? backButtonColors;
   final Widget? action;
   final Manga? manga;
+  final bool sourceExist;
   const MangaDetailView({
     super.key,
     required this.isExtended,
     this.titleDescription,
     this.backButtonColors,
     this.action,
+    required this.sourceExist,
     required this.manga,
   });
 
@@ -510,6 +512,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               return ChapterListTileWidget(
                                 chapter: chapters[indexx],
                                 chapterList: chapterList,
+                                sourceExist: widget.sourceExist,
                               );
                             })),
                   ),
