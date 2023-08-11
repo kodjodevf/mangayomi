@@ -12,23 +12,50 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/services/get_anime_servers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
-class AnimeStreamView extends riv.ConsumerWidget {
+class AnimeStreamView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
   const AnimeStreamView({
     super.key,
     required this.episode,
   });
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  riv.ConsumerState<AnimeStreamView> createState() => _AnimeStreamViewState();
+}
+
+class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
+  final _controller = MeeduPlayerController(
+    autoHideControls: false,
+    responsive: Responsive(
+      fontSizeRelativeToScreen: 2.0,
+      maxFontSize: 12,
+      iconsSizeRelativeToScreen: 10,
+      maxIconsSize: 50,
+      buttonsSizeRelativeToScreen: 10,
+      maxButtonsSize: 50,
+    ),
+    enabledButtons: const EnabledButtons(playPauseAndRepeat: false),
+    screenManager: const ScreenManager(
+      forceLandScapeInFullscreen: false,
+    ),
+  );
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
     final serversData = ref.watch(getAnimeServersProvider(
-      chapter: episode,
+      chapter: widget.episode,
     ));
     return serversData.when(
       data: (data) {
         if (data.isEmpty &&
-            (episode.manga.value!.isLocalArchive ?? false) == false) {
+            (widget.episode.manga.value!.isLocalArchive ?? false) == false) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
@@ -58,7 +85,7 @@ class AnimeStreamView extends riv.ConsumerWidget {
           (a, b) => a.quality.compareTo(b.quality),
         );
         return AnimeStreamPage(
-          episode: episode,
+          episode: widget.episode,
           videos: data,
         );
       },
@@ -99,33 +126,18 @@ class AnimeStreamView extends riv.ConsumerWidget {
             child: Stack(
               children: [
                 MeeduVideoPlayer(
-                  header: (context, controller, responsive) => AppBar(
-                    leading: BackButton(
-                      color: Colors.white,
-                      onPressed: () {
-                        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                            overlays: SystemUiOverlay.values);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  controller: MeeduPlayerController(
-                    autoHideControls: false,
-                    responsive: Responsive(
-                      fontSizeRelativeToScreen: 2.0,
-                      maxFontSize: 12,
-                      iconsSizeRelativeToScreen: 10,
-                      maxIconsSize: 50,
-                      buttonsSizeRelativeToScreen: 10,
-                      maxButtonsSize: 50,
-                    ),
-                    enabledButtons:
-                        const EnabledButtons(playPauseAndRepeat: false),
-                    screenManager: const ScreenManager(
-                      forceLandScapeInFullscreen: false,
-                    ),
-                  ),
-                ),
+                    header: (context, controller, responsive) => AppBar(
+                          leading: BackButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.manual,
+                                  overlays: SystemUiOverlay.values);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                    controller: _controller),
                 const ProgressCenter(),
               ],
             ),
