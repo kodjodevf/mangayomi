@@ -8,12 +8,9 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewCenter extends ConsumerWidget {
   final String lang;
-  final int length;
   final String url;
   final int index;
-  final String titleManga;
   final String source;
-  final String chapter;
   final Directory path;
   final bool isLocale;
   final Uint8List? archiveImage;
@@ -24,12 +21,9 @@ class ImageViewCenter extends ConsumerWidget {
   const ImageViewCenter({
     super.key,
     required this.url,
-    required this.chapter,
     required this.index,
     required this.path,
-    required this.titleManga,
     required this.source,
-    required this.length,
     required this.loadStateChanged,
     required this.onDoubleTap,
     required this.initGestureConfigHandler,

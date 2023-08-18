@@ -9,13 +9,10 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
 class ImageViewVertical extends ConsumerWidget {
-  final int length;
   final bool isLocale;
   final String url;
   final int index;
-  final String titleManga;
   final String source;
-  final String chapter;
   final Directory path;
   final String lang;
   final Uint8List? archiveImage;
@@ -23,12 +20,9 @@ class ImageViewVertical extends ConsumerWidget {
   const ImageViewVertical({
     super.key,
     required this.url,
-    required this.chapter,
     required this.index,
     required this.path,
-    required this.titleManga,
     required this.source,
-    required this.length,
     required this.isLocale,
     required this.lang,
     this.archiveImage,
@@ -48,12 +42,14 @@ class ImageViewVertical extends ConsumerWidget {
           isLocale
               ? archiveImage != null
                   ? ExtendedImage.memory(archiveImage!,
-                      fit: BoxFit.contain, enableMemoryCache: false,
+                      fit: BoxFit.contain,
+                      enableMemoryCache: false,
+                      enableLoadState: true,
                       loadStateChanged: (ExtendedImageState state) {
                       if (state.extendedImageLoadState == LoadState.loading) {
                         return Container(
                           color: Colors.black,
-                          height: mediaHeight(context, 0.8),
+                          height: mediaHeight(context, 0.6),
                         );
                       }
                       return null;
@@ -62,11 +58,12 @@ class ImageViewVertical extends ConsumerWidget {
                       fit: BoxFit.contain,
                       enableMemoryCache: false,
                       File('${path.path}${padIndex(index + 1)}.jpg'),
+                      enableLoadState: true,
                       loadStateChanged: (ExtendedImageState state) {
                       if (state.extendedImageLoadState == LoadState.loading) {
                         return Container(
                           color: Colors.black,
-                          height: mediaHeight(context, 0.8),
+                          height: mediaHeight(context, 0.6),
                         );
                       }
                       return null;
@@ -78,6 +75,7 @@ class ImageViewVertical extends ConsumerWidget {
                   cacheMaxAge: const Duration(days: 7),
                   fit: BoxFit.contain,
                   enableMemoryCache: true,
+                  enableLoadState: true,
                   loadStateChanged: (ExtendedImageState state) {
                   if (state.extendedImageLoadState == LoadState.loading) {
                     final ImageChunkEvent? loadingProgress =
