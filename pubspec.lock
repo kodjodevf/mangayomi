@@ -445,10 +445,10 @@ packages:
     dependency: "direct main"
     description:
       name: flex_color_scheme
-      sha256: "57feb7e5b783e843a43e7d2713b0b0a58941ac3abc0439501290661cad4183a5"
+      sha256: "32914024a4f404d90ff449f58d279191675b28e7c08824046baf06826e99d984"
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.0"
+    version: "7.3.1"
   flex_seed_scheme:
     dependency: transitive
     description:
@@ -519,10 +519,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_meedu_videoplayer
-      sha256: "8f4880ac0dbe1662ea8d0d03e35c86ea5696651600b59e9005f5607fbb9a8b6f"
+      sha256: "9fe1e0951c0742f84637be0aa4eac4073a2a6f394e9d0f08c4e93e4ae3d93caf"
       url: "https://pub.dev"
     source: hosted
-    version: "4.2.24"
+    version: "4.2.26"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -617,10 +617,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: b3cadd2cd59a4103fd5f6bc572ca75111264698784e927aa471921c3477d5475
+      sha256: "2aa884667eeda3a1c461f31e72af1f77984ab0f29450d8fb12ec1f7bc53eea14"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.0"
+    version: "10.1.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -833,10 +833,10 @@ packages:
     dependency: transitive
     description:
       name: media_kit
-      sha256: "0a89e7037002a62701ec319c375586849f9ef8e681820e1dd4a4ff7b843f7542"
+      sha256: eb47c2d51b7c06b319d8c776b47be912c5a4f53af7ab4814927a52a76442609e
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.4+1"
+    version: "1.1.2+1"
   media_kit_libs_android_video:
     dependency: "direct main"
     description:
@@ -857,10 +857,10 @@ packages:
     dependency: transitive
     description:
       name: media_kit_libs_linux
-      sha256: "570bf18ebbd1221caec082657468be05d180510385d3515ec38e0be44fdcc859"
+      sha256: "838b9e8041d376873cc938872c75812989d0feb247ad93afd8dbc92bf052680a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.0"
   media_kit_libs_macos_video:
     dependency: transitive
     description:
@@ -873,10 +873,10 @@ packages:
     dependency: transitive
     description:
       name: media_kit_libs_windows_video
-      sha256: f33aabd8414470d99e2c91dd98d605e6a5f1c4b8082dd933c10951bc961b9124
+      sha256: "31c6c75ab08627df9fce7ce2431e5ac5e5990ac40faef75b07c48d1d7907a37f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.7"
+    version: "1.0.6"
   media_kit_native_event_loop:
     dependency: transitive
     description:
@@ -889,10 +889,10 @@ packages:
     dependency: transitive
     description:
       name: media_kit_video
-      sha256: e7fcbe426d42a78ad6696f8f557adb9cbdc012177829026d04992cc106a1c815
+      sha256: "4b627683ef9e7f5cd049fd01be4b5deb5f31effc878503f108c81b19fd745040"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.5"
+    version: "1.1.2"
   meedu:
     dependency: transitive
     description:
@@ -1598,10 +1598,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_media_kit
-      sha256: "5f52455b3dc7df286a50b40629e7662e87a1c4bf282fa771d10223618a7fac8b"
+      sha256: "486c7704ddcc4324c841a362bc028198ce830c919a5d057dec360272f3d5b6dc"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.23"
+    version: "0.0.26"
   video_player_platform_interface:
     dependency: transitive
     description:

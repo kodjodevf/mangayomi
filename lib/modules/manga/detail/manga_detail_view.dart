@@ -177,14 +177,21 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     if (sortChapter == 0) {
       chapters.sort(
         (a, b) {
-          return a.scanlator!.compareTo(b.scanlator!) |
-              a.dateUpload!.compareTo(b.dateUpload!);
+          return (a.scanlator == null ||
+                  b.scanlator == null ||
+                  a.dateUpload == null ||
+                  b.dateUpload == null)
+              ? 0
+              : a.scanlator!.compareTo(b.scanlator!) |
+                  a.dateUpload!.compareTo(b.dateUpload!);
         },
       );
     } else if (sortChapter == 2) {
       chapters.sort(
         (a, b) {
-          return a.dateUpload!.compareTo(b.dateUpload!);
+          return (a.dateUpload == null || b.dateUpload == null)
+              ? 0
+              : a.dateUpload!.compareTo(b.dateUpload!);
         },
       );
     }
@@ -452,7 +459,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       .scaffoldBackgroundColor,
                                                   child: Padding(
                                                     padding: const EdgeInsets
-                                                            .symmetric(
+                                                        .symmetric(
                                                         horizontal: 8),
                                                     child: Text(
                                                       widget.manga!.isManga!

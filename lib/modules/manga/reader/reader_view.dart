@@ -12,9 +12,11 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
@@ -23,6 +25,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -163,6 +166,45 @@ class _MangaChapterPageGalleryState
     super.dispose();
   }
 
+  void _preloadImage(int index) {
+    final cropBorders = ref.watch(cropBordersStateProvider);
+
+    if (0 <= index && index < _uChapDataPreload.length) {
+      if (_cropImagesList.isNotEmpty && cropBorders == true
+          ? true
+          : _uChapDataPreload[index].isLocale!) {
+        final archiveImage = (_cropImagesList.isNotEmpty && cropBorders == true
+            ? _cropImagesList[index]
+            : _uChapDataPreload[index].archiveImage);
+
+        if (archiveImage != null) {
+          precacheImage(
+              ExtendedMemoryImageProvider(
+                  (_cropImagesList.isNotEmpty && cropBorders == true
+                      ? _cropImagesList[index]
+                      : _uChapDataPreload[index].archiveImage)!),
+              context);
+        } else {
+          precacheImage(
+              ExtendedFileImageProvider(File(
+                  "${_uChapDataPreload[index].path!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
+              context);
+        }
+      } else {
+        precacheImage(
+            ExtendedNetworkImageProvider(
+              _uChapDataPreload[index].url!,
+              cache: true,
+              cacheMaxAge: const Duration(days: 7),
+              headers: ref.watch(headersProvider(
+                  source: chapter.manga.value!.source!,
+                  lang: chapter.manga.value!.lang!)),
+            ),
+            context);
+      }
+    }
+  }
+
   late GetChapterUrlModel _chapterUrlModel = widget.chapterUrlModel;
 
   late Chapter chapter = widget.chapter;
@@ -246,15 +288,15 @@ class _MangaChapterPageGalleryState
       List<UChapDataPreload> uChapDataPreloadP = [];
       List<UChapDataPreload> uChapDataPreloadL = _uChapDataPreload;
       List<UChapDataPreload> preChap = [];
-      for (var ee in _uChapDataPreload) {
+      for (var chp in _uChapDataPreload) {
         if (chapterData.uChapDataPreload.first.chapter!.url ==
-            ee.chapter!.url) {
+            chp.chapter!.url) {
           isExist = true;
         }
       }
       if (!isExist) {
-        for (var aa in chapterData.uChapDataPreload) {
-          preChap.add(aa);
+        for (var ch in chapterData.uChapDataPreload) {
+          preChap.add(ch);
         }
       }
 
@@ -263,15 +305,7 @@ class _MangaChapterPageGalleryState
         for (var i = 0; i < preChap.length; i++) {
           int index = i + length;
           final dataPreload = preChap[i];
-          uChapDataPreloadP.add(UChapDataPreload(
-              dataPreload.chapter,
-              dataPreload.path,
-              dataPreload.url,
-              dataPreload.isLocale,
-              dataPreload.archiveImage,
-              dataPreload.index,
-              dataPreload.chapterUrlModel,
-              index));
+          uChapDataPreloadP.add(dataPreload..pageIndex = index);
         }
         if (mounted) {
           uChapDataPreloadL.addAll(uChapDataPreloadP);
@@ -301,6 +335,12 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
+    _preloadImage(index - 3);
+    _preloadImage(index - 2);
+    _preloadImage(index - 1);
+    _preloadImage(index + 1);
+    _preloadImage(index + 2);
+    _preloadImage(index + 3);
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
       setState(() {
         _readerController =
@@ -438,7 +478,6 @@ class _MangaChapterPageGalleryState
 
   late final _extendedController = ExtendedPageController(
     initialPage: _currentIndex!,
-    shouldIgnorePointerWhenScrolling: false,
   );
 
   double get pixelRatio => View.of(context).devicePixelRatio;
@@ -476,7 +515,7 @@ class _MangaChapterPageGalleryState
   }
 
   Axis _scrollDirection = Axis.vertical;
-  bool _isReversHorizontal = false;
+  bool _isReverseHorizontal = false;
 
   late bool _showPagesNumber = _readerController.getShowPageNumber();
   _setReaderMode(ReaderMode value, bool isInit) async {
@@ -486,7 +525,7 @@ class _MangaChapterPageGalleryState
         setState(() {
           _selectedValue = value;
           _scrollDirection = Axis.vertical;
-          _isReversHorizontal = false;
+          _isReverseHorizontal = false;
         });
         await Future.delayed(const Duration(milliseconds: 30));
 
@@ -496,9 +535,9 @@ class _MangaChapterPageGalleryState
       if (mounted) {
         setState(() {
           if (value == ReaderMode.rtl) {
-            _isReversHorizontal = true;
+            _isReverseHorizontal = true;
           } else {
-            _isReversHorizontal = false;
+            _isReverseHorizontal = false;
           }
           _selectedValue = value;
           _scrollDirection = Axis.horizontal;
@@ -511,7 +550,7 @@ class _MangaChapterPageGalleryState
       if (mounted) {
         setState(() {
           _selectedValue = value;
-          _isReversHorizontal = false;
+          _isReverseHorizontal = false;
         });
         await Future.delayed(const Duration(milliseconds: 30));
         _itemScrollController.scrollTo(
@@ -533,11 +572,19 @@ class _MangaChapterPageGalleryState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         AnimatedContainer(
-          height: _isView ? 80 : 0,
+          height: _isView
+              ? Platform.isIOS
+                  ? 120
+                  : 80
+              : 0,
           curve: Curves.ease,
           duration: const Duration(milliseconds: 200),
           child: PreferredSize(
-            preferredSize: Size.fromHeight(_isView ? 80 : 0),
+            preferredSize: Size.fromHeight(_isView
+                ? Platform.isIOS
+                    ? 120
+                    : 80
+                : 0),
             child: AppBar(
               centerTitle: false,
               automaticallyImplyLeading: false,
@@ -643,7 +690,7 @@ class _MangaChapterPageGalleryState
                     ),
                     Expanded(
                       child: Transform.scale(
-                        scaleX: !_isReversHorizontal ? 1 : -1,
+                        scaleX: !_isReverseHorizontal ? 1 : -1,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: Container(
@@ -656,7 +703,7 @@ class _MangaChapterPageGalleryState
                                 Padding(
                                   padding: const EdgeInsets.only(left: 12),
                                   child: Transform.scale(
-                                    scaleX: !_isReversHorizontal ? 1 : -1,
+                                    scaleX: !_isReverseHorizontal ? 1 : -1,
                                     child: SizedBox(
                                       width: 30,
                                       child: Consumer(
@@ -729,7 +776,7 @@ class _MangaChapterPageGalleryState
                                 Padding(
                                   padding: const EdgeInsets.only(right: 12),
                                   child: Transform.scale(
-                                    scaleX: !_isReversHorizontal ? 1 : -1,
+                                    scaleX: !_isReverseHorizontal ? 1 : -1,
                                     child: SizedBox(
                                       width: 30,
                                       child: Text(
@@ -932,7 +979,7 @@ class _MangaChapterPageGalleryState
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (_isReversHorizontal) {
+                  if (_isReverseHorizontal) {
                     _onBtnTapped(_currentIndex! + 1, false);
                   } else {
                     _onBtnTapped(_currentIndex! - 1, true);
@@ -970,7 +1017,7 @@ class _MangaChapterPageGalleryState
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  if (_isReversHorizontal) {
+                  if (_isReverseHorizontal) {
                     _onBtnTapped(_currentIndex! - 1, true);
                   } else {
                     _onBtnTapped(_currentIndex! + 1, false);
@@ -1085,7 +1132,6 @@ class _MangaChapterPageGalleryState
                       basePosition: _scalePosition,
                       onScaleEnd: _onScaleEnd,
                       child: ScrollablePositionedList.separated(
-                        // scrollOffsetController: _scrollController,
                         physics: const ClampingScrollPhysics(),
                         minCacheExtent: 15 * mediaHeight(context, 1),
                         initialScrollIndex: _currentIndex!,
@@ -1133,7 +1179,7 @@ class _MangaChapterPageGalleryState
                     child: ExtendedImageGesturePageView.builder(
                         controller: _extendedController,
                         scrollDirection: _scrollDirection,
-                        reverse: _isReversHorizontal,
+                        reverse: _isReverseHorizontal,
                         physics: const ClampingScrollPhysics(),
                         canScrollPage: (GestureDetails? gestureDetails) {
                           return gestureDetails != null
@@ -1304,6 +1350,7 @@ class _MangaChapterPageGalleryState
   }
 
   _showModalSettings() {
+    final l10n = l10nLocalizations(context)!;
     DraggableMenu.open(
         context,
         DraggableMenu(
@@ -1319,11 +1366,11 @@ class _MangaChapterPageGalleryState
                       const SizedBox(
                         height: 10,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          'Settings',
-                          style: TextStyle(
+                          l10n.settings,
+                          style: const TextStyle(
                               fontSize: 17, fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -1334,7 +1381,7 @@ class _MangaChapterPageGalleryState
                           children: [
                             SwitchListTile(
                               dense: true,
-                              title: const Text('Show Page Number'),
+                              title: Text(l10n.show_page_number),
                               value: _showPagesNumber,
                               onChanged: (value) {
                                 setState(() {
@@ -1355,14 +1402,14 @@ class _MangaChapterPageGalleryState
 }
 
 class UChapDataPreload {
-  final Chapter? chapter;
-  final Directory? path;
-  final String? url;
-  final bool? isLocale;
-  final Uint8List? archiveImage;
-  final int? index;
-  final GetChapterUrlModel? chapterUrlModel;
-  final int? pageIndex;
+  Chapter? chapter;
+  Directory? path;
+  String? url;
+  bool? isLocale;
+  Uint8List? archiveImage;
+  int? index;
+  GetChapterUrlModel? chapterUrlModel;
+  int? pageIndex;
   UChapDataPreload(
     this.chapter,
     this.path,
