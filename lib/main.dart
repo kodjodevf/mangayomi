@@ -3,7 +3,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_meedu_videoplayer/init_meedu_player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -17,6 +16,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:media_kit/media_kit.dart';
 
 late Isar isar;
 
@@ -30,18 +30,15 @@ class MyHttpoverrides extends HttpOverrides {
 }
 
 void main(List<String> args) async {
-  initMeeduPlayer(
-    androidUseMediaKit: true,
-    iosUseMediaKit: true,
-  );
   HttpOverrides.global = MyHttpoverrides();
-  if (Platform.isLinux || Platform.isWindows|| Platform.isMacOS) {
+  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
     if (runWebViewTitleBarWidget(args)) {
       return;
     }
   }
 
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
   isar = await StorageProvider().initDB(null);
   await StorageProvider().requestPermission();
   runApp(const ProviderScope(child: MyApp()));

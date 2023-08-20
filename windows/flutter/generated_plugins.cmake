@@ -4,17 +4,13 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_webview_window
-  flutter_meedu_videoplayer
-  fullscreen_window
   isar_flutter_libs
   media_kit_libs_windows_video
   media_kit_video
   permission_handler_windows
   screen_brightness_windows
-  screen_retriever
   share_plus
   url_launcher_windows
-  window_manager
   window_to_front
 )
 
