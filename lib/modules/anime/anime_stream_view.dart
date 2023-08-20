@@ -179,7 +179,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
   void initState() {
     super.initState();
     _currentPositionSub;
-    _video.value = widget.videos[7];
+    _video.value = widget.videos.first;
     _player.open(
         Media(_video.value!.originalUrl, httpHeaders: _video.value!.headers));
   }
