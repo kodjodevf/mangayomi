@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/stream_controller_provider.dart';
+import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_anime_servers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -29,9 +32,27 @@ class AnimeStreamView extends riv.ConsumerStatefulWidget {
 
 class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final serversData = ref.watch(getAnimeServersProvider(
       chapter: widget.episode,
     ));
@@ -106,7 +127,7 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
               Navigator.pop(context);
               return false;
             },
-            child: ProgressCenter(),
+            child: const ProgressCenter(),
           ),
         );
       },
@@ -132,13 +153,15 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
         const VideoControllerConfiguration(enableHardwareAcceleration: true),
   );
 
-  late final streamController = AnimeStreamController(episode: widget.episode);
+  late final _streamController = AnimeStreamController(episode: widget.episode);
 
   final ValueNotifier<vid.Video?> _video = ValueNotifier(null);
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
-  late Duration _currentPosition = streamController.geTCurrentPosition();
+  late Duration _currentPosition = _streamController.geTCurrentPosition();
   bool _showFitLabel = false;
+  final bool _isDesktop =
+      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (Duration position) {
@@ -147,18 +170,18 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
         _seekToCurrentPosition = false;
       } else {
         _currentPosition = position;
-        streamController.setCurrentPosition(position.inMilliseconds);
-        streamController.setAnimeHistoryUpdate();
+        _streamController.setCurrentPosition(position.inMilliseconds);
+        _streamController.setAnimeHistoryUpdate();
       }
     },
   );
   @override
   void initState() {
     super.initState();
+    _currentPositionSub;
     _video.value = widget.videos[7];
-
-    _player.open(Media(widget.videos[0].originalUrl,
-        httpHeaders: widget.videos[0].headers));
+    _player.open(
+        Media(_video.value!.originalUrl, httpHeaders: _video.value!.headers));
   }
 
   @override
@@ -166,6 +189,66 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
     _player.dispose();
     _currentPositionSub.cancel();
     super.dispose();
+  }
+
+  void _onChangeVideoQuality() {
+    final l10n = l10nLocalizations(context)!;
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        actions: List.generate(
+          widget.videos.length,
+          (index) {
+            final quality = widget.videos[index];
+            return CupertinoActionSheetAction(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    quality.quality,
+                    style: const TextStyle(),
+                  ),
+                  const SizedBox(
+                    width: 7,
+                  ),
+                  Icon(
+                    Icons.check,
+                    color: _video.value == quality
+                        ? Theme.of(context).iconTheme.color
+                        : Colors.transparent,
+                  ),
+                ],
+              ),
+              onPressed: () {
+                _video.value = quality; // change the video quality
+                _player.open(
+                    Media(quality.originalUrl, httpHeaders: quality.headers));
+                _seekToCurrentPosition = true;
+                _currentPositionSub = _player.stream.position.listen(
+                  (Duration position) {
+                    if (_seekToCurrentPosition) {
+                      _player.seek(_currentPosition);
+                      _seekToCurrentPosition = false;
+                    } else {
+                      _currentPosition = position;
+                      _streamController
+                          .setCurrentPosition(position.inMilliseconds);
+                      _streamController.setAnimeHistoryUpdate();
+                    }
+                  },
+                );
+                Navigator.maybePop(_);
+              },
+            );
+          },
+        ),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.maybePop(_),
+          isDestructiveAction: true,
+          child: Text(l10n.cancel),
+        ),
+      ),
+    );
   }
 
   Future<void> _setPlaybackSpeed(double speed) async {
@@ -185,6 +268,9 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
   }
 
   List<Widget> _bottomButtonBar(BuildContext context) {
+    bool hasPrevEpisode = _streamController.getEpisodeIndex() + 1 !=
+        _streamController.getEpisodesLength();
+    bool hasNextEpisode = _streamController.getEpisodeIndex() != 0;
     return [
       Flexible(
         child: Column(
@@ -199,61 +285,24 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: PopupMenuButton(
-                          child: const Icon(
-                            Icons.video_settings_outlined,
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                          onSelected: (value) async {
-                            _video.value = value;
-                            await _player.open(Media(value.originalUrl,
-                                httpHeaders: value.headers));
-                            _seekToCurrentPosition = true;
-                            _currentPositionSub =
-                                _player.stream.position.listen(
-                              (Duration position) {
-                                if (_seekToCurrentPosition) {
-                                  _player.seek(_currentPosition);
-                                  _seekToCurrentPosition = false;
-                                } else {
-                                  _currentPosition = position;
-                                  streamController.setCurrentPosition(
-                                      position.inMilliseconds);
-                                  streamController.setAnimeHistoryUpdate();
-                                }
-                              },
-                            );
-                          },
-                          itemBuilder: (context) => [
-                            for (var quality in widget.videos)
-                              PopupMenuItem(
-                                  height: 35,
-                                  value: quality,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        quality.quality,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 7,
-                                      ),
-                                      Icon(
-                                        Icons.check,
-                                        color: _video.value == quality
-                                            ? Colors.black
-                                            : Colors.transparent,
-                                      ),
-                                    ],
-                                  )),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CupertinoButton(
+                                padding: const EdgeInsets.all(5),
+                                onPressed: _onChangeVideoQuality,
+                                child: const Icon(
+                                  Icons.video_settings_outlined,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                              )),
+                          if (_isDesktop)
+                            const MaterialDesktopVolumeButton(
+                              iconSize: 38,
+                            ),
+                        ],
                       ),
                       Row(
                         children: [
@@ -303,9 +352,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
                               });
                             },
                           ),
-                          if (Platform.isWindows ||
-                              Platform.isMacOS ||
-                              Platform.isLinux)
+                          if (_isDesktop)
                             const MaterialDesktopFullscreenButton()
                         ],
                       ),
@@ -316,12 +363,20 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     MaterialButton(
-                      child: const Icon(
+                      onPressed: hasPrevEpisode
+                          ? () {
+                              pushReplacementMangaReaderView(
+                                  context: context,
+                                  chapter: _streamController.getPrevEpisode());
+                            }
+                          : null,
+                      child: Icon(
                         Icons.skip_previous_outlined,
                         size: 30,
-                        color: Colors.white,
+                        color: hasPrevEpisode
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.4),
                       ),
-                      onPressed: () {},
                     ),
                     const SizedBox(
                       width: 10,
@@ -344,26 +399,39 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
                             ),
                           ),
                         ),
-                        const MaterialPlayOrPauseButton(
-                          iconSize: 36,
-                        ),
+                        _isDesktop
+                            ? const MaterialDesktopPlayOrPauseButton(
+                                iconSize: 36,
+                              )
+                            : const MaterialPlayOrPauseButton(
+                                iconSize: 36,
+                              ),
                       ],
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     MaterialButton(
-                      child: const Icon(
+                      onPressed: hasNextEpisode
+                          ? () {
+                              pushReplacementMangaReaderView(
+                                context: context,
+                                chapter: _streamController.getNextEpisode(),
+                              );
+                            }
+                          : null,
+                      child: Icon(
                         Icons.skip_next_outlined,
                         size: 30,
-                        color: Colors.white,
+                        color: hasNextEpisode
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.4),
                       ),
-                      onPressed: () {},
                     ),
                   ],
                 ),
               ],
-            )
+            ),
           ],
         ),
       )
@@ -482,22 +550,24 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
         normal: MaterialDesktopVideoControlsThemeData(
             visibleOnMount: true,
             buttonBarHeight: 83,
+            seekBarContainerHeight: 3,
             controlsHoverDuration: const Duration(seconds: 5),
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
             primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
+            seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
             topButtonBar: _topButtonBar(context),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
             bottomButtonBar: _bottomButtonBar(context)),
         fullscreen: MaterialDesktopVideoControlsThemeData(
             buttonBarHeight: 83,
+            seekBarContainerHeight: 3,
             controlsHoverDuration: const Duration(seconds: 5),
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
             primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
+            seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
             topButtonBar: _topButtonBar(context),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
@@ -515,7 +585,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
           Navigator.pop(context);
           return false;
         },
-        child: mobilePlayer(),
+        child: _isDesktop ? desktopPlayer() : mobilePlayer(),
       ),
     );
   }

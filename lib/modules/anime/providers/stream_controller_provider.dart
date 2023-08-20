@@ -23,6 +23,17 @@ class AnimeStreamController {
     return isar.settings.getSync(227)!;
   }
 
+  int getEpisodeIndex() {
+    final chapters = getAnime().chapters.toList();
+    int? index;
+    for (var i = 0; i < chapters.length; i++) {
+      if (chapters[i].id == episode.id) {
+        index = i;
+      }
+    }
+    return index!;
+  }
+
   int getPrevEpisodeIndex() {
     final episodes = getAnime().chapters.toList();
     int? index;
@@ -53,7 +64,7 @@ class AnimeStreamController {
     return getAnime().chapters.toList()[getNextEpisodeIndex()];
   }
 
-  int getChaptersLength() {
+  int getEpisodesLength() {
     return getAnime().chapters.length;
   }
 
