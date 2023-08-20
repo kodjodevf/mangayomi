@@ -32,6 +32,17 @@ class AnimeStreamView extends riv.ConsumerStatefulWidget {
 
 class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
   @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -91,14 +102,9 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
         ),
         body: WillPopScope(
           onWillPop: () async {
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-              DeviceOrientation.portraitDown,
-            ]);
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                 overlays: SystemUiOverlay.values);
+
             Navigator.pop(context);
             return false;
           },
@@ -112,14 +118,9 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
           backgroundColor: Colors.black,
           body: WillPopScope(
             onWillPop: () async {
-              SystemChrome.setPreferredOrientations([
-                DeviceOrientation.portraitUp,
-                DeviceOrientation.landscapeLeft,
-                DeviceOrientation.landscapeRight,
-                DeviceOrientation.portraitDown,
-              ]);
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
+
               Navigator.pop(context);
               return false;
             },
