@@ -44,21 +44,22 @@ import 'package:share_plus/share_plus.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
-
   final Widget? titleDescription;
   final List<Color>? backButtonColors;
   final Widget? action;
   final Manga? manga;
   final bool sourceExist;
-  const MangaDetailView({
-    super.key,
-    required this.isExtended,
-    this.titleDescription,
-    this.backButtonColors,
-    this.action,
-    required this.sourceExist,
-    required this.manga,
-  });
+  final Function(bool) checkForUpdate;
+
+  const MangaDetailView(
+      {super.key,
+      required this.isExtended,
+      this.titleDescription,
+      this.backButtonColors,
+      this.action,
+      required this.sourceExist,
+      required this.manga,
+      required this.checkForUpdate});
 
   @override
   ConsumerState<MangaDetailView> createState() => _MangaDetailViewState();
@@ -349,13 +350,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ? Colors.transparent
                                 : Theme.of(context).scaffoldBackgroundColor,
                             actions: [
-                              // if (!isLocalArchive)
-                              //   IconButton(
-                              //       splashRadius: 20,
-                              //       onPressed: () {},
-                              //       icon: const Icon(
-                              //         Icons.download_outlined,
-                              //       )),
+                              if (!isLocalArchive)
+                                IconButton(
+                                    splashRadius: 20,
+                                    onPressed: () {
+                                      widget.checkForUpdate(true);
+                                    },
+                                    icon: const Icon(
+                                      Icons.refresh,
+                                    )),
                               IconButton(
                                   splashRadius: 20,
                                   onPressed: () {
@@ -406,7 +409,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 children: [
                   if (isTablet(context))
                     SizedBox(
-                        width: mediaWidth(context, 0.4),
+                        width: mediaWidth(context, 0.5),
                         height: mediaHeight(context, 1),
                         child: SingleChildScrollView(
                             child: _bodyContainer(

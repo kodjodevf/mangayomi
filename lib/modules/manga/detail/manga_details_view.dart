@@ -22,10 +22,12 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
   final bool sourceExist;
+  final Function(bool) checkForUpdate;
   const MangaDetailsView({
     super.key,
     required this.sourceExist,
     required this.manga,
+    required this.checkForUpdate,
   });
 
   @override
@@ -214,6 +216,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           ref.read(isExtendedStateProvider.notifier).update(value);
         },
         sourceExist: widget.sourceExist,
+        checkForUpdate: widget.checkForUpdate,
       ),
     );
   }

@@ -69,7 +69,27 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                 },
                 child: Stack(
                   children: [
-                    MangaDetailsView(manga: manga, sourceExist: sourceExist),
+                    MangaDetailsView(
+                      manga: manga,
+                      sourceExist: sourceExist,
+                      checkForUpdate: (value) async {
+                        if (!_isLoading) {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          if (sourceExist) {
+                            await ref.read(updateMangaDetailProvider(
+                                    mangaId: manga.id, isInit: false)
+                                .future);
+                          }
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        }
+                      },
+                    ),
                     if (_isLoading)
                       const Positioned(
                           top: 0,

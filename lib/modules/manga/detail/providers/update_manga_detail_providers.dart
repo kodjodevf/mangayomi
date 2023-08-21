@@ -87,7 +87,10 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     ..lang = lang
     ..isManga = source.isManga
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
-
+  final checkManga = isar.mangas.getSync(mangaId);
+  if (checkManga!.chapters.isNotEmpty && isInit) {
+    return;
+  }
   isar.writeTxnSync(() {
     isar.mangas.putSync(manga);
     if (getManga.names!.isNotEmpty &&
@@ -110,7 +113,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
               .replaceAll(']', "")
               .replaceAll("[", "");
         }
-        final chapters = Chapter(
+        final chapter = Chapter(
           name: title,
           url: getManga.urls![i].trim().trimLeft().trimRight(),
           dateUpload: getManga.chaptersDateUploads!.isEmpty
@@ -118,8 +121,8 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
               : getManga.chaptersDateUploads![i],
           scanlator: scanlator,
         )..manga.value = manga;
-        isar.chapters.putSync(chapters);
-        chapters.manga.saveSync();
+        isar.chapters.putSync(chapter);
+        chapter.manga.saveSync();
       }
     }
   });

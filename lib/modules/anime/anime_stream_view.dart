@@ -116,6 +116,16 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
       loading: () {
         return Scaffold(
           backgroundColor: Colors.black,
+          appBar: AppBar(
+            title: const Text(''),
+            leading: BackButton(
+              onPressed: () {
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                    overlays: SystemUiOverlay.values);
+                Navigator.pop(context);
+              },
+            ),
+          ),
           body: WillPopScope(
             onWillPop: () async {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -132,17 +142,17 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
   }
 }
 
-class AnimeStreamPage extends StatefulWidget {
+class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final List<vid.Video> videos;
   final Chapter episode;
   const AnimeStreamPage({Key? key, required this.videos, required this.episode})
       : super(key: key);
 
   @override
-  State<AnimeStreamPage> createState() => _AnimeStreamPageState();
+  riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
-class _AnimeStreamPageState extends State<AnimeStreamPage> {
+class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late final Player _player = Player();
   late final VideoController _controller = VideoController(
     _player,
@@ -156,7 +166,9 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
-  bool _showFitLabel = false;
+  final _showFitLabel = StateProvider((ref) => false);
+
+  final _fit = StateProvider((ref) => BoxFit.contain);
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   late StreamSubscription<Duration> _currentPositionSub =
@@ -325,28 +337,19 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
                             child: const Icon(Icons.fit_screen,
                                 size: 30, color: Colors.white),
                             onPressed: () async {
-                              _showFitLabel = true;
-                              setState(() {
-                                if (_fit == BoxFit.contain) {
-                                  _fit = BoxFit.cover;
-                                } else if (_fit == BoxFit.cover) {
-                                  _fit = BoxFit.fill;
-                                } else if (_fit == BoxFit.fill) {
-                                  _fit = BoxFit.fitHeight;
-                                } else if (_fit == BoxFit.fitHeight) {
-                                  _fit = BoxFit.fitWidth;
-                                } else if (_fit == BoxFit.fitWidth) {
-                                  _fit = BoxFit.none;
-                                } else if (_fit == BoxFit.none) {
-                                  _fit = BoxFit.scaleDown;
-                                } else if (_fit == BoxFit.scaleDown) {
-                                  _fit = BoxFit.contain;
-                                }
-                              });
+                              ref.read(_showFitLabel.notifier).state = true;
+                              final fit = switch (ref.watch(_fit)) {
+                                BoxFit.contain => BoxFit.cover,
+                                BoxFit.cover => BoxFit.fill,
+                                BoxFit.fill => BoxFit.fitHeight,
+                                BoxFit.fitHeight => BoxFit.fitWidth,
+                                BoxFit.fitWidth => BoxFit.none,
+                                BoxFit.none => BoxFit.scaleDown,
+                                _ => BoxFit.contain,
+                              };
+                              ref.read(_fit.notifier).state = fit;
                               await Future.delayed(const Duration(seconds: 1));
-                              setState(() {
-                                _showFitLabel = false;
-                              });
+                              ref.read(_showFitLabel.notifier).state = false;
                             },
                           ),
                           if (_isDesktop)
@@ -480,16 +483,17 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
   }
 
   Widget _videoPlayer(BuildContext context) {
+    final fit = ref.watch(_fit);
     return Stack(
       children: [
         Video(
-          fit: _fit,
+          fit: fit,
           controller: _controller,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           resumeUponEnteringForegroundMode: true,
         ),
-        if (_showFitLabel)
+        if (ref.watch(_showFitLabel))
           Positioned(
               top: 0,
               bottom: 0,
@@ -497,7 +501,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
               right: 0,
               child: Center(
                   child: Text(
-                _fit.name.toUpperCase(),
+                fit.name.toUpperCase(),
                 style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -507,8 +511,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
     );
   }
 
-  BoxFit _fit = BoxFit.contain;
-  Widget mobilePlayer() {
+  Widget _mobilePlayer() {
     return MaterialVideoControlsTheme(
         normal: MaterialVideoControlsThemeData(
             visibleOnMount: true,
@@ -542,7 +545,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
         child: _videoPlayer(context));
   }
 
-  Widget desktopPlayer() {
+  Widget _desktopPlayer() {
     return MaterialDesktopVideoControlsTheme(
         normal: MaterialDesktopVideoControlsThemeData(
             visibleOnMount: true,
@@ -582,7 +585,7 @@ class _AnimeStreamPageState extends State<AnimeStreamPage> {
           Navigator.pop(context);
           return false;
         },
-        child: _isDesktop ? desktopPlayer() : mobilePlayer(),
+        child: _isDesktop ? _desktopPlayer() : _mobilePlayer(),
       ),
     );
   }
