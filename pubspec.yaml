@@ -1,7 +1,7 @@
 name: mangayomi
 description: Free and open source manga reader multi plateform app inspired by Tachiyomi.
 
-version: 0.0.33+11
+version: 0.0.34+12
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
