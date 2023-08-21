@@ -1099,53 +1099,145 @@ class _MangaChapterPageGalleryState
   List<double> doubleTapScales = <double>[1.0, 2.0];
   GlobalKey<ExtendedImageSlidePageState> slidePagekey =
       GlobalKey<ExtendedImageSlidePageState>();
+  void _back(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cropBorders = ref.watch(cropBordersStateProvider);
 
     return WillPopScope(
       onWillPop: () async {
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-            overlays: SystemUiOverlay.values);
-        Navigator.pop(context);
-
+        _back(context);
         return false;
       },
-      child: NotificationListener<UserScrollNotification>(
-        onNotification: (notification) {
-          if (notification.direction == ScrollDirection.idle) {
-            _readerController.setMangaHistoryUpdate();
-            _readerController
-                .setPageIndex(_uChapDataPreload[_currentIndex!].index!);
-            _isBookmarked = _readerController.getChapterBookmarked();
+      child: KeyboardListener(
+        autofocus: true,
+        focusNode: FocusNode(),
+        onKeyEvent: (event) {
+          if (event is KeyDownEvent) {
+            return;
           }
-          return true;
+          bool hasNextChapter = _readerController.getChapterIndex() != 0;
+          bool hasPrevChapter = _readerController.getChapterIndex() + 1 !=
+              _readerController.getChaptersLength();
+          final action = switch (event.logicalKey) {
+            LogicalKeyboardKey.escape => _back(context),
+            LogicalKeyboardKey.backspace => _back(context),
+            LogicalKeyboardKey.arrowUp =>
+              _onBtnTapped(_currentIndex! - 1, true),
+            LogicalKeyboardKey.arrowLeft => _isReverseHorizontal
+                ? _onBtnTapped(_currentIndex! + 1, false)
+                : _onBtnTapped(_currentIndex! - 1, true),
+            LogicalKeyboardKey.arrowRight => _isReverseHorizontal
+                ? _onBtnTapped(_currentIndex! - 1, true)
+                : _onBtnTapped(_currentIndex! + 1, false),
+            LogicalKeyboardKey.arrowDown =>
+              _onBtnTapped(_currentIndex! + 1, true),
+            LogicalKeyboardKey.pageDown ||
+            LogicalKeyboardKey.keyN =>
+              hasNextChapter
+                  ? () {
+                      pushReplacementMangaReaderView(
+                        context: context,
+                        chapter: _readerController.getNextChapter(),
+                      );
+                    }
+                  : null,
+            LogicalKeyboardKey.pageUp ||
+            LogicalKeyboardKey.keyP =>
+              hasPrevChapter
+                  ? () {
+                      pushReplacementMangaReaderView(
+                          context: context,
+                          chapter: _readerController.getPrevChapter());
+                    }
+                  : null,
+            _ => null
+          };
+          action;
         },
-        child: Stack(
-          children: [
-            _isVerticalContinous()
-                ? PhotoViewGallery.builder(
-                    itemCount: 1,
-                    builder: (_, __) => PhotoViewGalleryPageOptions.customChild(
-                      controller: _photoViewController,
-                      scaleStateController: _photoViewScaleStateController,
-                      basePosition: _scalePosition,
-                      onScaleEnd: _onScaleEnd,
-                      child: ScrollablePositionedList.separated(
-                        physics: const ClampingScrollPhysics(),
-                        minCacheExtent: 15 * mediaHeight(context, 1),
-                        initialScrollIndex: _currentIndex!,
-                        itemCount: _uChapDataPreload.length,
-                        itemScrollController: _itemScrollController,
-                        itemPositionsListener: _itemPositionsListener,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            behavior: HitTestBehavior.translucent,
-                            onDoubleTapDown: (TapDownDetails details) {
-                              _toggleScale(details.globalPosition);
-                            },
-                            onDoubleTap: () {},
-                            child: ImageViewVertical(
+        child: NotificationListener<UserScrollNotification>(
+          onNotification: (notification) {
+            if (notification.direction == ScrollDirection.idle) {
+              _readerController.setMangaHistoryUpdate();
+              _readerController
+                  .setPageIndex(_uChapDataPreload[_currentIndex!].index!);
+              _isBookmarked = _readerController.getChapterBookmarked();
+            }
+            return true;
+          },
+          child: Stack(
+            children: [
+              _isVerticalContinous()
+                  ? PhotoViewGallery.builder(
+                      itemCount: 1,
+                      builder: (_, __) =>
+                          PhotoViewGalleryPageOptions.customChild(
+                        controller: _photoViewController,
+                        scaleStateController: _photoViewScaleStateController,
+                        basePosition: _scalePosition,
+                        onScaleEnd: _onScaleEnd,
+                        child: ScrollablePositionedList.separated(
+                          physics: const ClampingScrollPhysics(),
+                          minCacheExtent: 15 * mediaHeight(context, 1),
+                          initialScrollIndex: _currentIndex!,
+                          itemCount: _uChapDataPreload.length,
+                          itemScrollController: _itemScrollController,
+                          itemPositionsListener: _itemPositionsListener,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onDoubleTapDown: (TapDownDetails details) {
+                                _toggleScale(details.globalPosition);
+                              },
+                              onDoubleTap: () {},
+                              child: ImageViewVertical(
+                                archiveImage: _cropImagesList.isNotEmpty &&
+                                        cropBorders == true
+                                    ? _cropImagesList[index]
+                                    : _uChapDataPreload[index].archiveImage,
+                                source: _readerController.getSourceName(),
+                                index: _uChapDataPreload[index].index!,
+                                url: _uChapDataPreload[index].url!,
+                                path: _uChapDataPreload[index].path!,
+                                isLocale: _cropImagesList.isNotEmpty &&
+                                        cropBorders == true
+                                    ? true
+                                    : _uChapDataPreload[index].isLocale!,
+                                lang: _uChapDataPreload[index]
+                                    .chapter!
+                                    .manga
+                                    .value!
+                                    .lang!,
+                              ),
+                            );
+                          },
+                          separatorBuilder: (_, __) => Divider(
+                              color: Colors.black,
+                              height:
+                                  _selectedValue == ReaderMode.webtoon ? 0 : 6),
+                        ),
+                      ),
+                    )
+                  : Material(
+                      color: Colors.black,
+                      shadowColor: Colors.black,
+                      child: ExtendedImageGesturePageView.builder(
+                          controller: _extendedController,
+                          scrollDirection: _scrollDirection,
+                          reverse: _isReverseHorizontal,
+                          physics: const ClampingScrollPhysics(),
+                          canScrollPage: (GestureDetails? gestureDetails) {
+                            return gestureDetails != null
+                                ? !(gestureDetails.totalScale! > 1.0)
+                                : true;
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return ImageViewCenter(
                               archiveImage: _cropImagesList.isNotEmpty &&
                                       cropBorders == true
                                   ? _cropImagesList[index]
@@ -1154,6 +1246,139 @@ class _MangaChapterPageGalleryState
                               index: _uChapDataPreload[index].index!,
                               url: _uChapDataPreload[index].url!,
                               path: _uChapDataPreload[index].path!,
+                              loadStateChanged: (ExtendedImageState state) {
+                                if (state.extendedImageLoadState ==
+                                    LoadState.loading) {
+                                  final ImageChunkEvent? loadingProgress =
+                                      state.loadingProgress;
+                                  final double progress = loadingProgress
+                                              ?.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress!.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : 0;
+                                  return Container(
+                                    color: Colors.black,
+                                    height: mediaHeight(context, 0.8),
+                                    child:
+                                        CircularProgressIndicatorAnimateRotate(
+                                            progress: progress),
+                                  );
+                                }
+                                if (state.extendedImageLoadState ==
+                                    LoadState.completed) {
+                                  return StreamBuilder<double>(
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<double> data) {
+                                      return ExtendedImageGesture(
+                                        state,
+                                        canScaleImage: (_) =>
+                                            _imageDetailY == 0,
+                                        imageBuilder: (Widget image) {
+                                          return Stack(
+                                            children: <Widget>[
+                                              Positioned.fill(
+                                                top: _imageDetailY,
+                                                bottom: -_imageDetailY,
+                                                child: image,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    initialData: _imageDetailY,
+                                    stream: _rebuildDetail.stream,
+                                  );
+                                }
+                                if (state.extendedImageLoadState ==
+                                    LoadState.failed) {
+                                  return Container(
+                                      color: Colors.black,
+                                      height: mediaHeight(context, 0.8),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          ElevatedButton(
+                                              onPressed: () {
+                                                state.reLoadImage();
+                                              },
+                                              child: const Icon(
+                                                Icons.replay_outlined,
+                                                size: 30,
+                                              )),
+                                        ],
+                                      ));
+                                }
+                                return Container();
+                              },
+                              initGestureConfigHandler:
+                                  (ExtendedImageState state) {
+                                double? initialScale = 1.0;
+                                final size = MediaQuery.of(context).size;
+                                if (state.extendedImageInfo != null) {
+                                  initialScale = initScale(
+                                      size: size,
+                                      initialScale: initialScale,
+                                      imageSize: Size(
+                                          state.extendedImageInfo!.image.width
+                                              .toDouble(),
+                                          state.extendedImageInfo!.image.height
+                                              .toDouble()));
+                                }
+                                return GestureConfig(
+                                  inertialSpeed: 200,
+                                  inPageView: true,
+                                  initialScale: initialScale!,
+                                  maxScale: 8,
+                                  animationMaxScale: 8,
+                                  initialAlignment: InitialAlignment.center,
+                                  cacheGesture: true,
+                                  hitTestBehavior: HitTestBehavior.translucent,
+                                );
+                              },
+                              onDoubleTap: (ExtendedImageGestureState state) {
+                                final Offset? pointerDownPosition =
+                                    state.pointerDownPosition;
+                                final double? begin =
+                                    state.gestureDetails!.totalScale;
+                                double end;
+
+                                //remove old
+                                _doubleClickAnimation?.removeListener(
+                                    _doubleClickAnimationListener);
+
+                                //stop pre
+                                _doubleClickAnimationController.stop();
+
+                                //reset to use
+                                _doubleClickAnimationController.reset();
+
+                                if (begin == doubleTapScales[0]) {
+                                  end = doubleTapScales[1];
+                                } else {
+                                  end = doubleTapScales[0];
+                                }
+
+                                _doubleClickAnimationListener = () {
+                                  state.handleDoubleTap(
+                                      scale: _doubleClickAnimation!.value,
+                                      doubleTapPosition: pointerDownPosition);
+                                };
+
+                                _doubleClickAnimation = Tween(
+                                        begin: begin, end: end)
+                                    .animate(CurvedAnimation(
+                                        curve: Curves.ease,
+                                        parent:
+                                            _doubleClickAnimationController));
+
+                                _doubleClickAnimation!
+                                    .addListener(_doubleClickAnimationListener);
+
+                                _doubleClickAnimationController.forward();
+                              },
                               isLocale: _cropImagesList.isNotEmpty &&
                                       cropBorders == true
                                   ? true
@@ -1163,187 +1388,16 @@ class _MangaChapterPageGalleryState
                                   .manga
                                   .value!
                                   .lang!,
-                            ),
-                          );
-                        },
-                        separatorBuilder: (_, __) => Divider(
-                            color: Colors.black,
-                            height:
-                                _selectedValue == ReaderMode.webtoon ? 0 : 6),
-                      ),
-                    ),
-                  )
-                : Material(
-                    color: Colors.black,
-                    shadowColor: Colors.black,
-                    child: ExtendedImageGesturePageView.builder(
-                        controller: _extendedController,
-                        scrollDirection: _scrollDirection,
-                        reverse: _isReverseHorizontal,
-                        physics: const ClampingScrollPhysics(),
-                        canScrollPage: (GestureDetails? gestureDetails) {
-                          return gestureDetails != null
-                              ? !(gestureDetails.totalScale! > 1.0)
-                              : true;
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          return ImageViewCenter(
-                            archiveImage: _cropImagesList.isNotEmpty &&
-                                    cropBorders == true
-                                ? _cropImagesList[index]
-                                : _uChapDataPreload[index].archiveImage,
-                            source: _readerController.getSourceName(),
-                            index: _uChapDataPreload[index].index!,
-                            url: _uChapDataPreload[index].url!,
-                            path: _uChapDataPreload[index].path!,
-                            loadStateChanged: (ExtendedImageState state) {
-                              if (state.extendedImageLoadState ==
-                                  LoadState.loading) {
-                                final ImageChunkEvent? loadingProgress =
-                                    state.loadingProgress;
-                                final double progress =
-                                    loadingProgress?.expectedTotalBytes != null
-                                        ? loadingProgress!
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : 0;
-                                return Container(
-                                  color: Colors.black,
-                                  height: mediaHeight(context, 0.8),
-                                  child: CircularProgressIndicatorAnimateRotate(
-                                      progress: progress),
-                                );
-                              }
-                              if (state.extendedImageLoadState ==
-                                  LoadState.completed) {
-                                return StreamBuilder<double>(
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<double> data) {
-                                    return ExtendedImageGesture(
-                                      state,
-                                      canScaleImage: (_) => _imageDetailY == 0,
-                                      imageBuilder: (Widget image) {
-                                        return Stack(
-                                          children: <Widget>[
-                                            Positioned.fill(
-                                              top: _imageDetailY,
-                                              bottom: -_imageDetailY,
-                                              child: image,
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  initialData: _imageDetailY,
-                                  stream: _rebuildDetail.stream,
-                                );
-                              }
-                              if (state.extendedImageLoadState ==
-                                  LoadState.failed) {
-                                return Container(
-                                    color: Colors.black,
-                                    height: mediaHeight(context, 0.8),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              state.reLoadImage();
-                                            },
-                                            child: const Icon(
-                                              Icons.replay_outlined,
-                                              size: 30,
-                                            )),
-                                      ],
-                                    ));
-                              }
-                              return Container();
-                            },
-                            initGestureConfigHandler:
-                                (ExtendedImageState state) {
-                              double? initialScale = 1.0;
-                              final size = MediaQuery.of(context).size;
-                              if (state.extendedImageInfo != null) {
-                                initialScale = initScale(
-                                    size: size,
-                                    initialScale: initialScale,
-                                    imageSize: Size(
-                                        state.extendedImageInfo!.image.width
-                                            .toDouble(),
-                                        state.extendedImageInfo!.image.height
-                                            .toDouble()));
-                              }
-                              return GestureConfig(
-                                inertialSpeed: 200,
-                                inPageView: true,
-                                initialScale: initialScale!,
-                                maxScale: 8,
-                                animationMaxScale: 8,
-                                initialAlignment: InitialAlignment.center,
-                                cacheGesture: true,
-                                hitTestBehavior: HitTestBehavior.translucent,
-                              );
-                            },
-                            onDoubleTap: (ExtendedImageGestureState state) {
-                              final Offset? pointerDownPosition =
-                                  state.pointerDownPosition;
-                              final double? begin =
-                                  state.gestureDetails!.totalScale;
-                              double end;
-
-                              //remove old
-                              _doubleClickAnimation?.removeListener(
-                                  _doubleClickAnimationListener);
-
-                              //stop pre
-                              _doubleClickAnimationController.stop();
-
-                              //reset to use
-                              _doubleClickAnimationController.reset();
-
-                              if (begin == doubleTapScales[0]) {
-                                end = doubleTapScales[1];
-                              } else {
-                                end = doubleTapScales[0];
-                              }
-
-                              _doubleClickAnimationListener = () {
-                                state.handleDoubleTap(
-                                    scale: _doubleClickAnimation!.value,
-                                    doubleTapPosition: pointerDownPosition);
-                              };
-
-                              _doubleClickAnimation = Tween(
-                                      begin: begin, end: end)
-                                  .animate(CurvedAnimation(
-                                      curve: Curves.ease,
-                                      parent: _doubleClickAnimationController));
-
-                              _doubleClickAnimation!
-                                  .addListener(_doubleClickAnimationListener);
-
-                              _doubleClickAnimationController.forward();
-                            },
-                            isLocale: _cropImagesList.isNotEmpty &&
-                                    cropBorders == true
-                                ? true
-                                : _uChapDataPreload[index].isLocale!,
-                            lang: _uChapDataPreload[index]
-                                .chapter!
-                                .manga
-                                .value!
-                                .lang!,
-                          );
-                        },
-                        itemCount: _uChapDataPreload.length,
-                        onPageChanged: _onPageChanged)),
-            _gestureRightLeft(),
-            _gestureTopBottom(),
-            _showMore(),
-            _showPage(),
-          ],
+                            );
+                          },
+                          itemCount: _uChapDataPreload.length,
+                          onPageChanged: _onPageChanged)),
+              _gestureRightLeft(),
+              _gestureTopBottom(),
+              _showMore(),
+              _showPage(),
+            ],
+          ),
         ),
       ),
     );
