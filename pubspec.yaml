@@ -30,10 +30,7 @@ dependencies:
   google_fonts: ^5.1.0
   url_launcher: ^6.1.12
   package_info_plus: ^4.1.0
-  background_downloader:
-    git:
-      url: https://github.com/781flyingdutchman/background_downloader.git
-      ref: dev
+  background_downloader: ^7.9.2
   permission_handler: ^10.4.3
   flutter_inappwebview: ^5.7.2+3
   draggable_menu: ^4.1.3

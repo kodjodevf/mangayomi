@@ -1175,6 +1175,9 @@ class _MangaChapterPageGalleryState
         child: NotificationListener<UserScrollNotification>(
           onNotification: (notification) {
             if (notification.direction == ScrollDirection.idle) {
+              if (_isView) {
+                _isViewFunction();
+              }
               _readerController.setMangaHistoryUpdate();
               _readerController
                   .setPageIndex(_uChapDataPreload[_currentIndex!].index!);
