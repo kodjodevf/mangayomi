@@ -20,7 +20,7 @@ Future<List<MangaModel?>> searchManga(
   final runtime = runtimeEval(bytecode);
   runtime.args = [
     $MangaModel.wrap(MangaModel(
-        query: query,
+        query: query.trim(),
         lang: source.lang,
         page: page,
         baseUrl: source.baseUrl,
