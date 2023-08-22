@@ -18,6 +18,8 @@ class ReaderScreen extends ConsumerWidget {
     final cropBorders = ref.watch(cropBordersStateProvider);
     final doubleTapAnimationSpeed =
         ref.watch(doubleTapAnimationSpeedStateProvider);
+    final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
+    final scaleType = ref.watch(scaleTypeStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n!.reader),
@@ -143,6 +145,125 @@ class ReaderScreen extends ConsumerWidget {
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
+          ListTile(
+            onTap: () {
+              List<int> numbers = [4, 6, 8, 10, 12, 14, 16, 18, 20];
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        l10n.page_preload_amount,
+                      ),
+                      content: SizedBox(
+                          width: mediaWidth(context, 0.8),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: numbers.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: numbers[index],
+                                groupValue: pagePreloadAmount,
+                                onChanged: (value) {
+                                  ref
+                                      .read(pagePreloadAmountStateProvider
+                                          .notifier)
+                                      .set(value!);
+                                  Navigator.pop(context);
+                                },
+                                title: Row(
+                                  children: [Text(numbers[index].toString())],
+                                ),
+                              );
+                            },
+                          )),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  l10n.cancel,
+                                  style:
+                                      TextStyle(color: primaryColor(context)),
+                                )),
+                          ],
+                        )
+                      ],
+                    );
+                  });
+            },
+            title: Text(l10n.page_preload_amount),
+            subtitle: Text(
+              l10n.page_preload_amount_subtitle,
+              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        l10n.scale_type,
+                      ),
+                      content: SizedBox(
+                          width: mediaWidth(context, 0.8),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: getScaleTypeNames(context).length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                // dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: index,
+                                groupValue: scaleType.index,
+                                onChanged: (value) {
+                                  ref
+                                      .read(scaleTypeStateProvider.notifier)
+                                      .set(ScaleType.values[value!]);
+                                  Navigator.pop(context);
+                                },
+                                title: Row(
+                                  children: [
+                                    Text(getScaleTypeNames(context)[index]
+                                        .toString())
+                                  ],
+                                ),
+                              );
+                            },
+                          )),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  l10n.cancel,
+                                  style:
+                                      TextStyle(color: primaryColor(context)),
+                                )),
+                          ],
+                        )
+                      ],
+                    );
+                  });
+            },
+            title: Text(l10n.scale_type),
+            subtitle: Text(
+              getScaleTypeNames(context)[scaleType.index],
+              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+            ),
+          ),
           SwitchListTile(
               value: animatePageTransitions,
               title: Text(l10n.animate_page_transitions),
@@ -165,22 +286,32 @@ class ReaderScreen extends ConsumerWidget {
 
 String getReaderModeName(ReaderMode readerMode, BuildContext context) {
   final l10n = l10nLocalizations(context);
-  return readerMode == ReaderMode.vertical
-      ? l10n!.reading_mode_vertical
-      : readerMode == ReaderMode.verticalContinuous
-          ? l10n!.reading_mode_vertical_continuous
-          : readerMode == ReaderMode.ltr
-              ? l10n!.reading_mode_left_to_right
-              : readerMode == ReaderMode.rtl
-                  ? l10n!.reading_mode_right_to_left
-                  : l10n!.reading_mode_webtoon;
+  return switch (readerMode) {
+    ReaderMode.vertical => l10n!.reading_mode_vertical,
+    ReaderMode.verticalContinuous => l10n!.reading_mode_vertical_continuous,
+    ReaderMode.ltr => l10n!.reading_mode_left_to_right,
+    ReaderMode.rtl => l10n!.reading_mode_right_to_left,
+    _ => l10n!.reading_mode_webtoon
+  };
 }
 
 String getAnimationSpeedName(int type, BuildContext context) {
   final l10n = l10nLocalizations(context);
-  return type == 0
-      ? l10n!.no_animation
-      : type == 1
-          ? l10n!.normal
-          : l10n!.fast;
+  return switch (type) {
+    0 => l10n!.no_animation,
+    1 => l10n!.normal,
+    _ => l10n!.fast,
+  };
+}
+
+List<String> getScaleTypeNames(BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
+  return [
+    l10n.scale_type_fit_screen,
+    // l10n.scale_type_stretch,
+    l10n.scale_type_fit_width,
+    l10n.scale_type_fit_height,
+    // l10n.scale_type_original_size,
+    // l10n.scale_type_smart_fit,
+  ];
 }

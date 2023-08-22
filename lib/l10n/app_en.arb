@@ -203,6 +203,16 @@
   "uninstall":"Uninstall",
   "uninstall_extension":"Uninstall {ext} extension ?",
   "langauage":"Language",
-  "extension_detail":"Extension detail"
+  "extension_detail":"Extension detail",
+  "scale_type":"Scale type",
+  "scale_type_fit_screen":"Fit screen",
+  "scale_type_stretch":"Stretch",
+  "scale_type_fit_width":"Fit width",
+  "scale_type_fit_height":"Fit height",
+  "scale_type_original_size":"Original size",
+  "scale_type_smart_fit":"Smart fit",
+  "page_preload_amount":"Page preload amount",
+  "page_preload_amount_subtitle":"The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.",
+  "image_loading_error":"This image couldn't be loaded"
 
 }

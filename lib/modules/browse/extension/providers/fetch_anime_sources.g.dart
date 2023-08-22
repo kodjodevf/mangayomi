@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'c6d2c5cd85d0086160d7af66e9f7f07da7dcbc53';
+    r'c497fc574934c7b3313d19a518097460f95dbdf1';
 
 /// Copied from Dart SDK
 class _SystemHash {

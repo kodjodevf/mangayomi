@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
@@ -34,10 +36,12 @@ class ImageViewCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final scaleType = ref.watch(scaleTypeStateProvider);
     return isLocale
         ? archiveImage != null
             ? ExtendedImage.memory(
                 archiveImage!,
+                fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
                 mode: ExtendedImageMode.gesture,
@@ -47,6 +51,7 @@ class ImageViewCenter extends ConsumerWidget {
               )
             : ExtendedImage.file(
                 File("${path.path}" "${padIndex(index + 1)}.jpg"),
+                fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
                 mode: ExtendedImageMode.gesture,
@@ -56,6 +61,7 @@ class ImageViewCenter extends ConsumerWidget {
               )
         : ExtendedImage.network(
             url.trim().trimLeft().trimRight(),
+            fit: getBoxFit(scaleType),
             headers: ref.watch(headersProvider(source: source, lang: lang)),
             enableMemoryCache: true,
             mode: ExtendedImageMode.gesture,

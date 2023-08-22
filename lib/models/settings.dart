@@ -119,6 +119,11 @@ class Settings {
 
   SortLibraryManga? sortLibraryAnime;
 
+  int? pagePreloadAmount;
+
+  @enumerated
+  ScaleType scaleType;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -169,7 +174,9 @@ class Settings {
       this.animeLibraryShowNumbersOfItems = false,
       this.animeLibraryShowContinueReadingButton = false,
       this.animeLibraryLocalSource,
-      this.sortLibraryAnime});
+      this.sortLibraryAnime,
+      this.pagePreloadAmount = 6,
+      this.scaleType = ScaleType.fitScreen});
 }
 
 enum DisplayType {
@@ -177,6 +184,15 @@ enum DisplayType {
   comfortableGrid,
   coverOnlyGrid,
   list,
+}
+
+enum ScaleType {
+  fitScreen,
+  stretch,
+  fitWidth,
+  fitHeight,
+  originalSize,
+  smartFit,
 }
 
 @embedded

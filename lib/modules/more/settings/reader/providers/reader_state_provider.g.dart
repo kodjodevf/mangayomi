@@ -73,5 +73,38 @@ final cropBordersStateProvider =
 );
 
 typedef _$CropBordersState = AutoDisposeNotifier<bool>;
+String _$scaleTypeStateHash() => r'5e6943ab426e9f0bdfe16685a037f6def3a02ddf';
+
+/// See also [ScaleTypeState].
+@ProviderFor(ScaleTypeState)
+final scaleTypeStateProvider =
+    AutoDisposeNotifierProvider<ScaleTypeState, ScaleType>.internal(
+  ScaleTypeState.new,
+  name: r'scaleTypeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scaleTypeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ScaleTypeState = AutoDisposeNotifier<ScaleType>;
+String _$pagePreloadAmountStateHash() =>
+    r'f3b7f78ba1acc10631dc433298c49abe417f254e';
+
+/// See also [PagePreloadAmountState].
+@ProviderFor(PagePreloadAmountState)
+final pagePreloadAmountStateProvider =
+    AutoDisposeNotifierProvider<PagePreloadAmountState, int>.internal(
+  PagePreloadAmountState.new,
+  name: r'pagePreloadAmountStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$pagePreloadAmountStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$PagePreloadAmountState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

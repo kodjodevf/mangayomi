@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -24,6 +25,17 @@ class CurrentIndex extends _$CurrentIndex {
   ) {
     state = currentIndex;
   }
+}
+
+BoxFit getBoxFit(ScaleType scaleType) {
+  return switch (scaleType) {
+    ScaleType.fitHeight => BoxFit.fitHeight,
+    ScaleType.fitWidth => BoxFit.fitWidth,
+    ScaleType.fitScreen => BoxFit.contain,
+    ScaleType.originalSize => BoxFit.cover,
+    ScaleType.smartFit => BoxFit.contain,
+    _ => BoxFit.none
+  };
 }
 
 class ReaderController {

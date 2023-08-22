@@ -203,5 +203,15 @@
   "uninstall":"Désinstaller",
   "uninstall_extension":"Désinstaller l'extension {ext} ?",
   "langauage":"Langue",
-  "extension_detail":"Informations de l'extension"
+  "extension_detail":"Informations de l'extension",
+  "scale_type":"Type de mise à l'échelle",
+  "scale_type_fit_screen":"Adapter à l'écran",
+  "scale_type_stretch":"Étirer",
+  "scale_type_fit_width":"Adapter à la largeur",
+  "scale_type_fit_height":"Adapter à la hauteur",
+  "scale_type_original_size":"Taille originale",
+  "scale_type_smart_fit":"Adaptation intelligente",
+  "page_preload_amount":"Nombre de page à précharger",
+  "page_preload_amount_subtitle":"Le nombre de pages à précharger pendant la lecture. De plus grandes valeurs rendront la lecture plus fluide au coût d'un plus grand cache et d'une plus grande utilisation de données.",
+  "image_loading_error":"L'image n'a pas pu être chargée"
 }
