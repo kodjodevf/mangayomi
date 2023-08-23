@@ -62,6 +62,7 @@ class WordSet {
 }
 
 class MBridge {
+  ///Seaches for the first descendant node matching the given selectors, using a preorder traversal.
   static String querySelector(
     String html,
     String selector,
@@ -71,6 +72,7 @@ class MBridge {
     try {
       var parse = parser.parse(html);
 
+      // return querySelector text
       if (typeElement == 0) {
         return parse
             .querySelector(selector)!
@@ -78,6 +80,8 @@ class MBridge {
             .trim()
             .trimLeft()
             .trimRight();
+
+        // return querySelector innerHtml
       } else if (typeElement == 1) {
         return parse
             .querySelector(selector)!
@@ -85,6 +89,8 @@ class MBridge {
             .trim()
             .trimLeft()
             .trimRight();
+
+        // return querySelector outerHtml
       } else if (typeElement == 2) {
         return parse
             .querySelector(selector)!
@@ -93,6 +99,7 @@ class MBridge {
             .trimLeft()
             .trimRight();
       }
+      // return querySelector attributes
       return parse
           .querySelector(selector)!
           .attributes[attributes]!
@@ -105,6 +112,7 @@ class MBridge {
     }
   }
 
+  ///Returns all descendant nodes matching the given selectors, using a preorder traversal.
   static String querySelectorAll(String html, String selector, int typeElement,
       String attributes, int typeRegExp, int position, String join) {
     try {
@@ -113,47 +121,78 @@ class MBridge {
 
       List<dynamic> res = [];
       for (var element in a) {
+        //text
         if (typeElement == 0) {
           res.add(element.text.trim().trimLeft().trimRight());
-        } else if (typeElement == 1) {
+        }
+
+        //innerHtml
+        else if (typeElement == 1) {
           res.add(element.innerHtml.trim().trimLeft().trimRight());
-        } else if (typeElement == 2) {
+        }
+
+        //outerHtml
+        else if (typeElement == 2) {
           res.add(element.outerHtml.trim().trimLeft().trimRight());
-        } else if (typeElement == 3) {
+        }
+
+        //attributes
+        else if (typeElement == 3) {
           res.add(
               element.attributes[attributes]!.trim().trimLeft().trimRight());
         }
       }
-
+      // if (typeRegExp == 0) is the default parameter
       if (typeRegExp == 0) {
+        //join the list
         if (position == 0) {
           return res.join(join);
-        } else if (position == 1) {
+        }
+
+        //return first element of the list
+        else if (position == 1) {
           return res.first;
         }
+
+        //return last element of the list
         return res.last;
       }
+
       List<dynamic> resRegExp = [];
       for (var element in res) {
+        //get first element of href that match
         if (typeRegExp == 1) {
           resRegExp.add(regHrefMatcher(element.trim().trimLeft().trimRight()));
-        } else if (typeRegExp == 2) {
+        }
+
+        //get first element of src that match
+        else if (typeRegExp == 2) {
           resRegExp.add(regSrcMatcher(element.trim().trimLeft().trimRight()));
-        } else if (typeRegExp == 3) {
+        }
+
+        //get first element of datasrc that match
+        else if (typeRegExp == 3) {
           resRegExp
               .add(regDataSrcMatcher(element.trim().trimLeft().trimRight()));
-        } else if (typeRegExp == 4) {
-          resRegExp.add(regImgMatcher(element.trim().trimLeft().trimRight()));
-        } else if (typeRegExp == 5) {
+        }
+
+        //get first element of img that match
+        else if (typeRegExp == 4) {
           resRegExp.add(regImgMatcher(element.trim().trimLeft().trimRight()));
         }
       }
+
+      //join the resRegExp list
       if (position == 0) {
         return resRegExp.join(join);
-      } else if (position == 1) {
+      }
+
+      //return first element of the resRegExp list
+      else if (position == 1) {
         return resRegExp.first.trim().trimLeft().trimRight();
       }
 
+      //return last element of the resRegExp list
       return resRegExp.last.trim().trimLeft().trimRight();
     } catch (e) {
       _botToast(e.toString());
@@ -161,17 +200,23 @@ class MBridge {
     }
   }
 
+  ///Create query by html string
   static String xpath(String html, String xpath, String join) {
     try {
       List<String?> attrs = [];
       var htmlXPath = HtmlXPath.html(html);
       var query = htmlXPath.query(xpath);
+      // if (query.nodes.length > 1) the result will be a list that can be joined with a separator and will be split later.
       if (query.nodes.length > 1) {
         for (var element in query.attrs) {
           attrs.add(element!.trim().trimLeft().trimRight());
         }
+        //Join the attrs list
         return attrs.join(join);
-      } else {
+      }
+
+      //Return one attr
+      else {
         String? attr =
             query.attr != null ? query.attr!.trim().trimLeft().trimRight() : "";
         return attr;
@@ -182,6 +227,7 @@ class MBridge {
     }
   }
 
+  ///A list utility function
   static List listParse(List value, int type) {
     List<dynamic> val = [];
     for (var element in value) {
@@ -207,6 +253,9 @@ class MBridge {
     return val;
   }
 
+  ///Convert serie status to int
+  ///[status] contains the current status of the serie
+  ///[statusList] contains a list of map of many static status
   static int parseStatus(String status, List statusList) {
     for (var element in statusList) {
       Map statusMap = {};
@@ -227,6 +276,7 @@ class MBridge {
     return 5;
   }
 
+  ///Get Html content via webview when http request not working
   static Future<String> getHtmlViaWebview(String url, String rule) async {
     bool isOk = false;
     String? html;
@@ -303,12 +353,14 @@ class MBridge {
     return html!;
   }
 
+  ///Utility to decode json to List
   static List<dynamic> jsonDecodeToList(String source, int type) {
     return type == 0
         ? jsonDecode(source) as List
         : (jsonDecode(source) as List).map((e) => jsonEncode(e)).toList();
   }
 
+  ///Deobfuscate a JS code
   static String evalJs(String code) {
     try {
       //  JavascriptRuntime? flutterJs;
@@ -324,9 +376,11 @@ class MBridge {
     }
   }
 
+  ///Read values in parsed JSON object and return resut to List<String>
   static List<String> jsonPathToList(
       String source, String expression, int type) {
     try {
+      //Check jsonDecode(source) is list value
       if (jsonDecode(source) is List) {
         List<dynamic> values = [];
         final val = jsonDecode(source) as List;
@@ -342,15 +396,23 @@ class MBridge {
         for (var data in values) {
           final jsonRes = JsonPath(expression).read(data);
           String val = "";
+
+          //Get jsonRes first string value
           if (type == 0) {
             val = jsonRes.first.value.toString();
-          } else {
+          }
+
+          //Decode jsonRes first map value
+          else {
             val = jsonEncode(jsonRes.first.value);
           }
           list.add(val);
         }
         return list;
-      } else {
+      }
+
+      // else jsonDecode(source) is Map value
+      else {
         var map = json.decode(source);
         var values = JsonPath(expression).readValues(map);
         return values.map((e) {
@@ -363,6 +425,7 @@ class MBridge {
     }
   }
 
+  ///GetMapValue
   static String getMapValue(String source, String attr, int type) {
     try {
       var map = json.decode(source) as Map<String, dynamic>;
@@ -375,11 +438,13 @@ class MBridge {
     }
   }
 
+  ///Read values in parsed JSON object and return resut to String
   static String jsonPathToString(
       String source, String expression, String join) {
     try {
       List<dynamic> values = [];
 
+      //Check jsonDecode(source) is list value
       if (jsonDecode(source) is List) {
         final val = jsonDecode(source) as List;
         for (var element in val) {
@@ -390,7 +455,10 @@ class MBridge {
           }
           values.add(map);
         }
-      } else {
+      }
+
+      // else jsonDecode(source) is Map value
+      else {
         final mMap = jsonDecode(source) as Map?;
         Map<String, dynamic> map = {};
         if (mMap != null) {
@@ -408,6 +476,7 @@ class MBridge {
         for (var element in jsonRes) {
           list.add(element);
         }
+        //join the list into listRg
         listRg.add(list.join(join));
       }
       return listRg.first;
@@ -417,6 +486,7 @@ class MBridge {
     }
   }
 
+  //Utility to decode json values as Map<String,dynamic>
   static Map jsonPathToMap(String source) {
     final mMap = jsonDecode(source) as Map?;
     Map<String, dynamic> map = {};
@@ -426,6 +496,7 @@ class MBridge {
     return map;
   }
 
+  //Parse a list of dates to millisecondsSinceEpoch
   static List listParseDateTime(
       List value, String dateFormat, String dateFormatLocale) {
     List<dynamic> val = [];
@@ -446,6 +517,7 @@ class MBridge {
     return valD;
   }
 
+  //Utility to parse to String
   static String stringParse(String value, int type) {
     if (type == 0) {
       return value;
@@ -456,10 +528,12 @@ class MBridge {
         value.split('.-').map((e) => int.parse(e)).toList());
   }
 
+  //Utility to parse dynamic value to String
   static dynamic stringParseValue(dynamic value) {
     return value;
   }
 
+  //Utility to use RegExp
   static String regExp(
       //RegExp(r'\[a\]'), "[123]")
       String expression,
@@ -473,10 +547,12 @@ class MBridge {
     return regCustomMatcher(expression, source, group);
   }
 
+  //Utility to parse $int to int
   static int intParse(String value) {
     return int.parse(value);
   }
 
+  //Utility to check if list contains a value
   static bool listContain(List value, String element) {
     List<dynamic> val = [];
     for (var element in value) {
@@ -485,6 +561,7 @@ class MBridge {
     return val.contains(element);
   }
 
+  //Http request for MultiparFormData
   static Future<String> httpMultiparFormData(String url, int method) async {
     try {
       hp.StreamedResponse? res;
@@ -533,24 +610,38 @@ class MBridge {
     }
   }
 
+  //http request and also webview
   static Future<String> http(String url, int method) async {
     try {
       hp.StreamedResponse? res;
       String result = "";
+
+      //Get headers
       final headersMap = jsonDecode(url)["headers"] as Map?;
+
+      //Get sourceId
       final sourceId = jsonDecode(url)["sourceId"] as int?;
 
+      //Get body
       final bodyMap = jsonDecode(url)["body"] as Map?;
+
+      //Convert body Map<dynamic,dynamic> to Map<String,String>
       Map<String, dynamic> body = {};
       if (bodyMap != null) {
         body = bodyMap.map((key, value) => MapEntry(key.toString(), value));
       }
+
+      //Convert headers Map<dynamic,dynamic> to Map<String,String>
       Map<String, String> headers = {};
       if (headersMap != null) {
         headers = headersMap
             .map((key, value) => MapEntry(key.toString(), value.toString()));
       }
+
+      //Get the serie source
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
+
+      //Check the serie if has cloudflare
       if (source != null && source.hasCloudflare!) {
         final res = await cloudflareBypass(
             url: jsonDecode(url)["url"],
@@ -558,6 +649,8 @@ class MBridge {
             method: method);
         return res;
       }
+
+      //Do the http request if the serie hasn't cloudflare
       var request = hp.Request(
           method == 0
               ? 'GET'
@@ -567,6 +660,7 @@ class MBridge {
                       ? 'PUT'
                       : 'DELETE',
           Uri.parse(jsonDecode(url)["url"]));
+
       if (bodyMap != null) {
         request.body = json.encode(body);
       }
@@ -629,6 +723,7 @@ class MBridge {
     );
   }
 
+  //Utility to use substring
   static String subString(String text, String pattern, int type) {
     String result = "";
     if (type == 0) {
@@ -641,6 +736,7 @@ class MBridge {
     return result;
   }
 
+  //Parse a chapter date to millisecondsSinceEpoch
   static String parseChapterDate(
       String date, String dateFormat, String dateFormatLocale) {
     int parseRelativeDate(String date) {
@@ -835,6 +931,7 @@ class MBridge {
         .videosFromUrl(url, prefix: prefix, suffix: suffix);
   }
 
+  //Utility to use base64
   static String bAse64(String text, int type) {
     return utf8.decode(base64.decode(text));
   }
@@ -849,6 +946,7 @@ class MBridge {
     return Video(url, quality, originalUrl, headers: newHeaders);
   }
 
+  //Check if value is empty
   static bool isEmptyOrIsNotEmpty(dynamic value, int type) {
     if (value is List) {
       return type == 0 ? value.isEmpty : value.isNotEmpty;
