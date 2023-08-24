@@ -13,20 +13,23 @@ part 'get_anime_servers.g.dart';
 @riverpod
 Future<List<Video>> getAnimeServers(
   GetAnimeServersRef ref, {
-  required Chapter chapter,
+  required Chapter episode,
 }) async {
   List<Video> video = [];
-  if (!chapter.manga.value!.isLocalArchive!) {
+  if (episode.manga.value!.isLocalArchive!) {
+    return [Video(episode.archivePath!, episode.name!, episode.archivePath!)];
+  }
+  if (!episode.manga.value!.isLocalArchive!) {
     final source =
-        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+        getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
 
-    final bytecode = compilerEval(source.sourceCode!);
+    final bytecode = compilerEval(source!.sourceCode!);
 
     final runtime = runtimeEval(bytecode);
     runtime.args = [
       $MangaModel.wrap(MangaModel(
         lang: source.lang,
-        link: chapter.url,
+        link: episode.url,
         baseUrl: source.baseUrl,
         source: source.name,
         apiUrl: source.apiUrl,

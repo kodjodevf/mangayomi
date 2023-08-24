@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
     final serversData = ref.watch(getAnimeServersProvider(
-      chapter: widget.episode,
+      episode: widget.episode,
     ));
     return serversData.when(
       data: (data) {
@@ -119,6 +120,7 @@ class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
           appBar: AppBar(
             title: const Text(''),
             leading: BackButton(
+              color: Colors.white,
               onPressed: () {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
@@ -174,7 +176,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (Duration position) {
-      if (_seekToCurrentPosition) {
+      if (_seekToCurrentPosition && _currentPosition != Duration.zero) {
         _player.seek(_currentPosition);
         _seekToCurrentPosition = false;
       } else {
@@ -184,6 +186,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       }
     },
   );
+
   @override
   void initState() {
     super.initState();
@@ -201,10 +204,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   void _onChangeVideoQuality() {
+    log(_player.state.tracks.subtitle.toString());
     final l10n = l10nLocalizations(context)!;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
+        title: Text("Select video quality"),
         actions: List.generate(
           widget.videos.length,
           (index) {
@@ -235,7 +240,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 _seekToCurrentPosition = true;
                 _currentPositionSub = _player.stream.position.listen(
                   (Duration position) {
-                    if (_seekToCurrentPosition) {
+                    if (_seekToCurrentPosition &&
+                        _currentPosition != Duration.zero) {
                       _player.seek(_currentPosition);
                       _seekToCurrentPosition = false;
                     } else {
@@ -246,6 +252,54 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     }
                   },
                 );
+                Navigator.maybePop(_);
+              },
+            );
+          },
+        ),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.maybePop(_),
+          isDestructiveAction: true,
+          child: Text(l10n.cancel),
+        ),
+      ),
+    );
+  }
+
+  void _onChangeVideoSubtitle() {
+    final l10n = l10nLocalizations(context)!;
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        title: Text("Select sub"),
+        actions: List.generate(
+          _player.state.tracks.subtitle.length,
+          (index) {
+            final subtitle = _player.state.tracks.subtitle[index];
+            return CupertinoActionSheetAction(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    subtitle.title ??
+                        subtitle.language ??
+                        subtitle.channels ??
+                        "N/A",
+                    style: const TextStyle(),
+                  ),
+                  const SizedBox(
+                    width: 7,
+                  ),
+                  Icon(
+                    Icons.check,
+                    color: _player.state.track.subtitle == subtitle
+                        ? Theme.of(context).iconTheme.color
+                        : Colors.transparent,
+                  ),
+                ],
+              ),
+              onPressed: () {
+                _player.setSubtitleTrack(subtitle);
                 Navigator.maybePop(_);
               },
             );
@@ -303,6 +357,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                                 onPressed: _onChangeVideoQuality,
                                 child: const Icon(
                                   Icons.video_settings_outlined,
+                                  size: 30,
+                                  color: Colors.white,
+                                ),
+                              )),
+                          Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CupertinoButton(
+                                padding: const EdgeInsets.all(5),
+                                onPressed: _onChangeVideoSubtitle,
+                                child: const Icon(
+                                  Icons.subtitles,
                                   size: 30,
                                   color: Colors.white,
                                 ),

@@ -1659,8 +1659,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     return [
                       PopupMenuItem<int>(
                           value: 0, child: Text(l10n.open_random_entry)),
-                      if (widget.isManga)
-                        PopupMenuItem<int>(value: 1, child: Text(l10n.import)),
+                      PopupMenuItem<int>(value: 1, child: Text(l10n.import)),
                     ];
                   }, onSelected: (value) {
                     if (value == 0) {
@@ -1675,7 +1674,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             mangaM: randomManga);
                       });
                     } else {
-                      _importArchiveBD(context);
+                      _importLocal(context, widget.isManga);
                     }
                   }),
                 ],
@@ -1683,15 +1682,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 }
 
-_importArchiveBD(BuildContext context) {
+_importLocal(BuildContext context, bool isManga) {
   final l10n = l10nLocalizations(context)!;
   bool isLoading = false;
   showDialog(
       context: context,
+      barrierDismissible: !isLoading,
       builder: (context) {
         return AlertDialog(
           title: Text(
-            l10n.import_archive_bd,
+            l10n.import_local_file,
           ),
           content: StatefulBuilder(
             builder: (context, setState) {
@@ -1715,7 +1715,8 @@ _importArchiveBD(BuildContext context) {
                                     isLoading = true;
                                   });
                                   await ref.watch(
-                                      importArchivesFromFileProvider(null)
+                                      importArchivesFromFileProvider(
+                                              isManga: isManga, null)
                                           .future);
                                   setState(() {
                                     isLoading = false;
@@ -1727,7 +1728,7 @@ _importArchiveBD(BuildContext context) {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     const Icon(Icons.archive_outlined),
-                                    Text(l10n.import_archive_from_file,
+                                    Text(l10n.import_files,
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .textTheme
@@ -1739,39 +1740,6 @@ _importArchiveBD(BuildContext context) {
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(3),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10))),
-                                onPressed: () async {
-                                  await ref.watch(
-                                      importArchivesFromDirectoryProvider
-                                          .future);
-                                },
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    const Icon(Icons.folder),
-                                    Text(
-                                      l10n.import_archive_from_folder,
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall!
-                                              .color,
-                                          fontSize: 10),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
                         ],
                       ),
                       if (isLoading)

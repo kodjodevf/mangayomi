@@ -6,7 +6,7 @@ part of 'get_anime_servers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAnimeServersHash() => r'cd7f0fc4ee58ec02b015348aed60b1b0f2d1b300';
+String _$getAnimeServersHash() => r'8ca741fabdfe469251370c89edf3405f6738c52f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,10 +42,10 @@ class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
 
   /// See also [getAnimeServers].
   GetAnimeServersProvider call({
-    required Chapter chapter,
+    required Chapter episode,
   }) {
     return GetAnimeServersProvider(
-      chapter: chapter,
+      episode: episode,
     );
   }
 
@@ -54,7 +54,7 @@ class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
     covariant GetAnimeServersProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
+      episode: provider.episode,
     );
   }
 
@@ -77,11 +77,11 @@ class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
 class GetAnimeServersProvider extends AutoDisposeFutureProvider<List<Video>> {
   /// See also [getAnimeServers].
   GetAnimeServersProvider({
-    required this.chapter,
+    required this.episode,
   }) : super.internal(
           (ref) => getAnimeServers(
             ref,
-            chapter: chapter,
+            episode: episode,
           ),
           from: getAnimeServersProvider,
           name: r'getAnimeServersProvider',
@@ -94,17 +94,17 @@ class GetAnimeServersProvider extends AutoDisposeFutureProvider<List<Video>> {
               GetAnimeServersFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
+  final Chapter episode;
 
   @override
   bool operator ==(Object other) {
-    return other is GetAnimeServersProvider && other.chapter == chapter;
+    return other is GetAnimeServersProvider && other.episode == episode;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, episode.hashCode);
 
     return _SystemHash.finish(hash);
   }

@@ -11,9 +11,11 @@ part 'headers.g.dart';
 Map<String, String> headers(HeadersRef ref,
     {required String source, required String lang}) {
   final sourceM = getSource(lang, source);
-  if (sourceM.headers!.isEmpty && !sourceM.hasCloudflare!) {
-    return {};
-  }
+
+  if (sourceM == null) return {};
+
+  if (sourceM.headers!.isEmpty && !sourceM.hasCloudflare!) return {};
+
   Map<String, String> newHeaders = {};
   if (sourceM.headers!.isNotEmpty) {
     final headers = jsonDecode(sourceM.headers!) as Map;

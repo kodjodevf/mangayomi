@@ -6,25 +6,8 @@ part of 'local_archive.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$importArchivesFromDirectoryHash() =>
-    r'c42265b5ccec477da1a39964a4fffeaf37b49164';
-
-/// See also [importArchivesFromDirectory].
-@ProviderFor(importArchivesFromDirectory)
-final importArchivesFromDirectoryProvider =
-    AutoDisposeFutureProvider<dynamic>.internal(
-  importArchivesFromDirectory,
-  name: r'importArchivesFromDirectoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$importArchivesFromDirectoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef ImportArchivesFromDirectoryRef = AutoDisposeFutureProviderRef<dynamic>;
 String _$importArchivesFromFileHash() =>
-    r'ee38771c056b3f15d856ed0b91cd559ab22dc236';
+    r'afa44597ec3e225e22be1207958b6f4553420fb8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -60,10 +43,12 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
 
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider call(
-    Manga? mManga,
-  ) {
+    Manga? mManga, {
+    required bool isManga,
+  }) {
     return ImportArchivesFromFileProvider(
       mManga,
+      isManga: isManga,
     );
   }
 
@@ -73,6 +58,7 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
   ) {
     return call(
       provider.mManga,
+      isManga: provider.isManga,
     );
   }
 
@@ -96,11 +82,13 @@ class ImportArchivesFromFileProvider
     extends AutoDisposeFutureProvider<dynamic> {
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider(
-    this.mManga,
-  ) : super.internal(
+    this.mManga, {
+    required this.isManga,
+  }) : super.internal(
           (ref) => importArchivesFromFile(
             ref,
             mManga,
+            isManga: isManga,
           ),
           from: importArchivesFromFileProvider,
           name: r'importArchivesFromFileProvider',
@@ -114,16 +102,20 @@ class ImportArchivesFromFileProvider
         );
 
   final Manga? mManga;
+  final bool isManga;
 
   @override
   bool operator ==(Object other) {
-    return other is ImportArchivesFromFileProvider && other.mManga == mManga;
+    return other is ImportArchivesFromFileProvider &&
+        other.mManga == mManga &&
+        other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mManga.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
   }

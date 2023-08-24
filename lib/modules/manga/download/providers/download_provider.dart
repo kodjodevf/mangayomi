@@ -55,7 +55,7 @@ Future<List<String>> downloadChapter(
   } else {
     ref
         .read(getAnimeServersProvider(
-      chapter: chapter,
+      episode: chapter,
     ).future)
         .then((value) {
       final videosUrls =

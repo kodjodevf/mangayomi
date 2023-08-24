@@ -62,7 +62,7 @@ Future<GetChapterUrlModel> getChapterUrl(
         isarPageUrls.first.urls!.isNotEmpty) {
       pageUrls = isarPageUrls.first.urls!;
     } else {
-      final bytecode = compilerEval(source.sourceCode!);
+      final bytecode = compilerEval(source!.sourceCode!);
 
       final runtime = runtimeEval(bytecode);
       runtime.args = [

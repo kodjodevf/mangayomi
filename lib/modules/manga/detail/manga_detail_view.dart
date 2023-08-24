@@ -42,6 +42,8 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../utils/constant.dart';
+
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
   final Widget? titleDescription;
@@ -223,7 +225,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 headers: ref.watch(headersProvider(
                                     source: widget.manga!.source!,
                                     lang: widget.manga!.lang!)),
-                                imageUrl: widget.manga!.imageUrl!,
+                                imageUrl: widget.manga!.imageUrl!.isEmpty
+                                    ? emptyImg
+                                    : widget.manga!.imageUrl!,
                                 width: mediaWidth(context, 1),
                                 height: 300,
                                 fit: BoxFit.cover),
@@ -393,7 +397,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 } else if (value == 2) {
                                   final source = getSource(widget.manga!.lang!,
                                       widget.manga!.source!);
-                                  String url = source.apiUrl!.isEmpty
+                                  String url = source!.apiUrl!.isEmpty
                                       ? widget.manga!.link!
                                       : "${source.baseUrl}${widget.manga!.link!}";
 
@@ -491,7 +495,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                         color: secondaryColor(
                                                             context)),
                                                     label: Text(
-                                                      l10n.add_chapters,
+                                                      widget.manga!.isManga!
+                                                          ? l10n.add_chapters
+                                                          : l10n.add_episodes,
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
@@ -501,6 +507,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                     onPressed: () async {
                                                       await ref.watch(
                                                           importArchivesFromFileProvider(
+                                                                  isManga: widget
+                                                                      .manga!
+                                                                      .isManga!,
                                                                   widget.manga)
                                                               .future);
                                                     },
@@ -1245,6 +1254,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   onPressed: () async {
                                     await ref.watch(
                                         importArchivesFromFileProvider(
+                                                isManga: widget.manga!.isManga!,
                                                 widget.manga)
                                             .future);
                                   },
@@ -1272,7 +1282,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final imageProvider = widget.manga!.customCoverImage != null
         ? MemoryImage(widget.manga!.customCoverImage as Uint8List)
             as ImageProvider
-        : CachedNetworkImageProvider(widget.manga!.imageUrl!);
+        : CachedNetworkImageProvider(
+            widget.manga!.imageUrl!.isEmpty
+                ? emptyImg
+                : widget.manga!.imageUrl!,
+            headers: ref.watch(headersProvider(
+                source: widget.manga!.source!, lang: widget.manga!.lang!)));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
       child: GestureDetector(
@@ -1389,7 +1404,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   final manga = widget.manga!;
                   final source =
                       getSource(widget.manga!.lang!, widget.manga!.source!);
-                  String url = source.apiUrl!.isEmpty
+                  String url = source!.apiUrl!.isEmpty
                       ? widget.manga!.link!
                       : "${source.baseUrl}${widget.manga!.link!}";
 

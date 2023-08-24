@@ -635,7 +635,7 @@ class _MangaChapterPageGalleryState
                       onPressed: () {
                         final manga = chapter.manga.value!;
                         final source = getSource(manga.lang!, manga.source!);
-                        String url = source.apiUrl!.isEmpty
+                        String url = source!.apiUrl!.isEmpty
                             ? chapter.url!
                             : "${source.baseUrl}/${chapter.url!}";
                         Map<String, String> data = {

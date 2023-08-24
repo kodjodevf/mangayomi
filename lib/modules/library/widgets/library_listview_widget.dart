@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/library/providers/library_state_provider.dart'
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
@@ -97,7 +98,9 @@ class LibraryListViewWidget extends StatelessWidget {
                                         ? MemoryImage(entry.customCoverImage
                                             as Uint8List) as ImageProvider
                                         : CachedNetworkImageProvider(
-                                            entry.imageUrl!,
+                                            entry.imageUrl!.isEmpty
+                                                ? emptyImg
+                                                : entry.imageUrl!,
                                             headers: ref.watch(headersProvider(
                                                 source: entry.source!,
                                                 lang: entry.lang!)),

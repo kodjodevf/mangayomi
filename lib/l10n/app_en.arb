@@ -162,9 +162,8 @@
   "delete_chapters":"Delete Chapter?",
   "default0":"Default",
   "total_chapters":"Total Chapters",
-  "import_archive_bd":"Import Comic Archive",
-  "import_archive_from_file":".cbz or .zip files",
-  "import_archive_from_folder":"From folder (which contains .cbz or .zip files)",
+  "import_local_file":"Import Local file",
+  "import_files":"Files",
   "nothing_read_recently":"Nothing read recently",
   "status": "Status",
   "not_started": "Not started",
@@ -213,6 +212,7 @@
   "scale_type_smart_fit":"Smart fit",
   "page_preload_amount":"Page preload amount",
   "page_preload_amount_subtitle":"The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.",
-  "image_loading_error":"This image couldn't be loaded"
+  "image_loading_error":"This image couldn't be loaded",
+  "add_episodes":"Add Episodes"
 
 }

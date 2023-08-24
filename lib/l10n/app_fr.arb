@@ -162,9 +162,8 @@
   "delete_chapters":"Supprimer le chapitre ?",
   "default0":"défaut",
   "total_chapters":"Nombre de chapitres",
-  "import_archive_bd":"Importer des archives BD",
-  "import_archive_from_file":"fichier .cbz ou .zip",
-  "import_archive_from_folder":"à partir d'un dossier (comprenant fichier .cbz ou .zip)",
+  "import_local_file":"Importer des fichiers",
+  "import_files":"Fichiers",
   "nothing_read_recently":"Rien de lu recemment",
   "status": "Statut",
   "not_started": "Pas commencé",
@@ -213,5 +212,6 @@
   "scale_type_smart_fit":"Adaptation intelligente",
   "page_preload_amount":"Nombre de page à précharger",
   "page_preload_amount_subtitle":"Le nombre de pages à précharger pendant la lecture. De plus grandes valeurs rendront la lecture plus fluide au coût d'un plus grand cache et d'une plus grande utilisation de données.",
-  "image_loading_error":"L'image n'a pas pu être chargée"
+  "image_loading_error":"L'image n'a pas pu être chargée",
+  "add_episodes":"Ajouter Épisodes"
 }
