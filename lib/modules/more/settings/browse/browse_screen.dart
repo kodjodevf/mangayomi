@@ -20,111 +20,113 @@ class BrowseSScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n!.browse),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30, top: 20),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    children: [
-                      Text(l10n.extensions,
-                          style: TextStyle(
-                              fontSize: 13, color: primaryColor(context))),
-                    ],
-                  ),
-                ),
-                SwitchListTile(
-                    value: checkForExtensionUpdates,
-                    title: Text(l10n.check_for_extension_updates),
-                    onChanged: (value) {
-                      ref
-                          .read(checkForExtensionsUpdateStateProvider.notifier)
-                          .set(value);
-                    }),
-                if (checkForExtensionUpdates)
-                  SwitchListTile(
-                      value: autoUpdateExtensions,
-                      title: Text(l10n.auto_extensions_updates),
-                      subtitle: Text(
-                          l10n.auto_extensions_updates_subtitle,
-                          style: TextStyle(
-                              fontSize: 11, color: secondaryColor(context))),
-                      onChanged: (value) {
-                        ref
-                            .read(autoUpdateExtensionsStateProvider.notifier)
-                            .set(value);
-                      }),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    children: [
-                      Text(l10n.global_search,
-                          style: TextStyle(
-                              fontSize: 13, color: primaryColor(context))),
-                    ],
-                  ),
-                ),
-                SwitchListTile(
-                    value: onlyIncludePinnedSource,
-                    title: Text(l10n.only_include_pinned_sources),
-                    onChanged: (value) {
-                      ref
-                          .read(onlyIncludePinnedSourceStateProvider.notifier)
-                          .set(value);
-                    }),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Row(
-                    children: [
-                      Text(l10n.nsfw_sources,
-                          style: TextStyle(
-                              fontSize: 13, color: primaryColor(context))),
-                    ],
-                  ),
-                ),
-                SwitchListTile(
-                    value: showNSFWS,
-                    title: Text(l10n.nsfw_sources_show),
-                    onChanged: (value) {
-                      ref.read(showNSFWStateProvider.notifier).set(value);
-                    }),
-                ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30, top: 20),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.info_outline_rounded,
-                          color: secondaryColor(context),
-                        ),
+                        Text(l10n.extensions,
+                            style: TextStyle(
+                                fontSize: 13, color: primaryColor(context))),
                       ],
                     ),
                   ),
-                  subtitle: Text(l10n.nsfw_sources_info,
-                      style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context))),
-                )
-              ],
+                  SwitchListTile(
+                      value: checkForExtensionUpdates,
+                      title: Text(l10n.check_for_extension_updates),
+                      onChanged: (value) {
+                        ref
+                            .read(checkForExtensionsUpdateStateProvider.notifier)
+                            .set(value);
+                      }),
+                  if (checkForExtensionUpdates)
+                    SwitchListTile(
+                        value: autoUpdateExtensions,
+                        title: Text(l10n.auto_extensions_updates),
+                        subtitle: Text(
+                            l10n.auto_extensions_updates_subtitle,
+                            style: TextStyle(
+                                fontSize: 11, color: secondaryColor(context))),
+                        onChanged: (value) {
+                          ref
+                              .read(autoUpdateExtensionsStateProvider.notifier)
+                              .set(value);
+                        }),
+                ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Text(l10n.global_search,
+                            style: TextStyle(
+                                fontSize: 13, color: primaryColor(context))),
+                      ],
+                    ),
+                  ),
+                  SwitchListTile(
+                      value: onlyIncludePinnedSource,
+                      title: Text(l10n.only_include_pinned_sources),
+                      onChanged: (value) {
+                        ref
+                            .read(onlyIncludePinnedSourceStateProvider.notifier)
+                            .set(value);
+                      }),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Text(l10n.nsfw_sources,
+                            style: TextStyle(
+                                fontSize: 13, color: primaryColor(context))),
+                      ],
+                    ),
+                  ),
+                  SwitchListTile(
+                      value: showNSFWS,
+                      title: Text(l10n.nsfw_sources_show),
+                      onChanged: (value) {
+                        ref.read(showNSFWStateProvider.notifier).set(value);
+                      }),
+                  ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: secondaryColor(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: Text(l10n.nsfw_sources_info,
+                        style: TextStyle(
+                            fontSize: 11, color: secondaryColor(context))),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

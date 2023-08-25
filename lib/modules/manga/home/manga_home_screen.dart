@@ -10,7 +10,7 @@ import 'package:mangayomi/services/get_popular_manga.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
-import 'package:mangayomi/modules/library/search_text_form_field.dart';
+import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';

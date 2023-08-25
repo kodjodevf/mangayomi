@@ -5,7 +5,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
-import 'package:mangayomi/modules/library/search_text_form_field.dart';
+import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {
   const BrowseScreen({super.key});

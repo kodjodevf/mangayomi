@@ -54,21 +54,29 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       appBar: AppBar(
         title: Text(l10n!.about),
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 150,
-            // child: Center(
-            //     child: Image.asset(
-            //   "assets/icon.png",
-            //   color: Theme.of(context).brightness == Brightness.light
-            //       ? Colors.black
-            //       : Colors.white,
-            // ))
-          ),
-          Flexible(
-            flex: 3,
-            child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Center(
+            //     child: ClipOval(
+            //   child: Image.asset(
+            //     Theme.of(context).brightness == Brightness.light
+            //         ? "assets/app_icons/icon-black.png"
+            //         : "assets/app_icons/icon-red.png",
+            //     height: 100,
+            //   ),
+            // )),
+            const SizedBox(
+              height: 150,
+              // child: Center(
+              //     child: Image.asset(
+              //   "assets/icon.png",
+              //   color: Theme.of(context).brightness == Brightness.light
+              //       ? Colors.black
+              //       : Colors.white,
+              // ))
+            ),
+            Column(
               children: [
                 const Divider(
                   color: Colors.grey,
@@ -113,8 +121,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 )
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

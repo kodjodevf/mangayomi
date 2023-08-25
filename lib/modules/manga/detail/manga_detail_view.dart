@@ -817,6 +817,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           levels: [
             DraggableMenuLevel.ratio(
                 ratio: scanlators.$1.isEmpty ? 1 / 3.6 : 1 / 3.3),
+            DraggableMenuLevel.ratio(ratio: 2 / 3),
           ],
           fastDrag: false,
           minimizeBeforeFastDrag: false,

@@ -17,36 +17,38 @@ class TrackScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10nLocalizations(context)!.tracking),
       ),
-      body: StreamBuilder(
-          stream: isar.trackPreferences
-              .filter()
-              .syncIdIsNotNull()
-              .watch(fireImmediately: true),
-          builder: (context, snapshot) {
-            List<TrackPreference>? entries =
-                snapshot.hasData ? snapshot.data : [];
-            return Column(
-              children: [
-                TrackListile(
-                    onTap: () async {
-                      await ref
-                          .read(myAnimeListProvider(syncId: 1, isManga: null)
-                              .notifier)
-                          .login();
-                    },
-                    id: 1,
-                    entries: entries!),
-                TrackListile(
-                    onTap: () async {
-                      await ref
-                          .read(anilistProvider(syncId: 2).notifier)
-                          .login();
-                    },
-                    id: 2,
-                    entries: entries)
-              ],
-            );
-          }),
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+            stream: isar.trackPreferences
+                .filter()
+                .syncIdIsNotNull()
+                .watch(fireImmediately: true),
+            builder: (context, snapshot) {
+              List<TrackPreference>? entries =
+                  snapshot.hasData ? snapshot.data : [];
+              return Column(
+                children: [
+                  TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(myAnimeListProvider(syncId: 1, isManga: null)
+                                .notifier)
+                            .login();
+                      },
+                      id: 1,
+                      entries: entries!),
+                  TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(anilistProvider(syncId: 2).notifier)
+                            .login();
+                      },
+                      id: 2,
+                      entries: entries)
+                ],
+              );
+            }),
+      ),
     );
   }
 }

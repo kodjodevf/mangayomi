@@ -14,6 +14,17 @@ class MoreScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 20),
+            //   child: ClipOval(
+            //     child: Image.asset(
+            //       Theme.of(context).brightness == Brightness.light
+            //           ? "assets/app_icons/icon-black.png"
+            //           : "assets/app_icons/icon-red.png",
+            //       height: 150,
+            //     ),
+            //   ),
+            // ),
             SizedBox(
                 height: 200,
                 // child: Center(
