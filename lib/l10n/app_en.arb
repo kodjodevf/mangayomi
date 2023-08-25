@@ -215,6 +215,9 @@
   "image_loading_error":"This image couldn't be loaded",
   "add_episodes":"Add Episodes",
   "select_video_quality":"Select video quality",
-  "select_video_subtitle":"Select video subtitle"
+  "select_video_subtitle":"Select video subtitle",
+  "check_for_extension_updates":"Check for extension updates",
+  "auto_extensions_updates":"Auto extension updates",
+  "auto_extensions_updates_subtitle":"Will automatically update the extension when a new version is available."
 
 }

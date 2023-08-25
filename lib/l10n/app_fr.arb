@@ -106,7 +106,7 @@
   "only_on_wifi":"Uniquement en Wi-Fi",
   "save_as_cbz_archive":"Enregistrer comme archive CBZ",
   "browse_subtitle":"Sources, extensions, recherche globale",
-  "only_include_pinned_sources":"Rechercher uniquement les sources épinglées dans la recherche globale",
+  "only_include_pinned_sources":"N'inclure que les sources épinglées",
   "nsfw_sources":"Contenu +18",
   "nsfw_sources_show":"Afficher dans les listes de sources et d'extensions",
   "nsfw_sources_info":"Ceci n'empêche pas les extensions non officielles ou potentiellement mal signalées de diffuser du contenu +18 dans l'application.",
@@ -215,5 +215,8 @@
   "image_loading_error":"L'image n'a pas pu être chargée",
   "add_episodes":"Ajouter Épisodes",
   "select_video_quality":"Selectionner une qualité video",
-  "select_video_subtitle":"Selectionner un sous-titrage video"
+  "select_video_subtitle":"Selectionner un sous-titrage video",  
+  "check_for_extension_updates":"Vérifier les mise à jour d'extensions",
+  "auto_extensions_updates":"Mises à jour auto des extensions",
+  "auto_extensions_updates_subtitle":"Mettra automatiquement à jour l'extension lorsqu'une nouvelle version est disponible."
 }

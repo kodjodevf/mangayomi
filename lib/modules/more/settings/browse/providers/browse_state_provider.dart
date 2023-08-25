@@ -31,3 +31,33 @@ class ShowNSFWState extends _$ShowNSFWState {
     isar.writeTxnSync(() => isar.settings.putSync(settings!..showNSFW = value));
   }
 }
+
+@riverpod
+class AutoUpdateExtensionsState extends _$AutoUpdateExtensionsState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.autoExtensionsUpdates ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..autoExtensionsUpdates = value));
+  }
+}
+
+@riverpod
+class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.checkForExtensionUpdates ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(() =>
+        isar.settings.putSync(settings!..checkForExtensionUpdates = value));
+  }
+}

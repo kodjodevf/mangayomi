@@ -88,7 +88,7 @@ class Settings {
 
   final sources = IsarLinks<Source>();
 
-  bool? autoUpdateExtensions;
+  bool? autoExtensionsUpdates;
 
   bool? cropBorders;
 
@@ -120,6 +120,8 @@ class Settings {
   SortLibraryManga? sortLibraryAnime;
 
   int? pagePreloadAmount;
+
+  bool? checkForExtensionUpdates;
 
   @enumerated
   ScaleType scaleType;
@@ -162,7 +164,7 @@ class Settings {
       this.downloadLocation = "",
       this.cropBorders = false,
       this.libraryLocalSource,
-      this.autoUpdateExtensions = false,
+      this.autoExtensionsUpdates = false,
       this.animeDisplayType = DisplayType.compactGrid,
       this.libraryFilterAnimeDownloadType = 0,
       this.libraryFilterAnimeUnreadType = 0,
@@ -176,7 +178,8 @@ class Settings {
       this.animeLibraryLocalSource,
       this.sortLibraryAnime,
       this.pagePreloadAmount = 6,
-      this.scaleType = ScaleType.fitScreen});
+      this.scaleType = ScaleType.fitScreen,
+      this.checkForExtensionUpdates = true});
 }
 
 enum DisplayType {

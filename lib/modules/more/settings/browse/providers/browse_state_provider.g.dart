@@ -39,5 +39,39 @@ final showNSFWStateProvider =
 );
 
 typedef _$ShowNSFWState = AutoDisposeNotifier<bool>;
+String _$autoUpdateExtensionsStateHash() =>
+    r'dda58b6f78d486f82150e1edee4c1dadb9776df4';
+
+/// See also [AutoUpdateExtensionsState].
+@ProviderFor(AutoUpdateExtensionsState)
+final autoUpdateExtensionsStateProvider =
+    AutoDisposeNotifierProvider<AutoUpdateExtensionsState, bool>.internal(
+  AutoUpdateExtensionsState.new,
+  name: r'autoUpdateExtensionsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$autoUpdateExtensionsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AutoUpdateExtensionsState = AutoDisposeNotifier<bool>;
+String _$checkForExtensionsUpdateStateHash() =>
+    r'1b1f22a50e0862a7d643fbe0fcb5d563bd0169c2';
+
+/// See also [CheckForExtensionsUpdateState].
+@ProviderFor(CheckForExtensionsUpdateState)
+final checkForExtensionsUpdateStateProvider =
+    AutoDisposeNotifierProvider<CheckForExtensionsUpdateState, bool>.internal(
+  CheckForExtensionsUpdateState.new,
+  name: r'checkForExtensionsUpdateStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$checkForExtensionsUpdateStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CheckForExtensionsUpdateState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

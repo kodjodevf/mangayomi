@@ -12,6 +12,9 @@ class BrowseSScreen extends ConsumerWidget {
     final showNSFWS = ref.watch(showNSFWStateProvider);
     final onlyIncludePinnedSource =
         ref.watch(onlyIncludePinnedSourceStateProvider);
+    final checkForExtensionUpdates =
+        ref.watch(checkForExtensionsUpdateStateProvider);
+    final autoUpdateExtensions = ref.watch(autoUpdateExtensionsStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(
@@ -19,6 +22,44 @@ class BrowseSScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30, top: 20),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    children: [
+                      Text(l10n.extensions,
+                          style: TextStyle(
+                              fontSize: 13, color: primaryColor(context))),
+                    ],
+                  ),
+                ),
+                SwitchListTile(
+                    value: checkForExtensionUpdates,
+                    title: Text(l10n.check_for_extension_updates),
+                    onChanged: (value) {
+                      ref
+                          .read(checkForExtensionsUpdateStateProvider.notifier)
+                          .set(value);
+                    }),
+                if (checkForExtensionUpdates)
+                  SwitchListTile(
+                      value: autoUpdateExtensions,
+                      title: Text(l10n.auto_extensions_updates),
+                      subtitle: Text(
+                          l10n.auto_extensions_updates_subtitle,
+                          style: TextStyle(
+                              fontSize: 11, color: secondaryColor(context))),
+                      onChanged: (value) {
+                        ref
+                            .read(autoUpdateExtensionsStateProvider.notifier)
+                            .set(value);
+                      }),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 30),
             child: Column(
