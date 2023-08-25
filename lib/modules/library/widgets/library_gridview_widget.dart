@@ -64,7 +64,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                   ? MemoryImage(entry.customCoverImage as Uint8List)
                       as ImageProvider
                   : CachedNetworkImageProvider(
-                      entry.imageUrl!.isEmpty ? emptyImg : entry.imageUrl!,
+                      toImgUrl(entry.imageUrl!),
                       headers: ref.watch(headersProvider(
                           source: entry.source!, lang: entry.lang!)),
                     ),

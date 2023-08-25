@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
-// import 'package:image/image.dart';
+// import 'package:image/image.dart' as img;
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auto_crop_image_provider.g.dart';
@@ -85,86 +85,87 @@ class CropBorderClass {
 }
 
 void _autocropImageIsolate(CropBorderClass cropData) async {
-  // Image? croppedImage;
-  // // Image? image = decodeImage(cropData.image!);
-  // // final old = image;
-  // // image = copyCrop(image!, 0, 0, image.width, image.height);
+  // img.Image? croppedImage;
+  // img.Image? image = img.decodeImage(cropData.image!);
+  // final old = image;
+  // image = img.copyCrop(image!,
+  //     x: 0, y: 0, width: image.width, height: image.height);
 
-  // // int left = 0;
-  // // int top = 0;
-  // // int right = image.width - 1;
-  // // int bottom = image.height - 1;
+  // int left = 0;
+  // int top = 0;
+  // int right = image.width - 1;
+  // int bottom = image.height - 1;
 
-  // // // Find left coordinate
-  // // for (int x = 0; x < image.width; x++) {
-  // //   bool stop = false;
-  // //   for (int y = 0; y < image.height; y++) {
-  // //     if (image.getPixel(x, y) != getColor(255, 255, 255, 255)) {
-  // //       stop = true;
-  // //       break;
-  // //     }
-  // //   }
-  // //   if (stop) {
-  // //     left = x;
-  // //     break;
-  // //   }
-  // // }
+  // // Find left coordinate
+  // for (int x = 0; x < image.width; x++) {
+  //   bool stop = false;
+  //   for (int y = 0; y < image.height; y++) {
+  //     if (image.getPixel(x, y) != image.getColor(255, 255, 255, 255)) {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     left = x;
+  //     break;
+  //   }
+  // }
 
-  // // // Find top coordinate
-  // // for (int y = 0; y < image.height; y++) {
-  // //   bool stop = false;
-  // //   for (int x = 0; x < image.width; x++) {
-  // //     if (image.getPixel(x, y) != getColor(255, 255, 255, 255)) {
-  // //       stop = true;
-  // //       break;
-  // //     }
-  // //   }
-  // //   if (stop) {
-  // //     top = y;
-  // //     break;
-  // //   }
-  // // }
+  // // Find top coordinate
+  // for (int y = 0; y < image.height; y++) {
+  //   bool stop = false;
+  //   for (int x = 0; x < image.width; x++) {
+  //     if (image.getPixel(x, y) != image.getColor(255, 255, 255, 255)) {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     top = y;
+  //     break;
+  //   }
+  // }
 
-  // // // Find right coordinate
-  // // for (int x = image.width - 1; x >= 0; x--) {
-  // //   bool stop = false;
-  // //   for (int y = 0; y < image.height; y++) {
-  // //     if (image.getPixel(x, y) != getColor(255, 255, 255, 255)) {
-  // //       stop = true;
-  // //       break;
-  // //     }
-  // //   }
-  // //   if (stop) {
-  // //     right = x;
-  // //     break;
-  // //   }
-  // // }
+  // // Find right coordinate
+  // for (int x = image.width - 1; x >= 0; x--) {
+  //   bool stop = false;
+  //   for (int y = 0; y < image.height; y++) {
+  //     if (image.getPixel(x, y) != image.getColor(255, 255, 255, 255)) {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     right = x;
+  //     break;
+  //   }
+  // }
 
-  // // // Find bottom coordinate
-  // // for (int y = image.height - 1; y >= 0; y--) {
-  // //   bool stop = false;
-  // //   for (int x = 0; x < image.width; x++) {
-  // //     if (image.getPixel(x, y) != getColor(255, 255, 255, 255)) {
-  // //       stop = true;
-  // //       break;
-  // //     }
-  // //   }
-  // //   if (stop) {
-  // //     bottom = y;
-  // //     break;
-  // //   }
-  // // }
+  // // Find bottom coordinate
+  // for (int y = image.height - 1; y >= 0; y--) {
+  //   bool stop = false;
+  //   for (int x = 0; x < image.width; x++) {
+  //     if (image.getPixel(x, y) != image.getColor(255, 255, 255, 255)) {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     bottom = y;
+  //     break;
+  //   }
+  // }
 
-  // // // Crop the image
-  // // croppedImage = copyCrop(
-  // //   image,
-  // //   left,
-  // //   top,
-  // //   right - left + 1,
-  // //   bottom - top + 1,
-  // // );
+  // // Crop the image
+  // croppedImage = img.copyCrop(
+  //   image,
+  //   x: left,
+  //   y: top,
+  //   width: right - left + 1,
+  //   height: bottom - top + 1,
+  // );
   // if (old != croppedImage) {
-  //   cropData.sendPort.send(encodeJpg(croppedImage) as Uint8List);
+  //   cropData.sendPort.send(img.encodeJpg(croppedImage));
   // } else {
   //   cropData.sendPort.send(null);
   // }

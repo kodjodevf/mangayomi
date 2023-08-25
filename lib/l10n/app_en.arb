@@ -113,7 +113,7 @@
   "nsfw_sources_info":"This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app",
   "version":"Version",
   "check_for_update":"Check for update",
-  "n_days_ago":"{days} ago",
+  "n_days_ago":"{days} days ago",
   "today":"Today",
   "yesterday":"Yesterday",
   "a_week_ago":"A week ago",
@@ -213,6 +213,8 @@
   "page_preload_amount":"Page preload amount",
   "page_preload_amount_subtitle":"The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.",
   "image_loading_error":"This image couldn't be loaded",
-  "add_episodes":"Add Episodes"
+  "add_episodes":"Add Episodes",
+  "select_video_quality":"Select video quality",
+  "select_video_subtitle":"Select video subtitle"
 
 }

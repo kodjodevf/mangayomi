@@ -213,5 +213,7 @@
   "page_preload_amount":"Nombre de page à précharger",
   "page_preload_amount_subtitle":"Le nombre de pages à précharger pendant la lecture. De plus grandes valeurs rendront la lecture plus fluide au coût d'un plus grand cache et d'une plus grande utilisation de données.",
   "image_loading_error":"L'image n'a pas pu être chargée",
-  "add_episodes":"Ajouter Épisodes"
+  "add_episodes":"Ajouter Épisodes",
+  "select_video_quality":"Selectionner une qualité video",
+  "select_video_subtitle":"Selectionner un sous-titrage video"
 }

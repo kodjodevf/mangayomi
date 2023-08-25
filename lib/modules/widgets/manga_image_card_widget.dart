@@ -10,6 +10,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
@@ -48,8 +49,8 @@ class MangaImageCardWidget extends ConsumerWidget {
                       snapshot.hasData &&
                               snapshot.data!.isNotEmpty &&
                               snapshot.data!.first.imageUrl != null
-                          ? snapshot.data!.first.imageUrl!
-                          : getMangaDetail!.imageUrl!,
+                          ? toImgUrl(snapshot.data!.first.imageUrl!)
+                          : toImgUrl(getMangaDetail!.imageUrl!),
                       headers: ref.watch(headersProvider(
                           source: getMangaDetail!.source!,
                           lang: getMangaDetail!.lang!)),

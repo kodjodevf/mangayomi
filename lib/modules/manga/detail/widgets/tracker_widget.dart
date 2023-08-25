@@ -165,7 +165,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     dense: true,
                                     contentPadding: const EdgeInsets.all(0),
                                     value: status,
-                                    groupValue: toStatus(
+                                    groupValue: toTrackStatus(
                                         widget.trackRes.status,
                                         widget.isManga,
                                         widget.trackRes.syncId!),
@@ -204,7 +204,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       });
                 },
                     text: getTrackStatus(
-                        toStatus(widget.trackRes.status, widget.isManga,
+                        toTrackStatus(widget.trackRes.status, widget.isManga,
                             widget.trackRes.syncId!),
                         context)),
               ),

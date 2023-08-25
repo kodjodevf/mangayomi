@@ -225,9 +225,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 headers: ref.watch(headersProvider(
                                     source: widget.manga!.source!,
                                     lang: widget.manga!.lang!)),
-                                imageUrl: widget.manga!.imageUrl!.isEmpty
-                                    ? emptyImg
-                                    : widget.manga!.imageUrl!,
+                                imageUrl: toImgUrl(widget.manga!.imageUrl!),
                                 width: mediaWidth(context, 1),
                                 height: 300,
                                 fit: BoxFit.cover),
@@ -1282,10 +1280,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final imageProvider = widget.manga!.customCoverImage != null
         ? MemoryImage(widget.manga!.customCoverImage as Uint8List)
             as ImageProvider
-        : CachedNetworkImageProvider(
-            widget.manga!.imageUrl!.isEmpty
-                ? emptyImg
-                : widget.manga!.imageUrl!,
+        : CachedNetworkImageProvider(toImgUrl(widget.manga!.imageUrl!),
             headers: ref.watch(headersProvider(
                 source: widget.manga!.source!, lang: widget.manga!.lang!)));
     return Padding(

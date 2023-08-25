@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
-import 'package:mangayomi/modules/anime/providers/stream_controller_provider.dart';
+import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -20,18 +19,18 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 
-class AnimeStreamView extends riv.ConsumerStatefulWidget {
+class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
-  const AnimeStreamView({
+  const AnimePlayerView({
     super.key,
     required this.episode,
   });
 
   @override
-  riv.ConsumerState<AnimeStreamView> createState() => _AnimeStreamViewState();
+  riv.ConsumerState<AnimePlayerView> createState() => _AnimePlayerViewState();
 }
 
-class _AnimeStreamViewState extends riv.ConsumerState<AnimeStreamView> {
+class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations([
@@ -156,11 +155,8 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late final Player _player = Player();
-  late final VideoController _controller = VideoController(
-    _player,
-    configuration:
-        const VideoControllerConfiguration(enableHardwareAcceleration: true),
-  );
+
+  late final VideoController _controller = VideoController(_player);
 
   late final _streamController = AnimeStreamController(episode: widget.episode);
 
@@ -169,16 +165,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   bool _seekToCurrentPosition = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
   final _showFitLabel = StateProvider((ref) => false);
-
+  final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final _fit = StateProvider((ref) => BoxFit.contain);
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
   late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
-    (Duration position) {
+    (position) {
       if (_seekToCurrentPosition && _currentPosition != Duration.zero) {
         _player.seek(_currentPosition);
         _seekToCurrentPosition = false;
+        _isCompleted.value =
+            _player.state.duration.inSeconds - _currentPosition.inSeconds <= 10;
       } else {
         _currentPosition = position;
         _streamController.setCurrentPosition(position.inMilliseconds);
@@ -204,59 +202,58 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   void _onChangeVideoQuality() {
-    log(_player.state.tracks.subtitle.toString());
     final l10n = l10nLocalizations(context)!;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
-        title: Text("Select video quality"),
-        actions: List.generate(
-          widget.videos.length,
-          (index) {
-            final quality = widget.videos[index];
-            return CupertinoActionSheetAction(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    quality.quality,
-                    style: const TextStyle(),
+        title: Text(l10n.select_video_quality,
+            style: const TextStyle(fontSize: 30)),
+        actions: widget.videos
+            .map((quality) => CupertinoActionSheetAction(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          quality.quality,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 7,
+                      ),
+                      Icon(
+                        Icons.check,
+                        color: _video.value == quality
+                            ? Theme.of(context).iconTheme.color
+                            : Colors.transparent,
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Icon(
-                    Icons.check,
-                    color: _video.value == quality
-                        ? Theme.of(context).iconTheme.color
-                        : Colors.transparent,
-                  ),
-                ],
-              ),
-              onPressed: () {
-                _video.value = quality; // change the video quality
-                _player.open(
-                    Media(quality.originalUrl, httpHeaders: quality.headers));
-                _seekToCurrentPosition = true;
-                _currentPositionSub = _player.stream.position.listen(
-                  (Duration position) {
-                    if (_seekToCurrentPosition &&
-                        _currentPosition != Duration.zero) {
-                      _player.seek(_currentPosition);
-                      _seekToCurrentPosition = false;
-                    } else {
-                      _currentPosition = position;
-                      _streamController
-                          .setCurrentPosition(position.inMilliseconds);
-                      _streamController.setAnimeHistoryUpdate();
-                    }
+                  onPressed: () {
+                    _video.value = quality; // change the video quality
+                    _player.open(Media(quality.originalUrl,
+                        httpHeaders: quality.headers));
+                    _seekToCurrentPosition = true;
+                    _currentPositionSub = _player.stream.position.listen(
+                      (position) {
+                        if (_seekToCurrentPosition &&
+                            _currentPosition != Duration.zero) {
+                          _player.seek(_currentPosition);
+                          _seekToCurrentPosition = false;
+                        } else {
+                          _currentPosition = position;
+                          _streamController
+                              .setCurrentPosition(position.inMilliseconds);
+                          _streamController.setAnimeHistoryUpdate();
+                        }
+                      },
+                    );
+                    Navigator.maybePop(_);
                   },
-                );
-                Navigator.maybePop(_);
-              },
-            );
-          },
-        ),
+                ))
+            .toList(),
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.maybePop(_),
           isDestructiveAction: true,
@@ -271,40 +268,38 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
-        title: Text("Select sub"),
-        actions: List.generate(
-          _player.state.tracks.subtitle.length,
-          (index) {
-            final subtitle = _player.state.tracks.subtitle[index];
-            return CupertinoActionSheetAction(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    subtitle.title ??
-                        subtitle.language ??
-                        subtitle.channels ??
-                        "N/A",
-                    style: const TextStyle(),
+        title: Text(l10n.select_video_subtitle,
+            style: const TextStyle(fontSize: 30)),
+        actions: _player.state.tracks.subtitle
+            .map((subtitle) => CupertinoActionSheetAction(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        subtitle.title ??
+                            subtitle.language ??
+                            subtitle.channels ??
+                            "N/A",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(
+                        width: 7,
+                      ),
+                      Icon(
+                        Icons.check,
+                        color: _player.state.track.subtitle == subtitle
+                            ? Theme.of(context).iconTheme.color
+                            : Colors.transparent,
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 7,
-                  ),
-                  Icon(
-                    Icons.check,
-                    color: _player.state.track.subtitle == subtitle
-                        ? Theme.of(context).iconTheme.color
-                        : Colors.transparent,
-                  ),
-                ],
-              ),
-              onPressed: () {
-                _player.setSubtitleTrack(subtitle);
-                Navigator.maybePop(_);
-              },
-            );
-          },
-        ),
+                  onPressed: () {
+                    _player.setSubtitleTrack(subtitle);
+                    Navigator.maybePop(_);
+                  },
+                ))
+            .toList(),
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.maybePop(_),
           isDestructiveAction: true,

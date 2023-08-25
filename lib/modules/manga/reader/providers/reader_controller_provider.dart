@@ -34,7 +34,7 @@ BoxFit getBoxFit(ScaleType scaleType) {
     ScaleType.fitScreen => BoxFit.contain,
     ScaleType.originalSize => BoxFit.cover,
     ScaleType.smartFit => BoxFit.contain,
-    _ => BoxFit.none
+    _ => BoxFit.fill
   };
 }
 

@@ -44,7 +44,7 @@ String getTrackStatus(TrackStatus status, BuildContext context) {
   };
 }
 
-TrackStatus toStatus(TrackStatus status, bool isManga, int syncId) {
+TrackStatus toTrackStatus(TrackStatus status, bool isManga, int syncId) {
   return !isManga && syncId == 2
       ? switch (status) {
           TrackStatus.reading => TrackStatus.watching,
@@ -62,5 +62,9 @@ TrackStatus toStatus(TrackStatus status, bool isManga, int syncId) {
   };
 }
 
-const emptyImg =
+String toImgUrl(String url) {
+  return url.isEmpty ? _emptyImg : url;
+}
+
+const _emptyImg =
     "https://upload.wikimedia.org/wikipedia/commons/1/12/White_background.png";

@@ -308,7 +308,7 @@ List<String> getScaleTypeNames(BuildContext context) {
   final l10n = l10nLocalizations(context)!;
   return [
     l10n.scale_type_fit_screen,
-    // l10n.scale_type_stretch,
+    l10n.scale_type_stretch,
     l10n.scale_type_fit_width,
     l10n.scale_type_fit_height,
     // l10n.scale_type_original_size,

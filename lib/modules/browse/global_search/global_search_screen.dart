@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +12,7 @@ import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/library/search_text_form_field.dart';
@@ -230,8 +230,9 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                               snapshot.data!.isNotEmpty &&
                                               snapshot.data!.first.imageUrl !=
                                                   null
-                                          ? snapshot.data!.first.imageUrl!
-                                          : data.imageUrl!,
+                                          ? toImgUrl(
+                                              snapshot.data!.first.imageUrl!)
+                                          : toImgUrl(data.imageUrl!),
                                       width: 100,
                                       height: 140,
                                       fit: BoxFit.fill),

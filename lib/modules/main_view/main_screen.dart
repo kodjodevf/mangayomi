@@ -25,7 +25,8 @@ class MainScreen extends ConsumerWidget {
       final location = ref.watch(
         routerCurrentLocationStateProvider(context),
       );
-      bool isReadingScreen = location == '/mangareaderview';
+      bool isReadingScreen =
+          location == '/mangareaderview' || location == '/animePlayerView';
       int currentIndex = switch (location) {
         null => 0,
         '/MangaLibrary' => 0,
@@ -178,19 +179,18 @@ class MainScreen extends ConsumerWidget {
                       height: isLongPressed
                           ? 0
                           : location == null
-                              ? 80
+                              ? null
                               : location != '/MangaLibrary' &&
                                       location != '/AnimeLibrary' &&
                                       location != '/history' &&
                                       location != '/browse' &&
                                       location != '/more'
                                   ? 0
-                                  : Platform.isIOS? 110:80,
+                                  : null,
                       child: NavigationBarTheme(
                         data: NavigationBarThemeData(
                           indicatorShape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30)),
-                          height: 20,
                         ),
                         child: NavigationBar(
                           animationDuration: const Duration(milliseconds: 500),

@@ -490,22 +490,22 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         )),
                   ),
                 ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                        onPressed: () {},
-                        child: Icon(
-                          Icons.download_outlined,
-                          color: color,
-                        )),
-                  ),
-                ),
+                // Expanded(
+                //   child: SizedBox(
+                //     height: 70,
+                //     child: ElevatedButton(
+                //         style: ElevatedButton.styleFrom(
+                //           elevation: 0,
+                //           backgroundColor: Colors.transparent,
+                //           shadowColor: Colors.transparent,
+                //         ),
+                //         onPressed: () {},
+                //         child: Icon(
+                //           Icons.download_outlined,
+                //           color: color,
+                //         )),
+                //   ),
+                // ),
                 Expanded(
                   child: SizedBox(
                     height: 70,

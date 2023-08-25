@@ -39,7 +39,7 @@ Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
           description: '',
           isLocalArchive: true,
         );
-    for (var file in result.files) {
+    for (var file in result.files.reversed.toList()) {
       (String, LocalExtensionType, Uint8List, String)? data = isManga
           ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future)
           : null;

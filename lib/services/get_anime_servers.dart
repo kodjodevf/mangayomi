@@ -19,32 +19,30 @@ Future<List<Video>> getAnimeServers(
   if (episode.manga.value!.isLocalArchive!) {
     return [Video(episode.archivePath!, episode.name!, episode.archivePath!)];
   }
-  if (!episode.manga.value!.isLocalArchive!) {
-    final source =
-        getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
+  final source =
+      getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
 
-    final bytecode = compilerEval(source!.sourceCode!);
+  final bytecode = compilerEval(source!.sourceCode!);
 
-    final runtime = runtimeEval(bytecode);
-    runtime.args = [
-      $MangaModel.wrap(MangaModel(
-        lang: source.lang,
-        link: episode.url,
-        baseUrl: source.baseUrl,
-        source: source.name,
-        apiUrl: source.apiUrl,
-        sourceId: source.id,
-      ))
-    ];
-    var res = await runtime.executeLib(
-        'package:mangayomi/source_code.dart', 'getVideoList');
-    if (res is $List) {
-      video = res.$reified
-          .map(
-            (e) => Video(e.url, e.quality, e.originalUrl, headers: e.headers),
-          )
-          .toList();
-    }
+  final runtime = runtimeEval(bytecode);
+  runtime.args = [
+    $MangaModel.wrap(MangaModel(
+      lang: source.lang,
+      link: episode.url,
+      baseUrl: source.baseUrl,
+      source: source.name,
+      apiUrl: source.apiUrl,
+      sourceId: source.id,
+    ))
+  ];
+  var res = await runtime.executeLib(
+      'package:mangayomi/source_code.dart', 'getVideoList');
+  if (res is $List) {
+    video = res.$reified
+        .map(
+          (e) => Video(e.url, e.quality, e.originalUrl, headers: e.headers),
+        )
+        .toList();
   }
   return video;
 }

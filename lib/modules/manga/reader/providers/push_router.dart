@@ -26,7 +26,7 @@ pushMangaReaderView({
     if (chapter.manga.value!.isManga!) {
       context.push('/mangareaderview', extra: chapter);
     } else {
-      context.push('/animestreamview', extra: chapter);
+      context.push('/animePlayerView', extra: chapter);
     }
   }
 }
@@ -38,6 +38,6 @@ pushReplacementMangaReaderView({
   if (chapter.manga.value!.isManga!) {
     context.pushReplacement('/mangareaderview', extra: chapter);
   } else {
-    context.pushReplacement('/animestreamview', extra: chapter);
+    context.pushReplacement('/animePlayerView', extra: chapter);
   }
 }

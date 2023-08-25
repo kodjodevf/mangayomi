@@ -18,7 +18,6 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_url.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/image_detail_info.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
@@ -453,10 +452,11 @@ class _MangaChapterPageGalleryState
   //   if (!isOk) {
   //     isOk = true;
   //     _cropImagesList = await ref.watch(autoCropBorderProvider(
-  //             archiveImages: _chapterUrlModel.archiveImages,
-  //             isLocaleList: _chapterUrlModel.isLocaleList,
-  //             path: _chapterUrlModel.path!,
-  //             url: _chapterUrlModel.pageUrls)
+  //             archiveImages:
+  //                 _uChapDataPreload.map((e) => e.archiveImage).toList(),
+  //             isLocaleList: _uChapDataPreload.map((e) => e.isLocale!).toList(),
+  //             path: _uChapDataPreload[_currentIndex!].path!,
+  //             url: _uChapDataPreload.map((e) => e.url!).toList())
   //         .future);
   //     if (mounted) {
   //       setState(() {});
@@ -883,9 +883,9 @@ class _MangaChapterPageGalleryState
                         return IconButton(
                           onPressed: () {
                             // _cropImage();
-                            ref
-                                .read(cropBordersStateProvider.notifier)
-                                .set(!cropBorders);
+                            // ref
+                            //     .read(cropBordersStateProvider.notifier)
+                            //     .set(!cropBorders);
                           },
                           icon: Stack(
                             children: [
@@ -1103,7 +1103,6 @@ class _MangaChapterPageGalleryState
 
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
-  final Map<int, ImageDetailInfo> detailKeys = <int, ImageDetailInfo>{};
   late AnimationController _doubleClickAnimationController;
 
   Animation<double>? _doubleClickAnimation;
@@ -1375,37 +1374,18 @@ class _MangaChapterPageGalleryState
                                       }
                                       return Container();
                                     },
-                                    initGestureConfigHandler:
-                                        (ExtendedImageState state) {
-                                      double? initialScale = 1.0;
-                                      final size = MediaQuery.of(context).size;
-                                      if (state.extendedImageInfo != null) {
-                                        initialScale = initScale(
-                                            size: size,
-                                            initialScale: initialScale,
-                                            imageSize: Size(
-                                                state.extendedImageInfo!.image
-                                                    .width
-                                                    .toDouble(),
-                                                state.extendedImageInfo!.image
-                                                    .height
-                                                    .toDouble()));
-                                      }
+                                    initGestureConfigHandler: (state) {
                                       return GestureConfig(
                                         inertialSpeed: 200,
                                         inPageView: true,
-                                        initialScale: initialScale!,
                                         maxScale: 8,
                                         animationMaxScale: 8,
-                                        initialAlignment:
-                                            InitialAlignment.center,
                                         cacheGesture: true,
                                         hitTestBehavior:
                                             HitTestBehavior.translucent,
                                       );
                                     },
-                                    onDoubleTap:
-                                        (ExtendedImageGestureState state) {
+                                    onDoubleTap: (state) {
                                       final Offset? pointerDownPosition =
                                           state.pointerDownPosition;
                                       final double? begin =

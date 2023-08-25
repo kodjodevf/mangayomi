@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/anime/anime_stream_view.dart';
+import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -190,11 +190,11 @@ class RouterNotifier extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: "/animestreamview",
-          name: "animestreamview",
+          path: "/animePlayerView",
+          name: "animePlayerView",
           builder: (context, state) {
             final episode = state.extra as Chapter;
-            return AnimeStreamView(
+            return AnimePlayerView(
               episode: episode,
             );
           },
@@ -202,7 +202,7 @@ class RouterNotifier extends ChangeNotifier {
             final episode = state.extra as Chapter;
             return CustomTransition(
               key: state.pageKey,
-              child: AnimeStreamView(
+              child: AnimePlayerView(
                 episode: episode,
               ),
             );
