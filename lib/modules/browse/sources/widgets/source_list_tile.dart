@@ -68,15 +68,27 @@ class SourceListTile extends StatelessWidget {
                 const SizedBox(
                   width: 2,
                 ),
-                Text(
-                  "18+",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      fontSize: 10,
-                      color: Colors.redAccent.withBlue(5).withOpacity(0.8)),
+                SizedBox(
+                  height: 15,
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(3),
+                          child: Text(
+                            "NSFW",
+                            style: TextStyle(
+                                fontSize: 6,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                      )),
                 ),
               ],
-            )
+            ),
         ],
       ),
       title: Text(source.name!),
