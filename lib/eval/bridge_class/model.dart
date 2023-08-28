@@ -74,6 +74,14 @@ class VideoModel {
   String? quality;
   String? originalUrl;
   Map<String, String>? headers;
+  List<TrackModel>? subtitles;
+  VideoModel(
+      {this.url, this.quality, this.originalUrl, this.headers, this.subtitles});
+}
 
-  VideoModel({this.url, this.quality, this.originalUrl, this.headers});
+class TrackModel {
+  String? file;
+  String? label;
+
+  TrackModel({this.file, this.label});
 }

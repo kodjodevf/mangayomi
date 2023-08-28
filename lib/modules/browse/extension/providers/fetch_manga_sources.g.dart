@@ -7,7 +7,7 @@ part of 'fetch_manga_sources.dart';
 // **************************************************************************
 
 String _$fetchMangaSourcesListHash() =>
-    r'719d582950ddb40cf7367ddca871ec46145ab0eb';
+    r'0cd22cf1bb061a13e86e34ec08061e1c52c2f7cf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,9 +44,11 @@ class FetchMangaSourcesListFamily extends Family<AsyncValue<dynamic>> {
   /// See also [fetchMangaSourcesList].
   FetchMangaSourcesListProvider call({
     int? id,
+    required dynamic refresh,
   }) {
     return FetchMangaSourcesListProvider(
       id: id,
+      refresh: refresh,
     );
   }
 
@@ -56,6 +58,7 @@ class FetchMangaSourcesListFamily extends Family<AsyncValue<dynamic>> {
   ) {
     return call(
       id: provider.id,
+      refresh: provider.refresh,
     );
   }
 
@@ -79,10 +82,12 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [fetchMangaSourcesList].
   FetchMangaSourcesListProvider({
     this.id,
+    required this.refresh,
   }) : super.internal(
           (ref) => fetchMangaSourcesList(
             ref,
             id: id,
+            refresh: refresh,
           ),
           from: fetchMangaSourcesListProvider,
           name: r'fetchMangaSourcesListProvider',
@@ -96,16 +101,20 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
         );
 
   final int? id;
+  final dynamic refresh;
 
   @override
   bool operator ==(Object other) {
-    return other is FetchMangaSourcesListProvider && other.id == id;
+    return other is FetchMangaSourcesListProvider &&
+        other.id == id &&
+        other.refresh == refresh;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, id.hashCode);
+    hash = _SystemHash.combine(hash, refresh.hashCode);
 
     return _SystemHash.finish(hash);
   }

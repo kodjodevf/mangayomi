@@ -59,7 +59,7 @@ Future<List<String>> downloadChapter(
     ).future)
         .then((value) {
       final videosUrls =
-          value.where((element) => !element.url.contains(".m3u8")).toList();
+          value.$1.where((element) => !element.url.contains(".mp4")).toList();
       if (videosUrls.isNotEmpty) {
         pageUrls = [videosUrls.first.url];
         videoHeader.addAll(videosUrls.first.headers!);

@@ -19,15 +19,17 @@ class ExtensionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isManga) {
-      ref.watch(fetchMangaSourcesListProvider(id: null));
+      ref.watch(fetchMangaSourcesListProvider(id: null, refresh: false));
     } else {
-      ref.watch(fetchAnimeSourcesListProvider(id: null));
+      ref.watch(fetchAnimeSourcesListProvider(id: null, refresh: false));
     }
 
     return RefreshIndicator(
       onRefresh: () => isManga
-          ? ref.refresh(fetchMangaSourcesListProvider(id: null).future)
-          : ref.refresh(fetchAnimeSourcesListProvider(id: null).future),
+          ? ref.refresh(
+              fetchMangaSourcesListProvider(id: null, refresh: true).future)
+          : ref.refresh(
+              fetchAnimeSourcesListProvider(id: null, refresh: true).future),
       child: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: StreamBuilder(

@@ -9,8 +9,9 @@ import 'package:http/http.dart' as http;
 part 'fetch_anime_sources.g.dart';
 
 @riverpod
-Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
-  if (ref.watch(checkForExtensionsUpdateStateProvider)) {
+Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
+    {int? id, required bool refresh}) async {
+  if (ref.watch(checkForExtensionsUpdateStateProvider) || refresh) {
     final info = await PackageInfo.fromPlatform();
     final req = await http.get(Uri.parse(
         "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json"));
@@ -64,7 +65,8 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
                     final headers = await getHeaders(req.body, source.baseUrl!);
                     isar.writeTxnSync(() {
                       isar.sources.putSync(sourc
-                        ..headers = headers
+                        ..headers = headers ?? ""
+                        ..isAdded = true
                         ..sourceCode = req.body
                         ..sourceCodeUrl = source.sourceCodeUrl
                         ..id = source.id
@@ -75,14 +77,13 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref, {int? id}) async {
                         ..hasCloudflare = source.hasCloudflare
                         ..iconUrl = source.iconUrl
                         ..typeSource = source.typeSource
-                        ..isFullData = source.isFullData ?? false
                         ..lang = source.lang
                         ..isNsfw = source.isNsfw
                         ..name = source.name
                         ..version = source.version
                         ..versionLast = source.version
                         ..isManga = source.isManga
-                        ..isFullData = source.isFullData
+                        ..isFullData = source.isFullData ?? false
                         ..appMinVerReq = source.appMinVerReq);
                     });
                   } else {

@@ -2,6 +2,7 @@ import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge_class/track_model.dart';
 
 class $VideoModel implements VideoModel, $Instance {
   $VideoModel.wrap(this.$value) : _superclass = $Object($value);
@@ -35,6 +36,11 @@ class $VideoModel implements VideoModel, $Instance {
                   BridgeTypeAnnotation(
                       BridgeTypeRef.type(RuntimeTypes.mapType)),
                   false),
+              BridgeParameter(
+                  'substitles',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                  false),
             ]))
       },
       // Specify class fields
@@ -47,6 +53,8 @@ class $VideoModel implements VideoModel, $Instance {
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
         'headers': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType))),
+        'substitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
+            CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
       },
       wrap: true);
 
@@ -75,6 +83,12 @@ class $VideoModel implements VideoModel, $Instance {
       case 'headers':
         return $Map.wrap($value.headers!);
 
+      case 'substitles':
+        return $List.wrap($value.subtitles!
+            .map((e) =>
+                $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
+            .toList());
+
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -94,6 +108,8 @@ class $VideoModel implements VideoModel, $Instance {
         $value.originalUrl = value.$reified;
       case 'headers':
         $value.headers = value.$reified as Map<String, String>;
+      case 'subtitles':
+        $value.subtitles = value.$reified as List<TrackModel>;
 
       default:
         _superclass.$setProperty(runtime, identifier, value);
@@ -102,6 +118,9 @@ class $VideoModel implements VideoModel, $Instance {
 
   @override
   String? get url => $value.url;
+
+  @override
+  List<TrackModel>? get subtitles => $value.subtitles;
 
   @override
   String? get quality => $value.quality;
@@ -123,4 +142,7 @@ class $VideoModel implements VideoModel, $Instance {
 
   @override
   set originalUrl(String? originalUrl) {}
+
+  @override
+  set subtitles(List? subtitles) {}
 }

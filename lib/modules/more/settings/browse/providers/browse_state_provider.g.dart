@@ -40,7 +40,7 @@ final showNSFWStateProvider =
 
 typedef _$ShowNSFWState = AutoDisposeNotifier<bool>;
 String _$autoUpdateExtensionsStateHash() =>
-    r'dda58b6f78d486f82150e1edee4c1dadb9776df4';
+    r'30ce3c558504e005f9c85e2fc969ab7a581510cd';
 
 /// See also [AutoUpdateExtensionsState].
 @ProviderFor(AutoUpdateExtensionsState)

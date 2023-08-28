@@ -42,10 +42,12 @@ class _ExtensionListTileWidgetState
               _isLoading = true;
             });
             widget.source.isManga!
-                ? await ref.watch(
-                    fetchMangaSourcesListProvider(id: widget.source.id).future)
-                : await ref.watch(
-                    fetchAnimeSourcesListProvider(id: widget.source.id).future);
+                ? await ref.watch(fetchMangaSourcesListProvider(
+                        id: widget.source.id, refresh: true)
+                    .future)
+                : await ref.watch(fetchAnimeSourcesListProvider(
+                        id: widget.source.id, refresh: true)
+                    .future);
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -133,12 +135,12 @@ class _ExtensionListTileWidgetState
                     _isLoading = true;
                   });
                   widget.source.isManga!
-                      ? await ref.watch(
-                          fetchMangaSourcesListProvider(id: widget.source.id)
-                              .future)
-                      : await ref.watch(
-                          fetchAnimeSourcesListProvider(id: widget.source.id)
-                              .future);
+                      ? await ref.watch(fetchMangaSourcesListProvider(
+                              id: widget.source.id, refresh: true)
+                          .future)
+                      : await ref.watch(fetchAnimeSourcesListProvider(
+                              id: widget.source.id, refresh: true)
+                          .future);
                   if (mounted) {
                     setState(() {
                       _isLoading = false;

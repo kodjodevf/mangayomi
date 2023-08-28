@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dart_eval/dart_eval.dart';
+import 'package:mangayomi/eval/bridge_class/track_model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/eval/bridge_class/manga_model.dart';
@@ -15,6 +16,8 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'VideoModel.', $VideoModel.$new);
   runtime.registerBridgeFunc(
+      'package:bridge_lib/bridge_lib.dart', 'TrackModel.', $TrackModel.$new);
+  runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.http', $MBridge.$http);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.listParseDateTime', $MBridge.$listParseDateTime);
@@ -26,6 +29,8 @@ Runtime runtimeEval(Uint8List bytecode) {
       'MBridge.gogoCdnExtractor', $MBridge.$gogoCdnExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.doodExtractor', $MBridge.$doodExtractor);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.rapidCloudExtractor', $MBridge.$rapidCloudExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.streamTapeExtractor', $MBridge.$streamTapeExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

@@ -53,7 +53,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     ));
     return serversData.when(
       data: (data) {
-        if (data.isEmpty &&
+        if (data.$1.isEmpty &&
             (widget.episode.manga.value!.isLocalArchive ?? false) == false) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -80,12 +80,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             ),
           );
         }
-        data.sort(
+        data.$1.sort(
           (a, b) => a.quality.compareTo(b.quality),
         );
         return AnimeStreamPage(
           episode: widget.episode,
-          videos: data,
+          videos: data.$1,
+          isLocal: data.$2,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -146,7 +147,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final List<vid.Video> videos;
   final Chapter episode;
-  const AnimeStreamPage({Key? key, required this.videos, required this.episode})
+  final bool isLocal;
+  const AnimeStreamPage(
+      {Key? key,
+      required this.isLocal,
+      required this.videos,
+      required this.episode})
       : super(key: key);
 
   @override
@@ -160,7 +166,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   late final _streamController = AnimeStreamController(episode: widget.episode);
 
-  final ValueNotifier<vid.Video?> _video = ValueNotifier(null);
+  final ValueNotifier<VideoPrefs?> _video = ValueNotifier(null);
+  final ValueNotifier<VideoPrefs?> _subtitle = ValueNotifier(null);
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
@@ -184,14 +191,24 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       }
     },
   );
-
+  late final _firstVid = widget.videos.first;
   @override
   void initState() {
     super.initState();
     _currentPositionSub;
-    _video.value = widget.videos.first;
-    _player.open(
-        Media(_video.value!.originalUrl, httpHeaders: _video.value!.headers));
+    if (_firstVid.subtitles!.isNotEmpty) {
+      final firstSub = _firstVid.subtitles!.first;
+      _subtitle.value = VideoPrefs(
+          subtitle: SubtitleTrack.uri(firstSub.file!,
+              title: firstSub.label, language: firstSub.label));
+    }
+
+    _video.value = VideoPrefs(
+        videoTrack: VideoTrack(
+            _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
+        headers: _firstVid.headers);
+    _player.open(Media(_video.value!.videoTrack!.id,
+        httpHeaders: _video.value!.headers));
   }
 
   @override
@@ -202,20 +219,44 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   void _onChangeVideoQuality() {
+    List<VideoPrefs> videoQuality = [];
+    List<VideoTrack> videoTracks = _player.state.tracks.video
+        .where((element) => element.w != null && element.h != null)
+        .toList();
+    for (var track in videoTracks) {
+      videoQuality.add(VideoPrefs(videoTrack: track, isLocal: true));
+    }
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        videoQuality.add(VideoPrefs(
+            videoTrack: VideoTrack(
+              video.url,
+              video.quality,
+              video.quality,
+            ),
+            headers: video.headers,
+            isLocal: false));
+      }
+    }
+
     final l10n = l10nLocalizations(context)!;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
         title: Text(l10n.select_video_quality,
             style: const TextStyle(fontSize: 30)),
-        actions: widget.videos
+        actions: videoQuality
             .map((quality) => CupertinoActionSheetAction(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
                         child: Text(
-                          quality.quality,
+                          quality.isLocal && !widget.isLocal
+                              ? "${_firstVid.quality} ${quality.videoTrack!.h}p"
+                              : widget.isLocal
+                                  ? _firstVid.quality
+                                  : quality.videoTrack!.title!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -225,7 +266,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                       ),
                       Icon(
                         Icons.check,
-                        color: _video.value == quality
+                        color: quality.isLocal &&
+                                    !widget.isLocal &&
+                                    "${quality.videoTrack!.title}${quality.videoTrack!.h}p" ==
+                                        "${_video.value!.videoTrack!.title}${_video.value!.videoTrack!.h}p" ||
+                                "${_video.value!.videoTrack!.id}${_video.value!.videoTrack!.title}" ==
+                                    "${quality.videoTrack!.id}${quality.videoTrack!.title}"
                             ? Theme.of(context).iconTheme.color
                             : Colors.transparent,
                       ),
@@ -233,8 +279,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                   ),
                   onPressed: () {
                     _video.value = quality; // change the video quality
-                    _player.open(Media(quality.originalUrl,
-                        httpHeaders: quality.headers));
+                    if (quality.isLocal) {
+                      if (widget.isLocal) {
+                        _player.setVideoTrack(quality.videoTrack!);
+                      } else {
+                        _player.open(Media(quality.videoTrack!.id,
+                            httpHeaders: quality.headers));
+                      }
+                    } else {
+                      _player.open(Media(quality.videoTrack!.id,
+                          httpHeaders: quality.headers));
+                    }
                     _seekToCurrentPosition = true;
                     _currentPositionSub = _player.stream.position.listen(
                       (position) {
@@ -264,21 +319,40 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   void _onChangeVideoSubtitle() {
+    List<VideoPrefs> videoSubtitle = [];
+    List<SubtitleTrack> videoSubs = _player.state.tracks.subtitle
+        .where((element) => element.title != null && element.language != null)
+        .toList();
+    for (var sub in videoSubs) {
+      videoSubtitle.add(VideoPrefs(isLocal: true, subtitle: sub));
+    }
+
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        for (var sub in video.subtitles!) {
+          videoSubtitle.add(VideoPrefs(
+              isLocal: false,
+              subtitle: SubtitleTrack.uri(sub.file!,
+                  title: sub.label, language: sub.label)));
+        }
+      }
+    }
+
     final l10n = l10nLocalizations(context)!;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => CupertinoActionSheet(
         title: Text(l10n.select_video_subtitle,
             style: const TextStyle(fontSize: 30)),
-        actions: _player.state.tracks.subtitle
+        actions: videoSubtitle
             .map((subtitle) => CupertinoActionSheetAction(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        subtitle.title ??
-                            subtitle.language ??
-                            subtitle.channels ??
+                        subtitle.subtitle!.title ??
+                            subtitle.subtitle!.language ??
+                            subtitle.subtitle!.channels ??
                             "N/A",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -288,14 +362,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                       ),
                       Icon(
                         Icons.check,
-                        color: _player.state.track.subtitle == subtitle
+                        color: _subtitle.value != null &&
+                                "${_subtitle.value!.subtitle!.id}${_subtitle.value!.subtitle!.title}${_subtitle.value!.subtitle!.language}" ==
+                                    "${subtitle.subtitle!.id}${subtitle.subtitle!.title}${subtitle.subtitle!.language}"
                             ? Theme.of(context).iconTheme.color
                             : Colors.transparent,
                       ),
                     ],
                   ),
                   onPressed: () {
-                    _player.setSubtitleTrack(subtitle);
+                    _subtitle.value = subtitle;
+                    _player.setSubtitleTrack(subtitle.subtitle!);
                     Navigator.maybePop(_);
                   },
                 ))
@@ -722,4 +799,13 @@ class MaterialPositionIndicatorState extends State<MaterialPositionIndicator> {
       ],
     );
   }
+}
+
+class VideoPrefs {
+  VideoTrack? videoTrack;
+  SubtitleTrack? subtitle;
+  bool isLocal;
+  final Map<String, String>? headers;
+  VideoPrefs(
+      {this.videoTrack, this.isLocal = true, this.headers, this.subtitle});
 }

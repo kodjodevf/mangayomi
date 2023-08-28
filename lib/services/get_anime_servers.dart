@@ -11,13 +11,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_anime_servers.g.dart';
 
 @riverpod
-Future<List<Video>> getAnimeServers(
+Future<(List<Video>, bool)> getAnimeServers(
   GetAnimeServersRef ref, {
   required Chapter episode,
 }) async {
   List<Video> video = [];
   if (episode.manga.value!.isLocalArchive!) {
-    return [Video(episode.archivePath!, episode.name!, episode.archivePath!)];
+    return (
+      [Video(episode.archivePath!, episode.name!, episode.archivePath!)],
+      true
+    );
   }
   final source =
       getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
@@ -37,12 +40,19 @@ Future<List<Video>> getAnimeServers(
   ];
   var res = await runtime.executeLib(
       'package:mangayomi/source_code.dart', 'getVideoList');
+  // await Future.delayed(Duration(days: 1));
   if (res is $List) {
-    video = res.$reified
-        .map(
-          (e) => Video(e.url, e.quality, e.originalUrl, headers: e.headers),
-        )
-        .toList();
+    video = res.$reified.map(
+      (e) {
+        List<Track>? subtitles = [];
+        var subs = e.subtitles;
+        if (subs is $List) {
+          subtitles = subs.map((e) => Track(e.file, e.label)).toList();
+        }
+        return Video(e.url, e.quality, e.originalUrl,
+            headers: e.headers, subtitles: subtitles);
+      },
+    ).toList();
   }
-  return video;
+  return (video, false);
 }

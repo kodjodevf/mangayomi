@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge_class/track_model.dart';
 import 'package:mangayomi/eval/bridge_class/video_model.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
@@ -19,6 +20,7 @@ import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mp4upload_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mytv_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/okru_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/rapidcloud_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sendvid_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
@@ -931,6 +933,11 @@ class MBridge {
         .videosFromUrl(url, prefix: prefix, suffix: suffix);
   }
 
+  static Future<List<Video>> rapidCloudExtractor(
+      String url, String prefix) async {
+    return await RapidCloudExtractor().videosFromUrl(url, prefix);
+  }
+
   //Utility to use base64
   static String bAse64(String text, int type) {
     return utf8.decode(base64.decode(text));
@@ -1132,6 +1139,24 @@ class $MBridge extends MBridge with $Bridge {
                       false),
                   BridgeParameter(
                       'suffix',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'rapidCloudExtractor': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
+                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'prefix',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
@@ -2044,6 +2069,11 @@ class $MBridge extends MBridge with $Bridge {
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+  static $Future $rapidCloudExtractor(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $Future.wrap(MBridge.rapidCloudExtractor(args[0]!.$value, args[1]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
   static $bool $isEmptyOrIsNotEmpty(
       Runtime runtime, $Value? target, List<$Value?> args) {
@@ -2075,4 +2105,11 @@ $VideoModel _toVideoModel(Video e) => $VideoModel.wrap(VideoModel()
   ..headers = e.headers
   ..originalUrl = e.originalUrl
   ..quality = e.quality
-  ..url = e.url);
+  ..url = e.url
+  ..subtitles = $List.wrap(e.subtitles == null
+      ? []
+      : e.subtitles!
+          .map((t) => $TrackModel.wrap(TrackModel()
+            ..file = t.file
+            ..label = t.label))
+          .toList()));

@@ -6,7 +6,7 @@ part of 'get_anime_servers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAnimeServersHash() => r'26be3f4055c08947e6dca4d8e62abe07ddb98481';
+String _$getAnimeServersHash() => r'a458dba029f241dd84237469ce6496526932ca32';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,14 +29,14 @@ class _SystemHash {
   }
 }
 
-typedef GetAnimeServersRef = AutoDisposeFutureProviderRef<List<Video>>;
+typedef GetAnimeServersRef = AutoDisposeFutureProviderRef<(List<Video>, bool)>;
 
 /// See also [getAnimeServers].
 @ProviderFor(getAnimeServers)
 const getAnimeServersProvider = GetAnimeServersFamily();
 
 /// See also [getAnimeServers].
-class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
+class GetAnimeServersFamily extends Family<AsyncValue<(List<Video>, bool)>> {
   /// See also [getAnimeServers].
   const GetAnimeServersFamily();
 
@@ -74,7 +74,8 @@ class GetAnimeServersFamily extends Family<AsyncValue<List<Video>>> {
 }
 
 /// See also [getAnimeServers].
-class GetAnimeServersProvider extends AutoDisposeFutureProvider<List<Video>> {
+class GetAnimeServersProvider
+    extends AutoDisposeFutureProvider<(List<Video>, bool)> {
   /// See also [getAnimeServers].
   GetAnimeServersProvider({
     required this.episode,
