@@ -55,6 +55,8 @@ class $VideoModel implements VideoModel, $Instance {
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType))),
         'substitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
             CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
+        'audios': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
+            CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
       },
       wrap: true);
 
@@ -88,6 +90,11 @@ class $VideoModel implements VideoModel, $Instance {
             .map((e) =>
                 $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
             .toList());
+      case 'audios':
+        return $List.wrap($value.audios!
+            .map((e) =>
+                $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
+            .toList());
 
       default:
         return _superclass.$getProperty(runtime, identifier);
@@ -110,6 +117,8 @@ class $VideoModel implements VideoModel, $Instance {
         $value.headers = value.$reified as Map<String, String>;
       case 'subtitles':
         $value.subtitles = value.$reified as List<TrackModel>;
+      case 'audios':
+        $value.audios = value.$reified as List<TrackModel>;
 
       default:
         _superclass.$setProperty(runtime, identifier, value);
@@ -121,6 +130,9 @@ class $VideoModel implements VideoModel, $Instance {
 
   @override
   List<TrackModel>? get subtitles => $value.subtitles;
+
+  @override
+  List<TrackModel>? get audios => $value.audios;
 
   @override
   String? get quality => $value.quality;
@@ -145,4 +157,7 @@ class $VideoModel implements VideoModel, $Instance {
 
   @override
   set subtitles(List? subtitles) {}
+
+  @override
+  set audios(List? audios) {}
 }

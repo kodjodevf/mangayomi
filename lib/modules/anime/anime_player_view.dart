@@ -117,6 +117,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
       loading: () {
         return Scaffold(
           backgroundColor: Colors.black,
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
             title: const Text(''),
             leading: BackButton(
@@ -196,12 +197,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   void initState() {
     super.initState();
     _currentPositionSub;
-    if (_firstVid.subtitles!.isNotEmpty) {
-      final firstSub = _firstVid.subtitles!.first;
-      _subtitle.value = VideoPrefs(
-          subtitle: SubtitleTrack.uri(firstSub.file!,
-              title: firstSub.label, language: firstSub.label));
-    }
 
     _video.value = VideoPrefs(
         videoTrack: VideoTrack(
@@ -337,7 +332,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         }
       }
     }
-
+    _subtitle.value ??= videoSubtitle.first;
     final l10n = l10nLocalizations(context)!;
     showCupertinoModalPopup(
       context: context,

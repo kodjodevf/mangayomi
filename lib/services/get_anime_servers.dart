@@ -18,7 +18,10 @@ Future<(List<Video>, bool)> getAnimeServers(
   List<Video> video = [];
   if (episode.manga.value!.isLocalArchive!) {
     return (
-      [Video(episode.archivePath!, episode.name!, episode.archivePath!)],
+      [
+        Video(episode.archivePath!, episode.name!, episode.archivePath!,
+            subtitles: [])
+      ],
       true
     );
   }

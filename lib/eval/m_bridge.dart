@@ -943,14 +943,15 @@ class MBridge {
     return utf8.decode(base64.decode(text));
   }
 
-  static Video toVideo(
-      String url, String quality, String originalUrl, String? headers) {
+  static Video toVideo(String url, String quality, String originalUrl,
+      String? headers, List<Track>? subtitles, List<Track>? audios) {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map)
           .map((key, value) => MapEntry(key.toString(), value.toString()));
     }
-    return Video(url, quality, originalUrl, headers: newHeaders);
+    return Video(url, quality, originalUrl,
+        headers: newHeaders, subtitles: subtitles ?? [], audios: audios ?? []);
   }
 
   //Check if value is empty
@@ -1282,6 +1283,20 @@ class $MBridge extends MBridge with $Bridge {
                       'headers',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      true),
+                  BridgeParameter(
+                      'subtitles',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef(CoreTypes.list,
+                              [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                          nullable: true),
+                      true),
+                  BridgeParameter(
+                      'audios',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef(CoreTypes.list,
+                              [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
                           nullable: true),
                       true),
                 ],
@@ -1855,8 +1870,8 @@ class $MBridge extends MBridge with $Bridge {
 
   static $VideoModel $toVideo(
       Runtime runtime, $Value? target, List<$Value?> args) {
-    final value = MBridge.toVideo(
-        args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value);
+    final value = MBridge.toVideo(args[0]!.$value, args[1]!.$value,
+        args[2]!.$value, args[3]!.$value, args[4]!.$value, args[5]!.$value);
 
     return _toVideoModel(value);
   }
@@ -2109,6 +2124,13 @@ $VideoModel _toVideoModel(Video e) => $VideoModel.wrap(VideoModel()
   ..subtitles = $List.wrap(e.subtitles == null
       ? []
       : e.subtitles!
+          .map((t) => $TrackModel.wrap(TrackModel()
+            ..file = t.file
+            ..label = t.label))
+          .toList())
+  ..audios = $List.wrap(e.audios == null
+      ? []
+      : e.audios!
           .map((t) => $TrackModel.wrap(TrackModel()
             ..file = t.file
             ..label = t.label))

@@ -58,15 +58,17 @@ class RapidCloudExtractor {
 
       return [
         Video(decrypted[0]["file"], name, decrypted[0]["file"],
-            subtitles:
-                data.tracks!.map((e) => Track(e.file!, e.label!)).toList())
+            subtitles: data.tracks != null && data.tracks!.isEmpty
+                ? []
+                : data.tracks!
+                    .map((e) => Track(e.file ?? "", e.label ?? ""))
+                    .toList())
       ];
     } catch (_) {
       return [];
     }
   }
 }
-
 
 class Tracks {
   String? file;
