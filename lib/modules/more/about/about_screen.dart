@@ -57,24 +57,16 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Center(
-            //     child: ClipOval(
-            //   child: Image.asset(
-            //     Theme.of(context).brightness == Brightness.light
-            //         ? "assets/app_icons/icon-black.png"
-            //         : "assets/app_icons/icon-red.png",
-            //     height: 100,
-            //   ),
-            // )),
-            const SizedBox(
-              height: 150,
-              // child: Center(
-              //     child: Image.asset(
-              //   "assets/icon.png",
-              //   color: Theme.of(context).brightness == Brightness.light
-              //       ? Colors.black
-              //       : Colors.white,
-              // ))
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Image.asset(
+                "assets/app_icons/icon.png",
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+                fit: BoxFit.fill,
+                height: 130,
+              ),
             ),
             Column(
               children: [

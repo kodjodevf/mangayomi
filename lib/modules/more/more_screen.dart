@@ -14,27 +14,20 @@ class MoreScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 20),
-            //   child: ClipOval(
-            //     child: Image.asset(
-            //       Theme.of(context).brightness == Brightness.light
-            //           ? "assets/app_icons/icon-black.png"
-            //           : "assets/app_icons/icon-red.png",
-            //       height: 150,
-            //     ),
-            //   ),
-            // ),
             SizedBox(
-                height: 200,
-                // child: Center(
-                //     child: Image.asset(
-                //   "assets/icon.png",
-                //   color: Theme.of(context).brightness == Brightness.light
-                //       ? Colors.black
-                //       : Colors.white,
-                // ))
-                ),
+              height: AppBar().preferredSize.height,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: Image.asset(
+                "assets/app_icons/icon.png",
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+                fit: BoxFit.fill,
+                height: 130,
+              ),
+            ),
             const Divider(),
             // ListTile(
             //   onTap: () {},
