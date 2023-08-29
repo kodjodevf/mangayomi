@@ -1716,7 +1716,9 @@ _importLocal(BuildContext context, bool isManga) {
                                   });
                                   await ref.watch(
                                       importArchivesFromFileProvider(
-                                              isManga: isManga, null)
+                                              isManga: isManga,
+                                              null,
+                                              init: true)
                                           .future);
                                   setState(() {
                                     isLoading = false;

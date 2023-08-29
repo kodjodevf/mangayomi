@@ -25,7 +25,7 @@ class MoreScreen extends StatelessWidget {
                     ? Colors.black
                     : Colors.white,
                 fit: BoxFit.fill,
-                height: 130,
+                height: 100,
               ),
             ),
             const Divider(),

@@ -65,7 +65,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     ? Colors.black
                     : Colors.white,
                 fit: BoxFit.fill,
-                height: 130,
+                height: 100,
               ),
             ),
             Column(

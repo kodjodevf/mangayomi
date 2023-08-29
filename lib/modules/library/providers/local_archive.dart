@@ -10,7 +10,7 @@ part 'local_archive.g.dart';
 
 @riverpod
 Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
-    {required bool isManga}) async {
+    {required bool isManga, required bool init}) async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
@@ -44,7 +44,11 @@ Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
           ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future)
           : null;
       String name = _getName(file.path!);
-      manga.customCoverImage = isManga ? data!.$3 : null;
+
+      if (init) {
+        manga.customCoverImage = isManga ? data!.$3 : null;
+      }
+
       isar.writeTxnSync(() {
         isar.mangas.putSync(manga);
         final chapters = Chapter(

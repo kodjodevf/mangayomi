@@ -13,7 +13,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -21,6 +20,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -508,7 +508,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                   isManga: widget
                                                                       .manga!
                                                                       .isManga!,
-                                                                  widget.manga)
+                                                                  widget.manga,
+                                                                  init: false)
                                                               .future);
                                                     },
                                                   )
@@ -1112,7 +1113,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       right: 0,
                       child: IconButton(
                           onPressed: () {
-                            _editLocaleArchiveInfos();
+                            _editLocalArchiveInfos();
                           },
                           icon: const CircleAvatar(
                               child: Icon(Icons.edit_outlined))))
@@ -1254,7 +1255,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     await ref.watch(
                                         importArchivesFromFileProvider(
                                                 isManga: widget.manga!.isManga!,
-                                                widget.manga)
+                                                widget.manga,
+                                                init: false)
                                             .future);
                                   },
                                 )
@@ -1570,7 +1572,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         });
   }
 
-  _editLocaleArchiveInfos() {
+  _editLocalArchiveInfos() {
     final l10n = l10nLocalizations(context)!;
     TextEditingController? name =
         TextEditingController(text: widget.manga!.name!);
@@ -1659,7 +1661,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           child: Material(
             color: isLight(context)
                 ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
-                : !isar.settings.getSync(227)!.pureBlackDarkMode!
+                : !ref.watch(pureBlackDarkModeStateProvider)
                     ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
                     : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),

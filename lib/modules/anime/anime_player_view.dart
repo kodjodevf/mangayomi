@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -235,82 +236,110 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     }
 
     final l10n = l10nLocalizations(context)!;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        title: Text(l10n.select_video_quality,
-            style: const TextStyle(fontSize: 30)),
-        actions: videoQuality
-            .map((quality) => CupertinoActionSheetAction(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => ListView(
+              shrinkWrap: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Text(l10n.change_video_quality,
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .color!
+                              .withOpacity(0.8)),
+                      textAlign: TextAlign.center),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          quality.isLocal && !widget.isLocal
-                              ? "${_firstVid.quality} ${quality.videoTrack!.h}p"
-                              : widget.isLocal
-                                  ? _firstVid.quality
-                                  : quality.videoTrack!.title!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      Icon(
-                        Icons.check,
-                        color: quality.isLocal &&
-                                    !widget.isLocal &&
-                                    "${quality.videoTrack!.title}${quality.videoTrack!.h}p" ==
-                                        "${_video.value!.videoTrack!.title}${_video.value!.videoTrack!.h}p" ||
-                                "${_video.value!.videoTrack!.id}${_video.value!.videoTrack!.title}" ==
-                                    "${quality.videoTrack!.id}${quality.videoTrack!.title}"
-                            ? Theme.of(context).iconTheme.color
-                            : Colors.transparent,
-                      ),
+                      ...videoQuality
+                          .map((quality) => TextButton(
+                                style: TextButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(0))),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      quality.isLocal && !widget.isLocal
+                                          ? "${_firstVid.quality} ${quality.videoTrack!.h}p"
+                                          : widget.isLocal
+                                              ? _firstVid.quality
+                                              : quality.videoTrack!.title!,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(
+                                      width: 7,
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: quality.isLocal &&
+                                                  !widget.isLocal &&
+                                                  "${quality.videoTrack!.title}${quality.videoTrack!.h}p" ==
+                                                      "${_video.value!.videoTrack!.title}${_video.value!.videoTrack!.h}p" ||
+                                              "${_video.value!.videoTrack!.id}${_video.value!.videoTrack!.title}" ==
+                                                  "${quality.videoTrack!.id}${quality.videoTrack!.title}"
+                                          ? Theme.of(context).iconTheme.color
+                                          : Colors.transparent,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  _video.value =
+                                      quality; // change the video quality
+                                  if (quality.isLocal) {
+                                    if (widget.isLocal) {
+                                      _player
+                                          .setVideoTrack(quality.videoTrack!);
+                                    } else {
+                                      _player.open(Media(quality.videoTrack!.id,
+                                          httpHeaders: quality.headers));
+                                    }
+                                  } else {
+                                    _player.open(Media(quality.videoTrack!.id,
+                                        httpHeaders: quality.headers));
+                                  }
+                                  _seekToCurrentPosition = true;
+                                  _currentPositionSub =
+                                      _player.stream.position.listen(
+                                    (position) {
+                                      if (_seekToCurrentPosition &&
+                                          _currentPosition != Duration.zero) {
+                                        _player.seek(_currentPosition);
+                                        _seekToCurrentPosition = false;
+                                      } else {
+                                        _currentPosition = position;
+                                        _streamController.setCurrentPosition(
+                                            position.inMilliseconds);
+                                        _streamController
+                                            .setAnimeHistoryUpdate();
+                                      }
+                                    },
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ))
+                          .toList()
                     ],
                   ),
-                  onPressed: () {
-                    _video.value = quality; // change the video quality
-                    if (quality.isLocal) {
-                      if (widget.isLocal) {
-                        _player.setVideoTrack(quality.videoTrack!);
-                      } else {
-                        _player.open(Media(quality.videoTrack!.id,
-                            httpHeaders: quality.headers));
-                      }
-                    } else {
-                      _player.open(Media(quality.videoTrack!.id,
-                          httpHeaders: quality.headers));
-                    }
-                    _seekToCurrentPosition = true;
-                    _currentPositionSub = _player.stream.position.listen(
-                      (position) {
-                        if (_seekToCurrentPosition &&
-                            _currentPosition != Duration.zero) {
-                          _player.seek(_currentPosition);
-                          _seekToCurrentPosition = false;
-                        } else {
-                          _currentPosition = position;
-                          _streamController
-                              .setCurrentPosition(position.inMilliseconds);
-                          _streamController.setAnimeHistoryUpdate();
-                        }
-                      },
-                    );
-                    Navigator.maybePop(_);
-                  },
-                ))
-            .toList(),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.maybePop(_),
-          isDestructiveAction: true,
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
+                ),
+              ],
+            ));
   }
 
   void _onChangeVideoSubtitle() {
@@ -334,51 +363,77 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     }
     _subtitle.value ??= videoSubtitle.first;
     final l10n = l10nLocalizations(context)!;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        title: Text(l10n.select_video_subtitle,
-            style: const TextStyle(fontSize: 30)),
-        actions: videoSubtitle
-            .map((subtitle) => CupertinoActionSheetAction(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => ListView(
+              shrinkWrap: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Text(l10n.change_video_subtitle,
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .color!
+                              .withOpacity(0.8)),
+                      textAlign: TextAlign.center),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        subtitle.subtitle!.title ??
-                            subtitle.subtitle!.language ??
-                            subtitle.subtitle!.channels ??
-                            "N/A",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      Icon(
-                        Icons.check,
-                        color: _subtitle.value != null &&
-                                "${_subtitle.value!.subtitle!.id}${_subtitle.value!.subtitle!.title}${_subtitle.value!.subtitle!.language}" ==
-                                    "${subtitle.subtitle!.id}${subtitle.subtitle!.title}${subtitle.subtitle!.language}"
-                            ? Theme.of(context).iconTheme.color
-                            : Colors.transparent,
-                      ),
+                      ...videoSubtitle
+                          .map((subtitle) => TextButton(
+                                style: TextButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(0))),
+                                onPressed: () {
+                                  _subtitle.value = subtitle;
+                                  _player.setSubtitleTrack(subtitle.subtitle!);
+                                  Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      subtitle.subtitle!.title ??
+                                          subtitle.subtitle!.language ??
+                                          subtitle.subtitle!.channels ??
+                                          "N/A",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(
+                                      width: 7,
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: _subtitle.value != null &&
+                                              "${_subtitle.value!.subtitle!.id}${_subtitle.value!.subtitle!.title}${_subtitle.value!.subtitle!.language}" ==
+                                                  "${subtitle.subtitle!.id}${subtitle.subtitle!.title}${subtitle.subtitle!.language}"
+                                          ? Theme.of(context).iconTheme.color
+                                          : Colors.transparent,
+                                    ),
+                                  ],
+                                ),
+                              ))
+                          .toList(),
                     ],
                   ),
-                  onPressed: () {
-                    _subtitle.value = subtitle;
-                    _player.setSubtitleTrack(subtitle.subtitle!);
-                    Navigator.maybePop(_);
-                  },
-                ))
-            .toList(),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.maybePop(_),
-          isDestructiveAction: true,
-          child: Text(l10n.cancel),
-        ),
-      ),
-    );
+                )
+              ],
+            ));
   }
 
   Future<void> _setPlaybackSpeed(double speed) async {
@@ -803,4 +858,16 @@ class VideoPrefs {
   final Map<String, String>? headers;
   VideoPrefs(
       {this.videoTrack, this.isLocal = true, this.headers, this.subtitle});
+}
+
+_showDrag(Widget child) {
+  DraggableMenu(
+    ui: SoftModernDraggableMenu(barItem: Container(), radius: 20),
+    minimizeThreshold: 0.6,
+    levels: [
+      DraggableMenuLevel.ratio(ratio: 1.5 / 3),
+    ],
+    minimizeBeforeFastDrag: true,
+    child: child,
+  );
 }

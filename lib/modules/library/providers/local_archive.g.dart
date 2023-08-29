@@ -7,7 +7,7 @@ part of 'local_archive.dart';
 // **************************************************************************
 
 String _$importArchivesFromFileHash() =>
-    r'421b9f4f54cd22968cfc6447f174470712d684fc';
+    r'25ff2ca889a31d482a95af7cb9be8ebd9cf0dc89';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -45,10 +45,12 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
   ImportArchivesFromFileProvider call(
     Manga? mManga, {
     required bool isManga,
+    required bool init,
   }) {
     return ImportArchivesFromFileProvider(
       mManga,
       isManga: isManga,
+      init: init,
     );
   }
 
@@ -59,6 +61,7 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
     return call(
       provider.mManga,
       isManga: provider.isManga,
+      init: provider.init,
     );
   }
 
@@ -84,11 +87,13 @@ class ImportArchivesFromFileProvider
   ImportArchivesFromFileProvider(
     this.mManga, {
     required this.isManga,
+    required this.init,
   }) : super.internal(
           (ref) => importArchivesFromFile(
             ref,
             mManga,
             isManga: isManga,
+            init: init,
           ),
           from: importArchivesFromFileProvider,
           name: r'importArchivesFromFileProvider',
@@ -103,12 +108,14 @@ class ImportArchivesFromFileProvider
 
   final Manga? mManga;
   final bool isManga;
+  final bool init;
 
   @override
   bool operator ==(Object other) {
     return other is ImportArchivesFromFileProvider &&
         other.mManga == mManga &&
-        other.isManga == isManga;
+        other.isManga == isManga &&
+        other.init == init;
   }
 
   @override
@@ -116,6 +123,7 @@ class ImportArchivesFromFileProvider
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mManga.hashCode);
     hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, init.hashCode);
 
     return _SystemHash.finish(hash);
   }
