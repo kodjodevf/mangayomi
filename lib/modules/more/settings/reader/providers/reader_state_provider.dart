@@ -92,3 +92,18 @@ class PagePreloadAmountState extends _$PagePreloadAmountState {
         () => isar.settings.putSync(settings!..pagePreloadAmount = value));
   }
 }
+
+@riverpod
+class BackgroundColorState extends _$BackgroundColorState {
+  @override
+  BackgroundColor build() {
+    return isar.settings.getSync(227)!.backgroundColor;
+  }
+
+  void set(BackgroundColor value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..backgroundColor = value));
+  }
+}

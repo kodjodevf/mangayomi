@@ -2165,7 +2165,7 @@ void _botToast(String title) {
       onlyOne: true,
       dismissDirections: [DismissDirection.horizontal, DismissDirection.down],
       align: const Alignment(0, 0.99),
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 10),
       title: title);
 }
 

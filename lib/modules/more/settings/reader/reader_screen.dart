@@ -20,6 +20,7 @@ class ReaderScreen extends ConsumerWidget {
         ref.watch(doubleTapAnimationSpeedStateProvider);
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
     final scaleType = ref.watch(scaleTypeStateProvider);
+    final backgroundColor = ref.watch(backgroundColorStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n!.reader),
@@ -108,14 +109,16 @@ class ReaderScreen extends ConsumerWidget {
                                   groupValue: doubleTapAnimationSpeed,
                                   onChanged: (value) {
                                     ref
-                                        .read(doubleTapAnimationSpeedStateProvider
-                                            .notifier)
+                                        .read(
+                                            doubleTapAnimationSpeedStateProvider
+                                                .notifier)
                                         .set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
                                     children: [
-                                      Text(getAnimationSpeedName(index, context))
+                                      Text(
+                                          getAnimationSpeedName(index, context))
                                     ],
                                   ),
                                 );
@@ -143,6 +146,66 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(l10n.double_tap_animation_speed),
               subtitle: Text(
                 getAnimationSpeedName(doubleTapAnimationSpeed, context),
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(l10n.reading_mode),
+                        content: SizedBox(
+                            width: mediaWidth(context, 0.8),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: BackgroundColor.values.length,
+                              itemBuilder: (context, index) {
+                                return RadioListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: BackgroundColor.values[index],
+                                  groupValue: backgroundColor,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(backgroundColorStateProvider
+                                            .notifier)
+                                        .set(value!);
+                                    Navigator.pop(context);
+                                  },
+                                  title: Row(
+                                    children: [
+                                      Text(getBackgroundColorName(
+                                          BackgroundColor.values[index],
+                                          context))
+                                    ],
+                                  ),
+                                );
+                              },
+                            )),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    l10n.cancel,
+                                    style:
+                                        TextStyle(color: primaryColor(context)),
+                                  )),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              title: Text(l10n.reading_mode),
+              subtitle: Text(
+                getBackgroundColorName(backgroundColor, context),
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
               ),
             ),
@@ -294,6 +357,26 @@ String getReaderModeName(ReaderMode readerMode, BuildContext context) {
     ReaderMode.ltr => l10n!.reading_mode_left_to_right,
     ReaderMode.rtl => l10n!.reading_mode_right_to_left,
     _ => l10n!.reading_mode_webtoon
+  };
+}
+
+String getBackgroundColorName(
+    BackgroundColor backgroundColor, BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
+  return switch (backgroundColor) {
+    BackgroundColor.white => l10n.white,
+    BackgroundColor.grey => l10n.grey,
+    BackgroundColor.black => l10n.black,
+    _ => l10n.automaic,
+  };
+}
+
+Color? getBackgroundColor(BackgroundColor backgroundColor) {
+  return switch (backgroundColor) {
+    BackgroundColor.white => Colors.white,
+    BackgroundColor.grey => Colors.grey,
+    BackgroundColor.black => Colors.black,
+    _ => null,
   };
 }
 

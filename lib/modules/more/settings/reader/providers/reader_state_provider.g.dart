@@ -106,5 +106,22 @@ final pagePreloadAmountStateProvider =
 );
 
 typedef _$PagePreloadAmountState = AutoDisposeNotifier<int>;
+String _$backgroundColorStateHash() =>
+    r'912db0bc09d8aafe20b8eb46ed2f07a9d5439aaa';
+
+/// See also [BackgroundColorState].
+@ProviderFor(BackgroundColorState)
+final backgroundColorStateProvider =
+    AutoDisposeNotifierProvider<BackgroundColorState, BackgroundColor>.internal(
+  BackgroundColorState.new,
+  name: r'backgroundColorStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$backgroundColorStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$BackgroundColorState = AutoDisposeNotifier<BackgroundColor>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

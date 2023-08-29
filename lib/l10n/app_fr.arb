@@ -218,5 +218,12 @@
   "select_video_subtitle":"Selectionner un sous-titrage video",  
   "check_for_extension_updates":"Vérifier les mise à jour d'extensions",
   "auto_extensions_updates":"Mises à jour auto des extensions",
-  "auto_extensions_updates_subtitle":"Mettra automatiquement à jour l'extension lorsqu'une nouvelle version est disponible."
+  "auto_extensions_updates_subtitle":"Mettra automatiquement à jour l'extension lorsqu'une nouvelle version est disponible.",
+  "reading_mode":"Mode de lecture",
+  "custom_filter":"Filtre personnalisé",
+  "background_color":"Couleur de fond",
+  "white":"Blanc",
+  "black":"Noir",
+  "grey":"Gris",
+  "automaic":"Automatique"
 }

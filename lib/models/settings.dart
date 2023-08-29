@@ -126,6 +126,9 @@ class Settings {
   @enumerated
   ScaleType scaleType;
 
+  @enumerated
+  BackgroundColor backgroundColor;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -179,7 +182,8 @@ class Settings {
       this.sortLibraryAnime,
       this.pagePreloadAmount = 6,
       this.scaleType = ScaleType.fitScreen,
-      this.checkForExtensionUpdates = true});
+      this.checkForExtensionUpdates = true,
+      this.backgroundColor = BackgroundColor.black});
 }
 
 enum DisplayType {
@@ -197,6 +201,8 @@ enum ScaleType {
   originalSize,
   smartFit,
 }
+
+enum BackgroundColor { black, grey, white, automatic }
 
 @embedded
 class SortLibraryManga {
