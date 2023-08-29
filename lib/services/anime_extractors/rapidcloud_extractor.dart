@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
+import 'package:mangayomi/utils/extensions.dart';
 
 class RapidCloudExtractor {
   static const serverUrl = ['https://megacloud.tv', 'https://rapid-cloud.co'];
@@ -51,19 +52,43 @@ class RapidCloudExtractor {
       final id = url.split(sourceSpliter[type]).last.split('?').first;
       final srcRes =
           await http.get(Uri.parse('${serverUrl[type]}${sourceUrl[type]}$id'));
-
       final data = Data.fromJson(json.decode(srcRes.body));
 
       final decrypted = json.decode(await decrypt(data.sources!, keyType));
+      final videoList = <Video>[];
+      final fileURL = decrypted[0]["file"];
+      const separator = "#EXT-X-STREAM-INF:";
+      final masterPlaylistResponse = await http.get(Uri.parse(fileURL));
+      final masterPlaylist = masterPlaylistResponse.body;
+      if (masterPlaylist.contains(separator) && decrypted[0]["type"] == "hls") {
+        for (var it
+            in masterPlaylist.substringAfter(separator).split(separator)) {
+          final quality =
+              "${it.substringAfter("RESOLUTION=").substringAfter("x").substringBefore(",").substringBefore("\n")}p";
 
-      return [
-        Video(decrypted[0]["file"], name, decrypted[0]["file"],
+          var videoUrl = it.substringAfter("\n").substringBefore("\n");
+
+          if (!videoUrl.startsWith("http")) {
+            videoUrl =
+                "${fileURL.split("/").sublist(0, fileURL.split("/").length - 1).join("/")}/$videoUrl";
+          }
+
+          videoList.add(Video(videoUrl, "$name - $quality", videoUrl,
+              subtitles: data.tracks != null && data.tracks!.isEmpty
+                  ? []
+                  : data.tracks!
+                      .map((e) => Track(e.file ?? "", e.label ?? ""))
+                      .toList()));
+        }
+      } else {
+        videoList.add(Video(fileURL, name, fileURL,
             subtitles: data.tracks != null && data.tracks!.isEmpty
                 ? []
                 : data.tracks!
                     .map((e) => Track(e.file ?? "", e.label ?? ""))
-                    .toList())
-      ];
+                    .toList()));
+      }
+      return videoList;
     } catch (_) {
       return [];
     }
