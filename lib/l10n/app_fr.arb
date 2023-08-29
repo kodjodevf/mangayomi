@@ -97,7 +97,7 @@
   "normal":"Normale",
   "fast":"Rapide",
   "no_animation":"Sans animation",
-  "animate_page_transitions":"Toujours afficher la transition entre les chapitres",
+  "animate_page_transitions":"Activer les transitions",
   "crop_borders":"Rogner les bordures",
   "downloads":"Téléchargements",
   "downloads_subtitle":"Paramètres de téléchargement",
