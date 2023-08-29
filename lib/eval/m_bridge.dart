@@ -35,6 +35,7 @@ import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
@@ -943,6 +944,14 @@ class MBridge {
     return utf8.decode(base64.decode(text));
   }
 
+  static String encryptAESCryptoJS(String plainText, String passphrase) {
+    return CryptoAES.encryptAESCryptoJS(plainText, passphrase);
+  }
+
+  static String decryptAESCryptoJS(String encrypted, String passphrase) {
+    return CryptoAES.decryptAESCryptoJS(encrypted, passphrase);
+  }
+
   static Video toVideo(String url, String quality, String originalUrl,
       String? headers, List<Track>? subtitles, List<Track>? audios) {
     Map<String, String> newHeaders = {};
@@ -1030,6 +1039,42 @@ class $MBridge extends MBridge with $Bridge {
                       'type',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'encryptAESCryptoJS': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'plainText',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'passphrase',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'decryptAESCryptoJS': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'encrypted',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'passphrase',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
                 ],
                 namedParams: []),
@@ -1931,6 +1976,14 @@ class $MBridge extends MBridge with $Bridge {
 
   static $String $bAse64(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.bAse64(args[0]!.$value, args[1]!.$value));
+
+  static $String $encryptAESCryptoJS(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $String(MBridge.encryptAESCryptoJS(args[0]!.$value, args[1]!.$value));
+
+  static $String $decryptAESCryptoJS(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $String(MBridge.decryptAESCryptoJS(args[0]!.$value, args[1]!.$value));
 
   static $String $evalJs(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.evalJs(

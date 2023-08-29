@@ -32,6 +32,10 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.rapidCloudExtractor', $MBridge.$rapidCloudExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.encryptAESCryptoJS', $MBridge.$encryptAESCryptoJS);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.decryptAESCryptoJS', $MBridge.$decryptAESCryptoJS);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.streamTapeExtractor', $MBridge.$streamTapeExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.streamWishExtractor', $MBridge.$streamWishExtractor);
