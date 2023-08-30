@@ -204,6 +204,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         headers: _firstVid.headers);
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
+
+    if (_firstVid.subtitles!.isNotEmpty) {
+      _player.setSubtitleTrack(SubtitleTrack.uri(
+          _firstVid.subtitles!.first.file!,
+          title: _firstVid.subtitles!.first.label,
+          language: _firstVid.subtitles!.first.label));
+    }
   }
 
   @override
@@ -218,9 +225,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     List<VideoTrack> videoTracks = _player.state.tracks.video
         .where((element) => element.w != null && element.h != null)
         .toList();
+        
     for (var track in videoTracks) {
       videoQuality.add(VideoPrefs(videoTrack: track, isLocal: true));
     }
+
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
         videoQuality.add(VideoPrefs(
@@ -333,14 +342,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     for (var sub in videoSubs) {
       videoSubtitle.add(VideoPrefs(isLocal: true, subtitle: sub));
     }
-
+    List<String> subs = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
         for (var sub in video.subtitles!) {
-          videoSubtitle.add(VideoPrefs(
-              isLocal: false,
-              subtitle: SubtitleTrack.uri(sub.file!,
-                  title: sub.label, language: sub.label)));
+          if (!subs.contains(sub.file)) {
+            videoSubtitle.add(VideoPrefs(
+                isLocal: false,
+                subtitle: SubtitleTrack.uri(sub.file!,
+                    title: sub.label, language: sub.label)));
+            subs.add(sub.file!);
+          }
         }
       }
     }

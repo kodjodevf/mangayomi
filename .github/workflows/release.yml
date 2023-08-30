@@ -54,7 +54,6 @@ jobs:
         with:
           artifacts: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
           allowUpdates: true
-          omitBody: true
 
 
   build-and-release-ios-ipa:
@@ -98,7 +97,6 @@ jobs:
         with:
           artifacts: "build/ios/iphoneos/Mangayomi-*.ipa"
           allowUpdates: true
-          omitBody: true
 
   build-and-release-macos-dmg:
     permissions:
@@ -139,7 +137,6 @@ jobs:
         with:
           artifacts: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
           allowUpdates: true
-          omitBody: true
 
 
   build-and-release-windows-zip:
@@ -182,4 +179,46 @@ jobs:
         with:
           artifacts: build\windows\Mangayomi-*.zip
           allowUpdates: true
-          omitBody: true
+
+          
+  build-and-release-linux-zip:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: checkout branch
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2.10.0
+        with:
+          flutter-version: 3.13.0
+          channel: 'stable'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: Build Linux
+        run: flutter build linux --verbose
+      - name: Zip 
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: Mangayomi-${{github.ref_name}}-linux.zip
+          directory: build/linux/x64/release/bundle
+      
+      - name: upload artifact linux
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/linux/x64/release/bundle/Mangayomi-${{github.ref_name}}-linux.zip
+      - name: release packages linux
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/linux/x64/release/bundle/Mangayomi-${{github.ref_name}}-linux.zip
+          allowUpdates: true
