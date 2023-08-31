@@ -39,7 +39,6 @@ static void my_application_activate(GApplication* application) {
 #endif
   if (use_header_bar) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
-    gtk_window_set_icon_from_file(GTK_WINDOW(window),"assets/app_icons/icon-red-48x48.png",NULL);
     gtk_widget_show(GTK_WIDGET(header_bar));
     gtk_header_bar_set_title(header_bar, "Mangayomi");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
