@@ -36,7 +36,6 @@ import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
-import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
@@ -111,7 +110,7 @@ class MBridge {
           .trimLeft()
           .trimRight();
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -199,7 +198,7 @@ class MBridge {
       //return last element of the resRegExp list
       return resRegExp.last.trim().trimLeft().trimRight();
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -226,7 +225,7 @@ class MBridge {
         return attr;
       }
     } catch (e) {
-      // botToast(e.toString());
+      // _botToast(e.toString());
       return "";
     }
   }
@@ -297,11 +296,9 @@ class MBridge {
         ..launch(url);
 
       await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        html = await decodeHtml(
-          webview,
-        );
-        if (html == null || xpathSelector(html!).query(rule).attrs.isEmpty) {
+        await Future.delayed(const Duration(seconds: 10));
+        html = await decodeHtml(webview);
+        if (xpathSelector(html!).query(rule).attrs.isEmpty) {
           html = await decodeHtml(webview);
           return true;
         }
@@ -377,7 +374,7 @@ class MBridge {
       final jsPacker = JSPacker(code);
       return jsPacker.unpack() ?? "";
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -426,7 +423,7 @@ class MBridge {
         }).toList();
       }
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -487,7 +484,7 @@ class MBridge {
       }
       return listRg.first;
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -611,7 +608,7 @@ class MBridge {
 
       return result;
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       return "";
     }
   }
@@ -685,7 +682,7 @@ class MBridge {
 
       return result;
     } catch (e) {
-      botToast(e.toString());
+      _botToast(e.toString());
       return "";
     }
   }
@@ -781,7 +778,7 @@ class MBridge {
               ["menit", "dakika", "min", "minute", "minuto", "นาที", "دقائق"])
           .anyWordIn(date)) {
         return cal.subtract(Duration(minutes: number)).millisecondsSinceEpoch;
-      } else if (WordSet(["detik", "segundo", "second", "วินาที", "sec"])
+      } else if (WordSet(["detik", "segundo", "second", "วินาที"])
           .anyWordIn(date)) {
         return cal.subtract(Duration(seconds: number)).millisecondsSinceEpoch;
       } else if (WordSet(["week", "semana"]).anyWordIn(date)) {
@@ -875,13 +872,9 @@ class MBridge {
           } catch (_) {}
         }
       }
-      botToast(e.toString());
+      _botToast(e.toString());
       throw Exception(e);
     }
-  }
-
-  static String deobfuscateJsPassword(String inputString) {
-    return Deobfuscator.deobfuscateJsPassword(inputString);
   }
 
   static Future<List<Video>> sibnetExtractor(String url) async {
@@ -1100,19 +1093,6 @@ class $MBridge extends MBridge with $Bridge {
                       'type',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.intType)),
-                      false),
-                ],
-                namedParams: []),
-            isStatic: true),
-        'deobfuscateJsPassword': BridgeMethodDef(
-            BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
-                params: [
-                  BridgeParameter(
-                      'inputString',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
                 ],
                 namedParams: []),
@@ -2053,10 +2033,6 @@ class $MBridge extends MBridge with $Bridge {
       $String(MBridge.parseChapterDate(
           args[0]!.$value, args[1]!.$value, args[2]!.$value));
 
-  static $String $deobfuscateJsPassword(
-          Runtime runtime, $Value? target, List<$Value?> args) =>
-      $String(MBridge.deobfuscateJsPassword(args[0]!.$value));
-
   static $String $querySelectorAll(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.querySelectorAll(
@@ -2184,7 +2160,7 @@ class $MBridge extends MBridge with $Bridge {
   void $bridgeSet(String identifier, $Value value) {}
 }
 
-void botToast(String title) {
+void _botToast(String title) {
   BotToast.showSimpleNotification(
       onlyOne: true,
       dismissDirections: [DismissDirection.horizontal, DismissDirection.down],

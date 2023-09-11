@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
-import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -73,7 +72,8 @@ class Anilist extends _$Anilist {
   Future<Track> addLibManga(Track track) async {
     final accessToken = await _getAccesToken();
 
-    const query = '''
+    const query =
+        '''
     mutation AddManga(\$mangaId: Int, \$progress: Int, \$status: MediaListStatus) {
       SaveMediaListEntry(mediaId: \$mangaId, progress: \$progress, status: \$status) {
         id
@@ -107,7 +107,8 @@ class Anilist extends _$Anilist {
   Future<Track> addLibAnime(Track track) async {
     final accessToken = await _getAccesToken();
 
-    const query = '''
+    const query =
+        '''
     mutation AddAnime(\$animeId: Int, \$progress: Int, \$status: MediaListStatus) {
       SaveMediaListEntry(mediaId: \$animeId, progress: \$progress, status: \$status) {
         id
@@ -140,7 +141,8 @@ class Anilist extends _$Anilist {
 
   Future<Track> updateLibManga(Track track) async {
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     mutation UpdateManga(\$listId: Int, \$progress: Int, \$status: MediaListStatus, \$score: Int, \$startedAt: FuzzyDateInput, \$completedAt: FuzzyDateInput) {
       SaveMediaListEntry(
         id: \$listId,
@@ -183,7 +185,8 @@ class Anilist extends _$Anilist {
 
   Future<Track> updateLibAnime(Track track) async {
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     mutation UpdateAnime(\$listId: Int, \$progress: Int, \$status: MediaListStatus, \$score: Int, \$startedAt: FuzzyDateInput, \$completedAt: FuzzyDateInput) {
       SaveMediaListEntry(
         id: \$listId,
@@ -224,7 +227,8 @@ class Anilist extends _$Anilist {
 
   Future<List<TrackSearch>> search(String search) async {
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     query Search(\$query: String) {
       Page(perPage: 50) {
         media(search: \$query, type: MANGA, format_not_in: [NOVEL]) {
@@ -290,7 +294,8 @@ class Anilist extends _$Anilist {
 
   Future<List<TrackSearch>> searchAnime(String search) async {
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     query Search(\$query: String) {
       Page(perPage: 50) {
         media(search: \$query, type: ANIME) {
@@ -360,7 +365,8 @@ class Anilist extends _$Anilist {
     final userId = ref.watch(tracksProvider(syncId: syncId))!.username;
 
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     query(\$id: Int!, \$manga_id: Int!) {
       Page {
         mediaList(userId: \$id, type: MANGA, mediaId: \$manga_id) {
@@ -442,7 +448,8 @@ class Anilist extends _$Anilist {
     final userId = ref.watch(tracksProvider(syncId: syncId))!.username;
 
     final accessToken = await _getAccesToken();
-    const query = '''
+    const query =
+        '''
     query(\$id: Int!, \$anime_id: Int!) {
       Page {
         mediaList(userId: \$id, type: ANIME, mediaId: \$anime_id) {
@@ -519,7 +526,8 @@ class Anilist extends _$Anilist {
   }
 
   Future<(String, String)> _getCurrentUser(String accessToken) async {
-    const query = '''
+    const query =
+        '''
     query User {
       Viewer {
         id
@@ -558,7 +566,6 @@ class Anilist extends _$Anilist {
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
       ref.read(tracksProvider(syncId: syncId).notifier).logout();
-      botToast("Anilist Token expired");
       throw Exception("Token expired");
     }
     return mALOAuth.accessToken!;
@@ -570,20 +577,24 @@ class Anilist extends _$Anilist {
     return switch (scoreFormat) {
       "POINT_10" => (score / 10).toString(),
       "POINT_100" => score.toString(),
-      "POINT_5" => switch (score) {
-          0 => "0",
-          < 30 => "1",
-          < 50 => "2",
-          < 70 => "3",
-          < 90 => "4",
-          _ => "5"
-        },
-      "POINT_3" => switch (score) {
-          0 => "0",
-          <= 35 => ":(",
-          <= 60 => ":|",
-          _ => ":)"
-        },
+      "POINT_5" => score == 0
+          ? "0"
+          : score < 30
+              ? "1"
+              : score < 50
+                  ? "2"
+                  : score < 70
+                      ? "3"
+                      : score < 90
+                          ? "4"
+                          : "5",
+      "POINT_3" => score == 0
+          ? "0"
+          : score <= 35
+              ? ":("
+              : score <= 60
+                  ? ":|"
+                  : ":)",
       "POINT_10_DECIMAL" => (score / 10).toString(),
       _ => throw ("Unknown score type")
     };
@@ -672,16 +683,14 @@ class Anilist extends _$Anilist {
     final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
-      'POINT_5' => switch (score) {
-          0 => "0 ★",
-          _ => "${(score + 10) ~/ 20} ★"
-        },
-      'POINT_3' => switch (score) {
-          0 => "-",
-          <= 35 => "😦",
-          <= 60 => "😐",
-          _ => "😊"
-        },
+      'POINT_5' => score == 0 ? "0 ★" : "${(score + 10) ~/ 20} ★",
+      'POINT_3' => score == 0
+          ? "-"
+          : score <= 35
+              ? "😦"
+              : score <= 60
+                  ? "😐"
+                  : "😊",
       _ => _toAnilistScore(score),
     };
   }

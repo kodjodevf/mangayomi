@@ -25,7 +25,7 @@ Map<String, String> headers(HeadersRef ref,
 
   if (sourceM.hasCloudflare!) {
     final userAgent = isar.settings.getSync(227)!.userAgent!;
-    final cookie = ref.watch(cookieStateProvider(sourceM.id.toString()));
+    final cookie = ref.watch(cookieStateProvider(source));
 
     newHeaders.addAll({'User-Agent': userAgent, "Cookie": cookie});
   }

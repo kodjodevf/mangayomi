@@ -8,14 +8,22 @@ Future setCookie(SetCookieRef ref, String sourceId, String url) async {
   CookieManager cookie = CookieManager.instance();
 
   final cookies = await cookie.getCookies(url: Uri.parse(url.toString()));
-  final newCookie = cookies.join("; ");
-  setCookieBA(newCookie, sourceId);
+  final newCookie =
+      cookies.where((element) => element.name == "cf_clearance").toList();
+  if (newCookie.isNotEmpty) {
+    ref
+        .read(cookieStateProvider(sourceId).notifier)
+        .setCookie("cf_clearance=${newCookie.first.value};");
+  }
 }
 
 Future setCookieB(String sourceId, String url) async {
   CookieManager cookie = CookieManager.instance();
 
   final cookies = await cookie.getCookies(url: Uri.parse(url.toString()));
-  final newCookie = cookies.join("; ");
-  setCookieBA(newCookie, sourceId);
+  final newCookie =
+      cookies.where((element) => element.name == "cf_clearance").toList();
+  if (newCookie.isNotEmpty) {
+    setCookieB("cf_clearance=${newCookie.first.value};", sourceId);
+  }
 }

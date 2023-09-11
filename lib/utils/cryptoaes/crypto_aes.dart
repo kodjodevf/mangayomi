@@ -25,7 +25,7 @@ class CryptoAES {
 
   static String decryptAESCryptoJS(String encrypted, String passphrase) {
     try {
-      Uint8List encryptedBytesWithSalt = base64.decode(encrypted.trim());
+      Uint8List encryptedBytesWithSalt = base64.decode(encrypted);
 
       Uint8List encryptedBytes =
           encryptedBytesWithSalt.sublist(16, encryptedBytesWithSalt.length);

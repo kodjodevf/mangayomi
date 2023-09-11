@@ -76,19 +76,17 @@ class MainScreen extends ConsumerWidget {
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 0),
-                          width: switch (isLongPressed) {
-                            true => 0,
-                            _ => switch (location) {
-                                null => 100,
-                                != '/MangaLibrary' &&
-                                      != '/AnimeLibrary' &&
-                                      != '/history' &&
-                                      != '/browse' &&
-                                      != '/more' =>
-                                  0,
-                                _ => 100,
-                              },
-                          },
+                          width: isLongPressed
+                              ? 0
+                              : location == null
+                                  ? 100
+                                  : location != '/MangaLibrary' &&
+                                          location != '/AnimeLibrary' &&
+                                          location != '/history' &&
+                                          location != '/browse' &&
+                                          location != '/more'
+                                      ? 0
+                                      : 100,
                           child: NavigationRailTheme(
                             data: NavigationRailThemeData(
                               indicatorShape: RoundedRectangleBorder(
@@ -178,19 +176,17 @@ class MainScreen extends ConsumerWidget {
                   : AnimatedContainer(
                       duration: const Duration(milliseconds: 0),
                       width: mediaWidth(context, 1),
-                      height: switch (isLongPressed) {
-                        true => 0,
-                        _ => switch (location) {
-                            null => null,
-                            != '/MangaLibrary' &&
-                                  != '/AnimeLibrary' &&
-                                  != '/history' &&
-                                  != '/browse' &&
-                                  != '/more' =>
-                              0,
-                            _ => null,
-                          },
-                      },
+                      height: isLongPressed
+                          ? 0
+                          : location == null
+                              ? null
+                              : location != '/MangaLibrary' &&
+                                      location != '/AnimeLibrary' &&
+                                      location != '/history' &&
+                                      location != '/browse' &&
+                                      location != '/more'
+                                  ? 0
+                                  : null,
                       child: NavigationBarTheme(
                         data: NavigationBarThemeData(
                           indicatorShape: RoundedRectangleBorder(

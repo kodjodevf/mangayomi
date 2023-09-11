@@ -9,7 +9,7 @@ import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
+import 'package:mangayomi/modules/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';

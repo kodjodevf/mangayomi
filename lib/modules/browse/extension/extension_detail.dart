@@ -3,24 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
-class ExtensionDetail extends ConsumerStatefulWidget {
+class ExtensionDetail extends ConsumerWidget {
   final Source source;
   const ExtensionDetail({super.key, required this.source});
 
   @override
-  ConsumerState<ExtensionDetail> createState() => _ExtensionDetailState();
-}
-
-class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
-  late Source source = widget.source;
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -35,10 +28,10 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                   color:
                       Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(10)),
-              child: widget.source.iconUrl!.isEmpty
+              child: source.iconUrl!.isEmpty
                   ? const Icon(Icons.source_outlined, size: 140)
                   : CachedNetworkImage(
-                      imageUrl: widget.source.iconUrl!,
+                      imageUrl: source.iconUrl!,
                       fit: BoxFit.contain,
                       width: 140,
                       height: 140,
@@ -57,7 +50,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
-              widget.source.name!,
+              source.name!,
               style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -76,7 +69,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     Column(
                       children: [
                         Text(
-                          widget.source.version!,
+                          source.version!,
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -86,7 +79,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         ),
                       ],
                     ),
-                    if (widget.source.isNsfw!)
+                    if (source.isNsfw!)
                       Container(
                           decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.7),
@@ -103,7 +96,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     Column(
                       children: [
                         Text(
-                          completeLanguageName(widget.source.lang!),
+                          completeLanguageName(source.lang!),
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -138,10 +131,10 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         builder: (ctx) {
                           return AlertDialog(
                             title: Text(
-                              widget.source.name!,
+                              source.name!,
                             ),
-                            content: Text(
-                                l10n.uninstall_extension(widget.source.name!)),
+                            content:
+                                Text(l10n.uninstall_extension(source.name!)),
                             actions: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -156,8 +149,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                   ),
                                   TextButton(
                                       onPressed: () {
-                                        isar.writeTxnSync(() =>
-                                            isar.sources.putSync(widget.source
+                                        isar.writeTxnSync(
+                                            () => isar.sources.putSync(source
                                               ..sourceCode = ""
                                               ..isAdded = false
                                               ..isPinned = false));
@@ -177,86 +170,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         fontSize: 20, fontWeight: FontWeight.bold),
                   )),
             ),
-          ),
-          ref.watch(getMirrorPrefProvider(widget.source.sourceCode!)).when(
-                data: (data) => data != null
-                    ? ListTile(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    l10n.relative_timestamp,
-                                  ),
-                                  content: SizedBox(
-                                      width: mediaWidth(context, 0.8),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: data.entries.length,
-                                        itemBuilder: (context, index) {
-                                          return RadioListTile(
-                                            dense: true,
-                                            contentPadding:
-                                                const EdgeInsets.all(0),
-                                            value: data.entries
-                                                .toList()[index]
-                                                .value,
-                                            groupValue: widget.source.baseUrl!,
-                                            onChanged: (value) {
-                                              isar.writeTxnSync(() => isar
-                                                  .sources
-                                                  .putSync(widget.source
-                                                    ..baseUrl = data.entries
-                                                        .toList()[index]
-                                                        .value));
-                                              setState(() {
-                                                source = isar.sources
-                                                    .getSync(source.id!)!;
-                                              });
-
-                                              Navigator.pop(context);
-                                            },
-                                            title: Row(
-                                              children: [
-                                                Text(data.entries
-                                                    .toList()[index]
-                                                    .key)
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      )),
-                                  actions: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextButton(
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              l10n.cancel,
-                                              style: TextStyle(
-                                                  color: primaryColor(context)),
-                                            )),
-                                      ],
-                                    )
-                                  ],
-                                );
-                              });
-                        },
-                        title: Text(l10n.relative_timestamp),
-                        subtitle: Text(
-                          widget.source.baseUrl!,
-                          style: TextStyle(
-                              fontSize: 11, color: secondaryColor(context)),
-                        ),
-                      )
-                    : Container(),
-                error: (error, stackTrace) => Text(error.toString()),
-                loading: () => Container(),
-              )
+          )
         ],
       ),
     );

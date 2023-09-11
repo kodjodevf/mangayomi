@@ -10,7 +10,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
-import 'package:mangayomi/services/http_service/cloudflare/providers/cookie_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -183,6 +182,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _url = url.toString();
                         });
                       },
+                      
                       shouldOverrideUrlLoading:
                           (controller, navigationAction) async {
                         var uri = navigationAction.request.url!;
@@ -213,6 +213,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _url = url.toString();
                         });
                       },
+                      
                       onProgressChanged: (controller, progress) async {
                         setState(() {
                           this.progress = progress / 100;
@@ -232,12 +233,12 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _canGoback = canGoback;
                           _canGoForward = canGoForward;
                         });
-                      },
-                      initialOptions: InAppWebViewGroupOptions(
-                        crossPlatform: InAppWebViewOptions(
-                            userAgent: isar.settings.getSync(227)!.userAgent!),
-                      ),
-                      initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+                      },initialOptions: InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(userAgent: isar.settings.getSync(227)!.userAgent!),
+      ),
+                      
+                      initialUrlRequest:
+                          URLRequest(url: Uri.parse(widget.url)),
                     ),
                   ),
                 ],
@@ -255,17 +256,10 @@ Future<String> getWebViewPath() async {
   );
 }
 
-Future<String?> decodeHtml(Webview webview, {String? sourceId}) async {
+decodeHtml(Webview webview) async {
   final html = await webview
       .evaluateJavaScript("window.document.documentElement.outerHTML;");
-  final cookie = await webview.evaluateJavaScript("window.document.cookie;");
-  if (cookie != null && sourceId != null) {
-    setCookieBA(cookie, sourceId);
-  }
-
-  final res = jsonDecode(html!) as String;
-
-  return res == "<html><head></head><body></body></html>" || res.isEmpty
-      ? null
-      : res;
+  // final cookie = await webview.evaluateJavaScript("window.document.cookie;");
+  // log(cookie!);
+  return jsonDecode(html!) as String;
 }

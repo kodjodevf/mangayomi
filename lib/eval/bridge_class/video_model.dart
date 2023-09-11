@@ -41,11 +41,6 @@ class $VideoModel implements VideoModel, $Instance {
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
                       [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
                   false),
-              BridgeParameter(
-                  'audios',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
-                  false),
             ]))
       },
       // Specify class fields

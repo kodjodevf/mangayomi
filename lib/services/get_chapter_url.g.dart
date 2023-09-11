@@ -6,7 +6,7 @@ part of 'get_chapter_url.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'6a8b0eb3869519b75787d8d4a876f536a517e849';
+String _$getChapterUrlHash() => r'330c495774b22fc1fdedb0fa64969cd17e4635f8';
 
 /// Copied from Dart SDK
 class _SystemHash {
