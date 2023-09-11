@@ -6,7 +6,7 @@ part of 'cookie_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cookieStateHash() => r'42286f51989b6f65eed9787ca2390a96854395a8';
+String _$cookieStateHash() => r'a3e0c52a396c7b9072c2b1e948399f2e4e4728d5';
 
 /// Copied from Dart SDK
 class _SystemHash {

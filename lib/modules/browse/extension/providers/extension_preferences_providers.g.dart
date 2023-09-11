@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_chapter_url.dart';
+part of 'extension_preferences_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'6a8b0eb3869519b75787d8d4a876f536a517e849';
+String _$getMirrorPrefHash() => r'87d8329eabbe702d2e612a04cfe6fc719519194c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,32 @@ class _SystemHash {
   }
 }
 
-typedef GetChapterUrlRef = AutoDisposeFutureProviderRef<GetChapterUrlModel>;
+typedef GetMirrorPrefRef = AutoDisposeFutureProviderRef<Map<String, String>?>;
 
-/// See also [getChapterUrl].
-@ProviderFor(getChapterUrl)
-const getChapterUrlProvider = GetChapterUrlFamily();
+/// See also [getMirrorPref].
+@ProviderFor(getMirrorPref)
+const getMirrorPrefProvider = GetMirrorPrefFamily();
 
-/// See also [getChapterUrl].
-class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
-  /// See also [getChapterUrl].
-  const GetChapterUrlFamily();
+/// See also [getMirrorPref].
+class GetMirrorPrefFamily extends Family<AsyncValue<Map<String, String>?>> {
+  /// See also [getMirrorPref].
+  const GetMirrorPrefFamily();
 
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider call({
-    required Chapter chapter,
-  }) {
-    return GetChapterUrlProvider(
-      chapter: chapter,
+  /// See also [getMirrorPref].
+  GetMirrorPrefProvider call(
+    String codeSource,
+  ) {
+    return GetMirrorPrefProvider(
+      codeSource,
     );
   }
 
   @override
-  GetChapterUrlProvider getProviderOverride(
-    covariant GetChapterUrlProvider provider,
+  GetMirrorPrefProvider getProviderOverride(
+    covariant GetMirrorPrefProvider provider,
   ) {
     return call(
-      chapter: provider.chapter,
+      provider.codeSource,
     );
   }
 
@@ -70,42 +70,42 @@ class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getChapterUrlProvider';
+  String? get name => r'getMirrorPrefProvider';
 }
 
-/// See also [getChapterUrl].
-class GetChapterUrlProvider
-    extends AutoDisposeFutureProvider<GetChapterUrlModel> {
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider({
-    required this.chapter,
-  }) : super.internal(
-          (ref) => getChapterUrl(
+/// See also [getMirrorPref].
+class GetMirrorPrefProvider
+    extends AutoDisposeFutureProvider<Map<String, String>?> {
+  /// See also [getMirrorPref].
+  GetMirrorPrefProvider(
+    this.codeSource,
+  ) : super.internal(
+          (ref) => getMirrorPref(
             ref,
-            chapter: chapter,
+            codeSource,
           ),
-          from: getChapterUrlProvider,
-          name: r'getChapterUrlProvider',
+          from: getMirrorPrefProvider,
+          name: r'getMirrorPrefProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getChapterUrlHash,
-          dependencies: GetChapterUrlFamily._dependencies,
+                  : _$getMirrorPrefHash,
+          dependencies: GetMirrorPrefFamily._dependencies,
           allTransitiveDependencies:
-              GetChapterUrlFamily._allTransitiveDependencies,
+              GetMirrorPrefFamily._allTransitiveDependencies,
         );
 
-  final Chapter chapter;
+  final String codeSource;
 
   @override
   bool operator ==(Object other) {
-    return other is GetChapterUrlProvider && other.chapter == chapter;
+    return other is GetMirrorPrefProvider && other.codeSource == codeSource;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, codeSource.hashCode);
 
     return _SystemHash.finish(hash);
   }
