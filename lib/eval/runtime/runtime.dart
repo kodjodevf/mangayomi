@@ -100,6 +100,8 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.querySelector', $MBridge.$querySelector);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.deobfuscateJsPassword', $MBridge.$deobfuscateJsPassword);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.querySelectorAll', $MBridge.$querySelectorAll);
   runtime.setup();
   return runtime;

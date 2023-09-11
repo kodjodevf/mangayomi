@@ -35,7 +35,7 @@ class CookieState extends _$CookieState {
   }
 }
 
-void setCookieB(String newCookie, String idSource) {
+void setCookieBA(String newCookie, String idSource) {
   final settings = isar.settings.getSync(227);
   List<Cookie>? cookieList = [];
   for (var cookie in settings!.cookiesList ?? []) {
