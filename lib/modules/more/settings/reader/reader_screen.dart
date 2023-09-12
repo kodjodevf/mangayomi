@@ -155,7 +155,7 @@ class ReaderScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(l10n.reading_mode),
+                        title: Text(l10n.background_color),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
                             child: ListView.builder(
@@ -203,7 +203,7 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.reading_mode),
+              title: Text(l10n.background_color),
               subtitle: Text(
                 getBackgroundColorName(backgroundColor, context),
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),

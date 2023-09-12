@@ -736,49 +736,58 @@ class _MangaChapterPageGalleryState
                                         builder: (context, ref, child) {
                                       final currentIndex = ref
                                           .watch(currentIndexProvider(chapter));
-                                      return Slider(
-                                        onChanged: (value) {
-                                          ref
-                                              .read(
-                                                  currentIndexProvider(chapter)
-                                                      .notifier)
-                                              .setCurrentIndex(value.toInt());
-                                        },
-                                        onChangeEnd: (newValue) {
-                                          try {
-                                            final index = _uChapDataPreload
-                                                .where((element) =>
-                                                    element.chapter ==
-                                                        chapter &&
-                                                    element.index ==
-                                                        newValue.toInt())
-                                                .toList()
-                                                .first
-                                                .pageIndex;
+                                      return SliderTheme(
+                                        data: SliderTheme.of(context).copyWith(
+                                          overlayShape:
+                                              const RoundSliderOverlayShape(
+                                                  overlayRadius: 5.0),
+                                        ),
+                                        child: Slider(
+                                          onChanged: (value) {
+                                            ref
+                                                .read(currentIndexProvider(
+                                                        chapter)
+                                                    .notifier)
+                                                .setCurrentIndex(value.toInt());
+                                          },
+                                          onChangeEnd: (newValue) {
+                                            try {
+                                              final index = _uChapDataPreload
+                                                  .where((element) =>
+                                                      element.chapter ==
+                                                          chapter &&
+                                                      element.index ==
+                                                          newValue.toInt())
+                                                  .toList()
+                                                  .first
+                                                  .pageIndex;
 
-                                            _onBtnTapped(
-                                              index!,
-                                              true,
-                                              isSlide: true,
-                                            );
-                                          } catch (_) {}
-                                        },
-                                        divisions:
-                                            _readerController.getPageLength(
-                                                    _chapterUrlModel.pageUrls) -
-                                                1,
-                                        value: min(
-                                            currentIndex.toDouble(),
-                                            _readerController
-                                                .getPageLength(
-                                                    _chapterUrlModel.pageUrls)
-                                                .toDouble()),
-                                        label: '${currentIndex + 1}',
-                                        min: 0,
-                                        max: (_readerController.getPageLength(
-                                                    _chapterUrlModel.pageUrls) -
-                                                1)
-                                            .toDouble(),
+                                              _onBtnTapped(
+                                                index!,
+                                                true,
+                                                isSlide: true,
+                                              );
+                                            } catch (_) {}
+                                          },
+                                          divisions:
+                                              _readerController.getPageLength(
+                                                      _chapterUrlModel
+                                                          .pageUrls) -
+                                                  1,
+                                          value: min(
+                                              currentIndex.toDouble(),
+                                              _readerController
+                                                  .getPageLength(
+                                                      _chapterUrlModel.pageUrls)
+                                                  .toDouble()),
+                                          label: '${currentIndex + 1}',
+                                          min: 0,
+                                          max: (_readerController.getPageLength(
+                                                      _chapterUrlModel
+                                                          .pageUrls) -
+                                                  1)
+                                              .toDouble(),
+                                        ),
                                       );
                                     }),
                                   ),
