@@ -23,7 +23,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: Setup Android keystore
@@ -68,7 +68,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: flutter pub get
@@ -110,7 +110,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: flutter pub get
@@ -151,7 +151,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: flutter pub get
@@ -198,7 +198,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: flutter pub get
@@ -241,7 +241,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2.10.0
         with:
-          flutter-version: 3.13.0
+          flutter-version: 3.13.3
           channel: 'stable'
 
       - name: flutter pub get
