@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -83,7 +84,23 @@ class SourcesFilterScreen extends ConsumerWidget {
                                 .secondaryHeaderColor
                                 .withOpacity(0.5),
                             borderRadius: BorderRadius.circular(5)),
-                        child: const Icon(Icons.source_outlined),
+                        child: element.iconUrl!.isEmpty
+                            ? const Icon(Icons.source_outlined)
+                            : CachedNetworkImage(
+                                imageUrl: element.iconUrl!,
+                                fit: BoxFit.contain,
+                                width: 37,
+                                height: 37,
+                                errorWidget: (context, url, error) {
+                                  return const SizedBox(
+                                    width: 37,
+                                    height: 37,
+                                    child: Center(
+                                      child: Icon(Icons.source_outlined),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                       onChanged: (bool? value) {
                         isar.writeTxnSync(() {

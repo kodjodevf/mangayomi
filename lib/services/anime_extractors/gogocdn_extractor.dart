@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:encrypt/encrypt.dart';
-import 'package:flutter/services.dart';
 import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:html/parser.dart' as parser;
 import 'package:mangayomi/utils/extensions.dart';
 
@@ -32,21 +30,17 @@ class GogoCdnExtractor {
       RegExp(r'container-(\d+)').firstMatch(document)?.group(1);
       final decryptionKey =
           RegExp(r'videocontent-(\d+)').firstMatch(document)?.group(1);
-      final encryptAjaxParams = _cryptoHandler(
+      final encryptAjaxParams = MBridge.cryptoHandler(
         RegExp(r'data-value="([^"]+)').firstMatch(document)?.group(1) ?? "",
-        Uint8List.fromList(iv.codeUnits),
-        Uint8List.fromList(secretKey.codeUnits),
-        encrypt: false,
+        iv,
+        secretKey,
+        false,
       ).substringAfter("&");
 
       final httpUrl = Uri.parse(serverUrl);
       final host = "https://${httpUrl.host}/";
       final id = httpUrl.queryParameters['id'];
-      final encryptedId = _cryptoHandler(
-        id ?? "",
-        Uint8List.fromList(iv.codeUnits),
-        Uint8List.fromList(secretKey.codeUnits),
-      );
+      final encryptedId = MBridge.cryptoHandler(id ?? "", iv, secretKey, true);
 
       final token = httpUrl.queryParameters['token'];
       final qualityPrefix = token != null ? "Gogostream - " : "Vidstreaming - ";
@@ -58,11 +52,8 @@ class GogoCdnExtractor {
           headers: {"X-Requested-With": "XMLHttpRequest"});
       final jsonResponse = encryptAjaxResponse.body;
       final data = json.decode(jsonResponse)["data"];
-      final decryptedData = _cryptoHandler(
-          data ?? "",
-          Uint8List.fromList(iv.codeUnits),
-          Uint8List.fromList(decryptionKey!.codeUnits),
-          encrypt: false);
+      final decryptedData =
+          MBridge.cryptoHandler(data ?? "", iv, decryptionKey!, false);
       final videoList = <Video>[];
       final autoList = <Video>[];
       final array = json.decode(decryptedData)["source"];
@@ -111,31 +102,4 @@ class GogoCdnExtractor {
       return [];
     }
   }
-
-  String _cryptoHandler(
-    String string,
-    Uint8List iv,
-    Uint8List secretKeyString, {
-    bool encrypt = true,
-  }) {
-    if (encrypt) {
-      final encryptt = _encrypt(
-          String.fromCharCodes(secretKeyString), String.fromCharCodes(iv));
-      final aa = encryptt.$1.encrypt(string, iv: encryptt.$2);
-      return aa.base64;
-    } else {
-      final encryptt = _encrypt(
-          String.fromCharCodes(secretKeyString), String.fromCharCodes(iv));
-      final aa = encryptt.$1.decrypt64(string, iv: encryptt.$2);
-      return aa;
-    }
-  }
-}
-
-(encrypt.Encrypter, encrypt.IV) _encrypt(String keyy, String ivv) {
-  final key = encrypt.Key.fromUtf8(keyy);
-  final iv = encrypt.IV.fromUtf8(ivv);
-  final encrypter =
-      encrypt.Encrypter(encrypt.AES(key, mode: AESMode.cbc, padding: 'PKCS7'));
-  return (encrypter, iv);
 }

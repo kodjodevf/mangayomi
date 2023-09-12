@@ -376,6 +376,9 @@ class _MangaChapterPageGalleryState
   final double _imageDetailY = 0;
 
   void _onBtnTapped(int index, bool isPrev, {bool isSlide = false}) {
+    if (_isView) {
+      _isViewFunction();
+    }
     final readerMode = ref.watch(_selectedValue);
     final animatePageTransitions =
         ref.watch(animatePageTransitionsStateProvider);
@@ -637,10 +640,10 @@ class _MangaChapterPageGalleryState
                   IconButton(
                       onPressed: () {
                         final manga = chapter.manga.value!;
-                        final source = getSource(manga.lang!, manga.source!);
-                        String url = source!.apiUrl!.isEmpty
-                            ? chapter.url!
-                            : "${source.baseUrl}/${chapter.url!}";
+                        final source = getSource(manga.lang!, manga.source!)!;
+                        String url = chapter.url!.startsWith('/')
+                            ? "${source.baseUrl}/${chapter.url!}"
+                            : chapter.url!;
                         Map<String, String> data = {
                           'url': url,
                           'sourceId': source.id.toString(),

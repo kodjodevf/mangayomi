@@ -225,5 +225,6 @@
   "white":"Blanc",
   "black":"Noir",
   "grey":"Gris",
-  "automaic":"Automatique"
+  "automaic":"Automatique",
+  "preferred_domain":"Domaine préféré"
 }

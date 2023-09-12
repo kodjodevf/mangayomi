@@ -43,6 +43,7 @@ import 'package:mangayomi/utils/xpath_selector.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as hp;
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 class WordSet {
   final List<String> words;
@@ -981,6 +982,19 @@ class MBridge {
 
     return type == 0 ? value.isEmpty : value.isNotEmpty;
   }
+
+  static String cryptoHandler(
+      String text, String iv, String secretKeyString, bool encrypt) {
+    if (encrypt) {
+      final encryptt = _encrypt(secretKeyString, iv);
+      final en = encryptt.$1.encrypt(text, iv: encryptt.$2);
+      return en.base64;
+    } else {
+      final encryptt = _encrypt(secretKeyString, iv);
+      final en = encryptt.$1.decrypt64(text, iv: encryptt.$2);
+      return en;
+    }
+  }
 }
 
 final List<String> _dateFormats = [
@@ -1046,6 +1060,34 @@ class $MBridge extends MBridge with $Bridge {
                       'type',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'cryptoHandler': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'text',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'iv',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'secretKeyString',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'encrypt',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.boolType)),
                       false),
                 ],
                 namedParams: []),
@@ -1997,6 +2039,11 @@ class $MBridge extends MBridge with $Bridge {
   static $String $bAse64(Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.bAse64(args[0]!.$value, args[1]!.$value));
 
+  static $String $cryptoHandler(
+          Runtime runtime, $Value? target, List<$Value?> args) =>
+      $String(MBridge.cryptoHandler(
+          args[0]!.$value, args[1]!.$value, args[2]!.$value, args[3]!.$value));
+
   static $String $encryptAESCryptoJS(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.encryptAESCryptoJS(args[0]!.$value, args[1]!.$value));
@@ -2212,3 +2259,11 @@ $VideoModel _toVideoModel(Video e) => $VideoModel.wrap(VideoModel()
             ..file = t.file
             ..label = t.label))
           .toList()));
+
+(encrypt.Encrypter, encrypt.IV) _encrypt(String keyy, String ivv) {
+  final key = encrypt.Key.fromUtf8(keyy);
+  final iv = encrypt.IV.fromUtf8(ivv);
+  final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: 'PKCS7'));
+  return (encrypter, iv);
+}

@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:js_packer/js_packer.dart';
+import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
@@ -16,7 +16,7 @@ class FilemoonExtractor {
           .queryXPath('//script[contains(text(), "eval")]/text()')
           .attr;
 
-      final unpacked = _evalJs(jsEval!) ?? '';
+      final unpacked = MBridge.evalJs(jsEval!);
 
       final masterUrl = unpacked.isNotEmpty
           ? unpacked.substringAfter('{file:"').substringBefore('"}')
@@ -53,9 +53,4 @@ class FilemoonExtractor {
       return [];
     }
   }
-}
-
-String? _evalJs(String script) {
-  final jsPacker = JSPacker(script);
-  return jsPacker.unpack();
 }

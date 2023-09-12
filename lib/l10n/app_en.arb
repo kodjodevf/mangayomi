@@ -225,5 +225,6 @@
   "white":"White",
   "black":"Black",
   "grey":"Grey",
-  "automaic":"Automatic"
+  "automaic":"Automatic",
+  "preferred_domain":"Preferred Domain"
 }

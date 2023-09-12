@@ -1401,10 +1401,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 onPressed: () {
                   final manga = widget.manga!;
                   final source =
-                      getSource(widget.manga!.lang!, widget.manga!.source!);
-                  String url = source!.apiUrl!.isEmpty
-                      ? widget.manga!.link!
-                      : "${source.baseUrl}${widget.manga!.link!}";
+                      getSource(widget.manga!.lang!, widget.manga!.source!)!;
+                  String url = widget.manga!.link!.startsWith('/')
+                      ? "${source.baseUrl}${widget.manga!.link!}"
+                      : widget.manga!.link!;
 
                   Map<String, String> data = {
                     'url': url,

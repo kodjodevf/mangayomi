@@ -1,5 +1,5 @@
-import 'package:js_packer/js_packer.dart';
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
@@ -20,12 +20,12 @@ class StreamWishExtractor {
         return [];
       }
 
-      String? masterUrl = _evalJs(jsEval.first!)
-          ?.substringAfter('source')
+      String? masterUrl = MBridge.evalJs(jsEval.first!)
+          .substringAfter('source')
           .substringAfter('file:"')
           .substringBefore('"');
 
-      if (masterUrl == null) return [];
+      if (masterUrl.isEmpty) return [];
 
       final playlistHeaders = Map<String, String>.from(headers)
         ..addAll({
@@ -57,9 +57,4 @@ class StreamWishExtractor {
       return [];
     }
   }
-}
-
-String? _evalJs(String script) {
-  final jsPacker = JSPacker(script);
-  return jsPacker.unpack();
 }

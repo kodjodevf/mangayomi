@@ -4,7 +4,6 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 
 class ExtensionsLang extends ConsumerWidget {
@@ -14,8 +13,6 @@ class ExtensionsLang extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
-    final languages = languagesMap.entries.map((e) => e.value).toList();
-    languages.sort((a, b) => a.compareTo(b));
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.extensions),
@@ -29,6 +26,9 @@ class ExtensionsLang extends ConsumerWidget {
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             List<Source>? entries = snapshot.hasData ? snapshot.data : [];
+            final languages = entries!.map((e) => e.lang!).toSet().toList();
+
+            languages.sort((a, b) => a.compareTo(b));
             return ListView.builder(
               itemCount: languages.length,
               itemBuilder: (context, index) {
@@ -44,7 +44,7 @@ class ExtensionsLang extends ConsumerWidget {
                       }
                     });
                   },
-                  value: entries!
+                  value: entries
                       .where((element) =>
                           element.lang!.toLowerCase() == lang.toLowerCase() &&
                           element.isActive!)

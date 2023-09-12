@@ -187,7 +187,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: Text(
-                                    l10n.relative_timestamp,
+                                    l10n.preferred_domain,
                                   ),
                                   content: SizedBox(
                                       width: mediaWidth(context, 0.8),
@@ -246,7 +246,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                 );
                               });
                         },
-                        title: Text(l10n.relative_timestamp),
+                        title: Text(l10n.preferred_domain),
                         subtitle: Text(
                           widget.source.baseUrl!,
                           style: TextStyle(

@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:js_packer/js_packer.dart';
+import 'package:mangayomi/eval/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
@@ -22,7 +22,7 @@ class Mp4uploadExtractor {
           .attrs;
 
       if (scriptElementWithEval.isNotEmpty) {
-        script = _evalJs(script)!;
+        script = MBridge.evalJs(script);
       } else {
         final scriptElementWithSrc = xpathSelector(response.body)
             .queryXPath('//script[contains(text(), "player.src")]/text()')
@@ -51,9 +51,4 @@ class Mp4uploadExtractor {
       return [];
     }
   }
-}
-
-String? _evalJs(String script) {
-  final jsPacker = JSPacker(script);
-  return jsPacker.unpack();
 }

@@ -8,13 +8,13 @@ class CryptoAES {
   static String encryptAESCryptoJS(String plainText, String passphrase) {
     try {
       final salt = genRandomWithNonZero(8);
-      var keyndIV = deriveKeyAndIV(passphrase, salt);
+      var keyndIV = deriveKeyAndIV(passphrase.trim(), salt);
       final key = encrypt.Key(keyndIV.$1);
       final iv = encrypt.IV(keyndIV.$2);
 
       final encrypter = encrypt.Encrypter(
           encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
-      final encrypted = encrypter.encrypt(plainText, iv: iv);
+      final encrypted = encrypter.encrypt(plainText.trim(), iv: iv);
       Uint8List encryptedBytesWithSalt = Uint8List.fromList(
           createUint8ListFromString("Salted__") + salt + encrypted.bytes);
       return base64.encode(encryptedBytesWithSalt);
@@ -30,7 +30,7 @@ class CryptoAES {
       Uint8List encryptedBytes =
           encryptedBytesWithSalt.sublist(16, encryptedBytesWithSalt.length);
       final salt = encryptedBytesWithSalt.sublist(8, 16);
-      var keyndIV = deriveKeyAndIV(passphrase, salt);
+      var keyndIV = deriveKeyAndIV(passphrase.trim(), salt);
       final key = encrypt.Key(keyndIV.$1);
       final iv = encrypt.IV(keyndIV.$2);
 
