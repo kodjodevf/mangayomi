@@ -7,7 +7,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/get_manga_detail.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -184,126 +183,95 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final getMangaDetail = ref.watch(getMangaDetailProvider(
-        manga: widget.manga
-          ..lang = widget.source.lang
-          ..source = widget.source.name,
-        source: widget.source));
+    final getMangaDetail = widget.manga
+      ..lang = widget.source.lang
+      ..source = widget.source.name;
     final l10n = l10nLocalizations(context)!;
-    return getMangaDetail.when(
-      data: (data) {
-        return GestureDetector(
-          onTap: () async {
-            pushToMangaReaderDetail(
-                context: context,
-                getManga: data,
-                lang: widget.source.lang!,
-                isManga: widget.source.isManga ?? true);
-          },
-          child: StreamBuilder(
-              stream: isar.mangas
-                  .filter()
-                  .langEqualTo(widget.source.lang)
-                  .nameEqualTo(data.name)
-                  .sourceEqualTo(data.source)
-                  .watch(fireImmediately: true),
-              builder: (context, snapshot) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: Column(children: [
-                          snapshot.hasData &&
-                                  snapshot.data!.isNotEmpty &&
-                                  snapshot.data!.first.customCoverImage != null
-                              ? Image.memory(snapshot
-                                  .data!.first.customCoverImage as Uint8List)
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(2),
-                                  child: cachedNetworkImage(
-                                      headers: ref.watch(headersProvider(
-                                          source: data.source!,
-                                          lang: data.lang!)),
-                                      imageUrl: snapshot.hasData &&
-                                              snapshot.data!.isNotEmpty &&
-                                              snapshot.data!.first.imageUrl !=
-                                                  null
-                                          ? toImgUrl(
-                                              snapshot.data!.first.imageUrl!)
-                                          : toImgUrl(data.imageUrl!),
-                                      width: 100,
-                                      height: 140,
-                                      fit: BoxFit.fill),
-                                ),
-                          BottomTextWidget(
-                            fontSize: 12.0,
-                            text: widget.manga.name!,
-                            isLoading: true,
-                            isComfortableGrid: true,
-                          )
-                        ]),
-                      ),
-                      Container(
-                        width: 100,
-                        height: 140,
-                        color: snapshot.hasData &&
-                                snapshot.data!.isNotEmpty &&
-                                snapshot.data!.first.favorite
-                            ? Colors.black.withOpacity(0.7)
-                            : null,
-                      ),
-                      if (snapshot.hasData &&
-                          snapshot.data!.isNotEmpty &&
-                          snapshot.data!.first.favorite)
-                        Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: primaryColor(context),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Text(
-                                    l10n.in_library,
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                              ),
-                            )),
-                    ],
-                  ),
-                );
-              }),
-        );
+    return GestureDetector(
+      onTap: () async {
+        pushToMangaReaderDetail(
+            context: context,
+            getManga: getMangaDetail,
+            lang: widget.source.lang!,
+            isManga: widget.source.isManga ?? true);
       },
-      loading: () => Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: SizedBox(
-          width: 100,
-          child: Column(children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Container(
-                color: Theme.of(context).cardColor,
-                width: 100,
-                height: 140,
+      child: StreamBuilder(
+          stream: isar.mangas
+              .filter()
+              .langEqualTo(widget.source.lang)
+              .nameEqualTo(getMangaDetail.name)
+              .sourceEqualTo(getMangaDetail.source)
+              .watch(fireImmediately: true),
+          builder: (context, snapshot) {
+            return Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Stack(
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child: Column(children: [
+                      snapshot.hasData &&
+                              snapshot.data!.isNotEmpty &&
+                              snapshot.data!.first.customCoverImage != null
+                          ? Image.memory(snapshot.data!.first.customCoverImage
+                              as Uint8List)
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(2),
+                              child: cachedNetworkImage(
+                                  headers: ref.watch(headersProvider(
+                                      source: getMangaDetail.source!,
+                                      lang: getMangaDetail.lang!)),
+                                  imageUrl: snapshot.hasData &&
+                                          snapshot.data!.isNotEmpty &&
+                                          snapshot.data!.first.imageUrl != null
+                                      ? toImgUrl(snapshot.data!.first.imageUrl!)
+                                      : toImgUrl(getMangaDetail.imageUrl!),
+                                  width: 100,
+                                  height: 140,
+                                  fit: BoxFit.fill),
+                            ),
+                      BottomTextWidget(
+                        fontSize: 12.0,
+                        text: widget.manga.name!,
+                        isLoading: true,
+                        isComfortableGrid: true,
+                      )
+                    ]),
+                  ),
+                  Container(
+                    width: 100,
+                    height: 140,
+                    color: snapshot.hasData &&
+                            snapshot.data!.isNotEmpty &&
+                            snapshot.data!.first.favorite
+                        ? Colors.black.withOpacity(0.7)
+                        : null,
+                  ),
+                  if (snapshot.hasData &&
+                      snapshot.data!.isNotEmpty &&
+                      snapshot.data!.first.favorite)
+                    Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: primaryColor(context),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: Text(
+                                l10n.in_library,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            ),
+                          ),
+                        )),
+                ],
               ),
-            ),
-            BottomTextWidget(
-              fontSize: 12.0,
-              text: widget.manga.name!,
-              isLoading: true,
-              isComfortableGrid: true,
-            )
-          ]),
-        ),
-      ),
-      error: (error, stackTrace) => Center(child: Text(error.toString())),
+            );
+          }),
     );
   }
 

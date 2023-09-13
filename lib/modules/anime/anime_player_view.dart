@@ -171,6 +171,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<VideoPrefs?> _subtitle = ValueNotifier(null);
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
+  bool _initSubtitle = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
   final _showFitLabel = StateProvider((ref) => false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
@@ -180,6 +181,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (position) {
+      if (_initSubtitle) {
+        if (_firstVid.subtitles!.isNotEmpty) {
+          _player.setSubtitleTrack(SubtitleTrack.uri(
+              _firstVid.subtitles!.first.file!,
+              title: _firstVid.subtitles!.first.label,
+              language: _firstVid.subtitles!.first.label));
+          _initSubtitle = false;
+        }
+      }
       if (_seekToCurrentPosition && _currentPosition != Duration.zero) {
         _player.seek(_currentPosition);
         _seekToCurrentPosition = false;
@@ -204,13 +214,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         headers: _firstVid.headers);
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
-
-    if (_firstVid.subtitles!.isNotEmpty) {
-      _player.setSubtitleTrack(SubtitleTrack.uri(
-          _firstVid.subtitles!.first.file!,
-          title: _firstVid.subtitles!.first.label,
-          language: _firstVid.subtitles!.first.label));
-    }
   }
 
   @override
@@ -225,7 +228,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     List<VideoTrack> videoTracks = _player.state.tracks.video
         .where((element) => element.w != null && element.h != null)
         .toList();
-        
+
     for (var track in videoTracks) {
       videoQuality.add(VideoPrefs(videoTrack: track, isLocal: true));
     }
@@ -308,8 +311,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                                 httpHeaders: quality.headers));
                           }
                           _seekToCurrentPosition = true;
+                          _initSubtitle = true;
                           _currentPositionSub = _player.stream.position.listen(
                             (position) {
+                              if (_initSubtitle && _subtitle.value != null) {
+                                _player.setSubtitleTrack(
+                                    _subtitle.value!.subtitle!);
+                                _initSubtitle = false;
+                              }
                               if (_seekToCurrentPosition &&
                                   _currentPosition != Duration.zero) {
                                 _player.seek(_currentPosition);
@@ -555,11 +564,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     ),
                     Stack(
                       children: [
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          top: 0,
+                        Positioned.fill(
                           child: UnconstrainedBox(
                             child: Container(
                               width: 47,
@@ -610,19 +615,26 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     ];
   }
 
-  List<Widget> _topButtonBar(BuildContext context) {
+  List<Widget> _topButtonBar(BuildContext context, bool isFullScreen) {
     return [
       Flexible(
         child: Row(
           children: [
-            BackButton(
-              color: Colors.white,
-              onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
-                Navigator.pop(context);
-              },
-            ),
+            if (isFullScreen)
+              MaterialDesktopFullscreenButton(
+                icon: Icon(Platform.isIOS || Platform.isMacOS
+                    ? Icons.arrow_back_ios
+                    : Icons.arrow_back),
+              ),
+            if (!isFullScreen)
+              BackButton(
+                color: Colors.white,
+                onPressed: () {
+                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                      overlays: SystemUiOverlay.values);
+                  Navigator.pop(context);
+                },
+              ),
             Flexible(
               child: ListTile(
                 dense: true,
@@ -659,13 +671,16 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     return Stack(
       children: [
         Video(
-          // subtitleViewConfiguration: const SubtitleViewConfiguration(
-          //   style: TextStyle(
-          //       height: 1.4,
-          //       fontSize: 40,
-          //       fontWeight: FontWeight.normal,
-          //       backgroundColor: Colors.transparent),
-          // ),
+          subtitleViewConfiguration: const SubtitleViewConfiguration(
+            style: TextStyle(
+                height: 1.4,
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontFamily: "",
+                shadows: [Shadow(offset: Offset(0.0, 0.0), blurRadius: 7.0)],
+                backgroundColor: Colors.transparent),
+          ),
           fit: fit,
           controller: _controller,
           width: MediaQuery.of(context).size.width,
@@ -673,19 +688,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           resumeUponEnteringForegroundMode: true,
         ),
         if (ref.watch(_showFitLabel))
-          Positioned(
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
+          Positioned.fill(
               child: Center(
                   child: Text(
-                fit.name.toUpperCase(),
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              )))
+            fit.name.toUpperCase(),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+          )))
       ],
     );
   }
@@ -704,7 +713,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             primaryButtonBar: [],
             seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context),
+            topButtonBar: _topButtonBar(context, false),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
             bottomButtonBar: _bottomButtonBar(context, false)),
         fullscreen: MaterialVideoControlsThemeData(
@@ -718,7 +727,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             primaryButtonBar: [],
             seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context),
+            topButtonBar: _topButtonBar(context, true),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
             bottomButtonBar: _bottomButtonBar(context, true)),
         child: _videoPlayer(context));
@@ -736,7 +745,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             primaryButtonBar: [],
             seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context),
+            topButtonBar: _topButtonBar(context, false),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
             bottomButtonBar: _bottomButtonBar(context, false)),
         fullscreen: MaterialDesktopVideoControlsThemeData(
@@ -748,7 +757,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             primaryButtonBar: [],
             seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context),
+            topButtonBar: _topButtonBar(context, true),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
             bottomButtonBar: _bottomButtonBar(context, true)),
         child: _videoPlayer(context));

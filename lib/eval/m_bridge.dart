@@ -973,13 +973,6 @@ class MBridge {
 
   //Check if value is empty
   static bool isEmptyOrIsNotEmpty(dynamic value, int type) {
-    if (value is List) {
-      return type == 0 ? value.isEmpty : value.isNotEmpty;
-    }
-    if (value is String) {
-      return type == 0 ? value.isEmpty : value.isNotEmpty;
-    }
-
     return type == 0 ? value.isEmpty : value.isNotEmpty;
   }
 
