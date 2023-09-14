@@ -6,7 +6,7 @@ part of 'search_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'0c16725a47f5ad9b7ec7f128a5c1c03e4868fcf0';
+String _$searchMangaHash() => r'9bbf3d7b3cb8f1aa92201200e6a4616721cd3037';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,8 +28,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef SearchMangaRef = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [searchManga].
 @ProviderFor(searchManga)
@@ -83,12 +81,12 @@ class SearchMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
 class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [searchManga].
   SearchMangaProvider({
-    required this.source,
-    required this.query,
-    required this.page,
-  }) : super.internal(
+    required Source source,
+    required String query,
+    required int page,
+  }) : this._internal(
           (ref) => searchManga(
-            ref,
+            ref as SearchMangaRef,
             source: source,
             query: query,
             page: page,
@@ -102,11 +100,51 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
           dependencies: SearchMangaFamily._dependencies,
           allTransitiveDependencies:
               SearchMangaFamily._allTransitiveDependencies,
+          source: source,
+          query: query,
+          page: page,
         );
+
+  SearchMangaProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.source,
+    required this.query,
+    required this.page,
+  }) : super.internal();
 
   final Source source;
   final String query;
   final int page;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<MangaModel?>> Function(SearchMangaRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SearchMangaProvider._internal(
+        (ref) => create(ref as SearchMangaRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        source: source,
+        query: query,
+        page: page,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+    return _SearchMangaProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -126,5 +164,29 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+  /// The parameter `source` of this provider.
+  Source get source;
+
+  /// The parameter `query` of this provider.
+  String get query;
+
+  /// The parameter `page` of this provider.
+  int get page;
+}
+
+class _SearchMangaProviderElement
+    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    with SearchMangaRef {
+  _SearchMangaProviderElement(super.provider);
+
+  @override
+  Source get source => (origin as SearchMangaProvider).source;
+  @override
+  String get query => (origin as SearchMangaProvider).query;
+  @override
+  int get page => (origin as SearchMangaProvider).page;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

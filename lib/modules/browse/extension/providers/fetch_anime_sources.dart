@@ -10,8 +10,8 @@ part 'fetch_anime_sources.g.dart';
 
 @riverpod
 Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
-    {int? id, required bool refresh}) async {
-  if (ref.watch(checkForExtensionsUpdateStateProvider) || refresh) {
+    {int? id, required bool reFresh}) async {
+  if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     final info = await PackageInfo.fromPlatform();
     final req = await http.get(Uri.parse(
         "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json"));

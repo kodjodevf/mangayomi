@@ -6,7 +6,7 @@ part of 'extension_preferences_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMirrorPrefHash() => r'87d8329eabbe702d2e612a04cfe6fc719519194c';
+String _$getMirrorPrefHash() => r'b56f6cf8dcb17279b2945c9233711182380dd0c5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,8 +28,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef GetMirrorPrefRef = AutoDisposeFutureProviderRef<Map<String, String>?>;
 
 /// See also [getMirrorPref].
 @ProviderFor(getMirrorPref)
@@ -78,10 +76,10 @@ class GetMirrorPrefProvider
     extends AutoDisposeFutureProvider<Map<String, String>?> {
   /// See also [getMirrorPref].
   GetMirrorPrefProvider(
-    this.codeSource,
-  ) : super.internal(
+    String codeSource,
+  ) : this._internal(
           (ref) => getMirrorPref(
-            ref,
+            ref as GetMirrorPrefRef,
             codeSource,
           ),
           from: getMirrorPrefProvider,
@@ -93,9 +91,43 @@ class GetMirrorPrefProvider
           dependencies: GetMirrorPrefFamily._dependencies,
           allTransitiveDependencies:
               GetMirrorPrefFamily._allTransitiveDependencies,
+          codeSource: codeSource,
         );
 
+  GetMirrorPrefProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.codeSource,
+  }) : super.internal();
+
   final String codeSource;
+
+  @override
+  Override overrideWith(
+    FutureOr<Map<String, String>?> Function(GetMirrorPrefRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetMirrorPrefProvider._internal(
+        (ref) => create(ref as GetMirrorPrefRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        codeSource: codeSource,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Map<String, String>?> createElement() {
+    return _GetMirrorPrefProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -110,5 +142,19 @@ class GetMirrorPrefProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetMirrorPrefRef on AutoDisposeFutureProviderRef<Map<String, String>?> {
+  /// The parameter `codeSource` of this provider.
+  String get codeSource;
+}
+
+class _GetMirrorPrefProviderElement
+    extends AutoDisposeFutureProviderElement<Map<String, String>?>
+    with GetMirrorPrefRef {
+  _GetMirrorPrefProviderElement(super.provider);
+
+  @override
+  String get codeSource => (origin as GetMirrorPrefProvider).codeSource;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

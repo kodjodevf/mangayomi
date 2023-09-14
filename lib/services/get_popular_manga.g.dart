@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'6c9face3040220071430e814a12da83201692310';
+String _$getPopularMangaHash() => r'f5a1f5a66bad652cb461ef0ed9d30f60ff7a000a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,8 +28,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef GetPopularMangaRef = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [getPopularManga].
 @ProviderFor(getPopularManga)
@@ -81,11 +79,11 @@ class GetPopularMangaProvider
     extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [getPopularManga].
   GetPopularMangaProvider({
-    required this.source,
-    required this.page,
-  }) : super.internal(
+    required Source source,
+    required int page,
+  }) : this._internal(
           (ref) => getPopularManga(
-            ref,
+            ref as GetPopularMangaRef,
             source: source,
             page: page,
           ),
@@ -98,10 +96,47 @@ class GetPopularMangaProvider
           dependencies: GetPopularMangaFamily._dependencies,
           allTransitiveDependencies:
               GetPopularMangaFamily._allTransitiveDependencies,
+          source: source,
+          page: page,
         );
+
+  GetPopularMangaProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.source,
+    required this.page,
+  }) : super.internal();
 
   final Source source;
   final int page;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<MangaModel?>> Function(GetPopularMangaRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetPopularMangaProvider._internal(
+        (ref) => create(ref as GetPopularMangaRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        source: source,
+        page: page,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+    return _GetPopularMangaProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -119,5 +154,24 @@ class GetPopularMangaProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+  /// The parameter `source` of this provider.
+  Source get source;
+
+  /// The parameter `page` of this provider.
+  int get page;
+}
+
+class _GetPopularMangaProviderElement
+    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    with GetPopularMangaRef {
+  _GetPopularMangaProviderElement(super.provider);
+
+  @override
+  Source get source => (origin as GetPopularMangaProvider).source;
+  @override
+  int get page => (origin as GetPopularMangaProvider).page;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

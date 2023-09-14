@@ -89,9 +89,9 @@ class MyAnimeListProvider
     extends AutoDisposeNotifierProviderImpl<MyAnimeList, dynamic> {
   /// See also [MyAnimeList].
   MyAnimeListProvider({
-    required this.syncId,
-    required this.isManga,
-  }) : super.internal(
+    required int syncId,
+    required bool? isManga,
+  }) : this._internal(
           () => MyAnimeList()
             ..syncId = syncId
             ..isManga = isManga,
@@ -104,10 +104,57 @@ class MyAnimeListProvider
           dependencies: MyAnimeListFamily._dependencies,
           allTransitiveDependencies:
               MyAnimeListFamily._allTransitiveDependencies,
+          syncId: syncId,
+          isManga: isManga,
         );
+
+  MyAnimeListProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.syncId,
+    required this.isManga,
+  }) : super.internal();
 
   final int syncId;
   final bool? isManga;
+
+  @override
+  dynamic runNotifierBuild(
+    covariant MyAnimeList notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      isManga: isManga,
+    );
+  }
+
+  @override
+  Override overrideWith(MyAnimeList Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: MyAnimeListProvider._internal(
+        () => create()
+          ..syncId = syncId
+          ..isManga = isManga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        syncId: syncId,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<MyAnimeList, dynamic> createElement() {
+    return _MyAnimeListProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -124,16 +171,25 @@ class MyAnimeListProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<dynamic> {
+  /// The parameter `syncId` of this provider.
+  int get syncId;
+
+  /// The parameter `isManga` of this provider.
+  bool? get isManga;
+}
+
+class _MyAnimeListProviderElement
+    extends AutoDisposeNotifierProviderElement<MyAnimeList, dynamic>
+    with MyAnimeListRef {
+  _MyAnimeListProviderElement(super.provider);
 
   @override
-  dynamic runNotifierBuild(
-    covariant MyAnimeList notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-      isManga: isManga,
-    );
-  }
+  int get syncId => (origin as MyAnimeListProvider).syncId;
+  @override
+  bool? get isManga => (origin as MyAnimeListProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -30,9 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef GetArchivesDataFromDirectoryRef = AutoDisposeFutureProviderRef<
-    List<(String, LocalExtensionType, Uint8List, String)>>;
-
 /// See also [getArchivesDataFromDirectory].
 @ProviderFor(getArchivesDataFromDirectory)
 const getArchivesDataFromDirectoryProvider =
@@ -82,10 +79,10 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
     List<(String, LocalExtensionType, Uint8List, String)>> {
   /// See also [getArchivesDataFromDirectory].
   GetArchivesDataFromDirectoryProvider(
-    this.path,
-  ) : super.internal(
+    String path,
+  ) : this._internal(
           (ref) => getArchivesDataFromDirectory(
-            ref,
+            ref as GetArchivesDataFromDirectoryRef,
             path,
           ),
           from: getArchivesDataFromDirectoryProvider,
@@ -97,9 +94,46 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
           dependencies: GetArchivesDataFromDirectoryFamily._dependencies,
           allTransitiveDependencies:
               GetArchivesDataFromDirectoryFamily._allTransitiveDependencies,
+          path: path,
         );
 
+  GetArchivesDataFromDirectoryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.path,
+  }) : super.internal();
+
   final String path;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<(String, LocalExtensionType, Uint8List, String)>> Function(
+            GetArchivesDataFromDirectoryRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetArchivesDataFromDirectoryProvider._internal(
+        (ref) => create(ref as GetArchivesDataFromDirectoryRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        path: path,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<
+      List<(String, LocalExtensionType, Uint8List, String)>> createElement() {
+    return _GetArchivesDataFromDirectoryProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -115,10 +149,24 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
   }
 }
 
+mixin GetArchivesDataFromDirectoryRef on AutoDisposeFutureProviderRef<
+    List<(String, LocalExtensionType, Uint8List, String)>> {
+  /// The parameter `path` of this provider.
+  String get path;
+}
+
+class _GetArchivesDataFromDirectoryProviderElement
+    extends AutoDisposeFutureProviderElement<
+        List<(String, LocalExtensionType, Uint8List, String)>>
+    with GetArchivesDataFromDirectoryRef {
+  _GetArchivesDataFromDirectoryProviderElement(super.provider);
+
+  @override
+  String get path => (origin as GetArchivesDataFromDirectoryProvider).path;
+}
+
 String _$getArchiveDataFromDirectoryHash() =>
     r'fb85bd2b43ae73f083bdfa0760d8185ef989dd09';
-typedef GetArchiveDataFromDirectoryRef
-    = AutoDisposeFutureProviderRef<List<LocalArchive>>;
 
 /// See also [getArchiveDataFromDirectory].
 @ProviderFor(getArchiveDataFromDirectory)
@@ -168,10 +216,10 @@ class GetArchiveDataFromDirectoryProvider
     extends AutoDisposeFutureProvider<List<LocalArchive>> {
   /// See also [getArchiveDataFromDirectory].
   GetArchiveDataFromDirectoryProvider(
-    this.path,
-  ) : super.internal(
+    String path,
+  ) : this._internal(
           (ref) => getArchiveDataFromDirectory(
-            ref,
+            ref as GetArchiveDataFromDirectoryRef,
             path,
           ),
           from: getArchiveDataFromDirectoryProvider,
@@ -183,9 +231,45 @@ class GetArchiveDataFromDirectoryProvider
           dependencies: GetArchiveDataFromDirectoryFamily._dependencies,
           allTransitiveDependencies:
               GetArchiveDataFromDirectoryFamily._allTransitiveDependencies,
+          path: path,
         );
 
+  GetArchiveDataFromDirectoryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.path,
+  }) : super.internal();
+
   final String path;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<LocalArchive>> Function(
+            GetArchiveDataFromDirectoryRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetArchiveDataFromDirectoryProvider._internal(
+        (ref) => create(ref as GetArchiveDataFromDirectoryRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        path: path,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<LocalArchive>> createElement() {
+    return _GetArchiveDataFromDirectoryProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -201,10 +285,23 @@ class GetArchiveDataFromDirectoryProvider
   }
 }
 
+mixin GetArchiveDataFromDirectoryRef
+    on AutoDisposeFutureProviderRef<List<LocalArchive>> {
+  /// The parameter `path` of this provider.
+  String get path;
+}
+
+class _GetArchiveDataFromDirectoryProviderElement
+    extends AutoDisposeFutureProviderElement<List<LocalArchive>>
+    with GetArchiveDataFromDirectoryRef {
+  _GetArchiveDataFromDirectoryProviderElement(super.provider);
+
+  @override
+  String get path => (origin as GetArchiveDataFromDirectoryProvider).path;
+}
+
 String _$getArchivesDataFromFileHash() =>
     r'f118f903a693c2f2ad5ec2452430a1eb10b661b2';
-typedef GetArchivesDataFromFileRef = AutoDisposeFutureProviderRef<
-    (String, LocalExtensionType, Uint8List, String)>;
 
 /// See also [getArchivesDataFromFile].
 @ProviderFor(getArchivesDataFromFile)
@@ -254,10 +351,10 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
     (String, LocalExtensionType, Uint8List, String)> {
   /// See also [getArchivesDataFromFile].
   GetArchivesDataFromFileProvider(
-    this.path,
-  ) : super.internal(
+    String path,
+  ) : this._internal(
           (ref) => getArchivesDataFromFile(
-            ref,
+            ref as GetArchivesDataFromFileRef,
             path,
           ),
           from: getArchivesDataFromFileProvider,
@@ -269,9 +366,46 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
           dependencies: GetArchivesDataFromFileFamily._dependencies,
           allTransitiveDependencies:
               GetArchivesDataFromFileFamily._allTransitiveDependencies,
+          path: path,
         );
 
+  GetArchivesDataFromFileProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.path,
+  }) : super.internal();
+
   final String path;
+
+  @override
+  Override overrideWith(
+    FutureOr<(String, LocalExtensionType, Uint8List, String)> Function(
+            GetArchivesDataFromFileRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetArchivesDataFromFileProvider._internal(
+        (ref) => create(ref as GetArchivesDataFromFileRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        path: path,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<
+      (String, LocalExtensionType, Uint8List, String)> createElement() {
+    return _GetArchivesDataFromFileProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -287,9 +421,24 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
   }
 }
 
+mixin GetArchivesDataFromFileRef on AutoDisposeFutureProviderRef<
+    (String, LocalExtensionType, Uint8List, String)> {
+  /// The parameter `path` of this provider.
+  String get path;
+}
+
+class _GetArchivesDataFromFileProviderElement
+    extends AutoDisposeFutureProviderElement<
+        (String, LocalExtensionType, Uint8List, String)>
+    with GetArchivesDataFromFileRef {
+  _GetArchivesDataFromFileProviderElement(super.provider);
+
+  @override
+  String get path => (origin as GetArchivesDataFromFileProvider).path;
+}
+
 String _$getArchiveDataFromFileHash() =>
     r'e5dc60fea6c36346c47542c141703bb027173215';
-typedef GetArchiveDataFromFileRef = AutoDisposeFutureProviderRef<LocalArchive>;
 
 /// See also [getArchiveDataFromFile].
 @ProviderFor(getArchiveDataFromFile)
@@ -338,10 +487,10 @@ class GetArchiveDataFromFileProvider
     extends AutoDisposeFutureProvider<LocalArchive> {
   /// See also [getArchiveDataFromFile].
   GetArchiveDataFromFileProvider(
-    this.path,
-  ) : super.internal(
+    String path,
+  ) : this._internal(
           (ref) => getArchiveDataFromFile(
-            ref,
+            ref as GetArchiveDataFromFileRef,
             path,
           ),
           from: getArchiveDataFromFileProvider,
@@ -353,9 +502,43 @@ class GetArchiveDataFromFileProvider
           dependencies: GetArchiveDataFromFileFamily._dependencies,
           allTransitiveDependencies:
               GetArchiveDataFromFileFamily._allTransitiveDependencies,
+          path: path,
         );
 
+  GetArchiveDataFromFileProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.path,
+  }) : super.internal();
+
   final String path;
+
+  @override
+  Override overrideWith(
+    FutureOr<LocalArchive> Function(GetArchiveDataFromFileRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetArchiveDataFromFileProvider._internal(
+        (ref) => create(ref as GetArchiveDataFromFileRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        path: path,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<LocalArchive> createElement() {
+    return _GetArchiveDataFromFileProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -370,5 +553,19 @@ class GetArchiveDataFromFileProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetArchiveDataFromFileRef on AutoDisposeFutureProviderRef<LocalArchive> {
+  /// The parameter `path` of this provider.
+  String get path;
+}
+
+class _GetArchiveDataFromFileProviderElement
+    extends AutoDisposeFutureProviderElement<LocalArchive>
+    with GetArchiveDataFromFileRef {
+  _GetArchiveDataFromFileProviderElement(super.provider);
+
+  @override
+  String get path => (origin as GetArchiveDataFromFileProvider).path;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

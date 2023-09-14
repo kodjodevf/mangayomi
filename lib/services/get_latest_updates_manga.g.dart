@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'5bae855778ae63dd954705adab9b9bdb3432065e';
+    r'b4de1c71b935893780b02be6a4fa1980651a833d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,9 +29,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef GetLatestUpdatesMangaRef
-    = AutoDisposeFutureProviderRef<List<MangaModel?>>;
 
 /// See also [getLatestUpdatesManga].
 @ProviderFor(getLatestUpdatesManga)
@@ -84,11 +81,11 @@ class GetLatestUpdatesMangaProvider
     extends AutoDisposeFutureProvider<List<MangaModel?>> {
   /// See also [getLatestUpdatesManga].
   GetLatestUpdatesMangaProvider({
-    required this.source,
-    required this.page,
-  }) : super.internal(
+    required Source source,
+    required int page,
+  }) : this._internal(
           (ref) => getLatestUpdatesManga(
-            ref,
+            ref as GetLatestUpdatesMangaRef,
             source: source,
             page: page,
           ),
@@ -101,10 +98,48 @@ class GetLatestUpdatesMangaProvider
           dependencies: GetLatestUpdatesMangaFamily._dependencies,
           allTransitiveDependencies:
               GetLatestUpdatesMangaFamily._allTransitiveDependencies,
+          source: source,
+          page: page,
         );
+
+  GetLatestUpdatesMangaProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.source,
+    required this.page,
+  }) : super.internal();
 
   final Source source;
   final int page;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<MangaModel?>> Function(GetLatestUpdatesMangaRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetLatestUpdatesMangaProvider._internal(
+        (ref) => create(ref as GetLatestUpdatesMangaRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        source: source,
+        page: page,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+    return _GetLatestUpdatesMangaProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -122,5 +157,25 @@ class GetLatestUpdatesMangaProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetLatestUpdatesMangaRef
+    on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+  /// The parameter `source` of this provider.
+  Source get source;
+
+  /// The parameter `page` of this provider.
+  int get page;
+}
+
+class _GetLatestUpdatesMangaProviderElement
+    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    with GetLatestUpdatesMangaRef {
+  _GetLatestUpdatesMangaProviderElement(super.provider);
+
+  @override
+  Source get source => (origin as GetLatestUpdatesMangaProvider).source;
+  @override
+  int get page => (origin as GetLatestUpdatesMangaProvider).page;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

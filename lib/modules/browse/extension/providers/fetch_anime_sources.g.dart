@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'1808961fb57b3d53b12ec898ceb7ecb25886ea9e';
+    r'7aae588d0f4cce365267f9086c67176bf4253989';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,8 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef FetchAnimeSourcesListRef = AutoDisposeFutureProviderRef<dynamic>;
-
 /// See also [fetchAnimeSourcesList].
 @ProviderFor(fetchAnimeSourcesList)
 const fetchAnimeSourcesListProvider = FetchAnimeSourcesListFamily();
@@ -44,11 +42,11 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<dynamic>> {
   /// See also [fetchAnimeSourcesList].
   FetchAnimeSourcesListProvider call({
     int? id,
-    required bool refresh,
+    required bool reFresh,
   }) {
     return FetchAnimeSourcesListProvider(
       id: id,
-      refresh: refresh,
+      reFresh: reFresh,
     );
   }
 
@@ -58,7 +56,7 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<dynamic>> {
   ) {
     return call(
       id: provider.id,
-      refresh: provider.refresh,
+      reFresh: provider.reFresh,
     );
   }
 
@@ -81,13 +79,13 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<dynamic>> {
 class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [fetchAnimeSourcesList].
   FetchAnimeSourcesListProvider({
-    this.id,
-    required this.refresh,
-  }) : super.internal(
+    int? id,
+    required bool reFresh,
+  }) : this._internal(
           (ref) => fetchAnimeSourcesList(
-            ref,
+            ref as FetchAnimeSourcesListRef,
             id: id,
-            refresh: refresh,
+            reFresh: reFresh,
           ),
           from: fetchAnimeSourcesListProvider,
           name: r'fetchAnimeSourcesListProvider',
@@ -98,26 +96,82 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
           dependencies: FetchAnimeSourcesListFamily._dependencies,
           allTransitiveDependencies:
               FetchAnimeSourcesListFamily._allTransitiveDependencies,
+          id: id,
+          reFresh: reFresh,
         );
 
+  FetchAnimeSourcesListProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+    required this.reFresh,
+  }) : super.internal();
+
   final int? id;
-  final bool refresh;
+  final bool reFresh;
+
+  @override
+  Override overrideWith(
+    FutureOr<dynamic> Function(FetchAnimeSourcesListRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: FetchAnimeSourcesListProvider._internal(
+        (ref) => create(ref as FetchAnimeSourcesListRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+        reFresh: reFresh,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<dynamic> createElement() {
+    return _FetchAnimeSourcesListProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
     return other is FetchAnimeSourcesListProvider &&
         other.id == id &&
-        other.refresh == refresh;
+        other.reFresh == reFresh;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, id.hashCode);
-    hash = _SystemHash.combine(hash, refresh.hashCode);
+    hash = _SystemHash.combine(hash, reFresh.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
+
+mixin FetchAnimeSourcesListRef on AutoDisposeFutureProviderRef<dynamic> {
+  /// The parameter `id` of this provider.
+  int? get id;
+
+  /// The parameter `reFresh` of this provider.
+  bool get reFresh;
+}
+
+class _FetchAnimeSourcesListProviderElement
+    extends AutoDisposeFutureProviderElement<dynamic>
+    with FetchAnimeSourcesListRef {
+  _FetchAnimeSourcesListProviderElement(super.provider);
+
+  @override
+  int? get id => (origin as FetchAnimeSourcesListProvider).id;
+  @override
+  bool get reFresh => (origin as FetchAnimeSourcesListProvider).reFresh;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

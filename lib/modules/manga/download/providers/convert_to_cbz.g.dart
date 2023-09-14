@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef ConvertToCBZRef = AutoDisposeFutureProviderRef<List<String>>;
-
 /// See also [convertToCBZ].
 @ProviderFor(convertToCBZ)
 const convertToCBZProvider = ConvertToCBZFamily();
@@ -86,13 +84,13 @@ class ConvertToCBZFamily extends Family<AsyncValue<List<String>>> {
 class ConvertToCBZProvider extends AutoDisposeFutureProvider<List<String>> {
   /// See also [convertToCBZ].
   ConvertToCBZProvider(
-    this.chapterDir,
-    this.mangaDir,
-    this.chapterName,
-    this.pageList,
-  ) : super.internal(
+    String chapterDir,
+    String mangaDir,
+    String chapterName,
+    List<String> pageList,
+  ) : this._internal(
           (ref) => convertToCBZ(
-            ref,
+            ref as ConvertToCBZRef,
             chapterDir,
             mangaDir,
             chapterName,
@@ -107,12 +105,55 @@ class ConvertToCBZProvider extends AutoDisposeFutureProvider<List<String>> {
           dependencies: ConvertToCBZFamily._dependencies,
           allTransitiveDependencies:
               ConvertToCBZFamily._allTransitiveDependencies,
+          chapterDir: chapterDir,
+          mangaDir: mangaDir,
+          chapterName: chapterName,
+          pageList: pageList,
         );
+
+  ConvertToCBZProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapterDir,
+    required this.mangaDir,
+    required this.chapterName,
+    required this.pageList,
+  }) : super.internal();
 
   final String chapterDir;
   final String mangaDir;
   final String chapterName;
   final List<String> pageList;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<String>> Function(ConvertToCBZRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ConvertToCBZProvider._internal(
+        (ref) => create(ref as ConvertToCBZRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapterDir: chapterDir,
+        mangaDir: mangaDir,
+        chapterName: chapterName,
+        pageList: pageList,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<String>> createElement() {
+    return _ConvertToCBZProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -134,5 +175,34 @@ class ConvertToCBZProvider extends AutoDisposeFutureProvider<List<String>> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin ConvertToCBZRef on AutoDisposeFutureProviderRef<List<String>> {
+  /// The parameter `chapterDir` of this provider.
+  String get chapterDir;
+
+  /// The parameter `mangaDir` of this provider.
+  String get mangaDir;
+
+  /// The parameter `chapterName` of this provider.
+  String get chapterName;
+
+  /// The parameter `pageList` of this provider.
+  List<String> get pageList;
+}
+
+class _ConvertToCBZProviderElement
+    extends AutoDisposeFutureProviderElement<List<String>>
+    with ConvertToCBZRef {
+  _ConvertToCBZProviderElement(super.provider);
+
+  @override
+  String get chapterDir => (origin as ConvertToCBZProvider).chapterDir;
+  @override
+  String get mangaDir => (origin as ConvertToCBZProvider).mangaDir;
+  @override
+  String get chapterName => (origin as ConvertToCBZProvider).chapterName;
+  @override
+  List<String> get pageList => (origin as ConvertToCBZProvider).pageList;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

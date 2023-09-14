@@ -6,7 +6,7 @@ part of 'anilist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'8a637a067e4c70f07fa18a97ed3dc364320569db';
+String _$anilistHash() => r'129718800428fd699e018046c8bf047e97bddf11';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -89,9 +89,9 @@ class AnilistProvider
     extends AutoDisposeNotifierProviderImpl<Anilist, dynamic> {
   /// See also [Anilist].
   AnilistProvider({
-    required this.syncId,
-    this.isManga,
-  }) : super.internal(
+    required int syncId,
+    bool? isManga,
+  }) : this._internal(
           () => Anilist()
             ..syncId = syncId
             ..isManga = isManga,
@@ -103,10 +103,57 @@ class AnilistProvider
                   : _$anilistHash,
           dependencies: AnilistFamily._dependencies,
           allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
+          syncId: syncId,
+          isManga: isManga,
         );
+
+  AnilistProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.syncId,
+    required this.isManga,
+  }) : super.internal();
 
   final int syncId;
   final bool? isManga;
+
+  @override
+  dynamic runNotifierBuild(
+    covariant Anilist notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      isManga: isManga,
+    );
+  }
+
+  @override
+  Override overrideWith(Anilist Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: AnilistProvider._internal(
+        () => create()
+          ..syncId = syncId
+          ..isManga = isManga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        syncId: syncId,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<Anilist, dynamic> createElement() {
+    return _AnilistProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -123,16 +170,25 @@ class AnilistProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin AnilistRef on AutoDisposeNotifierProviderRef<dynamic> {
+  /// The parameter `syncId` of this provider.
+  int get syncId;
+
+  /// The parameter `isManga` of this provider.
+  bool? get isManga;
+}
+
+class _AnilistProviderElement
+    extends AutoDisposeNotifierProviderElement<Anilist, dynamic>
+    with AnilistRef {
+  _AnilistProviderElement(super.provider);
 
   @override
-  dynamic runNotifierBuild(
-    covariant Anilist notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-      isManga: isManga,
-    );
-  }
+  int get syncId => (origin as AnilistProvider).syncId;
+  @override
+  bool? get isManga => (origin as AnilistProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

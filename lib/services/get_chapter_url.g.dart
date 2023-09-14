@@ -6,7 +6,7 @@ part of 'get_chapter_url.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'6a8b0eb3869519b75787d8d4a876f536a517e849';
+String _$getChapterUrlHash() => r'330c495774b22fc1fdedb0fa64969cd17e4635f8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,8 +28,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef GetChapterUrlRef = AutoDisposeFutureProviderRef<GetChapterUrlModel>;
 
 /// See also [getChapterUrl].
 @ProviderFor(getChapterUrl)
@@ -78,10 +76,10 @@ class GetChapterUrlProvider
     extends AutoDisposeFutureProvider<GetChapterUrlModel> {
   /// See also [getChapterUrl].
   GetChapterUrlProvider({
-    required this.chapter,
-  }) : super.internal(
+    required Chapter chapter,
+  }) : this._internal(
           (ref) => getChapterUrl(
-            ref,
+            ref as GetChapterUrlRef,
             chapter: chapter,
           ),
           from: getChapterUrlProvider,
@@ -93,9 +91,43 @@ class GetChapterUrlProvider
           dependencies: GetChapterUrlFamily._dependencies,
           allTransitiveDependencies:
               GetChapterUrlFamily._allTransitiveDependencies,
+          chapter: chapter,
         );
 
+  GetChapterUrlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapter,
+  }) : super.internal();
+
   final Chapter chapter;
+
+  @override
+  Override overrideWith(
+    FutureOr<GetChapterUrlModel> Function(GetChapterUrlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetChapterUrlProvider._internal(
+        (ref) => create(ref as GetChapterUrlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapter: chapter,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<GetChapterUrlModel> createElement() {
+    return _GetChapterUrlProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -110,5 +142,19 @@ class GetChapterUrlProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetChapterUrlRef on AutoDisposeFutureProviderRef<GetChapterUrlModel> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
+}
+
+class _GetChapterUrlProviderElement
+    extends AutoDisposeFutureProviderElement<GetChapterUrlModel>
+    with GetChapterUrlRef {
+  _GetChapterUrlProviderElement(super.provider);
+
+  @override
+  Chapter get chapter => (origin as GetChapterUrlProvider).chapter;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

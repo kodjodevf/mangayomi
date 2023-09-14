@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef SetCookieRef = AutoDisposeFutureProviderRef<dynamic>;
-
 /// See also [setCookie].
 @ProviderFor(setCookie)
 const setCookieProvider = SetCookieFamily();
@@ -80,11 +78,11 @@ class SetCookieFamily extends Family<AsyncValue<dynamic>> {
 class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [setCookie].
   SetCookieProvider(
-    this.sourceId,
-    this.url,
-  ) : super.internal(
+    String sourceId,
+    String url,
+  ) : this._internal(
           (ref) => setCookie(
-            ref,
+            ref as SetCookieRef,
             sourceId,
             url,
           ),
@@ -96,10 +94,47 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
                   : _$setCookieHash,
           dependencies: SetCookieFamily._dependencies,
           allTransitiveDependencies: SetCookieFamily._allTransitiveDependencies,
+          sourceId: sourceId,
+          url: url,
         );
+
+  SetCookieProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.sourceId,
+    required this.url,
+  }) : super.internal();
 
   final String sourceId;
   final String url;
+
+  @override
+  Override overrideWith(
+    FutureOr<dynamic> Function(SetCookieRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: SetCookieProvider._internal(
+        (ref) => create(ref as SetCookieRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        sourceId: sourceId,
+        url: url,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<dynamic> createElement() {
+    return _SetCookieProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -117,5 +152,23 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin SetCookieRef on AutoDisposeFutureProviderRef<dynamic> {
+  /// The parameter `sourceId` of this provider.
+  String get sourceId;
+
+  /// The parameter `url` of this provider.
+  String get url;
+}
+
+class _SetCookieProviderElement
+    extends AutoDisposeFutureProviderElement<dynamic> with SetCookieRef {
+  _SetCookieProviderElement(super.provider);
+
+  @override
+  String get sourceId => (origin as SetCookieProvider).sourceId;
+  @override
+  String get url => (origin as SetCookieProvider).url;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

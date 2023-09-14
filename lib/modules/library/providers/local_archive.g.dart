@@ -30,8 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef ImportArchivesFromFileRef = AutoDisposeFutureProviderRef<dynamic>;
-
 /// See also [importArchivesFromFile].
 @ProviderFor(importArchivesFromFile)
 const importArchivesFromFileProvider = ImportArchivesFromFileFamily();
@@ -85,12 +83,12 @@ class ImportArchivesFromFileProvider
     extends AutoDisposeFutureProvider<dynamic> {
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider(
-    this.mManga, {
-    required this.isManga,
-    required this.init,
-  }) : super.internal(
+    Manga? mManga, {
+    required bool isManga,
+    required bool init,
+  }) : this._internal(
           (ref) => importArchivesFromFile(
-            ref,
+            ref as ImportArchivesFromFileRef,
             mManga,
             isManga: isManga,
             init: init,
@@ -104,11 +102,51 @@ class ImportArchivesFromFileProvider
           dependencies: ImportArchivesFromFileFamily._dependencies,
           allTransitiveDependencies:
               ImportArchivesFromFileFamily._allTransitiveDependencies,
+          mManga: mManga,
+          isManga: isManga,
+          init: init,
         );
+
+  ImportArchivesFromFileProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mManga,
+    required this.isManga,
+    required this.init,
+  }) : super.internal();
 
   final Manga? mManga;
   final bool isManga;
   final bool init;
+
+  @override
+  Override overrideWith(
+    FutureOr<dynamic> Function(ImportArchivesFromFileRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ImportArchivesFromFileProvider._internal(
+        (ref) => create(ref as ImportArchivesFromFileRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mManga: mManga,
+        isManga: isManga,
+        init: init,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<dynamic> createElement() {
+    return _ImportArchivesFromFileProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -128,5 +166,29 @@ class ImportArchivesFromFileProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<dynamic> {
+  /// The parameter `mManga` of this provider.
+  Manga? get mManga;
+
+  /// The parameter `isManga` of this provider.
+  bool get isManga;
+
+  /// The parameter `init` of this provider.
+  bool get init;
+}
+
+class _ImportArchivesFromFileProviderElement
+    extends AutoDisposeFutureProviderElement<dynamic>
+    with ImportArchivesFromFileRef {
+  _ImportArchivesFromFileProviderElement(super.provider);
+
+  @override
+  Manga? get mManga => (origin as ImportArchivesFromFileProvider).mManga;
+  @override
+  bool get isManga => (origin as ImportArchivesFromFileProvider).isManga;
+  @override
+  bool get init => (origin as ImportArchivesFromFileProvider).init;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

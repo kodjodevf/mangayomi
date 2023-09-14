@@ -6,7 +6,7 @@ part of 'get_manga_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'9ac46d56d3492b3a61ff159873762f579415fb36';
+String _$getMangaDetailHash() => r'025ccc11f94f9b69bd85d86833bc261f66b74f7f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,8 +28,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-typedef GetMangaDetailRef = AutoDisposeFutureProviderRef<MangaModel>;
 
 /// See also [getMangaDetail].
 @ProviderFor(getMangaDetail)
@@ -80,11 +78,11 @@ class GetMangaDetailFamily extends Family<AsyncValue<MangaModel>> {
 class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
   /// See also [getMangaDetail].
   GetMangaDetailProvider({
-    required this.manga,
-    required this.source,
-  }) : super.internal(
+    required MangaModel manga,
+    required Source source,
+  }) : this._internal(
           (ref) => getMangaDetail(
-            ref,
+            ref as GetMangaDetailRef,
             manga: manga,
             source: source,
           ),
@@ -97,10 +95,47 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
           dependencies: GetMangaDetailFamily._dependencies,
           allTransitiveDependencies:
               GetMangaDetailFamily._allTransitiveDependencies,
+          manga: manga,
+          source: source,
         );
+
+  GetMangaDetailProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+    required this.source,
+  }) : super.internal();
 
   final MangaModel manga;
   final Source source;
+
+  @override
+  Override overrideWith(
+    FutureOr<MangaModel> Function(GetMangaDetailRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetMangaDetailProvider._internal(
+        (ref) => create(ref as GetMangaDetailRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+        source: source,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<MangaModel> createElement() {
+    return _GetMangaDetailProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -118,5 +153,24 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetMangaDetailRef on AutoDisposeFutureProviderRef<MangaModel> {
+  /// The parameter `manga` of this provider.
+  MangaModel get manga;
+
+  /// The parameter `source` of this provider.
+  Source get source;
+}
+
+class _GetMangaDetailProviderElement
+    extends AutoDisposeFutureProviderElement<MangaModel>
+    with GetMangaDetailRef {
+  _GetMangaDetailProviderElement(super.provider);
+
+  @override
+  MangaModel get manga => (origin as GetMangaDetailProvider).manga;
+  @override
+  Source get source => (origin as GetMangaDetailProvider).source;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

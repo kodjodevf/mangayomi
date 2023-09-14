@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef GetAllMangaStreamRef = AutoDisposeStreamProviderRef<List<Manga>>;
-
 /// See also [getAllMangaStream].
 @ProviderFor(getAllMangaStream)
 const getAllMangaStreamProvider = GetAllMangaStreamFamily();
@@ -80,11 +78,11 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
 class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider({
-    required this.categoryId,
-    required this.isManga,
-  }) : super.internal(
+    required int? categoryId,
+    required bool? isManga,
+  }) : this._internal(
           (ref) => getAllMangaStream(
-            ref,
+            ref as GetAllMangaStreamRef,
             categoryId: categoryId,
             isManga: isManga,
           ),
@@ -97,10 +95,47 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
           dependencies: GetAllMangaStreamFamily._dependencies,
           allTransitiveDependencies:
               GetAllMangaStreamFamily._allTransitiveDependencies,
+          categoryId: categoryId,
+          isManga: isManga,
         );
+
+  GetAllMangaStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.categoryId,
+    required this.isManga,
+  }) : super.internal();
 
   final int? categoryId;
   final bool? isManga;
+
+  @override
+  Override overrideWith(
+    Stream<List<Manga>> Function(GetAllMangaStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetAllMangaStreamProvider._internal(
+        (ref) => create(ref as GetAllMangaStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        categoryId: categoryId,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<Manga>> createElement() {
+    return _GetAllMangaStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -119,10 +154,27 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   }
 }
 
+mixin GetAllMangaStreamRef on AutoDisposeStreamProviderRef<List<Manga>> {
+  /// The parameter `categoryId` of this provider.
+  int? get categoryId;
+
+  /// The parameter `isManga` of this provider.
+  bool? get isManga;
+}
+
+class _GetAllMangaStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<Manga>>
+    with GetAllMangaStreamRef {
+  _GetAllMangaStreamProviderElement(super.provider);
+
+  @override
+  int? get categoryId => (origin as GetAllMangaStreamProvider).categoryId;
+  @override
+  bool? get isManga => (origin as GetAllMangaStreamProvider).isManga;
+}
+
 String _$getAllMangaWithoutCategoriesStreamHash() =>
     r'03581754f330a87894f953f8eaae528642b0afc2';
-typedef GetAllMangaWithoutCategoriesStreamRef
-    = AutoDisposeStreamProviderRef<List<Manga>>;
 
 /// See also [getAllMangaWithoutCategoriesStream].
 @ProviderFor(getAllMangaWithoutCategoriesStream)
@@ -173,10 +225,10 @@ class GetAllMangaWithoutCategoriesStreamProvider
     extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaWithoutCategoriesStream].
   GetAllMangaWithoutCategoriesStreamProvider({
-    required this.isManga,
-  }) : super.internal(
+    required bool? isManga,
+  }) : this._internal(
           (ref) => getAllMangaWithoutCategoriesStream(
-            ref,
+            ref as GetAllMangaWithoutCategoriesStreamRef,
             isManga: isManga,
           ),
           from: getAllMangaWithoutCategoriesStreamProvider,
@@ -188,9 +240,44 @@ class GetAllMangaWithoutCategoriesStreamProvider
           dependencies: GetAllMangaWithoutCategoriesStreamFamily._dependencies,
           allTransitiveDependencies: GetAllMangaWithoutCategoriesStreamFamily
               ._allTransitiveDependencies,
+          isManga: isManga,
         );
 
+  GetAllMangaWithoutCategoriesStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isManga,
+  }) : super.internal();
+
   final bool? isManga;
+
+  @override
+  Override overrideWith(
+    Stream<List<Manga>> Function(GetAllMangaWithoutCategoriesStreamRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetAllMangaWithoutCategoriesStreamProvider._internal(
+        (ref) => create(ref as GetAllMangaWithoutCategoriesStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<Manga>> createElement() {
+    return _GetAllMangaWithoutCategoriesStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -206,5 +293,21 @@ class GetAllMangaWithoutCategoriesStreamProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetAllMangaWithoutCategoriesStreamRef
+    on AutoDisposeStreamProviderRef<List<Manga>> {
+  /// The parameter `isManga` of this provider.
+  bool? get isManga;
+}
+
+class _GetAllMangaWithoutCategoriesStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<Manga>>
+    with GetAllMangaWithoutCategoriesStreamRef {
+  _GetAllMangaWithoutCategoriesStreamProviderElement(super.provider);
+
+  @override
+  bool? get isManga =>
+      (origin as GetAllMangaWithoutCategoriesStreamProvider).isManga;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

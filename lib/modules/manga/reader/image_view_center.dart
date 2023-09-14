@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -16,6 +17,7 @@ class ImageViewCenter extends ConsumerWidget {
   final Directory path;
   final bool isLocale;
   final Uint8List? archiveImage;
+  final WidgetRef parentRef;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state) onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)
@@ -31,16 +33,37 @@ class ImageViewCenter extends ConsumerWidget {
     required this.initGestureConfigHandler,
     required this.isLocale,
     required this.lang,
+    required this.parentRef,
     this.archiveImage,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final cropBorders = ref.watch(cropBordersStateProvider);
+    final cropBorderData = parentRef.watch(autoCropImageBorderProvider(
+        autoCrop: cropBorders,
+        url: url,
+        archiveImages: archiveImage,
+        isLocaleList: isLocale,
+        path: path,
+        index: index));
+    return cropBorderData.when(
+      data: (data) {
+        return data != null
+            ? _imageView(true, data, ref)
+            : _imageView(isLocale, archiveImage, ref);
+      },
+      error: (error, stackTrace) => Center(child: Text(error.toString())),
+      loading: () => _imageView(isLocale, archiveImage, ref),
+    );
+  }
+
+  Widget _imageView(bool isLocale, Uint8List? archiveImage, WidgetRef ref) {
     final scaleType = ref.watch(scaleTypeStateProvider);
     return isLocale
         ? archiveImage != null
             ? ExtendedImage.memory(
-                archiveImage!,
+                archiveImage,
                 fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,

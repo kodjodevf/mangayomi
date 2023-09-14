@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef DownloadChapterRef = AutoDisposeFutureProviderRef<List<String>>;
-
 /// See also [downloadChapter].
 @ProviderFor(downloadChapter)
 const downloadChapterProvider = DownloadChapterFamily();
@@ -80,11 +78,11 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
 class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
-    required this.chapter,
-    this.useWifi,
-  }) : super.internal(
+    required Chapter chapter,
+    bool? useWifi,
+  }) : this._internal(
           (ref) => downloadChapter(
-            ref,
+            ref as DownloadChapterRef,
             chapter: chapter,
             useWifi: useWifi,
           ),
@@ -97,10 +95,47 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
           dependencies: DownloadChapterFamily._dependencies,
           allTransitiveDependencies:
               DownloadChapterFamily._allTransitiveDependencies,
+          chapter: chapter,
+          useWifi: useWifi,
         );
+
+  DownloadChapterProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapter,
+    required this.useWifi,
+  }) : super.internal();
 
   final Chapter chapter;
   final bool? useWifi;
+
+  @override
+  Override overrideWith(
+    FutureOr<List<String>> Function(DownloadChapterRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DownloadChapterProvider._internal(
+        (ref) => create(ref as DownloadChapterRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapter: chapter,
+        useWifi: useWifi,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<List<String>> createElement() {
+    return _DownloadChapterProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -118,5 +153,24 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<String>> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
+
+  /// The parameter `useWifi` of this provider.
+  bool? get useWifi;
+}
+
+class _DownloadChapterProviderElement
+    extends AutoDisposeFutureProviderElement<List<String>>
+    with DownloadChapterRef {
+  _DownloadChapterProviderElement(super.provider);
+
+  @override
+  Chapter get chapter => (origin as DownloadChapterProvider).chapter;
+  @override
+  bool? get useWifi => (origin as DownloadChapterProvider).useWifi;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

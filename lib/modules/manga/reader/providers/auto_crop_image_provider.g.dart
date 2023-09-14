@@ -6,7 +6,8 @@ part of 'auto_crop_image_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$autoCropBorderHash() => r'42f55a8c0704730e69055f914fc1b9766776dd64';
+String _$autoCropImageBorderHash() =>
+    r'059cbf2ee6f6ef931841e19851f201047a16bad6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,41 +30,45 @@ class _SystemHash {
   }
 }
 
-typedef AutoCropBorderRef = AutoDisposeFutureProviderRef<List<Uint8List?>>;
+/// See also [autoCropImageBorder].
+@ProviderFor(autoCropImageBorder)
+const autoCropImageBorderProvider = AutoCropImageBorderFamily();
 
-/// See also [autoCropBorder].
-@ProviderFor(autoCropBorder)
-const autoCropBorderProvider = AutoCropBorderFamily();
+/// See also [autoCropImageBorder].
+class AutoCropImageBorderFamily extends Family<AsyncValue<Uint8List?>> {
+  /// See also [autoCropImageBorder].
+  const AutoCropImageBorderFamily();
 
-/// See also [autoCropBorder].
-class AutoCropBorderFamily extends Family<AsyncValue<List<Uint8List?>>> {
-  /// See also [autoCropBorder].
-  const AutoCropBorderFamily();
-
-  /// See also [autoCropBorder].
-  AutoCropBorderProvider call({
-    required List<String?> url,
-    required List<Uint8List?> archiveImages,
-    required List<bool> isLocaleList,
+  /// See also [autoCropImageBorder].
+  AutoCropImageBorderProvider call({
+    required bool autoCrop,
+    required String? url,
+    required Uint8List? archiveImages,
+    required bool isLocaleList,
     required Directory path,
+    required int index,
   }) {
-    return AutoCropBorderProvider(
+    return AutoCropImageBorderProvider(
+      autoCrop: autoCrop,
       url: url,
       archiveImages: archiveImages,
       isLocaleList: isLocaleList,
       path: path,
+      index: index,
     );
   }
 
   @override
-  AutoCropBorderProvider getProviderOverride(
-    covariant AutoCropBorderProvider provider,
+  AutoCropImageBorderProvider getProviderOverride(
+    covariant AutoCropImageBorderProvider provider,
   ) {
     return call(
+      autoCrop: provider.autoCrop,
       url: provider.url,
       archiveImages: provider.archiveImages,
       isLocaleList: provider.isLocaleList,
       path: provider.path,
+      index: provider.index,
     );
   }
 
@@ -79,61 +84,158 @@ class AutoCropBorderFamily extends Family<AsyncValue<List<Uint8List?>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'autoCropBorderProvider';
+  String? get name => r'autoCropImageBorderProvider';
 }
 
-/// See also [autoCropBorder].
-class AutoCropBorderProvider
-    extends AutoDisposeFutureProvider<List<Uint8List?>> {
-  /// See also [autoCropBorder].
-  AutoCropBorderProvider({
-    required this.url,
-    required this.archiveImages,
-    required this.isLocaleList,
-    required this.path,
-  }) : super.internal(
-          (ref) => autoCropBorder(
-            ref,
+/// See also [autoCropImageBorder].
+class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
+  /// See also [autoCropImageBorder].
+  AutoCropImageBorderProvider({
+    required bool autoCrop,
+    required String? url,
+    required Uint8List? archiveImages,
+    required bool isLocaleList,
+    required Directory path,
+    required int index,
+  }) : this._internal(
+          (ref) => autoCropImageBorder(
+            ref as AutoCropImageBorderRef,
+            autoCrop: autoCrop,
             url: url,
             archiveImages: archiveImages,
             isLocaleList: isLocaleList,
             path: path,
+            index: index,
           ),
-          from: autoCropBorderProvider,
-          name: r'autoCropBorderProvider',
+          from: autoCropImageBorderProvider,
+          name: r'autoCropImageBorderProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$autoCropBorderHash,
-          dependencies: AutoCropBorderFamily._dependencies,
+                  : _$autoCropImageBorderHash,
+          dependencies: AutoCropImageBorderFamily._dependencies,
           allTransitiveDependencies:
-              AutoCropBorderFamily._allTransitiveDependencies,
+              AutoCropImageBorderFamily._allTransitiveDependencies,
+          autoCrop: autoCrop,
+          url: url,
+          archiveImages: archiveImages,
+          isLocaleList: isLocaleList,
+          path: path,
+          index: index,
         );
 
-  final List<String?> url;
-  final List<Uint8List?> archiveImages;
-  final List<bool> isLocaleList;
+  AutoCropImageBorderProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.autoCrop,
+    required this.url,
+    required this.archiveImages,
+    required this.isLocaleList,
+    required this.path,
+    required this.index,
+  }) : super.internal();
+
+  final bool autoCrop;
+  final String? url;
+  final Uint8List? archiveImages;
+  final bool isLocaleList;
   final Directory path;
+  final int index;
+
+  @override
+  Override overrideWith(
+    FutureOr<Uint8List?> Function(AutoCropImageBorderRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AutoCropImageBorderProvider._internal(
+        (ref) => create(ref as AutoCropImageBorderRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        autoCrop: autoCrop,
+        url: url,
+        archiveImages: archiveImages,
+        isLocaleList: isLocaleList,
+        path: path,
+        index: index,
+      ),
+    );
+  }
+
+  @override
+  FutureProviderElement<Uint8List?> createElement() {
+    return _AutoCropImageBorderProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
-    return other is AutoCropBorderProvider &&
+    return other is AutoCropImageBorderProvider &&
+        other.autoCrop == autoCrop &&
         other.url == url &&
         other.archiveImages == archiveImages &&
         other.isLocaleList == isLocaleList &&
-        other.path == path;
+        other.path == path &&
+        other.index == index;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, autoCrop.hashCode);
     hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, archiveImages.hashCode);
     hash = _SystemHash.combine(hash, isLocaleList.hashCode);
     hash = _SystemHash.combine(hash, path.hashCode);
+    hash = _SystemHash.combine(hash, index.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
+
+mixin AutoCropImageBorderRef on FutureProviderRef<Uint8List?> {
+  /// The parameter `autoCrop` of this provider.
+  bool get autoCrop;
+
+  /// The parameter `url` of this provider.
+  String? get url;
+
+  /// The parameter `archiveImages` of this provider.
+  Uint8List? get archiveImages;
+
+  /// The parameter `isLocaleList` of this provider.
+  bool get isLocaleList;
+
+  /// The parameter `path` of this provider.
+  Directory get path;
+
+  /// The parameter `index` of this provider.
+  int get index;
+}
+
+class _AutoCropImageBorderProviderElement
+    extends FutureProviderElement<Uint8List?> with AutoCropImageBorderRef {
+  _AutoCropImageBorderProviderElement(super.provider);
+
+  @override
+  bool get autoCrop => (origin as AutoCropImageBorderProvider).autoCrop;
+  @override
+  String? get url => (origin as AutoCropImageBorderProvider).url;
+  @override
+  Uint8List? get archiveImages =>
+      (origin as AutoCropImageBorderProvider).archiveImages;
+  @override
+  bool get isLocaleList => (origin as AutoCropImageBorderProvider).isLocaleList;
+  @override
+  Directory get path => (origin as AutoCropImageBorderProvider).path;
+  @override
+  int get index => (origin as AutoCropImageBorderProvider).index;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

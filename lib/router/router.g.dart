@@ -101,8 +101,8 @@ class RouterCurrentLocationStateProvider
         String?> {
   /// See also [RouterCurrentLocationState].
   RouterCurrentLocationStateProvider(
-    this.context,
-  ) : super.internal(
+    BuildContext context,
+  ) : this._internal(
           () => RouterCurrentLocationState()..context = context,
           from: routerCurrentLocationStateProvider,
           name: r'routerCurrentLocationStateProvider',
@@ -113,9 +113,51 @@ class RouterCurrentLocationStateProvider
           dependencies: RouterCurrentLocationStateFamily._dependencies,
           allTransitiveDependencies:
               RouterCurrentLocationStateFamily._allTransitiveDependencies,
+          context: context,
         );
 
+  RouterCurrentLocationStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.context,
+  }) : super.internal();
+
   final BuildContext context;
+
+  @override
+  String? runNotifierBuild(
+    covariant RouterCurrentLocationState notifier,
+  ) {
+    return notifier.build(
+      context,
+    );
+  }
+
+  @override
+  Override overrideWith(RouterCurrentLocationState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: RouterCurrentLocationStateProvider._internal(
+        () => create()..context = context,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        context: context,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<RouterCurrentLocationState, String?>
+      createElement() {
+    return _RouterCurrentLocationStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -130,15 +172,21 @@ class RouterCurrentLocationStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin RouterCurrentLocationStateRef on AutoDisposeNotifierProviderRef<String?> {
+  /// The parameter `context` of this provider.
+  BuildContext get context;
+}
+
+class _RouterCurrentLocationStateProviderElement
+    extends AutoDisposeNotifierProviderElement<RouterCurrentLocationState,
+        String?> with RouterCurrentLocationStateRef {
+  _RouterCurrentLocationStateProviderElement(super.provider);
 
   @override
-  String? runNotifierBuild(
-    covariant RouterCurrentLocationState notifier,
-  ) {
-    return notifier.build(
-      context,
-    );
-  }
+  BuildContext get context =>
+      (origin as RouterCurrentLocationStateProvider).context;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -30,8 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef GetAllHistoryStreamRef = AutoDisposeStreamProviderRef<List<History>>;
-
 /// See also [getAllHistoryStream].
 @ProviderFor(getAllHistoryStream)
 const getAllHistoryStreamProvider = GetAllHistoryStreamFamily();
@@ -79,10 +77,10 @@ class GetAllHistoryStreamProvider
     extends AutoDisposeStreamProvider<List<History>> {
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider({
-    required this.isManga,
-  }) : super.internal(
+    required bool isManga,
+  }) : this._internal(
           (ref) => getAllHistoryStream(
-            ref,
+            ref as GetAllHistoryStreamRef,
             isManga: isManga,
           ),
           from: getAllHistoryStreamProvider,
@@ -94,9 +92,43 @@ class GetAllHistoryStreamProvider
           dependencies: GetAllHistoryStreamFamily._dependencies,
           allTransitiveDependencies:
               GetAllHistoryStreamFamily._allTransitiveDependencies,
+          isManga: isManga,
         );
 
+  GetAllHistoryStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isManga,
+  }) : super.internal();
+
   final bool isManga;
+
+  @override
+  Override overrideWith(
+    Stream<List<History>> Function(GetAllHistoryStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetAllHistoryStreamProvider._internal(
+        (ref) => create(ref as GetAllHistoryStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<History>> createElement() {
+    return _GetAllHistoryStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -111,5 +143,19 @@ class GetAllHistoryStreamProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetAllHistoryStreamRef on AutoDisposeStreamProviderRef<List<History>> {
+  /// The parameter `isManga` of this provider.
+  bool get isManga;
+}
+
+class _GetAllHistoryStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<History>>
+    with GetAllHistoryStreamRef {
+  _GetAllHistoryStreamProviderElement(super.provider);
+
+  @override
+  bool get isManga => (origin as GetAllHistoryStreamProvider).isManga;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

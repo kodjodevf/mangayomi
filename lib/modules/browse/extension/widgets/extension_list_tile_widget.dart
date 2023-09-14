@@ -43,10 +43,10 @@ class _ExtensionListTileWidgetState
             });
             widget.source.isManga!
                 ? await ref.watch(fetchMangaSourcesListProvider(
-                        id: widget.source.id, refresh: true)
+                        id: widget.source.id, reFresh: true)
                     .future)
                 : await ref.watch(fetchAnimeSourcesListProvider(
-                        id: widget.source.id, refresh: true)
+                        id: widget.source.id, reFresh: true)
                     .future);
             if (mounted) {
               setState(() {
@@ -136,10 +136,10 @@ class _ExtensionListTileWidgetState
                   });
                   widget.source.isManga!
                       ? await ref.watch(fetchMangaSourcesListProvider(
-                              id: widget.source.id, refresh: true)
+                              id: widget.source.id, reFresh: true)
                           .future)
                       : await ref.watch(fetchAnimeSourcesListProvider(
-                              id: widget.source.id, refresh: true)
+                              id: widget.source.id, reFresh: true)
                           .future);
                   if (mounted) {
                     setState(() {

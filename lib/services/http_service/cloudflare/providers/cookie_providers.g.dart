@@ -6,7 +6,7 @@ part of 'cookie_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cookieStateHash() => r'a3e0c52a396c7b9072c2b1e948399f2e4e4728d5';
+String _$cookieStateHash() => r'42286f51989b6f65eed9787ca2390a96854395a8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -84,8 +84,8 @@ class CookieStateProvider
     extends AutoDisposeNotifierProviderImpl<CookieState, String> {
   /// See also [CookieState].
   CookieStateProvider(
-    this.idSource,
-  ) : super.internal(
+    String idSource,
+  ) : this._internal(
           () => CookieState()..idSource = idSource,
           from: cookieStateProvider,
           name: r'cookieStateProvider',
@@ -96,9 +96,50 @@ class CookieStateProvider
           dependencies: CookieStateFamily._dependencies,
           allTransitiveDependencies:
               CookieStateFamily._allTransitiveDependencies,
+          idSource: idSource,
         );
 
+  CookieStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.idSource,
+  }) : super.internal();
+
   final String idSource;
+
+  @override
+  String runNotifierBuild(
+    covariant CookieState notifier,
+  ) {
+    return notifier.build(
+      idSource,
+    );
+  }
+
+  @override
+  Override overrideWith(CookieState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: CookieStateProvider._internal(
+        () => create()..idSource = idSource,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        idSource: idSource,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<CookieState, String> createElement() {
+    return _CookieStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -112,15 +153,20 @@ class CookieStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin CookieStateRef on AutoDisposeNotifierProviderRef<String> {
+  /// The parameter `idSource` of this provider.
+  String get idSource;
+}
+
+class _CookieStateProviderElement
+    extends AutoDisposeNotifierProviderElement<CookieState, String>
+    with CookieStateRef {
+  _CookieStateProviderElement(super.provider);
 
   @override
-  String runNotifierBuild(
-    covariant CookieState notifier,
-  ) {
-    return notifier.build(
-      idSource,
-    );
-  }
+  String get idSource => (origin as CookieStateProvider).idSource;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

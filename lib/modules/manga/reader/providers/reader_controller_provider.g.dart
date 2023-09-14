@@ -84,8 +84,8 @@ class CurrentIndexProvider
     extends AutoDisposeNotifierProviderImpl<CurrentIndex, int> {
   /// See also [CurrentIndex].
   CurrentIndexProvider(
-    this.chapter,
-  ) : super.internal(
+    Chapter chapter,
+  ) : this._internal(
           () => CurrentIndex()..chapter = chapter,
           from: currentIndexProvider,
           name: r'currentIndexProvider',
@@ -96,9 +96,50 @@ class CurrentIndexProvider
           dependencies: CurrentIndexFamily._dependencies,
           allTransitiveDependencies:
               CurrentIndexFamily._allTransitiveDependencies,
+          chapter: chapter,
         );
 
+  CurrentIndexProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapter,
+  }) : super.internal();
+
   final Chapter chapter;
+
+  @override
+  int runNotifierBuild(
+    covariant CurrentIndex notifier,
+  ) {
+    return notifier.build(
+      chapter,
+    );
+  }
+
+  @override
+  Override overrideWith(CurrentIndex Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: CurrentIndexProvider._internal(
+        () => create()..chapter = chapter,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapter: chapter,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<CurrentIndex, int> createElement() {
+    return _CurrentIndexProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -112,15 +153,20 @@ class CurrentIndexProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin CurrentIndexRef on AutoDisposeNotifierProviderRef<int> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
+}
+
+class _CurrentIndexProviderElement
+    extends AutoDisposeNotifierProviderElement<CurrentIndex, int>
+    with CurrentIndexRef {
+  _CurrentIndexProviderElement(super.provider);
 
   @override
-  int runNotifierBuild(
-    covariant CurrentIndex notifier,
-  ) {
-    return notifier.build(
-      chapter,
-    );
-  }
+  Chapter get chapter => (origin as CurrentIndexProvider).chapter;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -30,8 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaDetailStreamRef = AutoDisposeStreamProviderRef<Manga?>;
-
 /// See also [getMangaDetailStream].
 @ProviderFor(getMangaDetailStream)
 const getMangaDetailStreamProvider = GetMangaDetailStreamFamily();
@@ -78,10 +76,10 @@ class GetMangaDetailStreamFamily extends Family<AsyncValue<Manga?>> {
 class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   /// See also [getMangaDetailStream].
   GetMangaDetailStreamProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           (ref) => getMangaDetailStream(
-            ref,
+            ref as GetMangaDetailStreamRef,
             mangaId: mangaId,
           ),
           from: getMangaDetailStreamProvider,
@@ -93,9 +91,43 @@ class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
           dependencies: GetMangaDetailStreamFamily._dependencies,
           allTransitiveDependencies:
               GetMangaDetailStreamFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  GetMangaDetailStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  Override overrideWith(
+    Stream<Manga?> Function(GetMangaDetailStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetMangaDetailStreamProvider._internal(
+        (ref) => create(ref as GetMangaDetailStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<Manga?> createElement() {
+    return _GetMangaDetailStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -111,8 +143,21 @@ class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   }
 }
 
+mixin GetMangaDetailStreamRef on AutoDisposeStreamProviderRef<Manga?> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _GetMangaDetailStreamProviderElement
+    extends AutoDisposeStreamProviderElement<Manga?>
+    with GetMangaDetailStreamRef {
+  _GetMangaDetailStreamProviderElement(super.provider);
+
+  @override
+  int get mangaId => (origin as GetMangaDetailStreamProvider).mangaId;
+}
+
 String _$getChaptersStreamHash() => r'31879a8ff45e1cd61255de50d030a0141450180d';
-typedef GetChaptersStreamRef = AutoDisposeStreamProviderRef<List<Chapter>>;
 
 /// See also [getChaptersStream].
 @ProviderFor(getChaptersStream)
@@ -161,10 +206,10 @@ class GetChaptersStreamProvider
     extends AutoDisposeStreamProvider<List<Chapter>> {
   /// See also [getChaptersStream].
   GetChaptersStreamProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           (ref) => getChaptersStream(
-            ref,
+            ref as GetChaptersStreamRef,
             mangaId: mangaId,
           ),
           from: getChaptersStreamProvider,
@@ -176,9 +221,43 @@ class GetChaptersStreamProvider
           dependencies: GetChaptersStreamFamily._dependencies,
           allTransitiveDependencies:
               GetChaptersStreamFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  GetChaptersStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  Override overrideWith(
+    Stream<List<Chapter>> Function(GetChaptersStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetChaptersStreamProvider._internal(
+        (ref) => create(ref as GetChaptersStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<Chapter>> createElement() {
+    return _GetChaptersStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -193,5 +272,19 @@ class GetChaptersStreamProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetChaptersStreamRef on AutoDisposeStreamProviderRef<List<Chapter>> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _GetChaptersStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<Chapter>>
+    with GetChaptersStreamRef {
+  _GetChaptersStreamProviderElement(super.provider);
+
+  @override
+  int get mangaId => (origin as GetChaptersStreamProvider).mangaId;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef UpdateMangaDetailRef = AutoDisposeFutureProviderRef<dynamic>;
-
 /// See also [updateMangaDetail].
 @ProviderFor(updateMangaDetail)
 const updateMangaDetailProvider = UpdateMangaDetailFamily();
@@ -80,11 +78,11 @@ class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
 class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [updateMangaDetail].
   UpdateMangaDetailProvider({
-    required this.mangaId,
-    required this.isInit,
-  }) : super.internal(
+    required int? mangaId,
+    required bool isInit,
+  }) : this._internal(
           (ref) => updateMangaDetail(
-            ref,
+            ref as UpdateMangaDetailRef,
             mangaId: mangaId,
             isInit: isInit,
           ),
@@ -97,10 +95,47 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
           dependencies: UpdateMangaDetailFamily._dependencies,
           allTransitiveDependencies:
               UpdateMangaDetailFamily._allTransitiveDependencies,
+          mangaId: mangaId,
+          isInit: isInit,
         );
+
+  UpdateMangaDetailProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+    required this.isInit,
+  }) : super.internal();
 
   final int? mangaId;
   final bool isInit;
+
+  @override
+  Override overrideWith(
+    FutureOr<dynamic> Function(UpdateMangaDetailRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UpdateMangaDetailProvider._internal(
+        (ref) => create(ref as UpdateMangaDetailRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+        isInit: isInit,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<dynamic> createElement() {
+    return _UpdateMangaDetailProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -118,5 +153,24 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin UpdateMangaDetailRef on AutoDisposeFutureProviderRef<dynamic> {
+  /// The parameter `mangaId` of this provider.
+  int? get mangaId;
+
+  /// The parameter `isInit` of this provider.
+  bool get isInit;
+}
+
+class _UpdateMangaDetailProviderElement
+    extends AutoDisposeFutureProviderElement<dynamic>
+    with UpdateMangaDetailRef {
+  _UpdateMangaDetailProviderElement(super.provider);
+
+  @override
+  int? get mangaId => (origin as UpdateMangaDetailProvider).mangaId;
+  @override
+  bool get isInit => (origin as UpdateMangaDetailProvider).isInit;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

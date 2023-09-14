@@ -134,8 +134,8 @@ class SortChapterStateProvider
     extends AutoDisposeNotifierProviderImpl<SortChapterState, SortChapter> {
   /// See also [SortChapterState].
   SortChapterStateProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           () => SortChapterState()..mangaId = mangaId,
           from: sortChapterStateProvider,
           name: r'sortChapterStateProvider',
@@ -146,9 +146,51 @@ class SortChapterStateProvider
           dependencies: SortChapterStateFamily._dependencies,
           allTransitiveDependencies:
               SortChapterStateFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  SortChapterStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  SortChapter runNotifierBuild(
+    covariant SortChapterState notifier,
+  ) {
+    return notifier.build(
+      mangaId: mangaId,
+    );
+  }
+
+  @override
+  Override overrideWith(SortChapterState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: SortChapterStateProvider._internal(
+        () => create()..mangaId = mangaId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<SortChapterState, SortChapter>
+      createElement() {
+    return _SortChapterStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -162,15 +204,20 @@ class SortChapterStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin SortChapterStateRef on AutoDisposeNotifierProviderRef<SortChapter> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _SortChapterStateProviderElement
+    extends AutoDisposeNotifierProviderElement<SortChapterState, SortChapter>
+    with SortChapterStateRef {
+  _SortChapterStateProviderElement(super.provider);
 
   @override
-  SortChapter runNotifierBuild(
-    covariant SortChapterState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
-  }
+  int get mangaId => (origin as SortChapterStateProvider).mangaId;
 }
 
 String _$chapterFilterDownloadedStateHash() =>
@@ -233,8 +280,8 @@ class ChapterFilterDownloadedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterDownloadedState, int> {
   /// See also [ChapterFilterDownloadedState].
   ChapterFilterDownloadedStateProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           () => ChapterFilterDownloadedState()..mangaId = mangaId,
           from: chapterFilterDownloadedStateProvider,
           name: r'chapterFilterDownloadedStateProvider',
@@ -245,9 +292,51 @@ class ChapterFilterDownloadedStateProvider
           dependencies: ChapterFilterDownloadedStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterFilterDownloadedStateFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  ChapterFilterDownloadedStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  int runNotifierBuild(
+    covariant ChapterFilterDownloadedState notifier,
+  ) {
+    return notifier.build(
+      mangaId: mangaId,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterFilterDownloadedState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterFilterDownloadedStateProvider._internal(
+        () => create()..mangaId = mangaId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterFilterDownloadedState, int>
+      createElement() {
+    return _ChapterFilterDownloadedStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -262,15 +351,20 @@ class ChapterFilterDownloadedStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _ChapterFilterDownloadedStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterFilterDownloadedState,
+        int> with ChapterFilterDownloadedStateRef {
+  _ChapterFilterDownloadedStateProviderElement(super.provider);
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterDownloadedState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
-  }
+  int get mangaId => (origin as ChapterFilterDownloadedStateProvider).mangaId;
 }
 
 String _$chapterFilterUnreadStateHash() =>
@@ -332,8 +426,8 @@ class ChapterFilterUnreadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterUnreadState, int> {
   /// See also [ChapterFilterUnreadState].
   ChapterFilterUnreadStateProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           () => ChapterFilterUnreadState()..mangaId = mangaId,
           from: chapterFilterUnreadStateProvider,
           name: r'chapterFilterUnreadStateProvider',
@@ -344,9 +438,51 @@ class ChapterFilterUnreadStateProvider
           dependencies: ChapterFilterUnreadStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterFilterUnreadStateFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  ChapterFilterUnreadStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  int runNotifierBuild(
+    covariant ChapterFilterUnreadState notifier,
+  ) {
+    return notifier.build(
+      mangaId: mangaId,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterFilterUnreadState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterFilterUnreadStateProvider._internal(
+        () => create()..mangaId = mangaId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterFilterUnreadState, int>
+      createElement() {
+    return _ChapterFilterUnreadStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -361,15 +497,20 @@ class ChapterFilterUnreadStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterFilterUnreadStateRef on AutoDisposeNotifierProviderRef<int> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _ChapterFilterUnreadStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterFilterUnreadState, int>
+    with ChapterFilterUnreadStateRef {
+  _ChapterFilterUnreadStateProviderElement(super.provider);
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterUnreadState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
-  }
+  int get mangaId => (origin as ChapterFilterUnreadStateProvider).mangaId;
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
@@ -432,8 +573,8 @@ class ChapterFilterBookmarkedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterBookmarkedState, int> {
   /// See also [ChapterFilterBookmarkedState].
   ChapterFilterBookmarkedStateProvider({
-    required this.mangaId,
-  }) : super.internal(
+    required int mangaId,
+  }) : this._internal(
           () => ChapterFilterBookmarkedState()..mangaId = mangaId,
           from: chapterFilterBookmarkedStateProvider,
           name: r'chapterFilterBookmarkedStateProvider',
@@ -444,9 +585,51 @@ class ChapterFilterBookmarkedStateProvider
           dependencies: ChapterFilterBookmarkedStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterFilterBookmarkedStateFamily._allTransitiveDependencies,
+          mangaId: mangaId,
         );
 
+  ChapterFilterBookmarkedStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.mangaId,
+  }) : super.internal();
+
   final int mangaId;
+
+  @override
+  int runNotifierBuild(
+    covariant ChapterFilterBookmarkedState notifier,
+  ) {
+    return notifier.build(
+      mangaId: mangaId,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterFilterBookmarkedState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterFilterBookmarkedStateProvider._internal(
+        () => create()..mangaId = mangaId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        mangaId: mangaId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterFilterBookmarkedState, int>
+      createElement() {
+    return _ChapterFilterBookmarkedStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -461,15 +644,20 @@ class ChapterFilterBookmarkedStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
+  /// The parameter `mangaId` of this provider.
+  int get mangaId;
+}
+
+class _ChapterFilterBookmarkedStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterFilterBookmarkedState,
+        int> with ChapterFilterBookmarkedStateRef {
+  _ChapterFilterBookmarkedStateProviderElement(super.provider);
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterBookmarkedState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
-  }
+  int get mangaId => (origin as ChapterFilterBookmarkedStateProvider).mangaId;
 }
 
 String _$chapterFilterResultStateHash() =>
@@ -531,8 +719,8 @@ class ChapterFilterResultStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterResultState, bool> {
   /// See also [ChapterFilterResultState].
   ChapterFilterResultStateProvider({
-    required this.manga,
-  }) : super.internal(
+    required Manga manga,
+  }) : this._internal(
           () => ChapterFilterResultState()..manga = manga,
           from: chapterFilterResultStateProvider,
           name: r'chapterFilterResultStateProvider',
@@ -543,9 +731,51 @@ class ChapterFilterResultStateProvider
           dependencies: ChapterFilterResultStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterFilterResultStateFamily._allTransitiveDependencies,
+          manga: manga,
         );
 
+  ChapterFilterResultStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+  }) : super.internal();
+
   final Manga manga;
+
+  @override
+  bool runNotifierBuild(
+    covariant ChapterFilterResultState notifier,
+  ) {
+    return notifier.build(
+      manga: manga,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterFilterResultState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterFilterResultStateProvider._internal(
+        () => create()..manga = manga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterFilterResultState, bool>
+      createElement() {
+    return _ChapterFilterResultStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -559,15 +789,20 @@ class ChapterFilterResultStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterFilterResultStateRef on AutoDisposeNotifierProviderRef<bool> {
+  /// The parameter `manga` of this provider.
+  Manga get manga;
+}
+
+class _ChapterFilterResultStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterFilterResultState, bool>
+    with ChapterFilterResultStateRef {
+  _ChapterFilterResultStateProviderElement(super.provider);
 
   @override
-  bool runNotifierBuild(
-    covariant ChapterFilterResultState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
-  }
+  Manga get manga => (origin as ChapterFilterResultStateProvider).manga;
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
@@ -629,8 +864,8 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
     ChapterSetIsBookmarkState, dynamic> {
   /// See also [ChapterSetIsBookmarkState].
   ChapterSetIsBookmarkStateProvider({
-    required this.manga,
-  }) : super.internal(
+    required Manga manga,
+  }) : this._internal(
           () => ChapterSetIsBookmarkState()..manga = manga,
           from: chapterSetIsBookmarkStateProvider,
           name: r'chapterSetIsBookmarkStateProvider',
@@ -641,9 +876,51 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: ChapterSetIsBookmarkStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterSetIsBookmarkStateFamily._allTransitiveDependencies,
+          manga: manga,
         );
 
+  ChapterSetIsBookmarkStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+  }) : super.internal();
+
   final Manga manga;
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetIsBookmarkState notifier,
+  ) {
+    return notifier.build(
+      manga: manga,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterSetIsBookmarkState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterSetIsBookmarkStateProvider._internal(
+        () => create()..manga = manga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState, dynamic>
+      createElement() {
+    return _ChapterSetIsBookmarkStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -657,15 +934,20 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterSetIsBookmarkStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+  /// The parameter `manga` of this provider.
+  Manga get manga;
+}
+
+class _ChapterSetIsBookmarkStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState,
+        dynamic> with ChapterSetIsBookmarkStateRef {
+  _ChapterSetIsBookmarkStateProviderElement(super.provider);
 
   @override
-  dynamic runNotifierBuild(
-    covariant ChapterSetIsBookmarkState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
-  }
+  Manga get manga => (origin as ChapterSetIsBookmarkStateProvider).manga;
 }
 
 String _$chapterSetIsReadStateHash() =>
@@ -727,8 +1009,8 @@ class ChapterSetIsReadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, dynamic> {
   /// See also [ChapterSetIsReadState].
   ChapterSetIsReadStateProvider({
-    required this.manga,
-  }) : super.internal(
+    required Manga manga,
+  }) : this._internal(
           () => ChapterSetIsReadState()..manga = manga,
           from: chapterSetIsReadStateProvider,
           name: r'chapterSetIsReadStateProvider',
@@ -739,9 +1021,51 @@ class ChapterSetIsReadStateProvider
           dependencies: ChapterSetIsReadStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterSetIsReadStateFamily._allTransitiveDependencies,
+          manga: manga,
         );
 
+  ChapterSetIsReadStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+  }) : super.internal();
+
   final Manga manga;
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetIsReadState notifier,
+  ) {
+    return notifier.build(
+      manga: manga,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterSetIsReadState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterSetIsReadStateProvider._internal(
+        () => create()..manga = manga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterSetIsReadState, dynamic>
+      createElement() {
+    return _ChapterSetIsReadStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -755,15 +1079,20 @@ class ChapterSetIsReadStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterSetIsReadStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+  /// The parameter `manga` of this provider.
+  Manga get manga;
+}
+
+class _ChapterSetIsReadStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterSetIsReadState, dynamic>
+    with ChapterSetIsReadStateRef {
+  _ChapterSetIsReadStateProviderElement(super.provider);
 
   @override
-  dynamic runNotifierBuild(
-    covariant ChapterSetIsReadState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
-  }
+  Manga get manga => (origin as ChapterSetIsReadStateProvider).manga;
 }
 
 String _$chapterSetDownloadStateHash() =>
@@ -825,8 +1154,8 @@ class ChapterSetDownloadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, dynamic> {
   /// See also [ChapterSetDownloadState].
   ChapterSetDownloadStateProvider({
-    required this.manga,
-  }) : super.internal(
+    required Manga manga,
+  }) : this._internal(
           () => ChapterSetDownloadState()..manga = manga,
           from: chapterSetDownloadStateProvider,
           name: r'chapterSetDownloadStateProvider',
@@ -837,9 +1166,51 @@ class ChapterSetDownloadStateProvider
           dependencies: ChapterSetDownloadStateFamily._dependencies,
           allTransitiveDependencies:
               ChapterSetDownloadStateFamily._allTransitiveDependencies,
+          manga: manga,
         );
 
+  ChapterSetDownloadStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+  }) : super.internal();
+
   final Manga manga;
+
+  @override
+  dynamic runNotifierBuild(
+    covariant ChapterSetDownloadState notifier,
+  ) {
+    return notifier.build(
+      manga: manga,
+    );
+  }
+
+  @override
+  Override overrideWith(ChapterSetDownloadState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChapterSetDownloadStateProvider._internal(
+        () => create()..manga = manga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChapterSetDownloadState, dynamic>
+      createElement() {
+    return _ChapterSetDownloadStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -853,15 +1224,20 @@ class ChapterSetDownloadStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ChapterSetDownloadStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+  /// The parameter `manga` of this provider.
+  Manga get manga;
+}
+
+class _ChapterSetDownloadStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ChapterSetDownloadState, dynamic>
+    with ChapterSetDownloadStateRef {
+  _ChapterSetDownloadStateProviderElement(super.provider);
 
   @override
-  dynamic runNotifierBuild(
-    covariant ChapterSetDownloadState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
-  }
+  Manga get manga => (origin as ChapterSetDownloadStateProvider).manga;
 }
 
 String _$chaptersListttStateHash() =>
@@ -941,8 +1317,8 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
     ScanlatorsFilterState, (List<String>, List<String>, List<String>)> {
   /// See also [ScanlatorsFilterState].
   ScanlatorsFilterStateProvider(
-    this.manga,
-  ) : super.internal(
+    Manga manga,
+  ) : this._internal(
           () => ScanlatorsFilterState()..manga = manga,
           from: scanlatorsFilterStateProvider,
           name: r'scanlatorsFilterStateProvider',
@@ -953,9 +1329,51 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: ScanlatorsFilterStateFamily._dependencies,
           allTransitiveDependencies:
               ScanlatorsFilterStateFamily._allTransitiveDependencies,
+          manga: manga,
         );
 
+  ScanlatorsFilterStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.manga,
+  }) : super.internal();
+
   final Manga manga;
+
+  @override
+  (List<String>, List<String>, List<String>) runNotifierBuild(
+    covariant ScanlatorsFilterState notifier,
+  ) {
+    return notifier.build(
+      manga,
+    );
+  }
+
+  @override
+  Override overrideWith(ScanlatorsFilterState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ScanlatorsFilterStateProvider._internal(
+        () => create()..manga = manga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        manga: manga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ScanlatorsFilterState,
+      (List<String>, List<String>, List<String>)> createElement() {
+    return _ScanlatorsFilterStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -969,15 +1387,22 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin ScanlatorsFilterStateRef on AutoDisposeNotifierProviderRef<
+    (List<String>, List<String>, List<String>)> {
+  /// The parameter `manga` of this provider.
+  Manga get manga;
+}
+
+class _ScanlatorsFilterStateProviderElement
+    extends AutoDisposeNotifierProviderElement<ScanlatorsFilterState,
+        (List<String>, List<String>, List<String>)>
+    with ScanlatorsFilterStateRef {
+  _ScanlatorsFilterStateProviderElement(super.provider);
 
   @override
-  (List<String>, List<String>, List<String>) runNotifierBuild(
-    covariant ScanlatorsFilterState notifier,
-  ) {
-    return notifier.build(
-      manga,
-    );
-  }
+  Manga get manga => (origin as ScanlatorsFilterStateProvider).manga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef GetAnimeServersRef = AutoDisposeFutureProviderRef<(List<Video>, bool)>;
-
 /// See also [getAnimeServers].
 @ProviderFor(getAnimeServers)
 const getAnimeServersProvider = GetAnimeServersFamily();
@@ -78,10 +76,10 @@ class GetAnimeServersProvider
     extends AutoDisposeFutureProvider<(List<Video>, bool)> {
   /// See also [getAnimeServers].
   GetAnimeServersProvider({
-    required this.episode,
-  }) : super.internal(
+    required Chapter episode,
+  }) : this._internal(
           (ref) => getAnimeServers(
-            ref,
+            ref as GetAnimeServersRef,
             episode: episode,
           ),
           from: getAnimeServersProvider,
@@ -93,9 +91,43 @@ class GetAnimeServersProvider
           dependencies: GetAnimeServersFamily._dependencies,
           allTransitiveDependencies:
               GetAnimeServersFamily._allTransitiveDependencies,
+          episode: episode,
         );
 
+  GetAnimeServersProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.episode,
+  }) : super.internal();
+
   final Chapter episode;
+
+  @override
+  Override overrideWith(
+    FutureOr<(List<Video>, bool)> Function(GetAnimeServersRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetAnimeServersProvider._internal(
+        (ref) => create(ref as GetAnimeServersRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        episode: episode,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<(List<Video>, bool)> createElement() {
+    return _GetAnimeServersProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -110,5 +142,19 @@ class GetAnimeServersProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetAnimeServersRef on AutoDisposeFutureProviderRef<(List<Video>, bool)> {
+  /// The parameter `episode` of this provider.
+  Chapter get episode;
+}
+
+class _GetAnimeServersProviderElement
+    extends AutoDisposeFutureProviderElement<(List<Video>, bool)>
+    with GetAnimeServersRef {
+  _GetAnimeServersProviderElement(super.provider);
+
+  @override
+  Chapter get episode => (origin as GetAnimeServersProvider).episode;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

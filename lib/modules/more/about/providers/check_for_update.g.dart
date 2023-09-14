@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef CheckForUpdateRef = AutoDisposeProviderRef<dynamic>;
-
 /// See also [checkForUpdate].
 @ProviderFor(checkForUpdate)
 const checkForUpdateProvider = CheckForUpdateFamily();
@@ -80,11 +78,11 @@ class CheckForUpdateFamily extends Family<dynamic> {
 class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
   /// See also [checkForUpdate].
   CheckForUpdateProvider({
-    this.context,
-    this.manualUpdate,
-  }) : super.internal(
+    BuildContext? context,
+    bool? manualUpdate,
+  }) : this._internal(
           (ref) => checkForUpdate(
-            ref,
+            ref as CheckForUpdateRef,
             context: context,
             manualUpdate: manualUpdate,
           ),
@@ -97,10 +95,47 @@ class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
           dependencies: CheckForUpdateFamily._dependencies,
           allTransitiveDependencies:
               CheckForUpdateFamily._allTransitiveDependencies,
+          context: context,
+          manualUpdate: manualUpdate,
         );
+
+  CheckForUpdateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.context,
+    required this.manualUpdate,
+  }) : super.internal();
 
   final BuildContext? context;
   final bool? manualUpdate;
+
+  @override
+  Override overrideWith(
+    dynamic Function(CheckForUpdateRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CheckForUpdateProvider._internal(
+        (ref) => create(ref as CheckForUpdateRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        context: context,
+        manualUpdate: manualUpdate,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<dynamic> createElement() {
+    return _CheckForUpdateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -118,5 +153,23 @@ class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin CheckForUpdateRef on AutoDisposeProviderRef<dynamic> {
+  /// The parameter `context` of this provider.
+  BuildContext? get context;
+
+  /// The parameter `manualUpdate` of this provider.
+  bool? get manualUpdate;
+}
+
+class _CheckForUpdateProviderElement extends AutoDisposeProviderElement<dynamic>
+    with CheckForUpdateRef {
+  _CheckForUpdateProviderElement(super.provider);
+
+  @override
+  BuildContext? get context => (origin as CheckForUpdateProvider).context;
+  @override
+  bool? get manualUpdate => (origin as CheckForUpdateProvider).manualUpdate;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -89,9 +89,9 @@ class TrackStateProvider
     extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
   /// See also [TrackState].
   TrackStateProvider({
-    this.track,
-    required this.isManga,
-  }) : super.internal(
+    Track? track,
+    required bool? isManga,
+  }) : this._internal(
           () => TrackState()
             ..track = track
             ..isManga = isManga,
@@ -104,10 +104,57 @@ class TrackStateProvider
           dependencies: TrackStateFamily._dependencies,
           allTransitiveDependencies:
               TrackStateFamily._allTransitiveDependencies,
+          track: track,
+          isManga: isManga,
         );
+
+  TrackStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.track,
+    required this.isManga,
+  }) : super.internal();
 
   final Track? track;
   final bool? isManga;
+
+  @override
+  Track runNotifierBuild(
+    covariant TrackState notifier,
+  ) {
+    return notifier.build(
+      track: track,
+      isManga: isManga,
+    );
+  }
+
+  @override
+  Override overrideWith(TrackState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: TrackStateProvider._internal(
+        () => create()
+          ..track = track
+          ..isManga = isManga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        track: track,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<TrackState, Track> createElement() {
+    return _TrackStateProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -124,16 +171,25 @@ class TrackStateProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin TrackStateRef on AutoDisposeNotifierProviderRef<Track> {
+  /// The parameter `track` of this provider.
+  Track? get track;
+
+  /// The parameter `isManga` of this provider.
+  bool? get isManga;
+}
+
+class _TrackStateProviderElement
+    extends AutoDisposeNotifierProviderElement<TrackState, Track>
+    with TrackStateRef {
+  _TrackStateProviderElement(super.provider);
 
   @override
-  Track runNotifierBuild(
-    covariant TrackState notifier,
-  ) {
-    return notifier.build(
-      track: track,
-      isManga: isManga,
-    );
-  }
+  Track? get track => (origin as TrackStateProvider).track;
+  @override
+  bool? get isManga => (origin as TrackStateProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

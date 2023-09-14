@@ -167,22 +167,14 @@ class _MangaChapterPageGalleryState
   }
 
   void _preloadImage(int index) {
-    final cropBorders = ref.watch(cropBordersStateProvider);
-
     if (0 <= index && index < _uChapDataPreload.length) {
-      if (_cropImagesList.isNotEmpty && cropBorders == true
-          ? true
-          : _uChapDataPreload[index].isLocale!) {
-        final archiveImage = (_cropImagesList.isNotEmpty && cropBorders == true
-            ? _cropImagesList[index]
-            : _uChapDataPreload[index].archiveImage);
+      if (_uChapDataPreload[index].isLocale!) {
+        final archiveImage = (_uChapDataPreload[index].archiveImage);
 
         if (archiveImage != null) {
           precacheImage(
               ExtendedMemoryImageProvider(
-                  (_cropImagesList.isNotEmpty && cropBorders == true
-                      ? _cropImagesList[index]
-                      : _uChapDataPreload[index].archiveImage)!),
+                  (_uChapDataPreload[index].archiveImage)!),
               context);
         } else {
           precacheImage(
@@ -333,6 +325,12 @@ class _MangaChapterPageGalleryState
     ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(
           _uChapDataPreload[_currentIndex!].index!,
         );
+    if (!(_isVerticalContinous())) {
+      for (var i = 1; i < pagePreloadAmount + 1; i++) {
+        _preloadImage(_currentIndex! + i);
+        _preloadImage(_currentIndex! - i);
+      }
+    }
   }
 
   void _onPageChanged(int index) {
@@ -450,24 +448,6 @@ class _MangaChapterPageGalleryState
       }
     }
   }
-
-  final List<Uint8List?> _cropImagesList = [];
-  bool isOk = false;
-  // _cropImage() async {
-  //   if (!isOk) {
-  //     isOk = true;
-  //     _cropImagesList = await ref.watch(autoCropBorderProvider(
-  //             archiveImages:
-  //                 _uChapDataPreload.map((e) => e.archiveImage).toList(),
-  //             isLocaleList: _uChapDataPreload.map((e) => e.isLocale!).toList(),
-  //             path: _uChapDataPreload[_currentIndex!].path!,
-  //             url: _uChapDataPreload.map((e) => e.url!).toList())
-  //         .future);
-  //     if (mounted) {
-  //       setState(() {});
-  //     }
-  //   }
-  // }
 
   final _selectedValue = StateProvider<ReaderMode?>((ref) => null);
   bool _isView = false;
@@ -893,10 +873,9 @@ class _MangaChapterPageGalleryState
                         final cropBorders = ref.watch(cropBordersStateProvider);
                         return IconButton(
                           onPressed: () {
-                            // _cropImage();
-                            // ref
-                            //     .read(cropBordersStateProvider.notifier)
-                            //     .set(!cropBorders);
+                            ref
+                                .read(cropBordersStateProvider.notifier)
+                                .set(!cropBorders);
                           },
                           icon: Stack(
                             children: [
@@ -1129,7 +1108,6 @@ class _MangaChapterPageGalleryState
 
   @override
   Widget build(BuildContext context) {
-    final cropBorders = ref.watch(cropBordersStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
@@ -1212,7 +1190,7 @@ class _MangaChapterPageGalleryState
                               basePosition: _scalePosition,
                               onScaleEnd: _onScaleEnd,
                               child: ScrollablePositionedList.separated(
-                                physics: const ClampingScrollPhysics(),
+                                // physics: const ClampingScrollPhysics(),
                                 minCacheExtent: 15 * mediaHeight(context, 1),
                                 initialScrollIndex: _currentIndex!,
                                 itemCount: _uChapDataPreload.length,
@@ -1227,24 +1205,19 @@ class _MangaChapterPageGalleryState
                                     onDoubleTap: () {},
                                     child: ImageViewVertical(
                                       archiveImage:
-                                          _cropImagesList.isNotEmpty &&
-                                                  cropBorders == true
-                                              ? _cropImagesList[index]
-                                              : _uChapDataPreload[index]
-                                                  .archiveImage,
+                                          _uChapDataPreload[index].archiveImage,
                                       source: _readerController.getSourceName(),
                                       index: _uChapDataPreload[index].index!,
                                       url: _uChapDataPreload[index].url!,
                                       path: _uChapDataPreload[index].path!,
-                                      isLocale: _cropImagesList.isNotEmpty &&
-                                              cropBorders == true
-                                          ? true
-                                          : _uChapDataPreload[index].isLocale!,
+                                      isLocale:
+                                          _uChapDataPreload[index].isLocale!,
                                       lang: _uChapDataPreload[index]
                                           .chapter!
                                           .manga
                                           .value!
                                           .lang!,
+                                      parentRef: ref,
                                       failedToLoadImage: (value) {
                                         // _failedToLoadImage.value = value;
                                       },
@@ -1276,10 +1249,9 @@ class _MangaChapterPageGalleryState
                                 },
                                 itemBuilder: (BuildContext context, int index) {
                                   return ImageViewCenter(
-                                    archiveImage: _cropImagesList.isNotEmpty &&
-                                            cropBorders == true
-                                        ? _cropImagesList[index]
-                                        : _uChapDataPreload[index].archiveImage,
+                                    parentRef: ref,
+                                    archiveImage:
+                                        _uChapDataPreload[index].archiveImage,
                                     source: _readerController.getSourceName(),
                                     index: _uChapDataPreload[index].index!,
                                     url: _uChapDataPreload[index].url!,
@@ -1442,10 +1414,8 @@ class _MangaChapterPageGalleryState
 
                                       _doubleClickAnimationController.forward();
                                     },
-                                    isLocale: _cropImagesList.isNotEmpty &&
-                                            cropBorders == true
-                                        ? true
-                                        : _uChapDataPreload[index].isLocale!,
+                                    isLocale:
+                                        _uChapDataPreload[index].isLocale!,
                                     lang: _uChapDataPreload[index]
                                         .chapter!
                                         .manga

@@ -84,8 +84,8 @@ class TracksProvider
     extends AutoDisposeNotifierProviderImpl<Tracks, TrackPreference?> {
   /// See also [Tracks].
   TracksProvider({
-    required this.syncId,
-  }) : super.internal(
+    required int? syncId,
+  }) : this._internal(
           () => Tracks()..syncId = syncId,
           from: tracksProvider,
           name: r'tracksProvider',
@@ -95,9 +95,50 @@ class TracksProvider
                   : _$tracksHash,
           dependencies: TracksFamily._dependencies,
           allTransitiveDependencies: TracksFamily._allTransitiveDependencies,
+          syncId: syncId,
         );
 
+  TracksProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.syncId,
+  }) : super.internal();
+
   final int? syncId;
+
+  @override
+  TrackPreference? runNotifierBuild(
+    covariant Tracks notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+    );
+  }
+
+  @override
+  Override overrideWith(Tracks Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: TracksProvider._internal(
+        () => create()..syncId = syncId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        syncId: syncId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<Tracks, TrackPreference?> createElement() {
+    return _TracksProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -111,15 +152,20 @@ class TracksProvider
 
     return _SystemHash.finish(hash);
   }
+}
+
+mixin TracksRef on AutoDisposeNotifierProviderRef<TrackPreference?> {
+  /// The parameter `syncId` of this provider.
+  int? get syncId;
+}
+
+class _TracksProviderElement
+    extends AutoDisposeNotifierProviderElement<Tracks, TrackPreference?>
+    with TracksRef {
+  _TracksProviderElement(super.provider);
 
   @override
-  TrackPreference? runNotifierBuild(
-    covariant Tracks notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-    );
-  }
+  int? get syncId => (origin as TracksProvider).syncId;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -29,8 +29,6 @@ class _SystemHash {
   }
 }
 
-typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
-
 /// See also [headers].
 @ProviderFor(headers)
 const headersProvider = HeadersFamily();
@@ -80,11 +78,11 @@ class HeadersFamily extends Family<Map<String, String>> {
 class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   /// See also [headers].
   HeadersProvider({
-    required this.source,
-    required this.lang,
-  }) : super.internal(
+    required String source,
+    required String lang,
+  }) : this._internal(
           (ref) => headers(
-            ref,
+            ref as HeadersRef,
             source: source,
             lang: lang,
           ),
@@ -96,10 +94,47 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
                   : _$headersHash,
           dependencies: HeadersFamily._dependencies,
           allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+          source: source,
+          lang: lang,
         );
+
+  HeadersProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.source,
+    required this.lang,
+  }) : super.internal();
 
   final String source;
   final String lang;
+
+  @override
+  Override overrideWith(
+    Map<String, String> Function(HeadersRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: HeadersProvider._internal(
+        (ref) => create(ref as HeadersRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        source: source,
+        lang: lang,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<Map<String, String>> createElement() {
+    return _HeadersProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -117,5 +152,23 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
     return _SystemHash.finish(hash);
   }
 }
+
+mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
+  /// The parameter `source` of this provider.
+  String get source;
+
+  /// The parameter `lang` of this provider.
+  String get lang;
+}
+
+class _HeadersProviderElement
+    extends AutoDisposeProviderElement<Map<String, String>> with HeadersRef {
+  _HeadersProviderElement(super.provider);
+
+  @override
+  String get source => (origin as HeadersProvider).source;
+  @override
+  String get lang => (origin as HeadersProvider).lang;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

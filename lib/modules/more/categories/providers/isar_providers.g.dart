@@ -30,9 +30,6 @@ class _SystemHash {
   }
 }
 
-typedef GetMangaCategorieStreamRef
-    = AutoDisposeStreamProviderRef<List<Category>>;
-
 /// See also [getMangaCategorieStream].
 @ProviderFor(getMangaCategorieStream)
 const getMangaCategorieStreamProvider = GetMangaCategorieStreamFamily();
@@ -80,10 +77,10 @@ class GetMangaCategorieStreamProvider
     extends AutoDisposeStreamProvider<List<Category>> {
   /// See also [getMangaCategorieStream].
   GetMangaCategorieStreamProvider({
-    required this.isManga,
-  }) : super.internal(
+    required bool isManga,
+  }) : this._internal(
           (ref) => getMangaCategorieStream(
-            ref,
+            ref as GetMangaCategorieStreamRef,
             isManga: isManga,
           ),
           from: getMangaCategorieStreamProvider,
@@ -95,9 +92,43 @@ class GetMangaCategorieStreamProvider
           dependencies: GetMangaCategorieStreamFamily._dependencies,
           allTransitiveDependencies:
               GetMangaCategorieStreamFamily._allTransitiveDependencies,
+          isManga: isManga,
         );
 
+  GetMangaCategorieStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isManga,
+  }) : super.internal();
+
   final bool isManga;
+
+  @override
+  Override overrideWith(
+    Stream<List<Category>> Function(GetMangaCategorieStreamRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetMangaCategorieStreamProvider._internal(
+        (ref) => create(ref as GetMangaCategorieStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<Category>> createElement() {
+    return _GetMangaCategorieStreamProviderElement(this);
+  }
 
   @override
   bool operator ==(Object other) {
@@ -112,5 +143,20 @@ class GetMangaCategorieStreamProvider
     return _SystemHash.finish(hash);
   }
 }
+
+mixin GetMangaCategorieStreamRef
+    on AutoDisposeStreamProviderRef<List<Category>> {
+  /// The parameter `isManga` of this provider.
+  bool get isManga;
+}
+
+class _GetMangaCategorieStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<Category>>
+    with GetMangaCategorieStreamRef {
+  _GetMangaCategorieStreamProviderElement(super.provider);
+
+  @override
+  bool get isManga => (origin as GetMangaCategorieStreamProvider).isManga;
+}
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
