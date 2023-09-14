@@ -8,7 +8,7 @@ Future setCookie(SetCookieRef ref, String sourceId, String url) async {
   CookieManager cookie = CookieManager.instance();
 
   final cookies = await cookie.getCookies(url: Uri.parse(url.toString()));
-  final newCookie = cookies.join("; ");
+  final newCookie = cookies.map((e) => "${e.name}=${e.value}").join("; ");
   setCookieBA(newCookie, sourceId);
 }
 
@@ -16,6 +16,6 @@ Future setCookieB(String sourceId, String url) async {
   CookieManager cookie = CookieManager.instance();
 
   final cookies = await cookie.getCookies(url: Uri.parse(url.toString()));
-  final newCookie = cookies.join("; ");
+  final newCookie = cookies.map((e) => "${e.name}=${e.value}").join("; ");
   setCookieBA(newCookie, sourceId);
 }
