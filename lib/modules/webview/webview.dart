@@ -256,16 +256,20 @@ Future<String> getWebViewPath() async {
 }
 
 Future<String?> decodeHtml(Webview webview, {String? sourceId}) async {
-  final html = await webview
-      .evaluateJavaScript("window.document.documentElement.outerHTML;");
-  final cookie = await webview.evaluateJavaScript("window.document.cookie;");
-  if (cookie != null && sourceId != null) {
-    setCookieBA(cookie, sourceId);
+  try {
+    final html = await webview
+        .evaluateJavaScript("window.document.documentElement.outerHTML;");
+    final cookie = await webview.evaluateJavaScript("window.document.cookie;");
+    if (cookie != null && sourceId != null) {
+      setCookieBA(cookie, sourceId);
+    }
+
+    final res = jsonDecode(html!) as String;
+
+    return res == "<html><head></head><body></body></html>" || res.isEmpty
+        ? null
+        : res;
+  } catch (_) {
+    return null;
   }
-
-  final res = jsonDecode(html!) as String;
-
-  return res == "<html><head></head><body></body></html>" || res.isEmpty
-      ? null
-      : res;
 }

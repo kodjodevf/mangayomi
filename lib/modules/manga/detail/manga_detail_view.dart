@@ -87,7 +87,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chaptersListStateProvider);
     final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
-    bool reverse = ref
+    bool reverse = !ref
         .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
         .reverse!;
     final filterUnread =
@@ -194,7 +194,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         (a, b) {
           return (a.dateUpload == null || b.dateUpload == null)
               ? 0
-              : a.dateUpload!.compareTo(b.dateUpload!);
+              : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
         },
       );
     }
@@ -764,7 +764,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                 chapter.id!);
                                                       }
                                                     });
-
                                                     ref
                                                         .read(
                                                             isLongPressedStateProvider

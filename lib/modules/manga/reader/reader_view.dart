@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
+// import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -182,6 +183,16 @@ class _MangaChapterPageGalleryState
                   "${_uChapDataPreload[index].path!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
               context);
         }
+        // final cropBorders = ref.watch(cropBordersStateProvider);
+        // ref
+        //     .watch(autoCropImageBorderProvider(
+        //             cropBorder: cropBorders, datas: _uChapDataPreload[index])
+        //         .future)
+        //     .then((value) {
+        //   if (value != null) {
+        //     precacheImage(ExtendedMemoryImageProvider(value), context);
+        //   }
+        // });
       } else {
         precacheImage(
             ExtendedNetworkImageProvider(
@@ -331,6 +342,7 @@ class _MangaChapterPageGalleryState
         _preloadImage(_currentIndex! - i);
       }
     }
+    // _initCropBorders();
   }
 
   void _onPageChanged(int index) {
@@ -733,13 +745,11 @@ class _MangaChapterPageGalleryState
                                           onChangeEnd: (newValue) {
                                             try {
                                               final index = _uChapDataPreload
-                                                  .where((element) =>
+                                                  .firstWhere((element) =>
                                                       element.chapter ==
                                                           chapter &&
                                                       element.index ==
                                                           newValue.toInt())
-                                                  .toList()
-                                                  .first
                                                   .pageIndex;
 
                                               _onBtnTapped(
@@ -882,7 +892,7 @@ class _MangaChapterPageGalleryState
                               const Icon(
                                 Icons.crop_rounded,
                               ),
-                              if (cropBorders)
+                              if (!cropBorders)
                                 Positioned(
                                   right: 8,
                                   child: Transform.scale(
@@ -921,6 +931,36 @@ class _MangaChapterPageGalleryState
       ],
     );
   }
+
+  // _initCropBorders() async {
+  //   final uChapDataPreloadF = _uChapDataPreload
+  //       .where((element) => element.chapter == chapter)
+  //       .toList();
+
+  //   for (var element in uChapDataPreloadF) {
+  //     if (mounted) {
+  //       // Uint8List? res;
+  //       // res =
+  //       await ref.watch(
+  //           autoCropImageBorderProvider(cropBorder: true, datas: element)
+  //               .future);
+  //       // bool isOk = false;
+  //       // while (res == null && isOk == false) {
+  //       //   try {
+  //       //     await Future.delayed(const Duration(seconds: 1));
+  //       //     res = await ref.refresh(
+  //       //         autoCropImageBorderProvider(cropBorder: true, datas: element)
+  //       //             .future);
+  //       //     if (res != null) {
+  //       //       isOk = true;
+  //       //     }
+  //       //   } catch (_) {
+  //       //     isOk = true;
+  //       //   }
+  //       // }
+  //     }
+  //   }
+  // }
 
   Widget _showPage() {
     return Consumer(builder: (context, ref, child) {
@@ -1172,6 +1212,7 @@ class _MangaChapterPageGalleryState
                   .setPageIndex(_uChapDataPreload[_currentIndex!].index!);
               _isBookmarked = _readerController.getChapterBookmarked();
             }
+
             return true;
           },
           child: ValueListenableBuilder(
@@ -1190,7 +1231,6 @@ class _MangaChapterPageGalleryState
                               basePosition: _scalePosition,
                               onScaleEnd: _onScaleEnd,
                               child: ScrollablePositionedList.separated(
-                                // physics: const ClampingScrollPhysics(),
                                 minCacheExtent: 15 * mediaHeight(context, 1),
                                 initialScrollIndex: _currentIndex!,
                                 itemCount: _uChapDataPreload.length,
@@ -1204,20 +1244,7 @@ class _MangaChapterPageGalleryState
                                     },
                                     onDoubleTap: () {},
                                     child: ImageViewVertical(
-                                      archiveImage:
-                                          _uChapDataPreload[index].archiveImage,
-                                      source: _readerController.getSourceName(),
-                                      index: _uChapDataPreload[index].index!,
-                                      url: _uChapDataPreload[index].url!,
-                                      path: _uChapDataPreload[index].path!,
-                                      isLocale:
-                                          _uChapDataPreload[index].isLocale!,
-                                      lang: _uChapDataPreload[index]
-                                          .chapter!
-                                          .manga
-                                          .value!
-                                          .lang!,
-                                      parentRef: ref,
+                                      datas: _uChapDataPreload[index],
                                       failedToLoadImage: (value) {
                                         // _failedToLoadImage.value = value;
                                       },
@@ -1249,13 +1276,7 @@ class _MangaChapterPageGalleryState
                                 },
                                 itemBuilder: (BuildContext context, int index) {
                                   return ImageViewCenter(
-                                    parentRef: ref,
-                                    archiveImage:
-                                        _uChapDataPreload[index].archiveImage,
-                                    source: _readerController.getSourceName(),
-                                    index: _uChapDataPreload[index].index!,
-                                    url: _uChapDataPreload[index].url!,
-                                    path: _uChapDataPreload[index].path!,
+                                    datas: _uChapDataPreload[index],
                                     loadStateChanged:
                                         (ExtendedImageState state) {
                                       if (state.extendedImageLoadState ==
@@ -1414,13 +1435,6 @@ class _MangaChapterPageGalleryState
 
                                       _doubleClickAnimationController.forward();
                                     },
-                                    isLocale:
-                                        _uChapDataPreload[index].isLocale!,
-                                    lang: _uChapDataPreload[index]
-                                        .chapter!
-                                        .manga
-                                        .value!
-                                        .lang!,
                                   );
                                 },
                                 itemCount: _uChapDataPreload.length,

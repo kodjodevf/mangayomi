@@ -3,8 +3,9 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
+// import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -14,50 +15,35 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
 class ImageViewVertical extends ConsumerWidget {
-  final bool isLocale;
-  final String url;
-  final int index;
-  final String source;
-  final Directory path;
-  final String lang;
-  final Uint8List? archiveImage;
-  final WidgetRef parentRef;
+  final UChapDataPreload datas;
+
   final Function(bool) failedToLoadImage;
 
   const ImageViewVertical(
-      {super.key,
-      required this.url,
-      required this.index,
-      required this.path,
-      required this.source,
-      required this.isLocale,
-      required this.lang,
-      this.archiveImage,
-      required this.parentRef,
-      required this.failedToLoadImage});
+      {super.key, required this.datas, required this.failedToLoadImage});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cropBorders = ref.watch(cropBordersStateProvider);
-    final cropBorderData = parentRef.watch(autoCropImageBorderProvider(
-        autoCrop: cropBorders,
-        url: url,
-        archiveImages: archiveImage,
-        isLocaleList: isLocale,
-        path: path,
-        index: index));
-
+    // final cropBorder = ref.watch(cropBordersStateProvider);
     return Container(
-        color: Colors.black,
-        child: cropBorderData.when(
-          data: (data) {
-            return data != null
-                ? _imageView(true, data, context, ref)
-                : _imageView(isLocale, archiveImage, context, ref);
-          },
-          error: (error, stackTrace) => Center(child: Text(error.toString())),
-          loading: () => _imageView(isLocale, archiveImage, context, ref),
-        ));
+      color: Colors.black,
+      child: _imageView(datas.isLocale!, datas.archiveImage, context, ref),
+
+      // StreamBuilder<Uint8List?>(
+      //     stream: ref
+      //         .watch(autoCropImageBorderProvider(
+      //                 datas: datas, cropBorder: cropBorder)
+      //             .future)
+      //         .asStream(),
+      //     builder: (context, snapshot) {
+      //       final hasData = snapshot.hasData && snapshot.data != null;
+      //       if (hasData) {
+      //         return _imageView(hasData, snapshot.data, context, ref);
+      //       }
+      //       return _imageView(
+      //           datas.isLocale!, datas.archiveImage, context, ref);
+      //     }),
+    );
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage,
@@ -67,7 +53,7 @@ class ImageViewVertical extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (index == 0)
+        if (datas.index == 0)
           SizedBox(
             height: MediaQuery.of(context).padding.top,
           ),
@@ -88,7 +74,8 @@ class ImageViewVertical extends ConsumerWidget {
                 : ExtendedImage.file(
                     fit: getBoxFit(scaleType),
                     enableMemoryCache: false,
-                    File('${path.path}${padIndex(index + 1)}.jpg'),
+                    File(
+                        '${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'),
                     enableLoadState: true, loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.loading) {
                       return Container(
@@ -98,8 +85,10 @@ class ImageViewVertical extends ConsumerWidget {
                     }
                     return null;
                   })
-            : ExtendedImage.network(url.trim().trimLeft().trimRight(),
-                headers: ref.watch(headersProvider(source: source, lang: lang)),
+            : ExtendedImage.network(datas.url!.trim().trimLeft().trimRight(),
+                headers: ref.watch(headersProvider(
+                    source: datas.chapter!.manga.value!.source!,
+                    lang: datas.chapter!.manga.value!.lang!)),
                 handleLoadingProgress: true,
                 cacheMaxAge: const Duration(days: 7),
                 fit: getBoxFit(scaleType),

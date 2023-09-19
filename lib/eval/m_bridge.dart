@@ -724,10 +724,10 @@ class MBridge {
         .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
   }
 
-  static Future<List<Video>> streamTapeExtractor(String url) async {
-    return await StreamTapeExtractor().videosFromUrl(
-      url,
-    );
+  static Future<List<Video>> streamTapeExtractor(
+      String url, String? quality) async {
+    return await StreamTapeExtractor()
+        .videosFromUrl(url, quality: quality ?? "StreamTape");
   }
 
   //Utility to use substring
@@ -1750,6 +1750,12 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
+                  BridgeParameter(
+                      'quality',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      true),
                 ],
                 namedParams: []),
             isStatic: true),
@@ -2134,8 +2140,9 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future $streamTapeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value).then(
-          (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
+      $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value, args[1]!.$value)
+          .then((value) =>
+              $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
   static $Future $mp4UploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>

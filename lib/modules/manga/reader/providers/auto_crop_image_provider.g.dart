@@ -7,7 +7,7 @@ part of 'auto_crop_image_provider.dart';
 // **************************************************************************
 
 String _$autoCropImageBorderHash() =>
-    r'059cbf2ee6f6ef931841e19851f201047a16bad6';
+    r'f156727d84d4721617872f4c51c81cef2c1466e9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -41,20 +41,12 @@ class AutoCropImageBorderFamily extends Family<AsyncValue<Uint8List?>> {
 
   /// See also [autoCropImageBorder].
   AutoCropImageBorderProvider call({
-    required bool autoCrop,
-    required String? url,
-    required Uint8List? archiveImages,
-    required bool isLocaleList,
-    required Directory path,
-    required int index,
+    required UChapDataPreload datas,
+    required bool cropBorder,
   }) {
     return AutoCropImageBorderProvider(
-      autoCrop: autoCrop,
-      url: url,
-      archiveImages: archiveImages,
-      isLocaleList: isLocaleList,
-      path: path,
-      index: index,
+      datas: datas,
+      cropBorder: cropBorder,
     );
   }
 
@@ -63,12 +55,8 @@ class AutoCropImageBorderFamily extends Family<AsyncValue<Uint8List?>> {
     covariant AutoCropImageBorderProvider provider,
   ) {
     return call(
-      autoCrop: provider.autoCrop,
-      url: provider.url,
-      archiveImages: provider.archiveImages,
-      isLocaleList: provider.isLocaleList,
-      path: provider.path,
-      index: provider.index,
+      datas: provider.datas,
+      cropBorder: provider.cropBorder,
     );
   }
 
@@ -91,21 +79,13 @@ class AutoCropImageBorderFamily extends Family<AsyncValue<Uint8List?>> {
 class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
   /// See also [autoCropImageBorder].
   AutoCropImageBorderProvider({
-    required bool autoCrop,
-    required String? url,
-    required Uint8List? archiveImages,
-    required bool isLocaleList,
-    required Directory path,
-    required int index,
+    required UChapDataPreload datas,
+    required bool cropBorder,
   }) : this._internal(
           (ref) => autoCropImageBorder(
             ref as AutoCropImageBorderRef,
-            autoCrop: autoCrop,
-            url: url,
-            archiveImages: archiveImages,
-            isLocaleList: isLocaleList,
-            path: path,
-            index: index,
+            datas: datas,
+            cropBorder: cropBorder,
           ),
           from: autoCropImageBorderProvider,
           name: r'autoCropImageBorderProvider',
@@ -116,12 +96,8 @@ class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
           dependencies: AutoCropImageBorderFamily._dependencies,
           allTransitiveDependencies:
               AutoCropImageBorderFamily._allTransitiveDependencies,
-          autoCrop: autoCrop,
-          url: url,
-          archiveImages: archiveImages,
-          isLocaleList: isLocaleList,
-          path: path,
-          index: index,
+          datas: datas,
+          cropBorder: cropBorder,
         );
 
   AutoCropImageBorderProvider._internal(
@@ -131,20 +107,12 @@ class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.autoCrop,
-    required this.url,
-    required this.archiveImages,
-    required this.isLocaleList,
-    required this.path,
-    required this.index,
+    required this.datas,
+    required this.cropBorder,
   }) : super.internal();
 
-  final bool autoCrop;
-  final String? url;
-  final Uint8List? archiveImages;
-  final bool isLocaleList;
-  final Directory path;
-  final int index;
+  final UChapDataPreload datas;
+  final bool cropBorder;
 
   @override
   Override overrideWith(
@@ -159,12 +127,8 @@ class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        autoCrop: autoCrop,
-        url: url,
-        archiveImages: archiveImages,
-        isLocaleList: isLocaleList,
-        path: path,
-        index: index,
+        datas: datas,
+        cropBorder: cropBorder,
       ),
     );
   }
@@ -177,46 +141,26 @@ class AutoCropImageBorderProvider extends FutureProvider<Uint8List?> {
   @override
   bool operator ==(Object other) {
     return other is AutoCropImageBorderProvider &&
-        other.autoCrop == autoCrop &&
-        other.url == url &&
-        other.archiveImages == archiveImages &&
-        other.isLocaleList == isLocaleList &&
-        other.path == path &&
-        other.index == index;
+        other.datas == datas &&
+        other.cropBorder == cropBorder;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, autoCrop.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-    hash = _SystemHash.combine(hash, archiveImages.hashCode);
-    hash = _SystemHash.combine(hash, isLocaleList.hashCode);
-    hash = _SystemHash.combine(hash, path.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
+    hash = _SystemHash.combine(hash, datas.hashCode);
+    hash = _SystemHash.combine(hash, cropBorder.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin AutoCropImageBorderRef on FutureProviderRef<Uint8List?> {
-  /// The parameter `autoCrop` of this provider.
-  bool get autoCrop;
+  /// The parameter `datas` of this provider.
+  UChapDataPreload get datas;
 
-  /// The parameter `url` of this provider.
-  String? get url;
-
-  /// The parameter `archiveImages` of this provider.
-  Uint8List? get archiveImages;
-
-  /// The parameter `isLocaleList` of this provider.
-  bool get isLocaleList;
-
-  /// The parameter `path` of this provider.
-  Directory get path;
-
-  /// The parameter `index` of this provider.
-  int get index;
+  /// The parameter `cropBorder` of this provider.
+  bool get cropBorder;
 }
 
 class _AutoCropImageBorderProviderElement
@@ -224,18 +168,9 @@ class _AutoCropImageBorderProviderElement
   _AutoCropImageBorderProviderElement(super.provider);
 
   @override
-  bool get autoCrop => (origin as AutoCropImageBorderProvider).autoCrop;
+  UChapDataPreload get datas => (origin as AutoCropImageBorderProvider).datas;
   @override
-  String? get url => (origin as AutoCropImageBorderProvider).url;
-  @override
-  Uint8List? get archiveImages =>
-      (origin as AutoCropImageBorderProvider).archiveImages;
-  @override
-  bool get isLocaleList => (origin as AutoCropImageBorderProvider).isLocaleList;
-  @override
-  Directory get path => (origin as AutoCropImageBorderProvider).path;
-  @override
-  int get index => (origin as AutoCropImageBorderProvider).index;
+  bool get cropBorder => (origin as AutoCropImageBorderProvider).cropBorder;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

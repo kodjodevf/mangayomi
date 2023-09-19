@@ -92,37 +92,42 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     return;
   }
   isar.writeTxnSync(() {
+    final chaptersNames = manga.chapters.map((e) => e.name).toList();
     isar.mangas.putSync(manga);
-    if (getManga.names!.isNotEmpty &&
-        getManga.names!.length > manga.chapters.length) {
-      int newChapsIndex = getManga.names!.length - manga.chapters.length;
-      manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
-      for (var i = 0; i < newChapsIndex; i++) {
-        String title = "";
-        String scanlator = "";
-        if (getManga.chaptersChaps != null &&
-            getManga.chaptersVolumes != null) {
-          title = beautifyChapterName(getManga.chaptersVolumes![i],
-              getManga.chaptersChaps![i], getManga.names![i], getManga.lang!);
-        } else {
-          title = getManga.names![i].trim().trimLeft().trimRight();
-        }
-        if (getManga.chaptersScanlators != null) {
-          scanlator = getManga.chaptersScanlators![i]
-              .toString()
-              .replaceAll(']', "")
-              .replaceAll("[", "");
-        }
-        final chapter = Chapter(
-          name: title,
-          url: getManga.urls![i].trim().trimLeft().trimRight(),
-          dateUpload: getManga.chaptersDateUploads!.isEmpty
-              ? null
-              : getManga.chaptersDateUploads![i],
-          scanlator: scanlator,
-        )..manga.value = manga;
-        isar.chapters.putSync(chapter);
-        chapter.manga.saveSync();
+    manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
+
+    List<Chapter> chapters = [];
+
+    for (var i = 0; i < getManga.names!.length; i++) {
+      String title = "";
+      String scanlator = "";
+      if (getManga.chaptersChaps != null && getManga.chaptersVolumes != null) {
+        title = beautifyChapterName(getManga.chaptersVolumes![i],
+            getManga.chaptersChaps![i], getManga.names![i], getManga.lang!);
+      } else {
+        title = getManga.names![i].trim().trimLeft().trimRight();
+      }
+      if (getManga.chaptersScanlators != null) {
+        scanlator = getManga.chaptersScanlators![i]
+            .toString()
+            .replaceAll(']', "")
+            .replaceAll("[", "");
+      }
+      final chapter = Chapter(
+        name: title,
+        url: getManga.urls![i].trim().trimLeft().trimRight(),
+        dateUpload: getManga.chaptersDateUploads!.isEmpty
+            ? DateTime.now().millisecondsSinceEpoch.toString()
+            : getManga.chaptersDateUploads![i],
+        scanlator: scanlator,
+      )..manga.value = manga;
+      chapters.add(chapter);
+      chapters.add(chapter);
+    }
+    for (var chap in chapters.reversed.toList()) {
+      if (!chaptersNames.contains(chap.name)) {
+        isar.chapters.putSync(chap);
+        chap.manga.saveSync();
       }
     }
   });

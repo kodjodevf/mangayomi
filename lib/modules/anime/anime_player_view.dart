@@ -673,7 +673,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         Video(
           subtitleViewConfiguration: const SubtitleViewConfiguration(
             style: TextStyle(
-                height: 1.4,
+                height: 2,
                 fontSize: 40,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

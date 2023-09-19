@@ -13,10 +13,6 @@ class AnimeStreamController {
     return episode.manga.value!;
   }
 
-  Chapter geAnime() {
-    return episode;
-  }
-
   final incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
 
   Settings getIsarSetting() {
@@ -82,9 +78,9 @@ class AnimeStreamController {
   void setAnimeHistoryUpdate() {
     if (!incognitoMode) {
       isar.writeTxnSync(() {
-        Manga? manga = episode.manga.value;
-        manga!.lastRead = DateTime.now().millisecondsSinceEpoch;
-        isar.mangas.putSync(manga);
+        Manga? anime = episode.manga.value;
+        anime!.lastRead = DateTime.now().millisecondsSinceEpoch;
+        isar.mangas.putSync(anime);
       });
       History? history;
 
@@ -112,24 +108,14 @@ class AnimeStreamController {
   }
 
   void setCurrentPosition(int duration) {
-    if (!incognitoMode) {
-      final chap = episode;
-      isar.writeTxnSync(() {
-        chap.lastPageRead = (duration).toString();
-        isar.chapters.putSync(chap);
-      });
+    if (!episode.isRead!) {
+      if (!incognitoMode) {
+        final ep = episode;
+        isar.writeTxnSync(() {
+          ep.lastPageRead = (duration).toString();
+          isar.chapters.putSync(ep);
+        });
+      }
     }
-  }
-
-  String getAnimeName() {
-    return getAnime().name!;
-  }
-
-  String getSourceName() {
-    return getAnime().source!;
-  }
-
-  String getChapterTitle() {
-    return episode.name!;
   }
 }

@@ -30,15 +30,13 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload(bool? useWifi) async {
-    if (widget.chapter.manga.value!.isManga!) {
-      final data = await ref.watch(
-          downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
-              .future);
-      if (mounted) {
-        setState(() {
-          _pageUrls = data;
-        });
-      }
+    final data = await ref.watch(
+        downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
+            .future);
+    if (mounted) {
+      setState(() {
+        _pageUrls = data;
+      });
     }
   }
 
@@ -53,6 +51,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     try {
       if (await File("${mangaDir!.path}${widget.chapter.name}.cbz").exists()) {
         File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
+      }
+      if (await File("${mangaDir.path}${widget.chapter.name}.mp4").exists()) {
+        File("${mangaDir.path}${widget.chapter.name}.mp4").deleteSync();
       }
       path!.deleteSync(recursive: true);
     } catch (_) {}

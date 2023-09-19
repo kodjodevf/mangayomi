@@ -77,12 +77,10 @@ class ChapterListTileWidget extends ConsumerWidget {
           children: [
             if ((chapter.manga.value!.isLocalArchive ?? false) == false)
               Text(
-                dateFormat(
-                    !chapter.manga.value!.isManga!
-                        ? DateTime.now().millisecondsSinceEpoch.toString()
-                        : chapter.dateUpload!,
-                    ref: ref,
-                    context: context),
+                chapter.dateUpload == null || chapter.dateUpload!.isEmpty
+                    ? ""
+                    : dateFormat(chapter.dateUpload!,
+                        ref: ref, context: context),
                 style: const TextStyle(fontSize: 11),
               ),
             if (!chapter.isRead!)
