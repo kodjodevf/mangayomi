@@ -60,6 +60,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         final entries = data
                             .where(
                                 (element) => element.mangaId == widget.manga.id)
+                            .toList()
+                            .reversed
                             .toList();
                         final isFr =
                             ref.watch(l10nLocaleStateProvider).languageCode ==
@@ -84,7 +86,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           onPressed: () {
                             pushMangaReaderView(
                                 context: context,
-                                chapter: widget.manga.chapters.last);
+                                chapter: widget.manga.chapters
+                                    .toList()
+                                    .reversed
+                                    .toList()
+                                    .last);
                           },
                           textWidth: isFr ? 80 : 40,
                           width: isFr ? 130 : 90,

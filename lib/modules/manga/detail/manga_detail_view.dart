@@ -87,7 +87,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final chapterNameList = ref.watch(chaptersListStateProvider);
     final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
-    bool reverse = !ref
+    final reverse = ref
         .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
         .reverse!;
     final filterUnread =
@@ -114,7 +114,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         child: chapters.when(
           data: (data) {
             List<Chapter> chapters = _filterAndSortChapter(
-                data: data,
+                data: data.reversed.toList(),
                 filterUnread: filterUnread,
                 filterBookmarked: filterBookmarked,
                 filterDownloaded: filterDownloaded,
@@ -132,7 +132,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           },
           loading: () {
             return _buildWidget(
-                chapters: widget.manga!.chapters.toList(),
+                chapters: widget.manga!.chapters.toList().reversed.toList(),
                 reverse: reverse,
                 chapterList: chapterNameList,
                 isLongPressed: isLongPressed);
@@ -1656,7 +1656,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     DraggableMenu.open(
         context,
         DraggableMenu(
-          ui: SoftModernDraggableMenu(radius: 20, barItem: Container()),
+          ui: ClassicDraggableMenu(
+              radius: 20,
+              barItem: Container(),
+              color: Theme.of(context).scaffoldBackgroundColor),
           child: Material(
             color: isLight(context)
                 ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)

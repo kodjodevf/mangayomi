@@ -20,7 +20,7 @@ class AnimeStreamController {
   }
 
   int getEpisodeIndex() {
-    final chapters = getAnime().chapters.toList();
+    final chapters = getAnime().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == episode.id) {
@@ -31,7 +31,7 @@ class AnimeStreamController {
   }
 
   int getPrevEpisodeIndex() {
-    final episodes = getAnime().chapters.toList();
+    final episodes = getAnime().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < episodes.length; i++) {
       if (episodes[i].id == episode.id) {
@@ -42,7 +42,7 @@ class AnimeStreamController {
   }
 
   int getNextEpisodeIndex() {
-    final episodes = getAnime().chapters.toList();
+    final episodes = getAnime().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < episodes.length; i++) {
       if (episodes[i].id == episode.id) {
@@ -53,11 +53,19 @@ class AnimeStreamController {
   }
 
   Chapter getPrevEpisode() {
-    return getAnime().chapters.toList()[getPrevEpisodeIndex()];
+    return getAnime()
+        .chapters
+        .toList()
+        .reversed
+        .toList()[getPrevEpisodeIndex()];
   }
 
   Chapter getNextEpisode() {
-    return getAnime().chapters.toList()[getNextEpisodeIndex()];
+    return getAnime()
+        .chapters
+        .toList()
+        .reversed
+        .toList()[getNextEpisodeIndex()];
   }
 
   int getEpisodesLength() {

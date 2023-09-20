@@ -143,7 +143,7 @@ class ReaderController {
   }
 
   int getPrevChapterIndex() {
-    final chapters = getManga().chapters.toList();
+    final chapters = getManga().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
@@ -154,7 +154,7 @@ class ReaderController {
   }
 
   int getNextChapterIndex() {
-    final chapters = getManga().chapters.toList();
+    final chapters = getManga().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
@@ -165,7 +165,7 @@ class ReaderController {
   }
 
   int getChapterIndex() {
-    final chapters = getManga().chapters.toList();
+    final chapters = getManga().chapters.toList().reversed.toList();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
@@ -176,11 +176,19 @@ class ReaderController {
   }
 
   Chapter getPrevChapter() {
-    return getManga().chapters.toList()[getPrevChapterIndex()];
+    return getManga()
+        .chapters
+        .toList()
+        .reversed
+        .toList()[getPrevChapterIndex()];
   }
 
   Chapter getNextChapter() {
-    return getManga().chapters.toList()[getNextChapterIndex()];
+    return getManga()
+        .chapters
+        .toList()
+        .reversed
+        .toList()[getNextChapterIndex()];
   }
 
   int getChaptersLength() {

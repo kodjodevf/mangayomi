@@ -280,7 +280,11 @@ class LibraryListViewWidget extends StatelessWidget {
                                     onTap: () {
                                       pushMangaReaderView(
                                           context: context,
-                                          chapter: entry.chapters.last);
+                                          chapter: entry.chapters
+                                              .toList()
+                                              .reversed
+                                              .toList()
+                                              .last);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
