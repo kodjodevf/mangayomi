@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -24,26 +23,9 @@ class ImageViewVertical extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final cropBorder = ref.watch(cropBordersStateProvider);
     return Container(
-      color: Colors.black,
-      child: _imageView(datas.isLocale!, datas.archiveImage, context, ref),
-
-      // StreamBuilder<Uint8List?>(
-      //     stream: ref
-      //         .watch(autoCropImageBorderProvider(
-      //                 datas: datas, cropBorder: cropBorder)
-      //             .future)
-      //         .asStream(),
-      //     builder: (context, snapshot) {
-      //       final hasData = snapshot.hasData && snapshot.data != null;
-      //       if (hasData) {
-      //         return _imageView(hasData, snapshot.data, context, ref);
-      //       }
-      //       return _imageView(
-      //           datas.isLocale!, datas.archiveImage, context, ref);
-      //     }),
-    );
+        color: Colors.black,
+        child: _imageView(datas.isLocale!, datas.archiveImage, context, ref));
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage,

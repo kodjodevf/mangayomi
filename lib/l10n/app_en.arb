@@ -226,5 +226,6 @@
   "black":"Black",
   "grey":"Grey",
   "automaic":"Automatic",
-  "preferred_domain":"Preferred Domain"
+  "preferred_domain":"Preferred Domain",
+  "load_more":"Load More"
 }

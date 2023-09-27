@@ -234,14 +234,14 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                       }
                                     });
                                   },
-                                  child: const Column(
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text("Load more"),
-                                      SizedBox(
+                                      Text(l10n.load_more),
+                                      const SizedBox(
                                         height: 10,
                                       ),
-                                      Icon(Icons.arrow_forward_outlined),
+                                      const Icon(Icons.arrow_forward_outlined),
                                     ],
                                   )),
                             )
@@ -297,7 +297,79 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               ),
             );
           },
-          error: (error, stackTrace) => Center(child: Text(error.toString())),
+          error: (error, stackTrace) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              if (_selectedIndex == 2 &&
+                                  _isSearch &&
+                                  _query.isNotEmpty) {
+                                ref.invalidate(searchMangaProvider(
+                                    source: widget.source,
+                                    query: _query,
+                                    page: 1));
+                              } else if (_selectedIndex == 1 &&
+                                  !_isSearch &&
+                                  _query.isEmpty) {
+                                ref.invalidate(getLatestUpdatesMangaProvider(
+                                    source: widget.source, page: 1));
+                              } else if (_selectedIndex == 0 &&
+                                  !_isSearch &&
+                                  _query.isEmpty) {
+                                ref.invalidate(getPopularMangaProvider(
+                                  source: widget.source,
+                                  page: 1,
+                                ));
+                              }
+                            },
+                            icon: const Icon(Icons.refresh)),
+                        Text(l10n.refresh)
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Map<String, String> data = {
+                              'url': widget.source.baseUrl!,
+                              'sourceId': widget.source.id.toString(),
+                              'title': ''
+                            };
+                            context.push("/mangawebview", extra: data);
+                          },
+                          icon: Icon(
+                            Icons.public,
+                            size: 22,
+                            color: secondaryColor(context),
+                          ),
+                        ),
+                        const Text("Webview")
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  error.toString(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
           loading: () => const Center(
             child: CircularProgressIndicator(),
           ),

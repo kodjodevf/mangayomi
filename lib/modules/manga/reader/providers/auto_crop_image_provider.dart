@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:image/image.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
@@ -10,56 +9,46 @@ part 'auto_crop_image_provider.g.dart';
 @Riverpod(keepAlive: true)
 Future<Uint8List?> autoCropImageBorder(AutoCropImageBorderRef ref,
     {required UChapDataPreload datas, required bool cropBorder}) async {
-  final ReceivePort receivePort = ReceivePort();
-  (Uint8List?, SendPort)? data;
-  try {
-    if (cropBorder) {
-      if (datas.archiveImage != null) {
-        data = (datas.archiveImage, receivePort.sendPort);
-      } else if (datas.isLocale!) {
-        data = (
-          File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg')
-              .readAsBytesSync(),
-          receivePort.sendPort
-        );
-      } else {
-        // String path = "";
-        // File? cachedImage;
-        // if (datas.url != null) {
-        //   cachedImage = await getCachedImageFile(datas.url!);
-        // }
-        // if (cachedImage != null) {
-        //   path = cachedImage.path;
-        // }
-        // if (path.isNotEmpty) {
-        //   data = (File(path).readAsBytesSync(), receivePort.sendPort);
-        // } else {
-        //   data = (null, receivePort.sendPort);
-        // }
-      }
-      await Isolate.spawn(_autocropImageIsolate, data);
-      return await receivePort.first as Uint8List?;
+  Uint8List? imageBytes;
+  if (cropBorder) {
+    if (datas.archiveImage != null) {
+      imageBytes = datas.archiveImage;
+    } else if (datas.isLocale!) {
+      imageBytes = File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg')
+          .readAsBytesSync();
+    } else {
+      // String path = "";
+      // File? cachedImage;
+      // if (datas.url != null) {
+      //   cachedImage = await getCachedImageFile(datas.url!);
+      // }
+      // if (cachedImage != null) {
+      //   path = cachedImage.path;
+      // }
+      // if (path.isNotEmpty) {
+      //   data = (File(path).readAsBytesSync(), receivePort.sendPort);
+      // } else {
+      //   data = (null, receivePort.sendPort);
+      // }
     }
-    return null;
-  } on Object {
-    receivePort.close();
-    return null;
+    if (imageBytes == null) {
+      return null;
+    }
+    final res = await compute(cropImageWithThread, imageBytes);
+    return res;
   }
+  return null;
 }
 
-Future<Uint8List?> _autocropImageIsolate((Uint8List?, SendPort?)? datas) async {
-  SendPort? resultPort = datas!.$2;
+Future<Uint8List?> cropImageWithThread(
+  Uint8List? imageBytes,
+) async {
+  Command crop = Command();
+  crop.decodeImage(imageBytes!);
+  Command encode = Command();
+  encode.subCommand = crop;
 
-  Uint8List? img = datas.$1;
-
-  if (img == null) {
-    Isolate.exit(resultPort, null);
-  }
-
-  Image? croppedImage;
-
-  Image? image = decodeImage(img);
-
+  final image = await encode.getImageThread();
   int left = 0;
   int top = 0;
   int right = image!.width;
@@ -125,15 +114,15 @@ Future<Uint8List?> _autocropImageIsolate((Uint8List?, SendPort?)? datas) async {
     }
   }
 
-  // Crop the image
-  croppedImage = copyCrop(
-    image,
+  crop.copyCrop(
     x: left,
     y: top,
     width: right - left,
     height: bottom - top,
   );
 
-  Uint8List? encodeImage = encodeJpg(croppedImage);
-  Isolate.exit(resultPort, encodeImage);
+  encode.subCommand = crop;
+  encode.encodeJpg();
+
+  return encode.getBytesThread();
 }

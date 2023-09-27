@@ -7,7 +7,7 @@ part of 'auto_crop_image_provider.dart';
 // **************************************************************************
 
 String _$autoCropImageBorderHash() =>
-    r'f156727d84d4721617872f4c51c81cef2c1466e9';
+    r'298f7adb70ff125c339dd793dca5be8394b96355';
 
 /// Copied from Dart SDK
 class _SystemHash {

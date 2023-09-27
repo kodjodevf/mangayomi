@@ -11,7 +11,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-// import 'package:mangayomi/modules/manga/reader/providers/auto_crop_image_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -168,44 +167,36 @@ class _MangaChapterPageGalleryState
   }
 
   void _preloadImage(int index) {
-    if (0 <= index && index < _uChapDataPreload.length) {
-      if (_uChapDataPreload[index].isLocale!) {
-        final archiveImage = (_uChapDataPreload[index].archiveImage);
+    try {
+      if (0 <= index && index < _uChapDataPreload.length) {
+        if (_uChapDataPreload[index].isLocale!) {
+          final archiveImage = (_uChapDataPreload[index].archiveImage);
 
-        if (archiveImage != null) {
-          precacheImage(
-              ExtendedMemoryImageProvider(
-                  (_uChapDataPreload[index].archiveImage)!),
-              context);
+          if (archiveImage != null) {
+            precacheImage(
+                ExtendedMemoryImageProvider(
+                    (_uChapDataPreload[index].archiveImage)!),
+                context);
+          } else {
+            precacheImage(
+                ExtendedFileImageProvider(File(
+                    "${_uChapDataPreload[index].path!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
+                context);
+          }
         } else {
           precacheImage(
-              ExtendedFileImageProvider(File(
-                  "${_uChapDataPreload[index].path!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
+              ExtendedNetworkImageProvider(
+                _uChapDataPreload[index].url!,
+                cache: true,
+                cacheMaxAge: const Duration(days: 7),
+                headers: ref.watch(headersProvider(
+                    source: chapter.manga.value!.source!,
+                    lang: chapter.manga.value!.lang!)),
+              ),
               context);
         }
-        // final cropBorders = ref.watch(cropBordersStateProvider);
-        // ref
-        //     .watch(autoCropImageBorderProvider(
-        //             cropBorder: cropBorders, datas: _uChapDataPreload[index])
-        //         .future)
-        //     .then((value) {
-        //   if (value != null) {
-        //     precacheImage(ExtendedMemoryImageProvider(value), context);
-        //   }
-        // });
-      } else {
-        precacheImage(
-            ExtendedNetworkImageProvider(
-              _uChapDataPreload[index].url!,
-              cache: true,
-              cacheMaxAge: const Duration(days: 7),
-              headers: ref.watch(headersProvider(
-                  source: chapter.manga.value!.source!,
-                  lang: chapter.manga.value!.lang!)),
-            ),
-            context);
       }
-    }
+    } catch (_) {}
   }
 
   late GetChapterUrlModel _chapterUrlModel = widget.chapterUrlModel;
@@ -291,9 +282,21 @@ class _MangaChapterPageGalleryState
       List<UChapDataPreload> uChapDataPreloadP = [];
       List<UChapDataPreload> uChapDataPreloadL = _uChapDataPreload;
       List<UChapDataPreload> preChap = [];
+      final uIsNotEmpty =
+          chapterData.uChapDataPreload.first.chapter!.url!.isNotEmpty;
+      final aIsNotEmpty =
+          chapterData.uChapDataPreload.first.chapter!.archivePath!.isNotEmpty;
       for (var chp in _uChapDataPreload) {
-        if (chapterData.uChapDataPreload.first.chapter!.url ==
-            chp.chapter!.url) {
+        final cuIsNotEmpty = chp.chapter!.url!.isNotEmpty;
+        final caIsNotEmpty = chp.chapter!.archivePath!.isNotEmpty;
+        if (uIsNotEmpty &&
+                cuIsNotEmpty &&
+                chapterData.uChapDataPreload.first.chapter!.url ==
+                    chp.chapter!.url ||
+            aIsNotEmpty &&
+                caIsNotEmpty &&
+                chapterData.uChapDataPreload.first.chapter!.archivePath ==
+                    chp.chapter!.archivePath) {
           isExist = true;
         }
       }
@@ -931,36 +934,6 @@ class _MangaChapterPageGalleryState
       ],
     );
   }
-
-  // _initCropBorders() async {
-  //   final uChapDataPreloadF = _uChapDataPreload
-  //       .where((element) => element.chapter == chapter)
-  //       .toList();
-
-  //   for (var element in uChapDataPreloadF) {
-  //     if (mounted) {
-  //       // Uint8List? res;
-  //       // res =
-  //       await ref.watch(
-  //           autoCropImageBorderProvider(cropBorder: true, datas: element)
-  //               .future);
-  //       // bool isOk = false;
-  //       // while (res == null && isOk == false) {
-  //       //   try {
-  //       //     await Future.delayed(const Duration(seconds: 1));
-  //       //     res = await ref.refresh(
-  //       //         autoCropImageBorderProvider(cropBorder: true, datas: element)
-  //       //             .future);
-  //       //     if (res != null) {
-  //       //       isOk = true;
-  //       //     }
-  //       //   } catch (_) {
-  //       //     isOk = true;
-  //       //   }
-  //       // }
-  //     }
-  //   }
-  // }
 
   Widget _showPage() {
     return Consumer(builder: (context, ref, child) {

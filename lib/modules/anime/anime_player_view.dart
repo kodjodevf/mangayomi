@@ -54,7 +54,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     return serversData.when(
       data: (data) {
         if (data.$1.isEmpty &&
-            (widget.episode.manga.value!.isLocalArchive ?? false) == false) {
+            !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
