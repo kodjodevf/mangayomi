@@ -1121,8 +1121,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'sibnetExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1134,8 +1136,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'myTvExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1147,8 +1151,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'okruExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1160,8 +1166,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'voeExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1179,8 +1187,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'vidBomExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1192,8 +1202,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'streamlareExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1215,8 +1227,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'rapidCloudExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1233,8 +1247,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'sendVidExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1257,8 +1273,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'yourUploadExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1720,8 +1738,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'gogoCdnExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1733,8 +1753,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'doodExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1746,8 +1768,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'streamTapeExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1765,8 +1789,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'mp4UploadExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1794,8 +1820,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'streamWishExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -1812,8 +1840,10 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'filemoonExtractor': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                  BridgeTypeRef(CoreTypes.list,
+                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                ])),
                 params: [
                   BridgeParameter(
                       'url',
@@ -2141,87 +2171,87 @@ class $MBridge extends MBridge with $Bridge {
       $Future.wrap(MBridge.getHtmlViaWebview(args[0]!.$value, args[1]!.$value)
           .then((value) => $String(value)));
 
-  static $Future $gogoCdnExtractor(
+  static $Future<List<$VideoModel>> $gogoCdnExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.gogoCdnExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $doodExtractor(
+  static $Future<List<$VideoModel>> $doodExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.doodExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $streamTapeExtractor(
+  static $Future<List<$VideoModel>> $streamTapeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamTapeExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $mp4UploadExtractor(
+  static $Future<List<$VideoModel>> $mp4UploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $streamWishExtractor(
+  static $Future<List<$VideoModel>> $streamWishExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamWishExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $filemoonExtractor(
+  static $Future<List<$VideoModel>> $filemoonExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.filemoonExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $sendVidExtractor(
+  static $Future<List<$VideoModel>> $sendVidExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.sendVidExtractor(
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $yourUploadExtractor(
+  static $Future<List<$VideoModel>> $yourUploadExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.yourUploadExtractor(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $sibnetExtractor(
+  static $Future<List<$VideoModel>> $sibnetExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $myTvExtractor(
+  static $Future<List<$VideoModel>> $myTvExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.myTvExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $okruExtractor(
+  static $Future<List<$VideoModel>> $okruExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.okruExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $voeExtractor(
+  static $Future<List<$VideoModel>> $voeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.voeExtractor(args[0]!.$value, args[1]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $vidBomExtractor(
+  static $Future<List<$VideoModel>> $vidBomExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.vidBomExtractor(args[0]!.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
-  static $Future $streamlareExtractor(
+  static $Future<List<$VideoModel>> $streamlareExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.streamlareExtractor(
               args[0]!.$value, args[1]!.$value, args[2]!.$value)
           .then((value) =>
               $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
-  static $Future $rapidCloudExtractor(
+  static $Future<List<$VideoModel>> $rapidCloudExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.rapidCloudExtractor(args[0]!.$value, args[1]!.$value)
           .then((value) =>
