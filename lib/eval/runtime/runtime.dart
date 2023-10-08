@@ -84,7 +84,13 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.stringParse', $MBridge.$stringParse);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
-      'MBridge.subString', $MBridge.$subString);
+      'MBridge.substringAfter', $MBridge.$substringAfter);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.substringAfterLast', $MBridge.$substringAfterLast);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.substringBeforeLast', $MBridge.$substringBeforeLast);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.substringBefore', $MBridge.$substringBefore);
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.evalJs', $MBridge.$evalJs);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

@@ -389,7 +389,7 @@ class _MangaChapterPageGalleryState
   final double _imageDetailY = 0;
 
   void _onBtnTapped(int index, bool isPrev, {bool isSlide = false}) {
-    if (_isView) {
+    if (_isView && !isSlide) {
       _isViewFunction();
     }
     final readerMode = ref.watch(_selectedValue);
@@ -1151,25 +1151,21 @@ class _MangaChapterPageGalleryState
                 : _onBtnTapped(_currentIndex! + 1, false),
             LogicalKeyboardKey.arrowDown =>
               _onBtnTapped(_currentIndex! + 1, true),
-            LogicalKeyboardKey.pageDown ||
-            LogicalKeyboardKey.keyN =>
-              hasNextChapter
-                  ? () {
-                      pushReplacementMangaReaderView(
-                        context: context,
-                        chapter: _readerController.getNextChapter(),
-                      );
-                    }
-                  : null,
-            LogicalKeyboardKey.pageUp ||
-            LogicalKeyboardKey.keyP =>
-              hasPrevChapter
-                  ? () {
-                      pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getPrevChapter());
-                    }
-                  : null,
+            LogicalKeyboardKey.keyN || LogicalKeyboardKey.pageDown => switch (
+                  hasNextChapter) {
+                true => pushReplacementMangaReaderView(
+                    context: context,
+                    chapter: _readerController.getNextChapter(),
+                  ),
+                _ => null
+              },
+            LogicalKeyboardKey.keyP || LogicalKeyboardKey.pageUp => switch (
+                  hasPrevChapter) {
+                true => pushReplacementMangaReaderView(
+                    context: context,
+                    chapter: _readerController.getPrevChapter()),
+                _ => null
+              },
             _ => null
           };
           action;
@@ -1275,6 +1271,9 @@ class _MangaChapterPageGalleryState
                                       }
                                       if (state.extendedImageLoadState ==
                                           LoadState.completed) {
+                                        if (_failedToLoadImage.value == true) {
+                                          _failedToLoadImage.value = false;
+                                        }
                                         return StreamBuilder(
                                           builder: (context, data) {
                                             return ExtendedImageGesture(
@@ -1300,7 +1299,9 @@ class _MangaChapterPageGalleryState
                                       }
                                       if (state.extendedImageLoadState ==
                                           LoadState.failed) {
-                                        _failedToLoadImage.value = true;
+                                        if (_failedToLoadImage.value == false) {
+                                          _failedToLoadImage.value = true;
+                                        }
                                         return Container(
                                             color: getBackgroundColor(
                                                 backgroundColor),

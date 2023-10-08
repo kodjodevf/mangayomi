@@ -118,13 +118,13 @@ class MBridge {
   }
 
   ///Returns all descendant nodes matching the given selectors, using a preorder traversal.
-  static String querySelectorAll(String html, String selector, int typeElement,
-      String attributes, int typeRegExp, int position, String join) {
+  static List<String> querySelectorAll(String html, String selector,
+      int typeElement, String attributes, int typeRegExp) {
     try {
       var parse = parser.parse(html);
       final a = parse.querySelectorAll(selector);
 
-      List<dynamic> res = [];
+      List<String> res = [];
       for (var element in a) {
         //text
         if (typeElement == 0) {
@@ -149,21 +149,10 @@ class MBridge {
       }
       // if (typeRegExp == 0) is the default parameter
       if (typeRegExp == 0) {
-        //join the list
-        if (position == 0) {
-          return res.join(join);
-        }
-
-        //return first element of the list
-        else if (position == 1) {
-          return res.first;
-        }
-
-        //return last element of the list
-        return res.last;
+        return res;
       }
 
-      List<dynamic> resRegExp = [];
+      List<String> resRegExp = [];
       for (var element in res) {
         //get first element of href that match
         if (typeRegExp == 1) {
@@ -186,19 +175,7 @@ class MBridge {
           resRegExp.add(regImgMatcher(element.trim().trimLeft().trimRight()));
         }
       }
-
-      //join the resRegExp list
-      if (position == 0) {
-        return resRegExp.join(join);
-      }
-
-      //return first element of the resRegExp list
-      else if (position == 1) {
-        return resRegExp.first.trim().trimLeft().trimRight();
-      }
-
-      //return last element of the resRegExp list
-      return resRegExp.last.trim().trimLeft().trimRight();
+      return resRegExp;
     } catch (e) {
       botToast(e.toString());
       throw Exception(e);
@@ -206,7 +183,7 @@ class MBridge {
   }
 
   ///Create query by html string
-  static String xpath(String html, String xpath, String join) {
+  static List<String> xpath(String html, String xpath) {
     try {
       List<String?> attrs = [];
       var htmlXPath = HtmlXPath.html(html);
@@ -217,18 +194,18 @@ class MBridge {
           attrs.add(element!.trim().trimLeft().trimRight());
         }
         //Join the attrs list
-        return attrs.join(join);
+        return attrs.map((e) => e!).toList();
       }
 
       //Return one attr
       else {
-        String? attr =
+        String attr =
             query.attr != null ? query.attr!.trim().trimLeft().trimRight() : "";
-        return attr;
+        return [attr];
       }
     } catch (e) {
       // botToast(e.toString());
-      return "";
+      return [];
     }
   }
 
@@ -296,9 +273,8 @@ class MBridge {
       webview
         ..setApplicationNameForUserAgent(defaultUserAgent)
         ..launch(url);
-
       await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 3));
         html = await decodeHtml(
           webview,
         );
@@ -307,15 +283,6 @@ class MBridge {
           return true;
         }
         return false;
-      });
-      html = await decodeHtml(webview);
-      isOk = true;
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        if (isOk == true) {
-          return false;
-        }
-        return true;
       });
       html = await decodeHtml(webview);
       webview.close();
@@ -433,10 +400,10 @@ class MBridge {
   }
 
   ///GetMapValue
-  static String getMapValue(String source, String attr, int type) {
+  static String getMapValue(String source, String attr, bool encode) {
     try {
       var map = json.decode(source) as Map<String, dynamic>;
-      if (type == 0) {
+      if (!encode) {
         return map[attr] != null ? map[attr].toString() : "";
       }
       return map[attr] != null ? jsonEncode(map[attr]) : "";
@@ -595,7 +562,7 @@ class MBridge {
                   : method == 2
                       ? 'PUT'
                       : 'DELETE',
-          Uri.parse(jsonDecode(url)["url"]));
+          Uri.parse(url));
       request.fields.addAll(fields);
 
       request.headers.addAll(headers);
@@ -618,20 +585,21 @@ class MBridge {
   }
 
   //http request and also webview
-  static Future<String> http(String url, int method) async {
+  static Future<String> http(String method, String datas) async {
     try {
       hp.StreamedResponse? res;
       String result = "";
 
       //Get headers
-      final headersMap = jsonDecode(url)["headers"] as Map?;
+      final headersMap = jsonDecode(datas)["headers"] as Map?;
 
       //Get sourceId
-      final sourceId = jsonDecode(url)["sourceId"] as int?;
+      final sourceId = jsonDecode(datas)["sourceId"] as int?;
 
       //Get body
-      final bodyMap = jsonDecode(url)["body"] as Map?;
+      final bodyMap = jsonDecode(datas)["body"] as Map?;
 
+      final url = jsonDecode(datas)["url"] as String;
       //Convert body Map<dynamic,dynamic> to Map<String,String>
       Map<String, dynamic> body = {};
       if (bodyMap != null) {
@@ -649,24 +617,14 @@ class MBridge {
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
 
       //Check the serie if has cloudflare
-      if (source != null && source.hasCloudflare!) {
-        final res = await cloudflareBypass(
-            url: jsonDecode(url)["url"],
-            sourceId: source.id.toString(),
-            method: method);
-        return res;
-      }
+      // if (source != null && source.hasCloudflare!) {
+      // final res = await cloudflareBypass(
+      //     url: url, sourceId: source.id.toString(), method: method);
+      // return res;
+      // }
 
       //Do the http request if the serie hasn't cloudflare
-      var request = hp.Request(
-          method == 0
-              ? 'GET'
-              : method == 1
-                  ? 'POST'
-                  : method == 2
-                      ? 'PUT'
-                      : 'DELETE',
-          Uri.parse(jsonDecode(url)["url"]));
+      var request = hp.Request(method, Uri.parse(url));
 
       if (bodyMap != null) {
         request.body = json.encode(body);
@@ -676,7 +634,10 @@ class MBridge {
 
       res = await request.send();
 
-      if (res.statusCode != 200) {
+      if (res.statusCode != 200 && source != null && source.hasCloudflare!) {
+        result = await cloudflareBypass(
+            url: url, sourceId: source.id.toString(), method: 0);
+      } else if (res.statusCode != 200) {
         result = "400";
       } else if (res.statusCode == 200) {
         result = await res.stream.bytesToString();
@@ -731,16 +692,22 @@ class MBridge {
   }
 
   //Utility to use substring
-  static String subString(String text, String pattern, int type) {
-    String result = "";
-    if (type == 0) {
-      result = text.substringBefore(pattern);
-    } else if (type == 1) {
-      result = text.split(pattern).last;
-    } else if (type == 2) {
-      result = text.substringAfter(pattern);
-    }
-    return result;
+  static String substringAfter(String text, String pattern) {
+    return text.substringAfter(pattern);
+  }
+
+  //Utility to use substring
+  static String substringBefore(String text, String pattern) {
+    return text.substringBefore(pattern);
+  }
+
+  //Utility to use substring
+  static String substringBeforeLast(String text, String pattern) {
+    return text.substringBeforeLast(pattern);
+  }
+
+  static String substringAfterLast(String text, String pattern) {
+    return text.split(pattern).last;
   }
 
   //Parse a chapter date to millisecondsSinceEpoch
@@ -1318,7 +1285,7 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
-        'subString': BridgeMethodDef(
+        'substringAfter': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(
                     BridgeTypeRef.type(RuntimeTypes.stringType)),
@@ -1333,10 +1300,59 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'substringBefore': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
                   BridgeParameter(
-                      'type',
+                      'text',
                       BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'pattern',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'substringBeforeLast': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'text',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'pattern',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
+        'substringAfterLast': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'text',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'pattern',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
                 ],
                 namedParams: []),
@@ -1440,13 +1456,15 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
-                  BridgeParameter(
-                      'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
-                      false),
                 ],
-                namedParams: []),
+                namedParams: [
+                  BridgeParameter(
+                      'encode',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.boolType),
+                          nullable: true),
+                      true),
+                ]),
             isStatic: true),
         'jsonPathToList': BridgeMethodDef(
             BridgeFunctionDef(
@@ -1614,14 +1632,16 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'querySelectorAll': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
+                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
                 params: [
                   BridgeParameter(
                       'html',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
+                ],
+                namedParams: [
                   BridgeParameter(
                       'selector',
                       BridgeTypeAnnotation(
@@ -1642,23 +1662,12 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.intType)),
                       false),
-                  BridgeParameter(
-                      'position',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
-                      false),
-                  BridgeParameter(
-                      'join',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                ],
-                namedParams: []),
+                ]),
             isStatic: true),
         'xpath': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
+                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
                 params: [
                   BridgeParameter(
                       'html',
@@ -1667,11 +1676,6 @@ class $MBridge extends MBridge with $Bridge {
                       false),
                   BridgeParameter(
                       'xpath',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                  BridgeParameter(
-                      'join',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
@@ -1684,14 +1688,14 @@ class $MBridge extends MBridge with $Bridge {
                     [BridgeTypeRef.type(RuntimeTypes.stringType)])),
                 params: [
                   BridgeParameter(
-                      'url',
+                      'method',
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
                   BridgeParameter(
-                      'method',
+                      'datas',
                       BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
                 ],
                 namedParams: []),
@@ -1943,8 +1947,10 @@ class $MBridge extends MBridge with $Bridge {
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $MBridge();
 
-  static $String $xpath(Runtime runtime, $Value? target, List<$Value?> args) =>
-      $String(MBridge.xpath(args[0]!.$value, args[1]!.$value, args[2]!.$value));
+  static $Value $xpath(Runtime runtime, $Value? target, List<$Value?> args) =>
+      $List.wrap(MBridge.xpath(args[0]!.$value, args[1]!.$value)
+          .map((e) => $String(e))
+          .toList());
 
   static $List $listParse(Runtime runtime, $Value? target, List<$Value?> args) {
     return $List.wrap(MBridge.listParse(
@@ -1985,19 +1991,29 @@ class $MBridge extends MBridge with $Bridge {
   static $String $jsonPathToString(
       Runtime runtime, $Value? target, List<$Value?> args) {
     return $String(MBridge.jsonPathToString(
-      args[0]!.$value,
-      args[1]!.$value,
-      args[2]!.$value,
-    ));
+        args[0]!.$value, args[1]!.$value, args[2]!.$value));
   }
 
-  static $String $subString(
+  static $String $substringAfter(
       Runtime runtime, $Value? target, List<$Value?> args) {
-    return $String(MBridge.subString(
-      args[0]!.$value,
-      args[1]!.$value,
-      args[2]!.$value,
-    ));
+    return $String(MBridge.substringAfter(args[0]!.$value, args[1]!.$value));
+  }
+
+  static $String $substringAfterLast(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    return $String(
+        MBridge.substringAfterLast(args[0]!.$value, args[1]!.$value));
+  }
+
+  static $String $substringBefore(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    return $String(MBridge.substringBefore(args[0]!.$value, args[1]!.$value));
+  }
+
+  static $String $substringBeforeLast(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    return $String(
+        MBridge.substringBeforeLast(args[0]!.$value, args[1]!.$value));
   }
 
   static $String $getMapValue(
@@ -2005,7 +2021,7 @@ class $MBridge extends MBridge with $Bridge {
     return $String(MBridge.getMapValue(
       args[0]!.$value,
       args[1]!.$value,
-      args[2]!.$value,
+      args[2]?.$value ?? false,
     ));
   }
 
@@ -2103,16 +2119,13 @@ class $MBridge extends MBridge with $Bridge {
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.deobfuscateJsPassword(args[0]!.$value));
 
-  static $String $querySelectorAll(
+  static $Value $querySelectorAll(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $String(MBridge.querySelectorAll(
-          args[0]!.$value,
-          args[1]!.$value,
-          args[2]!.$value,
-          args[3]!.$value,
-          args[4]!.$value,
-          args[5]!.$value,
-          args[6]!.$value));
+      $List.wrap(MBridge.querySelectorAll(args[0]!.$value, args[1]!.$value,
+              args[2]!.$value, args[3]!.$value, args[4]!.$value)
+          .map((e) => $String(e))
+          .toList());
+
   static $Future $http(Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.http(args[0]!.$value, args[1]!.$value)
           .then((value) => $String(value)));

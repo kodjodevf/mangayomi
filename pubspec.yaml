@@ -1,10 +1,10 @@
 name: mangayomi
 description: Free and open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi.
-
+publish_to: 'none'
 version: 0.0.45+18
 
 environment:
-  sdk: '>=3.1.2 <4.0.0'
+  sdk: '>=3.1.3 <4.0.0'
 
 
 dependencies:
@@ -29,7 +29,7 @@ dependencies:
   google_fonts: ^5.1.0
   url_launcher: ^6.1.12
   package_info_plus: ^4.1.0
-  background_downloader: ^7.9.4
+  background_downloader: ^7.10.0
   permission_handler: ^11.0.0
   flutter_inappwebview: ^5.7.2+3
   draggable_menu: ^4.1.3
@@ -41,18 +41,21 @@ dependencies:
   archive: ^3.3.9
   file_picker: ^5.3.3
   path_provider: ^2.1.0
-  image: ^4.0.17
+  # image: ^4.0.17
   scrollable_positioned_list: ^0.3.5
-  dart_eval: ^0.6.0
+  dart_eval: ^0.6.3
+    # git:
+    #   url: https://github.com/kodjodevf/dart_eval.git
+    #   ref: 05c54b2
   json_path: ^0.6.2
   bot_toast: ^4.0.4
   flutter_web_auth_2: ^2.1.5
   numberpicker: ^2.1.2
   encrypt: ^5.0.1
   js_packer: ^0.0.5
-  media_kit: ^1.1.7
-  media_kit_video: ^1.1.8
-  media_kit_libs_video: ^1.0.1
+  media_kit: ^1.1.8+2
+  media_kit_video: ^1.2.1
+  media_kit_libs_video: ^1.0.3
   crypto: ^3.0.3
   
 

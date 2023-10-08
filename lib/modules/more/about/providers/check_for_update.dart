@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -27,36 +26,38 @@ checkForUpdate(CheckForUpdateRef ref,
       BotToast.showText(text: l10n.new_update_available);
       await Future.delayed(const Duration(seconds: 1));
     }
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.new_update_available),
-          content: Text(
-              "${l10n.app_version(updateAvailable.$1)}\n\n${updateAvailable.$2}"),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(l10n.cancel)),
-                const SizedBox(
-                  width: 15,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      _launchInBrowser(Uri.parse(updateAvailable.$3));
-                    },
-                    child: Text(l10n.download)),
-              ],
-            )
-          ],
-        );
-      },
-    );
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(l10n.new_update_available),
+            content: Text(
+                "${l10n.app_version(updateAvailable.$1)}\n\n${updateAvailable.$2}"),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(l10n.cancel)),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        _launchInBrowser(Uri.parse(updateAvailable.$3));
+                      },
+                      child: Text(l10n.download)),
+                ],
+              )
+            ],
+          );
+        },
+      );
+    }
   } else if (compareVersions(info.version, updateAvailable.$1) == 0) {
     if (manualUpdate) {
       BotToast.showText(text: l10n.no_new_updates_available);

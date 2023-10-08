@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:image/image.dart';
+// import 'package:image/image.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -43,86 +43,87 @@ Future<Uint8List?> autoCropImageBorder(AutoCropImageBorderRef ref,
 Future<Uint8List?> cropImageWithThread(
   Uint8List? imageBytes,
 ) async {
-  Command crop = Command();
-  crop.decodeImage(imageBytes!);
-  Command encode = Command();
-  encode.subCommand = crop;
+  // Command crop = Command();
+  // crop.decodeImage(imageBytes!);
+  // Command encode = Command();
+  // encode.subCommand = crop;
 
-  final image = await encode.getImageThread();
-  int left = 0;
-  int top = 0;
-  int right = image!.width;
-  int bottom = image.height;
+  // final image = await encode.getImageThread();
+  // int left = 0;
+  // int top = 0;
+  // int right = image!.width;
+  // int bottom = image.height;
 
-  // Find left coordinate
-  for (int x = 0; x < image.width; x++) {
-    bool stop = false;
-    for (int y = 0; y < image.height; y++) {
-      if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
-        stop = true;
-        break;
-      }
-    }
-    if (stop) {
-      left = x;
-      break;
-    }
-  }
+  // // Find left coordinate
+  // for (int x = 0; x < image.width; x++) {
+  //   bool stop = false;
+  //   for (int y = 0; y < image.height; y++) {
+  //     if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     left = x;
+  //     break;
+  //   }
+  // }
 
-  // Find top coordinate
-  for (int y = 0; y < image.height; y++) {
-    bool stop = false;
-    for (int x = 0; x < image.width; x++) {
-      if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
-        stop = true;
-        break;
-      }
-    }
-    if (stop) {
-      top = y;
-      break;
-    }
-  }
+  // // Find top coordinate
+  // for (int y = 0; y < image.height; y++) {
+  //   bool stop = false;
+  //   for (int x = 0; x < image.width; x++) {
+  //     if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     top = y;
+  //     break;
+  //   }
+  // }
 
-  // Find right coordinate
-  for (int x = image.width - 1; x >= 0; x--) {
-    bool stop = false;
-    for (int y = 0; y < image.height; y++) {
-      if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
-        stop = true;
-        break;
-      }
-    }
-    if (stop) {
-      right = x;
-      break;
-    }
-  }
+  // // Find right coordinate
+  // for (int x = image.width - 1; x >= 0; x--) {
+  //   bool stop = false;
+  //   for (int y = 0; y < image.height; y++) {
+  //     if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     right = x;
+  //     break;
+  //   }
+  // }
 
-  // Find bottom coordinate
-  for (int y = image.height - 1; y >= 0; y--) {
-    bool stop = false;
-    for (int x = 0; x < image.width; x++) {
-      if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
-        stop = true;
-        break;
-      }
-    }
-    if (stop) {
-      bottom = y;
-      break;
-    }
-  }
+  // // Find bottom coordinate
+  // for (int y = image.height - 1; y >= 0; y--) {
+  //   bool stop = false;
+  //   for (int x = 0; x < image.width; x++) {
+  //     if (image.getPixel(x, y).toString() != "(255, 255, 255)") {
+  //       stop = true;
+  //       break;
+  //     }
+  //   }
+  //   if (stop) {
+  //     bottom = y;
+  //     break;
+  //   }
+  // }
 
-  crop.copyCrop(
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-  );
+  // crop.copyCrop(
+  //   x: left,
+  //   y: top,
+  //   width: right - left,
+  //   height: bottom - top,
+  // );
 
-  encode.subCommand = crop;
-  encode.encodeJpg();
+  // encode.subCommand = crop;
+  // encode.encodeJpg();
 
-  return encode.getBytesThread();
+  // return encode.getBytesThread();
+  return null;
 }

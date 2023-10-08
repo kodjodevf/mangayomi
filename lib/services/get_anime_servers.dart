@@ -9,6 +9,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_anime_servers.g.dart';
 
@@ -30,9 +31,10 @@ Future<(List<Video>, bool)> getAnimeServers(
     return ([Video(path!, episode.name!, path, subtitles: [])], true);
   }
   final source =
-      getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
+      getSource(episode.manga.value!.lang!, episode.manga.value!.source!)!;
 
-  final bytecode = compilerEval(source!.sourceCode!);
+  final bytecode =
+      compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
   final runtime = runtimeEval(bytecode);
   runtime.args = [

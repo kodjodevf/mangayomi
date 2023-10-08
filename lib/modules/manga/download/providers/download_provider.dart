@@ -83,8 +83,7 @@ Future<List<String>> downloadChapter(
         await File("${mangaDir!.path}${chapter.name}.cbz").exists() &&
             ref.watch(saveAsCBZArchiveStateProvider);
     bool mp4FileExist =
-        await File("${mangaDir.path}${chapter.name}.mp4").exists() &&
-            ref.watch(saveAsCBZArchiveStateProvider);
+        await File("${mangaDir.path}${chapter.name}.mp4").exists();
     if (!cbzFileExist || !mp4FileExist) {
       for (var index = 0; index < pageUrls.length; index++) {
         final path2 = Directory("${path1.path}downloads/");

@@ -433,7 +433,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _playbackSpeed.value = speed;
   }
 
-  Future<void> _togglePlaybackSpeed() async {
+  void _togglePlaybackSpeed() {
     List<double> allowedSpeeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
     if (allowedSpeeds.indexOf(_playbackSpeed.value) <
         allowedSpeeds.length - 1) {
@@ -442,6 +442,26 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     } else {
       _setPlaybackSpeed(allowedSpeeds[0]);
     }
+  }
+
+  Future<void> _changeFitLabel(WidgetRef ref) async {
+    List<BoxFit> fitList = [
+      BoxFit.contain,
+      BoxFit.cover,
+      BoxFit.fill,
+      BoxFit.fitHeight,
+      BoxFit.fitWidth,
+      BoxFit.none
+    ];
+    ref.read(_showFitLabel.notifier).state = true;
+    if (fitList.indexOf(ref.watch(_fit)) < fitList.length - 1) {
+      ref.read(_fit.notifier).state =
+          fitList[fitList.indexOf(ref.watch(_fit)) + 1];
+    } else {
+      ref.read(_fit.notifier).state = fitList[0];
+    }
+    await Future.delayed(const Duration(seconds: 1));
+    ref.read(_showFitLabel.notifier).state = false;
   }
 
   List<Widget> _bottomButtonBar(BuildContext context, bool isFullScreen) {
@@ -514,25 +534,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                               onPressed: () {
                                 _togglePlaybackSpeed();
                               }),
-                          MaterialButton(
-                            child: const Icon(Icons.fit_screen,
-                                size: 30, color: Colors.white),
-                            onPressed: () async {
-                              ref.read(_showFitLabel.notifier).state = true;
-                              final fit = switch (ref.watch(_fit)) {
-                                BoxFit.contain => BoxFit.cover,
-                                BoxFit.cover => BoxFit.fill,
-                                BoxFit.fill => BoxFit.fitHeight,
-                                BoxFit.fitHeight => BoxFit.fitWidth,
-                                BoxFit.fitWidth => BoxFit.none,
-                                BoxFit.none => BoxFit.scaleDown,
-                                _ => BoxFit.contain,
-                              };
-                              ref.read(_fit.notifier).state = fit;
-                              await Future.delayed(const Duration(seconds: 1));
-                              ref.read(_showFitLabel.notifier).state = false;
-                            },
-                          ),
+                          if (!isFullScreen)
+                            MaterialButton(
+                              child: const Icon(Icons.fit_screen,
+                                  size: 30, color: Colors.white),
+                              onPressed: () async {
+                                _changeFitLabel(ref);
+                              },
+                            ),
                           if (_isDesktop)
                             const MaterialDesktopFullscreenButton()
                         ],
@@ -673,12 +682,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         Video(
           subtitleViewConfiguration: const SubtitleViewConfiguration(
             style: TextStyle(
-                height: 2,
-                fontSize: 40,
+                fontSize: 50,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontFamily: "",
-                shadows: [Shadow(offset: Offset(0.0, 0.0), blurRadius: 7.0)],
+                shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
                 backgroundColor: Colors.transparent),
           ),
           fit: fit,

@@ -16,6 +16,7 @@ import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_url.g.dart';
 
@@ -56,13 +57,14 @@ Future<GetChapterUrlModel> getChapterUrl(
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
   if (!chapter.manga.value!.isLocalArchive!) {
     final source =
-        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!)!;
     if (isarPageUrls.isNotEmpty &&
         isarPageUrls.first.urls != null &&
         isarPageUrls.first.urls!.isNotEmpty) {
       pageUrls = isarPageUrls.first.urls!;
     } else {
-      final bytecode = compilerEval(source!.sourceCode!);
+      final bytecode =
+          compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
       final runtime = runtimeEval(bytecode);
       runtime.args = [

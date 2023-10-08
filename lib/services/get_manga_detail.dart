@@ -4,6 +4,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/bridge_class/manga_model.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
+import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
 
@@ -14,7 +15,8 @@ Future<MangaModel> getMangaDetail(
   required Source source,
 }) async {
   MangaModel? mangadetail;
-  final bytecode = compilerEval(source.sourceCode!);
+  final bytecode =
+      compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
   final runtime = runtimeEval(bytecode);
   runtime.args = [
