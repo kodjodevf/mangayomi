@@ -1,2 +1,2 @@
 const useTestSourceCode = false;
-const testSourceCode = '''''';
+const testSourceCode = r'''''';

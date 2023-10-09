@@ -57,38 +57,41 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
               } else if (isar.sources.getSync(source.id!) != null) {
                 // log("exist");
                 final sourc = isar.sources.getSync(source.id!)!;
-                if (compareVersions(sourc.version!, source.version!) < 0) {
-                  // log("update aivalable auto update");
-                  if (ref.watch(autoUpdateExtensionsStateProvider)) {
-                    final req =
-                        await http.get(Uri.parse(source.sourceCodeUrl!));
-                    final headers = await getHeaders(req.body, source.baseUrl!);
-                    isar.writeTxnSync(() {
-                      isar.sources.putSync(sourc
-                        ..headers = headers ?? ""
-                        ..isAdded = true
-                        ..sourceCode = req.body
-                        ..sourceCodeUrl = source.sourceCodeUrl
-                        ..id = source.id
-                        ..apiUrl = source.apiUrl
-                        ..baseUrl = source.baseUrl
-                        ..dateFormat = source.dateFormat
-                        ..dateFormatLocale = source.dateFormatLocale
-                        ..hasCloudflare = source.hasCloudflare
-                        ..iconUrl = source.iconUrl
-                        ..typeSource = source.typeSource
-                        ..lang = source.lang
-                        ..isNsfw = source.isNsfw
-                        ..name = source.name
-                        ..version = source.version
-                        ..versionLast = source.version
-                        ..isManga = source.isManga
-                        ..isFullData = source.isFullData ?? false
-                        ..appMinVerReq = source.appMinVerReq);
-                    });
-                  } else {
-                    // log("update aivalable");
-                    isar.sources.putSync(sourc..versionLast = source.version);
+                if (sourc.isAdded!) {
+                  if (compareVersions(sourc.version!, source.version!) < 0) {
+                    // log("update aivalable auto update");
+                    if (ref.watch(autoUpdateExtensionsStateProvider)) {
+                      final req =
+                          await http.get(Uri.parse(source.sourceCodeUrl!));
+                      final headers =
+                          await getHeaders(req.body, source.baseUrl!);
+                      isar.writeTxnSync(() {
+                        isar.sources.putSync(sourc
+                          ..headers = headers ?? ""
+                          ..isAdded = true
+                          ..sourceCode = req.body
+                          ..sourceCodeUrl = source.sourceCodeUrl
+                          ..id = source.id
+                          ..apiUrl = source.apiUrl
+                          ..baseUrl = source.baseUrl
+                          ..dateFormat = source.dateFormat
+                          ..dateFormatLocale = source.dateFormatLocale
+                          ..hasCloudflare = source.hasCloudflare
+                          ..iconUrl = source.iconUrl
+                          ..typeSource = source.typeSource
+                          ..lang = source.lang
+                          ..isNsfw = source.isNsfw
+                          ..name = source.name
+                          ..version = source.version
+                          ..versionLast = source.version
+                          ..isManga = source.isManga
+                          ..isFullData = source.isFullData ?? false
+                          ..appMinVerReq = source.appMinVerReq);
+                      });
+                    } else {
+                      // log("update aivalable");
+                      isar.sources.putSync(sourc..versionLast = source.version);
+                    }
                   }
                 }
               } else {
