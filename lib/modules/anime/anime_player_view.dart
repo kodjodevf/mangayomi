@@ -203,7 +203,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       }
       if (_firstVid.subtitles!.isNotEmpty) {
         if (_initSubtitle) {
-          _player.setSubtitleTrack(_subtitle.value!);
+          try {
+            _player.setSubtitleTrack(_subtitle.value!);
+          } catch (_) {}
           _initSubtitle = false;
         }
       }
@@ -243,11 +245,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
         videoQuality.add(VideoPrefs(
-            videoTrack: VideoTrack(
-              video.url,
-              video.quality,
-              video.quality,
-            ),
+            videoTrack: VideoTrack(video.url, video.quality, video.quality),
             headers: video.headers,
             isLocal: false));
       }
@@ -291,10 +289,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                             ),
                             Icon(
                               Icons.check,
-                              color: "${_video.value!.videoTrack!.id}${_video.value!.videoTrack!.title}" ==
-                                      "${quality.videoTrack!.id}${quality.videoTrack!.title}"
+                              color: widget.isLocal
                                   ? Theme.of(context).iconTheme.color
-                                  : Colors.transparent,
+                                  : _video.value!.videoTrack!.title ==
+                                          quality.videoTrack!.title
+                                      ? Theme.of(context).iconTheme.color
+                                      : Colors.transparent,
                             ),
                           ],
                         ),
@@ -318,7 +318,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                                   _currentPosition != Duration.zero) {
                                 await _player.stream.buffer.first;
                                 _player.seek(_currentPosition);
-                                _player.setSubtitleTrack(_subtitle.value!);
+                                try {
+                                  _player.setSubtitleTrack(_subtitle.value!);
+                                } catch (_) {}
+
                                 _seekToCurrentPosition = false;
                               } else {
                                 _currentPosition = position;
@@ -385,7 +388,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             .map((sub) => CupertinoActionSheetAction(
                   onPressed: () {
                     Navigator.maybePop(_);
-                    _player.setSubtitleTrack(sub.subtitle!);
+                    try {
+                      _player.setSubtitleTrack(_subtitle.value!);
+                    } catch (_) {}
                     if (!widget.isLocal) _subtitle.value = sub.subtitle;
                   },
                   child: Row(
