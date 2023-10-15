@@ -7,13 +7,15 @@ class BottomTextWidget extends StatelessWidget {
   final bool isComfortableGrid;
   final double? fontSize;
   final int? maxLines;
+  final Color? textColor;
   const BottomTextWidget(
       {super.key,
       required this.text,
       this.isLoading = false,
       this.isComfortableGrid = false,
       this.fontSize = 12.0,
-      this.maxLines = 2});
+      this.maxLines = 2,
+      this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class BottomTextWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.w600,
-                      color: primaryColor(context),
+                      color: textColor ?? primaryColor(context),
                     ),
                     maxLines: maxLines,
                     overflow: TextOverflow.ellipsis,
@@ -51,10 +53,10 @@ class BottomTextWidget extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 5, bottom: 5),
                         child: Text(
                           text,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13.0,
-                            color: Colors.white,
-                            shadows: <Shadow>[
+                            color: textColor ?? Colors.white,
+                            shadows: const <Shadow>[
                               Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0)
                             ],
                           ),
@@ -87,10 +89,10 @@ class BottomTextWidget extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 5, bottom: 5),
                           child: Text(
                             text,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.0,
-                              color: Colors.white,
-                              shadows: <Shadow>[
+                              color: textColor ?? Colors.white,
+                              shadows: const <Shadow>[
                                 Shadow(
                                     offset: Offset(0.5, 0.9), blurRadius: 3.0)
                               ],

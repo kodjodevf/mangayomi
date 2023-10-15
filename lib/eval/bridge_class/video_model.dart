@@ -37,7 +37,7 @@ class $VideoModel implements VideoModel, $Instance {
                       BridgeTypeRef.type(RuntimeTypes.mapType)),
                   false),
               BridgeParameter(
-                  'substitles',
+                  'subtitles',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
                       [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
                   false),
@@ -58,7 +58,7 @@ class $VideoModel implements VideoModel, $Instance {
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
         'headers': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType))),
-        'substitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
+        'subtitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
             CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
         'audios': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
             CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
@@ -86,11 +86,9 @@ class $VideoModel implements VideoModel, $Instance {
         return $String($value.quality!);
       case 'originalUrl':
         return $String($value.originalUrl!);
-
       case 'headers':
         return $Map.wrap($value.headers!);
-
-      case 'substitles':
+      case 'subtitles':
         return $List.wrap($value.subtitles!
             .map((e) =>
                 $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
@@ -119,11 +117,26 @@ class $VideoModel implements VideoModel, $Instance {
       case 'originalUrl':
         $value.originalUrl = value.$reified;
       case 'headers':
-        $value.headers = value.$reified as Map<String, String>;
+        $value.headers = (value.$reified as Map).isNotEmpty
+            ? (value.$reified as Map)
+                .map((key, value) => MapEntry(key.toString(), value.toString()))
+            : {};
       case 'subtitles':
-        $value.subtitles = value.$reified as List<TrackModel>;
+        $value.subtitles = (value.$reified as List).isNotEmpty
+            ? (value.$reified as List)
+                .map((e) => TrackModel()
+                  ..file = e.file
+                  ..label = e.label)
+                .toList()
+            : [];
       case 'audios':
-        $value.audios = value.$reified as List<TrackModel>;
+        $value.audios = (value.$reified as List).isNotEmpty
+            ? (value.$reified as List)
+                .map((e) => TrackModel()
+                  ..file = e.file
+                  ..label = e.label)
+                .toList()
+            : [];
 
       default:
         _superclass.$setProperty(runtime, identifier, value);

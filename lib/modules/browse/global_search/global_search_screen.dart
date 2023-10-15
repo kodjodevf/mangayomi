@@ -1,12 +1,13 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/search_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -35,7 +36,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   final _textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
+    List<Source> sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
         ? isar.sources
             .filter()
             .isPinnedEqualTo(true)
@@ -50,6 +51,12 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             .and()
             .isMangaEqualTo(widget.isManga)
             .findAllSync();
+    sourceList = sourceList
+        .where(
+          (element) =>
+              ref.watch(showNSFWStateProvider) ? true : element.isNsfw == false,
+        )
+        .toList();
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -118,12 +125,14 @@ class SourceSearchScreen extends ConsumerWidget {
           ListTile(
             dense: true,
             onTap: () {
-              Map<String, dynamic> data = {
-                'query': query,
-                'source': source,
-                'viewOnly': true,
-              };
-              context.push('/searchResult', extra: data);
+              Navigator.push(
+                  context,
+                  createRoute(
+                      page: MangaHomeScreen(
+                    query: query,
+                    source: source,
+                    isSearch: true,
+                  )));
             },
             title: Text(source.name!),
             subtitle: Text(
@@ -193,7 +202,8 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
             context: context,
             getManga: getMangaDetail,
             lang: widget.source.lang!,
-            isManga: widget.source.isManga ?? true);
+            isManga: widget.source.isManga ?? true,
+            useMaterialRoute: true);
       },
       child: StreamBuilder(
           stream: isar.mangas
@@ -208,7 +218,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
               child: Stack(
                 children: [
                   SizedBox(
-                    width: 100,
+                    width: 110,
                     child: Column(children: [
                       snapshot.hasData &&
                               snapshot.data!.isNotEmpty &&
@@ -216,7 +226,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                           ? Image.memory(snapshot.data!.first.customCoverImage
                               as Uint8List)
                           : ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
+                              borderRadius: BorderRadius.circular(5),
                               child: cachedNetworkImage(
                                   headers: ref.watch(headersProvider(
                                       source: getMangaDetail.source!,
@@ -226,14 +236,15 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                           snapshot.data!.first.imageUrl != null
                                       ? toImgUrl(snapshot.data!.first.imageUrl!)
                                       : toImgUrl(getMangaDetail.imageUrl!),
-                                  width: 100,
-                                  height: 140,
+                                  width: 110,
+                                  height: 150,
                                   fit: BoxFit.fill),
                             ),
                       BottomTextWidget(
                         fontSize: 12.0,
                         text: widget.manga.name!,
                         isLoading: true,
+                        textColor: Theme.of(context).textTheme.bodyLarge!.color,
                         isComfortableGrid: true,
                       )
                     ]),

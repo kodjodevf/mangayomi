@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'b4de1c71b935893780b02be6a4fa1980651a833d';
+    r'a5d39851af8f86e57147591b2c261298ecaa6a1d';
 
 /// Copied from Dart SDK
 class _SystemHash {

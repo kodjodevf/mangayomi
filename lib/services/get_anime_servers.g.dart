@@ -6,7 +6,7 @@ part of 'get_anime_servers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAnimeServersHash() => r'39f02b0c0b51a78a7c1a67747686909beedc5d0e';
+String _$getAnimeServersHash() => r'908cdc967253129e94e25f58a8d7df18044ccd3a';
 
 /// Copied from Dart SDK
 class _SystemHash {

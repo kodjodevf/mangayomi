@@ -22,12 +22,9 @@ Future<(List<Video>, bool)> getAnimeServers(
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
   final isLocalArchive = episode.manga.value!.isLocalArchive!;
   List<Video> video = [];
-
-  if (await File("${mangaDirectory!.path}${episode.name}.mp4").exists() ||
-      isLocalArchive) {
-    final path = isLocalArchive
-        ? episode.archivePath
-        : "${mangaDirectory.path}${episode.name}.mp4";
+  final mp4animePath = "${mangaDirectory!.path}${episode.name}.mp4";
+  if (await File(mp4animePath).exists() || isLocalArchive) {
+    final path = isLocalArchive ? episode.archivePath : mp4animePath;
     return ([Video(path!, episode.name!, path, subtitles: [])], true);
   }
   final source =
@@ -56,11 +53,23 @@ Future<(List<Video>, bool)> getAnimeServers(
         var subs = e.subtitles;
         if (subs is $List) {
           subtitles = subs.map((e) => Track(e.file, e.label)).toList();
+        } else {
+          try {
+            subtitles = (subs as List<TrackModel>).map((e) {
+              return Track(e.file, e.label);
+            }).toList();
+          } catch (_) {}
         }
         List<Track>? audios = [];
         var auds = e.audios;
         if (auds is $List) {
           audios = auds.map((e) => Track(e.file, e.label)).toList();
+        } else {
+          try {
+            audios = (subs as List<TrackModel>).map((e) {
+              return Track(e.file, e.label);
+            }).toList();
+          } catch (_) {}
         }
         return Video(e.url, e.quality, e.originalUrl,
             headers: e.headers, subtitles: subtitles, audios: audios);

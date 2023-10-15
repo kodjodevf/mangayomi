@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -42,6 +43,22 @@ Future<List<String>> downloadChapter(
       "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}${isManga ? "/$scanlator${chapter.name!.replaceAll(regExp, '_')}" : ""}";
   path = Directory("${path1!.path}$finalPath/");
   Map<String, String> videoHeader = {};
+
+  void savePageUrls() {
+    final settings = isar.settings.getSync(227)!;
+    List<ChapterPageurls>? chapterPageUrls = [];
+    for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
+      if (chapterPageUrl.chapterId != chapter.id) {
+        chapterPageUrls.add(chapterPageUrl);
+      }
+    }
+    chapterPageUrls.add(ChapterPageurls()
+      ..chapterId = chapter.id
+      ..urls = pageUrls);
+    isar.writeTxnSync(() =>
+        isar.settings.putSync(settings..chapterPageUrlsList = chapterPageUrls));
+  }
+
   if (isManga) {
     ref
         .read(getChapterUrlProvider(
@@ -208,6 +225,7 @@ Future<List<String>> downloadChapter(
           batchProgressCallback: (succeeded, failed) async {
             if (succeeded == tasks.length) {
               if (isManga) {
+                savePageUrls();
                 if (ref.watch(saveAsCBZArchiveStateProvider)) {
                   await ref.watch(convertToCBZProvider(
                           path!.path, mangaDir.path, chapter.name!, pageUrls)
@@ -288,6 +306,9 @@ Future<List<String>> downloadChapter(
                   ..failed = 0
                   ..isDownload = (progress == 1.0));
               });
+            }
+            if (progress == 1.0) {
+              savePageUrls();
             }
           },
           onStatus: (status) async {

@@ -8,7 +8,9 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -106,7 +108,8 @@ void pushToMangaReaderDetail(
     required BuildContext context,
     int? archiveId,
     Manga? mangaM,
-    bool? isManga}) {
+    bool? isManga,
+    bool useMaterialRoute = false}) {
   int? mangaId;
   if (archiveId == null) {
     final manga = mangaM ??
@@ -194,5 +197,14 @@ void pushToMangaReaderDetail(
     );
   }
 
-  context.push('/manga-reader/detail', extra: mangaId);
+  if (useMaterialRoute) {
+    Navigator.push(
+        context,
+        createRoute(
+            page: MangaReaderDetail(
+          mangaId: mangaId,
+        )));
+  } else {
+    context.push('/manga-reader/detail', extra: mangaId);
+  }
 }

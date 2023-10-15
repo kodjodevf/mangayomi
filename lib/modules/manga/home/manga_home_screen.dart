@@ -17,7 +17,13 @@ import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
-  const MangaHomeScreen({required this.source, super.key});
+  final bool isSearch;
+  final String query;
+  const MangaHomeScreen(
+      {required this.source,
+      this.query = "",
+      this.isSearch = false,
+      super.key});
 
   @override
   ConsumerState<MangaHomeScreen> createState() => _MangaHomeScreenState();
@@ -37,7 +43,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   final ScrollController _scrollController = ScrollController();
   int _fullDataLength = 50;
   int _page = 1;
-  int _selectedIndex = 0;
+  late int _selectedIndex = widget.isSearch ? 2 : 0;
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return [
@@ -82,9 +88,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     return mangaResList;
   }
 
-  final _textEditingController = TextEditingController();
-  String _query = "";
-  bool _isSearch = false;
+  late final _textEditingController = TextEditingController(text: widget.query);
+  late String _query = widget.query;
+  late bool _isSearch = widget.isSearch;
   AsyncValue<List<MangaModel?>>? _getManga;
   int _length = 0;
   @override
@@ -105,6 +111,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     return Scaffold(
         appBar: AppBar(
           title: _isSearch ? null : Text('${widget.source.name}'),
+          leading: !_isSearch ? null : Container(),
           actions: [
             _isSearch
                 ? SeachFormTextField(
@@ -127,11 +134,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     },
                     onPressed: () {
                       setState(() {
-                        _isSearch = false;
-                        _query = "";
-                        _selectedIndex = 0;
-                        _page = 1;
-                        _textEditingController.clear();
+                        if (_textEditingController.text.isEmpty) {
+                          _isSearch = false;
+                          _query = "";
+                          _selectedIndex = 0;
+                          _page = 1;
+                          _textEditingController.clear();
+                        } else {
+                          Navigator.pop(context);
+                        }
                       });
                     },
                     controller: _textEditingController,
@@ -189,7 +200,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ),
                 Container(
                   color: primaryColor(context),
-                  height: 1,
+                  height: 0.3,
                   width: mediaWidth(context, 1),
                 )
               ],

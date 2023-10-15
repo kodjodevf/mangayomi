@@ -658,10 +658,8 @@ class MBridge {
     );
   }
 
-  static Future<List<Video>> doodExtractor(String url) async {
-    return await DoodExtractor().videosFromUrl(
-      url,
-    );
+  static Future<List<Video>> doodExtractor(String url, String? quality) async {
+    return await DoodExtractor().videosFromUrl(url, quality: quality);
   }
 
   static Future<List<Video>> streamWishExtractor(
@@ -1181,7 +1179,7 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType),
                           nullable: true),
-                      false),
+                      true),
                 ],
                 namedParams: []),
             isStatic: true),
@@ -1763,6 +1761,12 @@ class $MBridge extends MBridge with $Bridge {
                       BridgeTypeAnnotation(
                           BridgeTypeRef.type(RuntimeTypes.stringType)),
                       false),
+                  BridgeParameter(
+                      'quality',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                          nullable: true),
+                      true),
                 ],
                 namedParams: []),
             isStatic: true),
@@ -2178,7 +2182,7 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future<List<$VideoModel>> $doodExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.doodExtractor(args[0]!.$value).then(
+      $Future.wrap(MBridge.doodExtractor(args[0]!.$value, args[1]?.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
   static $Future<List<$VideoModel>> $streamTapeExtractor(
@@ -2237,7 +2241,7 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future<List<$VideoModel>> $voeExtractor(
           Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(MBridge.voeExtractor(args[0]!.$value, args[1]!.$value).then(
+      $Future.wrap(MBridge.voeExtractor(args[0]!.$value, args[1]?.$value).then(
           (value) => $List.wrap(value.map((e) => _toVideoModel(e)).toList())));
 
   static $Future<List<$VideoModel>> $vidBomExtractor(

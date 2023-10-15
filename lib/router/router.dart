@@ -19,7 +19,6 @@ import 'package:mangayomi/modules/history/history_screen.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
-import 'package:mangayomi/modules/manga/home/manga_search_screen.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/about/about_screen.dart';
 import 'package:mangayomi/modules/more/download_queue/download_queue_screen.dart';
@@ -292,29 +291,6 @@ class RouterNotifier extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: "/searchResult",
-          name: "searchResult",
-          builder: (context, state) {
-            final data = state.extra as Map<String, dynamic>;
-            return SearchResultScreen(
-              query: data['query']!,
-              source: data['source']!,
-              viewOnly: data['viewOnly'],
-            );
-          },
-          pageBuilder: (context, state) {
-            final data = state.extra as Map<String, dynamic>;
-            return CustomTransition(
-              key: state.pageKey,
-              child: SearchResultScreen(
-                query: data['query']!,
-                source: data['source']!,
-                viewOnly: data['viewOnly'],
-              ),
-            );
-          },
-        ),
-        GoRoute(
           path: "/about",
           name: "about",
           builder: (context, state) {
@@ -475,4 +451,13 @@ class CustomTransition extends CustomTransitionPage {
           },
           child: child,
         );
+}
+
+Route createRoute({required Widget page}) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => page,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+  );
 }
