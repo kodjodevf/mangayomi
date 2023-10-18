@@ -85,7 +85,7 @@
   "relative_timestamp_long":"Long (Short+, n days ago)",
   "date_format":"Date format",
   "reader":"Reader",
-  "refresh":"refresh",
+  "refresh":"Refresh",
   "reader_subtitle":"Reading mode, display, navigation",
   "default_reading_mode":"Default reading mode",
   "reading_mode_vertical":"Vertical",
@@ -227,5 +227,6 @@
   "grey":"Grey",
   "automaic":"Automatic",
   "preferred_domain":"Preferred Domain",
-  "load_more":"Load More"
+  "load_more":"Load More",
+  "cancel_all_for_this_series":"Cancel all for this series"
 }

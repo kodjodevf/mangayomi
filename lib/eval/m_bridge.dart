@@ -184,28 +184,28 @@ class MBridge {
 
   ///Create query by html string
   static List<String> xpath(String html, String xpath) {
+    List<String> attrs = [];
     try {
-      List<String?> attrs = [];
       var htmlXPath = HtmlXPath.html(html);
       var query = htmlXPath.query(xpath);
-      // if (query.nodes.length > 1) the result will be a list that can be joined with a separator and will be split later.
       if (query.nodes.length > 1) {
         for (var element in query.attrs) {
           attrs.add(element!.trim().trimLeft().trimRight());
         }
-        //Join the attrs list
-        return attrs.map((e) => e!).toList();
       }
 
       //Return one attr
-      else {
+      else if (query.nodes.length == 1) {
         String attr =
             query.attr != null ? query.attr!.trim().trimLeft().trimRight() : "";
-        return [attr];
+        if (attr.isNotEmpty) {
+          attrs = [attr];
+        }
       }
+      return attrs;
     } catch (e) {
       // botToast(e.toString());
-      return [];
+      return attrs;
     }
   }
 
@@ -489,6 +489,16 @@ class MBridge {
       }
     }
     return valD;
+  }
+
+  static List sortMapList(List list, String value, int type) {
+    if (type == 0) {
+      list.sort((a, b) => a[value].compareTo(b[value]));
+    } else if (type == 1) {
+      list.sort((a, b) => b[value].compareTo(a[value]));
+    }
+
+    return list;
   }
 
   //Utility to parse to String
@@ -1971,6 +1981,29 @@ class $MBridge extends MBridge with $Bridge {
                 ],
                 namedParams: []),
             isStatic: true),
+        'sortMapList': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                params: [
+                  BridgeParameter(
+                      'list',
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
+                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                      false),
+                  BridgeParameter(
+                      'value',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      false),
+                  BridgeParameter(
+                      'type',
+                      BridgeTypeAnnotation(
+                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
       },
       getters: {},
       setters: {},
@@ -2004,6 +2037,23 @@ class $MBridge extends MBridge with $Bridge {
     }
 
     return $int(MBridge.parseStatus(args[0]!.$value, argss2));
+  }
+
+  static $Value $sortMapList(
+      Runtime runtime, $Value? target, List<$Value?> args) {
+    List list = args[0]!.$value;
+    if (list is $List) {
+      list = list.$reified;
+    }
+    list = list.map((e) {
+      if (e is $Map<$Value?, $Value?>) {
+        return e.$reified;
+      }
+      return e;
+    }).toList();
+
+    return $String(jsonEncode(
+        MBridge.sortMapList(list, args[1]!.$value, args[2]!.$value)));
   }
 
   static $List $listParseDateTime(

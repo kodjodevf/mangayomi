@@ -5,6 +5,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
@@ -117,12 +118,17 @@ class DownloadQueueScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: PopupMenuButton(
                           child: const Icon(Icons.more_vert),
-                          onSelected: (value) {
+                          onSelected: (value) async {
                             if (value.toString() == 'Cancel') {
-                              List<String> taskIds = [];
-                              for (var id in entries.first.taskIds!) {
-                                taskIds.add(id);
-                              }
+                              final taskIds = (isar.settings
+                                              .getSync(227)!
+                                              .chapterPageUrlsList ??
+                                          [])
+                                      .where((e) =>
+                                          e.chapterId == element.chapterId!)
+                                      .map((e) => e.urls)
+                                      .firstOrNull ??
+                                  [];
                               FileDownloader()
                                   .cancelTasksWithIds(taskIds)
                                   .then((value) async {
@@ -138,11 +144,48 @@ class DownloadQueueScreen extends ConsumerWidget {
                                   isar.downloads.deleteSync(id);
                                 });
                               });
+                            } else if (value.toString() == 'CancelAll') {
+                              final chapterIds = entries
+                                  .where((element) =>
+                                      element.chapter.value!.name ==
+                                      element.chapter.value!.name)
+                                  .map((e) => e.chapterId)
+                                  .toList();
+                              for (var chapterId in chapterIds) {
+                                final taskIds = (isar.settings
+                                                .getSync(227)!
+                                                .chapterPageUrlsList ??
+                                            [])
+                                        .where((e) => e.chapterId == chapterId!)
+                                        .map((e) => e.urls)
+                                        .firstOrNull ??
+                                    [];
+                                await FileDownloader()
+                                    .cancelTasksWithIds(taskIds);
+                                await Future.delayed(
+                                    const Duration(milliseconds: 300));
+                                final chapterD = isar.downloads
+                                    .filter()
+                                    .chapterIdEqualTo(chapterId)
+                                    .findFirstSync();
+                                if (chapterD != null) {
+                                  final verifyId =
+                                      isar.downloads.getSync(chapterD.id!);
+                                  isar.writeTxnSync(() {
+                                    if (verifyId != null) {
+                                      isar.downloads.deleteSync(chapterD.id!);
+                                    }
+                                  });
+                                }
+                              }
                             }
                           },
                           itemBuilder: (context) => [
                             PopupMenuItem(
                                 value: 'Cancel', child: Text(l10n.cancel)),
+                            PopupMenuItem(
+                                value: 'CancelAll',
+                                child: Text(l10n.cancel_all_for_this_series)),
                           ],
                         ),
                       )

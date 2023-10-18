@@ -207,182 +207,191 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             ),
           ),
         ),
-        body: _getManga!.when(
-          data: (data) {
-            Widget buildProgressIndicator() {
-              return !(data.isNotEmpty && (data.last!.hasNextPage ?? true))
-                  ? Container()
-                  : _isLoading
-                      ? const Center(
-                          child: SizedBox(
-                            height: 100,
-                            width: 200,
-                            child: Center(
-                              child: CircularProgressIndicator(),
+        body: WillPopScope(
+          onWillPop: () async {
+            Navigator.pop(context);
+            return false;
+          },
+          child: _getManga!.when(
+            data: (data) {
+              Widget buildProgressIndicator() {
+                return !(data.isNotEmpty && (data.last!.hasNextPage ?? true))
+                    ? Container()
+                    : _isLoading
+                        ? const Center(
+                            child: SizedBox(
+                              height: 100,
+                              width: 200,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
-                          ),
-                        )
-                      : isTablet(context)
-                          ? Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5))),
-                                  onPressed: () {
-                                    if (mounted) {
-                                      setState(() {
-                                        _isLoading = true;
-                                      });
-                                    }
-                                    _loadMore().then((value) {
+                          )
+                        : isTablet(context)
+                            ? Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5))),
+                                    onPressed: () {
                                       if (mounted) {
                                         setState(() {
-                                          data.addAll(value);
-                                          _isLoading = false;
+                                          _isLoading = true;
                                         });
                                       }
-                                    });
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(l10n.load_more),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Icon(Icons.arrow_forward_outlined),
-                                    ],
-                                  )),
-                            )
-                          : Container();
-            }
+                                      _loadMore().then((value) {
+                                        if (mounted) {
+                                          setState(() {
+                                            data.addAll(value);
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      });
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(l10n.load_more),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Icon(
+                                            Icons.arrow_forward_outlined),
+                                      ],
+                                    )),
+                              )
+                            : Container();
+              }
 
-            if (data.isEmpty) {
-              return Center(child: Text(l10n.no_result));
-            }
-            _scrollController.addListener(() {
-              if (_scrollController.position.pixels ==
-                  _scrollController.position.maxScrollExtent) {
-                if (data.isNotEmpty && (data.last!.hasNextPage ?? true)) {
-                  if (mounted) {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                  }
-                  _loadMore().then((value) {
+              if (data.isEmpty) {
+                return Center(child: Text(l10n.no_result));
+              }
+              _scrollController.addListener(() {
+                if (_scrollController.position.pixels ==
+                    _scrollController.position.maxScrollExtent) {
+                  if (data.isNotEmpty && (data.last!.hasNextPage ?? true)) {
                     if (mounted) {
                       setState(() {
-                        data.addAll(value);
-                        _isLoading = false;
+                        _isLoading = true;
                       });
                     }
-                  });
-                }
-              }
-            });
-
-            _length = widget.source.isFullData! ? _fullDataLength : data.length;
-            _length = (data.length < _length ? data.length : _length);
-            return Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Column(
-                children: [
-                  Flexible(
-                      child: GridViewWidget(
-                    controller: _scrollController,
-                    itemCount: _length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == _length) {
-                        return buildProgressIndicator();
+                    _loadMore().then((value) {
+                      if (mounted) {
+                        setState(() {
+                          data.addAll(value);
+                          _isLoading = false;
+                        });
                       }
-                      return MangaHomeImageCard(
-                        isManga: widget.source.isManga ?? true,
-                        manga: data[index]!,
-                        source: widget.source,
-                      );
-                    },
-                  )),
-                ],
-              ),
-            );
-          },
-          error: (error, stackTrace) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                    });
+                  }
+                }
+              });
+
+              _length =
+                  widget.source.isFullData! ? _fullDataLength : data.length;
+              _length = (data.length < _length ? data.length : _length);
+              return Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Column(
                   children: [
-                    Column(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              if (_selectedIndex == 2 &&
-                                  _isSearch &&
-                                  _query.isNotEmpty) {
-                                ref.invalidate(searchMangaProvider(
-                                    source: widget.source,
-                                    query: _query,
-                                    page: 1));
-                              } else if (_selectedIndex == 1 &&
-                                  !_isSearch &&
-                                  _query.isEmpty) {
-                                ref.invalidate(getLatestUpdatesMangaProvider(
-                                    source: widget.source, page: 1));
-                              } else if (_selectedIndex == 0 &&
-                                  !_isSearch &&
-                                  _query.isEmpty) {
-                                ref.invalidate(getPopularMangaProvider(
-                                  source: widget.source,
-                                  page: 1,
-                                ));
-                              }
-                            },
-                            icon: const Icon(Icons.refresh)),
-                        Text(l10n.refresh)
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    Column(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Map<String, String> data = {
-                              'url': widget.source.baseUrl!,
-                              'sourceId': widget.source.id.toString(),
-                              'title': ''
-                            };
-                            context.push("/mangawebview", extra: data);
-                          },
-                          icon: Icon(
-                            Icons.public,
-                            size: 22,
-                            color: secondaryColor(context),
-                          ),
-                        ),
-                        const Text("Webview")
-                      ],
-                    )
+                    Flexible(
+                        child: GridViewWidget(
+                      controller: _scrollController,
+                      itemCount: _length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == _length) {
+                          return buildProgressIndicator();
+                        }
+                        return MangaHomeImageCard(
+                          isManga: widget.source.isManga ?? true,
+                          manga: data[index]!,
+                          source: widget.source,
+                        );
+                      },
+                    )),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  error.toString(),
-                  textAlign: TextAlign.center,
+              );
+            },
+            error: (error, stackTrace) => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                if (_selectedIndex == 2 &&
+                                    _isSearch &&
+                                    _query.isNotEmpty) {
+                                  ref.invalidate(searchMangaProvider(
+                                      source: widget.source,
+                                      query: _query,
+                                      page: 1));
+                                } else if (_selectedIndex == 1 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(getLatestUpdatesMangaProvider(
+                                      source: widget.source, page: 1));
+                                } else if (_selectedIndex == 0 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(getPopularMangaProvider(
+                                    source: widget.source,
+                                    page: 1,
+                                  ));
+                                }
+                              },
+                              icon: const Icon(Icons.refresh)),
+                          Text(l10n.refresh)
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Map<String, String> data = {
+                                'url': widget.source.baseUrl!,
+                                'sourceId': widget.source.id.toString(),
+                                'title': ''
+                              };
+                              context.push("/mangawebview", extra: data);
+                            },
+                            icon: Icon(
+                              Icons.public,
+                              size: 22,
+                              color: secondaryColor(context),
+                            ),
+                          ),
+                          const Text("Webview")
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          loading: () => const Center(
-            child: CircularProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    error.toString(),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         ));
   }

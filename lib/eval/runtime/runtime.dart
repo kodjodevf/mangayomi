@@ -111,6 +111,8 @@ Runtime runtimeEval(Uint8List bytecode) {
       'MBridge.querySelectorAll', $MBridge.$querySelectorAll);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.cryptoHandler', $MBridge.$cryptoHandler);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MBridge.sortMapList', $MBridge.$sortMapList);
   runtime.setup();
   return runtime;
 }

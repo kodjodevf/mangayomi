@@ -250,8 +250,8 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                     ]),
                   ),
                   Container(
-                    width: 100,
-                    height: 140,
+                    width: 110,
+                    height: 150,
                     color: snapshot.hasData &&
                             snapshot.data!.isNotEmpty &&
                             snapshot.data!.first.favorite

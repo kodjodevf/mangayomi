@@ -227,5 +227,6 @@
   "grey":"Gris",
   "automaic":"Automatique",
   "preferred_domain":"Domaine préféré",
-  "load_more":"Charger plus"
+  "load_more":"Charger plus",
+  "cancel_all_for_this_series":"Tout annuler pour cette serie"
 }

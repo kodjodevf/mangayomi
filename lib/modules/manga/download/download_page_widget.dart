@@ -1,4 +1,3 @@
-// ignore_for_file: implementation_imports, depend_on_referenced_packages
 import 'dart:io';
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
@@ -30,23 +30,17 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
   final StorageProvider _storageProvider = StorageProvider();
   _startDownload(bool? useWifi) async {
-    final data = await ref.watch(
+    await ref.watch(
         downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
             .future);
-    if (mounted) {
-      setState(() {
-        _pageUrls = data;
-      });
-    }
   }
 
   late final manga = widget.chapter.manga.value!;
   _deleteFile(List pageUrl) async {
     final mangaDir =
         await _storageProvider.getMangaMainDirectory(widget.chapter);
-    final path = await _storageProvider.getMangaChapterDirectory(
-      widget.chapter,
-    );
+    final path =
+        await _storageProvider.getMangaChapterDirectory(widget.chapter);
 
     try {
       if (await File("${mangaDir!.path}${widget.chapter.name}.cbz").exists()) {
@@ -278,26 +272,29 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     );
   }
 
-  _cancelTasks() {
+  _cancelTasks() async {
     setState(() {
       _isStarted = false;
     });
-
-    FileDownloader().cancelTasksWithIds(_pageUrls).then((value) async {
-      await Future.delayed(const Duration(seconds: 1));
-      final chapterD = isar.downloads
-          .filter()
-          .chapterIdEqualTo(widget.chapter.id!)
-          .findFirstSync();
-      if (chapterD != null) {
-        final verifyId = isar.downloads.getSync(chapterD.id!);
-        isar.writeTxnSync(() {
-          if (verifyId != null) {
-            isar.downloads.deleteSync(chapterD.id!);
-          }
-        });
-      }
-    });
+    _pageUrls = (isar.settings.getSync(227)!.chapterPageUrlsList ?? [])
+            .where((element) => element.chapterId == widget.chapter.id)
+            .map((e) => e.urls)
+            .firstOrNull ??
+        [];
+    await FileDownloader().cancelTasksWithIds(_pageUrls);
+    await Future.delayed(const Duration(seconds: 2));
+    final chapterD = isar.downloads
+        .filter()
+        .chapterIdEqualTo(widget.chapter.id!)
+        .findFirstSync();
+    if (chapterD != null) {
+      final verifyId = isar.downloads.getSync(chapterD.id!);
+      isar.writeTxnSync(() {
+        if (verifyId != null) {
+          isar.downloads.deleteSync(chapterD.id!);
+        }
+      });
+    }
   }
 
   @override
