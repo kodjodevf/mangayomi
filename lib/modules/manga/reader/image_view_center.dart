@@ -28,17 +28,20 @@ class ImageViewCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return StreamBuilder<Uint8List?>(
-        stream: ref
-            .watch(cropBordersProvider(datas: datas, cropBorder: cropBorders)
-                .future)
-            .asStream(),
-        builder: (context, snapshot) {
-          final hasData = snapshot.hasData && snapshot.data != null;
-
-          return _imageView(hasData ? hasData : datas.isLocale!,
-              hasData ? snapshot.data : datas.archiveImage, ref);
-        });
+    final image =
+        ref.watch(cropBordersProvider(datas: datas, cropBorder: cropBorders));
+    final defaultWidget = _imageView(datas.isLocale!, datas.archiveImage, ref);
+    return image.when(
+      data: (data) {
+        if (data == null && !datas.isLocale!) {
+          ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
+        }
+        return _imageView(data != null ? true : datas.isLocale!,
+            data ?? datas.archiveImage, ref);
+      },
+      error: (_, __) => defaultWidget,
+      loading: () => defaultWidget,
+    );
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage, WidgetRef ref) {

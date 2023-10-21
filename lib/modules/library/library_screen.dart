@@ -1730,7 +1730,7 @@ _importLocal(BuildContext context, bool isManga) {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     const Icon(Icons.archive_outlined),
-                                    Text(l10n.import_files,
+                                    Text("${l10n.import_files} ( ${isManga?".zip, .cbz":".mp4, .mkv, .avi, and more"} )",
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .textTheme
