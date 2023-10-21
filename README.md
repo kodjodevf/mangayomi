@@ -59,10 +59,6 @@ Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/rele
 
 
 
-## Disclaimer
-
-The developer of this application does not have any affiliation with the content providers available.
-
 ## Using Rust Inside Flutter
 
 This project leverages Flutter for GUI and Rust for the backend logic,
@@ -108,3 +104,7 @@ For detailed instructions on writing Rust and Flutter together,
 please refer to Rinf's [documentation](https://rinf-docs.cunarist.com).
 
 
+
+## Disclaimer
+
+The developer of this application does not have any affiliation with the content providers available.
