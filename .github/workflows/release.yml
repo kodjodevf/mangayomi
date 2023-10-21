@@ -25,6 +25,26 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Java toolchain (Only Android target)
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
+
       - name: Setup Android keystore
         run: |
           echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
@@ -68,6 +88,20 @@ jobs:
         uses: subosito/flutter-action@v2.10.0
         with:
           channel: 'stable'
+      
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
 
       - name: flutter pub get
         run: |
@@ -110,6 +144,20 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
+
       - name: flutter pub get
         run: |
           git config --global core.longpaths true
@@ -150,6 +198,20 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
+
       - name: flutter pub get
         run: |
           git config --global core.longpaths true
@@ -177,7 +239,7 @@ jobs:
           allowUpdates: true
 
           
-  build-and-release-linux_zip:
+  build-and-release-linux-zip:
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -195,6 +257,20 @@ jobs:
         uses: subosito/flutter-action@v2.10.0
         with:
           channel: 'stable'
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
 
       - name: flutter pub get
         run: flutter pub get
@@ -237,6 +313,20 @@ jobs:
         uses: subosito/flutter-action@v2.10.0
         with:
           channel: 'stable'
+          
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Protobuf compiler
+        uses: arduino/setup-protoc@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install the CLI tool
+        run: cargo install rinf
+        
+      - name: Generate message files
+        run: rinf message
 
       - name: flutter pub get
         run: flutter pub get

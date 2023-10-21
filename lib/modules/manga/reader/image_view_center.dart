@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -11,6 +12,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewCenter extends ConsumerWidget {
   final UChapDataPreload datas;
+  final bool cropBorders;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state) onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)
@@ -18,6 +20,7 @@ class ImageViewCenter extends ConsumerWidget {
   const ImageViewCenter({
     super.key,
     required this.datas,
+    required this.cropBorders,
     required this.loadStateChanged,
     required this.onDoubleTap,
     required this.initGestureConfigHandler,
@@ -25,7 +28,17 @@ class ImageViewCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return _imageView(datas.isLocale!, datas.archiveImage, ref);
+    return StreamBuilder<Uint8List?>(
+        stream: ref
+            .watch(cropBordersProvider(datas: datas, cropBorder: cropBorders)
+                .future)
+            .asStream(),
+        builder: (context, snapshot) {
+          final hasData = snapshot.hasData && snapshot.data != null;
+
+          return _imageView(hasData ? hasData : datas.isLocale!,
+              hasData ? snapshot.data : datas.archiveImage, ref);
+        });
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage, WidgetRef ref) {

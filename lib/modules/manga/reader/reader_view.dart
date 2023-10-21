@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -244,12 +245,15 @@ class _MangaChapterPageGalleryState
     if (_currentIndex! >= 0 && _currentIndex! < _uChapDataPreload.length) {
       if (_readerController.chapter.id !=
           _uChapDataPreload[_currentIndex!].chapter!.id) {
-        setState(() {
-          _readerController = ReaderController(
-              chapter: _uChapDataPreload[_currentIndex!].chapter!);
-
-          _chapterUrlModel = _uChapDataPreload[_currentIndex!].chapterUrlModel!;
-        });
+        if (mounted) {
+          setState(() {
+            _readerController = ReaderController(
+                chapter: _uChapDataPreload[_currentIndex!].chapter!);
+            chapter = _uChapDataPreload[_currentIndex!].chapter!;
+            _chapterUrlModel =
+                _uChapDataPreload[_currentIndex!].chapterUrlModel!;
+          });
+        }
       }
 
       ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(
@@ -315,14 +319,11 @@ class _MangaChapterPageGalleryState
         }
         if (mounted) {
           uChapDataPreloadL.addAll(uChapDataPreloadP);
-          setState(() {
-            _uChapDataPreload = uChapDataPreloadL;
-            _chapterUrlModel = chapterData;
-            _readerController = ReaderController(chapter: chap);
-            _readerController = ReaderController(
-                chapter: _uChapDataPreload[_currentIndex!].chapter!);
-            chapter = chap;
-          });
+          if (mounted) {
+            setState(() {
+              _uChapDataPreload = uChapDataPreloadL;
+            });
+          }
         }
       }
     } catch (_) {}
@@ -345,7 +346,6 @@ class _MangaChapterPageGalleryState
         _preloadImage(_currentIndex! - i);
       }
     }
-    // _initCropBorders();
   }
 
   void _onPageChanged(int index) {
@@ -355,12 +355,14 @@ class _MangaChapterPageGalleryState
     }
 
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
-      setState(() {
-        _readerController =
-            ReaderController(chapter: _uChapDataPreload[index].chapter!);
-
-        _chapterUrlModel = _uChapDataPreload[index].chapterUrlModel!;
-      });
+      if (mounted) {
+        setState(() {
+          _readerController =
+              ReaderController(chapter: _uChapDataPreload[index].chapter!);
+          chapter = _uChapDataPreload[_currentIndex!].chapter!;
+          _chapterUrlModel = _uChapDataPreload[index].chapterUrlModel!;
+        });
+      }
     }
     _currentIndex = index;
 
@@ -491,29 +493,31 @@ class _MangaChapterPageGalleryState
   }
 
   void _toggleScale(Offset tapPosition) {
-    setState(() {
-      if (_scaleAnimationController.isAnimating) {
-        return;
-      }
-
-      if (_photoViewController.scale == 1.0) {
-        _scalePosition = _computeAlignmentByTapOffset(tapPosition);
-
-        if (_scaleAnimationController.isCompleted) {
-          _scaleAnimationController.reset();
+    if (mounted) {
+      setState(() {
+        if (_scaleAnimationController.isAnimating) {
+          return;
         }
 
-        _scaleAnimationController.forward();
-        return;
-      }
+        if (_photoViewController.scale == 1.0) {
+          _scalePosition = _computeAlignmentByTapOffset(tapPosition);
 
-      if (_photoViewController.scale == 2.0) {
-        _scaleAnimationController.reverse();
-        return;
-      }
+          if (_scaleAnimationController.isCompleted) {
+            _scaleAnimationController.reset();
+          }
 
-      _photoViewScaleStateController.reset();
-    });
+          _scaleAnimationController.forward();
+          return;
+        }
+
+        if (_photoViewController.scale == 2.0) {
+          _scaleAnimationController.reverse();
+          return;
+        }
+
+        _photoViewScaleStateController.reset();
+      });
+    }
   }
 
   Axis _scrollDirection = Axis.vertical;
@@ -947,7 +951,7 @@ class _MangaChapterPageGalleryState
                     '${currentIndex + 1} / ${_readerController.getPageLength(_chapterUrlModel.pageUrls)}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 13.0,
+                      fontSize: 15.0,
                       shadows: <Shadow>[
                         Shadow(offset: Offset(0.0, 0.0), blurRadius: 7.0)
                       ],
@@ -1104,6 +1108,8 @@ class _MangaChapterPageGalleryState
         readerMode == ReaderMode.webtoon;
   }
 
+  final List<UChapDataPreload> _cropBorderCheckList = [];
+
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
   late AnimationController _doubleClickAnimationController;
@@ -1119,9 +1125,29 @@ class _MangaChapterPageGalleryState
     Navigator.pop(context);
   }
 
+  _processCropBorders() async {
+    for (var datas in _uChapDataPreload) {
+      if (!_cropBorderCheckList.contains(datas)) {
+        _cropBorderCheckList.add(datas);
+        ref.watch(cropBordersProvider(datas: datas, cropBorder: true));
+        ref.watch(cropBordersProvider(datas: datas, cropBorder: false));
+      } else {
+        if (!datas.isLocale!) {
+          final res = await ref.watch(
+              cropBordersProvider(datas: datas, cropBorder: true).future);
+          if (res == null) {
+            ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
+          }
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _processCropBorders();
     final backgroundColor = ref.watch(backgroundColorStateProvider);
+    final cropBorders = ref.watch(cropBordersStateProvider);
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
       onWillPop: () async {
@@ -1217,6 +1243,7 @@ class _MangaChapterPageGalleryState
                                       failedToLoadImage: (value) {
                                         // _failedToLoadImage.value = value;
                                       },
+                                      cropBorders: cropBorders,
                                     ),
                                   );
                                 },
@@ -1409,6 +1436,7 @@ class _MangaChapterPageGalleryState
 
                                       _doubleClickAnimationController.forward();
                                     },
+                                    cropBorders: cropBorders,
                                   );
                                 },
                                 itemCount: _uChapDataPreload.length,

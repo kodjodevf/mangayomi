@@ -1,0 +1,6 @@
+syntax = "proto3";
+package crop_borders;
+
+message ReadRequest {
+  bytes image = 1;
+}

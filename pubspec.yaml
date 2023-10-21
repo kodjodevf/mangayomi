@@ -41,12 +41,8 @@ dependencies:
   archive: ^3.3.9
   file_picker: ^5.3.3
   path_provider: ^2.1.0
-  # image: ^4.0.17
   scrollable_positioned_list: ^0.3.5
   dart_eval: ^0.6.5
-    # git:
-    #   url: https://github.com/kodjodevf/dart_eval.git
-    #   ref: 05c54b2
   json_path: ^0.6.2
   bot_toast: ^4.0.4
   flutter_web_auth_2: ^2.1.5
@@ -57,6 +53,8 @@ dependencies:
   media_kit_video: ^1.2.1
   media_kit_libs_video: ^1.0.3
   crypto: ^3.0.3
+  rinf: ^4.13.1
+  protobuf: ^3.1.0
   
 
 
