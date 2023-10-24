@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
@@ -173,7 +173,7 @@ class SourceSearchScreen extends ConsumerWidget {
 }
 
 class MangaGlobalImageCard extends ConsumerStatefulWidget {
-  final MangaModel manga;
+  final MManga manga;
   final Source source;
 
   const MangaGlobalImageCard({

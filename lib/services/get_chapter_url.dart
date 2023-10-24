@@ -3,8 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge_class/manga_model.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge/m_manga.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -67,18 +66,9 @@ Future<GetChapterUrlModel> getChapterUrl(
           compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
       final runtime = runtimeEval(bytecode);
-      runtime.args = [
-        $MangaModel.wrap(MangaModel(
-          lang: source.lang,
-          link: chapter.url,
-          baseUrl: source.baseUrl,
-          source: source.name,
-          apiUrl: source.apiUrl,
-          sourceId: source.id,
-        ))
-      ];
+      runtime.args = [$MManga.wrap(source.toMManga(link: chapter.url!))];
       var res = await runtime.executeLib(
-          'package:mangayomi/source_code.dart', 'getChapterUrl');
+          'package:mangayomi/source_code.dart', 'getChapterPages');
       if (res is $List) {
         for (var element in res.$reified) {
           if (element is $Value) {

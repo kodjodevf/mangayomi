@@ -34,13 +34,13 @@ class _SystemHash {
 const getMangaDetailProvider = GetMangaDetailFamily();
 
 /// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<MangaModel>> {
+class GetMangaDetailFamily extends Family<AsyncValue<MManga>> {
   /// See also [getMangaDetail].
   const GetMangaDetailFamily();
 
   /// See also [getMangaDetail].
   GetMangaDetailProvider call({
-    required MangaModel manga,
+    required MManga manga,
     required Source source,
   }) {
     return GetMangaDetailProvider(
@@ -75,10 +75,10 @@ class GetMangaDetailFamily extends Family<AsyncValue<MangaModel>> {
 }
 
 /// See also [getMangaDetail].
-class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
+class GetMangaDetailProvider extends AutoDisposeFutureProvider<MManga> {
   /// See also [getMangaDetail].
   GetMangaDetailProvider({
-    required MangaModel manga,
+    required MManga manga,
     required Source source,
   }) : this._internal(
           (ref) => getMangaDetail(
@@ -110,12 +110,12 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
     required this.source,
   }) : super.internal();
 
-  final MangaModel manga;
+  final MManga manga;
   final Source source;
 
   @override
   Override overrideWith(
-    FutureOr<MangaModel> Function(GetMangaDetailRef provider) create,
+    FutureOr<MManga> Function(GetMangaDetailRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -133,7 +133,7 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<MangaModel> createElement() {
+  AutoDisposeFutureProviderElement<MManga> createElement() {
     return _GetMangaDetailProviderElement(this);
   }
 
@@ -154,21 +154,21 @@ class GetMangaDetailProvider extends AutoDisposeFutureProvider<MangaModel> {
   }
 }
 
-mixin GetMangaDetailRef on AutoDisposeFutureProviderRef<MangaModel> {
+mixin GetMangaDetailRef on AutoDisposeFutureProviderRef<MManga> {
   /// The parameter `manga` of this provider.
-  MangaModel get manga;
+  MManga get manga;
 
   /// The parameter `source` of this provider.
   Source get source;
 }
 
 class _GetMangaDetailProviderElement
-    extends AutoDisposeFutureProviderElement<MangaModel>
+    extends AutoDisposeFutureProviderElement<MManga>
     with GetMangaDetailRef {
   _GetMangaDetailProviderElement(super.provider);
 
   @override
-  MangaModel get manga => (origin as GetMangaDetailProvider).manga;
+  MManga get manga => (origin as GetMangaDetailProvider).manga;
   @override
   Source get source => (origin as GetMangaDetailProvider).source;
 }

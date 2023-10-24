@@ -36,7 +36,7 @@ const getLatestUpdatesMangaProvider = GetLatestUpdatesMangaFamily();
 
 /// See also [getLatestUpdatesManga].
 class GetLatestUpdatesMangaFamily
-    extends Family<AsyncValue<List<MangaModel?>>> {
+    extends Family<AsyncValue<List<MManga?>>> {
   /// See also [getLatestUpdatesManga].
   const GetLatestUpdatesMangaFamily();
 
@@ -78,7 +78,7 @@ class GetLatestUpdatesMangaFamily
 
 /// See also [getLatestUpdatesManga].
 class GetLatestUpdatesMangaProvider
-    extends AutoDisposeFutureProvider<List<MangaModel?>> {
+    extends AutoDisposeFutureProvider<List<MManga?>> {
   /// See also [getLatestUpdatesManga].
   GetLatestUpdatesMangaProvider({
     required Source source,
@@ -118,7 +118,7 @@ class GetLatestUpdatesMangaProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MangaModel?>> Function(GetLatestUpdatesMangaRef provider)
+    FutureOr<List<MManga?>> Function(GetLatestUpdatesMangaRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -137,7 +137,7 @@ class GetLatestUpdatesMangaProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
     return _GetLatestUpdatesMangaProviderElement(this);
   }
 
@@ -159,7 +159,7 @@ class GetLatestUpdatesMangaProvider
 }
 
 mixin GetLatestUpdatesMangaRef
-    on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+    on AutoDisposeFutureProviderRef<List<MManga?>> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -168,7 +168,7 @@ mixin GetLatestUpdatesMangaRef
 }
 
 class _GetLatestUpdatesMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    extends AutoDisposeFutureProviderElement<List<MManga?>>
     with GetLatestUpdatesMangaRef {
   _GetLatestUpdatesMangaProviderElement(super.provider);
 

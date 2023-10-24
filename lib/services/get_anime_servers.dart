@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge_class/manga_model.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge/m_manga.dart';
+import 'package:mangayomi/eval/model/m_track.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
@@ -34,16 +34,7 @@ Future<(List<Video>, bool)> getAnimeServers(
       compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
   final runtime = runtimeEval(bytecode);
-  runtime.args = [
-    $MangaModel.wrap(MangaModel(
-      lang: source.lang,
-      link: episode.url,
-      baseUrl: source.baseUrl,
-      source: source.name,
-      apiUrl: source.apiUrl,
-      sourceId: source.id,
-    ))
-  ];
+  runtime.args = [$MManga.wrap(source.toMManga(link: episode.url!))];
   var res = await runtime.executeLib(
       'package:mangayomi/source_code.dart', 'getVideoList');
   if (res is $List) {
@@ -55,7 +46,7 @@ Future<(List<Video>, bool)> getAnimeServers(
           subtitles = subs.map((e) => Track(e.file, e.label)).toList();
         } else {
           try {
-            subtitles = (subs as List<TrackModel>).map((e) {
+            subtitles = (subs as List<MTrack>).map((e) {
               return Track(e.file, e.label);
             }).toList();
           } catch (_) {}
@@ -66,7 +57,7 @@ Future<(List<Video>, bool)> getAnimeServers(
           audios = auds.map((e) => Track(e.file, e.label)).toList();
         } else {
           try {
-            audios = (subs as List<TrackModel>).map((e) {
+            audios = (subs as List<MTrack>).map((e) {
               return Track(e.file, e.label);
             }).toList();
           } catch (_) {}

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_latest_updates_manga.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
@@ -53,8 +53,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     ];
   }
 
-  Future<List<MangaModel?>> _loadMore() async {
-    List<MangaModel?> mangaResList = [];
+  Future<List<MManga?>> _loadMore() async {
+    List<MManga?> mangaResList = [];
 
     if (_isLoading) {
       if (widget.source.isFullData!) {
@@ -91,7 +91,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late final _textEditingController = TextEditingController(text: widget.query);
   late String _query = widget.query;
   late bool _isSearch = widget.isSearch;
-  AsyncValue<List<MangaModel?>>? _getManga;
+  AsyncValue<List<MManga?>>? _getManga;
   int _length = 0;
   @override
   Widget build(BuildContext context) {
@@ -398,7 +398,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 }
 
 class MangaHomeImageCard extends ConsumerStatefulWidget {
-  final MangaModel manga;
+  final MManga manga;
   final bool isManga;
   final Source source;
   const MangaHomeImageCard({

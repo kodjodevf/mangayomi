@@ -34,7 +34,7 @@ class _SystemHash {
 const searchMangaProvider = SearchMangaFamily();
 
 /// See also [searchManga].
-class SearchMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
+class SearchMangaFamily extends Family<AsyncValue<List<MManga?>>> {
   /// See also [searchManga].
   const SearchMangaFamily();
 
@@ -78,7 +78,7 @@ class SearchMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
 }
 
 /// See also [searchManga].
-class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
+class SearchMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   /// See also [searchManga].
   SearchMangaProvider({
     required Source source,
@@ -123,7 +123,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
 
   @override
   Override overrideWith(
-    FutureOr<List<MangaModel?>> Function(SearchMangaRef provider) create,
+    FutureOr<List<MManga?>> Function(SearchMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -142,7 +142,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
     return _SearchMangaProviderElement(this);
   }
 
@@ -165,7 +165,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MangaModel?>> {
   }
 }
 
-mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -177,7 +177,7 @@ mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
 }
 
 class _SearchMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    extends AutoDisposeFutureProviderElement<List<MManga?>>
     with SearchMangaRef {
   _SearchMangaProviderElement(super.provider);
 
