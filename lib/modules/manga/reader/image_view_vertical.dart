@@ -36,10 +36,10 @@ class ImageViewVertical extends ConsumerWidget {
         color: Colors.black,
         child: image.when(
           data: (data) {
-            if (data == null && !datas.isLocale!) {
-              ref.invalidate(
-                  cropBordersProvider(datas: datas, cropBorder: true));
-            }
+            // if (data == null && !datas.isLocale!) {
+            //   ref.invalidate(
+            //       cropBordersProvider(datas: datas, cropBorder: true));
+            // }
             return _imageView(data != null ? true : datas.isLocale!,
                 data ?? datas.archiveImage, context, ref);
           },
