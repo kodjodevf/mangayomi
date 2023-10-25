@@ -1,3 +1,4 @@
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -14,10 +15,14 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     return;
   }
   final source = getSource(manga.lang!, manga.source!);
-
-  final getManga = await ref.watch(
-      getMangaDetailProvider(manga: manga.toMManga(source!), source: source)
-          .future);
+  MManga getManga;
+  try {
+    getManga = await ref.watch(
+        getMangaDetailProvider(manga: manga.toMManga(source!), source: source)
+            .future);
+  } catch (_) {
+    return;
+  }
 
   manga
     ..imageUrl = getManga.imageUrl ?? manga.imageUrl

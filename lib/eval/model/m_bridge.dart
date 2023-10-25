@@ -10,6 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
+import 'package:mangayomi/eval/model/m_http_response.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
 import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
@@ -575,10 +576,9 @@ class MBridge {
   }
 
   //http request and also webview
-  static Future<String> http(String method, String datas) async {
+  static Future<MHttpResponse> http(String method, String datas) async {
     try {
       hp.StreamedResponse? res;
-      String result = "";
 
       //Get headers
       final headersMap = jsonDecode(datas)["headers"] as Map?;
@@ -606,13 +606,6 @@ class MBridge {
       //Get the serie source
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
 
-      //Check the serie if has cloudflare
-      // if (source != null && source.hasCloudflare!) {
-      // final res = await cloudflareBypass(
-      //     url: url, sourceId: source.id.toString(), method: method);
-      // return res;
-      // }
-
       //Do the http request if the serie hasn't cloudflare
       var request = hp.Request(method, Uri.parse(url));
 
@@ -623,22 +616,25 @@ class MBridge {
       request.headers.addAll(headers);
 
       res = await request.send();
-
-      if (res.statusCode != 200 && source != null && source.hasCloudflare!) {
-        result = await cloudflareBypass(
-            url: url, sourceId: source.id.toString(), method: 0);
-      } else if (res.statusCode != 200) {
-        result = "400";
-      } else if (res.statusCode == 200) {
-        result = await res.stream.bytesToString();
+      MHttpResponse httpResponse = MHttpResponse();
+      if (res.statusCode != 200 && (source?.hasCloudflare ?? false)) {
+        final result = await cloudflareBypass(
+            url: url, sourceId: source!.id.toString(), method: 0);
+        httpResponse =
+            MHttpResponse(body: result, statusCode: 200, hasError: false);
       } else {
-        result = res.reasonPhrase!;
+        httpResponse = MHttpResponse(
+            body: res.statusCode == 200
+                ? await res.stream.bytesToString()
+                : res.reasonPhrase,
+            statusCode: res.statusCode,
+            hasError: res.statusCode != 200);
       }
 
-      return result;
+      return httpResponse;
     } catch (e) {
       botToast(e.toString());
-      return "";
+      return MHttpResponse(body: e.toString(), statusCode: 0, hasError: true);
     }
   }
 

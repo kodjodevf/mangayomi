@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:dart_eval/dart_eval.dart';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
 import 'package:mangayomi/eval/bridge/m_manga.dart';
 import 'package:mangayomi/eval/bridge/m_status.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
@@ -13,7 +14,8 @@ Uint8List compilerEval(String sourceCode) {
     $MBridge.$declaration,
     $MManga.$declaration,
     $MVideo.$declaration,
-    $MTrack.$declaration
+    $MTrack.$declaration,
+    $MHttpResponse.$declaration
   ]);
   compiler.defineBridgeEnum($MStatus.$declaration);
   final program = compiler.compile({

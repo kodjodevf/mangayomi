@@ -274,6 +274,7 @@ class $MManga implements MManga, $Instance {
         $value.images = value.$reified;
       case 'hasNextPage':
         $value.hasNextPage = value.$reified;
+      case 'hasError':
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -302,44 +303,31 @@ class $MManga implements MManga, $Instance {
 
   @override
   String? get lang => $value.lang;
+
   @override
   int? get sourceId => $value.sourceId;
   @override
   int? get status => $value.status;
 
   @override
-  set author(String? author) {
-    //  implement author
-  }
+  set author(String? author) {}
 
   @override
-  set description(String? description) {
-    //  implement description
-  }
+  set description(String? description) {}
 
   @override
-  set imageUrl(String? imageUrl) {
-    //  implement imageUrl
-  }
+  set imageUrl(String? imageUrl) {}
 
   @override
-  set link(String? link) {
-    //  implement link
-  }
+  set link(String? link) {}
 
   @override
-  set name(String? name) {
-    //  implement name
-  }
+  set name(String? name) {}
 
   @override
-  set source(String? source) {
-    //  implement source
-  }
+  set source(String? source) {}
   @override
-  set hasNextPage(bool? hasNextPage) {
-    //  implement hasNextPage
-  }
+  set hasNextPage(bool? hasNextPage) {}
 
   @override
   List<dynamic>? get chaptersDateUploads => $value.chaptersDateUploads;
@@ -363,39 +351,25 @@ class $MManga implements MManga, $Instance {
   List<dynamic>? get statusList => $value.statusList;
 
   @override
-  set chaptersDateUploads(List? chaptersDateUploads) {
-    //  implement chaptersDateUploads
-  }
+  set chaptersDateUploads(List? chaptersDateUploads) {}
 
   @override
-  set names(List? names) {
-    //  implement names
-  }
+  set names(List? names) {}
 
   @override
-  set chaptersScanlators(List? chaptersScanlators) {
-    //  implement chaptersScanlators
-  }
+  set chaptersScanlators(List? chaptersScanlators) {}
 
   @override
-  set urls(List? urls) {
-    //  implement urls
-  }
+  set urls(List? urls) {}
 
   @override
-  set genre(List? genre) {
-    //  implement genre
-  }
+  set genre(List? genre) {}
 
   @override
-  set lang(String? lang) {
-    //  implement lang
-  }
+  set lang(String? lang) {}
 
   @override
-  set status(int? status) {
-    //  implement status
-  }
+  set status(int? status) {}
 
   @override
   String? get apiUrl => $value.apiUrl;
@@ -413,60 +387,38 @@ class $MManga implements MManga, $Instance {
   bool? get hasNextPage => $value.hasNextPage;
 
   @override
-  set apiUrl(String? apiUrl) {
-    //  implement apiUrl
-  }
+  set apiUrl(String? apiUrl) {}
 
   @override
-  set baseUrl(String? baseUrl) {
-    //  implement baseUrl
-  }
+  set baseUrl(String? baseUrl) {}
 
   @override
-  set dateFormat(String? dateFormat) {
-    //  implement dateFormat
-  }
+  set dateFormat(String? dateFormat) {}
 
   @override
-  set dateFormatLocale(String? dateFormatLocale) {
-    //  implement dateFormatLocale
-  }
+  set dateFormatLocale(String? dateFormatLocale) {}
 
   @override
   int? get page => $value.page;
 
   @override
-  set page(int? page) {
-    //  implement page
-  }
+  set page(int? page) {}
   @override
   String? get query => $value.query;
 
   @override
-  set query(String? query) {
-    //  implement query
-  }
+  set query(String? query) {}
 
   @override
-  set chaptersChaps(List? chaptersChaps) {
-    //  implement chaptersChaps
-  }
+  set chaptersChaps(List? chaptersChaps) {}
 
   @override
-  set chaptersVolumes(List? chaptersVolumes) {
-    //  implement chaptersVolumes
-  }
+  set chaptersVolumes(List? chaptersVolumes) {}
   @override
-  set images(List? images) {
-    //  implement images
-  }
+  set images(List? images) {}
   @override
-  set statusList(List? images) {
-    //  implement images
-  }
+  set statusList(List? images) {}
 
   @override
-  set sourceId(int? sourceId) {
-    //  implement sourceId
-  }
+  set sourceId(int? sourceId) {}
 }

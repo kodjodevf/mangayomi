@@ -1,3 +1,4 @@
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/bridge/m_manga.dart';
@@ -27,6 +28,12 @@ Future<List<MManga?>> searchManga(
     source.isManga! ? 'searchManga' : 'searchAnime',
   );
   try {
+    if (res is $MHttpResponse) {
+      final value = res.$reified;
+      if (value.hasError!) {
+        throw value.body!;
+      }
+    }
     if (res is $MManga) {
       final value = res.$reified;
       List<MManga> newManga = [];
@@ -49,7 +56,7 @@ Future<List<MManga?>> searchManga(
       manga = (res.$reified as List<dynamic>).map((e) => e as MManga).toList();
     }
   } catch (e) {
-    throw Exception(e);
+    throw e.toString();
   }
   return manga;
 }

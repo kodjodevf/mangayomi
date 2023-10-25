@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dart_eval/dart_eval.dart';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
 import 'package:mangayomi/eval/bridge/m_status.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
 import 'package:mangayomi/eval/bridge/m_video.dart';
@@ -20,7 +21,8 @@ Runtime runtimeEval(Uint8List bytecode) {
       'package:bridge_lib/bridge_lib.dart', 'MTrack.', $MTrack.$new);
   runtime.registerBridgeEnumValues(
       'package:bridge_lib/bridge_lib.dart', 'MStatus', $MStatus.$values);
-
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MHttpResponse.', $MHttpResponse.$new);
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.http', $MBridge.$http);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_track.dart';
 import 'package:mangayomi/eval/model/m_video.dart';
@@ -679,8 +680,8 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'http': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                returns: BridgeTypeAnnotation(
+                    BridgeTypeRef(CoreTypes.future, [$MHttpResponse.$type])),
                 params: [
                   BridgeParameter(
                       'method',
@@ -1128,7 +1129,7 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future $http(Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.http(args[0]!.$value, args[1]!.$value)
-          .then((value) => $String(value)));
+          .then((value) => $MHttpResponse.wrap(value)));
 
   static $Future $httpMultiparFormData(
           Runtime runtime, $Value? target, List<$Value?> args) =>
@@ -1236,7 +1237,6 @@ class $MBridge extends MBridge with $Bridge {
   void $bridgeSet(String identifier, $Value value) {}
 }
 
-
 $MVideo _toMVideo(Video e) => $MVideo.wrap(MVideo()
   ..headers = e.headers
   ..originalUrl = e.originalUrl
@@ -1256,4 +1256,3 @@ $MVideo _toMVideo(Video e) => $MVideo.wrap(MVideo()
             ..file = t.file
             ..label = t.label))
           .toList()));
-
