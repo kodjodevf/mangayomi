@@ -34,7 +34,7 @@ class _SystemHash {
 const getPopularMangaProvider = GetPopularMangaFamily();
 
 /// See also [getPopularManga].
-class GetPopularMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
+class GetPopularMangaFamily extends Family<AsyncValue<List<MManga?>>> {
   /// See also [getPopularManga].
   const GetPopularMangaFamily();
 
@@ -76,7 +76,7 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<MangaModel?>>> {
 
 /// See also [getPopularManga].
 class GetPopularMangaProvider
-    extends AutoDisposeFutureProvider<List<MangaModel?>> {
+    extends AutoDisposeFutureProvider<List<MManga?>> {
   /// See also [getPopularManga].
   GetPopularMangaProvider({
     required Source source,
@@ -116,7 +116,7 @@ class GetPopularMangaProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MangaModel?>> Function(GetPopularMangaRef provider) create,
+    FutureOr<List<MManga?>> Function(GetPopularMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -134,7 +134,7 @@ class GetPopularMangaProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MangaModel?>> createElement() {
+  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
     return _GetPopularMangaProviderElement(this);
   }
 
@@ -155,7 +155,7 @@ class GetPopularMangaProvider
   }
 }
 
-mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
+mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -164,7 +164,7 @@ mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MangaModel?>> {
 }
 
 class _GetPopularMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MangaModel?>>
+    extends AutoDisposeFutureProviderElement<List<MManga?>>
     with GetPopularMangaRef {
   _GetPopularMangaProviderElement(super.provider);
 

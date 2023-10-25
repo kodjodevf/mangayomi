@@ -1132,13 +1132,13 @@ class _MangaChapterPageGalleryState
         ref.watch(cropBordersProvider(datas: datas, cropBorder: true));
         ref.watch(cropBordersProvider(datas: datas, cropBorder: false));
       } else {
-        if (!datas.isLocale!) {
-          final res = await ref.watch(
-              cropBordersProvider(datas: datas, cropBorder: true).future);
-          if (res == null) {
-            ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
-          }
-        }
+        // if (!datas.isLocale!) {
+        //   final res = await ref.watch(
+        //       cropBordersProvider(datas: datas, cropBorder: true).future);
+        //   if (res == null) {
+        //     ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
+        //   }
+        // }
       }
     }
   }

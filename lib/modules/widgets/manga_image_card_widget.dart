@@ -7,7 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
@@ -21,7 +21,7 @@ class MangaImageCardWidget extends ConsumerWidget {
   final String lang;
   final bool isManga;
 
-  final MangaModel? getMangaDetail;
+  final MManga? getMangaDetail;
 
   const MangaImageCardWidget(
       {required this.lang,
@@ -103,7 +103,7 @@ class MangaImageCardWidget extends ConsumerWidget {
 }
 
 void pushToMangaReaderDetail(
-    {MangaModel? getManga,
+    {MManga? getManga,
     required String lang,
     required BuildContext context,
     int? archiveId,

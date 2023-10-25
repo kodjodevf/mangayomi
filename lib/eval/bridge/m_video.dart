@@ -1,52 +1,21 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
-import 'package:mangayomi/eval/bridge_class/track_model.dart';
+import 'package:mangayomi/eval/model/m_track.dart';
+import 'package:mangayomi/eval/model/m_video.dart';
+import 'package:mangayomi/eval/bridge/m_track.dart';
 
-class $VideoModel implements VideoModel, $Instance {
-  $VideoModel.wrap(this.$value) : _superclass = $Object($value);
+class $MVideo implements MVideo, $Instance {
+  $MVideo.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'VideoModel'));
+      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MVideo'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
         '': BridgeConstructorDef(BridgeFunctionDef(
-            returns: BridgeTypeAnnotation($type),
-            params: [],
-            namedParams: [
-              BridgeParameter(
-                  'url',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'quality',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'originalUrl',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'headers',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.mapType)),
-                  false),
-              BridgeParameter(
-                  'subtitles',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
-                  false),
-              BridgeParameter(
-                  'audios',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
-                  false),
-            ]))
+          returns: BridgeTypeAnnotation($type),
+        ))
       },
       // Specify class fields
       fields: {
@@ -57,23 +26,26 @@ class $VideoModel implements VideoModel, $Instance {
         'originalUrl': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
         'headers': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType))),
-        'subtitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
-            CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
-        'audios': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(
-            CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]))),
+            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType, [
+          BridgeTypeRef.type(RuntimeTypes.stringType),
+          BridgeTypeRef.type(RuntimeTypes.stringType)
+        ]))),
+        'subtitles': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
+        'audios': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
       },
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $VideoModel.wrap(VideoModel());
+    return $MVideo.wrap(MVideo());
   }
 
   @override
-  final VideoModel $value;
+  final MVideo $value;
 
   @override
-  VideoModel get $reified => $value;
+  MVideo get $reified => $value;
 
   final $Instance _superclass;
 
@@ -91,12 +63,12 @@ class $VideoModel implements VideoModel, $Instance {
       case 'subtitles':
         return $List.wrap($value.subtitles!
             .map((e) =>
-                $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
+                $MTrack.wrap(MTrack(file: e.file, label: e.label)))
             .toList());
       case 'audios':
         return $List.wrap($value.audios!
             .map((e) =>
-                $TrackModel.wrap(TrackModel(file: e.file, label: e.label)))
+                $MTrack.wrap(MTrack(file: e.file, label: e.label)))
             .toList());
 
       default:
@@ -124,7 +96,7 @@ class $VideoModel implements VideoModel, $Instance {
       case 'subtitles':
         $value.subtitles = (value.$reified as List).isNotEmpty
             ? (value.$reified as List)
-                .map((e) => TrackModel()
+                .map((e) => MTrack()
                   ..file = e.file
                   ..label = e.label)
                 .toList()
@@ -132,7 +104,7 @@ class $VideoModel implements VideoModel, $Instance {
       case 'audios':
         $value.audios = (value.$reified as List).isNotEmpty
             ? (value.$reified as List)
-                .map((e) => TrackModel()
+                .map((e) => MTrack()
                   ..file = e.file
                   ..label = e.label)
                 .toList()
@@ -147,10 +119,10 @@ class $VideoModel implements VideoModel, $Instance {
   String? get url => $value.url;
 
   @override
-  List<TrackModel>? get subtitles => $value.subtitles;
+  List<MTrack>? get subtitles => $value.subtitles;
 
   @override
-  List<TrackModel>? get audios => $value.audios;
+  List<MTrack>? get audios => $value.audios;
 
   @override
   String? get quality => $value.quality;

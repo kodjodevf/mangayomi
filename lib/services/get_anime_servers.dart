@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge_class/manga_model.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
+import 'package:mangayomi/eval/bridge/m_manga.dart';
+import 'package:mangayomi/eval/model/m_track.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
@@ -34,47 +35,50 @@ Future<(List<Video>, bool)> getAnimeServers(
       compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
   final runtime = runtimeEval(bytecode);
-  runtime.args = [
-    $MangaModel.wrap(MangaModel(
-      lang: source.lang,
-      link: episode.url,
-      baseUrl: source.baseUrl,
-      source: source.name,
-      apiUrl: source.apiUrl,
-      sourceId: source.id,
-    ))
-  ];
+  runtime.args = [$MManga.wrap(source.toMManga(link: episode.url!))];
   var res = await runtime.executeLib(
       'package:mangayomi/source_code.dart', 'getVideoList');
-  if (res is $List) {
-    video = res.$reified.map(
-      (e) {
-        List<Track>? subtitles = [];
-        var subs = e.subtitles;
-        if (subs is $List) {
-          subtitles = subs.map((e) => Track(e.file, e.label)).toList();
-        } else {
-          try {
-            subtitles = (subs as List<TrackModel>).map((e) {
-              return Track(e.file, e.label);
-            }).toList();
-          } catch (_) {}
-        }
-        List<Track>? audios = [];
-        var auds = e.audios;
-        if (auds is $List) {
-          audios = auds.map((e) => Track(e.file, e.label)).toList();
-        } else {
-          try {
-            audios = (subs as List<TrackModel>).map((e) {
-              return Track(e.file, e.label);
-            }).toList();
-          } catch (_) {}
-        }
-        return Video(e.url, e.quality, e.originalUrl,
-            headers: e.headers, subtitles: subtitles, audios: audios);
-      },
-    ).toList();
+
+  try {
+    if (res is $MHttpResponse) {
+      final value = res.$reified;
+      if (value.hasError!) {
+        throw value.body!;
+      }
+    }
+    if (res is $List) {
+      video = res.$reified.map(
+        (e) {
+          List<Track>? subtitles = [];
+          var subs = e.subtitles;
+          if (subs is $List) {
+            subtitles = subs.map((e) => Track(e.file, e.label)).toList();
+          } else {
+            try {
+              subtitles = (subs as List<MTrack>).map((e) {
+                return Track(e.file, e.label);
+              }).toList();
+            } catch (_) {}
+          }
+          List<Track>? audios = [];
+          var auds = e.audios;
+          if (auds is $List) {
+            audios = auds.map((e) => Track(e.file, e.label)).toList();
+          } else {
+            try {
+              audios = (subs as List<MTrack>).map((e) {
+                return Track(e.file, e.label);
+              }).toList();
+            } catch (_) {}
+          }
+          return Video(e.url, e.quality, e.originalUrl,
+              headers: e.headers, subtitles: subtitles, audios: audios);
+        },
+      ).toList();
+    }
+  } catch (e) {
+    throw e.toString();
   }
+
   return (video, false);
 }

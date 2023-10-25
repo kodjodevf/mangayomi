@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:dart_eval/dart_eval.dart';
-import 'package:mangayomi/eval/bridge_class/track_model.dart';
-import 'package:mangayomi/eval/bridge_class/video_model.dart';
-import 'package:mangayomi/eval/m_bridge.dart';
-import 'package:mangayomi/eval/bridge_class/manga_model.dart';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
+import 'package:mangayomi/eval/bridge/m_status.dart';
+import 'package:mangayomi/eval/bridge/m_track.dart';
+import 'package:mangayomi/eval/bridge/m_video.dart';
+import 'package:mangayomi/eval/bridge/m_bridge.dart';
+import 'package:mangayomi/eval/bridge/m_manga.dart';
 
 Runtime runtimeEval(Uint8List bytecode) {
   final runtime = Runtime(bytecode.buffer.asByteData());
@@ -12,19 +14,21 @@ Runtime runtimeEval(Uint8List bytecode) {
       'package:bridge_lib/bridge_lib.dart', 'MBridge.', $MBridge.$construct,
       isBridge: true);
   runtime.registerBridgeFunc(
-      'package:bridge_lib/bridge_lib.dart', 'MangaModel.', $MangaModel.$new);
+      'package:bridge_lib/bridge_lib.dart', 'MManga.', $MManga.$new);
   runtime.registerBridgeFunc(
-      'package:bridge_lib/bridge_lib.dart', 'VideoModel.', $VideoModel.$new);
+      'package:bridge_lib/bridge_lib.dart', 'MVideo.', $MVideo.$new);
   runtime.registerBridgeFunc(
-      'package:bridge_lib/bridge_lib.dart', 'TrackModel.', $TrackModel.$new);
+      'package:bridge_lib/bridge_lib.dart', 'MTrack.', $MTrack.$new);
+  runtime.registerBridgeEnumValues(
+      'package:bridge_lib/bridge_lib.dart', 'MStatus', $MStatus.$values);
+  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
+      'MHttpResponse.', $MHttpResponse.$new);
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.http', $MBridge.$http);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.listParseDateTime', $MBridge.$listParseDateTime);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.httpMultiparFormData', $MBridge.$httpMultiparFormData);
-  runtime.registerBridgeFunc(
-      'package:bridge_lib/bridge_lib.dart', 'MBridge.bAse64', $MBridge.$bAse64);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.gogoCdnExtractor', $MBridge.$gogoCdnExtractor);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
@@ -64,8 +68,6 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.toVideo', $MBridge.$toVideo);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
-      'MBridge.isEmptyOrIsNotEmpty', $MBridge.$isEmptyOrIsNotEmpty);
-  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonPathToList', $MBridge.$jsonPathToList);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.jsonDecodeToList', $MBridge.$jsonDecodeToList);
@@ -74,15 +76,11 @@ Runtime runtimeEval(Uint8List bytecode) {
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.parseStatus', $MBridge.$parseStatus);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
-      'MBridge.stringParseValue', $MBridge.$stringParseValue);
-  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.getMapValue', $MBridge.$getMapValue);
   runtime.registerBridgeFunc(
       'package:bridge_lib/bridge_lib.dart', 'MBridge.regExp', $MBridge.$regExp);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.parseChapterDate', $MBridge.$parseChapterDate);
-  runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
-      'MBridge.stringParse', $MBridge.$stringParse);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',
       'MBridge.substringAfter', $MBridge.$substringAfter);
   runtime.registerBridgeFunc('package:bridge_lib/bridge_lib.dart',

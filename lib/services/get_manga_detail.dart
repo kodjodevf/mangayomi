@@ -1,39 +1,38 @@
 import 'dart:async';
+import 'package:mangayomi/eval/bridge/m_http_response.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/eval/bridge_class/manga_model.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/bridge/m_manga.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_manga_detail.g.dart';
 
 @riverpod
-Future<MangaModel> getMangaDetail(
+Future<MManga> getMangaDetail(
   GetMangaDetailRef ref, {
-  required MangaModel manga,
+  required MManga manga,
   required Source source,
 }) async {
-  MangaModel? mangadetail;
+  MManga? mangadetail;
   final bytecode =
       compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
   final runtime = runtimeEval(bytecode);
-  runtime.args = [
-    $MangaModel.wrap(manga
-      ..source = source.name
-      ..lang = source.lang)
-  ];
+  runtime.args = [$MManga.wrap(manga)];
 
-  var result = await runtime.executeLib('package:mangayomi/source_code.dart',
+  var res = await runtime.executeLib('package:mangayomi/source_code.dart',
       source.isManga! ? 'getMangaDetail' : 'getAnimeDetail');
-  try {
-    if (result is $MangaModel) {
-      final value = result.$reified;
-      mangadetail = value;
+  if (res is $MHttpResponse) {
+    final value = res.$reified;
+    if (value.hasError!) {
+      throw value.body!;
     }
-  } catch (_) {
-    return manga;
+  }
+  if (res is $MManga) {
+    final value = res.$reified;
+    mangadetail = value;
   }
   return mangadetail!;
 }

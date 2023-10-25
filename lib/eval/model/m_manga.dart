@@ -1,4 +1,4 @@
-class MangaModel {
+class MManga {
   String? name;
 
   String? link;
@@ -41,7 +41,7 @@ class MangaModel {
   List<dynamic>? chaptersChaps;
   List<dynamic>? images;
   List<dynamic>? statusList;
-  MangaModel(
+  MManga(
       {this.source = "",
       this.author = "",
       this.genre,
@@ -67,27 +67,4 @@ class MangaModel {
       this.images,
       this.statusList,
       this.hasNextPage = true});
-}
-
-class VideoModel {
-  String? url;
-  String? quality;
-  String? originalUrl;
-  Map<String, String>? headers;
-  List<TrackModel>? subtitles;
-  List<TrackModel>? audios;
-  VideoModel(
-      {this.url,
-      this.quality,
-      this.originalUrl,
-      this.headers,
-      this.subtitles,
-      this.audios});
-}
-
-class TrackModel {
-  String? file;
-  String? label;
-
-  TrackModel({this.file, this.label});
 }

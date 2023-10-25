@@ -1,164 +1,19 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 
-class $MangaModel implements MangaModel, $Instance {
-  $MangaModel.wrap(this.$value) : _superclass = $Object($value);
+class $MManga implements MManga, $Instance {
+  $MManga.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MangaModel'));
+      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MManga'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
         '': BridgeConstructorDef(BridgeFunctionDef(
-            returns: BridgeTypeAnnotation($type),
-            params: [],
-            namedParams: [
-              BridgeParameter(
-                  'source',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'author',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'status',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.intType)),
-                  false),
-              BridgeParameter(
-                  'genre',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.stringType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'imageUrl',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'lang',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'name',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'link',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'description',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'baseUrl',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'dateFormat',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'dateFormatLocale',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'apiUrl',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'page',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.intType)),
-                  false),
-              BridgeParameter(
-                  'query',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.stringType)),
-                  false),
-              BridgeParameter(
-                  'sourceId',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.intType)),
-                  false),
-              BridgeParameter(
-                  'names',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'urls',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'chaptersScanlators',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'chaptersDateUploads',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'chaptersVolumes',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'chaptersChaps',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'images',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'statusList',
-                  BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.list,
-                        [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-                  ),
-                  false),
-              BridgeParameter(
-                  'hasNextPage',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef.type(RuntimeTypes.boolType)),
-                  false),
-            ]))
+          returns: BridgeTypeAnnotation($type),
+        ))
       },
       // Specify class fields
       fields: {
@@ -201,49 +56,43 @@ class $MangaModel implements MangaModel, $Instance {
         'names': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'urls': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'chaptersScanlators': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'chaptersDateUploads': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'chaptersVolumes': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'chaptersChaps': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'images': BridgeFieldDef(
           BridgeTypeAnnotation(
             BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
-          ),
-        ),
-        'statusList': BridgeFieldDef(
-          BridgeTypeAnnotation(
-            BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                CoreTypes.list, [BridgeTypeRef.type(RuntimeTypes.stringType)]),
           ),
         ),
         'hasNextPage': BridgeFieldDef(
@@ -255,14 +104,14 @@ class $MangaModel implements MangaModel, $Instance {
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MangaModel.wrap(MangaModel());
+    return $MManga.wrap(MManga());
   }
 
   @override
-  final MangaModel $value;
+  final MManga $value;
 
   @override
-  MangaModel get $reified => $value;
+  MManga get $reified => $value;
 
   final $Instance _superclass;
 
@@ -363,10 +212,7 @@ class $MangaModel implements MangaModel, $Instance {
             return e;
           }
         }).toList());
-      case 'statusList':
-        return $List.wrap($value.statusList!.map((e) {
-          return $int(e);
-        }).toList());
+
       case 'hasNextPage':
         return $bool($value.hasNextPage!);
       default:
@@ -387,7 +233,7 @@ class $MangaModel implements MangaModel, $Instance {
       case 'status':
         $value.status = value.$reified;
       case 'genre':
-        $value.genre = value.$reified as List<dynamic>;
+        $value.genre = value.$reified;
       case 'imageUrl':
         $value.imageUrl = value.$reified;
       case 'lang':
@@ -413,23 +259,22 @@ class $MangaModel implements MangaModel, $Instance {
       case 'sourceId':
         $value.sourceId = value.$reified;
       case 'names':
-        $value.names = value.$reified as List<dynamic>;
+        $value.names = value.$reified;
       case 'chaptersDateUploads':
-        $value.chaptersDateUploads = value.$reified as List<dynamic>;
+        $value.chaptersDateUploads = value.$reified;
       case 'chaptersScanlators':
-        $value.chaptersScanlators = value.$reified as List<dynamic>;
+        $value.chaptersScanlators = value.$reified;
       case 'urls':
-        $value.urls = value.$reified as List<dynamic>;
+        $value.urls = value.$reified;
       case 'chaptersVolumes':
-        $value.chaptersVolumes = value.$reified as List<dynamic>;
+        $value.chaptersVolumes = value.$reified;
       case 'chaptersChaps':
-        $value.chaptersChaps = value.$reified as List<dynamic>;
+        $value.chaptersChaps = value.$reified;
       case 'images':
-        $value.images = value.$reified as List<dynamic>;
-      case 'statusList':
-        $value.statusList = value.$reified as List<dynamic>;
+        $value.images = value.$reified;
       case 'hasNextPage':
         $value.hasNextPage = value.$reified;
+      case 'hasError':
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -458,44 +303,31 @@ class $MangaModel implements MangaModel, $Instance {
 
   @override
   String? get lang => $value.lang;
+
   @override
   int? get sourceId => $value.sourceId;
   @override
   int? get status => $value.status;
 
   @override
-  set author(String? author) {
-    //  implement author
-  }
+  set author(String? author) {}
 
   @override
-  set description(String? description) {
-    //  implement description
-  }
+  set description(String? description) {}
 
   @override
-  set imageUrl(String? imageUrl) {
-    //  implement imageUrl
-  }
+  set imageUrl(String? imageUrl) {}
 
   @override
-  set link(String? link) {
-    //  implement link
-  }
+  set link(String? link) {}
 
   @override
-  set name(String? name) {
-    //  implement name
-  }
+  set name(String? name) {}
 
   @override
-  set source(String? source) {
-    //  implement source
-  }
+  set source(String? source) {}
   @override
-  set hasNextPage(bool? hasNextPage) {
-    //  implement hasNextPage
-  }
+  set hasNextPage(bool? hasNextPage) {}
 
   @override
   List<dynamic>? get chaptersDateUploads => $value.chaptersDateUploads;
@@ -519,39 +351,25 @@ class $MangaModel implements MangaModel, $Instance {
   List<dynamic>? get statusList => $value.statusList;
 
   @override
-  set chaptersDateUploads(List? chaptersDateUploads) {
-    //  implement chaptersDateUploads
-  }
+  set chaptersDateUploads(List? chaptersDateUploads) {}
 
   @override
-  set names(List? names) {
-    //  implement names
-  }
+  set names(List? names) {}
 
   @override
-  set chaptersScanlators(List? chaptersScanlators) {
-    //  implement chaptersScanlators
-  }
+  set chaptersScanlators(List? chaptersScanlators) {}
 
   @override
-  set urls(List? urls) {
-    //  implement urls
-  }
+  set urls(List? urls) {}
 
   @override
-  set genre(List? genre) {
-    //  implement genre
-  }
+  set genre(List? genre) {}
 
   @override
-  set lang(String? lang) {
-    //  implement lang
-  }
+  set lang(String? lang) {}
 
   @override
-  set status(int? status) {
-    //  implement status
-  }
+  set status(int? status) {}
 
   @override
   String? get apiUrl => $value.apiUrl;
@@ -569,60 +387,38 @@ class $MangaModel implements MangaModel, $Instance {
   bool? get hasNextPage => $value.hasNextPage;
 
   @override
-  set apiUrl(String? apiUrl) {
-    //  implement apiUrl
-  }
+  set apiUrl(String? apiUrl) {}
 
   @override
-  set baseUrl(String? baseUrl) {
-    //  implement baseUrl
-  }
+  set baseUrl(String? baseUrl) {}
 
   @override
-  set dateFormat(String? dateFormat) {
-    //  implement dateFormat
-  }
+  set dateFormat(String? dateFormat) {}
 
   @override
-  set dateFormatLocale(String? dateFormatLocale) {
-    //  implement dateFormatLocale
-  }
+  set dateFormatLocale(String? dateFormatLocale) {}
 
   @override
   int? get page => $value.page;
 
   @override
-  set page(int? page) {
-    //  implement page
-  }
+  set page(int? page) {}
   @override
   String? get query => $value.query;
 
   @override
-  set query(String? query) {
-    //  implement query
-  }
+  set query(String? query) {}
 
   @override
-  set chaptersChaps(List? chaptersChaps) {
-    //  implement chaptersChaps
-  }
+  set chaptersChaps(List? chaptersChaps) {}
 
   @override
-  set chaptersVolumes(List? chaptersVolumes) {
-    //  implement chaptersVolumes
-  }
+  set chaptersVolumes(List? chaptersVolumes) {}
   @override
-  set images(List? images) {
-    //  implement images
-  }
+  set images(List? images) {}
   @override
-  set statusList(List? images) {
-    //  implement images
-  }
+  set statusList(List? images) {}
 
   @override
-  set sourceId(int? sourceId) {
-    //  implement sourceId
-  }
+  set sourceId(int? sourceId) {}
 }

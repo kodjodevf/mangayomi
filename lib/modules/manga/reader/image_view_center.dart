@@ -33,9 +33,9 @@ class ImageViewCenter extends ConsumerWidget {
     final defaultWidget = _imageView(datas.isLocale!, datas.archiveImage, ref);
     return image.when(
       data: (data) {
-        if (data == null && !datas.isLocale!) {
-          ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
-        }
+        // if (data == null && !datas.isLocale!) {
+        //   ref.invalidate(cropBordersProvider(datas: datas, cropBorder: true));
+        // }
         return _imageView(data != null ? true : datas.isLocale!,
             data ?? datas.archiveImage, ref);
       },

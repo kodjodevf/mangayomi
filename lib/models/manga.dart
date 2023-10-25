@@ -1,5 +1,7 @@
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/source.dart';
 part 'manga.g.dart';
 
 @collection
@@ -64,6 +66,30 @@ class Manga {
       this.lastRead = 0,
       this.isLocalArchive = false,
       this.customCoverImage});
+
+  MManga toMManga(Source source) {
+    return MManga(
+        name: name,
+        link: link,
+        genre: genre,
+        author: author,
+        status: switch (status) {
+          Status.ongoing => 0,
+          Status.completed => 1,
+          Status.onHiatus => 2,
+          Status.canceled => 3,
+          Status.publishingFinished => 4,
+          _ => 5,
+        },
+        description: description,
+        imageUrl: imageUrl,
+        baseUrl: source.baseUrl,
+        apiUrl: source.apiUrl,
+        lang: lang,
+        dateFormat: source.dateFormat,
+        source: source.name,
+        dateFormatLocale: source.dateFormatLocale);
+  }
 }
 
 enum Status {
@@ -74,4 +100,3 @@ enum Status {
   onHiatus,
   publishingFinished
 }
-

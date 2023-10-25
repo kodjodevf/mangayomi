@@ -1,4 +1,4 @@
-import 'package:mangayomi/eval/bridge_class/model.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -15,64 +15,27 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     return;
   }
   final source = getSource(manga.lang!, manga.source!);
-  final mangaS = MangaModel(
-      name: manga.name,
-      link: manga.link,
-      genre: manga.genre,
-      author: manga.author,
-      status: switch (manga.status) {
-        Status.ongoing => 0,
-        Status.completed => 1,
-        Status.onHiatus => 2,
-        Status.canceled => 3,
-        Status.publishingFinished => 4,
-        _ => 5,
-      },
-      description: manga.description,
-      imageUrl: manga.imageUrl,
-      baseUrl: source!.baseUrl,
-      apiUrl: source.apiUrl,
-      lang: manga.lang,
-      dateFormat: source.dateFormat,
-      dateFormatLocale: source.dateFormatLocale);
-  final getManga = await ref
-      .watch(getMangaDetailProvider(manga: mangaS, source: source).future);
+  MManga getManga;
+  try {
+    getManga = await ref.watch(
+        getMangaDetailProvider(manga: manga.toMManga(source!), source: source)
+            .future);
+  } catch (_) {
+    return;
+  }
 
-  final imageUrl = getManga.imageUrl != null && getManga.imageUrl!.isNotEmpty
-      ? getManga.imageUrl
-      : manga.imageUrl ?? "";
-  final name = getManga.name != null && getManga.name!.isNotEmpty
-      ? getManga.name!.trim().trimLeft().trimRight()
-      : manga.name ?? "";
-  final genre = getManga.genre != null && getManga.genre!.isNotEmpty
-      ? getManga.genre!
-          .map((e) => e.toString().trim().trimLeft().trimRight())
-          .toList()
-          .toSet()
-          .toList()
-      : manga.genre ?? [];
-
-  final author = getManga.author != null && getManga.author!.isNotEmpty
-      ? getManga.author!.trim().trimLeft().trimRight()
-      : manga.author ?? "";
-  final description =
-      getManga.description != null && getManga.description!.isNotEmpty
-          ? getManga.description!.trim().trimLeft().trimRight()
-          : manga.description ?? "";
-  final link = getManga.link != null && getManga.link!.isNotEmpty
-      ? getManga.link!.trim().trimLeft().trimRight()
-      : manga.link ?? "";
-  final sourceA = getManga.source != null && getManga.source!.isNotEmpty
-      ? getManga.source!.trim().trimLeft().trimRight()
-      : manga.source ?? "";
-  final lang = getManga.lang != null && getManga.lang!.isNotEmpty
-      ? getManga.lang!.trim().trimLeft().trimRight()
-      : manga.lang ?? "";
   manga
-    ..imageUrl = imageUrl
-    ..name = name
-    ..genre = genre
-    ..author = author
+    ..imageUrl = getManga.imageUrl ?? manga.imageUrl
+    ..name = getManga.name?.trim().trimLeft().trimRight() ?? manga.name
+    ..genre = getManga.genre
+            ?.map((e) => e.toString().trim().trimLeft().trimRight())
+            .toList()
+            .toSet()
+            .toList() ??
+        manga.genre ??
+        []
+    ..author =
+        getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
     ..status = switch (getManga.status) {
       0 => Status.ongoing,
       1 => Status.completed,
@@ -81,10 +44,12 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
       4 => Status.publishingFinished,
       _ => Status.unknown,
     }
-    ..description = description
-    ..link = link
-    ..source = sourceA
-    ..lang = lang
+    ..description = getManga.description?.trim().trimLeft().trimRight() ??
+        manga.description ??
+        ""
+    ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
+    ..source = getManga.source?.trim().trimLeft().trimRight() ?? manga.source
+    ..lang = manga.lang
     ..isManga = source.isManga
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
   final checkManga = isar.mangas.getSync(mangaId);
