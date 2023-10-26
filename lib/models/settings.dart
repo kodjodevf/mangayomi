@@ -129,6 +129,8 @@ class Settings {
   @enumerated
   BackgroundColor backgroundColor;
 
+  List<PersonalPageMode>? personalPageModeList;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -183,7 +185,8 @@ class Settings {
       this.pagePreloadAmount = 6,
       this.scaleType = ScaleType.fitScreen,
       this.checkForExtensionUpdates = true,
-      this.backgroundColor = BackgroundColor.black});
+      this.backgroundColor = BackgroundColor.black,
+      this.personalPageModeList});
 }
 
 enum DisplayType {
@@ -266,7 +269,17 @@ class PersonalReaderMode {
   ReaderMode readerMode = ReaderMode.vertical;
 }
 
+@embedded
+class PersonalPageMode {
+  int? mangaId;
+
+  @enumerated
+  PageMode pageMode = PageMode.onePage;
+}
+
 enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }
+
+enum PageMode { onePage, doubleColumm }
 
 @embedded
 class FilterScanlator {

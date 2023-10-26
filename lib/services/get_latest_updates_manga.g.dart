@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'a5d39851af8f86e57147591b2c261298ecaa6a1d';
+    r'1d73d374c00305d86e3a62ea762367391a01b093';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,8 +35,7 @@ class _SystemHash {
 const getLatestUpdatesMangaProvider = GetLatestUpdatesMangaFamily();
 
 /// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaFamily
-    extends Family<AsyncValue<List<MManga?>>> {
+class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<MManga?>>> {
   /// See also [getLatestUpdatesManga].
   const GetLatestUpdatesMangaFamily();
 
@@ -118,8 +117,7 @@ class GetLatestUpdatesMangaProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MManga?>> Function(GetLatestUpdatesMangaRef provider)
-        create,
+    FutureOr<List<MManga?>> Function(GetLatestUpdatesMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -158,8 +156,7 @@ class GetLatestUpdatesMangaProvider
   }
 }
 
-mixin GetLatestUpdatesMangaRef
-    on AutoDisposeFutureProviderRef<List<MManga?>> {
+mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
   /// The parameter `source` of this provider.
   Source get source;
 

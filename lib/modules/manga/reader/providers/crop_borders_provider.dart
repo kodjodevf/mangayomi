@@ -37,7 +37,6 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
         operation: RustOperation.Read,
         message: requestMessage.writeToBuffer());
     final rustResponse = await requestToRust(rustRequest);
-
     return rustResponse.blob;
   }
   return null;

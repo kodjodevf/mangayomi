@@ -14,17 +14,11 @@ class ImageViewCenter extends ConsumerWidget {
   final UChapDataPreload datas;
   final bool cropBorders;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
-  final Function(ExtendedImageGestureState state) onDoubleTap;
-  final GestureConfig Function(ExtendedImageState state)
-      initGestureConfigHandler;
-  const ImageViewCenter({
-    super.key,
-    required this.datas,
-    required this.cropBorders,
-    required this.loadStateChanged,
-    required this.onDoubleTap,
-    required this.initGestureConfigHandler,
-  });
+  const ImageViewCenter(
+      {super.key,
+      required this.datas,
+      required this.cropBorders,
+      required this.loadStateChanged});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -53,9 +47,6 @@ class ImageViewCenter extends ConsumerWidget {
                 fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap,
                 loadStateChanged: loadStateChanged,
               )
             : ExtendedImage.file(
@@ -63,9 +54,6 @@ class ImageViewCenter extends ConsumerWidget {
                 fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
-                mode: ExtendedImageMode.gesture,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap,
                 loadStateChanged: loadStateChanged,
               )
         : ExtendedImage.network(
@@ -77,8 +65,6 @@ class ImageViewCenter extends ConsumerWidget {
             enableMemoryCache: true,
             mode: ExtendedImageMode.gesture,
             cacheMaxAge: const Duration(days: 7),
-            initGestureConfigHandler: initGestureConfigHandler,
-            onDoubleTap: onDoubleTap,
             handleLoadingProgress: true,
             loadStateChanged: loadStateChanged,
           );

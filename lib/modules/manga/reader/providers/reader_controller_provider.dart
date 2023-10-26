@@ -62,6 +62,16 @@ class ReaderController {
     return isar.settings.getSync(227)!.defaultReaderMode;
   }
 
+  PageMode getPageMode() {
+    final personalPageModeList = getIsarSetting().personalPageModeList ?? [];
+    final personalPageMode = personalPageModeList
+        .where((element) => element.mangaId == getManga().id);
+    if (personalPageMode.isNotEmpty) {
+      return personalPageMode.first.pageMode;
+    }
+    return PageMode.onePage;
+  }
+
   void setReaderMode(ReaderMode newReaderMode) {
     List<PersonalReaderMode>? personalReaderModeLists = [];
     for (var personalReaderMode
@@ -75,6 +85,20 @@ class ReaderController {
       ..readerMode = newReaderMode);
     isar.writeTxnSync(() => isar.settings.putSync(
         getIsarSetting()..personalReaderModeList = personalReaderModeLists));
+  }
+
+  void setPageMode(PageMode newPageMode) {
+    List<PersonalPageMode>? personalPageModeLists = [];
+    for (var personalPageMode in getIsarSetting().personalPageModeList ?? []) {
+      if (personalPageMode.mangaId != getManga().id) {
+        personalPageModeLists.add(personalPageMode);
+      }
+    }
+    personalPageModeLists.add(PersonalPageMode()
+      ..mangaId = getManga().id
+      ..pageMode = newPageMode);
+    isar.writeTxnSync(() => isar.settings.putSync(
+        getIsarSetting()..personalPageModeList = personalPageModeLists));
   }
 
   void setShowPageNumber(bool value) {

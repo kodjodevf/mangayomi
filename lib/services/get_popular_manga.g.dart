@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'94fbfc0ba4aca487c3f510263bde2566d7b2bf5a';
+String _$getPopularMangaHash() => r'68fcd40dfff14b97e19592e611098b1634e5e17c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -75,8 +75,7 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<MManga?>>> {
 }
 
 /// See also [getPopularManga].
-class GetPopularMangaProvider
-    extends AutoDisposeFutureProvider<List<MManga?>> {
+class GetPopularMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   /// See also [getPopularManga].
   GetPopularMangaProvider({
     required Source source,
