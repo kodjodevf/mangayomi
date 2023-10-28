@@ -4,6 +4,14 @@
 
 <h1 align="center"> Mangayomi </h1>
 
+<p align="center">
+
+ [![CI](https://github.com/kodjodevf/mangayomi/actions/workflows/release.yml/badge.svg)](https://github.com/kodjodevf/mangayomi/actions/workflows/release.yml)
+ [![latest release](https://img.shields.io/github/release/kodjodevf/mangayomi.svg?maxAge=3600&label=download)](https://github.com/kodjodevf/mangayomi/releases)
+ [![Discord](https://img.shields.io/discord/1157628512077893666.svg?label=discord&labelColor=7289da&color=2c2f33&style=flat)](https://discord.gg/Ae2S6dUhAY) 
+
+</p>
+
 Mangayomi is free an open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi made with Flutter. It allows users to read manga and watch anime from a variety of sources.
 
 ## Features

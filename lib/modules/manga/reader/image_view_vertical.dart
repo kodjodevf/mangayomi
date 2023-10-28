@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -28,24 +27,10 @@ class ImageViewVertical extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final image =
-        ref.watch(cropBordersProvider(datas: datas, cropBorder: cropBorders));
-    final defaultWidget =
-        _imageView(datas.isLocale!, datas.archiveImage, context, ref);
-    return Container(
-        color: Colors.black,
-        child: image.when(
-          data: (data) {
-            // if (data == null && !datas.isLocale!) {
-            //   ref.invalidate(
-            //       cropBordersProvider(datas: datas, cropBorder: true));
-            // }
-            return _imageView(data != null ? true : datas.isLocale!,
-                data ?? datas.archiveImage, context, ref);
-          },
-          error: (_, __) => defaultWidget,
-          loading: () => defaultWidget,
-        ));
+    final cropImageExist = cropBorders && datas.cropImage != null;
+
+    return _imageView(cropImageExist ? true : datas.isLocale!,
+        cropImageExist ? datas.cropImage : datas.archiveImage, context, ref);
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage,
