@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_latest_updates_manga.dart';
 import 'package:mangayomi/services/get_popular_manga.dart';
@@ -53,8 +54,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     ];
   }
 
-  Future<List<MManga?>> _loadMore() async {
-    List<MManga?> mangaResList = [];
+  Future<MPages?> _loadMore() async {
+    MPages? mangaResList;
 
     if (_isLoading) {
       if (widget.source.isFullData!) {
@@ -91,7 +92,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late final _textEditingController = TextEditingController(text: widget.query);
   late String _query = widget.query;
   late bool _isSearch = widget.isSearch;
-  AsyncValue<List<MManga?>>? _getManga;
+  AsyncValue<MPages?>? _getManga;
   int _length = 0;
   @override
   Widget build(BuildContext context) {
@@ -215,7 +216,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           child: _getManga!.when(
             data: (data) {
               Widget buildProgressIndicator() {
-                return !(data.isNotEmpty && (data.last!.hasNextPage ?? true))
+                return !(data!.list.isNotEmpty && (data.hasNextPage))
                     ? Container()
                     : _isLoading
                         ? const Center(
@@ -244,7 +245,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                       _loadMore().then((value) {
                                         if (mounted) {
                                           setState(() {
-                                            data.addAll(value);
+                                            data.list.addAll(value!.list);
                                             _isLoading = false;
                                           });
                                         }
@@ -266,13 +267,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             : Container();
               }
 
-              if (data.isEmpty) {
+              if (data!.list.isEmpty) {
                 return Center(child: Text(l10n.no_result));
               }
               _scrollController.addListener(() {
                 if (_scrollController.position.pixels ==
                     _scrollController.position.maxScrollExtent) {
-                  if (data.isNotEmpty && (data.last!.hasNextPage ?? true)) {
+                  if (data.list.isNotEmpty && (data.hasNextPage)) {
                     if (mounted) {
                       setState(() {
                         _isLoading = true;
@@ -281,7 +282,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     _loadMore().then((value) {
                       if (mounted) {
                         setState(() {
-                          data.addAll(value);
+                          data.list.addAll(value!.list);
                           _isLoading = false;
                         });
                       }
@@ -290,9 +291,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 }
               });
 
+              _length = widget.source.isFullData!
+                  ? _fullDataLength
+                  : data.list.length;
               _length =
-                  widget.source.isFullData! ? _fullDataLength : data.length;
-              _length = (data.length < _length ? data.length : _length);
+                  (data.list.length < _length ? data.list.length : _length);
               return Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Column(
@@ -307,7 +310,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         }
                         return MangaHomeImageCard(
                           isManga: widget.source.isManga ?? true,
-                          manga: data[index]!,
+                          manga: data.list[index],
                           source: widget.source,
                         );
                       },
@@ -419,10 +422,8 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
     super.build(context);
 
     return MangaImageCardWidget(
-      getMangaDetail: widget.manga
-        ..lang = widget.source.lang
-        ..source = widget.source.name,
-      lang: widget.source.lang!,
+      getMangaDetail: widget.manga,
+      source: widget.source,
       isManga: widget.isManga,
     );
   }

@@ -77,7 +77,8 @@ class RapidCloudExtractor {
               subtitles: data.tracks != null && data.tracks!.isEmpty
                   ? []
                   : data.tracks!
-                      .map((e) => Track(e.file ?? "", e.label ?? ""))
+                      .map((e) =>
+                          Track(file: e.file ?? "", label: e.label ?? ""))
                       .toList()));
         }
       } else {
@@ -85,7 +86,7 @@ class RapidCloudExtractor {
             subtitles: data.tracks != null && data.tracks!.isEmpty
                 ? []
                 : data.tracks!
-                    .map((e) => Track(e.file ?? "", e.label ?? ""))
+                    .map((e) => Track(file: e.file ?? "", label: e.label ?? ""))
                     .toList()));
       }
       return videoList;

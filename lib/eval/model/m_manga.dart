@@ -1,3 +1,6 @@
+import 'package:mangayomi/eval/model/m_chapter.dart';
+import 'package:mangayomi/models/manga.dart';
+
 class MManga {
   String? name;
 
@@ -9,62 +12,32 @@ class MManga {
 
   String? author;
 
-  int? status;
+  Status? status;
 
-  List<dynamic>? genre = [];
+  List<String>? genre;
 
-  String? source;
+  List<MChapter>? chapters;
 
-  String? lang;
-
-  String? baseUrl;
-
-  String? dateFormat;
-
-  String? dateFormatLocale;
-
-  String? apiUrl;
-
-  int? page;
-
-  String? query;
-
-  int? sourceId;
-
-  bool? hasNextPage;
-
-  List<dynamic>? names;
-  List<dynamic>? urls;
-  List<dynamic>? chaptersScanlators;
-  List<dynamic>? chaptersDateUploads;
-  List<dynamic>? chaptersVolumes;
-  List<dynamic>? chaptersChaps;
-  List<dynamic>? images;
-  List<dynamic>? statusList;
   MManga(
-      {this.source = "",
-      this.author = "",
+      {this.author,
       this.genre,
-      this.imageUrl = "",
-      this.lang = "",
-      this.link = "",
-      this.name = "",
-      this.status = 0,
-      this.description = "",
-      this.apiUrl = "",
-      this.baseUrl = "",
-      this.dateFormat = "",
-      this.dateFormatLocale = "",
-      this.page = 1,
-      this.query = "",
-      this.sourceId = 0,
-      this.names,
-      this.chaptersDateUploads,
-      this.chaptersScanlators,
-      this.urls,
-      this.chaptersVolumes,
-      this.chaptersChaps,
-      this.images,
-      this.statusList,
-      this.hasNextPage = true});
+      this.imageUrl,
+      this.link,
+      this.name,
+      this.status = Status.unknown,
+      this.description,
+      this.chapters});
+
+  // Manga toManga(Manga? manga, String source) {
+  //   return Manga(
+  //       source: manga?.source ?? source,
+  //       author: author,
+  //       genre: genre,
+  //       imageUrl: imageUrl,
+  //       lang: "lang",
+  //       link: link,
+  //       name: name,
+  //       status: status!,
+  //       description: description);
+  // }
 }

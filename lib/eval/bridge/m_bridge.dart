@@ -1,18 +1,17 @@
 import 'dart:convert';
+
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge/m_http_response.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/eval/model/m_track.dart';
-import 'package:mangayomi/eval/model/m_video.dart';
+import 'package:mangayomi/eval/bridge/m_status.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
 import 'package:mangayomi/eval/bridge/m_video.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 
 class $MBridge extends MBridge with $Bridge {
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MBridge'));
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MBridge'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
@@ -22,77 +21,64 @@ class $MBridge extends MBridge with $Bridge {
       methods: {
         'cryptoHandler': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'text',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'iv',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'secretKeyString',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'encrypt',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.boolType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'encryptAESCryptoJS': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'plainText',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'passphrase',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'decryptAESCryptoJS': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'encrypted',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'passphrase',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'deobfuscateJsPassword': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'inputString',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -100,14 +86,13 @@ class $MBridge extends MBridge with $Bridge {
         'sibnetExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -115,14 +100,13 @@ class $MBridge extends MBridge with $Bridge {
         'myTvExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -130,14 +114,13 @@ class $MBridge extends MBridge with $Bridge {
         'okruExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -145,19 +128,17 @@ class $MBridge extends MBridge with $Bridge {
         'voeExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'quality',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       true),
                 ],
@@ -166,14 +147,13 @@ class $MBridge extends MBridge with $Bridge {
         'vidBomExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -181,24 +161,21 @@ class $MBridge extends MBridge with $Bridge {
         'streamlareExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'suffix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -206,19 +183,17 @@ class $MBridge extends MBridge with $Bridge {
         'rapidCloudExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -226,25 +201,22 @@ class $MBridge extends MBridge with $Bridge {
         'sendVidExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'headers',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -252,163 +224,124 @@ class $MBridge extends MBridge with $Bridge {
         'yourUploadExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'headers',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       false),
                   BridgeParameter(
                       'name',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'substringAfter': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'text',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'pattern',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'substringBefore': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'text',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'pattern',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'substringBeforeLast': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'text',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'pattern',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'substringAfterLast': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'text',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'pattern',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                ],
-                namedParams: []),
-            isStatic: true),
-        'listParse': BridgeMethodDef(
-            BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
-                params: [
-                  BridgeParameter(
-                      'value',
-                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
-                      false),
-                  BridgeParameter(
-                      'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'toVideo': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.dynamicType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.dynamic)),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'quality',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'originalUrl',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'headers',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       true),
                   BridgeParameter(
                       'subtitles',
                       BridgeTypeAnnotation(
                           BridgeTypeRef(CoreTypes.list,
-                              [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                              [BridgeTypeRef(CoreTypes.dynamic)]),
                           nullable: true),
                       true),
                   BridgeParameter(
                       'audios',
                       BridgeTypeAnnotation(
                           BridgeTypeRef(CoreTypes.list,
-                              [BridgeTypeRef.type(RuntimeTypes.dynamicType)]),
+                              [BridgeTypeRef(CoreTypes.dynamic)]),
                           nullable: true),
                       true),
                 ],
@@ -416,300 +349,227 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'jsonPathToString': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'expression',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'join',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'getMapValue': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'attr',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: [
                   BridgeParameter(
                       'encode',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.boolType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool),
                           nullable: true),
                       true),
                 ]),
             isStatic: true),
         'jsonPathToList': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
                 params: [
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'expression',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'jsonDecodeToList': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
                 params: [
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'jsonPathToMap': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.mapType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map)),
                 params: [
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'parseStatus': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.intType)),
+                returns: BridgeTypeAnnotation($MStatus.$type),
                 params: [
                   BridgeParameter(
                       'status',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'statusList',
-                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                      BridgeTypeAnnotation(BridgeTypeRef(
+                          CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
-        'listParseDateTime': BridgeMethodDef(
+        'parseDates': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
                 params: [
                   BridgeParameter(
                       'value',
-                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                      BridgeTypeAnnotation(BridgeTypeRef(
+                          CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
                       false),
                   BridgeParameter(
                       'dateFormat',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'dateFormatLocale',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                ],
-                namedParams: []),
-            isStatic: true),
-        'listContain': BridgeMethodDef(
-            BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.boolType)),
-                params: [
-                  BridgeParameter(
-                      'value',
-                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
-                      false),
-                  BridgeParameter(
-                      'element',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'querySelector': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'html',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'selector',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'typeElement',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                   BridgeParameter(
                       'attributes',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'parseChapterDate': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'date',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'dateFormat',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'dateFormatLocale',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'querySelectorAll': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
                 params: [
                   BridgeParameter(
                       'html',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: [
                   BridgeParameter(
                       'selector',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'typeElement',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                   BridgeParameter(
                       'attributes',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'typeRegExp',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                 ]),
             isStatic: true),
         'xpath': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
                 params: [
                   BridgeParameter(
                       'html',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'xpath',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'http': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef(CoreTypes.future, [$MHttpResponse.$type])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
                 params: [
                   BridgeParameter(
                       'method',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'datas',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                ],
-                namedParams: []),
-            isStatic: true),
-        'httpMultiparFormData': BridgeMethodDef(
-            BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
-                params: [
-                  BridgeParameter(
-                      'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
-                      false),
-                  BridgeParameter(
-                      'method',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -717,14 +577,13 @@ class $MBridge extends MBridge with $Bridge {
         'gogoCdnExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -732,19 +591,17 @@ class $MBridge extends MBridge with $Bridge {
         'doodExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'quality',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       true),
                 ],
@@ -753,19 +610,17 @@ class $MBridge extends MBridge with $Bridge {
         'streamTapeExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'quality',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       true),
                 ],
@@ -774,30 +629,26 @@ class $MBridge extends MBridge with $Bridge {
         'mp4UploadExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'headers',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'suffix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -805,19 +656,17 @@ class $MBridge extends MBridge with $Bridge {
         'streamWishExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
@@ -825,19 +674,17 @@ class $MBridge extends MBridge with $Bridge {
         'filemoonExtractor': BridgeMethodDef(
             BridgeFunctionDef(
                 returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                  BridgeTypeRef(CoreTypes.list,
-                      [BridgeTypeRef.type(RuntimeTypes.dynamicType)])
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
                 ])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'prefix',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                           nullable: true),
                       false),
                 ],
@@ -845,100 +692,74 @@ class $MBridge extends MBridge with $Bridge {
             isStatic: true),
         'getHtmlViaWebview': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future,
-                    [BridgeTypeRef.type(RuntimeTypes.stringType)])),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(
+                    CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
                 params: [
                   BridgeParameter(
                       'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'rule',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'evalJs': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'code',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'regExp': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'expression',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'source',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'replace',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                   BridgeParameter(
                       'group',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
-                      false),
-                ],
-                namedParams: []),
-            isStatic: true),
-        'intParse': BridgeMethodDef(
-            BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.intType)),
-                params: [
-                  BridgeParameter(
-                      'url',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                 ],
                 namedParams: []),
             isStatic: true),
         'sortMapList': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation(
-                    BridgeTypeRef.type(RuntimeTypes.stringType)),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'list',
-                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list,
-                          [BridgeTypeRef.type(RuntimeTypes.dynamicType)])),
+                      BridgeTypeAnnotation(BridgeTypeRef(
+                          CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
                       false),
                   BridgeParameter(
                       'value',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.stringType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                       false),
                   BridgeParameter(
                       'type',
-                      BridgeTypeAnnotation(
-                          BridgeTypeRef.type(RuntimeTypes.intType)),
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
                       false),
                 ],
                 namedParams: []),
@@ -958,14 +779,7 @@ class $MBridge extends MBridge with $Bridge {
           .map((e) => $String(e))
           .toList());
 
-  static $List $listParse(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $List.wrap(MBridge.listParse(
-      args[0]!.$value,
-      args[1]!.$value,
-    ).map((e) => $String(e)).toList());
-  }
-
-  static $int $parseStatus(
+  static $MStatus $parseStatus(
       Runtime runtime, $Value? target, List<$Value?> args) {
     List<dynamic> argss2 = [];
 
@@ -975,7 +789,7 @@ class $MBridge extends MBridge with $Bridge {
       argss2 = args[1]!.$value as List<dynamic>;
     }
 
-    return $int(MBridge.parseStatus(args[0]!.$value, argss2));
+    return $MStatus.wrap(MBridge.parseStatus(args[0]!.$value, argss2));
   }
 
   static $Value $sortMapList(
@@ -995,12 +809,12 @@ class $MBridge extends MBridge with $Bridge {
         MBridge.sortMapList(list, args[1]!.$value, args[2]!.$value)));
   }
 
-  static $List $listParseDateTime(
+  static $List $parseDates(
       Runtime runtime, $Value? target, List<$Value?> args) {
-    return $List.wrap(MBridge.listParseDateTime(
-            args[0]!.$value, args[1]!.$value, args[2]!.$value)
-        .map((e) => $String(e))
-        .toList());
+    return $List.wrap(
+        MBridge.parseDates(args[0]!.$value, args[1]!.$value, args[2]!.$value)
+            .map((e) => $String(e))
+            .toList());
   }
 
   static $MVideo $toVideo(Runtime runtime, $Value? target, List<$Value?> args) {
@@ -1096,16 +910,6 @@ class $MBridge extends MBridge with $Bridge {
         args[4]!.$value,
       ));
 
-  static $int $intParse(Runtime runtime, $Value? target, List<$Value?> args) =>
-      $int(MBridge.intParse(
-        args[0]!.$value,
-      ));
-
-  static $bool $listContain(
-          Runtime runtime, $Value? target, List<$Value?> args) =>
-      $bool(MBridge.listContain(
-          args[0]!.$value as List<$Value>, args[1]!.$value));
-
   static $String $querySelector(
           Runtime runtime, $Value? target, List<$Value?> args) =>
       $String(MBridge.querySelector(
@@ -1129,13 +933,7 @@ class $MBridge extends MBridge with $Bridge {
 
   static $Future $http(Runtime runtime, $Value? target, List<$Value?> args) =>
       $Future.wrap(MBridge.http(args[0]!.$value, args[1]!.$value)
-          .then((value) => $MHttpResponse.wrap(value)));
-
-  static $Future $httpMultiparFormData(
-          Runtime runtime, $Value? target, List<$Value?> args) =>
-      $Future.wrap(
-          MBridge.httpMultiparFormData(args[0]!.$value, args[1]!.$value)
-              .then((value) => $String(value)));
+          .then((value) => $String(value)));
 
   static $Future $getHtmlViaWebview(
           Runtime runtime, $Value? target, List<$Value?> args) =>
@@ -1237,22 +1035,16 @@ class $MBridge extends MBridge with $Bridge {
   void $bridgeSet(String identifier, $Value value) {}
 }
 
-$MVideo _toMVideo(Video e) => $MVideo.wrap(MVideo()
-  ..headers = e.headers
-  ..originalUrl = e.originalUrl
-  ..quality = e.quality
-  ..url = e.url
-  ..subtitles = $List.wrap(e.subtitles == null
-      ? []
-      : e.subtitles!
-          .map((t) => $MTrack.wrap(MTrack()
-            ..file = t.file
-            ..label = t.label))
-          .toList())
-  ..audios = $List.wrap(e.audios == null
-      ? []
-      : e.audios!
-          .map((t) => $MTrack.wrap(MTrack()
-            ..file = t.file
-            ..label = t.label))
-          .toList()));
+$MVideo _toMVideo(Video e) =>
+    $MVideo.wrap(Video(e.url, e.quality, e.originalUrl)
+      ..headers = e.headers
+      ..subtitles = $List.wrap(e.subtitles == null
+          ? []
+          : e.subtitles!
+              .map((t) => $MTrack.wrap(Track(file: t.file, label: t.label)))
+              .toList())
+      ..audios = $List.wrap(e.audios == null
+          ? []
+          : e.audios!
+              .map((t) => $MTrack.wrap(Track(file: t.file, label: t.label)))
+              .toList()));

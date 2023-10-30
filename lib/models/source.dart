@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_source.dart';
 part 'source.g.dart';
 
 @collection
@@ -93,16 +93,15 @@ class Source {
     isFullData = json['isFullData'] ?? false;
     appMinVerReq = json['appMinVerReq'];
   }
-  MManga toMManga({int page = 1, String? query = "", String link = ""}) {
-    return MManga(
-        page: page,
-        query: query,
-        link: link,
+  MSource toMSource() {
+    return MSource(
+        id: id,
+        name: name,
+        hasCloudflare: hasCloudflare,
+        isFullData: isFullData,
         lang: lang,
         baseUrl: baseUrl,
         apiUrl: apiUrl,
-        sourceId: id,
-        source: name,
         dateFormat: dateFormat,
         dateFormatLocale: dateFormatLocale);
   }

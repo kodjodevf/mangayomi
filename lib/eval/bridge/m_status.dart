@@ -7,7 +7,7 @@ class $MStatus implements $Instance {
   static $MStatus $wrap(Runtime runtime, $Value? target, List<$Value?> args) =>
       $MStatus.wrap(args[0]!.$value);
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MStatus'));
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MStatus'));
   static const $declaration = BridgeEnumDef($type, values: [
     'ongoing',
     'completed',

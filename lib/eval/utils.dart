@@ -1,5 +1,5 @@
 const utils = r'''
-import 'package:bridge_lib/bridge_lib.dart';
+import 'package:mangayomi/bridge_lib.dart';
 class Substring {
   final String _text;
 
@@ -7,6 +7,10 @@ class Substring {
 
   Substring substringAfter(String pattern) {
     return Substring(MBridge.substringAfter(_text,pattern));
+  }
+
+  Substring substringAfterLast(String pattern) {
+    return Substring(MBridge.substringAfterLast(_text,pattern));
   }
 
   Substring substringBefore(String pattern) {

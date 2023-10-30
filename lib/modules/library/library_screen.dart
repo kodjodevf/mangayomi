@@ -1671,7 +1671,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 : null,
                             context: context,
                             lang: randomManga.lang!,
-                            mangaM: randomManga);
+                            mangaM: randomManga,
+                            source: randomManga.source!);
                       });
                     } else {
                       _importLocal(context, widget.isManga);
@@ -1730,7 +1731,8 @@ _importLocal(BuildContext context, bool isManga) {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     const Icon(Icons.archive_outlined),
-                                    Text("${l10n.import_files} ( ${isManga?".zip, .cbz":".mp4, .mkv, .avi, and more"} )",
+                                    Text(
+                                        "${l10n.import_files} ( ${isManga ? ".zip, .cbz" : ".mp4, .mkv, .avi, and more"} )",
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .textTheme

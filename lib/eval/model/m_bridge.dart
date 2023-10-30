@@ -10,7 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
-import 'package:mangayomi/eval/model/m_http_response.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
 import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
@@ -206,36 +206,10 @@ class MBridge {
     }
   }
 
-  ///A list utility function
-  static List listParse(List value, int type) {
-    List<dynamic> val = [];
-    for (var element in value) {
-      if (element is $Value) {
-        val.add(element.$reified.toString());
-      } else {
-        val.add(element);
-      }
-    }
-    if (type == 3) {
-      return val.toSet().toList();
-    } else if (type == 1) {
-      return [val.first];
-    } else if (type == 2) {
-      return [val.last];
-    } else if (type == 4) {
-      return val.where((element) => element.toString().isNotEmpty).toList();
-    } else if (type == 5) {
-      return val.reversed.toList();
-    } else if (type == 6) {
-      return [val.join()];
-    }
-    return val;
-  }
-
   ///Convert serie status to int
   ///[status] contains the current status of the serie
   ///[statusList] contains a list of map of many static status
-  static int parseStatus(String status, List statusList) {
+  static Status parseStatus(String status, List statusList) {
     for (var element in statusList) {
       Map statusMap = {};
       if (element is $Map<$Value, $Value>) {
@@ -248,11 +222,18 @@ class MBridge {
             .toString()
             .toLowerCase()
             .contains(status.toLowerCase().trim().trimLeft().trimRight())) {
-          return element.value as int;
+          return switch (element.value as int) {
+            0 => Status.ongoing,
+            1 => Status.completed,
+            2 => Status.onHiatus,
+            3 => Status.canceled,
+            4 => Status.publishingFinished,
+            _ => Status.unknown,
+          };
         }
       }
     }
-    return 5;
+    return Status.unknown;
   }
 
   ///Get Html content via webview when http request not working
@@ -468,7 +449,7 @@ class MBridge {
   }
 
   //Parse a list of dates to millisecondsSinceEpoch
-  static List listParseDateTime(
+  static List parseDates(
       List value, String dateFormat, String dateFormatLocale) {
     List<dynamic> val = [];
     for (var element in value) {
@@ -512,73 +493,11 @@ class MBridge {
     return regCustomMatcher(expression, source, group);
   }
 
-  //Utility to parse $int to int
-  static int intParse(String value) {
-    return int.parse(value);
-  }
-
-  //Utility to check if list contains a value
-  static bool listContain(List value, String element) {
-    List<dynamic> val = [];
-    for (var element in value) {
-      val.add(element.$reified);
-    }
-    return val.contains(element);
-  }
-
-  //Http request for MultiparFormData
-  static Future<String> httpMultiparFormData(String url, int method) async {
+  //http request and also webview
+  static Future<String> http(String method, String datas) async {
     try {
       hp.StreamedResponse? res;
       String result = "";
-      final headersMap = jsonDecode(url)["headers"] as Map?;
-
-      final fieldsMap = jsonDecode(url)["fields"] as Map?;
-      Map<String, String> fields = {};
-      if (fieldsMap != null) {
-        fields = fieldsMap
-            .map((key, value) => MapEntry(key.toString(), value.toString()));
-      }
-      Map<String, String> headers = {};
-      if (headersMap != null) {
-        headers = headersMap
-            .map((key, value) => MapEntry(key.toString(), value.toString()));
-      }
-
-      var request = hp.MultipartRequest(
-          method == 0
-              ? 'GET'
-              : method == 1
-                  ? 'POST'
-                  : method == 2
-                      ? 'PUT'
-                      : 'DELETE',
-          Uri.parse(url));
-      request.fields.addAll(fields);
-
-      request.headers.addAll(headers);
-
-      res = await request.send();
-
-      if (res.statusCode != 200) {
-        result = "400";
-      } else if (res.statusCode == 200) {
-        result = await res.stream.bytesToString();
-      } else {
-        result = res.reasonPhrase!;
-      }
-
-      return result;
-    } catch (e) {
-      botToast(e.toString());
-      return "";
-    }
-  }
-
-  //http request and also webview
-  static Future<MHttpResponse> http(String method, String datas) async {
-    try {
-      hp.StreamedResponse? res;
 
       //Get headers
       final headersMap = jsonDecode(datas)["headers"] as Map?;
@@ -606,6 +525,13 @@ class MBridge {
       //Get the serie source
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
 
+      //Check the serie if has cloudflare
+      // if (source != null && source.hasCloudflare!) {
+      // final res = await cloudflareBypass(
+      //     url: url, sourceId: source.id.toString(), method: method);
+      // return res;
+      // }
+
       //Do the http request if the serie hasn't cloudflare
       var request = hp.Request(method, Uri.parse(url));
 
@@ -616,25 +542,22 @@ class MBridge {
       request.headers.addAll(headers);
 
       res = await request.send();
-      MHttpResponse httpResponse = MHttpResponse();
-      if (res.statusCode != 200 && (source?.hasCloudflare ?? false)) {
-        final result = await cloudflareBypass(
-            url: url, sourceId: source!.id.toString(), method: 0);
-        httpResponse =
-            MHttpResponse(body: result, statusCode: 200, hasError: false);
-      } else {
-        httpResponse = MHttpResponse(
-            body: res.statusCode == 200
-                ? await res.stream.bytesToString()
-                : res.reasonPhrase,
-            statusCode: res.statusCode,
-            hasError: res.statusCode != 200);
-      }
 
-      return httpResponse;
+      if (res.statusCode != 200 && source != null && source.hasCloudflare!) {
+        result = await cloudflareBypass(
+            url: url, sourceId: source.id.toString(), method: 0);
+      } else if (res.statusCode != 200) {
+        result = "400";
+      } else if (res.statusCode == 200) {
+        result = await res.stream.bytesToString();
+      } else {
+        result = res.reasonPhrase!;
+      }
+      // log(result);
+      return result;
     } catch (e) {
       botToast(e.toString());
-      return MHttpResponse(body: e.toString(), statusCode: 0, hasError: true);
+      return "";
     }
   }
 
@@ -969,6 +892,7 @@ final List<String> _dateFormats = [
   "MMMM d, yyyy",
   "MMM dd,yyyy"
 ];
+
 void botToast(String title) {
   BotToast.showSimpleNotification(
       onlyOne: true,

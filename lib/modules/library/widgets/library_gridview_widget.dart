@@ -76,7 +76,8 @@ class LibraryGridViewWidget extends StatelessWidget {
                       archiveId: isLocalArchive ? entry.id : null,
                       context: context,
                       lang: entry.lang!,
-                      mangaM: entry);
+                      mangaM: entry,
+                      source: entry.source!);
                 }
               },
               onLongPress: () {

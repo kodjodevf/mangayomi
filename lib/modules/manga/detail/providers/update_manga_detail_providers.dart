@@ -18,12 +18,10 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
   MManga getManga;
   try {
     getManga = await ref.watch(
-        getMangaDetailProvider(manga: manga.toMManga(source!), source: source)
-            .future);
+        getMangaDetailProvider(url: manga.link!, source: source!).future);
   } catch (_) {
     return;
   }
-
   manga
     ..imageUrl = getManga.imageUrl ?? manga.imageUrl
     ..name = getManga.name?.trim().trimLeft().trimRight() ?? manga.name
@@ -36,19 +34,13 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
         []
     ..author =
         getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
-    ..status = switch (getManga.status) {
-      0 => Status.ongoing,
-      1 => Status.completed,
-      2 => Status.onHiatus,
-      3 => Status.canceled,
-      4 => Status.publishingFinished,
-      _ => Status.unknown,
-    }
+    ..status =
+        getManga.status == Status.unknown ? manga.status : getManga.status!
     ..description = getManga.description?.trim().trimLeft().trimRight() ??
         manga.description ??
         ""
     ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
-    ..source = getManga.source?.trim().trimLeft().trimRight() ?? manga.source
+    ..source = manga.source
     ..lang = manga.lang
     ..isManga = source.isManga
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
@@ -61,35 +53,20 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
     List<Chapter> chapters = [];
-    if (getManga.names!.isNotEmpty &&
-        getManga.names!.length > manga.chapters.length) {
-      int newChapsIndex = getManga.names!.length - manga.chapters.length;
+
+    final chaps = getManga.chapters;
+    if (chaps!.isNotEmpty && chaps.length > manga.chapters.length) {
+      int newChapsIndex = chaps.length - manga.chapters.length;
       manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
       for (var i = 0; i < newChapsIndex; i++) {
-        String title = "";
-        String scanlator = "";
-        if (getManga.chaptersChaps != null &&
-            getManga.chaptersVolumes != null) {
-          title = beautifyChapterName(getManga.chaptersVolumes![i],
-              getManga.chaptersChaps![i], getManga.names![i], getManga.lang!);
-        } else {
-          title = getManga.names![i].trim().trimLeft().trimRight();
-        }
-        if (getManga.chaptersScanlators != null) {
-          scanlator = getManga.chaptersScanlators![i]
-              .toString()
-              .replaceAll(']', "")
-              .replaceAll("[", "");
-        }
         final chapter = Chapter(
-          name: title,
-          url: getManga.urls![i].trim().trimLeft().trimRight(),
-          dateUpload: getManga.chaptersDateUploads!.isEmpty
+          name: chaps[i].name!,
+          url: chaps[i].url!.trim().trimLeft().trimRight(),
+          dateUpload: chaps[i].dateUpload == null
               ? DateTime.now().millisecondsSinceEpoch.toString()
-              : getManga.chaptersDateUploads![i],
-          scanlator: scanlator,
+              : chaps[i].dateUpload.toString(),
+          scanlator: chaps[i].scanlator ?? '',
         )..manga.value = manga;
-        chapters.add(chapter);
         chapters.add(chapter);
       }
     }
@@ -100,41 +77,4 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
       }
     }
   });
-}
-
-String beautifyChapterName(String vol, String chap, String title, String lang) {
-  String result = "";
-  vol = vol.trim().trimLeft().trimRight();
-  chap = chap.trim().trimLeft().trimRight();
-  title = title.trim().trimLeft().trimRight();
-
-  if (vol != "null" && vol.isNotEmpty) {
-    if (chap != "null" && chap.isEmpty) {
-      result += "Volume $vol ";
-    } else {
-      result += "Vol. $vol ";
-    }
-  }
-
-  if (chap != "null" && chap.isNotEmpty) {
-    if (vol != "null" && vol.isEmpty) {
-      if (lang != "null" && lang == "fr") {
-        result += "Chapitre $chap";
-      } else {
-        result += "Chapter $chap";
-      }
-    } else {
-      result += "Ch. $chap ";
-    }
-  }
-
-  if (title != "null" && title.isNotEmpty) {
-    if (chap != "null" && chap.isEmpty) {
-      result += title;
-    } else {
-      result += " : $title";
-    }
-  }
-
-  return result;
 }

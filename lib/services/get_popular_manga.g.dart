@@ -6,7 +6,7 @@ part of 'get_popular_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularMangaHash() => r'68fcd40dfff14b97e19592e611098b1634e5e17c';
+String _$getPopularMangaHash() => r'6dbb566dffd311195e5e98b2c49470435a6da8dd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const getPopularMangaProvider = GetPopularMangaFamily();
 
 /// See also [getPopularManga].
-class GetPopularMangaFamily extends Family<AsyncValue<List<MManga?>>> {
+class GetPopularMangaFamily extends Family<AsyncValue<MPages?>> {
   /// See also [getPopularManga].
   const GetPopularMangaFamily();
 
@@ -75,7 +75,7 @@ class GetPopularMangaFamily extends Family<AsyncValue<List<MManga?>>> {
 }
 
 /// See also [getPopularManga].
-class GetPopularMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
+class GetPopularMangaProvider extends AutoDisposeFutureProvider<MPages?> {
   /// See also [getPopularManga].
   GetPopularMangaProvider({
     required Source source,
@@ -115,7 +115,7 @@ class GetPopularMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
 
   @override
   Override overrideWith(
-    FutureOr<List<MManga?>> Function(GetPopularMangaRef provider) create,
+    FutureOr<MPages?> Function(GetPopularMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -133,7 +133,7 @@ class GetPopularMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
+  AutoDisposeFutureProviderElement<MPages?> createElement() {
     return _GetPopularMangaProviderElement(this);
   }
 
@@ -154,7 +154,7 @@ class GetPopularMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   }
 }
 
-mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
+mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -163,8 +163,7 @@ mixin GetPopularMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
 }
 
 class _GetPopularMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MManga?>>
-    with GetPopularMangaRef {
+    extends AutoDisposeFutureProviderElement<MPages?> with GetPopularMangaRef {
   _GetPopularMangaProviderElement(super.provider);
 
   @override

@@ -6,7 +6,7 @@ part of 'search_manga.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'0b909c6f3e6d9f0ff7eb01432019b58fece0fbeb';
+String _$searchMangaHash() => r'f1a2af2f06c967c647ed803f8199de711a84bb49';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const searchMangaProvider = SearchMangaFamily();
 
 /// See also [searchManga].
-class SearchMangaFamily extends Family<AsyncValue<List<MManga?>>> {
+class SearchMangaFamily extends Family<AsyncValue<MPages?>> {
   /// See also [searchManga].
   const SearchMangaFamily();
 
@@ -78,7 +78,7 @@ class SearchMangaFamily extends Family<AsyncValue<List<MManga?>>> {
 }
 
 /// See also [searchManga].
-class SearchMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
+class SearchMangaProvider extends AutoDisposeFutureProvider<MPages?> {
   /// See also [searchManga].
   SearchMangaProvider({
     required Source source,
@@ -123,7 +123,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
 
   @override
   Override overrideWith(
-    FutureOr<List<MManga?>> Function(SearchMangaRef provider) create,
+    FutureOr<MPages?> Function(SearchMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -142,7 +142,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
+  AutoDisposeFutureProviderElement<MPages?> createElement() {
     return _SearchMangaProviderElement(this);
   }
 
@@ -165,7 +165,7 @@ class SearchMangaProvider extends AutoDisposeFutureProvider<List<MManga?>> {
   }
 }
 
-mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
+mixin SearchMangaRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -177,8 +177,7 @@ mixin SearchMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
 }
 
 class _SearchMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MManga?>>
-    with SearchMangaRef {
+    extends AutoDisposeFutureProviderElement<MPages?> with SearchMangaRef {
   _SearchMangaProviderElement(super.provider);
 
   @override

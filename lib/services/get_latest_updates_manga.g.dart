@@ -7,7 +7,7 @@ part of 'get_latest_updates_manga.dart';
 // **************************************************************************
 
 String _$getLatestUpdatesMangaHash() =>
-    r'1d73d374c00305d86e3a62ea762367391a01b093';
+    r'18b028e5a9dd359c19f1850819f0a46e50c0f27d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,7 +35,7 @@ class _SystemHash {
 const getLatestUpdatesMangaProvider = GetLatestUpdatesMangaFamily();
 
 /// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<MManga?>>> {
+class GetLatestUpdatesMangaFamily extends Family<AsyncValue<MPages?>> {
   /// See also [getLatestUpdatesManga].
   const GetLatestUpdatesMangaFamily();
 
@@ -76,8 +76,7 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<MManga?>>> {
 }
 
 /// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaProvider
-    extends AutoDisposeFutureProvider<List<MManga?>> {
+class GetLatestUpdatesMangaProvider extends AutoDisposeFutureProvider<MPages?> {
   /// See also [getLatestUpdatesManga].
   GetLatestUpdatesMangaProvider({
     required Source source,
@@ -117,7 +116,7 @@ class GetLatestUpdatesMangaProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MManga?>> Function(GetLatestUpdatesMangaRef provider) create,
+    FutureOr<MPages?> Function(GetLatestUpdatesMangaRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -135,7 +134,7 @@ class GetLatestUpdatesMangaProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
+  AutoDisposeFutureProviderElement<MPages?> createElement() {
     return _GetLatestUpdatesMangaProviderElement(this);
   }
 
@@ -156,7 +155,7 @@ class GetLatestUpdatesMangaProvider
   }
 }
 
-mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
+mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -165,7 +164,7 @@ mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
 }
 
 class _GetLatestUpdatesMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MManga?>>
+    extends AutoDisposeFutureProviderElement<MPages?>
     with GetLatestUpdatesMangaRef {
   _GetLatestUpdatesMangaProviderElement(super.provider);
 
