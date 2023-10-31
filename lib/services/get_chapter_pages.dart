@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:mangayomi/eval/compiler/compiler.dart';
-import 'package:mangayomi/eval/model/source_provider.dart';
+import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -15,15 +15,15 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'get_chapter_url.g.dart';
+part 'get_chapter_pages.g.dart';
 
-class GetChapterUrlModel {
+class GetChapterPagesModel {
   Directory? path;
   List<String> pageUrls = [];
   List<bool> isLocaleList = [];
   List<Uint8List?> archiveImages = [];
   List<UChapDataPreload> uChapDataPreload;
-  GetChapterUrlModel(
+  GetChapterPagesModel(
       {required this.path,
       required this.pageUrls,
       required this.isLocaleList,
@@ -32,8 +32,8 @@ class GetChapterUrlModel {
 }
 
 @riverpod
-Future<GetChapterUrlModel> getChapterUrl(
-  GetChapterUrlRef ref, {
+Future<GetChapterPagesModel> getChapterPages(
+  GetChapterPagesRef ref, {
   required Chapter chapter,
 }) async {
   List<UChapDataPreload> uChapDataPreloadp = [];
@@ -66,7 +66,7 @@ Future<GetChapterUrlModel> getChapterUrl(
       final runtime = runtimeEval(bytecode);
 
       var res = await runtime.executeLib('package:mangayomi/main.dart', 'main');
-      pageUrls = (await (res as MSourceProvider)
+      pageUrls = (await (res as MProvider)
           .getPageList(source.toMSource(), chapter.url!));
     }
   }
@@ -119,7 +119,7 @@ Future<GetChapterUrlModel> getChapterUrl(
           isLocaleList[i],
           archiveImages[i],
           i,
-          GetChapterUrlModel(
+          GetChapterPagesModel(
               path: path,
               pageUrls: pageUrls,
               isLocaleList: isLocaleList,
@@ -129,7 +129,7 @@ Future<GetChapterUrlModel> getChapterUrl(
     }
   }
 
-  return GetChapterUrlModel(
+  return GetChapterPagesModel(
       path: path,
       pageUrls: pageUrls,
       isLocaleList: isLocaleList,

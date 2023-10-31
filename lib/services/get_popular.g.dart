@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_manga_detail.dart';
+part of 'get_popular.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMangaDetailHash() => r'eb7a5bd7ba691d3bac1edc50c5d1e3edc8be89f8';
+String _$getPopularHash() => r'9eb971f8ca52854efe7431010b93a998e425f9da';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,33 +29,33 @@ class _SystemHash {
   }
 }
 
-/// See also [getMangaDetail].
-@ProviderFor(getMangaDetail)
-const getMangaDetailProvider = GetMangaDetailFamily();
+/// See also [getPopular].
+@ProviderFor(getPopular)
+const getPopularProvider = GetPopularFamily();
 
-/// See also [getMangaDetail].
-class GetMangaDetailFamily extends Family<AsyncValue<MManga>> {
-  /// See also [getMangaDetail].
-  const GetMangaDetailFamily();
+/// See also [getPopular].
+class GetPopularFamily extends Family<AsyncValue<MPages?>> {
+  /// See also [getPopular].
+  const GetPopularFamily();
 
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider call({
-    required String url,
+  /// See also [getPopular].
+  GetPopularProvider call({
     required Source source,
+    required int page,
   }) {
-    return GetMangaDetailProvider(
-      url: url,
+    return GetPopularProvider(
       source: source,
+      page: page,
     );
   }
 
   @override
-  GetMangaDetailProvider getProviderOverride(
-    covariant GetMangaDetailProvider provider,
+  GetPopularProvider getProviderOverride(
+    covariant GetPopularProvider provider,
   ) {
     return call(
-      url: provider.url,
       source: provider.source,
+      page: provider.page,
     );
   }
 
@@ -71,105 +71,105 @@ class GetMangaDetailFamily extends Family<AsyncValue<MManga>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getMangaDetailProvider';
+  String? get name => r'getPopularProvider';
 }
 
-/// See also [getMangaDetail].
-class GetMangaDetailProvider extends AutoDisposeFutureProvider<MManga> {
-  /// See also [getMangaDetail].
-  GetMangaDetailProvider({
-    required String url,
+/// See also [getPopular].
+class GetPopularProvider extends AutoDisposeFutureProvider<MPages?> {
+  /// See also [getPopular].
+  GetPopularProvider({
     required Source source,
+    required int page,
   }) : this._internal(
-          (ref) => getMangaDetail(
-            ref as GetMangaDetailRef,
-            url: url,
+          (ref) => getPopular(
+            ref as GetPopularRef,
             source: source,
+            page: page,
           ),
-          from: getMangaDetailProvider,
-          name: r'getMangaDetailProvider',
+          from: getPopularProvider,
+          name: r'getPopularProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getMangaDetailHash,
-          dependencies: GetMangaDetailFamily._dependencies,
+                  : _$getPopularHash,
+          dependencies: GetPopularFamily._dependencies,
           allTransitiveDependencies:
-              GetMangaDetailFamily._allTransitiveDependencies,
-          url: url,
+              GetPopularFamily._allTransitiveDependencies,
           source: source,
+          page: page,
         );
 
-  GetMangaDetailProvider._internal(
+  GetPopularProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.url,
     required this.source,
+    required this.page,
   }) : super.internal();
 
-  final String url;
   final Source source;
+  final int page;
 
   @override
   Override overrideWith(
-    FutureOr<MManga> Function(GetMangaDetailRef provider) create,
+    FutureOr<MPages?> Function(GetPopularRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetMangaDetailProvider._internal(
-        (ref) => create(ref as GetMangaDetailRef),
+      override: GetPopularProvider._internal(
+        (ref) => create(ref as GetPopularRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        url: url,
         source: source,
+        page: page,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<MManga> createElement() {
-    return _GetMangaDetailProviderElement(this);
+  AutoDisposeFutureProviderElement<MPages?> createElement() {
+    return _GetPopularProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaDetailProvider &&
-        other.url == url &&
-        other.source == source;
+    return other is GetPopularProvider &&
+        other.source == source &&
+        other.page == page;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, page.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin GetMangaDetailRef on AutoDisposeFutureProviderRef<MManga> {
-  /// The parameter `url` of this provider.
-  String get url;
-
+mixin GetPopularRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
+
+  /// The parameter `page` of this provider.
+  int get page;
 }
 
-class _GetMangaDetailProviderElement
-    extends AutoDisposeFutureProviderElement<MManga> with GetMangaDetailRef {
-  _GetMangaDetailProviderElement(super.provider);
+class _GetPopularProviderElement
+    extends AutoDisposeFutureProviderElement<MPages?> with GetPopularRef {
+  _GetPopularProviderElement(super.provider);
 
   @override
-  String get url => (origin as GetMangaDetailProvider).url;
+  Source get source => (origin as GetPopularProvider).source;
   @override
-  Source get source => (origin as GetMangaDetailProvider).source;
+  int get page => (origin as GetPopularProvider).page;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

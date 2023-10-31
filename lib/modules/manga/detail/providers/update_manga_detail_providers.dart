@@ -2,7 +2,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/services/get_manga_detail.dart';
+import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'update_manga_detail_providers.g.dart';
@@ -17,8 +17,8 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
   final source = getSource(manga.lang!, manga.source!);
   MManga getManga;
   try {
-    getManga = await ref.watch(
-        getMangaDetailProvider(url: manga.link!, source: source!).future);
+    getManga = await ref
+        .watch(getDetailProvider(url: manga.link!, source: source!).future);
   } catch (_) {
     return;
   }

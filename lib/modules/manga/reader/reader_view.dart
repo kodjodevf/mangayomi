@@ -19,7 +19,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/services/get_chapter_url.dart';
+import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -48,7 +48,7 @@ class MangaReaderView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
-    final chapterData = ref.watch(getChapterUrlProvider(
+    final chapterData = ref.watch(getChapterPagesProvider(
       chapter: chapter,
     ));
 
@@ -144,7 +144,7 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
     required this.chapter,
     required this.chapterUrlModel,
   });
-  final GetChapterUrlModel chapterUrlModel;
+  final GetChapterPagesModel chapterUrlModel;
 
   final Chapter chapter;
 
@@ -173,7 +173,7 @@ class _MangaChapterPageGalleryState
     super.dispose();
   }
 
-  late GetChapterUrlModel _chapterUrlModel = widget.chapterUrlModel;
+  late GetChapterPagesModel _chapterUrlModel = widget.chapterUrlModel;
 
   late Chapter chapter = widget.chapter;
 
@@ -744,7 +744,7 @@ class _MangaChapterPageGalleryState
             hasNextChapter ? _readerController.getNextChapter() : null;
         if (chapter != null) {
           ref
-              .watch(getChapterUrlProvider(
+              .watch(getChapterPagesProvider(
             chapter: chapter,
           ).future)
               .then((value) {
@@ -755,7 +755,7 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  _preloadNextChapter(GetChapterUrlModel chapterData, Chapter chap) {
+  _preloadNextChapter(GetChapterPagesModel chapterData, Chapter chap) {
     try {
       int length = 0;
       bool isExist = false;
@@ -854,7 +854,7 @@ class _MangaChapterPageGalleryState
             hasNextChapter ? _readerController.getNextChapter() : null;
         if (chapter != null) {
           ref
-              .watch(getChapterUrlProvider(
+              .watch(getChapterPagesProvider(
             chapter: chapter,
           ).future)
               .then((value) {
@@ -1891,7 +1891,7 @@ class UChapDataPreload {
   bool? isLocale;
   Uint8List? archiveImage;
   int? index;
-  GetChapterUrlModel? chapterUrlModel;
+  GetChapterPagesModel? chapterUrlModel;
   int? pageIndex;
   Uint8List? cropImage;
   UChapDataPreload(this.chapter, this.path, this.url, this.isLocale,

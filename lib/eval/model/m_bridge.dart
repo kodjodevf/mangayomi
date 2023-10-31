@@ -65,27 +65,25 @@ class WordSet {
 
 class MBridge {
   ///Seaches for the first descendant node matching the given selectors, using a preorder traversal.
-  static String querySelector(
-    String html,
-    String selector,
-    int typeElement,
-    String attributes,
-  ) {
+  static const $Function querySelector = $Function(_querySelector);
+
+  static $Value? _querySelector(_, __, List<$Value?> args) {
+    String html = args[0]!.$reified;
+    String selector = args[0]!.$reified;
+    int typeElement = args[0]!.$reified;
+    String attributes = args[0]!.$reified;
+
+    String res = "";
     try {
       var parse = parser.parse(html);
 
       // return querySelector text
       if (typeElement == 0) {
-        return parse
-            .querySelector(selector)!
-            .text
-            .trim()
-            .trimLeft()
-            .trimRight();
+        res = parse.querySelector(selector)!.text.trim().trimLeft().trimRight();
 
         // return querySelector innerHtml
       } else if (typeElement == 1) {
-        return parse
+        res = parse
             .querySelector(selector)!
             .innerHtml
             .trim()
@@ -94,7 +92,7 @@ class MBridge {
 
         // return querySelector outerHtml
       } else if (typeElement == 2) {
-        return parse
+        res = parse
             .querySelector(selector)!
             .outerHtml
             .trim()
@@ -102,21 +100,27 @@ class MBridge {
             .trimRight();
       }
       // return querySelector attributes
-      return parse
+      res = parse
           .querySelector(selector)!
           .attributes[attributes]!
           .trim()
           .trimLeft()
           .trimRight();
+      return $String(res);
     } catch (e) {
-      botToast(e.toString());
       throw Exception(e);
     }
   }
 
   ///Returns all descendant nodes matching the given selectors, using a preorder traversal.
-  static List<String> querySelectorAll(String html, String selector,
-      int typeElement, String attributes, int typeRegExp) {
+  static const $Function querySelectorAll = $Function(_querySelectorAll);
+
+  static $Value? _querySelectorAll(_, __, List<$Value?> args) {
+    String html = args[0]!.$value;
+    String selector = args[1]!.$value;
+    int typeElement = args[2]!.$value;
+    String attributes = args[3]!.$value;
+    int typeRegExp = args[4]!.$value;
     try {
       var parse = parser.parse(html);
       final a = parse.querySelectorAll(selector);
@@ -146,7 +150,7 @@ class MBridge {
       }
       // if (typeRegExp == 0) is the default parameter
       if (typeRegExp == 0) {
-        return res;
+        return $List.wrap(res.map((e) => $String(e)).toList());
       }
 
       List<String> resRegExp = [];
@@ -172,7 +176,7 @@ class MBridge {
           resRegExp.add(regImgMatcher(element.trim().trimLeft().trimRight()));
         }
       }
-      return resRegExp;
+      return $List.wrap(resRegExp.map((e) => $String(e)).toList());
     } catch (e) {
       botToast(e.toString());
       throw Exception(e);
@@ -180,7 +184,11 @@ class MBridge {
   }
 
   ///Create query by html string
-  static List<String> xpath(String html, String xpath) {
+  static const $Function xpath = $Function(_xpath);
+
+  static $Value? _xpath(_, __, List<$Value?> args) {
+    String html = args[0]!.$reified;
+    String xpath = args[1]!.$reified;
     List<String> attrs = [];
     try {
       var htmlXPath = HtmlXPath.html(html);
@@ -199,10 +207,9 @@ class MBridge {
           attrs = [attr];
         }
       }
-      return attrs;
+      return $List.wrap(attrs.map((e) => $String(e)).toList());
     } catch (e) {
-      // botToast(e.toString());
-      return attrs;
+      throw e.toString();
     }
   }
 
@@ -305,32 +312,26 @@ class MBridge {
     return html!;
   }
 
-  ///Utility to decode json to List
-  static List<dynamic> jsonDecodeToList(String source, int type) {
-    return type == 0
-        ? jsonDecode(source) as List
-        : (jsonDecode(source) as List).map((e) => jsonEncode(e)).toList();
-  }
-
   ///Deobfuscate a JS code
-  static String evalJs(String code) {
+  static const $Function evalJs = $Function(_evalJs);
+
+  static $Value? _evalJs(_, __, List<$Value?> args) {
+    String code = args[0]!.$reified;
     try {
-      //  JavascriptRuntime? flutterJs;
-      // flutterJs = getJavascriptRuntime();
-      // final res = flutterJs.evaluate(code).stringResult;
-      // flutterJs.dispose();
-      // return res;
       final jsPacker = JSPacker(code);
-      return jsPacker.unpack() ?? "";
+      return $String(jsPacker.unpack() ?? "");
     } catch (e) {
-      botToast(e.toString());
       throw Exception(e);
     }
   }
 
   ///Read values in parsed JSON object and return resut to List<String>
-  static List<String> jsonPathToList(
-      String source, String expression, int type) {
+  static const $Function jsonPathToList = $Function(_jsonPathToList);
+
+  static $Value? _jsonPathToList(_, __, List<$Value?> args) {
+    String source = args[0]!.$reified;
+    String expression = args[1]!.$reified;
+    int type = args[2]!.$reified;
     try {
       //Check jsonDecode(source) is list value
       if (jsonDecode(source) is List) {
@@ -360,19 +361,18 @@ class MBridge {
           }
           list.add(val);
         }
-        return list;
+        return $List.wrap(list.map((e) => $String(e)).toList());
       }
 
       // else jsonDecode(source) is Map value
       else {
         var map = json.decode(source);
         var values = JsonPath(expression).readValues(map);
-        return values.map((e) {
-          return e == null ? "{}" : json.encode(e);
-        }).toList();
+        return $List.wrap(values.map((e) {
+          return $String(e == null ? "{}" : json.encode(e));
+        }).toList());
       }
     } catch (e) {
-      botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -391,8 +391,12 @@ class MBridge {
   }
 
   ///Read values in parsed JSON object and return resut to String
-  static String jsonPathToString(
-      String source, String expression, String join) {
+  static const $Function jsonPathToString = $Function(_jsonPathToString);
+
+  static $Value? _jsonPathToString(_, __, List<$Value?> args) {
+    String source = args[0]!.$reified;
+    String expression = args[1]!.$reified;
+    String join = args[2]!.$reified;
     try {
       List<dynamic> values = [];
 
@@ -431,21 +435,10 @@ class MBridge {
         //join the list into listRg
         listRg.add(list.join(join));
       }
-      return listRg.first;
+      return $String(listRg.first);
     } catch (e) {
-      botToast(e.toString());
       throw Exception(e);
     }
-  }
-
-  //Utility to decode json values as Map<String,dynamic>
-  static Map jsonPathToMap(String source) {
-    final mMap = jsonDecode(source) as Map?;
-    Map<String, dynamic> map = {};
-    if (mMap != null) {
-      map = mMap.map((key, value) => MapEntry(key.toString(), value));
-    }
-    return map;
   }
 
   //Parse a list of dates to millisecondsSinceEpoch
@@ -494,6 +487,7 @@ class MBridge {
   }
 
   //http request and also webview
+  
   static Future<String> http(String method, String datas) async {
     try {
       hp.StreamedResponse? res;
@@ -558,13 +552,12 @@ class MBridge {
     } catch (e) {
       botToast(e.toString());
       return "";
+      // throw e.toString();
     }
   }
 
   static Future<List<Video>> gogoCdnExtractor(String url) async {
-    return await GogoCdnExtractor().videosFromUrl(
-      url,
-    );
+    return await GogoCdnExtractor().videosFromUrl(url);
   }
 
   static Future<List<Video>> doodExtractor(String url, String? quality) async {

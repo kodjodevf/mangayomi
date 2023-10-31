@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:mangayomi/eval/model/source_provider.dart';
+import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
@@ -9,11 +9,11 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'get_anime_servers.g.dart';
+part 'get_video_list.g.dart';
 
 @riverpod
-Future<(List<Video>, bool)> getAnimeServers(
-  GetAnimeServersRef ref, {
+Future<(List<Video>, bool)> getVideoList(
+  GetVideoListRef ref, {
   required Chapter episode,
 }) async {
   final storageProvider = StorageProvider();
@@ -33,7 +33,7 @@ Future<(List<Video>, bool)> getAnimeServers(
   final runtime = runtimeEval(bytecode);
 
   var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
-  final dd = (await (res as MSourceProvider)
-      .getVideoList(source.toMSource(), episode.url!));
+  final dd =
+      (await (res as MProvider).getVideoList(source.toMSource(), episode.url!));
   return (dd, false);
 }

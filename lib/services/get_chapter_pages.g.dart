@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_chapter_url.dart';
+part of 'get_chapter_pages.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterUrlHash() => r'd6b596903c5d72d96755fb6e439aa825310ae5da';
+String _$getChapterPagesHash() => r'ebd047f73e22df675982127c901b2d386873e208';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [getChapterUrl].
-@ProviderFor(getChapterUrl)
-const getChapterUrlProvider = GetChapterUrlFamily();
+/// See also [getChapterPages].
+@ProviderFor(getChapterPages)
+const getChapterPagesProvider = GetChapterPagesFamily();
 
-/// See also [getChapterUrl].
-class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
-  /// See also [getChapterUrl].
-  const GetChapterUrlFamily();
+/// See also [getChapterPages].
+class GetChapterPagesFamily extends Family<AsyncValue<GetChapterPagesModel>> {
+  /// See also [getChapterPages].
+  const GetChapterPagesFamily();
 
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider call({
+  /// See also [getChapterPages].
+  GetChapterPagesProvider call({
     required Chapter chapter,
   }) {
-    return GetChapterUrlProvider(
+    return GetChapterPagesProvider(
       chapter: chapter,
     );
   }
 
   @override
-  GetChapterUrlProvider getProviderOverride(
-    covariant GetChapterUrlProvider provider,
+  GetChapterPagesProvider getProviderOverride(
+    covariant GetChapterPagesProvider provider,
   ) {
     return call(
       chapter: provider.chapter,
@@ -68,33 +68,33 @@ class GetChapterUrlFamily extends Family<AsyncValue<GetChapterUrlModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getChapterUrlProvider';
+  String? get name => r'getChapterPagesProvider';
 }
 
-/// See also [getChapterUrl].
-class GetChapterUrlProvider
-    extends AutoDisposeFutureProvider<GetChapterUrlModel> {
-  /// See also [getChapterUrl].
-  GetChapterUrlProvider({
+/// See also [getChapterPages].
+class GetChapterPagesProvider
+    extends AutoDisposeFutureProvider<GetChapterPagesModel> {
+  /// See also [getChapterPages].
+  GetChapterPagesProvider({
     required Chapter chapter,
   }) : this._internal(
-          (ref) => getChapterUrl(
-            ref as GetChapterUrlRef,
+          (ref) => getChapterPages(
+            ref as GetChapterPagesRef,
             chapter: chapter,
           ),
-          from: getChapterUrlProvider,
-          name: r'getChapterUrlProvider',
+          from: getChapterPagesProvider,
+          name: r'getChapterPagesProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getChapterUrlHash,
-          dependencies: GetChapterUrlFamily._dependencies,
+                  : _$getChapterPagesHash,
+          dependencies: GetChapterPagesFamily._dependencies,
           allTransitiveDependencies:
-              GetChapterUrlFamily._allTransitiveDependencies,
+              GetChapterPagesFamily._allTransitiveDependencies,
           chapter: chapter,
         );
 
-  GetChapterUrlProvider._internal(
+  GetChapterPagesProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -108,12 +108,12 @@ class GetChapterUrlProvider
 
   @override
   Override overrideWith(
-    FutureOr<GetChapterUrlModel> Function(GetChapterUrlRef provider) create,
+    FutureOr<GetChapterPagesModel> Function(GetChapterPagesRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetChapterUrlProvider._internal(
-        (ref) => create(ref as GetChapterUrlRef),
+      override: GetChapterPagesProvider._internal(
+        (ref) => create(ref as GetChapterPagesRef),
         from: from,
         name: null,
         dependencies: null,
@@ -125,13 +125,13 @@ class GetChapterUrlProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<GetChapterUrlModel> createElement() {
-    return _GetChapterUrlProviderElement(this);
+  AutoDisposeFutureProviderElement<GetChapterPagesModel> createElement() {
+    return _GetChapterPagesProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetChapterUrlProvider && other.chapter == chapter;
+    return other is GetChapterPagesProvider && other.chapter == chapter;
   }
 
   @override
@@ -143,18 +143,18 @@ class GetChapterUrlProvider
   }
 }
 
-mixin GetChapterUrlRef on AutoDisposeFutureProviderRef<GetChapterUrlModel> {
+mixin GetChapterPagesRef on AutoDisposeFutureProviderRef<GetChapterPagesModel> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
 }
 
-class _GetChapterUrlProviderElement
-    extends AutoDisposeFutureProviderElement<GetChapterUrlModel>
-    with GetChapterUrlRef {
-  _GetChapterUrlProviderElement(super.provider);
+class _GetChapterPagesProviderElement
+    extends AutoDisposeFutureProviderElement<GetChapterPagesModel>
+    with GetChapterPagesRef {
+  _GetChapterPagesProviderElement(super.provider);
 
   @override
-  Chapter get chapter => (origin as GetChapterUrlProvider).chapter;
+  Chapter get chapter => (origin as GetChapterPagesProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

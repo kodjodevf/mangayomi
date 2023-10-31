@@ -6,9 +6,9 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/get_latest_updates_manga.dart';
-import 'package:mangayomi/services/get_popular_manga.dart';
-import 'package:mangayomi/services/search_manga.dart';
+import 'package:mangayomi/services/get_latest_updates.dart';
+import 'package:mangayomi/services/get_popular.dart';
+import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -63,17 +63,17 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-          mangaResList = await ref.watch(getPopularMangaProvider(
+          mangaResList = await ref.watch(getPopularProvider(
             source: widget.source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-          mangaResList = await ref.watch(getLatestUpdatesMangaProvider(
+          mangaResList = await ref.watch(getLatestUpdatesProvider(
             source: widget.source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
-          mangaResList = await ref.watch(searchMangaProvider(
+          mangaResList = await ref.watch(searchProvider(
             source: widget.source,
             query: _query,
             page: _page + 1,
@@ -98,12 +98,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   Widget build(BuildContext context) {
     if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
       _getManga = ref.watch(
-          searchMangaProvider(source: widget.source, query: _query, page: 1));
+          searchProvider(source: widget.source, query: _query, page: 1));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       _getManga = ref
-          .watch(getLatestUpdatesMangaProvider(source: widget.source, page: 1));
+          .watch(getLatestUpdatesProvider(source: widget.source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-      _getManga = ref.watch(getPopularMangaProvider(
+      _getManga = ref.watch(getPopularProvider(
         source: widget.source,
         page: 1,
       ));
@@ -335,19 +335,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                 if (_selectedIndex == 2 &&
                                     _isSearch &&
                                     _query.isNotEmpty) {
-                                  ref.invalidate(searchMangaProvider(
+                                  ref.invalidate(searchProvider(
                                       source: widget.source,
                                       query: _query,
                                       page: 1));
                                 } else if (_selectedIndex == 1 &&
                                     !_isSearch &&
                                     _query.isEmpty) {
-                                  ref.invalidate(getLatestUpdatesMangaProvider(
+                                  ref.invalidate(getLatestUpdatesProvider(
                                       source: widget.source, page: 1));
                                 } else if (_selectedIndex == 0 &&
                                     !_isSearch &&
                                     _query.isEmpty) {
-                                  ref.invalidate(getPopularMangaProvider(
+                                  ref.invalidate(getPopularProvider(
                                     source: widget.source,
                                     page: 1,
                                   ));

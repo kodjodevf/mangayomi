@@ -11,7 +11,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/get_anime_servers.dart';
+import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:media_kit/media_kit.dart';
@@ -48,7 +48,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
         overlays: []);
-    final serversData = ref.watch(getAnimeServersProvider(
+    final serversData = ref.watch(getVideoListProvider(
       episode: widget.episode,
     ));
     return serversData.when(

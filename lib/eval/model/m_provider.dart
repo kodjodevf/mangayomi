@@ -3,8 +3,8 @@ import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/video.dart';
 
-abstract class MSourceProvider {
-  MSourceProvider();
+abstract class MProvider {
+  MProvider();
 
   Future<MPages> getLatestUpdates(MSource sourceInfo, int page);
 

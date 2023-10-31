@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'search_manga.dart';
+part of 'get_detail.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchMangaHash() => r'f1a2af2f06c967c647ed803f8199de711a84bb49';
+String _$getDetailHash() => r'683f6a473aca093cc35d5d9756ae9cbdfb302f88';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,36 +29,33 @@ class _SystemHash {
   }
 }
 
-/// See also [searchManga].
-@ProviderFor(searchManga)
-const searchMangaProvider = SearchMangaFamily();
+/// See also [getDetail].
+@ProviderFor(getDetail)
+const getDetailProvider = GetDetailFamily();
 
-/// See also [searchManga].
-class SearchMangaFamily extends Family<AsyncValue<MPages?>> {
-  /// See also [searchManga].
-  const SearchMangaFamily();
+/// See also [getDetail].
+class GetDetailFamily extends Family<AsyncValue<MManga>> {
+  /// See also [getDetail].
+  const GetDetailFamily();
 
-  /// See also [searchManga].
-  SearchMangaProvider call({
+  /// See also [getDetail].
+  GetDetailProvider call({
+    required String url,
     required Source source,
-    required String query,
-    required int page,
   }) {
-    return SearchMangaProvider(
+    return GetDetailProvider(
+      url: url,
       source: source,
-      query: query,
-      page: page,
     );
   }
 
   @override
-  SearchMangaProvider getProviderOverride(
-    covariant SearchMangaProvider provider,
+  GetDetailProvider getProviderOverride(
+    covariant GetDetailProvider provider,
   ) {
     return call(
+      url: provider.url,
       source: provider.source,
-      query: provider.query,
-      page: provider.page,
     );
   }
 
@@ -74,118 +71,104 @@ class SearchMangaFamily extends Family<AsyncValue<MPages?>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'searchMangaProvider';
+  String? get name => r'getDetailProvider';
 }
 
-/// See also [searchManga].
-class SearchMangaProvider extends AutoDisposeFutureProvider<MPages?> {
-  /// See also [searchManga].
-  SearchMangaProvider({
+/// See also [getDetail].
+class GetDetailProvider extends AutoDisposeFutureProvider<MManga> {
+  /// See also [getDetail].
+  GetDetailProvider({
+    required String url,
     required Source source,
-    required String query,
-    required int page,
   }) : this._internal(
-          (ref) => searchManga(
-            ref as SearchMangaRef,
+          (ref) => getDetail(
+            ref as GetDetailRef,
+            url: url,
             source: source,
-            query: query,
-            page: page,
           ),
-          from: searchMangaProvider,
-          name: r'searchMangaProvider',
+          from: getDetailProvider,
+          name: r'getDetailProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$searchMangaHash,
-          dependencies: SearchMangaFamily._dependencies,
-          allTransitiveDependencies:
-              SearchMangaFamily._allTransitiveDependencies,
+                  : _$getDetailHash,
+          dependencies: GetDetailFamily._dependencies,
+          allTransitiveDependencies: GetDetailFamily._allTransitiveDependencies,
+          url: url,
           source: source,
-          query: query,
-          page: page,
         );
 
-  SearchMangaProvider._internal(
+  GetDetailProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
+    required this.url,
     required this.source,
-    required this.query,
-    required this.page,
   }) : super.internal();
 
+  final String url;
   final Source source;
-  final String query;
-  final int page;
 
   @override
   Override overrideWith(
-    FutureOr<MPages?> Function(SearchMangaRef provider) create,
+    FutureOr<MManga> Function(GetDetailRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: SearchMangaProvider._internal(
-        (ref) => create(ref as SearchMangaRef),
+      override: GetDetailProvider._internal(
+        (ref) => create(ref as GetDetailRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
+        url: url,
         source: source,
-        query: query,
-        page: page,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<MPages?> createElement() {
-    return _SearchMangaProviderElement(this);
+  AutoDisposeFutureProviderElement<MManga> createElement() {
+    return _GetDetailProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SearchMangaProvider &&
-        other.source == source &&
-        other.query == query &&
-        other.page == page;
+    return other is GetDetailProvider &&
+        other.url == url &&
+        other.source == source;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, query.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin SearchMangaRef on AutoDisposeFutureProviderRef<MPages?> {
+mixin GetDetailRef on AutoDisposeFutureProviderRef<MManga> {
+  /// The parameter `url` of this provider.
+  String get url;
+
   /// The parameter `source` of this provider.
   Source get source;
-
-  /// The parameter `query` of this provider.
-  String get query;
-
-  /// The parameter `page` of this provider.
-  int get page;
 }
 
-class _SearchMangaProviderElement
-    extends AutoDisposeFutureProviderElement<MPages?> with SearchMangaRef {
-  _SearchMangaProviderElement(super.provider);
+class _GetDetailProviderElement extends AutoDisposeFutureProviderElement<MManga>
+    with GetDetailRef {
+  _GetDetailProviderElement(super.provider);
 
   @override
-  Source get source => (origin as SearchMangaProvider).source;
+  String get url => (origin as GetDetailProvider).url;
   @override
-  String get query => (origin as SearchMangaProvider).query;
-  @override
-  int get page => (origin as SearchMangaProvider).page;
+  Source get source => (origin as GetDetailProvider).source;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

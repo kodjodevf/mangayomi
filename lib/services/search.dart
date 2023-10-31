@@ -1,31 +1,29 @@
-import 'dart:async';
-import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
-import 'package:mangayomi/eval/model/source_provider.dart';
+import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'get_manga_detail.g.dart';
+part 'search.g.dart';
 
 @riverpod
-Future<MManga> getMangaDetail(
-  GetMangaDetailRef ref, {
-  required String url,
+Future<MPages?> search(
+  SearchRef ref, {
   required Source source,
+  required String query,
+  required int page,
 }) async {
-  MManga? mangadetail;
+  MPages? manga;
   final bytecode =
       compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
-
   final runtime = runtimeEval(bytecode);
-
-  var res = await runtime.executeLib('package:mangayomi/main.dart', 'main');
+  var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
   try {
-    mangadetail =
-        await (res as MSourceProvider).getDetail(source.toMSource(), url);
+    manga = await (res as MProvider)
+        .search(source.toMSource(), query, page);
   } catch (e) {
     throw Exception(e);
   }
-  return mangadetail;
+  return manga;
 }
