@@ -1,15 +1,14 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/model/m_track.dart';
-import 'package:mangayomi/eval/model/m_video.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
+import 'package:mangayomi/models/video.dart';
 
-class $MVideo implements MVideo, $Instance {
+class $MVideo implements Video, $Instance {
   $MVideo.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MVideo'));
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MVideo'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
@@ -20,16 +19,17 @@ class $MVideo implements MVideo, $Instance {
       // Specify class fields
       fields: {
         'url': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'quality': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'originalUrl': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
-        'headers': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.mapType, [
-          BridgeTypeRef.type(RuntimeTypes.stringType),
-          BridgeTypeRef.type(RuntimeTypes.stringType)
-        ]))),
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'headers': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.map, [
+              BridgeTypeRef(CoreTypes.string),
+              BridgeTypeRef(CoreTypes.string)
+            ]),
+            nullable: true)),
         'subtitles': BridgeFieldDef(BridgeTypeAnnotation(
             BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
         'audios': BridgeFieldDef(BridgeTypeAnnotation(
@@ -38,14 +38,14 @@ class $MVideo implements MVideo, $Instance {
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MVideo.wrap(MVideo());
+    return $MVideo.wrap(Video("", "", ""));
   }
 
   @override
-  final MVideo $value;
+  final Video $value;
 
   @override
-  MVideo get $reified => $value;
+  Video get $reified => $value;
 
   final $Instance _superclass;
 
@@ -53,22 +53,20 @@ class $MVideo implements MVideo, $Instance {
   $Value? $getProperty(Runtime runtime, String identifier) {
     switch (identifier) {
       case 'url':
-        return $String($value.url!);
+        return $String($value.url);
       case 'quality':
-        return $String($value.quality!);
+        return $String($value.quality);
       case 'originalUrl':
-        return $String($value.originalUrl!);
+        return $String($value.originalUrl);
       case 'headers':
-        return $Map.wrap($value.headers!);
+        return $Map.wrap($value.headers ?? {});
       case 'subtitles':
         return $List.wrap($value.subtitles!
-            .map((e) =>
-                $MTrack.wrap(MTrack(file: e.file, label: e.label)))
+            .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
             .toList());
       case 'audios':
         return $List.wrap($value.audios!
-            .map((e) =>
-                $MTrack.wrap(MTrack(file: e.file, label: e.label)))
+            .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
             .toList());
 
       default:
@@ -89,26 +87,17 @@ class $MVideo implements MVideo, $Instance {
       case 'originalUrl':
         $value.originalUrl = value.$reified;
       case 'headers':
-        $value.headers = (value.$reified as Map).isNotEmpty
-            ? (value.$reified as Map)
-                .map((key, value) => MapEntry(key.toString(), value.toString()))
-            : {};
+        $value.headers = (value.$reified as Map)
+            .map((key, value) => MapEntry(key.toString(), value.toString()));
       case 'subtitles':
-        $value.subtitles = (value.$reified as List).isNotEmpty
-            ? (value.$reified as List)
-                .map((e) => MTrack()
-                  ..file = e.file
-                  ..label = e.label)
-                .toList()
-            : [];
+        $value.subtitles = (value.$reified as List)
+            .map((e) => Track(file: e.file, label: e.label))
+            .toList();
+
       case 'audios':
-        $value.audios = (value.$reified as List).isNotEmpty
-            ? (value.$reified as List)
-                .map((e) => MTrack()
-                  ..file = e.file
-                  ..label = e.label)
-                .toList()
-            : [];
+        $value.audios = (value.$reified as List)
+            .map((e) => Track(file: e.file, label: e.label))
+            .toList();
 
       default:
         _superclass.$setProperty(runtime, identifier, value);
@@ -116,22 +105,22 @@ class $MVideo implements MVideo, $Instance {
   }
 
   @override
-  String? get url => $value.url;
+  String get url => $value.url;
 
   @override
-  List<MTrack>? get subtitles => $value.subtitles;
+  List<Track>? get subtitles => $value.subtitles;
 
   @override
-  List<MTrack>? get audios => $value.audios;
+  List<Track>? get audios => $value.audios;
 
   @override
-  String? get quality => $value.quality;
+  String get quality => $value.quality;
 
   @override
   Map<String, String>? get headers => $value.headers;
 
   @override
-  String? get originalUrl => $value.originalUrl;
+  String get originalUrl => $value.originalUrl;
 
   @override
   set url(String? url) {}

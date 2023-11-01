@@ -1,13 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_latest_updates_manga.dart';
+part of 'get_latest_updates.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getLatestUpdatesMangaHash() =>
-    r'1d73d374c00305d86e3a62ea762367391a01b093';
+String _$getLatestUpdatesHash() => r'19ccde133a23148dd90f29110b5f9804cd2cb942';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,29 +29,29 @@ class _SystemHash {
   }
 }
 
-/// See also [getLatestUpdatesManga].
-@ProviderFor(getLatestUpdatesManga)
-const getLatestUpdatesMangaProvider = GetLatestUpdatesMangaFamily();
+/// See also [getLatestUpdates].
+@ProviderFor(getLatestUpdates)
+const getLatestUpdatesProvider = GetLatestUpdatesFamily();
 
-/// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<MManga?>>> {
-  /// See also [getLatestUpdatesManga].
-  const GetLatestUpdatesMangaFamily();
+/// See also [getLatestUpdates].
+class GetLatestUpdatesFamily extends Family<AsyncValue<MPages?>> {
+  /// See also [getLatestUpdates].
+  const GetLatestUpdatesFamily();
 
-  /// See also [getLatestUpdatesManga].
-  GetLatestUpdatesMangaProvider call({
+  /// See also [getLatestUpdates].
+  GetLatestUpdatesProvider call({
     required Source source,
     required int page,
   }) {
-    return GetLatestUpdatesMangaProvider(
+    return GetLatestUpdatesProvider(
       source: source,
       page: page,
     );
   }
 
   @override
-  GetLatestUpdatesMangaProvider getProviderOverride(
-    covariant GetLatestUpdatesMangaProvider provider,
+  GetLatestUpdatesProvider getProviderOverride(
+    covariant GetLatestUpdatesProvider provider,
   ) {
     return call(
       source: provider.source,
@@ -72,36 +71,35 @@ class GetLatestUpdatesMangaFamily extends Family<AsyncValue<List<MManga?>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getLatestUpdatesMangaProvider';
+  String? get name => r'getLatestUpdatesProvider';
 }
 
-/// See also [getLatestUpdatesManga].
-class GetLatestUpdatesMangaProvider
-    extends AutoDisposeFutureProvider<List<MManga?>> {
-  /// See also [getLatestUpdatesManga].
-  GetLatestUpdatesMangaProvider({
+/// See also [getLatestUpdates].
+class GetLatestUpdatesProvider extends AutoDisposeFutureProvider<MPages?> {
+  /// See also [getLatestUpdates].
+  GetLatestUpdatesProvider({
     required Source source,
     required int page,
   }) : this._internal(
-          (ref) => getLatestUpdatesManga(
-            ref as GetLatestUpdatesMangaRef,
+          (ref) => getLatestUpdates(
+            ref as GetLatestUpdatesRef,
             source: source,
             page: page,
           ),
-          from: getLatestUpdatesMangaProvider,
-          name: r'getLatestUpdatesMangaProvider',
+          from: getLatestUpdatesProvider,
+          name: r'getLatestUpdatesProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getLatestUpdatesMangaHash,
-          dependencies: GetLatestUpdatesMangaFamily._dependencies,
+                  : _$getLatestUpdatesHash,
+          dependencies: GetLatestUpdatesFamily._dependencies,
           allTransitiveDependencies:
-              GetLatestUpdatesMangaFamily._allTransitiveDependencies,
+              GetLatestUpdatesFamily._allTransitiveDependencies,
           source: source,
           page: page,
         );
 
-  GetLatestUpdatesMangaProvider._internal(
+  GetLatestUpdatesProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -117,12 +115,12 @@ class GetLatestUpdatesMangaProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<MManga?>> Function(GetLatestUpdatesMangaRef provider) create,
+    FutureOr<MPages?> Function(GetLatestUpdatesRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetLatestUpdatesMangaProvider._internal(
-        (ref) => create(ref as GetLatestUpdatesMangaRef),
+      override: GetLatestUpdatesProvider._internal(
+        (ref) => create(ref as GetLatestUpdatesRef),
         from: from,
         name: null,
         dependencies: null,
@@ -135,13 +133,13 @@ class GetLatestUpdatesMangaProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<MManga?>> createElement() {
-    return _GetLatestUpdatesMangaProviderElement(this);
+  AutoDisposeFutureProviderElement<MPages?> createElement() {
+    return _GetLatestUpdatesProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetLatestUpdatesMangaProvider &&
+    return other is GetLatestUpdatesProvider &&
         other.source == source &&
         other.page == page;
   }
@@ -156,7 +154,7 @@ class GetLatestUpdatesMangaProvider
   }
 }
 
-mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
+mixin GetLatestUpdatesRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
 
@@ -164,15 +162,14 @@ mixin GetLatestUpdatesMangaRef on AutoDisposeFutureProviderRef<List<MManga?>> {
   int get page;
 }
 
-class _GetLatestUpdatesMangaProviderElement
-    extends AutoDisposeFutureProviderElement<List<MManga?>>
-    with GetLatestUpdatesMangaRef {
-  _GetLatestUpdatesMangaProviderElement(super.provider);
+class _GetLatestUpdatesProviderElement
+    extends AutoDisposeFutureProviderElement<MPages?> with GetLatestUpdatesRef {
+  _GetLatestUpdatesProviderElement(super.provider);
 
   @override
-  Source get source => (origin as GetLatestUpdatesMangaProvider).source;
+  Source get source => (origin as GetLatestUpdatesProvider).source;
   @override
-  int get page => (origin as GetLatestUpdatesMangaProvider).page;
+  int get page => (origin as GetLatestUpdatesProvider).page;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

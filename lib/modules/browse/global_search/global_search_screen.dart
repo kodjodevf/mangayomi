@@ -2,13 +2,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/services/search_manga.dart';
+import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -112,7 +112,7 @@ class SourceSearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
-    final search = ref.watch(searchMangaProvider(
+    final search = ref.watch(searchProvider(
       source: source,
       page: 1,
       query: query,
@@ -149,13 +149,13 @@ class SourceSearchScreen extends ConsumerWidget {
                 error: (error, stackTrace) =>
                     Center(child: Text(error.toString())),
                 data: (data) {
-                  if (data.isNotEmpty) {
+                  if (data!.list.isNotEmpty) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: data.length,
+                      itemCount: data.list.length,
                       itemBuilder: (context, index) {
                         return MangaGlobalImageCard(
-                          manga: data[index]!,
+                          manga: data.list[index],
                           source: source,
                         );
                       },
@@ -192,9 +192,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final getMangaDetail = widget.manga
-      ..lang = widget.source.lang
-      ..source = widget.source.name;
+    final getMangaDetail = widget.manga;
     final l10n = l10nLocalizations(context)!;
     return GestureDetector(
       onTap: () async {
@@ -203,14 +201,15 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
             getManga: getMangaDetail,
             lang: widget.source.lang!,
             isManga: widget.source.isManga ?? true,
-            useMaterialRoute: true);
+            useMaterialRoute: true,
+            source: widget.source.name!);
       },
       child: StreamBuilder(
           stream: isar.mangas
               .filter()
               .langEqualTo(widget.source.lang)
               .nameEqualTo(getMangaDetail.name)
-              .sourceEqualTo(getMangaDetail.source)
+              .sourceEqualTo(widget.source.name)
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             return Padding(
@@ -229,8 +228,8 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                               borderRadius: BorderRadius.circular(5),
                               child: cachedNetworkImage(
                                   headers: ref.watch(headersProvider(
-                                      source: getMangaDetail.source!,
-                                      lang: getMangaDetail.lang!)),
+                                      source: widget.source.name!,
+                                      lang: widget.source.lang!)),
                                   imageUrl: snapshot.hasData &&
                                           snapshot.data!.isNotEmpty &&
                                           snapshot.data!.first.imageUrl != null

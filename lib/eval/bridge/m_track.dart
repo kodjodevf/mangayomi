@@ -1,13 +1,13 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/model/m_track.dart';
+import 'package:mangayomi/models/video.dart';
 
-class $MTrack implements MTrack, $Instance {
+class $MTrack implements Track, $Instance {
   $MTrack.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:bridge_lib/bridge_lib.dart', 'MTrack'));
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MTrack'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
@@ -18,21 +18,21 @@ class $MTrack implements MTrack, $Instance {
       // Specify class fields
       fields: {
         'file': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'label': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef.type(RuntimeTypes.stringType))),
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
       },
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MTrack.wrap(MTrack());
+    return $MTrack.wrap(Track());
   }
 
   @override
-  final MTrack $value;
+  final Track $value;
 
   @override
-  MTrack get $reified => $value;
+  Track get $reified => $value;
 
   final $Instance _superclass;
 

@@ -8,8 +8,8 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/get_anime_servers.dart';
-import 'package:mangayomi/services/get_chapter_url.dart';
+import 'package:mangayomi/services/get_video_list.dart';
+import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path_provider/path_provider.dart';
@@ -61,7 +61,7 @@ Future<List<String>> downloadChapter(
 
   if (isManga) {
     ref
-        .read(getChapterUrlProvider(
+        .read(getChapterPagesProvider(
       chapter: chapter,
     ).future)
         .then((value) {
@@ -72,7 +72,7 @@ Future<List<String>> downloadChapter(
     });
   } else {
     ref
-        .read(getAnimeServersProvider(
+        .read(getVideoListProvider(
       episode: chapter,
     ).future)
         .then((value) {

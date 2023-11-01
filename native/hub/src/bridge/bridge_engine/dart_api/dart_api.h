@@ -15,14 +15,14 @@
  * This reference is generated from the header include/dart_api.h.
  */
 
-/* __STDC_FORMAT_MACROS has to be defined before including <inttypes.h> to
+/* __STDC_FORMAT_MACROS has to be defined before including <ints.h> to
  * enable platform independent printf format specifiers. */
 #ifndef __STDC_FORMAT_MACROS
 #define __STDC_FORMAT_MACROS
 #endif
 
 #include <assert.h>
-#include <inttypes.h>
+#include <ints.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus

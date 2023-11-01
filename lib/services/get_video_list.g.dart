@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_anime_servers.dart';
+part of 'get_video_list.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAnimeServersHash() => r'9bac62e3b98438831ac0331a7725fee7127b5f60';
+String _$getVideoListHash() => r'924c2961d148f9ebb0952239c0528d5269a4526a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +29,27 @@ class _SystemHash {
   }
 }
 
-/// See also [getAnimeServers].
-@ProviderFor(getAnimeServers)
-const getAnimeServersProvider = GetAnimeServersFamily();
+/// See also [getVideoList].
+@ProviderFor(getVideoList)
+const getVideoListProvider = GetVideoListFamily();
 
-/// See also [getAnimeServers].
-class GetAnimeServersFamily extends Family<AsyncValue<(List<Video>, bool)>> {
-  /// See also [getAnimeServers].
-  const GetAnimeServersFamily();
+/// See also [getVideoList].
+class GetVideoListFamily extends Family<AsyncValue<(List<Video>, bool)>> {
+  /// See also [getVideoList].
+  const GetVideoListFamily();
 
-  /// See also [getAnimeServers].
-  GetAnimeServersProvider call({
+  /// See also [getVideoList].
+  GetVideoListProvider call({
     required Chapter episode,
   }) {
-    return GetAnimeServersProvider(
+    return GetVideoListProvider(
       episode: episode,
     );
   }
 
   @override
-  GetAnimeServersProvider getProviderOverride(
-    covariant GetAnimeServersProvider provider,
+  GetVideoListProvider getProviderOverride(
+    covariant GetVideoListProvider provider,
   ) {
     return call(
       episode: provider.episode,
@@ -68,33 +68,33 @@ class GetAnimeServersFamily extends Family<AsyncValue<(List<Video>, bool)>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getAnimeServersProvider';
+  String? get name => r'getVideoListProvider';
 }
 
-/// See also [getAnimeServers].
-class GetAnimeServersProvider
+/// See also [getVideoList].
+class GetVideoListProvider
     extends AutoDisposeFutureProvider<(List<Video>, bool)> {
-  /// See also [getAnimeServers].
-  GetAnimeServersProvider({
+  /// See also [getVideoList].
+  GetVideoListProvider({
     required Chapter episode,
   }) : this._internal(
-          (ref) => getAnimeServers(
-            ref as GetAnimeServersRef,
+          (ref) => getVideoList(
+            ref as GetVideoListRef,
             episode: episode,
           ),
-          from: getAnimeServersProvider,
-          name: r'getAnimeServersProvider',
+          from: getVideoListProvider,
+          name: r'getVideoListProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getAnimeServersHash,
-          dependencies: GetAnimeServersFamily._dependencies,
+                  : _$getVideoListHash,
+          dependencies: GetVideoListFamily._dependencies,
           allTransitiveDependencies:
-              GetAnimeServersFamily._allTransitiveDependencies,
+              GetVideoListFamily._allTransitiveDependencies,
           episode: episode,
         );
 
-  GetAnimeServersProvider._internal(
+  GetVideoListProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -108,12 +108,12 @@ class GetAnimeServersProvider
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool)> Function(GetAnimeServersRef provider) create,
+    FutureOr<(List<Video>, bool)> Function(GetVideoListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetAnimeServersProvider._internal(
-        (ref) => create(ref as GetAnimeServersRef),
+      override: GetVideoListProvider._internal(
+        (ref) => create(ref as GetVideoListRef),
         from: from,
         name: null,
         dependencies: null,
@@ -126,12 +126,12 @@ class GetAnimeServersProvider
 
   @override
   AutoDisposeFutureProviderElement<(List<Video>, bool)> createElement() {
-    return _GetAnimeServersProviderElement(this);
+    return _GetVideoListProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetAnimeServersProvider && other.episode == episode;
+    return other is GetVideoListProvider && other.episode == episode;
   }
 
   @override
@@ -143,18 +143,18 @@ class GetAnimeServersProvider
   }
 }
 
-mixin GetAnimeServersRef on AutoDisposeFutureProviderRef<(List<Video>, bool)> {
+mixin GetVideoListRef on AutoDisposeFutureProviderRef<(List<Video>, bool)> {
   /// The parameter `episode` of this provider.
   Chapter get episode;
 }
 
-class _GetAnimeServersProviderElement
+class _GetVideoListProviderElement
     extends AutoDisposeFutureProviderElement<(List<Video>, bool)>
-    with GetAnimeServersRef {
-  _GetAnimeServersProviderElement(super.provider);
+    with GetVideoListRef {
+  _GetVideoListProviderElement(super.provider);
 
   @override
-  Chapter get episode => (origin as GetAnimeServersProvider).episode;
+  Chapter get episode => (origin as GetVideoListProvider).episode;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

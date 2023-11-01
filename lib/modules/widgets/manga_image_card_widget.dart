@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
@@ -18,13 +19,13 @@ import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 
 class MangaImageCardWidget extends ConsumerWidget {
-  final String lang;
+  final Source source;
   final bool isManga;
 
   final MManga? getMangaDetail;
 
   const MangaImageCardWidget(
-      {required this.lang,
+      {required this.source,
       super.key,
       required this.getMangaDetail,
       required this.isManga});
@@ -35,9 +36,9 @@ class MangaImageCardWidget extends ConsumerWidget {
     return StreamBuilder(
         stream: isar.mangas
             .filter()
-            .langEqualTo(lang)
+            .langEqualTo(source.lang)
             .nameEqualTo(getMangaDetail!.name)
-            .sourceEqualTo(getMangaDetail!.source)
+            .sourceEqualTo(source.name)
             .watch(fireImmediately: true),
         builder: (context, snapshot) {
           return CoverViewWidget(
@@ -54,14 +55,14 @@ class MangaImageCardWidget extends ConsumerWidget {
                           ? toImgUrl(snapshot.data!.first.imageUrl!)
                           : toImgUrl(getMangaDetail!.imageUrl!),
                       headers: ref.watch(headersProvider(
-                          source: getMangaDetail!.source!,
-                          lang: getMangaDetail!.lang!)),
+                          source: source.name!, lang: source.lang!)),
                     ),
               onTap: () {
                 pushToMangaReaderDetail(
                     context: context,
                     getManga: getMangaDetail!,
-                    lang: lang,
+                    lang: source.lang!,
+                    source: source.name!,
                     isManga: isManga);
               },
               children: [
@@ -106,6 +107,7 @@ void pushToMangaReaderDetail(
     {MManga? getManga,
     required String lang,
     required BuildContext context,
+    required String source,
     int? archiveId,
     Manga? mangaM,
     bool? isManga,
@@ -116,23 +118,12 @@ void pushToMangaReaderDetail(
         Manga(
             imageUrl: getManga!.imageUrl,
             name: getManga.name!.trim().trimLeft().trimRight(),
-            genre: getManga.genre == null
-                ? []
-                : getManga.genre!.map((e) => e.toString()).toList(),
+            genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
             author: getManga.author ?? "",
-            status: getManga.status == null
-                ? Status.unknown
-                : switch (getManga.status) {
-                    0 => Status.ongoing,
-                    1 => Status.completed,
-                    2 => Status.onHiatus,
-                    3 => Status.canceled,
-                    4 => Status.publishingFinished,
-                    _ => Status.unknown,
-                  },
+            status: getManga.status ?? Status.unknown,
             description: getManga.description ?? "",
             link: getManga.link,
-            source: getManga.source,
+            source: source,
             lang: lang,
             lastUpdate: 0,
             isManga: isManga ?? true);

@@ -1,18 +1,18 @@
 class Video {
-  final String url;
-  final String quality;
-  final String originalUrl;
-  final Map<String, String>? headers;
-  final List<Track>? subtitles;
-  final List<Track>? audios;
+  String url;
+  String quality;
+  String originalUrl;
+  Map<String, String>? headers;
+  List<Track>? subtitles;
+  List<Track>? audios;
 
   Video(this.url, this.quality, this.originalUrl,
       {this.headers, this.subtitles, this.audios});
 }
 
 class Track {
-  final String? file;
-  final String? label;
+  String? file;
+  String? label;
 
-  Track(this.file, this.label);
+  Track({this.file, this.label});
 }

@@ -284,10 +284,11 @@ packages:
   dart_eval:
     dependency: "direct main"
     description:
-      name: dart_eval
-      sha256: "2b94cab3b22cccb5ea0c3241e1ddbfd57a62fc28c3af855cb2b3cbec7c7a5212"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: f40fb94
+      resolved-ref: f40fb942f9a3a9d5fd6ca8393e753ed820f5bfed
+      url: "https://github.com/ethanblake4/dart_eval.git"
+    source: git
     version: "0.6.5"
   dart_style:
     dependency: transitive
