@@ -1032,6 +1032,9 @@ class _MangaChapterPageGalleryState
                 .future)
             .then((value) {
           _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
+          if (mounted) {
+            setState(() {});
+          }
         });
       }
     }
@@ -1045,11 +1048,13 @@ class _MangaChapterPageGalleryState
                   datas: _uChapDataPreload[index], cropBorder: true)
               .future)
           .then((value) {
-        _uChapDataPreload[index] = _uChapDataPreload[index]
-          ..cropImage = value;
+        _uChapDataPreload[index] = _uChapDataPreload[index]..cropImage = value;
       });
+      if (mounted) {
+        setState(() {});
+      }
     } else {
-      if (_uChapDataPreload[index].isLocale! &&
+      if (!_uChapDataPreload[index].isLocale! &&
           _uChapDataPreload[index].cropImage == null) {
         ref
             .watch(cropBordersProvider(
@@ -1059,6 +1064,9 @@ class _MangaChapterPageGalleryState
           _uChapDataPreload[index] = _uChapDataPreload[index]
             ..cropImage = value;
         });
+        if (mounted) {
+          setState(() {});
+        }
       }
     }
   }
