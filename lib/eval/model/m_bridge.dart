@@ -107,8 +107,8 @@ class MBridge {
           .trimLeft()
           .trimRight();
       return $String(res);
-    } catch (e) {
-      throw Exception(e);
+    } catch (_) {
+      return $String("");
     }
   }
 
@@ -177,9 +177,9 @@ class MBridge {
         }
       }
       return $List.wrap(resRegExp.map((e) => $String(e)).toList());
-    } catch (e) {
-      botToast(e.toString());
-      throw Exception(e);
+    } catch (_) {
+      // botToast(e.toString());
+      return $List.wrap([]);
     }
   }
 
@@ -208,8 +208,8 @@ class MBridge {
         }
       }
       return $List.wrap(attrs.map((e) => $String(e)).toList());
-    } catch (e) {
-      throw e.toString();
+    } catch (_) {
+      return $List.wrap([]);
     }
   }
 
@@ -320,8 +320,8 @@ class MBridge {
     try {
       final jsPacker = JSPacker(code);
       return $String(jsPacker.unpack() ?? "");
-    } catch (e) {
-      throw Exception(e);
+    } catch (_) {
+      return $String("");
     }
   }
 
@@ -372,8 +372,8 @@ class MBridge {
           return $String(e == null ? "{}" : json.encode(e));
         }).toList());
       }
-    } catch (e) {
-      throw Exception(e);
+    } catch (_) {
+      return $List.wrap([]);
     }
   }
 
@@ -436,8 +436,8 @@ class MBridge {
         listRg.add(list.join(join));
       }
       return $String(listRg.first);
-    } catch (e) {
-      throw Exception(e);
+    } catch (_) {
+      return $String("");
     }
   }
 
@@ -487,11 +487,9 @@ class MBridge {
   }
 
   //http request and also webview
-  
   static Future<String> http(String method, String datas) async {
     try {
       hp.StreamedResponse? res;
-      String result = "";
 
       //Get headers
       final headersMap = jsonDecode(datas)["headers"] as Map?;
@@ -519,14 +517,6 @@ class MBridge {
       //Get the serie source
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
 
-      //Check the serie if has cloudflare
-      // if (source != null && source.hasCloudflare!) {
-      // final res = await cloudflareBypass(
-      //     url: url, sourceId: source.id.toString(), method: method);
-      // return res;
-      // }
-
-      //Do the http request if the serie hasn't cloudflare
       var request = hp.Request(method, Uri.parse(url));
 
       if (bodyMap != null) {
@@ -537,22 +527,17 @@ class MBridge {
 
       res = await request.send();
 
-      if (res.statusCode != 200 && source != null && source.hasCloudflare!) {
-        result = await cloudflareBypass(
-            url: url, sourceId: source.id.toString(), method: 0);
-      } else if (res.statusCode != 200) {
-        result = "400";
+      if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
+        return await cloudflareBypass(
+            url: url, sourceId: source!.id.toString(), method: 0);
       } else if (res.statusCode == 200) {
-        result = await res.stream.bytesToString();
+        return await res.stream.bytesToString();
       } else {
-        result = res.reasonPhrase!;
+        return "error";
       }
-      // log(result);
-      return result;
     } catch (e) {
       botToast(e.toString());
-      return "";
-      // throw e.toString();
+      return "error";
     }
   }
 
@@ -753,9 +738,7 @@ class MBridge {
   }
 
   static Future<List<Video>> sibnetExtractor(String url) async {
-    return await SibnetExtractor().videosFromUrl(
-      url,
-    );
+    return await SibnetExtractor().videosFromUrl(url);
   }
 
   static Future<List<Video>> sendVidExtractor(
@@ -771,15 +754,11 @@ class MBridge {
   }
 
   static Future<List<Video>> myTvExtractor(String url) async {
-    return await MytvExtractor().videosFromUrl(
-      url,
-    );
+    return await MytvExtractor().videosFromUrl(url);
   }
 
   static Future<List<Video>> okruExtractor(String url) async {
-    return await OkruExtractor().videosFromUrl(
-      url,
-    );
+    return await OkruExtractor().videosFromUrl(url);
   }
 
   static Future<List<Video>> yourUploadExtractor(
@@ -798,9 +777,7 @@ class MBridge {
   }
 
   static Future<List<Video>> vidBomExtractor(String url) async {
-    return await VidBomExtractor().videosFromUrl(
-      url,
-    );
+    return await VidBomExtractor().videosFromUrl(url);
   }
 
   static Future<List<Video>> streamlareExtractor(
