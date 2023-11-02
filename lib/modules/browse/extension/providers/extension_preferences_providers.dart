@@ -11,7 +11,7 @@ Future<Map<String, String>?> getMirrorPref(
     final bytecode = compilerEval(codeSource);
     final runtime = runtimeEval(bytecode);
     var res = await runtime.executeLib(
-      'package:mangayomi/source_code.dart',
+      'package:mangayomi/main.dart',
       'getMirrorPref',
     );
     Map<String, String> headers = {};

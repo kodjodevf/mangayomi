@@ -162,7 +162,7 @@ Future<String?> getHeaders(String codeSource, String baseUrl) async {
     final runtime = runtimeEval(bytecode);
     runtime.args = [$String(baseUrl)];
     var res = await runtime.executeLib(
-      'package:mangayomi/source_code.dart',
+      'package:mangayomi/main.dart',
       'getHeader',
     );
     Map<String, String> headers = {};
