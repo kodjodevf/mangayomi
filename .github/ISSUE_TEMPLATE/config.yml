@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: ⚠️ Extension Issue
-      url: https://github.com/kodjodevf/mangayomi-extensions/issues/new
+      url: https://github.com/kodjodevf/mangayomi-extensions/issues/new/choose
       about: Issues and requests for extensions and sources should be opened in the mangayomi-extensions repository instead
   - name: 🧑‍💻 Mangayomi help discord
     url: https://discord.com/invite/EjfBuYahsP

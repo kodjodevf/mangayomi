@@ -74,7 +74,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: If this is an issue with an extension, I should be opening an issue in the [extensions repository](https://github.com/kodjodevf/mangayomi-extensions/issues/new).
+        - label: If this is an issue with an extension, I should be opening an issue in the [extensions repository](https://github.com/kodjodevf/mangayomi-extensions/issues/new/choose).
           required: true
         - label: I have updated all installed extensions.
           required: true
