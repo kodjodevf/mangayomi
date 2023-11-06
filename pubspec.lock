@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "64.0.0"
   analyzer:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: analyzer
       sha256: "69f54f967773f6c26c7dcb13e93d7ccee8b17a641689da39e878d5cf13b06893"
@@ -697,9 +697,10 @@ packages:
   isar_generator:
     dependency: "direct dev"
     description:
-      path: "packages/isar_generator"
-      relative: true
-    source: path
+      name: isar_generator
+      sha256: "76c121e1295a30423604f2f819bc255bc79f852f3bc8743a24017df6068ad133"
+      url: "https://pub.dev"
+    source: hosted
     version: "3.1.0+1"
   js:
     dependency: transitive

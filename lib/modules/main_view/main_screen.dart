@@ -99,58 +99,39 @@ class MainScreen extends ConsumerWidget {
                               useIndicator: true,
                               destinations: [
                                 NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.collections_bookmark,
-                                    ),
+                                    selectedIcon:
+                                        const Icon(Icons.collections_bookmark),
                                     icon: const Icon(
-                                      Icons.collections_bookmark_outlined,
-                                    ),
+                                        Icons.collections_bookmark_outlined),
                                     label: Padding(
                                         padding: const EdgeInsets.only(top: 5),
                                         child: Text(l10n.manga))),
                                 NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.video_collection,
-                                    ),
+                                    selectedIcon:
+                                        const Icon(Icons.video_collection),
                                     icon: const Icon(
-                                      Icons.video_collection_outlined,
-                                    ),
+                                        Icons.video_collection_outlined),
                                     label: Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Text(l10n.anime),
-                                    )),
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(l10n.anime))),
                                 NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.new_releases,
-                                    ),
-                                    icon: const Icon(
-                                      Icons.new_releases_outlined,
-                                    ),
+                                    selectedIcon: const Icon(Icons.history),
+                                    icon: const Icon(Icons.history_outlined),
                                     label: Padding(
                                         padding: const EdgeInsets.only(top: 5),
                                         child: Text(l10n.history))),
                                 NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.history,
-                                    ),
-                                    icon: const Icon(
-                                      Icons.history_outlined,
-                                    ),
+                                    selectedIcon: const Icon(Icons.explore),
+                                    icon: const Icon(Icons.explore_outlined),
                                     label: Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Text(l10n.browse),
-                                    )),
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(l10n.browse))),
                                 NavigationRailDestination(
-                                    selectedIcon: const Icon(
-                                      Icons.more_horiz,
-                                    ),
-                                    icon: const Icon(
-                                      Icons.more_horiz_outlined,
-                                    ),
+                                    selectedIcon: const Icon(Icons.more_horiz),
+                                    icon: const Icon(Icons.more_horiz_outlined),
                                     label: Padding(
-                                      padding: const EdgeInsets.only(top: 5),
-                                      child: Text(l10n.more),
-                                    )),
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(l10n.more))),
                               ],
                               selectedIndex: currentIndex,
                               onDestinationSelected: (newIndex) {
@@ -201,44 +182,28 @@ class MainScreen extends ConsumerWidget {
                           selectedIndex: currentIndex,
                           destinations: [
                             NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.collections_bookmark,
-                                ),
+                                selectedIcon:
+                                    const Icon(Icons.collections_bookmark),
                                 icon: const Icon(
-                                  Icons.collections_bookmark_outlined,
-                                ),
+                                    Icons.collections_bookmark_outlined),
                                 label: l10n.manga),
                             NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.video_collection,
-                                ),
-                                icon: const Icon(
-                                  Icons.video_collection_outlined,
-                                ),
+                                selectedIcon:
+                                    const Icon(Icons.video_collection),
+                                icon:
+                                    const Icon(Icons.video_collection_outlined),
                                 label: l10n.anime),
                             NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.new_releases,
-                                ),
-                                icon: const Icon(
-                                  Icons.new_releases_outlined,
-                                ),
+                                selectedIcon: const Icon(Icons.history),
+                                icon: const Icon(Icons.history_outlined),
                                 label: l10n.history),
                             NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.history,
-                                ),
-                                icon: const Icon(
-                                  Icons.history_outlined,
-                                ),
+                                selectedIcon: const Icon(Icons.explore),
+                                icon: const Icon(Icons.explore_outlined),
                                 label: l10n.browse),
                             NavigationDestination(
-                                selectedIcon: const Icon(
-                                  Icons.more_horiz,
-                                ),
-                                icon: const Icon(
-                                  Icons.more_horiz_outlined,
-                                ),
+                                selectedIcon: const Icon(Icons.more_horiz),
+                                icon: const Icon(Icons.more_horiz_outlined),
                                 label: l10n.more),
                           ],
                           onDestinationSelected: (newIndex) {
