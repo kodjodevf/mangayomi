@@ -228,5 +228,11 @@
   "automaic":"Automatique",
   "preferred_domain":"Domaine préféré",
   "load_more":"Charger plus",
-  "cancel_all_for_this_series":"Tout annuler pour cette serie"
+  "cancel_all_for_this_series":"Tout annuler pour cette serie",
+  "login":"Connexion",
+  "login_into":"Connexion à {tracker}",
+  "email_adress":"Adresse couriel",
+  "password":"Mot de passe",
+  "log_out_from":"Se déconnecter de {tracker} ?",
+  "log_out":"Se déconnecter"
 }

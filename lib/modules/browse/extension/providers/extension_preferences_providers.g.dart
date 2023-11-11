@@ -6,7 +6,7 @@ part of 'extension_preferences_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMirrorPrefHash() => r'b56f6cf8dcb17279b2945c9233711182380dd0c5';
+String _$getMirrorPrefHash() => r'9b39c2c0e06ce4efda23dfd078d4ff96c1441f53';
 
 /// Copied from Dart SDK
 class _SystemHash {

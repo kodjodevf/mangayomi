@@ -500,6 +500,9 @@ class MBridge {
       //Get body
       final bodyMap = jsonDecode(datas)["body"] as Map?;
 
+      final useFormBuilder =
+          (jsonDecode(datas)["useFormBuilder"] as bool?) ?? false;
+
       final url = jsonDecode(datas)["url"] as String;
       //Convert body Map<dynamic,dynamic> to Map<String,String>
       Map<String, dynamic> body = {};
@@ -517,15 +520,27 @@ class MBridge {
       //Get the serie source
       final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
 
-      var request = hp.Request(method, Uri.parse(url));
+      if (useFormBuilder) {
+        var request = hp.MultipartRequest(method, Uri.parse(url));
+        if (bodyMap != null) {
+          final fields = bodyMap
+              .map((key, value) => MapEntry(key.toString(), value.toString()));
+          request.fields.addAll(fields);
+        }
+        request.headers.addAll(headers);
 
-      if (bodyMap != null) {
-        request.body = json.encode(body);
+        res = await request.send();
+      } else {
+        var request = hp.Request(method, Uri.parse(url));
+
+        if (bodyMap != null) {
+          request.body = json.encode(body);
+        }
+
+        request.headers.addAll(headers);
+
+        res = await request.send();
       }
-
-      request.headers.addAll(headers);
-
-      res = await request.send();
 
       if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
         return await cloudflareBypass(

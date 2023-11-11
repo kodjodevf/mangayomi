@@ -329,7 +329,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
                 BridgeParameter(
                     'prefix',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                        nullable: true),
                     false),
               ]),
         ),
@@ -721,6 +722,18 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
+        'base64': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              params: [
+                BridgeParameter(
+                    'string',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+                BridgeParameter('type',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
+              ]),
+        ),
         'regExp': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
@@ -773,6 +786,12 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       'http' => $Function((_, __, List<$Value?> args) {
           return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
               .then((value) => $String(value)));
+        }),
+      'base64' => $Function((_, __, List<$Value?> args) {
+          final result = args[1]!.$reified == 0
+              ? utf8.decode(base64Url.decode(args[0]!.$reified))
+              : base64Url.encode(utf8.encode(args[0]!.$reified));
+          return $String(result);
         }),
       "cryptoHandler" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.cryptoHandler(args[0]!.$value, args[1]!.$value,
@@ -842,7 +861,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "yourUploadExtractor" => $Function((_, __, List<$Value?> args) =>
           $Future.wrap(MBridge.yourUploadExtractor(args[0]!.$value,
-                  args[1]?.$value, args[2]?.$value, args[3]?.$value)
+                  args[1]?.$value, args[2]?.$value, args[3]?.$value ?? "")
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "gogoCdnExtractor" => $Function((_, __, List<$Value?> args) =>
