@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
 
 class TrackListile extends ConsumerWidget {
@@ -20,6 +22,7 @@ class TrackListile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isLogged =
         entries.where((element) => element.syncId == id).isNotEmpty;
+    final l10n = l10nLocalizations(context)!;
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       leading: ClipRRect(
@@ -46,29 +49,41 @@ class TrackListile extends ConsumerWidget {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(
-                        "Log out from ${trackInfos(id).$2}",
-                      ),
+                      title: Text(l10n.log_out_from(trackInfos(id).$2)),
                       actions: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            TextButton(
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                    surfaceTintColor: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: secondaryColor(context)),
+                                        borderRadius:
+                                            BorderRadius.circular(20))),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text("Cancel")),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            TextButton(
+                                child: Text(l10n.cancel)),
+                            const SizedBox(width: 15),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        Colors.red.withOpacity(0.7)),
                                 onPressed: () {
                                   ref
                                       .read(tracksProvider(syncId: id).notifier)
                                       .logout();
                                   Navigator.pop(context);
                                 },
-                                child: const Text("Log out")),
+                                child: Text(
+                                  l10n.log_out,
+                                  style:
+                                      TextStyle(color: secondaryColor(context)),
+                                )),
                           ],
                         )
                       ],

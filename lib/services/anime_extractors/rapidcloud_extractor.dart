@@ -96,24 +96,9 @@ class RapidCloudExtractor {
   }
 }
 
-class Tracks {
-  String? file;
-  String? label;
-
-  Tracks({
-    this.file,
-    this.label,
-  });
-
-  Tracks.fromJson(Map<String, dynamic> json) {
-    file = json['file'];
-    label = json['label'];
-  }
-}
-
 class Data {
   String? sources;
-  List<Tracks>? tracks;
+  List<Track>? tracks;
   bool? encrypted;
 
   Data({
@@ -125,9 +110,9 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     sources = json['sources'];
     if (json['tracks'] != null) {
-      tracks = <Tracks>[];
+      tracks = <Track>[];
       json['tracks'].forEach((v) {
-        tracks!.add(Tracks.fromJson(v));
+        tracks!.add(Track.fromJson(v));
       });
     }
     encrypted = json['encrypted'];

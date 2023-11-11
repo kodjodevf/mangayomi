@@ -15,4 +15,8 @@ class Track {
   String? label;
 
   Track({this.file, this.label});
+  Track.fromJson(Map<String, dynamic> json) {
+    file = json['file'];
+    label = json['label'];
+  }
 }

@@ -228,5 +228,11 @@
   "automaic":"Automatic",
   "preferred_domain":"Preferred Domain",
   "load_more":"Load More",
-  "cancel_all_for_this_series":"Cancel all for this series"
+  "cancel_all_for_this_series":"Cancel all for this series",
+  "login":"Login",
+  "login_into":"Login into {tracker}",
+  "email_adress":"Email Address",
+  "password":"Password",
+  "log_out_from":"Log out from {tracker}?",
+  "log_out":"Log out"
 }
