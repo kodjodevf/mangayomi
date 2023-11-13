@@ -24,7 +24,7 @@ Features include:
 * Read and manage local archives (.cbz, .zip)
 * Watch and manage local Anime
 * A configurable reader with multiple viewers, reading directions.
-* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/) and [AniList](https://anilist.co/) support
+* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support
 * Categories to organize your library
 * Light and dark themes
 
