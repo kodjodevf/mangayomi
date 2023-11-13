@@ -218,7 +218,7 @@ class _MangaChapterPageGalleryState
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   final _currentReaderMode = StateProvider<ReaderMode?>((ref) => null);
-  final _pageMode = StateProvider<PageMode?>((ref) => null);
+  PageMode? _pageMode;
   bool _isView = false;
   Alignment _scalePosition = Alignment.center;
   final PhotoViewController _photoViewController = PhotoViewController();
@@ -259,7 +259,7 @@ class _MangaChapterPageGalleryState
     _processCropBorders();
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
-    final pageMode = ref.watch(_pageMode);
+    ;
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
       onWillPop: () async {
@@ -314,10 +314,16 @@ class _MangaChapterPageGalleryState
               if (_isView) {
                 _isViewFunction();
               }
-              _readerController.setMangaHistoryUpdate();
-              _readerController.setPageIndex(
-                  _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!));
-              _isBookmarked = _readerController.getChapterBookmarked();
+              final currentIndex = ref.watch(currentIndexProvider(chapter));
+              int pagesLength = _pageMode == PageMode.doubleColumm
+                  ? (_uChapDataPreload.length / 2).ceil() + 1
+                  : _uChapDataPreload.length;
+              if (currentIndex == pagesLength - 1) {
+                _readerController.setMangaHistoryUpdate();
+                _readerController.setPageIndex(
+                    _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!));
+                _isBookmarked = _readerController.getChapterBookmarked();
+              }
             }
 
             return true;
@@ -343,7 +349,7 @@ class _MangaChapterPageGalleryState
                                       initialScrollIndex:
                                           _readerController.getPageIndex(),
                                       itemCount:
-                                          pageMode == PageMode.doubleColumm
+                                          _pageMode == PageMode.doubleColumm
                                               ? (_uChapDataPreload.length / 2)
                                                       .ceil() +
                                                   1
@@ -364,7 +370,7 @@ class _MangaChapterPageGalleryState
                                                 details.globalPosition);
                                           },
                                           onDoubleTap: () {},
-                                          child: pageMode ==
+                                          child: _pageMode ==
                                                   PageMode.doubleColumm
                                               ? DoubleColummVerticalView(
                                                   datas: index == 0
@@ -415,7 +421,7 @@ class _MangaChapterPageGalleryState
                         : Material(
                             color: getBackgroundColor(backgroundColor),
                             shadowColor: getBackgroundColor(backgroundColor),
-                            child: pageMode == PageMode.doubleColumm
+                            child: _pageMode == PageMode.doubleColumm
                                 ? ExtendedImageGesturePageView.builder(
                                     controller: _extendedController,
                                     scrollDirection: _scrollDirection,
@@ -715,7 +721,7 @@ class _MangaChapterPageGalleryState
   void _readProgressListener() {
     _currentIndex = _itemPositionsListener.itemPositions.value.first.index;
 
-    int pagesLength = ref.watch(_pageMode) == PageMode.doubleColumm
+    int pagesLength = _pageMode == PageMode.doubleColumm
         ? (_uChapDataPreload.length / 2).ceil() + 1
         : _uChapDataPreload.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
@@ -811,7 +817,11 @@ class _MangaChapterPageGalleryState
     await Future.delayed(const Duration(milliseconds: 1));
     ref.read(_currentReaderMode.notifier).state =
         _readerController.getReaderMode();
-    ref.read(_pageMode.notifier).state = _readerController.getPageMode();
+    if (mounted) {
+      setState(() {
+        _pageMode = _readerController.getPageMode();
+      });
+    }
     _setReaderMode(_readerController.getReaderMode(), ref);
     ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(
           _uChapDataPreload[_currentIndex!].index!,
@@ -972,8 +982,8 @@ class _MangaChapterPageGalleryState
   _setReaderMode(ReaderMode value, WidgetRef ref) async {
     _failedToLoadImage.value = false;
     _readerController.setReaderMode(value);
-    final pageMode = ref.watch(_pageMode);
-    int index = pageMode == PageMode.doubleColumm
+
+    int index = _pageMode == PageMode.doubleColumm
         ? (_currentIndex! / 2).ceil()
         : _currentIndex!;
     ref.read(_currentReaderMode.notifier).state = value;
@@ -1076,7 +1086,6 @@ class _MangaChapterPageGalleryState
         _readerController.getChaptersLength();
     bool hasNextChapter = _readerController.getChapterIndex() != 0;
     final readerMode = ref.watch(_currentReaderMode);
-    final pageMode = ref.watch(_pageMode);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -1268,7 +1277,7 @@ class _MangaChapterPageGalleryState
                                               );
                                             } catch (_) {}
                                           },
-                                          divisions: pageMode ==
+                                          divisions: _pageMode ==
                                                   PageMode.doubleColumm
                                               ? ((_readerController.getPageLength(
                                                               _chapterUrlModel
@@ -1282,7 +1291,7 @@ class _MangaChapterPageGalleryState
                                                   1,
                                           value: min(
                                               (currentIndex).toDouble(),
-                                              pageMode == PageMode.doubleColumm
+                                              _pageMode == PageMode.doubleColumm
                                                   ? ((_readerController.getPageLength(
                                                                   _chapterUrlModel
                                                                       .pageUrls)) /
@@ -1297,7 +1306,8 @@ class _MangaChapterPageGalleryState
                                           label:
                                               _currentIndexLabel(currentIndex),
                                           min: 0,
-                                          max: pageMode == PageMode.doubleColumm
+                                          max: _pageMode ==
+                                                  PageMode.doubleColumm
                                               ? (((_readerController.getPageLength(
                                                                   _chapterUrlModel
                                                                       .pageUrls)) /
@@ -1451,7 +1461,7 @@ class _MangaChapterPageGalleryState
                           PageMode newPageMode;
 
                           _onBtnTapped(
-                            pageMode == PageMode.onePage
+                            _pageMode == PageMode.onePage
                                 ? (_geCurrentIndex(
                                             _uChapDataPreload[_currentIndex!]
                                                 .index!) /
@@ -1462,14 +1472,19 @@ class _MangaChapterPageGalleryState
                             true,
                             isSlide: true,
                           );
-                          newPageMode = pageMode == PageMode.onePage
+                          newPageMode = _pageMode == PageMode.onePage
                               ? PageMode.doubleColumm
                               : PageMode.onePage;
-                          ref.read(_pageMode.notifier).state = newPageMode;
+
                           _readerController.setPageMode(newPageMode);
+                          if (mounted) {
+                            setState(() {
+                              _pageMode = newPageMode;
+                            });
+                          }
                         },
                         icon: Icon(
-                          pageMode == PageMode.doubleColumm
+                          _pageMode == PageMode.doubleColumm
                               ? CupertinoIcons.book_solid
                               : CupertinoIcons.book,
                         ),
@@ -1532,7 +1547,7 @@ class _MangaChapterPageGalleryState
   }
 
   String _currentIndexLabel(int index) {
-    if (ref.watch(_pageMode) != PageMode.doubleColumm) {
+    if (_pageMode != PageMode.doubleColumm) {
       return "${index + 1}";
     }
     if (index == 0) {
@@ -1545,7 +1560,7 @@ class _MangaChapterPageGalleryState
   }
 
   int _geCurrentIndex(int index) {
-    if (ref.watch(_pageMode) != PageMode.doubleColumm || index == 0) {
+    if (_pageMode != PageMode.doubleColumm || index == 0) {
       return index;
     }
     int pageLength = _readerController.getPageLength(_chapterUrlModel.pageUrls);
@@ -1750,12 +1765,12 @@ class _MangaChapterPageGalleryState
                                         title: Text(
                                           l10n.crop_borders,
                                           style: TextStyle(
-                                              fontSize: 17,
                                               color: Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge!
                                                   .color!
-                                                  .withOpacity(0.9)),
+                                                  .withOpacity(0.9),
+                                              fontSize: 14),
                                         ),
                                         onChanged: (value) {
                                           ref
@@ -1849,12 +1864,12 @@ class _MangaChapterPageGalleryState
                                         title: Text(
                                           l10n.show_page_number,
                                           style: TextStyle(
-                                              fontSize: 17,
                                               color: Theme.of(context)
                                                   .textTheme
                                                   .bodyLarge!
                                                   .color!
-                                                  .withOpacity(0.9)),
+                                                  .withOpacity(0.9),
+                                              fontSize: 14),
                                         ),
                                         onChanged: (value) {
                                           ref
@@ -1865,8 +1880,16 @@ class _MangaChapterPageGalleryState
                                         }),
                                     SwitchListTile(
                                         value: animatePageTransitions,
-                                        title:
-                                            Text(l10n.animate_page_transitions),
+                                        title: Text(
+                                          l10n.animate_page_transitions,
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .color!
+                                                  .withOpacity(0.9),
+                                              fontSize: 14),
+                                        ),
                                         onChanged: (value) {
                                           ref
                                               .read(
@@ -1942,15 +1965,10 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
                       Icons.check,
                       color: d == value ? Colors.white : Colors.transparent,
                     ),
-                    const SizedBox(
-                      width: 7,
-                    ),
+                    const SizedBox(width: 7),
                     Text(
                       itemText(d),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 )),
@@ -1964,7 +1982,6 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                      fontSize: 17,
                       color: Theme.of(context)
                           .textTheme
                           .bodyLarge!
@@ -1976,13 +1993,8 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 17),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
+                  Text(title),
+                  const SizedBox(width: 20),
                   const Icon(Icons.keyboard_arrow_down_outlined)
                 ],
               ),
@@ -1990,113 +2002,6 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ViewPage extends StatefulWidget {
-  final ImageProvider<Object> imageProvider;
-  final Function(double) scale;
-  const ViewPage({super.key, required this.imageProvider, required this.scale});
-
-  @override
-  State<ViewPage> createState() => _ViewPageState();
-}
-
-class _ViewPageState extends State<ViewPage> with TickerProviderStateMixin {
-  late AnimationController _scaleAnimationController;
-  late Animation<double> _animation;
-  Alignment _scalePosition = Alignment.center;
-  final PhotoViewController _photoViewController = PhotoViewController();
-  final PhotoViewScaleStateController _photoViewScaleStateController =
-      PhotoViewScaleStateController();
-  Duration? _doubleTapAnimationDuration() {
-    int doubleTapAnimationValue =
-        isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
-    if (doubleTapAnimationValue == 0) {
-      return const Duration(milliseconds: 10);
-    } else if (doubleTapAnimationValue == 1) {
-      return const Duration(milliseconds: 800);
-    }
-    return const Duration(milliseconds: 200);
-  }
-
-  void _onScaleEnd(BuildContext context, ScaleEndDetails details,
-      PhotoViewControllerValue controllerValue) {
-    if (controllerValue.scale! < 1) {
-      _photoViewScaleStateController.reset();
-    }
-  }
-
-  double get pixelRatio => View.of(context).devicePixelRatio;
-  Size get size => View.of(context).physicalSize / pixelRatio;
-  Alignment _computeAlignmentByTapOffset(Offset offset) {
-    return Alignment((offset.dx - size.width / 2) / (size.width / 2),
-        (offset.dy - size.height / 2) / (size.height / 2));
-  }
-
-  @override
-  void initState() {
-    _scaleAnimationController = AnimationController(
-        duration: _doubleTapAnimationDuration(), vsync: this);
-    _animation = Tween(begin: 1.0, end: 2.0).animate(
-        CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
-    _animation.addListener(() {
-      _photoViewController.scale = _animation.value;
-      widget.scale(_animation.value);
-    });
-
-    super.initState();
-  }
-
-  void _toggleScale(Offset tapPosition) {
-    if (mounted) {
-      setState(() {
-        if (_scaleAnimationController.isAnimating) {
-          return;
-        }
-
-        if (_photoViewController.scale == 1.0) {
-          _scalePosition = _computeAlignmentByTapOffset(tapPosition);
-
-          if (_scaleAnimationController.isCompleted) {
-            _scaleAnimationController.reset();
-          }
-
-          _scaleAnimationController.forward();
-          return;
-        }
-
-        if (_photoViewController.scale == 2.0) {
-          _scaleAnimationController.reverse();
-          return;
-        }
-
-        _photoViewScaleStateController.reset();
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PhotoViewGallery.builder(
-      backgroundDecoration: const BoxDecoration(color: Colors.transparent),
-      itemCount: 1,
-      builder: (context, index) {
-        return PhotoViewGalleryPageOptions.customChild(
-            controller: _photoViewController,
-            scaleStateController: _photoViewScaleStateController,
-            basePosition: _scalePosition,
-            onScaleEnd: _onScaleEnd,
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onDoubleTapDown: (TapDownDetails details) {
-                _toggleScale(details.globalPosition);
-              },
-              onDoubleTap: () {},
-              child: Image(image: widget.imageProvider),
-            ));
-      },
     );
   }
 }

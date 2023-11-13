@@ -60,11 +60,10 @@ packages:
   background_downloader:
     dependency: "direct main"
     description:
-      name: background_downloader
-      sha256: "4e1722c4002c6c7aef2305b580f4ffe410582452aa980e6e69bad77f68bc26c0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.11.1"
+      path: "packages/background_downloader"
+      relative: true
+    source: path
+    version: "7.12.3"
   boolean_selector:
     dependency: transitive
     description:

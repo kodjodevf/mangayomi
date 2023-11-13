@@ -29,7 +29,8 @@ dependencies:
   google_fonts: ^5.1.0
   url_launcher: ^6.1.12
   package_info_plus: ^4.1.0
-  background_downloader: ^7.11.1
+  background_downloader: 
+    path: packages/background_downloader
   permission_handler: ^11.0.1
   flutter_inappwebview: ^5.7.2+3
   draggable_menu: ^4.4.0
