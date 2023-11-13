@@ -234,5 +234,7 @@
   "email_adress":"Adresse couriel",
   "password":"Mot de passe",
   "log_out_from":"Se déconnecter de {tracker} ?",
-  "log_out":"Se déconnecter"
+  "log_out":"Se déconnecter",
+  "update_pending":"Mises à jour en attente",
+  "update_all":"Tout mettre à jour"
 }

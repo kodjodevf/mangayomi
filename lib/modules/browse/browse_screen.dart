@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
@@ -123,8 +128,24 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             tabs: [
               Tab(text: l10n.manga_sources),
               Tab(text: l10n.anime_sources),
-              Tab(text: l10n.manga_extensions),
-              Tab(text: l10n.anime_extensions),
+              Tab(
+                child: Row(
+                  children: [
+                    Text(l10n.manga_extensions),
+                    const SizedBox(width: 8),
+                    _extensionUpdateNumbers(ref, true)
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  children: [
+                    Text(l10n.anime_extensions),
+                    const SizedBox(width: 8),
+                    _extensionUpdateNumbers(ref, false)
+                  ],
+                ),
+              ),
               // Tab(text: l10n.migrate),
             ],
           ),
@@ -149,4 +170,43 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       ),
     );
   }
+}
+
+Widget _extensionUpdateNumbers(WidgetRef ref, bool isManga) {
+  return StreamBuilder(
+      stream: isar.sources
+          .filter()
+          .idIsNotNull()
+          .and()
+          .isActiveEqualTo(true)
+          .isMangaEqualTo(isManga)
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final entries = snapshot.data!
+              .where((element) => ref.watch(showNSFWStateProvider)
+                  ? true
+                  : element.isNsfw == false)
+              .where((element) =>
+                  compareVersions(element.version!, element.versionLast!) < 0)
+              .toList();
+          return entries.isEmpty
+              ? Container()
+              : Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Theme.of(context).focusColor),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      entries.length.toString(),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall!.color),
+                    ),
+                  ),
+                );
+        }
+        return Container();
+      });
 }

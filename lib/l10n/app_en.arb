@@ -234,5 +234,7 @@
   "email_adress":"Email Address",
   "password":"Password",
   "log_out_from":"Log out from {tracker}?",
-  "log_out":"Log out"
+  "log_out":"Log out",
+  "update_pending":"Update pending",
+  "update_all":"Update all"
 }
