@@ -53,7 +53,11 @@ dependencies:
   encrypt: ^5.0.3
   js_packer: ^0.0.5
   media_kit: ^1.1.10+1
-  media_kit_video: ^1.2.4
+  media_kit_video: 
+    git:
+      url: https://github.com/media-kit/media-kit.git
+      path: media_kit_video
+      ref: e01d534
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
   rinf: ^4.13.1
