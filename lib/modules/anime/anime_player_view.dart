@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -162,9 +162,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late final Player _player = Player();
-
   late final VideoController _controller = VideoController(_player);
-
   late final _streamController = AnimeStreamController(episode: widget.episode);
   late final _firstVid = widget.videos.first;
 
@@ -183,8 +181,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   bool _initSubtitle = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
   final _showFitLabel = StateProvider((ref) => false);
+  final _showSeekTo = StateProvider((ref) => false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final _fit = StateProvider((ref) => BoxFit.contain);
+  final _seekTo = StateProvider((ref) => 0);
 
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
@@ -234,7 +234,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _streamController.setAnimeHistoryUpdate();
   }
 
-  void _onChangeVideoQuality() {
+  Widget _videoQualityWidget(BuildContext context) {
     List<VideoPrefs> videoQuality = _player.state.tracks.video
         .where((element) =>
             element.w != null && element.h != null && widget.isLocal)
@@ -251,96 +251,169 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       }
     }
 
-    final l10n = l10nLocalizations(context)!;
-    showCupertinoModalPopup(
-        context: context,
-        builder: (_) => CupertinoActionSheet(
-              title: Text(l10n.change_video_quality,
-                  style: TextStyle(
-                      fontSize: 24,
-                      color: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .color!
-                          .withOpacity(0.8)),
-                  textAlign: TextAlign.center),
-              actions: videoQuality
-                  .map((quality) => CupertinoActionSheetAction(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.isLocal
-                                    ? _firstVid.quality
-                                    : quality.videoTrack!.title!,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 7,
-                            ),
-                            Icon(
-                              Icons.check,
-                              color: widget.isLocal
-                                  ? Theme.of(context).iconTheme.color
-                                  : _video.value!.videoTrack!.title ==
-                                          quality.videoTrack!.title
-                                      ? Theme.of(context).iconTheme.color
-                                      : Colors.transparent,
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          _video.value = quality; // change the video quality
-                          if (quality.isLocal) {
-                            if (widget.isLocal) {
-                              _player.setVideoTrack(quality.videoTrack!);
-                            } else {
-                              _player.open(Media(quality.videoTrack!.id,
-                                  httpHeaders: quality.headers));
-                            }
-                          } else {
-                            _player.open(Media(quality.videoTrack!.id,
-                                httpHeaders: quality.headers));
-                          }
-                          _seekToCurrentPosition = true;
-                          _currentPositionSub = _player.stream.position.listen(
-                            (position) async {
-                              if (_seekToCurrentPosition &&
-                                  _currentPosition != Duration.zero) {
-                                await _player.stream.buffer.first;
-                                _player.seek(_currentPosition);
-                                try {
-                                  _player.setSubtitleTrack(_subtitle.value!);
-                                } catch (_) {}
-
-                                _seekToCurrentPosition = false;
-                              } else {
-                                _currentPosition = position;
-                              }
-                            },
-                          );
-                          Navigator.maybePop(_);
-                        },
-                      ))
-                  .toList(),
-              cancelButton: CupertinoActionSheetAction(
-                onPressed: () => Navigator.maybePop(_),
-                isDestructiveAction: true,
-                child: Text(l10n.cancel),
+    return Column(
+      children: videoQuality.map((quality) {
+        final selected =
+            _video.value!.videoTrack!.title == quality.videoTrack!.title ||
+                widget.isLocal;
+        return GestureDetector(
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(
+                  Icons.check,
+                  color: selected ? Colors.white : Colors.transparent,
+                ),
               ),
-            ));
+              Expanded(
+                child: Text(
+                  widget.isLocal
+                      ? _firstVid.quality
+                      : quality.videoTrack!.title!,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                      color: selected
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.6)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          onTap: () {
+            _video.value = quality; // change the video quality
+            if (quality.isLocal) {
+              if (widget.isLocal) {
+                _player.setVideoTrack(quality.videoTrack!);
+              } else {
+                _player.open(Media(quality.videoTrack!.id,
+                    httpHeaders: quality.headers));
+              }
+            } else {
+              _player.open(
+                  Media(quality.videoTrack!.id, httpHeaders: quality.headers));
+            }
+            _seekToCurrentPosition = true;
+            _currentPositionSub = _player.stream.position.listen(
+              (position) async {
+                if (_seekToCurrentPosition &&
+                    _currentPosition != Duration.zero) {
+                  await _player.stream.buffer.first;
+                  _player.seek(_currentPosition);
+                  try {
+                    _player.setSubtitleTrack(_subtitle.value!);
+                  } catch (_) {}
+
+                  _seekToCurrentPosition = false;
+                } else {
+                  _currentPosition = position;
+                }
+              },
+            );
+            Navigator.pop(context);
+          },
+        );
+      }).toList(),
+    );
   }
 
-  void _onChangeVideoSubtitle() {
+ void _videoSettingDraggableMenu(BuildContext context) async {
+    final l10n = l10nLocalizations(context)!;
+    _player.pause();
+    await DraggableMenu.open(
+        context,
+        DraggableMenu(
+          ui: ClassicDraggableMenu(
+              radius: 30,
+              barItem: Container(),
+              color: Colors.black.withOpacity(0.6)),
+          minimizeThreshold: 0.6,
+          levels: [
+            DraggableMenuLevel.ratio(ratio: 2 / 3),
+            DraggableMenuLevel.ratio(ratio: 0.9),
+          ],
+          minimizeBeforeFastDrag: true,
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, left: 12, bottom: 5),
+                              child: Row(
+                                children: [
+                                  Text(l10n.video_quality,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20)),
+                                ],
+                              ),
+                            ),
+                            const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5)),
+                            _videoQualityWidget(context)
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                        color: Colors.white,
+                        width: 0.2,
+                        height: mediaHeight(context, 1)),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, left: 12, bottom: 5),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    l10n.subtitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5)),
+                            _videoSubtitle(context)
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                )),
+          ),
+        ));
+    _player.play();
+  }
+
+  Widget _videoSubtitle(BuildContext context) {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
         .where((element) =>
             element.title != null && element.language != null && widget.isLocal)
@@ -366,67 +439,54 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     if (widget.isLocal) {
       subtitle = _player.state.track.subtitle;
     } else {
-      subtitle = _subtitle.value;
+      try {
+        subtitle = _subtitle.value;
+      } catch (_) {}
     }
 
-    final l10n = l10nLocalizations(context)!;
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        title: Text(l10n.change_video_subtitle,
-            style: TextStyle(
-                fontSize: 24,
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .color!
-                    .withOpacity(0.8)),
-            textAlign: TextAlign.center),
-        actions: videoSubtitle
-            .toSet()
-            .toList()
-            .map((sub) => CupertinoActionSheetAction(
-                  onPressed: () {
-                    Navigator.maybePop(_);
-                    try {
-                      _player.setSubtitleTrack(_subtitle.value!);
-                    } catch (_) {}
-                    if (!widget.isLocal) _subtitle.value = sub.subtitle;
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        sub.subtitle!.title ??
-                            sub.subtitle!.language ??
-                            sub.subtitle!.channels ??
-                            "N/A",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                Theme.of(context).textTheme.bodyLarge!.color),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      Icon(
-                        Icons.check,
-                        color: subtitle != null && sub.subtitle == subtitle
-                            ? Theme.of(context).iconTheme.color
-                            : Colors.transparent,
-                      ),
-                    ],
-                  ),
-                ))
-            .toList(),
-        cancelButton: CupertinoActionSheetAction(
-          onPressed: () => Navigator.maybePop(_),
-          isDestructiveAction: true,
-          child: Text(l10n.cancel),
-        ),
-      ),
+    videoSubtitle
+        .sort((a, b) => a.subtitle!.title!.compareTo(b.subtitle!.title!));
+    videoSubtitle.insert(
+        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+    return Column(
+      children: videoSubtitle.toSet().toList().map((sub) {
+        final selected = subtitle != null && sub.subtitle == subtitle;
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            try {
+              _player.setSubtitleTrack(sub.subtitle!);
+              if (!widget.isLocal) _subtitle.value = sub.subtitle;
+            } catch (_) {}
+          },
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(
+                  Icons.check,
+                  color: selected ? Colors.white : Colors.transparent,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  sub.subtitle!.title ??
+                      sub.subtitle!.language ??
+                      sub.subtitle!.channels ??
+                      "None",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                      color: selected
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.6)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -462,11 +522,107 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     } else {
       ref.read(_fit.notifier).state = fitList[0];
     }
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
     ref.read(_showFitLabel.notifier).state = false;
   }
 
-  List<Widget> _bottomButtonBar(BuildContext context, bool isFullScreen) {
+  Widget _seekToWidget() {
+    return SizedBox(
+      height: 30,
+      child: ElevatedButton(
+          onPressed: () async {
+            ref.read(_seekTo.notifier).state = 85;
+            ref.read(_showSeekTo.notifier).state = true;
+            await _player
+                .seek(Duration(seconds: _currentPosition.inSeconds + 85));
+            ref.read(_seekTo.notifier).state = 0;
+            ref.read(_showSeekTo.notifier).state = false;
+          },
+          child:
+              const Text("+85", style: TextStyle(fontWeight: FontWeight.bold))),
+    );
+  }
+
+  List<Widget> _mobileBottomButtonBar(BuildContext context, bool isFullScreen) {
+    return [
+      Flexible(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _seekToWidget(),
+                Row(
+                  children: [
+                    if (!isFullScreen)
+                      IconButton(
+                        padding: const EdgeInsets.all(5),
+                        onPressed: () => _videoSettingDraggableMenu(context),
+                        icon: const Icon(
+                          Icons.video_settings_outlined,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    TextButton(
+                        child: ValueListenableBuilder<double>(
+                          valueListenable: _playbackSpeed,
+                          builder: (context, value, child) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "${value}x",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            );
+                          },
+                        ),
+                        onPressed: () {
+                          _togglePlaybackSpeed();
+                        }),
+                    if (!isFullScreen)
+                      IconButton(
+                        icon: const Icon(Icons.fit_screen_sharp,
+                            size: 25, color: Colors.white),
+                        onPressed: () async {
+                          _changeFitLabel(ref);
+                        },
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 20),
+              child: Row(
+                children: [
+                  SizedBox(
+                      width: 70,
+                      child: Center(
+                          child: MaterialMobilePositionIndicator(left: true))),
+                  Expanded(
+                    child: SizedBox(
+                        height: 20,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 7),
+                            child: MaterialSeekBar())),
+                  ),
+                  SizedBox(
+                      width: 70,
+                      child: Center(
+                          child: MaterialMobilePositionIndicator(left: false)))
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+    ];
+  }
+
+  List<Widget> _desktopBottomButtonBar(
+      BuildContext context, bool isFullScreen) {
     bool hasPrevEpisode = _streamController.getEpisodeIndex() + 1 !=
         _streamController.getEpisodesLength();
     bool hasNextEpisode = _streamController.getEpisodeIndex() != 0;
@@ -475,150 +631,90 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const MaterialPositionIndicator(),
-            const Spacer(),
-            Stack(
+            Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          if (!isFullScreen)
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CupertinoButton(
-                                  padding: const EdgeInsets.all(5),
-                                  onPressed: _onChangeVideoQuality,
-                                  child: const Icon(
-                                    Icons.video_settings_outlined,
-                                    size: 30,
-                                    color: Colors.white,
-                                  ),
-                                )),
-                          if (!isFullScreen)
-                            Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CupertinoButton(
-                                  padding: const EdgeInsets.all(5),
-                                  onPressed: _onChangeVideoSubtitle,
-                                  child: const Icon(
-                                    Icons.subtitles,
-                                    size: 30,
-                                    color: Colors.white,
-                                  ),
-                                )),
-                          if (_isDesktop)
-                            const MaterialDesktopVolumeButton(
-                              iconSize: 38,
-                            ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          MaterialButton(
-                              child: ValueListenableBuilder<double>(
-                                valueListenable: _playbackSpeed,
-                                builder: (context, value, child) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "${value}x",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              onPressed: () {
-                                _togglePlaybackSpeed();
-                              }),
-                          if (!isFullScreen)
-                            MaterialButton(
-                              child: const Icon(Icons.fit_screen,
-                                  size: 30, color: Colors.white),
-                              onPressed: () async {
-                                _changeFitLabel(ref);
-                              },
-                            ),
-                          if (_isDesktop)
-                            const MaterialDesktopFullscreenButton()
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MaterialButton(
-                      onPressed: hasPrevEpisode
-                          ? () {
+                _seekToWidget(),
+              ],
+            ),
+            const SizedBox(height: 20, child: MaterialDesktopSeekBar()),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_isDesktop)
+                    Row(
+                      children: [
+                        if (hasPrevEpisode)
+                          IconButton(
+                            onPressed: () {
                               pushReplacementMangaReaderView(
                                   context: context,
                                   chapter: _streamController.getPrevEpisode());
-                            }
-                          : null,
-                      child: Icon(
-                        Icons.skip_previous_outlined,
-                        size: 30,
-                        color: hasPrevEpisode
-                            ? Colors.white
-                            : Colors.white.withOpacity(0.4),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Stack(
-                      children: [
-                        Positioned.fill(
-                          child: UnconstrainedBox(
-                            child: Container(
-                              width: 47,
-                              height: 47,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(
-                                      color: Colors.white, width: 3)),
+                            },
+                            icon: const Icon(
+                              Icons.skip_previous_outlined,
+                              size: 25,
+                              color: Colors.white,
                             ),
                           ),
-                        ),
-                        _isDesktop
-                            ? const MaterialDesktopPlayOrPauseButton(
-                                iconSize: 36,
-                              )
-                            : const MaterialPlayOrPauseButton(
-                                iconSize: 36,
-                              ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    MaterialButton(
-                      onPressed: hasNextEpisode
-                          ? () {
+                        const MaterialDesktopPlayOrPauseButton(iconSize: 25),
+                        if (hasNextEpisode)
+                          IconButton(
+                            onPressed: () {
                               pushReplacementMangaReaderView(
                                 context: context,
                                 chapter: _streamController.getNextEpisode(),
                               );
-                            }
-                          : null,
-                      child: Icon(
-                        Icons.skip_next_outlined,
-                        size: 30,
-                        color: hasNextEpisode
-                            ? Colors.white
-                            : Colors.white.withOpacity(0.4),
-                      ),
+                            },
+                            icon: const Icon(Icons.skip_next_outlined,
+                                size: 25, color: Colors.white),
+                          ),
+                        const MaterialDesktopVolumeButton(iconSize: 25),
+                        const MaterialDesktopPositionIndicator()
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  Row(
+                    children: [
+                      if (!isFullScreen)
+                        IconButton(
+                          onPressed: () => _videoSettingDraggableMenu(context),
+                          icon: const Icon(
+                            Icons.video_settings_outlined,
+                            size: 25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      TextButton(
+                          child: ValueListenableBuilder<double>(
+                            valueListenable: _playbackSpeed,
+                            builder: (context, value, child) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "${value}x",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              );
+                            },
+                          ),
+                          onPressed: () {
+                            _togglePlaybackSpeed();
+                          }),
+                      if (!isFullScreen)
+                        IconButton(
+                          icon: const Icon(Icons.fit_screen_outlined,
+                              size: 25, color: Colors.white),
+                          onPressed: () async {
+                            _changeFitLabel(ref);
+                          },
+                        ),
+                      if (_isDesktop)
+                        const MaterialDesktopFullscreenButton(iconSize: 25)
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -673,12 +769,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             ),
           ],
         ),
-      )
+      ),
     ];
   }
 
   Widget _videoPlayer(BuildContext context) {
     final fit = ref.watch(_fit);
+    final seekTo = ref.watch(_seekTo);
     return Stack(
       children: [
         Video(
@@ -697,6 +794,30 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           height: MediaQuery.of(context).size.height,
           resumeUponEnteringForegroundMode: true,
         ),
+        if (ref.watch(_showSeekTo))
+          Positioned.fill(
+            child: UnconstrainedBox(
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(64.0),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
+                  child: Text(
+                    "+ $seekTo",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+              ),
+            ),
+          ),
         if (ref.watch(_showFitLabel))
           Positioned.fill(
               child: Center(
@@ -710,66 +831,111 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   Widget _mobilePlayer() {
-    return MaterialVideoControlsTheme(
-        normal: MaterialVideoControlsThemeData(
+    MaterialVideoControlsThemeData materialVideoControlsThemeData(
+            bool isFullScreen) =>
+        MaterialVideoControlsThemeData(
             visibleOnMount: true,
-            buttonBarHeight: 83,
+            buttonBarHeight: 100,
             seekOnDoubleTap: true,
-            controlsHoverDuration: const Duration(seconds: 5),
+            seekGesture: true,
+            horizontalGestureSensitivity: 5000,
+            verticalGestureSensitivity: 300,
+            controlsHoverDuration: const Duration(seconds: 1000),
             volumeGesture: true,
             brightnessGesture: true,
+            seekBarThumbSize: 15,
+            seekBarHeight: 5,
+            displaySeekBar: false,
+            seekIndicatorBuilder: (context, duration) {
+              final swipeDuration = duration.inSeconds;
+              final value = _currentPosition.inSeconds + swipeDuration;
+              return Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(64.0),
+                ),
+                height: 52.0,
+                width: 108.0,
+                child: Text(
+                  Duration(seconds: value).label(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14.0,
+                    color: Color(0xFFFFFFFF),
+                  ),
+                ),
+              );
+            },
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
+            primaryButtonBar: _mobilePrimaryButtonBar(),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, false),
+            topButtonBar: _topButtonBar(context, isFullScreen),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            bottomButtonBar: _bottomButtonBar(context, false)),
-        fullscreen: MaterialVideoControlsThemeData(
-            buttonBarHeight: 83,
-            seekOnDoubleTap: true,
-            controlsHoverDuration: const Duration(seconds: 5),
-            volumeGesture: true,
-            brightnessGesture: true,
-            seekBarPositionColor: primaryColor(context),
-            seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(bottom: 60, left: 8, right: 8),
-            topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, true),
-            bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            bottomButtonBar: _bottomButtonBar(context, true)),
+            bottomButtonBar: _mobileBottomButtonBar(context, isFullScreen));
+    return MaterialVideoControlsTheme(
+        normal: materialVideoControlsThemeData(false),
+        fullscreen: materialVideoControlsThemeData(true),
         child: _videoPlayer(context));
   }
 
+  List<Widget> _mobilePrimaryButtonBar() {
+    bool hasPrevEpisode = _streamController.getEpisodeIndex() + 1 !=
+        _streamController.getEpisodesLength();
+    bool hasNextEpisode = _streamController.getEpisodeIndex() != 0;
+    return [
+      const Spacer(flex: 3),
+      IconButton(
+        onPressed: hasPrevEpisode
+            ? () {
+                pushReplacementMangaReaderView(
+                    context: context,
+                    chapter: _streamController.getPrevEpisode());
+              }
+            : null,
+        icon: const Icon(
+          Icons.skip_previous_outlined,
+          size: 30,
+          color: Colors.white,
+        ),
+      ),
+      const Spacer(),
+      const MaterialPlayOrPauseButton(iconSize: 55),
+      const Spacer(),
+      IconButton(
+        onPressed: hasNextEpisode
+            ? () {
+                pushReplacementMangaReaderView(
+                  context: context,
+                  chapter: _streamController.getNextEpisode(),
+                );
+              }
+            : null,
+        icon:
+            const Icon(Icons.skip_next_outlined, size: 30, color: Colors.white),
+      ),
+      const Spacer(flex: 3)
+    ];
+  }
+
   Widget _desktopPlayer() {
-    return MaterialDesktopVideoControlsTheme(
-        normal: MaterialDesktopVideoControlsThemeData(
+    MaterialDesktopVideoControlsThemeData materialVideoControlsThemeData(
+            bool isFullScreen) =>
+        MaterialDesktopVideoControlsThemeData(
             visibleOnMount: true,
-            buttonBarHeight: 83,
-            seekBarContainerHeight: 4,
-            controlsHoverDuration: const Duration(seconds: 5),
+            controlsHoverDuration: const Duration(seconds: 10),
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
             topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, false),
-            bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            bottomButtonBar: _bottomButtonBar(context, false)),
-        fullscreen: MaterialDesktopVideoControlsThemeData(
-            buttonBarHeight: 83,
-            seekBarContainerHeight: 4,
-            controlsHoverDuration: const Duration(seconds: 5),
-            seekBarPositionColor: primaryColor(context),
-            seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: [],
-            seekBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, true),
-            bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            bottomButtonBar: _bottomButtonBar(context, true)),
+            topButtonBar: _topButtonBar(context, isFullScreen),
+            buttonBarHeight: 100,
+            displaySeekBar: false,
+            seekBarThumbSize: 15,
+            bottomButtonBar: _desktopBottomButtonBar(context, isFullScreen));
+    return MaterialDesktopVideoControlsTheme(
+        normal: materialVideoControlsThemeData(false),
+        fullscreen: materialVideoControlsThemeData(true),
         child: _videoPlayer(context));
   }
 
@@ -789,17 +955,21 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 }
 
-class MaterialPositionIndicator extends StatefulWidget {
-  /// Overriden [TextStyle] for the [MaterialPositionIndicator].
+class MaterialMobilePositionIndicator extends StatefulWidget {
+  final bool left;
+
+  /// Overriden [TextStyle] for the [MaterialMobilePositionIndicator].
   final TextStyle? style;
-  const MaterialPositionIndicator({super.key, this.style});
+  const MaterialMobilePositionIndicator(
+      {super.key, this.style, required this.left});
 
   @override
-  MaterialPositionIndicatorState createState() =>
-      MaterialPositionIndicatorState();
+  MaterialMobilePositionIndicatorState createState() =>
+      MaterialMobilePositionIndicatorState();
 }
 
-class MaterialPositionIndicatorState extends State<MaterialPositionIndicator> {
+class MaterialMobilePositionIndicatorState
+    extends State<MaterialMobilePositionIndicator> {
   late Duration position = controller(context).player.state.position;
   late Duration duration = controller(context).player.state.duration;
 
@@ -836,29 +1006,25 @@ class MaterialPositionIndicatorState extends State<MaterialPositionIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          position.label(reference: duration),
-          style: widget.style ??
-              const TextStyle(
-                height: 1.0,
-                fontSize: 12.0,
-                color: Colors.white,
-              ),
-        ),
-        Text(
-          duration.label(reference: duration),
-          style: widget.style ??
-              const TextStyle(
-                height: 1.0,
-                fontSize: 12.0,
-                color: Colors.white,
-              ),
-        ),
-      ],
-    );
+    return widget.left
+        ? Text(
+            position.label(reference: duration),
+            style: widget.style ??
+                const TextStyle(
+                  height: 1.0,
+                  fontSize: 12.0,
+                  color: Colors.white,
+                ),
+          )
+        : Text(
+            duration.label(reference: duration),
+            style: widget.style ??
+                const TextStyle(
+                  height: 1.0,
+                  fontSize: 12.0,
+                  color: Colors.white,
+                ),
+          );
   }
 }
 

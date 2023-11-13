@@ -457,7 +457,7 @@ class Kitsu extends _$Kitsu {
 
   String _getUserId() {
     final track = ref.watch(tracksProvider(syncId: syncId));
-    return json.decode(track!.prefs!)["userId"];
+    return track!.username!;
   }
 
   TrackStatus _getKitsuTrackStatus(String status) {
