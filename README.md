@@ -17,7 +17,7 @@ Mangayomi is free an open source manga reader and anime streaming cross-platefor
 ## Features
 
 Features include:
-* [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions)
+* [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions), utilizing the capabilities of the [dart_eval](https://pub.dev/packages/dart_eval) package
 * Online reading from a variety of sources
 * Watch anime from a variety of sources
 * Local reading of downloaded content
@@ -52,7 +52,7 @@ Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/rele
 
 ## Using Rust Inside Flutter
 
-This project leverages Flutter for GUI and Rust for the backend logic,
+This project use Rust for the [auto-image-cropper](https://github.com/ritiek/auto-image-cropper) crate,
 utilizing the capabilities of the
 [Rinf](https://pub.dev/packages/rinf) framework.
 
@@ -93,6 +93,7 @@ flutter run
 
 For detailed instructions on writing Rust and Flutter together,
 please refer to Rinf's [documentation](https://rinf-docs.cunarist.com).
+
 
 ## License
 
