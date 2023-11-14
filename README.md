@@ -31,20 +31,16 @@ Features include:
 ## Screenshots :camera:
 
 ### Mobile Screenshots                                                                                                                
-| Views    |  Light                                                     |  Dark                                                        |
-| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| Manga    |  ![mobile_manga_light](screenshots/mobile_manga_light.png)     |![mobile_manga_dark](screenshots/mobile_manga_dark.png)      |
-| Anime    |  ![mobile_anime_light](screenshots/mobile_anime_light.png)     |![mobile_anime_dark](screenshots/mobile_anime_dark.png)      |
-| Reader   |  ![mobile_reader_light](screenshots/mobile_reader_light.png)   |![mobile_reader_dark](screenshots/mobile_reader_dark.png) |
-| Player   |  ![mobile_anime_player](screenshots/mobile_anime_player.png)|![mobile_anime_player](screenshots/mobile_anime_player.png)|
+|          |  Views                                                |
+| -------- | ----------------------------------------------------- |
+| Reader   |  ![mobile_reader_light](screenshots/mobile_reader.jpg)|
+| Player   |  ![mobile_anime_player](screenshots/mobile_player.jpg)|
 
 ### Desktop Screenshots                                                                                                                
-| Views    |  Light                                                     |  Dark                                                        |
-| -------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| Manga    |  ![desktop_manga_light](screenshots/desktop_manga_light.png)     |![desktop_manga_dark](screenshots/desktop_manga_dark.png)      |
-| Anime    |  ![desktop_anime_light](screenshots/desktop_anime_light.png)     |![desktop_anime_dark](screenshots/desktop_anime_dark.png)      |
-| Reader   |  ![desktop_reader_light](screenshots/desktop_reader_light.png)   |![desktop_reader_dark](screenshots/desktop_reader_dark.png) |
-| Player   |  ![desktop_anime_player](screenshots/desktop_anime_player.png)|![desktop_anime_player](screenshots/desktop_anime_player.png)|
+|          |  Views                                            |
+| -------- | ------------------------------------------------- |
+| Reader   |  ![desktop_reader](screenshots/desktop_reader.png)|
+| Player   |  ![desktop_player](screenshots/desktop_player.png)|
 
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
