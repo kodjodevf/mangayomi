@@ -31,16 +31,14 @@ Features include:
 ## Screenshots :camera:
 
 ### Mobile Screenshots                                                                                                                
-|          |  Views                                                |
-| -------- | ----------------------------------------------------- |
-| Reader   |  ![mobile_reader_light](screenshots/mobile_reader.jpg)|
-| Player   |  ![mobile_anime_player](screenshots/mobile_player.jpg)|
+|          |  Reader                                               |  Player                                               |
+| -------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| Views    |  ![mobile_reader_light](screenshots/mobile_reader.jpg)|  ![mobile_anime_player](screenshots/mobile_player.jpg)|
 
 ### Desktop Screenshots                                                                                                                
-|          |  Views                                            |
-| -------- | ------------------------------------------------- |
-| Reader   |  ![desktop_reader](screenshots/desktop_reader.png)|
-| Player   |  ![desktop_player](screenshots/desktop_player.png)|
+|          |  Reader                                           |  Player                                           |
+| -------- | ------------------------------------------------- | ------------------------------------------------- |
+| Views    |  ![desktop_reader](screenshots/desktop_reader.png)|  ![desktop_player](screenshots/desktop_player.png)|
 
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
