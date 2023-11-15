@@ -5,18 +5,17 @@
 
 #![allow(dead_code)]
 
-use api::RustResponseUnique;
-use api::RustSignal;
+pub use interface::*;
 use tokio::sync::mpsc::Receiver;
+use tokio_with_wasm::tokio;
 
-pub mod api;
-pub mod bridge_engine;
-mod bridge_generated;
+mod generated;
+mod interface;
 
 /// This function is expected to be used only once
 /// during the initialization of the Rust logic.
-pub fn get_request_receiver() -> Receiver<api::RustRequestUnique> {
-    let cell = api::REQUST_RECEIVER_SHARED.lock().unwrap();
+pub fn get_request_receiver() -> Receiver<RustRequestUnique> {
+    let cell = REQUST_RECEIVER_SHARED.lock().unwrap();
     let option = cell.replace(None);
     option.unwrap()
 }
@@ -25,13 +24,13 @@ pub fn get_request_receiver() -> Receiver<api::RustRequestUnique> {
 /// and trigger the rebuild.
 /// No memory copy is involved as the bytes are moved directly to Dart.
 pub fn send_rust_signal(rust_signal: RustSignal) {
-    api::SIGNAL_STREAM.with(|inner| {
+    SIGNAL_STREAM.with(|inner| {
         let mut borrowed = inner.borrow_mut();
         let option = borrowed.as_ref();
         if let Some(stream) = option {
             stream.add(rust_signal);
         } else {
-            let cell = api::SIGNAL_STREAM_SHARED.lock().unwrap();
+            let cell = SIGNAL_STREAM_SHARED.lock().unwrap();
             let stream = cell.borrow().as_ref().unwrap().clone();
             stream.add(rust_signal);
             borrowed.replace(stream);
@@ -43,13 +42,13 @@ pub fn send_rust_signal(rust_signal: RustSignal) {
 /// to remember which request that response corresponds to.
 /// No memory copy is involved as the bytes are moved directly to Dart.
 pub fn respond_to_dart(response_unique: RustResponseUnique) {
-    api::RESPONSE_STREAM.with(|inner| {
+    RESPONSE_STREAM.with(|inner| {
         let mut borrowed = inner.borrow_mut();
         let option = borrowed.as_ref();
         if let Some(stream) = option {
             stream.add(response_unique);
         } else {
-            let cell = api::RESPONSE_STREAM_SHARED.lock().unwrap();
+            let cell = RESPONSE_STREAM_SHARED.lock().unwrap();
             let stream = cell.borrow().as_ref().unwrap().clone();
             stream.add(response_unique);
             borrowed.replace(stream);
@@ -79,13 +78,13 @@ macro_rules! debug_print {
 /// Use `debug_print!` macro instead.
 #[cfg(debug_assertions)]
 pub fn send_rust_report(rust_report: String) {
-    api::REPORT_STREAM.with(|inner| {
+    REPORT_STREAM.with(|inner| {
         let mut borrowed = inner.borrow_mut();
         let option = borrowed.as_ref();
         if let Some(stream) = option {
             stream.add(rust_report);
         } else {
-            let cell = api::REPORT_STREAM_SHARED.lock().unwrap();
+            let cell = REPORT_STREAM_SHARED.lock().unwrap();
             let stream = cell.borrow().as_ref().unwrap().clone();
             stream.add(rust_report);
             borrowed.replace(stream);

@@ -61,7 +61,7 @@ dependencies:
       ref: e01d534
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
-  rinf: ^4.13.1
+  rinf: ^4.16.3
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.2
   

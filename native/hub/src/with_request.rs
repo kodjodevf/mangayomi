@@ -2,7 +2,7 @@
 //! when a `RustRequest` was received from Dart
 //! and returns `RustResponse`.
 
-use crate::bridge::api::{RustRequestUnique, RustResponse, RustResponseUnique};
+use crate::bridge::{RustRequestUnique, RustResponse, RustResponseUnique};
 use crate::imagecrop;
 use crate::messages;
 

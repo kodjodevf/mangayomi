@@ -11,34 +11,9 @@ edition = "2021"
 # `staticlib` is for iOS and macOS.
 crate-type = ["lib", "cdylib", "staticlib"]
 
-# These are dependencies for non-web platforms.
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-libc = "0.2"
-dart-sys = { version = "4.0.2" }
-allo-isolate = { version = "0.1.20", features = ["zero-copy"] }
-tokio = { version = "1.28.2", features = ["rt-multi-thread", "time"] }
-os-thread-local = "0.1.3"
-backtrace = "0.3.69"
-
-# These are dependencies for the web.
-[target.'cfg(target_family = "wasm")'.dependencies]
-wasm-bindgen = { version = "0.2.87" }
-wasm-bindgen-futures = "0.4.37"
-js-sys = "0.3.64"
-web-sys = { version = "0.3.64", features = [
-    "DedicatedWorkerGlobalScope",
-    "MessagePort",
-    "Blob",
-    "BlobPropertyBag",
-    "Worker",
-    "Url",
-    "BroadcastChannel",
-] }
-async_wasm_task = "0.2.3"
-
 [dependencies]
-bytemuck = "1.11.0"
-lazy_static = "1.4.0"
-tokio = { version = "1.28.2", features = ["sync", "macros"] }
+rinf = "4.16.3"
+tokio_with_wasm = "0.3.2"
+wasm-bindgen = "0.2.87"
 prost = "0.12.0"
 image = "0.24.7"
