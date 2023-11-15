@@ -1,11 +1,10 @@
 use bridge::respond_to_dart;
-use web_alias::*;
 use with_request::handle_request;
+use tokio_with_wasm::tokio;
 
 mod bridge;
 mod imagecrop;
 mod messages;
-mod web_alias;
 mod with_request;
 
 /// This `hub` crate is the entry point for the Rust logic.
@@ -16,7 +15,7 @@ async fn main() {
     // Repeat `crate::spawn` anywhere in your code
     // if more concurrent tasks are needed.
     while let Some(request_unique) = request_receiver.recv().await {
-        crate::spawn(async {
+        tokio::spawn(async {
             let response_unique = handle_request(request_unique).await;
             respond_to_dart(response_unique);
         });

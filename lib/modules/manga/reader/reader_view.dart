@@ -259,7 +259,6 @@ class _MangaChapterPageGalleryState
     _processCropBorders();
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
-    ;
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
       onWillPop: () async {
