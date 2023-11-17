@@ -64,11 +64,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
                 },
               ),
             ),
-            body: PopScope(
-              onPopInvoked: (_) {
+            body: WillPopScope(
+              onWillPop: () async {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
+                return false;
               },
               child: const Center(
                 child: Text("Error"),
@@ -76,9 +77,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             ),
           );
         }
-        data.$1.sort(
-          (a, b) => a.quality.compareTo(b.quality),
-        );
+        data.$1.sort((a, b) => a.quality.compareTo(b.quality));
         return AnimeStreamPage(
           episode: widget.episode,
           videos: data.$1,
@@ -97,12 +96,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             },
           ),
         ),
-        body: PopScope(
-          onPopInvoked: (_) {
+        body: WillPopScope(
+          onWillPop: () async {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                 overlays: SystemUiOverlay.values);
 
             Navigator.pop(context);
+            return false;
           },
           child: Center(
             child: Text(error.toString()),
@@ -124,12 +124,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               },
             ),
           ),
-          body: PopScope(
-            onPopInvoked: (_) {
+          body: WillPopScope(
+            onWillPop: () async {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
 
               Navigator.pop(context);
+              return false;
             },
             child: const ProgressCenter(),
           ),
@@ -932,11 +933,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PopScope(
-        onPopInvoked: (_) {
+      body: WillPopScope(
+        onWillPop: () async {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
               overlays: SystemUiOverlay.values);
           Navigator.pop(context);
+          return false;
         },
         child: _isDesktop ? _desktopPlayer() : _mobilePlayer(),
       ),

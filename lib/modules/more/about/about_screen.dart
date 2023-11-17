@@ -108,7 +108,13 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           _launchInBrowser(Uri.parse(
                               'https://github.com/kodjodevf/mangayomi'));
                         },
-                        icon: const Icon(FontAwesomeIcons.github))
+                        icon: const Icon(FontAwesomeIcons.github)),
+                    IconButton(
+                        onPressed: () {
+                          _launchInBrowser(Uri.parse(
+                              'https://discord.com/invite/EjfBuYahsP'));
+                        },
+                        icon: const Icon(FontAwesomeIcons.discord))
                   ],
                 )
               ],

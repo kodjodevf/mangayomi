@@ -6,17 +6,17 @@ import 'package:mangayomi/models/video.dart';
 abstract class MProvider {
   MProvider();
 
-  Future<MPages> getLatestUpdates(MSource sourceInfo, int page);
+  Future<MPages> getLatestUpdates(MSource source, int page);
 
-  Future<MPages> getPopular(MSource sourceInfo, int page);
+  Future<MPages> getPopular(MSource source, int page);
 
-  Future<MPages> search(MSource sourceInfo, String query, int page);
+  Future<MPages> search(MSource source, String query, int page);
 
-  Future<MManga> getDetail(MSource sourceInfo, String url);
+  Future<MManga> getDetail(MSource source, String url);
 
-  Future<List<String>> getPageList(MSource sourceInfo, String url);
+  Future<List<String>> getPageList(MSource source, String url);
 
-  Future<List<Video>> getVideoList(MSource sourceInfo, String url);
+  Future<List<Video>> getVideoList(MSource source, String url);
 
   // FilterList getFilterList();
 }

@@ -208,9 +208,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             ),
           ),
         ),
-        body: PopScope(
-          onPopInvoked: (_) {
+        body: WillPopScope(
+          onWillPop: () async {
             Navigator.pop(context);
+            return false;
           },
           child: _getManga!.when(
             data: (data) {

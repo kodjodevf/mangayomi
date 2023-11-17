@@ -32,7 +32,6 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:rinf/rinf.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 typedef DoubleClickAnimationListener = void Function();
@@ -68,11 +67,12 @@ class MangaReaderView extends ConsumerWidget {
                 },
               ),
             ),
-            body: PopScope(
-              onPopInvoked: (_) {
+            body: WillPopScope(
+              onWillPop: () async {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
+                return false;
               },
               child: const Center(
                 child: Text("Error"),
@@ -97,11 +97,12 @@ class MangaReaderView extends ConsumerWidget {
             },
           ),
         ),
-        body: PopScope(
-          onPopInvoked: (_) {
+        body: WillPopScope(
+          onWillPop: () async {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                 overlays: SystemUiOverlay.values);
             Navigator.pop(context);
+            return false;
           },
           child: Center(
             child: Text(error.toString()),
@@ -121,11 +122,12 @@ class MangaReaderView extends ConsumerWidget {
               },
             ),
           ),
-          body: PopScope(
-            onPopInvoked: (_) {
+          body: WillPopScope(
+            onWillPop: () async {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
               Navigator.pop(context);
+              return false;
             },
             child: const ProgressCenter(),
           ),
@@ -163,7 +165,6 @@ class _MangaChapterPageGalleryState
     _readerController.setMangaHistoryUpdate();
     _readerController.setPageIndex(
         _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!));
-    Rinf.ensureFinalized();
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     clearGestureDetailsCache();
@@ -257,9 +258,10 @@ class _MangaChapterPageGalleryState
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
     final l10n = l10nLocalizations(context)!;
-    return PopScope(
-      onPopInvoked: (_) {
+    return WillPopScope(
+      onWillPop: () async {
         _goBack(context);
+        return false;
       },
       child: KeyboardListener(
         autofocus: true,
