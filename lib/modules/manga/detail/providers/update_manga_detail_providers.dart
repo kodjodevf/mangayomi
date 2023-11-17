@@ -1,3 +1,4 @@
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -19,7 +20,8 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
   try {
     getManga = await ref
         .watch(getDetailProvider(url: manga.link!, source: source!).future);
-  } catch (_) {
+  } catch (e) {
+    botToast(e.toString());
     return;
   }
   manga

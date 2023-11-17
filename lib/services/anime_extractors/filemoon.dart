@@ -7,8 +7,9 @@ import 'package:mangayomi/utils/xpath_selector.dart';
 class FilemoonExtractor {
   final http.Client client = http.Client();
 
-  Future<List<Video>> videosFromUrl(String url, String prefix) async {
-    prefix = prefix.isEmpty ? "Filemoon - " : prefix;
+  Future<List<Video>> videosFromUrl(
+      String url, String prefix, String suffix) async {
+    prefix = prefix.isEmpty ? "Filemoon " : prefix;
     try {
       final response = await client.get(Uri.parse(url));
 
@@ -44,7 +45,7 @@ class FilemoonExtractor {
 
         return Video(
           videoUrl,
-          "$prefix - $resolution",
+          "$prefix - $resolution $suffix",
           videoUrl,
           headers: videoHeaders,
         );

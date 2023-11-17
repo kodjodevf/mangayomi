@@ -68,12 +68,11 @@ class MangaReaderView extends ConsumerWidget {
                 },
               ),
             ),
-            body: WillPopScope(
-              onWillPop: () async {
+            body: PopScope(
+              onPopInvoked: (_) {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
-                return false;
               },
               child: const Center(
                 child: Text("Error"),
@@ -98,12 +97,11 @@ class MangaReaderView extends ConsumerWidget {
             },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
+        body: PopScope(
+          onPopInvoked: (_) {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                 overlays: SystemUiOverlay.values);
             Navigator.pop(context);
-            return false;
           },
           child: Center(
             child: Text(error.toString()),
@@ -123,12 +121,11 @@ class MangaReaderView extends ConsumerWidget {
               },
             ),
           ),
-          body: WillPopScope(
-            onWillPop: () async {
+          body: PopScope(
+            onPopInvoked: (_) {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
               Navigator.pop(context);
-              return false;
             },
             child: const ProgressCenter(),
           ),
@@ -260,10 +257,9 @@ class _MangaChapterPageGalleryState
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
     final l10n = l10nLocalizations(context)!;
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (_) {
         _goBack(context);
-        return false;
       },
       child: KeyboardListener(
         autofocus: true,

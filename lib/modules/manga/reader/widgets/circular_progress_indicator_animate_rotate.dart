@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 class CircularProgressIndicatorAnimateRotate extends StatefulWidget {
   final double progress;
   const CircularProgressIndicatorAnimateRotate(
-      {Key? key, required this.progress})
-      : super(key: key);
+      {super.key, required this.progress});
 
   @override
   State<CircularProgressIndicatorAnimateRotate> createState() =>

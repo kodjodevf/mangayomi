@@ -443,13 +443,11 @@ class RouterNotifier extends ChangeNotifier {
 }
 
 class CustomTransition extends CustomTransitionPage {
-  CustomTransition({required LocalKey key, required Widget child})
+  CustomTransition({required LocalKey super.key, required super.child})
       : super(
-          key: key,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
           },
-          child: child,
         );
 }
 
@@ -461,3 +459,11 @@ Route createRoute({required Widget page}) {
     },
   );
 }
+// I/vrf     ( 6408): 4�~
+// I/URL_SAFE( 6408): NJV-
+// I/DEFAULT ( 6408): TkpWLQ==
+// I/shift   ( 6408): QnlYJVAB
+// I/shift_default( 6408): UW5sWUpWQUI=
+// I/rot13   ( 6408): HJ5fJHcJDHV=
+// I/vrfEncrypt( 6408): HJ5fJHcJDHV=
+// I/flutter ( 6408): vrf=HJ5fJHcJDHV%3D%0A

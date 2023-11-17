@@ -695,6 +695,11 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                         nullable: true),
                     false),
+                BridgeParameter(
+                    'suffix',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                        nullable: true),
+                    false),
               ]),
         ),
         'getHtmlViaWebview': BridgeMethodDef(
@@ -720,18 +725,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     'code',
                     BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                     false),
-              ]),
-        ),
-        'base64': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              params: [
-                BridgeParameter(
-                    'string',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter('type',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
               ]),
         ),
         'regExp': BridgeMethodDef(
@@ -786,12 +779,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       'http' => $Function((_, __, List<$Value?> args) {
           return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
               .then((value) => $String(value)));
-        }),
-      'base64' => $Function((_, __, List<$Value?> args) {
-          final result = args[1]!.$reified == 0
-              ? utf8.decode(base64Url.decode(args[0]!.$reified))
-              : base64Url.encode(utf8.encode(args[0]!.$reified));
-          return $String(result);
         }),
       "cryptoHandler" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.cryptoHandler(args[0]!.$value, args[1]!.$value,
@@ -876,15 +863,16 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "mp4UploadExtractor" => $Function((_, __, List<$Value?> args) =>
           $Future.wrap(MBridge.mp4UploadExtractor(args[0]!.$value,
-                  args[1]!.$value, args[2]!.$value, args[3]!.$value)
+                  args[1]!.$value, args[2]?.$value, args[3]!.$value)
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "streamWishExtractor" => $Function((_, __, List<$Value?> args) => $Future
           .wrap(MBridge.streamWishExtractor(args[0]!.$value, args[1]!.$value)
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
-      "filemoonExtractor" => $Function((_, __, List<$Value?> args) => $Future
-          .wrap(MBridge.filemoonExtractor(args[0]!.$value, args[1]?.$value)
+      "filemoonExtractor" => $Function((_, __, List<$Value?> args) =>
+          $Future.wrap(MBridge.filemoonExtractor(
+                  args[0]!.$value, args[1]?.$value ?? "", args[2]?.$value ?? "")
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "toVideo" => $Function((_, __, List<$Value?> args) {

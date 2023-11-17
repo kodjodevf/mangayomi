@@ -92,10 +92,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             ),
           )
         : SafeArea(
-            child: WillPopScope(
-              onWillPop: () async {
+            child: PopScope(
+              onPopInvoked: (_) {
                 _webViewController?.goBack();
-                return false;
               },
               child: Column(
                 children: [

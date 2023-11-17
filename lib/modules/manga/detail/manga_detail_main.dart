@@ -67,10 +67,9 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                         .future);
                   }
                 },
-                child: WillPopScope(
-                  onWillPop: () async {
+                child: PopScope(
+                  onPopInvoked: (_) {
                     Navigator.pop(context);
-                    return false;
                   },
                   child: Stack(
                     children: [

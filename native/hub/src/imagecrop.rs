@@ -17,7 +17,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.*/ 
+SOFTWARE.*/
 
 use crate::bridge::{RustOperation, RustRequest, RustResponse};
 use image::{DynamicImage, GenericImageView, ImageOutputFormat, ImageResult, Rgba};
@@ -124,8 +124,7 @@ impl ImageCrop {
 }
 
 fn crop_image(image: Vec<u8>) -> DynamicImage {
-    let mut image =
-        ImageCrop::open(image).expect(&format!("Failed to load image"));
+    let mut image = ImageCrop::open(image).expect(&format!("Failed to load image"));
 
     let (top_left_corner, bottom_right_corner) = image.calculate_corners();
 

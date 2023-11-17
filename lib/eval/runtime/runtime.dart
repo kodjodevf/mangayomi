@@ -6,6 +6,5 @@ Runtime runtimeEval(Uint8List bytecode) {
   final runtime = Runtime(bytecode.buffer.asByteData());
   final plugin = MEvalPlugin();
   runtime.addPlugin(plugin);
-  runtime.setup();
   return runtime;
 }

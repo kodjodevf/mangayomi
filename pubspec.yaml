@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.0.7+28
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
+  sdk: '>=3.2.0 <4.0.0'
 
 
 dependencies:
@@ -45,8 +45,8 @@ dependencies:
   scrollable_positioned_list: ^0.3.5
   dart_eval:
     git:
-      url: https://github.com/ethanblake4/dart_eval.git
-      ref: f40fb94
+      url: https://github.com/kodjodevf/dart_eval.git
+      ref: d9091db
   json_path: ^0.6.2
   bot_toast: ^4.1.3
   flutter_web_auth_2: ^3.0.2
@@ -76,7 +76,7 @@ dev_dependencies:
   riverpod_generator: ^2.3.2
   flutter_launcher_icons: ^0.13.1
   isar_generator: ^3.1.0+1
-  flutter_lints: ^2.0.1
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true

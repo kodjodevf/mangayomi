@@ -21,10 +21,7 @@ import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/vi
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
-  const AnimePlayerView({
-    super.key,
-    required this.episode,
-  });
+  const AnimePlayerView({super.key, required this.episode});
 
   @override
   riv.ConsumerState<AnimePlayerView> createState() => _AnimePlayerViewState();
@@ -67,12 +64,11 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
                 },
               ),
             ),
-            body: WillPopScope(
-              onWillPop: () async {
+            body: PopScope(
+              onPopInvoked: (_) {
                 SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                     overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
-                return false;
               },
               child: const Center(
                 child: Text("Error"),
@@ -101,13 +97,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
+        body: PopScope(
+          onPopInvoked: (_) {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                 overlays: SystemUiOverlay.values);
 
             Navigator.pop(context);
-            return false;
           },
           child: Center(
             child: Text(error.toString()),
@@ -129,13 +124,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               },
             ),
           ),
-          body: WillPopScope(
-            onWillPop: () async {
+          body: PopScope(
+            onPopInvoked: (_) {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
 
               Navigator.pop(context);
-              return false;
             },
             child: const ProgressCenter(),
           ),
@@ -150,11 +144,10 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final Chapter episode;
   final bool isLocal;
   const AnimeStreamPage(
-      {Key? key,
+      {super.key,
       required this.isLocal,
       required this.videos,
-      required this.episode})
-      : super(key: key);
+      required this.episode});
 
   @override
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
@@ -939,12 +932,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
+      body: PopScope(
+        onPopInvoked: (_) {
           SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
               overlays: SystemUiOverlay.values);
           Navigator.pop(context);
-          return false;
         },
         child: _isDesktop ? _desktopPlayer() : _mobilePlayer(),
       ),

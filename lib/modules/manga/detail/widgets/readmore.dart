@@ -4,8 +4,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class ReadMoreWidget extends StatefulWidget {
-  const ReadMoreWidget({Key? key, required this.text, required this.onChanged})
-      : super(key: key);
+  const ReadMoreWidget({super.key, required this.text, required this.onChanged});
   final Function(bool) onChanged;
   final String text;
 

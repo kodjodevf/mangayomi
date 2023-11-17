@@ -97,11 +97,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
-      _getManga = ref.watch(
-          searchProvider(source: widget.source, query: _query, page: 1));
-    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       _getManga = ref
-          .watch(getLatestUpdatesProvider(source: widget.source, page: 1));
+          .watch(searchProvider(source: widget.source, query: _query, page: 1));
+    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+      _getManga =
+          ref.watch(getLatestUpdatesProvider(source: widget.source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
       _getManga = ref.watch(getPopularProvider(
         source: widget.source,
@@ -208,10 +208,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             ),
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
+        body: PopScope(
+          onPopInvoked: (_) {
             Navigator.pop(context);
-            return false;
           },
           child: _getManga!.when(
             data: (data) {

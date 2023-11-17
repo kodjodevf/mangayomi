@@ -42,7 +42,7 @@ class Mp4uploadExtractor {
           .substringBefore('"');
       final resolutionMatch = qualityRegex.firstMatch(script);
       final resolution = resolutionMatch?.group(1) ?? 'Unknown resolution';
-      final quality = '$prefix Mp4Upload - $resolution $suffix';
+      final quality = '$prefix Mp4Upload - ${resolution}p $suffix';
 
       return [
         Video(videoUrl, quality, videoUrl, headers: newHeaders),
