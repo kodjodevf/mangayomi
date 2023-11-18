@@ -284,9 +284,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: d9091db
-      resolved-ref: d9091db309b7d5727792a702e916310e69865cb2
-      url: "https://github.com/kodjodevf/dart_eval.git"
+      ref: "9d2d4a7"
+      resolved-ref: "9d2d4a79cb77d2274bedde98ac0f7bb63b013776"
+      url: "https://github.com/ethanblake4/dart_eval.git"
     source: git
     version: "0.7.1"
   dart_style:

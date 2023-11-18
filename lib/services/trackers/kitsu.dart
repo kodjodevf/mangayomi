@@ -520,6 +520,6 @@ class Kitsu extends _$Kitsu {
   }
 
   String? _toKitsuScore(int score) {
-    return score > 0 ? (score / 5).toString() : null;
+    return score > 0 ? (score * 2).toString() : null;
   }
 }
