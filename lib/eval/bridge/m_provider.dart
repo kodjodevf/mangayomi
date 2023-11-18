@@ -35,7 +35,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MSource.$type),
                 false,
               ),
@@ -50,7 +50,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MSource.$type),
                 false,
               ),
@@ -65,7 +65,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MSource.$type),
                 false,
               ),
@@ -85,7 +85,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 BridgeTypeRef(CoreTypes.future, [$MManga.$type])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MManga.$type),
                 false,
               ),
@@ -101,7 +101,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MManga.$type),
                 false,
               ),
@@ -117,7 +117,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
             params: [
               BridgeParameter(
-                'sourceInfo',
+                'source',
                 BridgeTypeAnnotation($MManga.$type),
                 false,
               ),
@@ -951,27 +951,26 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  Future<MManga> getDetail(MSource sourceInfo, String url) async =>
-      await $_invoke('getDetail', [$MSource.wrap(sourceInfo), $String(url)]);
+  Future<MManga> getDetail(MSource source, String url) async =>
+      await $_invoke('getDetail', [$MSource.wrap(source), $String(url)]);
 
   @override
-  Future<MPages> getLatestUpdates(MSource sourceInfo, int page) async =>
+  Future<MPages> getLatestUpdates(MSource source, int page) async =>
+      await $_invoke('getLatestUpdates', [$MSource.wrap(source), $int(page)]);
+
+  @override
+  Future<MPages> getPopular(MSource source, int page) async =>
+      await $_invoke('getPopular', [$MSource.wrap(source), $int(page)]);
+
+  @override
+  Future<MPages> search(MSource source, String query, int page) async =>
       await $_invoke(
-          'getLatestUpdates', [$MSource.wrap(sourceInfo), $int(page)]);
+          'search', [$MSource.wrap(source), $String(query), $int(page)]);
 
   @override
-  Future<MPages> getPopular(MSource sourceInfo, int page) async =>
-      await $_invoke('getPopular', [$MSource.wrap(sourceInfo), $int(page)]);
-
-  @override
-  Future<MPages> search(MSource sourceInfo, String query, int page) async =>
-      await $_invoke(
-          'search', [$MSource.wrap(sourceInfo), $String(query), $int(page)]);
-
-  @override
-  Future<List<String>> getPageList(MSource sourceInfo, String url) async {
-    final res = await $_invoke(
-        'getPageList', [$MSource.wrap(sourceInfo), $String(url)]);
+  Future<List<String>> getPageList(MSource source, String url) async {
+    final res =
+        await $_invoke('getPageList', [$MSource.wrap(source), $String(url)]);
     if (res is $List) {
       return res.$reified.map((e) => e as String).toList();
     }
@@ -979,9 +978,9 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  Future<List<Video>> getVideoList(MSource sourceInfo, String url) async {
-    final res = await $_invoke(
-        'getVideoList', [$MSource.wrap(sourceInfo), $String(url)]);
+  Future<List<Video>> getVideoList(MSource source, String url) async {
+    final res =
+        await $_invoke('getVideoList', [$MSource.wrap(source), $String(url)]);
     if (res is $List) {
       return res.$reified.map((e) => e as Video).toList();
     }

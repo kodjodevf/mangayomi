@@ -806,13 +806,13 @@ class _ChapterFilterResultStateProviderElement
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'd8218bacd17ab93480808ad0b015341ccb80d335';
+    r'113131bb13e50566390ee3e34aa2f08820a8870c';
 
 abstract class _$ChapterSetIsBookmarkState
-    extends BuildlessAutoDisposeNotifier<dynamic> {
+    extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  dynamic build({
+  void build({
     required Manga manga,
   });
 }
@@ -822,7 +822,7 @@ abstract class _$ChapterSetIsBookmarkState
 const chapterSetIsBookmarkStateProvider = ChapterSetIsBookmarkStateFamily();
 
 /// See also [ChapterSetIsBookmarkState].
-class ChapterSetIsBookmarkStateFamily extends Family<dynamic> {
+class ChapterSetIsBookmarkStateFamily extends Family<void> {
   /// See also [ChapterSetIsBookmarkState].
   const ChapterSetIsBookmarkStateFamily();
 
@@ -860,8 +860,8 @@ class ChapterSetIsBookmarkStateFamily extends Family<dynamic> {
 }
 
 /// See also [ChapterSetIsBookmarkState].
-class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
-    ChapterSetIsBookmarkState, dynamic> {
+class ChapterSetIsBookmarkStateProvider
+    extends AutoDisposeNotifierProviderImpl<ChapterSetIsBookmarkState, void> {
   /// See also [ChapterSetIsBookmarkState].
   ChapterSetIsBookmarkStateProvider({
     required Manga manga,
@@ -892,7 +892,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
   final Manga manga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant ChapterSetIsBookmarkState notifier,
   ) {
     return notifier.build(
@@ -917,7 +917,7 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState, dynamic>
+  AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState, void>
       createElement() {
     return _ChapterSetIsBookmarkStateProviderElement(this);
   }
@@ -936,14 +936,14 @@ class ChapterSetIsBookmarkStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
-mixin ChapterSetIsBookmarkStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin ChapterSetIsBookmarkStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
 }
 
 class _ChapterSetIsBookmarkStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState,
-        dynamic> with ChapterSetIsBookmarkStateRef {
+    extends AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState, void>
+    with ChapterSetIsBookmarkStateRef {
   _ChapterSetIsBookmarkStateProviderElement(super.provider);
 
   @override
@@ -951,13 +951,13 @@ class _ChapterSetIsBookmarkStateProviderElement
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'b60dfd136e52743fdde9067d3e366d90d49dd9b4';
+    r'c319f81ec30565ad81a28cb0a8ce7fddcb47cd77';
 
 abstract class _$ChapterSetIsReadState
-    extends BuildlessAutoDisposeNotifier<dynamic> {
+    extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  dynamic build({
+  void build({
     required Manga manga,
   });
 }
@@ -967,7 +967,7 @@ abstract class _$ChapterSetIsReadState
 const chapterSetIsReadStateProvider = ChapterSetIsReadStateFamily();
 
 /// See also [ChapterSetIsReadState].
-class ChapterSetIsReadStateFamily extends Family<dynamic> {
+class ChapterSetIsReadStateFamily extends Family<void> {
   /// See also [ChapterSetIsReadState].
   const ChapterSetIsReadStateFamily();
 
@@ -1006,7 +1006,7 @@ class ChapterSetIsReadStateFamily extends Family<dynamic> {
 
 /// See also [ChapterSetIsReadState].
 class ChapterSetIsReadStateProvider
-    extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, dynamic> {
+    extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, void> {
   /// See also [ChapterSetIsReadState].
   ChapterSetIsReadStateProvider({
     required Manga manga,
@@ -1037,7 +1037,7 @@ class ChapterSetIsReadStateProvider
   final Manga manga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant ChapterSetIsReadState notifier,
   ) {
     return notifier.build(
@@ -1062,7 +1062,7 @@ class ChapterSetIsReadStateProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ChapterSetIsReadState, dynamic>
+  AutoDisposeNotifierProviderElement<ChapterSetIsReadState, void>
       createElement() {
     return _ChapterSetIsReadStateProviderElement(this);
   }
@@ -1081,13 +1081,13 @@ class ChapterSetIsReadStateProvider
   }
 }
 
-mixin ChapterSetIsReadStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin ChapterSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
 }
 
 class _ChapterSetIsReadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ChapterSetIsReadState, dynamic>
+    extends AutoDisposeNotifierProviderElement<ChapterSetIsReadState, void>
     with ChapterSetIsReadStateRef {
   _ChapterSetIsReadStateProviderElement(super.provider);
 
@@ -1096,13 +1096,13 @@ class _ChapterSetIsReadStateProviderElement
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'7001c969e208fb928a48723780dce8e3daaecc0a';
+    r'496b93306bd41686daf09af7f7594ae697927005';
 
 abstract class _$ChapterSetDownloadState
-    extends BuildlessAutoDisposeNotifier<dynamic> {
+    extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  dynamic build({
+  void build({
     required Manga manga,
   });
 }
@@ -1112,7 +1112,7 @@ abstract class _$ChapterSetDownloadState
 const chapterSetDownloadStateProvider = ChapterSetDownloadStateFamily();
 
 /// See also [ChapterSetDownloadState].
-class ChapterSetDownloadStateFamily extends Family<dynamic> {
+class ChapterSetDownloadStateFamily extends Family<void> {
   /// See also [ChapterSetDownloadState].
   const ChapterSetDownloadStateFamily();
 
@@ -1151,7 +1151,7 @@ class ChapterSetDownloadStateFamily extends Family<dynamic> {
 
 /// See also [ChapterSetDownloadState].
 class ChapterSetDownloadStateProvider
-    extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, dynamic> {
+    extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, void> {
   /// See also [ChapterSetDownloadState].
   ChapterSetDownloadStateProvider({
     required Manga manga,
@@ -1182,7 +1182,7 @@ class ChapterSetDownloadStateProvider
   final Manga manga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant ChapterSetDownloadState notifier,
   ) {
     return notifier.build(
@@ -1207,7 +1207,7 @@ class ChapterSetDownloadStateProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ChapterSetDownloadState, dynamic>
+  AutoDisposeNotifierProviderElement<ChapterSetDownloadState, void>
       createElement() {
     return _ChapterSetDownloadStateProviderElement(this);
   }
@@ -1226,13 +1226,13 @@ class ChapterSetDownloadStateProvider
   }
 }
 
-mixin ChapterSetDownloadStateRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin ChapterSetDownloadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
 }
 
 class _ChapterSetDownloadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ChapterSetDownloadState, dynamic>
+    extends AutoDisposeNotifierProviderElement<ChapterSetDownloadState, void>
     with ChapterSetDownloadStateRef {
   _ChapterSetDownloadStateProviderElement(super.provider);
 

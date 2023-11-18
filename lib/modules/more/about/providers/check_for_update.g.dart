@@ -34,7 +34,7 @@ class _SystemHash {
 const checkForUpdateProvider = CheckForUpdateFamily();
 
 /// See also [checkForUpdate].
-class CheckForUpdateFamily extends Family<dynamic> {
+class CheckForUpdateFamily extends Family<Object?> {
   /// See also [checkForUpdate].
   const CheckForUpdateFamily();
 
@@ -75,7 +75,7 @@ class CheckForUpdateFamily extends Family<dynamic> {
 }
 
 /// See also [checkForUpdate].
-class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
+class CheckForUpdateProvider extends AutoDisposeProvider<Object?> {
   /// See also [checkForUpdate].
   CheckForUpdateProvider({
     BuildContext? context,
@@ -115,7 +115,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
 
   @override
   Override overrideWith(
-    dynamic Function(CheckForUpdateRef provider) create,
+    Object? Function(CheckForUpdateRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -133,7 +133,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
   }
 
   @override
-  AutoDisposeProviderElement<dynamic> createElement() {
+  AutoDisposeProviderElement<Object?> createElement() {
     return _CheckForUpdateProviderElement(this);
   }
 
@@ -154,7 +154,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<dynamic> {
   }
 }
 
-mixin CheckForUpdateRef on AutoDisposeProviderRef<dynamic> {
+mixin CheckForUpdateRef on AutoDisposeProviderRef<Object?> {
   /// The parameter `context` of this provider.
   BuildContext? get context;
 
@@ -162,7 +162,7 @@ mixin CheckForUpdateRef on AutoDisposeProviderRef<dynamic> {
   bool? get manualUpdate;
 }
 
-class _CheckForUpdateProviderElement extends AutoDisposeProviderElement<dynamic>
+class _CheckForUpdateProviderElement extends AutoDisposeProviderElement<Object?>
     with CheckForUpdateRef {
   _CheckForUpdateProviderElement(super.provider);
 

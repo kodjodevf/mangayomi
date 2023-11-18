@@ -309,5 +309,22 @@ class _GetAllMangaWithoutCategoriesStreamProviderElement
   bool? get isManga =>
       (origin as GetAllMangaWithoutCategoriesStreamProvider).isManga;
 }
+
+String _$getSettingsStreamHash() => r'273ef0597a1078ab7c31af861628f1be7ab154d8';
+
+/// See also [getSettingsStream].
+@ProviderFor(getSettingsStream)
+final getSettingsStreamProvider =
+    AutoDisposeStreamProvider<List<Settings>>.internal(
+  getSettingsStream,
+  name: r'getSettingsStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getSettingsStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef GetSettingsStreamRef = AutoDisposeStreamProviderRef<List<Settings>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

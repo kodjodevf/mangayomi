@@ -6,7 +6,7 @@ part of 'anilist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'129718800428fd699e018046c8bf047e97bddf11';
+String _$anilistHash() => r'0fd8945c8705e69d1609d9d5c6ccb5bacd84149e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,11 +29,11 @@ class _SystemHash {
   }
 }
 
-abstract class _$Anilist extends BuildlessAutoDisposeNotifier<dynamic> {
+abstract class _$Anilist extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final bool? isManga;
 
-  dynamic build({
+  void build({
     required int syncId,
     bool? isManga,
   });
@@ -44,7 +44,7 @@ abstract class _$Anilist extends BuildlessAutoDisposeNotifier<dynamic> {
 const anilistProvider = AnilistFamily();
 
 /// See also [Anilist].
-class AnilistFamily extends Family<dynamic> {
+class AnilistFamily extends Family<void> {
   /// See also [Anilist].
   const AnilistFamily();
 
@@ -85,8 +85,7 @@ class AnilistFamily extends Family<dynamic> {
 }
 
 /// See also [Anilist].
-class AnilistProvider
-    extends AutoDisposeNotifierProviderImpl<Anilist, dynamic> {
+class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   /// See also [Anilist].
   AnilistProvider({
     required int syncId,
@@ -122,7 +121,7 @@ class AnilistProvider
   final bool? isManga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant Anilist notifier,
   ) {
     return notifier.build(
@@ -151,7 +150,7 @@ class AnilistProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Anilist, dynamic> createElement() {
+  AutoDisposeNotifierProviderElement<Anilist, void> createElement() {
     return _AnilistProviderElement(this);
   }
 
@@ -172,7 +171,7 @@ class AnilistProvider
   }
 }
 
-mixin AnilistRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin AnilistRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -181,8 +180,7 @@ mixin AnilistRef on AutoDisposeNotifierProviderRef<dynamic> {
 }
 
 class _AnilistProviderElement
-    extends AutoDisposeNotifierProviderElement<Anilist, dynamic>
-    with AnilistRef {
+    extends AutoDisposeNotifierProviderElement<Anilist, void> with AnilistRef {
   _AnilistProviderElement(super.provider);
 
   @override

@@ -35,7 +35,7 @@ class _SystemHash {
 const importArchivesFromFileProvider = ImportArchivesFromFileFamily();
 
 /// See also [importArchivesFromFile].
-class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
+class ImportArchivesFromFileFamily extends Family<AsyncValue> {
   /// See also [importArchivesFromFile].
   const ImportArchivesFromFileFamily();
 
@@ -80,7 +80,7 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue<dynamic>> {
 
 /// See also [importArchivesFromFile].
 class ImportArchivesFromFileProvider
-    extends AutoDisposeFutureProvider<dynamic> {
+    extends AutoDisposeFutureProvider<Object?> {
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider(
     Manga? mManga, {
@@ -125,7 +125,7 @@ class ImportArchivesFromFileProvider
 
   @override
   Override overrideWith(
-    FutureOr<dynamic> Function(ImportArchivesFromFileRef provider) create,
+    FutureOr<Object?> Function(ImportArchivesFromFileRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -144,7 +144,7 @@ class ImportArchivesFromFileProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<dynamic> createElement() {
+  AutoDisposeFutureProviderElement<Object?> createElement() {
     return _ImportArchivesFromFileProviderElement(this);
   }
 
@@ -167,7 +167,7 @@ class ImportArchivesFromFileProvider
   }
 }
 
-mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<dynamic> {
+mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `mManga` of this provider.
   Manga? get mManga;
 
@@ -179,7 +179,7 @@ mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<dynamic> {
 }
 
 class _ImportArchivesFromFileProviderElement
-    extends AutoDisposeFutureProviderElement<dynamic>
+    extends AutoDisposeFutureProviderElement<Object?>
     with ImportArchivesFromFileRef {
   _ImportArchivesFromFileProviderElement(super.provider);
 

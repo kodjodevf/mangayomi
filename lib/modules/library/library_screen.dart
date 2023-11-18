@@ -48,180 +48,228 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   int _tabIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final categories =
-        ref.watch(getMangaCategorieStreamProvider(isManga: widget.isManga));
-    final withoutCategories = ref.watch(
-        getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga));
-    final showCategoryTabs = ref
-        .watch(libraryShowCategoryTabsStateProvider(isManga: widget.isManga));
-    final mangaAll = ref.watch(
-        getAllMangaStreamProvider(categoryId: null, isManga: widget.isManga));
-    final l10n = l10nLocalizations(context)!;
-    return Scaffold(
-        body: mangaAll.when(
-          data: (man) {
-            return withoutCategories.when(
-              data: (withoutCategory) {
-                return categories.when(
-                  data: (data) {
-                    if (data.isNotEmpty && showCategoryTabs) {
-                      final entr = data;
-                      tabBarController = TabController(
-                          length: withoutCategory.isNotEmpty
-                              ? entr.length + 1
-                              : entr.length,
-                          vsync: this);
-                      tabBarController.animateTo(_tabIndex);
-                      tabBarController.addListener(() {
-                        _tabIndex = tabBarController.index;
-                      });
+    final settingsStream = ref.watch(getSettingsStreamProvider);
+    return settingsStream.when(data: (settingsList) {
+      final settings = settingsList.first;
 
-                      return Consumer(builder: (context, ref, child) {
-                        bool reverse = ref
-                            .watch(sortLibraryMangaStateProvider(
-                                isManga: widget.isManga))
-                            .reverse!;
+      final categories =
+          ref.watch(getMangaCategorieStreamProvider(isManga: widget.isManga));
+      final withoutCategories = ref.watch(
+          getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga));
+      final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider(
+          isManga: widget.isManga, settings: settings));
+      final mangaAll = ref.watch(
+          getAllMangaStreamProvider(categoryId: null, isManga: widget.isManga));
+      final l10n = l10nLocalizations(context)!;
+      return Scaffold(
+          body: mangaAll.when(
+            data: (man) {
+              return withoutCategories.when(
+                data: (withoutCategory) {
+                  return categories.when(
+                    data: (data) {
+                      if (data.isNotEmpty && showCategoryTabs) {
+                        final entr = data;
+                        tabBarController = TabController(
+                            length: withoutCategory.isNotEmpty
+                                ? entr.length + 1
+                                : entr.length,
+                            vsync: this);
+                        tabBarController.animateTo(_tabIndex);
+                        tabBarController.addListener(() {
+                          _tabIndex = tabBarController.index;
+                        });
 
-                        final continueReaderBtn = ref.watch(
-                            libraryShowContinueReadingButtonStateProvider(
-                                isManga: widget.isManga));
-                        final showNumbersOfItems = ref.watch(
-                            libraryShowNumbersOfItemsStateProvider(
-                                isManga: widget.isManga));
-                        final localSource = ref.watch(
-                            libraryLocalSourceStateProvider(
-                                isManga: widget.isManga));
-                        final downloadedChapter = ref.watch(
-                            libraryDownloadedChaptersStateProvider(
-                                isManga: widget.isManga));
-                        final language = ref.watch(libraryLanguageStateProvider(
-                            isManga: widget.isManga));
-                        final displayType = ref
-                            .read(libraryDisplayTypeStateProvider(
-                                    isManga: widget.isManga)
-                                .notifier)
-                            .getLibraryDisplayTypeValue(ref.watch(
-                                libraryDisplayTypeStateProvider(
-                                    isManga: widget.isManga)));
-                        final isNotFiltering = ref.watch(
-                            mangasFilterResultStateProvider(
-                                isManga: widget.isManga, mangaList: _entries));
-                        final downloadFilterType = ref.watch(
-                            mangaFilterDownloadedStateProvider(
-                                isManga: widget.isManga, mangaList: _entries));
-                        final unreadFilterType = ref.watch(
-                            mangaFilterUnreadStateProvider(
-                                isManga: widget.isManga, mangaList: _entries));
-                        final startedFilterType = ref.watch(
-                            mangaFilterStartedStateProvider(
-                                isManga: widget.isManga, mangaList: _entries));
-                        final bookmarkedFilterType = ref.watch(
-                            mangaFilterBookmarkedStateProvider(
-                                isManga: widget.isManga, mangaList: _entries));
-                        final sortType = ref
-                            .watch(sortLibraryMangaStateProvider(
-                                isManga: widget.isManga))
-                            .index as int;
-                        final numberOfItemsList = _filterAndSortManga(
-                            data: man,
-                            downloadFilterType: downloadFilterType,
-                            unreadFilterType: unreadFilterType,
-                            startedFilterType: startedFilterType,
-                            bookmarkedFilterType: bookmarkedFilterType,
-                            sortType: sortType);
-                        final withoutCategoryNumberOfItemsList =
-                            _filterAndSortManga(
-                                data: withoutCategory,
-                                downloadFilterType: downloadFilterType,
-                                unreadFilterType: unreadFilterType,
-                                startedFilterType: startedFilterType,
-                                bookmarkedFilterType: bookmarkedFilterType,
-                                sortType: sortType);
+                        return Consumer(builder: (context, ref, child) {
+                          bool reverse = ref
+                              .watch(sortLibraryMangaStateProvider(
+                                  isManga: widget.isManga, settings: settings))
+                              .reverse!;
 
-                        return DefaultTabController(
-                          length: entr.length,
-                          child: Scaffold(
-                            appBar: _appBar(
-                                isNotFiltering,
-                                showNumbersOfItems,
-                                numberOfItemsList.length,
-                                ref,
-                                [],
-                                true,
-                                withoutCategory.isNotEmpty && _tabIndex == 0
-                                    ? null
-                                    : entr[withoutCategory.isNotEmpty
-                                            ? _tabIndex - 1
-                                            : _tabIndex]
-                                        .id!),
-                            body: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TabBar(
-                                    isScrollable: true,
-                                    controller: tabBarController,
-                                    tabs: [
-                                      if (withoutCategory.isNotEmpty)
-                                        for (var i = 0;
-                                            i < entr.length + 1;
-                                            i++)
-                                          Row(
-                                            children: [
-                                              Tab(
-                                                  text: i == 0
-                                                      ? l10n.default0
-                                                      : entr[i - 1].name),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              if (showNumbersOfItems)
-                                                i == 0
-                                                    ? CircleAvatar(
-                                                        backgroundColor:
-                                                            Theme.of(context)
-                                                                .focusColor,
-                                                        radius: 8,
-                                                        child: Text(
-                                                          withoutCategoryNumberOfItemsList
-                                                              .length
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 10,
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .bodySmall!
-                                                                  .color),
-                                                        ),
-                                                      )
-                                                    : _categoriesNumberOfItems(
-                                                        downloadFilterType:
-                                                            downloadFilterType,
-                                                        unreadFilterType:
-                                                            unreadFilterType,
-                                                        startedFilterType:
-                                                            startedFilterType,
-                                                        bookmarkedFilterType:
-                                                            bookmarkedFilterType,
-                                                        reverse: reverse,
-                                                        downloadedChapter:
-                                                            downloadedChapter,
-                                                        continueReaderBtn:
-                                                            continueReaderBtn,
-                                                        categoryId:
-                                                            entr[i - 1].id!),
-                                            ],
-                                          ),
-                                      if (withoutCategory.isEmpty)
-                                        for (var i = 0; i < entr.length; i++)
-                                          Row(
-                                            children: [
-                                              Tab(text: entr[i].name),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              if (showNumbersOfItems)
-                                                _categoriesNumberOfItems(
+                          final continueReaderBtn = ref.watch(
+                              libraryShowContinueReadingButtonStateProvider(
+                                  isManga: widget.isManga, settings: settings));
+                          final showNumbersOfItems = ref.watch(
+                              libraryShowNumbersOfItemsStateProvider(
+                                  isManga: widget.isManga, settings: settings));
+                          final localSource = ref.watch(
+                              libraryLocalSourceStateProvider(
+                                  isManga: widget.isManga, settings: settings));
+                          final downloadedChapter = ref.watch(
+                              libraryDownloadedChaptersStateProvider(
+                                  isManga: widget.isManga, settings: settings));
+                          final language = ref.watch(
+                              libraryLanguageStateProvider(
+                                  isManga: widget.isManga, settings: settings));
+                          final displayType = ref
+                              .read(libraryDisplayTypeStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .getLibraryDisplayTypeValue(ref.watch(
+                                  libraryDisplayTypeStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)));
+                          final isNotFiltering = ref.watch(
+                              mangasFilterResultStateProvider(
+                                  isManga: widget.isManga,
+                                  mangaList: _entries,
+                                  settings: settings));
+                          final downloadFilterType = ref.watch(
+                              mangaFilterDownloadedStateProvider(
+                                  isManga: widget.isManga,
+                                  mangaList: _entries,
+                                  settings: settings));
+                          final unreadFilterType = ref.watch(
+                              mangaFilterUnreadStateProvider(
+                                  isManga: widget.isManga,
+                                  mangaList: _entries,
+                                  settings: settings));
+                          final startedFilterType = ref.watch(
+                              mangaFilterStartedStateProvider(
+                                  isManga: widget.isManga,
+                                  mangaList: _entries,
+                                  settings: settings));
+                          final bookmarkedFilterType = ref.watch(
+                              mangaFilterBookmarkedStateProvider(
+                                  isManga: widget.isManga,
+                                  mangaList: _entries,
+                                  settings: settings));
+                          final sortType = ref
+                              .watch(sortLibraryMangaStateProvider(
+                                  isManga: widget.isManga, settings: settings))
+                              .index as int;
+                          final numberOfItemsList = _filterAndSortManga(
+                              data: man,
+                              downloadFilterType: downloadFilterType,
+                              unreadFilterType: unreadFilterType,
+                              startedFilterType: startedFilterType,
+                              bookmarkedFilterType: bookmarkedFilterType,
+                              sortType: sortType);
+                          final withoutCategoryNumberOfItemsList =
+                              _filterAndSortManga(
+                                  data: withoutCategory,
+                                  downloadFilterType: downloadFilterType,
+                                  unreadFilterType: unreadFilterType,
+                                  startedFilterType: startedFilterType,
+                                  bookmarkedFilterType: bookmarkedFilterType,
+                                  sortType: sortType);
+
+                          return DefaultTabController(
+                            length: entr.length,
+                            child: Scaffold(
+                              appBar: _appBar(
+                                  isNotFiltering,
+                                  showNumbersOfItems,
+                                  numberOfItemsList.length,
+                                  ref,
+                                  [],
+                                  true,
+                                  withoutCategory.isNotEmpty && _tabIndex == 0
+                                      ? null
+                                      : entr[withoutCategory.isNotEmpty
+                                              ? _tabIndex - 1
+                                              : _tabIndex]
+                                          .id!,
+                                  settings),
+                              body: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TabBar(
+                                      isScrollable: true,
+                                      controller: tabBarController,
+                                      tabs: [
+                                        if (withoutCategory.isNotEmpty)
+                                          for (var i = 0;
+                                              i < entr.length + 1;
+                                              i++)
+                                            Row(
+                                              children: [
+                                                Tab(
+                                                    text: i == 0
+                                                        ? l10n.default0
+                                                        : entr[i - 1].name),
+                                                const SizedBox(
+                                                  width: 4,
+                                                ),
+                                                if (showNumbersOfItems)
+                                                  i == 0
+                                                      ? CircleAvatar(
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .focusColor,
+                                                          radius: 8,
+                                                          child: Text(
+                                                            withoutCategoryNumberOfItemsList
+                                                                .length
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 10,
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .bodySmall!
+                                                                    .color),
+                                                          ),
+                                                        )
+                                                      : _categoriesNumberOfItems(
+                                                          downloadFilterType:
+                                                              downloadFilterType,
+                                                          unreadFilterType:
+                                                              unreadFilterType,
+                                                          startedFilterType:
+                                                              startedFilterType,
+                                                          bookmarkedFilterType:
+                                                              bookmarkedFilterType,
+                                                          reverse: reverse,
+                                                          downloadedChapter:
+                                                              downloadedChapter,
+                                                          continueReaderBtn:
+                                                              continueReaderBtn,
+                                                          categoryId:
+                                                              entr[i - 1].id!,
+                                                          settings: settings),
+                                              ],
+                                            ),
+                                        if (withoutCategory.isEmpty)
+                                          for (var i = 0; i < entr.length; i++)
+                                            Row(
+                                              children: [
+                                                Tab(text: entr[i].name),
+                                                const SizedBox(
+                                                  width: 4,
+                                                ),
+                                                if (showNumbersOfItems)
+                                                  _categoriesNumberOfItems(
+                                                      downloadFilterType:
+                                                          downloadFilterType,
+                                                      unreadFilterType:
+                                                          unreadFilterType,
+                                                      startedFilterType:
+                                                          startedFilterType,
+                                                      bookmarkedFilterType:
+                                                          bookmarkedFilterType,
+                                                      reverse: reverse,
+                                                      downloadedChapter:
+                                                          downloadedChapter,
+                                                      continueReaderBtn:
+                                                          continueReaderBtn,
+                                                      categoryId: entr[i].id!,
+                                                      settings: settings),
+                                              ],
+                                            )
+                                      ]),
+                                  Flexible(
+                                      child: TabBarView(
+                                          controller: tabBarController,
+                                          children: [
+                                        if (withoutCategory.isNotEmpty)
+                                          for (var i = 0;
+                                              i < entr.length + 1;
+                                              i++)
+                                            i == 0
+                                                ? _bodyWithoutCategories(
+                                                    withouCategories: true,
                                                     downloadFilterType:
                                                         downloadFilterType,
                                                     unreadFilterType:
@@ -235,299 +283,292 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                         downloadedChapter,
                                                     continueReaderBtn:
                                                         continueReaderBtn,
-                                                    categoryId: entr[i].id!),
-                                            ],
-                                          )
-                                    ]),
-                                Flexible(
-                                    child: TabBarView(
-                                        controller: tabBarController,
-                                        children: [
-                                      if (withoutCategory.isNotEmpty)
-                                        for (var i = 0;
-                                            i < entr.length + 1;
-                                            i++)
-                                          i == 0
-                                              ? _bodyWithoutCategories(
-                                                  withouCategories: true,
-                                                  downloadFilterType:
-                                                      downloadFilterType,
-                                                  unreadFilterType:
-                                                      unreadFilterType,
-                                                  startedFilterType:
-                                                      startedFilterType,
-                                                  bookmarkedFilterType:
-                                                      bookmarkedFilterType,
-                                                  reverse: reverse,
-                                                  downloadedChapter:
-                                                      downloadedChapter,
-                                                  continueReaderBtn:
-                                                      continueReaderBtn,
-                                                  language: language,
-                                                  displayType: displayType,
-                                                  ref: ref,
-                                                  localSource: localSource)
-                                              : _bodyWithCatories(
-                                                  categoryId: entr[i - 1].id!,
-                                                  downloadFilterType:
-                                                      downloadFilterType,
-                                                  unreadFilterType:
-                                                      unreadFilterType,
-                                                  startedFilterType:
-                                                      startedFilterType,
-                                                  bookmarkedFilterType:
-                                                      bookmarkedFilterType,
-                                                  reverse: reverse,
-                                                  downloadedChapter:
-                                                      downloadedChapter,
-                                                  continueReaderBtn:
-                                                      continueReaderBtn,
-                                                  language: language,
-                                                  displayType: displayType,
-                                                  ref: ref,
-                                                  localSource: localSource),
-                                      if (withoutCategory.isEmpty)
-                                        for (var i = 0; i < entr.length; i++)
-                                          _bodyWithCatories(
-                                              categoryId: entr[i].id!,
-                                              downloadFilterType:
-                                                  downloadFilterType,
-                                              unreadFilterType:
-                                                  unreadFilterType,
-                                              startedFilterType:
-                                                  startedFilterType,
-                                              bookmarkedFilterType:
-                                                  bookmarkedFilterType,
-                                              reverse: reverse,
-                                              downloadedChapter:
-                                                  downloadedChapter,
-                                              continueReaderBtn:
-                                                  continueReaderBtn,
-                                              language: language,
-                                              displayType: displayType,
-                                              ref: ref,
-                                              localSource: localSource)
-                                    ]))
-                              ],
+                                                    language: language,
+                                                    displayType: displayType,
+                                                    ref: ref,
+                                                    localSource: localSource,
+                                                    settings: settings)
+                                                : _bodyWithCatories(
+                                                    categoryId: entr[i - 1].id!,
+                                                    downloadFilterType:
+                                                        downloadFilterType,
+                                                    unreadFilterType:
+                                                        unreadFilterType,
+                                                    startedFilterType:
+                                                        startedFilterType,
+                                                    bookmarkedFilterType:
+                                                        bookmarkedFilterType,
+                                                    reverse: reverse,
+                                                    downloadedChapter:
+                                                        downloadedChapter,
+                                                    continueReaderBtn:
+                                                        continueReaderBtn,
+                                                    language: language,
+                                                    displayType: displayType,
+                                                    ref: ref,
+                                                    localSource: localSource,
+                                                    settings: settings),
+                                        if (withoutCategory.isEmpty)
+                                          for (var i = 0; i < entr.length; i++)
+                                            _bodyWithCatories(
+                                                categoryId: entr[i].id!,
+                                                downloadFilterType:
+                                                    downloadFilterType,
+                                                unreadFilterType:
+                                                    unreadFilterType,
+                                                startedFilterType:
+                                                    startedFilterType,
+                                                bookmarkedFilterType:
+                                                    bookmarkedFilterType,
+                                                reverse: reverse,
+                                                downloadedChapter:
+                                                    downloadedChapter,
+                                                continueReaderBtn:
+                                                    continueReaderBtn,
+                                                language: language,
+                                                displayType: displayType,
+                                                ref: ref,
+                                                localSource: localSource,
+                                                settings: settings)
+                                      ]))
+                                ],
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        });
+                      }
+                      return Consumer(builder: (context, ref, child) {
+                        bool reverse = ref
+                            .watch(sortLibraryMangaStateProvider(
+                                isManga: widget.isManga, settings: settings))
+                            .reverse!;
+                        final continueReaderBtn = ref.watch(
+                            libraryShowContinueReadingButtonStateProvider(
+                                isManga: widget.isManga, settings: settings));
+                        final showNumbersOfItems = ref.watch(
+                            libraryShowNumbersOfItemsStateProvider(
+                                isManga: widget.isManga, settings: settings));
+                        final localSource = ref.watch(
+                            libraryLocalSourceStateProvider(
+                                isManga: widget.isManga, settings: settings));
+                        final downloadedChapter = ref.watch(
+                            libraryDownloadedChaptersStateProvider(
+                                isManga: widget.isManga, settings: settings));
+                        final language = ref.watch(libraryLanguageStateProvider(
+                            isManga: widget.isManga, settings: settings));
+                        final displayType = ref
+                            .read(libraryDisplayTypeStateProvider(
+                                    isManga: widget.isManga, settings: settings)
+                                .notifier)
+                            .getLibraryDisplayTypeValue(ref.watch(
+                                libraryDisplayTypeStateProvider(
+                                    isManga: widget.isManga,
+                                    settings: settings)));
+                        final isNotFiltering = ref.watch(
+                            mangasFilterResultStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings));
+                        final downloadFilterType = ref.watch(
+                            mangaFilterDownloadedStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings));
+                        final unreadFilterType = ref.watch(
+                            mangaFilterUnreadStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings));
+                        final startedFilterType = ref.watch(
+                            mangaFilterStartedStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings));
+                        final bookmarkedFilterType = ref.watch(
+                            mangaFilterBookmarkedStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings));
+                        final sortType = ref
+                            .watch(sortLibraryMangaStateProvider(
+                                isManga: widget.isManga, settings: settings))
+                            .index;
+                        final numberOfItemsList = _filterAndSortManga(
+                            data: man,
+                            downloadFilterType: downloadFilterType,
+                            unreadFilterType: unreadFilterType,
+                            startedFilterType: startedFilterType,
+                            bookmarkedFilterType: bookmarkedFilterType,
+                            sortType: sortType!);
+                        return Scaffold(
+                            appBar: _appBar(
+                                isNotFiltering,
+                                showNumbersOfItems,
+                                numberOfItemsList.length,
+                                ref,
+                                numberOfItemsList,
+                                false,
+                                null,
+                                settings),
+                            body: _bodyWithoutCategories(
+                                downloadFilterType: downloadFilterType,
+                                unreadFilterType: unreadFilterType,
+                                startedFilterType: startedFilterType,
+                                bookmarkedFilterType: bookmarkedFilterType,
+                                reverse: reverse,
+                                downloadedChapter: downloadedChapter,
+                                continueReaderBtn: continueReaderBtn,
+                                language: language,
+                                displayType: displayType,
+                                ref: ref,
+                                localSource: localSource,
+                                settings: settings));
                       });
-                    }
-                    return Consumer(builder: (context, ref, child) {
-                      bool reverse = ref
-                          .watch(sortLibraryMangaStateProvider(
-                              isManga: widget.isManga))
-                          .reverse!;
-                      final continueReaderBtn = ref.watch(
-                          libraryShowContinueReadingButtonStateProvider(
-                              isManga: widget.isManga));
-                      final showNumbersOfItems = ref.watch(
-                          libraryShowNumbersOfItemsStateProvider(
-                              isManga: widget.isManga));
-                      final localSource = ref.watch(
-                          libraryLocalSourceStateProvider(
-                              isManga: widget.isManga));
-                      final downloadedChapter = ref.watch(
-                          libraryDownloadedChaptersStateProvider(
-                              isManga: widget.isManga));
-                      final language = ref.watch(libraryLanguageStateProvider(
-                          isManga: widget.isManga));
-                      final displayType = ref
-                          .read(libraryDisplayTypeStateProvider(
-                                  isManga: widget.isManga)
-                              .notifier)
-                          .getLibraryDisplayTypeValue(ref.watch(
-                              libraryDisplayTypeStateProvider(
-                                  isManga: widget.isManga)));
-                      final isNotFiltering = ref.watch(
-                          mangasFilterResultStateProvider(
-                              isManga: widget.isManga, mangaList: _entries));
-                      final downloadFilterType = ref.watch(
-                          mangaFilterDownloadedStateProvider(
-                              isManga: widget.isManga, mangaList: _entries));
-                      final unreadFilterType = ref.watch(
-                          mangaFilterUnreadStateProvider(
-                              isManga: widget.isManga, mangaList: _entries));
-                      final startedFilterType = ref.watch(
-                          mangaFilterStartedStateProvider(
-                              isManga: widget.isManga, mangaList: _entries));
-                      final bookmarkedFilterType = ref.watch(
-                          mangaFilterBookmarkedStateProvider(
-                              isManga: widget.isManga, mangaList: _entries));
-                      final sortType = ref
-                          .watch(sortLibraryMangaStateProvider(
-                              isManga: widget.isManga))
-                          .index;
-                      final numberOfItemsList = _filterAndSortManga(
-                          data: man,
-                          downloadFilterType: downloadFilterType,
-                          unreadFilterType: unreadFilterType,
-                          startedFilterType: startedFilterType,
-                          bookmarkedFilterType: bookmarkedFilterType,
-                          sortType: sortType!);
-                      return Scaffold(
-                          appBar: _appBar(
-                              isNotFiltering,
-                              showNumbersOfItems,
-                              numberOfItemsList.length,
-                              ref,
-                              numberOfItemsList,
-                              false,
-                              null),
-                          body: _bodyWithoutCategories(
-                              downloadFilterType: downloadFilterType,
-                              unreadFilterType: unreadFilterType,
-                              startedFilterType: startedFilterType,
-                              bookmarkedFilterType: bookmarkedFilterType,
-                              reverse: reverse,
-                              downloadedChapter: downloadedChapter,
-                              continueReaderBtn: continueReaderBtn,
-                              language: language,
-                              displayType: displayType,
-                              ref: ref,
-                              localSource: localSource));
-                    });
-                  },
-                  error: (Object error, StackTrace stackTrace) {
-                    return ErrorText(error);
-                  },
-                  loading: () {
-                    return const ProgressCenter();
-                  },
-                );
-              },
-              error: (Object error, StackTrace stackTrace) {
-                return ErrorText(error);
-              },
-              loading: () {
-                return const ProgressCenter();
-              },
-            );
-          },
-          error: (Object error, StackTrace stackTrace) {
-            return ErrorText(error);
-          },
-          loading: () {
-            return const ProgressCenter();
-          },
-        ),
-        bottomNavigationBar: Consumer(builder: (context, ref, child) {
-          final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
-          final color = Theme.of(context).textTheme.bodyLarge!.color!;
-          final mangaIds = ref.watch(mangasListStateProvider);
-          return AnimatedContainer(
-            curve: Curves.easeIn,
-            decoration: BoxDecoration(
-                color: primaryColor(context).withOpacity(0.2),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            duration: const Duration(milliseconds: 100),
-            height: isLongPressed ? 70 : 0,
-            width: mediaWidth(context, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
+                    },
+                    error: (Object error, StackTrace stackTrace) {
+                      return ErrorText(error);
+                    },
+                    loading: () {
+                      return const ProgressCenter();
+                    },
+                  );
+                },
+                error: (Object error, StackTrace stackTrace) {
+                  return ErrorText(error);
+                },
+                loading: () {
+                  return const ProgressCenter();
+                },
+              );
+            },
+            error: (Object error, StackTrace stackTrace) {
+              return ErrorText(error);
+            },
+            loading: () {
+              return const ProgressCenter();
+            },
+          ),
+          bottomNavigationBar: Consumer(builder: (context, ref, child) {
+            final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+            final color = Theme.of(context).textTheme.bodyLarge!.color!;
+            final mangaIds = ref.watch(mangasListStateProvider);
+            return AnimatedContainer(
+              curve: Curves.easeIn,
+              decoration: BoxDecoration(
+                  color: primaryColor(context).withOpacity(0.2),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              duration: const Duration(milliseconds: 100),
+              height: isLongPressed ? 70 : 0,
+              width: mediaWidth(context, 1),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 70,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              shadowColor: Colors.transparent,
+                              elevation: 0,
+                              backgroundColor: Colors.transparent),
+                          onPressed: () {
+                            _openCategory();
+                          },
+                          child: Icon(
+                            Icons.label_outline_rounded,
+                            color: color,
+                          )),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      height: 70,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: Colors.transparent),
-                        onPressed: () {
-                          _openCategory();
-                        },
-                        child: Icon(
-                          Icons.label_outline_rounded,
-                          color: color,
-                        )),
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            ref
+                                .read(mangasSetIsReadStateProvider(
+                                        mangaIds: mangaIds)
+                                    .notifier)
+                                .set();
+                          },
+                          child: Icon(
+                            Icons.done_all_sharp,
+                            color: color,
+                          )),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                        onPressed: () {
-                          ref
-                              .read(mangasSetIsReadStateProvider(
-                                      mangaIds: mangaIds)
-                                  .notifier)
-                              .set();
-                        },
-                        child: Icon(
-                          Icons.done_all_sharp,
-                          color: color,
-                        )),
+                  Expanded(
+                    child: SizedBox(
+                      height: 70,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            ref
+                                .read(mangasSetUnReadStateProvider(
+                                        mangaIds: mangaIds)
+                                    .notifier)
+                                .set();
+                          },
+                          child: Icon(
+                            Icons.remove_done_sharp,
+                            color: color,
+                          )),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                        onPressed: () {
-                          ref
-                              .read(mangasSetUnReadStateProvider(
-                                      mangaIds: mangaIds)
-                                  .notifier)
-                              .set();
-                        },
-                        child: Icon(
-                          Icons.remove_done_sharp,
-                          color: color,
-                        )),
+                  // Expanded(
+                  //   child: SizedBox(
+                  //     height: 70,
+                  //     child: ElevatedButton(
+                  //         style: ElevatedButton.styleFrom(
+                  //           elevation: 0,
+                  //           backgroundColor: Colors.transparent,
+                  //           shadowColor: Colors.transparent,
+                  //         ),
+                  //         onPressed: () {},
+                  //         child: Icon(
+                  //           Icons.download_outlined,
+                  //           color: color,
+                  //         )),
+                  //   ),
+                  // ),
+                  Expanded(
+                    child: SizedBox(
+                      height: 70,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            _deleteManga();
+                          },
+                          child: Icon(
+                            Icons.delete_outline_outlined,
+                            color: color,
+                          )),
+                    ),
                   ),
-                ),
-                // Expanded(
-                //   child: SizedBox(
-                //     height: 70,
-                //     child: ElevatedButton(
-                //         style: ElevatedButton.styleFrom(
-                //           elevation: 0,
-                //           backgroundColor: Colors.transparent,
-                //           shadowColor: Colors.transparent,
-                //         ),
-                //         onPressed: () {},
-                //         child: Icon(
-                //           Icons.download_outlined,
-                //           color: color,
-                //         )),
-                //   ),
-                // ),
-                Expanded(
-                  child: SizedBox(
-                    height: 70,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                        ),
-                        onPressed: () {
-                          _deleteManga();
-                        },
-                        child: Icon(
-                          Icons.delete_outline_outlined,
-                          color: color,
-                        )),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }));
+                ],
+              ),
+            );
+          }));
+    }, error: (error, e) {
+      return ErrorText(error);
+    }, loading: () {
+      return ProgressCenter();
+    });
   }
 
   Widget _categoriesNumberOfItems(
@@ -538,11 +579,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool reverse,
       required bool downloadedChapter,
       required bool continueReaderBtn,
-      required int categoryId}) {
+      required int categoryId,
+      required Settings settings}) {
     final mangas = ref.watch(getAllMangaStreamProvider(
         categoryId: categoryId, isManga: widget.isManga));
-    final sortType =
-        ref.watch(sortLibraryMangaStateProvider(isManga: widget.isManga)).index;
+    final sortType = ref
+        .watch(sortLibraryMangaStateProvider(
+            isManga: widget.isManga, settings: settings))
+        .index;
     return mangas.when(
       data: (data) {
         final categoriNumberOfItemsList = _filterAndSortManga(
@@ -584,12 +628,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool localSource,
       required bool language,
       required WidgetRef ref,
-      required DisplayType displayType}) {
+      required DisplayType displayType,
+      required Settings settings}) {
     final l10n = l10nLocalizations(context)!;
     final mangas = ref.watch(getAllMangaStreamProvider(
         categoryId: categoryId, isManga: widget.isManga));
-    final sortType =
-        ref.watch(sortLibraryMangaStateProvider(isManga: widget.isManga)).index;
+    final sortType = ref
+        .watch(sortLibraryMangaStateProvider(
+            isManga: widget.isManga, settings: settings))
+        .index;
     final mangaIdsList = ref.watch(mangasListStateProvider);
     return Scaffold(
         body: mangas.when(
@@ -648,9 +695,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required bool language,
       required DisplayType displayType,
       required WidgetRef ref,
-      bool withouCategories = false}) {
-    final sortType =
-        ref.watch(sortLibraryMangaStateProvider(isManga: widget.isManga)).index;
+      bool withouCategories = false,
+      required Settings settings}) {
+    final sortType = ref
+        .watch(sortLibraryMangaStateProvider(
+            isManga: widget.isManga, settings: settings))
+        .index;
     final manga = withouCategories
         ? ref.watch(
             getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga))
@@ -1138,7 +1188,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         });
   }
 
-  _showDraggableMenu() {
+  _showDraggableMenu(Settings settings) {
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
     final l10n = l10nLocalizations(context)!;
@@ -1183,14 +1233,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           type: ref.watch(
                                               mangaFilterDownloadedStateProvider(
                                                   isManga: widget.isManga,
-                                                  mangaList: _entries)),
+                                                  mangaList: _entries,
+                                                  settings: settings)),
                                           onTap: () {
                                             ref
                                                 .read(
                                                     mangaFilterDownloadedStateProvider(
                                                             isManga:
                                                                 widget.isManga,
-                                                            mangaList: _entries)
+                                                            mangaList: _entries,
+                                                            settings: settings)
                                                         .notifier)
                                                 .update();
                                           }),
@@ -1199,14 +1251,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           type: ref.watch(
                                               mangaFilterUnreadStateProvider(
                                                   isManga: widget.isManga,
-                                                  mangaList: _entries)),
+                                                  mangaList: _entries,
+                                                  settings: settings)),
                                           onTap: () {
                                             ref
                                                 .read(
                                                     mangaFilterUnreadStateProvider(
                                                             isManga:
                                                                 widget.isManga,
-                                                            mangaList: _entries)
+                                                            mangaList: _entries,
+                                                            settings: settings)
                                                         .notifier)
                                                 .update();
                                           }),
@@ -1215,14 +1269,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           type: ref.watch(
                                               mangaFilterStartedStateProvider(
                                                   isManga: widget.isManga,
-                                                  mangaList: _entries)),
+                                                  mangaList: _entries,
+                                                  settings: settings)),
                                           onTap: () {
                                             ref
                                                 .read(
                                                     mangaFilterStartedStateProvider(
                                                             isManga:
                                                                 widget.isManga,
-                                                            mangaList: _entries)
+                                                            mangaList: _entries,
+                                                            settings: settings)
                                                         .notifier)
                                                 .update();
                                           }),
@@ -1231,7 +1287,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           type: ref.watch(
                                               mangaFilterBookmarkedStateProvider(
                                                   isManga: widget.isManga,
-                                                  mangaList: _entries)),
+                                                  mangaList: _entries,
+                                                  settings: settings)),
                                           onTap: () {
                                             setState(() {
                                               ref
@@ -1240,7 +1297,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                               isManga: widget
                                                                   .isManga,
                                                               mangaList:
-                                                                  _entries)
+                                                                  _entries,
+                                                              settings:
+                                                                  settings)
                                                           .notifier)
                                                   .update();
                                             });
@@ -1251,12 +1310,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 Consumer(builder: (context, ref, chil) {
                                   final reverse = ref
                                       .read(sortLibraryMangaStateProvider(
-                                              isManga: widget.isManga)
+                                              isManga: widget.isManga,
+                                              settings: settings)
                                           .notifier)
                                       .isReverse();
                                   final reverseChapter = ref.watch(
                                       sortLibraryMangaStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   return Column(
                                     children: [
                                       for (var i = 0; i < 7; i++)
@@ -1269,7 +1330,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .read(
                                                     sortLibraryMangaStateProvider(
                                                             isManga:
-                                                                widget.isManga)
+                                                                widget.isManga,
+                                                            settings: settings)
                                                         .notifier)
                                                 .set(i);
                                           },
@@ -1282,29 +1344,37 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 Consumer(builder: (context, ref, chil) {
                                   final display = ref.watch(
                                       libraryDisplayTypeStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final displayV = ref.read(
                                       libraryDisplayTypeStateProvider(
-                                              isManga: widget.isManga)
+                                              isManga: widget.isManga,
+                                              settings: settings)
                                           .notifier);
                                   final showCategoryTabs = ref.watch(
                                       libraryShowCategoryTabsStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final continueReaderBtn = ref.watch(
                                       libraryShowContinueReadingButtonStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final showNumbersOfItems = ref.watch(
                                       libraryShowNumbersOfItemsStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final downloadedChapter = ref.watch(
                                       libraryDownloadedChaptersStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final language = ref.watch(
                                       libraryLanguageStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   final localSource = ref.watch(
                                       libraryLocalSourceStateProvider(
-                                          isManga: widget.isManga));
+                                          isManga: widget.isManga,
+                                          settings: settings));
                                   return SingleChildScrollView(
                                     physics:
                                         const NeverScrollableScrollPhysics(),
@@ -1372,7 +1442,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryDownloadedChaptersStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(
                                                             !downloadedChapter);
@@ -1384,7 +1456,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryLanguageStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(!language);
                                                   }),
@@ -1395,7 +1469,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryLocalSourceStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(!localSource);
                                                   }),
@@ -1425,7 +1501,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryShowCategoryTabsStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(!showCategoryTabs);
                                                   }),
@@ -1439,7 +1517,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryShowNumbersOfItemsStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(
                                                             !showNumbersOfItems);
@@ -1470,7 +1550,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                     ref
                                                         .read(libraryShowContinueReadingButtonStateProvider(
                                                                 isManga: widget
-                                                                    .isManga)
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
                                                             .notifier)
                                                         .set(
                                                             !continueReaderBtn);
@@ -1515,7 +1597,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       WidgetRef ref,
       List<Manga> mangas,
       bool isCategory,
-      int? categoryId) {
+      int? categoryId,
+      Settings settings) {
     final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
     final mangaIdsList = ref.watch(mangasListStateProvider);
     final manga = categoryId == null
@@ -1649,7 +1732,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   IconButton(
                       splashRadius: 20,
                       onPressed: () {
-                        _showDraggableMenu();
+                        _showDraggableMenu(settings);
                       },
                       icon: Icon(
                         Icons.filter_list_sharp,

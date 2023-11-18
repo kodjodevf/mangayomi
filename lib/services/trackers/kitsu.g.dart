@@ -6,7 +6,7 @@ part of 'kitsu.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$kitsuHash() => r'560c510503436a38bb1283c28978de2dcec7a367';
+String _$kitsuHash() => r'36f64dbeaabb1338240ff372079a6ecb166abccb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,11 +29,11 @@ class _SystemHash {
   }
 }
 
-abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<dynamic> {
+abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final bool? isManga;
 
-  dynamic build({
+  void build({
     required int syncId,
     bool? isManga,
   });
@@ -44,7 +44,7 @@ abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<dynamic> {
 const kitsuProvider = KitsuFamily();
 
 /// See also [Kitsu].
-class KitsuFamily extends Family<dynamic> {
+class KitsuFamily extends Family<void> {
   /// See also [Kitsu].
   const KitsuFamily();
 
@@ -85,7 +85,7 @@ class KitsuFamily extends Family<dynamic> {
 }
 
 /// See also [Kitsu].
-class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, dynamic> {
+class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   /// See also [Kitsu].
   KitsuProvider({
     required int syncId,
@@ -121,7 +121,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, dynamic> {
   final bool? isManga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant Kitsu notifier,
   ) {
     return notifier.build(
@@ -150,7 +150,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, dynamic> {
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Kitsu, dynamic> createElement() {
+  AutoDisposeNotifierProviderElement<Kitsu, void> createElement() {
     return _KitsuProviderElement(this);
   }
 
@@ -171,7 +171,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, dynamic> {
   }
 }
 
-mixin KitsuRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin KitsuRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -180,7 +180,7 @@ mixin KitsuRef on AutoDisposeNotifierProviderRef<dynamic> {
 }
 
 class _KitsuProviderElement
-    extends AutoDisposeNotifierProviderElement<Kitsu, dynamic> with KitsuRef {
+    extends AutoDisposeNotifierProviderElement<Kitsu, void> with KitsuRef {
   _KitsuProviderElement(super.provider);
 
   @override

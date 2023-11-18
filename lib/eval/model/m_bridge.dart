@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
@@ -542,7 +541,6 @@ class MBridge {
 
         res = await request.send();
       }
-      log(res.statusCode.toString());
       if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
         return await cloudflareBypass(
             url: url, sourceId: source!.id.toString(), method: 0);

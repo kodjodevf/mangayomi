@@ -34,7 +34,7 @@ class _SystemHash {
 const setCookieProvider = SetCookieFamily();
 
 /// See also [setCookie].
-class SetCookieFamily extends Family<AsyncValue<dynamic>> {
+class SetCookieFamily extends Family<AsyncValue> {
   /// See also [setCookie].
   const SetCookieFamily();
 
@@ -75,7 +75,7 @@ class SetCookieFamily extends Family<AsyncValue<dynamic>> {
 }
 
 /// See also [setCookie].
-class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
+class SetCookieProvider extends AutoDisposeFutureProvider<Object?> {
   /// See also [setCookie].
   SetCookieProvider(
     String sourceId,
@@ -114,7 +114,7 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
 
   @override
   Override overrideWith(
-    FutureOr<dynamic> Function(SetCookieRef provider) create,
+    FutureOr<Object?> Function(SetCookieRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -132,7 +132,7 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<dynamic> createElement() {
+  AutoDisposeFutureProviderElement<Object?> createElement() {
     return _SetCookieProviderElement(this);
   }
 
@@ -153,7 +153,7 @@ class SetCookieProvider extends AutoDisposeFutureProvider<dynamic> {
   }
 }
 
-mixin SetCookieRef on AutoDisposeFutureProviderRef<dynamic> {
+mixin SetCookieRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `sourceId` of this provider.
   String get sourceId;
 
@@ -162,7 +162,7 @@ mixin SetCookieRef on AutoDisposeFutureProviderRef<dynamic> {
 }
 
 class _SetCookieProviderElement
-    extends AutoDisposeFutureProviderElement<dynamic> with SetCookieRef {
+    extends AutoDisposeFutureProviderElement<Object?> with SetCookieRef {
   _SetCookieProviderElement(super.provider);
 
   @override

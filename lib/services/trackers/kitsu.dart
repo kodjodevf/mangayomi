@@ -37,7 +37,7 @@ class Kitsu extends _$Kitsu {
   }
 
   @override
-  build({required int syncId, bool? isManga}) {}
+ void build({required int syncId, bool? isManga}) {}
 
   Future<(bool, String)> login(String username, String password) async {
     try {

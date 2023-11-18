@@ -35,7 +35,7 @@ class _SystemHash {
 const fetchMangaSourcesListProvider = FetchMangaSourcesListFamily();
 
 /// See also [fetchMangaSourcesList].
-class FetchMangaSourcesListFamily extends Family<AsyncValue<dynamic>> {
+class FetchMangaSourcesListFamily extends Family<AsyncValue> {
   /// See also [fetchMangaSourcesList].
   const FetchMangaSourcesListFamily();
 
@@ -76,7 +76,7 @@ class FetchMangaSourcesListFamily extends Family<AsyncValue<dynamic>> {
 }
 
 /// See also [fetchMangaSourcesList].
-class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
+class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   /// See also [fetchMangaSourcesList].
   FetchMangaSourcesListProvider({
     int? id,
@@ -116,7 +116,7 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
 
   @override
   Override overrideWith(
-    FutureOr<dynamic> Function(FetchMangaSourcesListRef provider) create,
+    FutureOr<Object?> Function(FetchMangaSourcesListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -134,7 +134,7 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<dynamic> createElement() {
+  AutoDisposeFutureProviderElement<Object?> createElement() {
     return _FetchMangaSourcesListProviderElement(this);
   }
 
@@ -155,7 +155,7 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<dynamic> {
   }
 }
 
-mixin FetchMangaSourcesListRef on AutoDisposeFutureProviderRef<dynamic> {
+mixin FetchMangaSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
 
@@ -164,7 +164,7 @@ mixin FetchMangaSourcesListRef on AutoDisposeFutureProviderRef<dynamic> {
 }
 
 class _FetchMangaSourcesListProviderElement
-    extends AutoDisposeFutureProviderElement<dynamic>
+    extends AutoDisposeFutureProviderElement<Object?>
     with FetchMangaSourcesListRef {
   _FetchMangaSourcesListProviderElement(super.provider);
 

@@ -23,7 +23,7 @@ class MyAnimeList extends _$MyAnimeList {
   int listPaginationAmount = 250;
 
   @override
-  build({required int syncId, required bool? isManga}) {}
+  void build({required int syncId, required bool? isManga}) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)

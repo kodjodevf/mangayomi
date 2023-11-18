@@ -10,10 +10,8 @@ part 'library_state_provider.g.dart';
 @riverpod
 class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   @override
-  String build({required bool isManga}) {
-    return isManga
-        ? isar.settings.getSync(227)!.displayType.name
-        : isar.settings.getSync(227)!.animeDisplayType.name;
+  String build({required bool isManga, required Settings settings}) {
+    return isManga ? settings.displayType.name : settings.animeDisplayType.name;
   }
 
   DisplayType getLibraryDisplayTypeValue(String value) {
@@ -38,7 +36,6 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   }
 
   void setLibraryDisplayType(DisplayType displayType) {
-    Settings settings = isar.settings.getSync(227)!;
     state = displayType.name;
     if (isManga) {
       settings = settings..displayType = displayType;
@@ -55,26 +52,29 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
 @riverpod
 class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   @override
-  int build({required List<Manga> mangaList, required bool isManga}) {
+  int build(
+      {required List<Manga> mangaList,
+      required bool isManga,
+      required Settings settings}) {
     state = getType();
     return getType();
   }
 
   int getType() {
     return isManga
-        ? isar.settings.getSync(227)!.libraryFilterMangasDownloadType!
-        : isar.settings.getSync(227)!.libraryFilterAnimeDownloadType ?? 0;
+        ? settings.libraryFilterMangasDownloadType!
+        : settings.libraryFilterAnimeDownloadType ?? 0;
   }
 
   void setType(int type) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryFilterMangasDownloadType = type;
+      appSettings = settings..libraryFilterMangasDownloadType = type;
     } else {
-      settings = settings..libraryFilterAnimeDownloadType = type;
+      appSettings = settings..libraryFilterAnimeDownloadType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
     state = type;
   }
@@ -93,26 +93,29 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
 @riverpod
 class MangaFilterUnreadState extends _$MangaFilterUnreadState {
   @override
-  int build({required List<Manga> mangaList, required bool isManga}) {
+  int build(
+      {required List<Manga> mangaList,
+      required bool isManga,
+      required Settings settings}) {
     state = getType();
     return getType();
   }
 
   int getType() {
     return isManga
-        ? isar.settings.getSync(227)!.libraryFilterMangasUnreadType!
-        : isar.settings.getSync(227)!.libraryFilterAnimeUnreadType ?? 0;
+        ? settings.libraryFilterMangasUnreadType!
+        : settings.libraryFilterAnimeUnreadType ?? 0;
   }
 
   void setType(int type) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryFilterMangasUnreadType = type;
+      appSettings = settings..libraryFilterMangasUnreadType = type;
     } else {
-      settings = settings..libraryFilterAnimeUnreadType = type;
+      appSettings = settings..libraryFilterAnimeUnreadType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
     state = type;
   }
@@ -180,26 +183,29 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
 @riverpod
 class MangaFilterStartedState extends _$MangaFilterStartedState {
   @override
-  int build({required List<Manga> mangaList, required bool isManga}) {
+  int build(
+      {required List<Manga> mangaList,
+      required bool isManga,
+      required Settings settings}) {
     state = getType();
     return getType();
   }
 
   int getType() {
     return isManga
-        ? isar.settings.getSync(227)!.libraryFilterMangasStartedType!
-        : isar.settings.getSync(227)!.libraryFilterAnimeStartedType ?? 0;
+        ? settings.libraryFilterMangasStartedType!
+        : settings.libraryFilterAnimeStartedType ?? 0;
   }
 
   void setType(int type) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryFilterMangasStartedType = type;
+      appSettings = settings..libraryFilterMangasStartedType = type;
     } else {
-      settings = settings..libraryFilterAnimeStartedType = type;
+      appSettings = settings..libraryFilterAnimeStartedType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
     state = type;
   }
@@ -267,26 +273,29 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
 @riverpod
 class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   @override
-  int build({required List<Manga> mangaList, required bool isManga}) {
+  int build(
+      {required List<Manga> mangaList,
+      required bool isManga,
+      required Settings settings}) {
     state = getType();
     return getType();
   }
 
   int getType() {
     return isManga
-        ? isar.settings.getSync(227)!.libraryFilterMangasBookMarkedType!
-        : isar.settings.getSync(227)!.libraryFilterAnimeBookMarkedType ?? 0;
+        ? settings.libraryFilterMangasBookMarkedType!
+        : settings.libraryFilterAnimeBookMarkedType ?? 0;
   }
 
   void setType(int type) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryFilterMangasBookMarkedType = type;
+      appSettings = settings..libraryFilterMangasBookMarkedType = type;
     } else {
-      settings = settings..libraryFilterAnimeBookMarkedType = type;
+      appSettings = settings..libraryFilterAnimeBookMarkedType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
     state = type;
   }
@@ -354,15 +363,18 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
 @riverpod
 class MangasFilterResultState extends _$MangasFilterResultState {
   @override
-  bool build({required List<Manga> mangaList, required bool isManga}) {
+  bool build(
+      {required List<Manga> mangaList,
+      required bool isManga,
+      required Settings settings}) {
     final downloadFilterType = ref.watch(mangaFilterDownloadedStateProvider(
-        mangaList: mangaList, isManga: isManga));
-    final unreadFilterType = ref.watch(
-        mangaFilterUnreadStateProvider(mangaList: mangaList, isManga: isManga));
+        mangaList: mangaList, isManga: isManga, settings: settings));
+    final unreadFilterType = ref.watch(mangaFilterUnreadStateProvider(
+        mangaList: mangaList, isManga: isManga, settings: settings));
     final startedFilterType = ref.watch(mangaFilterStartedStateProvider(
-        mangaList: mangaList, isManga: isManga));
+        mangaList: mangaList, isManga: isManga, settings: settings));
     final bookmarkedFilterType = ref.watch(mangaFilterBookmarkedStateProvider(
-        mangaList: mangaList, isManga: isManga));
+        mangaList: mangaList, isManga: isManga, settings: settings));
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         startedFilterType == 0 &&
@@ -373,22 +385,22 @@ class MangasFilterResultState extends _$MangasFilterResultState {
 @riverpod
 class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryShowCategoryTabs!
-        : isar.settings.getSync(227)!.animeLibraryShowCategoryTabs ?? false;
+        ? settings.libraryShowCategoryTabs!
+        : settings.animeLibraryShowCategoryTabs ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryShowCategoryTabs = value;
+      appSettings = settings..libraryShowCategoryTabs = value;
     } else {
-      settings = settings..animeLibraryShowCategoryTabs = value;
+      appSettings = settings..animeLibraryShowCategoryTabs = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -396,22 +408,22 @@ class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
 @riverpod
 class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryDownloadedChapters!
-        : isar.settings.getSync(227)!.animeLibraryDownloadedChapters ?? false;
+        ? settings.libraryDownloadedChapters!
+        : settings.animeLibraryDownloadedChapters ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryDownloadedChapters = value;
+      appSettings = settings..libraryDownloadedChapters = value;
     } else {
-      settings = settings..animeLibraryDownloadedChapters = value;
+      appSettings = settings..animeLibraryDownloadedChapters = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -419,22 +431,22 @@ class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
 @riverpod
 class LibraryLanguageState extends _$LibraryLanguageState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryShowLanguage!
-        : isar.settings.getSync(227)!.animeLibraryShowLanguage ?? false;
+        ? settings.libraryShowLanguage!
+        : settings.animeLibraryShowLanguage ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryShowLanguage = value;
+      appSettings = settings..libraryShowLanguage = value;
     } else {
-      settings = settings..animeLibraryShowLanguage = value;
+      appSettings = settings..animeLibraryShowLanguage = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -442,22 +454,22 @@ class LibraryLanguageState extends _$LibraryLanguageState {
 @riverpod
 class LibraryLocalSourceState extends _$LibraryLocalSourceState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryLocalSource ?? false
-        : isar.settings.getSync(227)!.animeLibraryLocalSource ?? false;
+        ? settings.libraryLocalSource ?? false
+        : settings.animeLibraryLocalSource ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryShowLanguage = value;
+      appSettings = settings..libraryShowLanguage = value;
     } else {
-      settings = settings..animeLibraryShowLanguage = value;
+      appSettings = settings..animeLibraryShowLanguage = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -465,22 +477,22 @@ class LibraryLocalSourceState extends _$LibraryLocalSourceState {
 @riverpod
 class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryShowNumbersOfItems!
-        : isar.settings.getSync(227)!.animeLibraryShowNumbersOfItems ?? false;
+        ? settings.libraryShowNumbersOfItems!
+        : settings.animeLibraryShowNumbersOfItems ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryShowNumbersOfItems = value;
+      appSettings = settings..libraryShowNumbersOfItems = value;
     } else {
-      settings = settings..animeLibraryShowNumbersOfItems = value;
+      appSettings = settings..animeLibraryShowNumbersOfItems = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -489,23 +501,22 @@ class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
 class LibraryShowContinueReadingButtonState
     extends _$LibraryShowContinueReadingButtonState {
   @override
-  bool build({required bool isManga}) {
+  bool build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.libraryShowContinueReadingButton!
-        : isar.settings.getSync(227)!.animeLibraryShowContinueReadingButton ??
-            false;
+        ? settings.libraryShowContinueReadingButton!
+        : settings.animeLibraryShowContinueReadingButton ?? false;
   }
 
   void set(bool value) {
-    Settings settings = isar.settings.getSync(227)!;
+    Settings appSettings = Settings();
     if (isManga) {
-      settings = settings..libraryShowContinueReadingButton = value;
+      appSettings = settings..libraryShowContinueReadingButton = value;
     } else {
-      settings = settings..animeLibraryShowContinueReadingButton = value;
+      appSettings = settings..animeLibraryShowContinueReadingButton = value;
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }
@@ -513,25 +524,25 @@ class LibraryShowContinueReadingButtonState
 @riverpod
 class SortLibraryMangaState extends _$SortLibraryMangaState {
   @override
-  SortLibraryManga build({required bool isManga}) {
+  SortLibraryManga build({required bool isManga, required Settings settings}) {
     return isManga
-        ? isar.settings.getSync(227)!.sortLibraryManga ?? SortLibraryManga()
-        : isar.settings.getSync(227)!.sortLibraryAnime ?? SortLibraryManga();
+        ? settings.sortLibraryManga ?? SortLibraryManga()
+        : settings.sortLibraryAnime ?? SortLibraryManga();
   }
 
   void update(bool reverse, int index) {
+    Settings appSettings = Settings();
     var value = SortLibraryManga()
       ..index = index
       ..reverse = state.index == index ? !reverse : reverse;
-    Settings settings = isar.settings.getSync(227)!;
+
     if (isManga) {
-      settings = settings..sortLibraryManga = value;
+      appSettings = settings..sortLibraryManga = value;
     } else {
-      settings = settings..sortLibraryAnime = value;
+      appSettings = settings..sortLibraryAnime = value;
     }
     isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227)!;
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
     state = value;
   }
@@ -605,7 +616,7 @@ class IsLongPressedMangaState extends _$IsLongPressedMangaState {
 @riverpod
 class MangasSetIsReadState extends _$MangasSetIsReadState {
   @override
-  build({required List<int> mangaIds}) {}
+  void build({required List<int> mangaIds}) {}
 
   set() {
     for (var mangaid in mangaIds) {
@@ -628,7 +639,7 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
 @riverpod
 class MangasSetUnReadState extends _$MangasSetUnReadState {
   @override
-  build({required List<int> mangaIds}) {}
+  void build({required List<int> mangaIds}) {}
 
   set() {
     for (var mangaid in mangaIds) {

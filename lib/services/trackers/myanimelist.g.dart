@@ -6,7 +6,7 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'e5319db619172cd428a25174a8bb720c99a2a1b7';
+String _$myAnimeListHash() => r'ab694820166610c5ec7bb1c936527b4da73fb6d5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,11 +29,11 @@ class _SystemHash {
   }
 }
 
-abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<dynamic> {
+abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final bool? isManga;
 
-  dynamic build({
+  void build({
     required int syncId,
     required bool? isManga,
   });
@@ -44,7 +44,7 @@ abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<dynamic> {
 const myAnimeListProvider = MyAnimeListFamily();
 
 /// See also [MyAnimeList].
-class MyAnimeListFamily extends Family<dynamic> {
+class MyAnimeListFamily extends Family<void> {
   /// See also [MyAnimeList].
   const MyAnimeListFamily();
 
@@ -86,7 +86,7 @@ class MyAnimeListFamily extends Family<dynamic> {
 
 /// See also [MyAnimeList].
 class MyAnimeListProvider
-    extends AutoDisposeNotifierProviderImpl<MyAnimeList, dynamic> {
+    extends AutoDisposeNotifierProviderImpl<MyAnimeList, void> {
   /// See also [MyAnimeList].
   MyAnimeListProvider({
     required int syncId,
@@ -123,7 +123,7 @@ class MyAnimeListProvider
   final bool? isManga;
 
   @override
-  dynamic runNotifierBuild(
+  void runNotifierBuild(
     covariant MyAnimeList notifier,
   ) {
     return notifier.build(
@@ -152,7 +152,7 @@ class MyAnimeListProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<MyAnimeList, dynamic> createElement() {
+  AutoDisposeNotifierProviderElement<MyAnimeList, void> createElement() {
     return _MyAnimeListProviderElement(this);
   }
 
@@ -173,7 +173,7 @@ class MyAnimeListProvider
   }
 }
 
-mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<dynamic> {
+mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -182,7 +182,7 @@ mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<dynamic> {
 }
 
 class _MyAnimeListProviderElement
-    extends AutoDisposeNotifierProviderElement<MyAnimeList, dynamic>
+    extends AutoDisposeNotifierProviderElement<MyAnimeList, void>
     with MyAnimeListRef {
   _MyAnimeListProviderElement(super.provider);
 

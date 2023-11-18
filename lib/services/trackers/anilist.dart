@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http/http.dart' as http;
@@ -15,30 +14,25 @@ part 'anilist.g.dart';
 
 @riverpod
 class Anilist extends _$Anilist {
-  String clientId =
+  final String _clientId =
       (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
-  static const String baseApiUrl = "https://graphql.anilist.co/";
-  static const String baseUrl = "https://anilist.co/api/v2/";
-  static const String baseMangaUrl = "https://anilist.co/manga/";
-  String redirectUri = (Platform.isWindows || Platform.isLinux)
+  static const String _baseApiUrl = "https://graphql.anilist.co/";
+  final String _redirectUri = (Platform.isWindows || Platform.isLinux)
       ? 'http://localhost:43824/success?code=1337'
       : 'mangayomi://success?code=1337';
-  String clientSecret = (Platform.isWindows || Platform.isLinux)
+  final String _clientSecret = (Platform.isWindows || Platform.isLinux)
       ? 'tJA13cAR2tCCXrJCwwvmwEDbWRoIaahFiJTXToHd'
       : 'G2fFUiGtgFd60D0lCkhgGKvMmrCfDmZXADQIzWXr';
 
   @override
-  build({required int syncId, bool? isManga}) {}
-
-  String _authUrl() {
-    return 'https://anilist.co/api/v2/oauth/authorize?client_id=$clientId&redirect_uri=$redirectUri&response_type=code';
-  }
+ void build({required int syncId, bool? isManga}) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)
         ? 'http://localhost:43824'
         : 'mangayomi';
-    final loginUrl = _authUrl();
+    final loginUrl =
+        'https://anilist.co/api/v2/oauth/authorize?client_id=$_clientId&redirect_uri=$_redirectUri&response_type=code';
 
     try {
       final uri = await FlutterWebAuth2.authenticate(
@@ -49,9 +43,9 @@ class Anilist extends _$Anilist {
         Uri.parse('https://anilist.co/api/v2/oauth/token'),
         body: {
           'grant_type': 'authorization_code',
-          'client_id': clientId,
-          'client_secret': clientSecret,
-          'redirect_uri': redirectUri,
+          'client_id': _clientId,
+          'client_secret': _clientSecret,
+          'redirect_uri': _redirectUri,
           'code': code
         },
       );
@@ -92,7 +86,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -126,7 +120,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -169,15 +163,14 @@ class Anilist extends _$Anilist {
       }
     };
 
-    final dd = await http.post(
-      Uri.parse(baseApiUrl),
+    await http.post(
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
       },
       body: json.encode(body),
     );
-    log(dd.body);
     return track;
   }
 
@@ -212,7 +205,7 @@ class Anilist extends _$Anilist {
       }
     };
     await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -257,7 +250,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -323,7 +316,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -410,7 +403,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -492,7 +485,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
@@ -535,7 +528,7 @@ class Anilist extends _$Anilist {
     };
 
     final response = await http.post(
-      Uri.parse(baseApiUrl),
+      Uri.parse(_baseApiUrl),
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken'
