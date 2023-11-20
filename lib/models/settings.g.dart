@@ -58,270 +58,290 @@ const SettingsSchema = CollectionSchema(
       name: r'animeLibraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
-    r'autoExtensionsUpdates': PropertySchema(
+    r'autoBackupLocation': PropertySchema(
       id: 8,
+      name: r'autoBackupLocation',
+      type: IsarType.string,
+    ),
+    r'autoExtensionsUpdates': PropertySchema(
+      id: 9,
       name: r'autoExtensionsUpdates',
       type: IsarType.bool,
     ),
     r'backgroundColor': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'backgroundColor',
       type: IsarType.byte,
       enumMap: _SettingsbackgroundColorEnumValueMap,
     ),
+    r'backupFrequency': PropertySchema(
+      id: 11,
+      name: r'backupFrequency',
+      type: IsarType.long,
+    ),
+    r'backupFrequencyOptions': PropertySchema(
+      id: 12,
+      name: r'backupFrequencyOptions',
+      type: IsarType.longList,
+    ),
     r'chapterFilterBookmarkedList': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'chapterFilterBookmarkedList',
       type: IsarType.objectList,
       target: r'ChapterFilterBookmarked',
     ),
     r'chapterFilterDownloadedList': PropertySchema(
-      id: 11,
+      id: 14,
       name: r'chapterFilterDownloadedList',
       type: IsarType.objectList,
       target: r'ChapterFilterDownloaded',
     ),
     r'chapterFilterUnreadList': PropertySchema(
-      id: 12,
+      id: 15,
       name: r'chapterFilterUnreadList',
       type: IsarType.objectList,
       target: r'ChapterFilterUnread',
     ),
     r'chapterPageIndexList': PropertySchema(
-      id: 13,
+      id: 16,
       name: r'chapterPageIndexList',
       type: IsarType.objectList,
       target: r'ChapterPageIndex',
     ),
     r'chapterPageUrlsList': PropertySchema(
-      id: 14,
+      id: 17,
       name: r'chapterPageUrlsList',
       type: IsarType.objectList,
       target: r'ChapterPageurls',
     ),
     r'checkForExtensionUpdates': PropertySchema(
-      id: 15,
+      id: 18,
       name: r'checkForExtensionUpdates',
       type: IsarType.bool,
     ),
     r'cookiesList': PropertySchema(
-      id: 16,
+      id: 19,
       name: r'cookiesList',
       type: IsarType.objectList,
       target: r'Cookie',
     ),
     r'cropBorders': PropertySchema(
-      id: 17,
+      id: 20,
       name: r'cropBorders',
       type: IsarType.bool,
     ),
     r'dateFormat': PropertySchema(
-      id: 18,
+      id: 21,
       name: r'dateFormat',
       type: IsarType.string,
     ),
     r'defaultReaderMode': PropertySchema(
-      id: 19,
+      id: 22,
       name: r'defaultReaderMode',
       type: IsarType.byte,
       enumMap: _SettingsdefaultReaderModeEnumValueMap,
     ),
     r'displayType': PropertySchema(
-      id: 20,
+      id: 23,
       name: r'displayType',
       type: IsarType.byte,
       enumMap: _SettingsdisplayTypeEnumValueMap,
     ),
     r'doubleTapAnimationSpeed': PropertySchema(
-      id: 21,
+      id: 24,
       name: r'doubleTapAnimationSpeed',
       type: IsarType.long,
     ),
     r'downloadLocation': PropertySchema(
-      id: 22,
+      id: 25,
       name: r'downloadLocation',
       type: IsarType.string,
     ),
     r'downloadOnlyOnWifi': PropertySchema(
-      id: 23,
+      id: 26,
       name: r'downloadOnlyOnWifi',
       type: IsarType.bool,
     ),
     r'filterScanlatorList': PropertySchema(
-      id: 24,
+      id: 27,
       name: r'filterScanlatorList',
       type: IsarType.objectList,
       target: r'FilterScanlator',
     ),
     r'flexColorSchemeBlendLevel': PropertySchema(
-      id: 25,
+      id: 28,
       name: r'flexColorSchemeBlendLevel',
       type: IsarType.double,
     ),
     r'flexSchemeColorIndex': PropertySchema(
-      id: 26,
+      id: 29,
       name: r'flexSchemeColorIndex',
       type: IsarType.long,
     ),
     r'incognitoMode': PropertySchema(
-      id: 27,
+      id: 30,
       name: r'incognitoMode',
       type: IsarType.bool,
     ),
     r'libraryDownloadedChapters': PropertySchema(
-      id: 28,
+      id: 31,
       name: r'libraryDownloadedChapters',
       type: IsarType.bool,
     ),
     r'libraryFilterAnimeBookMarkedType': PropertySchema(
-      id: 29,
+      id: 32,
       name: r'libraryFilterAnimeBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeDownloadType': PropertySchema(
-      id: 30,
+      id: 33,
       name: r'libraryFilterAnimeDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeStartedType': PropertySchema(
-      id: 31,
+      id: 34,
       name: r'libraryFilterAnimeStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeUnreadType': PropertySchema(
-      id: 32,
+      id: 35,
       name: r'libraryFilterAnimeUnreadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasBookMarkedType': PropertySchema(
-      id: 33,
+      id: 36,
       name: r'libraryFilterMangasBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasDownloadType': PropertySchema(
-      id: 34,
+      id: 37,
       name: r'libraryFilterMangasDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasStartedType': PropertySchema(
-      id: 35,
+      id: 38,
       name: r'libraryFilterMangasStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasUnreadType': PropertySchema(
-      id: 36,
+      id: 39,
       name: r'libraryFilterMangasUnreadType',
       type: IsarType.long,
     ),
     r'libraryLocalSource': PropertySchema(
-      id: 37,
+      id: 40,
       name: r'libraryLocalSource',
       type: IsarType.bool,
     ),
     r'libraryShowCategoryTabs': PropertySchema(
-      id: 38,
+      id: 41,
       name: r'libraryShowCategoryTabs',
       type: IsarType.bool,
     ),
     r'libraryShowContinueReadingButton': PropertySchema(
-      id: 39,
+      id: 42,
       name: r'libraryShowContinueReadingButton',
       type: IsarType.bool,
     ),
     r'libraryShowLanguage': PropertySchema(
-      id: 40,
+      id: 43,
       name: r'libraryShowLanguage',
       type: IsarType.bool,
     ),
     r'libraryShowNumbersOfItems': PropertySchema(
-      id: 41,
+      id: 44,
       name: r'libraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
     r'locale': PropertySchema(
-      id: 42,
+      id: 45,
       name: r'locale',
       type: IsarType.object,
       target: r'L10nLocale',
     ),
     r'onlyIncludePinnedSources': PropertySchema(
-      id: 43,
+      id: 46,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'pagePreloadAmount': PropertySchema(
-      id: 44,
+      id: 47,
       name: r'pagePreloadAmount',
       type: IsarType.long,
     ),
     r'personalPageModeList': PropertySchema(
-      id: 45,
+      id: 48,
       name: r'personalPageModeList',
       type: IsarType.objectList,
       target: r'PersonalPageMode',
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 46,
+      id: 49,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
       target: r'PersonalReaderMode',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 47,
+      id: 50,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 48,
+      id: 51,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 49,
+      id: 52,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'scaleType': PropertySchema(
-      id: 50,
+      id: 53,
       name: r'scaleType',
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
     r'showNSFW': PropertySchema(
-      id: 51,
+      id: 54,
       name: r'showNSFW',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 52,
+      id: 55,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 53,
+      id: 56,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 54,
+      id: 57,
       name: r'sortLibraryAnime',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 55,
+      id: 58,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
+    r'startDatebackup': PropertySchema(
+      id: 59,
+      name: r'startDatebackup',
+      type: IsarType.long,
+    ),
     r'themeIsDark': PropertySchema(
-      id: 56,
+      id: 60,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 57,
+      id: 61,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -366,6 +386,18 @@ int _settingsEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.autoBackupLocation;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.backupFrequencyOptions;
+    if (value != null) {
+      bytesCount += 3 + value.length * 8;
+    }
+  }
   {
     final list = object.chapterFilterBookmarkedList;
     if (list != null) {
@@ -564,121 +596,125 @@ void _settingsSerialize(
   writer.writeBool(offsets[5], object.animeLibraryShowContinueReadingButton);
   writer.writeBool(offsets[6], object.animeLibraryShowLanguage);
   writer.writeBool(offsets[7], object.animeLibraryShowNumbersOfItems);
-  writer.writeBool(offsets[8], object.autoExtensionsUpdates);
-  writer.writeByte(offsets[9], object.backgroundColor.index);
+  writer.writeString(offsets[8], object.autoBackupLocation);
+  writer.writeBool(offsets[9], object.autoExtensionsUpdates);
+  writer.writeByte(offsets[10], object.backgroundColor.index);
+  writer.writeLong(offsets[11], object.backupFrequency);
+  writer.writeLongList(offsets[12], object.backupFrequencyOptions);
   writer.writeObjectList<ChapterFilterBookmarked>(
-    offsets[10],
+    offsets[13],
     allOffsets,
     ChapterFilterBookmarkedSchema.serialize,
     object.chapterFilterBookmarkedList,
   );
   writer.writeObjectList<ChapterFilterDownloaded>(
-    offsets[11],
+    offsets[14],
     allOffsets,
     ChapterFilterDownloadedSchema.serialize,
     object.chapterFilterDownloadedList,
   );
   writer.writeObjectList<ChapterFilterUnread>(
-    offsets[12],
+    offsets[15],
     allOffsets,
     ChapterFilterUnreadSchema.serialize,
     object.chapterFilterUnreadList,
   );
   writer.writeObjectList<ChapterPageIndex>(
-    offsets[13],
+    offsets[16],
     allOffsets,
     ChapterPageIndexSchema.serialize,
     object.chapterPageIndexList,
   );
   writer.writeObjectList<ChapterPageurls>(
-    offsets[14],
+    offsets[17],
     allOffsets,
     ChapterPageurlsSchema.serialize,
     object.chapterPageUrlsList,
   );
-  writer.writeBool(offsets[15], object.checkForExtensionUpdates);
+  writer.writeBool(offsets[18], object.checkForExtensionUpdates);
   writer.writeObjectList<Cookie>(
-    offsets[16],
+    offsets[19],
     allOffsets,
     CookieSchema.serialize,
     object.cookiesList,
   );
-  writer.writeBool(offsets[17], object.cropBorders);
-  writer.writeString(offsets[18], object.dateFormat);
-  writer.writeByte(offsets[19], object.defaultReaderMode.index);
-  writer.writeByte(offsets[20], object.displayType.index);
-  writer.writeLong(offsets[21], object.doubleTapAnimationSpeed);
-  writer.writeString(offsets[22], object.downloadLocation);
-  writer.writeBool(offsets[23], object.downloadOnlyOnWifi);
+  writer.writeBool(offsets[20], object.cropBorders);
+  writer.writeString(offsets[21], object.dateFormat);
+  writer.writeByte(offsets[22], object.defaultReaderMode.index);
+  writer.writeByte(offsets[23], object.displayType.index);
+  writer.writeLong(offsets[24], object.doubleTapAnimationSpeed);
+  writer.writeString(offsets[25], object.downloadLocation);
+  writer.writeBool(offsets[26], object.downloadOnlyOnWifi);
   writer.writeObjectList<FilterScanlator>(
-    offsets[24],
+    offsets[27],
     allOffsets,
     FilterScanlatorSchema.serialize,
     object.filterScanlatorList,
   );
-  writer.writeDouble(offsets[25], object.flexColorSchemeBlendLevel);
-  writer.writeLong(offsets[26], object.flexSchemeColorIndex);
-  writer.writeBool(offsets[27], object.incognitoMode);
-  writer.writeBool(offsets[28], object.libraryDownloadedChapters);
-  writer.writeLong(offsets[29], object.libraryFilterAnimeBookMarkedType);
-  writer.writeLong(offsets[30], object.libraryFilterAnimeDownloadType);
-  writer.writeLong(offsets[31], object.libraryFilterAnimeStartedType);
-  writer.writeLong(offsets[32], object.libraryFilterAnimeUnreadType);
-  writer.writeLong(offsets[33], object.libraryFilterMangasBookMarkedType);
-  writer.writeLong(offsets[34], object.libraryFilterMangasDownloadType);
-  writer.writeLong(offsets[35], object.libraryFilterMangasStartedType);
-  writer.writeLong(offsets[36], object.libraryFilterMangasUnreadType);
-  writer.writeBool(offsets[37], object.libraryLocalSource);
-  writer.writeBool(offsets[38], object.libraryShowCategoryTabs);
-  writer.writeBool(offsets[39], object.libraryShowContinueReadingButton);
-  writer.writeBool(offsets[40], object.libraryShowLanguage);
-  writer.writeBool(offsets[41], object.libraryShowNumbersOfItems);
+  writer.writeDouble(offsets[28], object.flexColorSchemeBlendLevel);
+  writer.writeLong(offsets[29], object.flexSchemeColorIndex);
+  writer.writeBool(offsets[30], object.incognitoMode);
+  writer.writeBool(offsets[31], object.libraryDownloadedChapters);
+  writer.writeLong(offsets[32], object.libraryFilterAnimeBookMarkedType);
+  writer.writeLong(offsets[33], object.libraryFilterAnimeDownloadType);
+  writer.writeLong(offsets[34], object.libraryFilterAnimeStartedType);
+  writer.writeLong(offsets[35], object.libraryFilterAnimeUnreadType);
+  writer.writeLong(offsets[36], object.libraryFilterMangasBookMarkedType);
+  writer.writeLong(offsets[37], object.libraryFilterMangasDownloadType);
+  writer.writeLong(offsets[38], object.libraryFilterMangasStartedType);
+  writer.writeLong(offsets[39], object.libraryFilterMangasUnreadType);
+  writer.writeBool(offsets[40], object.libraryLocalSource);
+  writer.writeBool(offsets[41], object.libraryShowCategoryTabs);
+  writer.writeBool(offsets[42], object.libraryShowContinueReadingButton);
+  writer.writeBool(offsets[43], object.libraryShowLanguage);
+  writer.writeBool(offsets[44], object.libraryShowNumbersOfItems);
   writer.writeObject<L10nLocale>(
-    offsets[42],
+    offsets[45],
     allOffsets,
     L10nLocaleSchema.serialize,
     object.locale,
   );
-  writer.writeBool(offsets[43], object.onlyIncludePinnedSources);
-  writer.writeLong(offsets[44], object.pagePreloadAmount);
+  writer.writeBool(offsets[46], object.onlyIncludePinnedSources);
+  writer.writeLong(offsets[47], object.pagePreloadAmount);
   writer.writeObjectList<PersonalPageMode>(
-    offsets[45],
+    offsets[48],
     allOffsets,
     PersonalPageModeSchema.serialize,
     object.personalPageModeList,
   );
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[46],
+    offsets[49],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
-  writer.writeBool(offsets[47], object.pureBlackDarkMode);
-  writer.writeLong(offsets[48], object.relativeTimesTamps);
-  writer.writeBool(offsets[49], object.saveAsCBZArchive);
-  writer.writeByte(offsets[50], object.scaleType.index);
-  writer.writeBool(offsets[51], object.showNSFW);
-  writer.writeBool(offsets[52], object.showPagesNumber);
+  writer.writeBool(offsets[50], object.pureBlackDarkMode);
+  writer.writeLong(offsets[51], object.relativeTimesTamps);
+  writer.writeBool(offsets[52], object.saveAsCBZArchive);
+  writer.writeByte(offsets[53], object.scaleType.index);
+  writer.writeBool(offsets[54], object.showNSFW);
+  writer.writeBool(offsets[55], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[53],
+    offsets[56],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[54],
+    offsets[57],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[55],
+    offsets[58],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
-  writer.writeBool(offsets[56], object.themeIsDark);
-  writer.writeString(offsets[57], object.userAgent);
+  writer.writeLong(offsets[59], object.startDatebackup);
+  writer.writeBool(offsets[60], object.themeIsDark);
+  writer.writeString(offsets[61], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -698,126 +734,130 @@ Settings _settingsDeserialize(
     animeLibraryShowContinueReadingButton: reader.readBoolOrNull(offsets[5]),
     animeLibraryShowLanguage: reader.readBoolOrNull(offsets[6]),
     animeLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[7]),
-    autoExtensionsUpdates: reader.readBoolOrNull(offsets[8]),
+    autoBackupLocation: reader.readStringOrNull(offsets[8]),
+    autoExtensionsUpdates: reader.readBoolOrNull(offsets[9]),
     backgroundColor: _SettingsbackgroundColorValueEnumMap[
-            reader.readByteOrNull(offsets[9])] ??
+            reader.readByteOrNull(offsets[10])] ??
         BackgroundColor.black,
+    backupFrequency: reader.readLongOrNull(offsets[11]),
+    backupFrequencyOptions: reader.readLongList(offsets[12]),
     chapterFilterDownloadedList: reader.readObjectList<ChapterFilterDownloaded>(
-      offsets[11],
+      offsets[14],
       ChapterFilterDownloadedSchema.deserialize,
       allOffsets,
       ChapterFilterDownloaded(),
     ),
     chapterPageIndexList: reader.readObjectList<ChapterPageIndex>(
-      offsets[13],
+      offsets[16],
       ChapterPageIndexSchema.deserialize,
       allOffsets,
       ChapterPageIndex(),
     ),
     chapterPageUrlsList: reader.readObjectList<ChapterPageurls>(
-      offsets[14],
+      offsets[17],
       ChapterPageurlsSchema.deserialize,
       allOffsets,
       ChapterPageurls(),
     ),
-    checkForExtensionUpdates: reader.readBoolOrNull(offsets[15]),
+    checkForExtensionUpdates: reader.readBoolOrNull(offsets[18]),
     cookiesList: reader.readObjectList<Cookie>(
-      offsets[16],
+      offsets[19],
       CookieSchema.deserialize,
       allOffsets,
       Cookie(),
     ),
-    cropBorders: reader.readBoolOrNull(offsets[17]),
-    dateFormat: reader.readStringOrNull(offsets[18]),
+    cropBorders: reader.readBoolOrNull(offsets[20]),
+    dateFormat: reader.readStringOrNull(offsets[21]),
     defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
-            reader.readByteOrNull(offsets[19])] ??
+            reader.readByteOrNull(offsets[22])] ??
         ReaderMode.vertical,
     displayType:
-        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[20])] ??
+        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[23])] ??
             DisplayType.compactGrid,
-    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[21]),
-    downloadLocation: reader.readStringOrNull(offsets[22]),
-    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[23]),
-    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[25]),
-    flexSchemeColorIndex: reader.readLongOrNull(offsets[26]),
+    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[24]),
+    downloadLocation: reader.readStringOrNull(offsets[25]),
+    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[26]),
+    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[28]),
+    flexSchemeColorIndex: reader.readLongOrNull(offsets[29]),
     id: id,
-    incognitoMode: reader.readBoolOrNull(offsets[27]),
-    libraryDownloadedChapters: reader.readBoolOrNull(offsets[28]),
-    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[29]),
-    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[30]),
-    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[31]),
-    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[32]),
-    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[33]),
-    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[34]),
-    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[35]),
-    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[36]),
-    libraryLocalSource: reader.readBoolOrNull(offsets[37]),
-    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[38]),
-    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[39]),
-    libraryShowLanguage: reader.readBoolOrNull(offsets[40]),
-    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[41]),
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[43]),
-    pagePreloadAmount: reader.readLongOrNull(offsets[44]),
+    incognitoMode: reader.readBoolOrNull(offsets[30]),
+    libraryDownloadedChapters: reader.readBoolOrNull(offsets[31]),
+    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[32]),
+    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[33]),
+    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[34]),
+    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[35]),
+    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[36]),
+    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[37]),
+    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[38]),
+    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[39]),
+    libraryLocalSource: reader.readBoolOrNull(offsets[40]),
+    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[41]),
+    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[42]),
+    libraryShowLanguage: reader.readBoolOrNull(offsets[43]),
+    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[44]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[46]),
+    pagePreloadAmount: reader.readLongOrNull(offsets[47]),
     personalPageModeList: reader.readObjectList<PersonalPageMode>(
-      offsets[45],
+      offsets[48],
       PersonalPageModeSchema.deserialize,
       allOffsets,
       PersonalPageMode(),
     ),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[46],
+      offsets[49],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[47]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[48]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[49]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[50]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[51]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[52]),
     scaleType:
-        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[50])] ??
+        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[53])] ??
             ScaleType.fitScreen,
-    showNSFW: reader.readBoolOrNull(offsets[51]),
-    showPagesNumber: reader.readBoolOrNull(offsets[52]),
+    showNSFW: reader.readBoolOrNull(offsets[54]),
+    showPagesNumber: reader.readBoolOrNull(offsets[55]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[53],
+      offsets[56],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[54],
+      offsets[57],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
     sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[55],
+      offsets[58],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    themeIsDark: reader.readBoolOrNull(offsets[56]),
-    userAgent: reader.readStringOrNull(offsets[57]),
+    startDatebackup: reader.readLongOrNull(offsets[59]),
+    themeIsDark: reader.readBoolOrNull(offsets[60]),
+    userAgent: reader.readStringOrNull(offsets[61]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
-    offsets[10],
+    offsets[13],
     ChapterFilterBookmarkedSchema.deserialize,
     allOffsets,
     ChapterFilterBookmarked(),
   );
   object.chapterFilterUnreadList = reader.readObjectList<ChapterFilterUnread>(
-    offsets[12],
+    offsets[15],
     ChapterFilterUnreadSchema.deserialize,
     allOffsets,
     ChapterFilterUnread(),
   );
   object.filterScanlatorList = reader.readObjectList<FilterScanlator>(
-    offsets[24],
+    offsets[27],
     FilterScanlatorSchema.deserialize,
     allOffsets,
     FilterScanlator(),
   );
   object.locale = reader.readObjectOrNull<L10nLocale>(
-    offsets[42],
+    offsets[45],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
@@ -850,93 +890,93 @@ P _settingsDeserializeProp<P>(
     case 7:
       return (reader.readBoolOrNull(offset)) as P;
     case 8:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 10:
       return (_SettingsbackgroundColorValueEnumMap[
               reader.readByteOrNull(offset)] ??
           BackgroundColor.black) as P;
-    case 10:
+    case 11:
+      return (reader.readLongOrNull(offset)) as P;
+    case 12:
+      return (reader.readLongList(offset)) as P;
+    case 13:
       return (reader.readObjectList<ChapterFilterBookmarked>(
         offset,
         ChapterFilterBookmarkedSchema.deserialize,
         allOffsets,
         ChapterFilterBookmarked(),
       )) as P;
-    case 11:
+    case 14:
       return (reader.readObjectList<ChapterFilterDownloaded>(
         offset,
         ChapterFilterDownloadedSchema.deserialize,
         allOffsets,
         ChapterFilterDownloaded(),
       )) as P;
-    case 12:
+    case 15:
       return (reader.readObjectList<ChapterFilterUnread>(
         offset,
         ChapterFilterUnreadSchema.deserialize,
         allOffsets,
         ChapterFilterUnread(),
       )) as P;
-    case 13:
+    case 16:
       return (reader.readObjectList<ChapterPageIndex>(
         offset,
         ChapterPageIndexSchema.deserialize,
         allOffsets,
         ChapterPageIndex(),
       )) as P;
-    case 14:
+    case 17:
       return (reader.readObjectList<ChapterPageurls>(
         offset,
         ChapterPageurlsSchema.deserialize,
         allOffsets,
         ChapterPageurls(),
       )) as P;
-    case 15:
+    case 18:
       return (reader.readBoolOrNull(offset)) as P;
-    case 16:
+    case 19:
       return (reader.readObjectList<Cookie>(
         offset,
         CookieSchema.deserialize,
         allOffsets,
         Cookie(),
       )) as P;
-    case 17:
+    case 20:
       return (reader.readBoolOrNull(offset)) as P;
-    case 18:
+    case 21:
       return (reader.readStringOrNull(offset)) as P;
-    case 19:
+    case 22:
       return (_SettingsdefaultReaderModeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ReaderMode.vertical) as P;
-    case 20:
+    case 23:
       return (_SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           DisplayType.compactGrid) as P;
-    case 21:
-      return (reader.readLongOrNull(offset)) as P;
-    case 22:
-      return (reader.readStringOrNull(offset)) as P;
-    case 23:
-      return (reader.readBoolOrNull(offset)) as P;
     case 24:
+      return (reader.readLongOrNull(offset)) as P;
+    case 25:
+      return (reader.readStringOrNull(offset)) as P;
+    case 26:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 27:
       return (reader.readObjectList<FilterScanlator>(
         offset,
         FilterScanlatorSchema.deserialize,
         allOffsets,
         FilterScanlator(),
       )) as P;
-    case 25:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 26:
-      return (reader.readLongOrNull(offset)) as P;
-    case 27:
-      return (reader.readBoolOrNull(offset)) as P;
     case 28:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 29:
       return (reader.readLongOrNull(offset)) as P;
     case 30:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 31:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 32:
       return (reader.readLongOrNull(offset)) as P;
     case 33:
@@ -948,74 +988,82 @@ P _settingsDeserializeProp<P>(
     case 36:
       return (reader.readLongOrNull(offset)) as P;
     case 37:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 38:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 39:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 40:
       return (reader.readBoolOrNull(offset)) as P;
     case 41:
       return (reader.readBoolOrNull(offset)) as P;
     case 42:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 43:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 44:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 45:
       return (reader.readObjectOrNull<L10nLocale>(
         offset,
         L10nLocaleSchema.deserialize,
         allOffsets,
       )) as P;
-    case 43:
+    case 46:
       return (reader.readBoolOrNull(offset)) as P;
-    case 44:
+    case 47:
       return (reader.readLongOrNull(offset)) as P;
-    case 45:
+    case 48:
       return (reader.readObjectList<PersonalPageMode>(
         offset,
         PersonalPageModeSchema.deserialize,
         allOffsets,
         PersonalPageMode(),
       )) as P;
-    case 46:
+    case 49:
       return (reader.readObjectList<PersonalReaderMode>(
         offset,
         PersonalReaderModeSchema.deserialize,
         allOffsets,
         PersonalReaderMode(),
       )) as P;
-    case 47:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 48:
-      return (reader.readLongOrNull(offset)) as P;
-    case 49:
-      return (reader.readBoolOrNull(offset)) as P;
     case 50:
-      return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          ScaleType.fitScreen) as P;
-    case 51:
       return (reader.readBoolOrNull(offset)) as P;
+    case 51:
+      return (reader.readLongOrNull(offset)) as P;
     case 52:
       return (reader.readBoolOrNull(offset)) as P;
     case 53:
+      return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ScaleType.fitScreen) as P;
+    case 54:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 55:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 56:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
       )) as P;
-    case 54:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 55:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 56:
-      return (reader.readBoolOrNull(offset)) as P;
     case 57:
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 58:
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
+    case 59:
+      return (reader.readLongOrNull(offset)) as P;
+    case 60:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 61:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1432,6 +1480,160 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'autoBackupLocation',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'autoBackupLocation',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'autoBackupLocation',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'autoBackupLocation',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'autoBackupLocation',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'autoBackupLocation',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      autoBackupLocationIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'autoBackupLocation',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       autoExtensionsUpdatesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1512,6 +1714,243 @@ extension SettingsQueryFilter
         upper: upper,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'backupFrequency',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'backupFrequency',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'backupFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'backupFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'backupFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'backupFrequency',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'backupFrequencyOptions',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'backupFrequencyOptions',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsElementEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'backupFrequencyOptions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsElementGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'backupFrequencyOptions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsElementLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'backupFrequencyOptions',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsElementBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'backupFrequencyOptions',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      backupFrequencyOptionsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'backupFrequencyOptions',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
     });
   }
 
@@ -4557,6 +4996,80 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'startDatebackup',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'startDatebackup',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'startDatebackup',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'startDatebackup',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'startDatebackup',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      startDatebackupBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'startDatebackup',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> themeIsDarkIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -5001,6 +5514,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByAutoBackupLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoBackupLocation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAutoBackupLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoBackupLocation', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByAutoExtensionsUpdates() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'autoExtensionsUpdates', Sort.asc);
@@ -5023,6 +5549,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByBackgroundColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backgroundColor', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByBackupFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backupFrequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByBackupFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backupFrequency', Sort.desc);
     });
   }
 
@@ -5459,6 +5997,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByStartDatebackup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'startDatebackup', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByStartDatebackupDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'startDatebackup', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeIsDark', Sort.asc);
@@ -5598,6 +6148,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByAutoBackupLocation() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoBackupLocation', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAutoBackupLocationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoBackupLocation', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByAutoExtensionsUpdates() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'autoExtensionsUpdates', Sort.asc);
@@ -5620,6 +6183,18 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByBackgroundColorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'backgroundColor', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByBackupFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backupFrequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByBackupFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backupFrequency', Sort.desc);
     });
   }
 
@@ -6068,6 +6643,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByStartDatebackup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'startDatebackup', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByStartDatebackupDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'startDatebackup', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeIsDark', Sort.asc);
@@ -6150,6 +6737,14 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByAutoBackupLocation(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'autoBackupLocation',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
       distinctByAutoExtensionsUpdates() {
     return QueryBuilder.apply(this, (query) {
@@ -6160,6 +6755,19 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByBackgroundColor() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'backgroundColor');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByBackupFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'backupFrequency');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByBackupFrequencyOptions() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'backupFrequencyOptions');
     });
   }
 
@@ -6380,6 +6988,12 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByStartDatebackup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'startDatebackup');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'themeIsDark');
@@ -6458,6 +7072,13 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, String?, QQueryOperations>
+      autoBackupLocationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'autoBackupLocation');
+    });
+  }
+
   QueryBuilder<Settings, bool?, QQueryOperations>
       autoExtensionsUpdatesProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -6469,6 +7090,19 @@ extension SettingsQueryProperty
       backgroundColorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'backgroundColor');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations> backupFrequencyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'backupFrequency');
+    });
+  }
+
+  QueryBuilder<Settings, List<int>?, QQueryOperations>
+      backupFrequencyOptionsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'backupFrequencyOptions');
     });
   }
 
@@ -6776,6 +7410,12 @@ extension SettingsQueryProperty
       sortLibraryMangaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sortLibraryManga');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations> startDatebackupProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'startDatebackup');
     });
   }
 

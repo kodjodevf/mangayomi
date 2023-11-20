@@ -56,7 +56,7 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.label_outline_rounded,
               title: l10n.categories,
             ),
-            const Divider(),
+
             // ListTileWidget(
             //   onTap: () {
             //     context.push('/history');
@@ -71,9 +71,8 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.settings_backup_restore_sharp,
               title: 'Backup and restore',
             ),
-            // const Divider(
-            //   color: Colors.grey,
-            // ),
+            const Divider(),
+
             ListTileWidget(
               onTap: () {
                 context.push('/settings');

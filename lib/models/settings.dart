@@ -131,6 +131,14 @@ class Settings {
 
   List<PersonalPageMode>? personalPageModeList;
 
+  int? startDatebackup;
+
+  int? backupFrequency;
+
+  List<int>? backupFrequencyOptions;
+
+  String? autoBackupLocation;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -186,7 +194,11 @@ class Settings {
       this.scaleType = ScaleType.fitScreen,
       this.checkForExtensionUpdates = true,
       this.backgroundColor = BackgroundColor.black,
-      this.personalPageModeList});
+      this.personalPageModeList,
+      this.backupFrequency,
+      this.backupFrequencyOptions,
+      this.autoBackupLocation,
+      this.startDatebackup});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
