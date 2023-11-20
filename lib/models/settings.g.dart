@@ -7973,9 +7973,10 @@ ChapterPageurls _chapterPageurlsDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = ChapterPageurls();
-  object.chapterId = reader.readLongOrNull(offsets[0]);
-  object.urls = reader.readStringList(offsets[1]);
+  final object = ChapterPageurls(
+    chapterId: reader.readLongOrNull(offsets[0]),
+    urls: reader.readStringList(offsets[1]),
+  );
   return object;
 }
 
@@ -8367,9 +8368,10 @@ ChapterPageIndex _chapterPageIndexDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = ChapterPageIndex();
-  object.chapterId = reader.readLongOrNull(offsets[0]);
-  object.index = reader.readLongOrNull(offsets[1]);
+  final object = ChapterPageIndex(
+    chapterId: reader.readLongOrNull(offsets[0]),
+    index: reader.readLongOrNull(offsets[1]),
+  );
   return object;
 }
 
@@ -8604,9 +8606,10 @@ Cookie _cookieDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Cookie();
-  object.cookie = reader.readStringOrNull(offsets[0]);
-  object.idSource = reader.readStringOrNull(offsets[1]);
+  final object = Cookie(
+    cookie: reader.readStringOrNull(offsets[0]),
+    idSource: reader.readStringOrNull(offsets[1]),
+  );
   return object;
 }
 
@@ -8972,11 +8975,12 @@ PersonalReaderMode _personalReaderModeDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = PersonalReaderMode();
-  object.mangaId = reader.readLongOrNull(offsets[0]);
-  object.readerMode = _PersonalReaderModereaderModeValueEnumMap[
-          reader.readByteOrNull(offsets[1])] ??
-      ReaderMode.vertical;
+  final object = PersonalReaderMode(
+    mangaId: reader.readLongOrNull(offsets[0]),
+    readerMode: _PersonalReaderModereaderModeValueEnumMap[
+            reader.readByteOrNull(offsets[1])] ??
+        ReaderMode.vertical,
+  );
   return object;
 }
 
@@ -9199,11 +9203,12 @@ PersonalPageMode _personalPageModeDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = PersonalPageMode();
-  object.mangaId = reader.readLongOrNull(offsets[0]);
-  object.pageMode = _PersonalPageModepageModeValueEnumMap[
-          reader.readByteOrNull(offsets[1])] ??
-      PageMode.onePage;
+  final object = PersonalPageMode(
+    mangaId: reader.readLongOrNull(offsets[0]),
+    pageMode: _PersonalPageModepageModeValueEnumMap[
+            reader.readByteOrNull(offsets[1])] ??
+        PageMode.onePage,
+  );
   return object;
 }
 
@@ -9431,9 +9436,10 @@ FilterScanlator _filterScanlatorDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = FilterScanlator();
-  object.mangaId = reader.readLongOrNull(offsets[0]);
-  object.scanlators = reader.readStringList(offsets[1]);
+  final object = FilterScanlator(
+    mangaId: reader.readLongOrNull(offsets[0]),
+    scanlators: reader.readStringList(offsets[1]),
+  );
   return object;
 }
 

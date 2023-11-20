@@ -69,13 +69,13 @@ class MangaImageCardWidget extends ConsumerWidget {
                 Container(
                   color: snapshot.hasData &&
                           snapshot.data!.isNotEmpty &&
-                          snapshot.data!.first.favorite
+                          snapshot.data!.first.favorite!
                       ? Colors.black.withOpacity(0.7)
                       : null,
                 ),
                 if (snapshot.hasData &&
                     snapshot.data!.isNotEmpty &&
-                    snapshot.data!.first.favorite)
+                    snapshot.data!.first.favorite!)
                   Positioned(
                       top: 0,
                       left: 0,

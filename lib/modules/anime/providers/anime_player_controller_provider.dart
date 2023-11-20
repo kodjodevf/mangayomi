@@ -98,7 +98,9 @@ class AnimeStreamController {
       if (empty) {
         history = History(
             mangaId: getAnime().id,
-            date: DateTime.now().millisecondsSinceEpoch.toString())
+            date: DateTime.now().millisecondsSinceEpoch.toString(),
+            isManga: getAnime().isManga,
+            chapterId: episode.id)
           ..chapter.value = episode;
       } else {
         history = (isar.historys

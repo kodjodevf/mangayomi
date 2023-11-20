@@ -10,6 +10,8 @@ class Download {
 
   int? chapterId;
 
+  int? mangaId;
+
   int? succeeded;
 
   int? failed;
@@ -27,6 +29,7 @@ class Download {
   Download({
     this.id = Isar.autoIncrement,
     required this.chapterId,
+    required this.mangaId,
     required this.succeeded,
     required this.failed,
     required this.total,
@@ -34,4 +37,29 @@ class Download {
     required this.taskIds,
     required this.isStartDownload,
   });
+  Download.fromJson(Map<String, dynamic> json) {
+    chapterId = json['chapterId'];
+    failed = json['failed'];
+    id = json['id'];
+    isDownload = json['isDownload'];
+    isStartDownload = json['isStartDownload'];
+    mangaId = json['mangaId'];
+    succeeded = json['succeeded'];
+    taskIds = json['taskIds'].cast<String>();
+    total = json['total'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['chapterId'] = chapterId;
+    data['failed'] = failed;
+    data['id'] = id;
+    data['isDownload'] = isDownload;
+    data['isStartDownload'] = isStartDownload;
+    data['mangaId'] = mangaId;
+    data['succeeded'] = succeeded;
+    data['taskIds'] = taskIds;
+    data['total'] = total;
+    return data;
+  }
 }

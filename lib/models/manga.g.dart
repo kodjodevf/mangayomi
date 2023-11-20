@@ -238,7 +238,7 @@ Manga _mangaDeserialize(
     customCoverImage: reader.readByteList(offsets[2]),
     dateAdded: reader.readLongOrNull(offsets[3]),
     description: reader.readStringOrNull(offsets[4]),
-    favorite: reader.readBoolOrNull(offsets[5]) ?? false,
+    favorite: reader.readBoolOrNull(offsets[5]),
     genre: reader.readStringList(offsets[6]),
     id: id,
     imageUrl: reader.readStringOrNull(offsets[7]),
@@ -274,7 +274,7 @@ P _mangaDeserializeProp<P>(
     case 4:
       return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 6:
       return (reader.readStringList(offset)) as P;
     case 7:
@@ -1084,8 +1084,24 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> favoriteIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'favorite',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> favoriteIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'favorite',
+      ));
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterFilterCondition> favoriteEqualTo(
-      bool value) {
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'favorite',
@@ -2919,7 +2935,7 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Manga, bool, QQueryOperations> favoriteProperty() {
+  QueryBuilder<Manga, bool?, QQueryOperations> favoriteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'favorite');
     });

@@ -134,7 +134,9 @@ class ReaderController {
       if (empty) {
         history = History(
             mangaId: getManga().id,
-            date: DateTime.now().millisecondsSinceEpoch.toString())
+            date: DateTime.now().millisecondsSinceEpoch.toString(),
+            isManga: getManga().isManga,
+            chapterId: chapter.id)
           ..chapter.value = chapter;
       } else {
         history = (isar.historys

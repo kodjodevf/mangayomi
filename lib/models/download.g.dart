@@ -37,18 +37,23 @@ const DownloadSchema = CollectionSchema(
       name: r'isStartDownload',
       type: IsarType.bool,
     ),
-    r'succeeded': PropertySchema(
+    r'mangaId': PropertySchema(
       id: 4,
+      name: r'mangaId',
+      type: IsarType.long,
+    ),
+    r'succeeded': PropertySchema(
+      id: 5,
       name: r'succeeded',
       type: IsarType.long,
     ),
     r'taskIds': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'taskIds',
       type: IsarType.stringList,
     ),
     r'total': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'total',
       type: IsarType.long,
     )
@@ -105,9 +110,10 @@ void _downloadSerialize(
   writer.writeLong(offsets[1], object.failed);
   writer.writeBool(offsets[2], object.isDownload);
   writer.writeBool(offsets[3], object.isStartDownload);
-  writer.writeLong(offsets[4], object.succeeded);
-  writer.writeStringList(offsets[5], object.taskIds);
-  writer.writeLong(offsets[6], object.total);
+  writer.writeLong(offsets[4], object.mangaId);
+  writer.writeLong(offsets[5], object.succeeded);
+  writer.writeStringList(offsets[6], object.taskIds);
+  writer.writeLong(offsets[7], object.total);
 }
 
 Download _downloadDeserialize(
@@ -122,9 +128,10 @@ Download _downloadDeserialize(
     id: id,
     isDownload: reader.readBoolOrNull(offsets[2]),
     isStartDownload: reader.readBoolOrNull(offsets[3]),
-    succeeded: reader.readLongOrNull(offsets[4]),
-    taskIds: reader.readStringList(offsets[5]),
-    total: reader.readLongOrNull(offsets[6]),
+    mangaId: reader.readLongOrNull(offsets[4]),
+    succeeded: reader.readLongOrNull(offsets[5]),
+    taskIds: reader.readStringList(offsets[6]),
+    total: reader.readLongOrNull(offsets[7]),
   );
   return object;
 }
@@ -147,8 +154,10 @@ P _downloadDeserializeProp<P>(
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readStringList(offset)) as P;
+    case 7:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -502,6 +511,75 @@ extension DownloadQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isStartDownload',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'mangaId',
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'mangaId',
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'mangaId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'mangaId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'mangaId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterFilterCondition> mangaIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'mangaId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -949,6 +1027,18 @@ extension DownloadQuerySortBy on QueryBuilder<Download, Download, QSortBy> {
     });
   }
 
+  QueryBuilder<Download, Download, QAfterSortBy> sortByMangaId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mangaId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterSortBy> sortByMangaIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mangaId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Download, Download, QAfterSortBy> sortBySucceeded() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'succeeded', Sort.asc);
@@ -1036,6 +1126,18 @@ extension DownloadQuerySortThenBy
     });
   }
 
+  QueryBuilder<Download, Download, QAfterSortBy> thenByMangaId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mangaId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterSortBy> thenByMangaIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'mangaId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Download, Download, QAfterSortBy> thenBySucceeded() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'succeeded', Sort.asc);
@@ -1087,6 +1189,12 @@ extension DownloadQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Download, Download, QDistinct> distinctByMangaId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'mangaId');
+    });
+  }
+
   QueryBuilder<Download, Download, QDistinct> distinctBySucceeded() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'succeeded');
@@ -1135,6 +1243,12 @@ extension DownloadQueryProperty
   QueryBuilder<Download, bool?, QQueryOperations> isStartDownloadProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isStartDownload');
+    });
+  }
+
+  QueryBuilder<Download, int?, QQueryOperations> mangaIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'mangaId');
     });
   }
 

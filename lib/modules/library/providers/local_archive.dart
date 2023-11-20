@@ -15,10 +15,7 @@ Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: isManga
-          ? [
-              'cbz',
-              'zip',
-            ]
+          ? ['cbz', 'zip']
           : ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv']);
   if (result != null) {
     final dateNow = DateTime.now().millisecondsSinceEpoch;
@@ -53,7 +50,8 @@ Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
         isar.mangas.putSync(manga);
         final chapters = Chapter(
             name: isManga ? data!.$1 : name,
-            archivePath: isManga ? data!.$4 : file.path)
+            archivePath: isManga ? data!.$4 : file.path,
+            mangaId: manga.id)
           ..manga.value = manga;
         isar.chapters.putSync(chapters);
         chapters.manga.saveSync();
