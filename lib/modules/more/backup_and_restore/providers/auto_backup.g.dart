@@ -6,8 +6,23 @@ part of 'auto_backup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$checkAndBackupHash() => r'039aea77df04d1925a25ad8839177cf9ee96aa65';
+
+/// See also [checkAndBackup].
+@ProviderFor(checkAndBackup)
+final checkAndBackupProvider = AutoDisposeProvider<void>.internal(
+  checkAndBackup,
+  name: r'checkAndBackupProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$checkAndBackupHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef CheckAndBackupRef = AutoDisposeProviderRef<void>;
 String _$backupFrequencyStateHash() =>
-    r'234368840b43f1f1bb3f4825f39c86bfa189a8ac';
+    r'2e73e3fe54456978ff92f49cdc67e84f2af6de7c';
 
 /// See also [BackupFrequencyState].
 @ProviderFor(BackupFrequencyState)

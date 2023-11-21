@@ -23,13 +23,13 @@ class BackupAndRestore extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Backup and restore"),
+        title: Text(l10n.backup_and_restore),
       ),
       body: Column(
         children: [
           ListTile(
             onTap: () {
-              final list = _getList();
+              final list = _getList(context);
               List<int> indexList = [];
               indexList.addAll(backupFrequencyOptions);
               showDialog(
@@ -38,8 +38,8 @@ class BackupAndRestore extends ConsumerWidget {
                     return StatefulBuilder(
                       builder: (context, setState) {
                         return AlertDialog(
-                          title: const Text(
-                            "What do you want to backup?",
+                          title: Text(
+                            l10n.create_backup_dialog_title,
                           ),
                           content: SizedBox(
                               width: mediaWidth(context, 0.8),
@@ -101,27 +101,80 @@ class BackupAndRestore extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text("Create backup"),
+            title: Text(l10n.create_backup),
             subtitle: Text(
-              "Can be used to restore current library",
+              l10n.create_backup_subtitle,
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
           ListTile(
-            onTap: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  allowMultiple: false,
-                  type: FileType.custom,
-                  allowedExtensions: ['backup']);
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(l10n.restore_backup),
+                      content: SizedBox(
+                          width: mediaWidth(context, 0.8),
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.info_outline_rounded,
+                                      color: secondaryColor(context)),
+                                ],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Text(l10n.restore_backup_warning_title),
+                              ),
+                            ],
+                          )),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  l10n.cancel,
+                                  style:
+                                      TextStyle(color: primaryColor(context)),
+                                )),
+                            TextButton(
+                                onPressed: () async {
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles(
+                                          allowMultiple: false,
+                                          type: FileType.custom,
+                                          allowedExtensions: ['backup']);
 
-              if (result != null && context.mounted) {
-                ref.watch(doRestoreProvider(
-                    path: result.files.first.path!, context: context));
-              }
+                                  if (result != null && context.mounted) {
+                                    ref.watch(doRestoreProvider(
+                                        path: result.files.first.path!,
+                                        context: context));
+                                  }
+                                  if (!context.mounted) return;
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  l10n.ok,
+                                  style:
+                                      TextStyle(color: primaryColor(context)),
+                                )),
+                          ],
+                        )
+                      ],
+                    );
+                  });
             },
-            title: const Text("Restore backup"),
+            title: Text(l10n.restore_backup),
             subtitle: Text(
-              "Restore library from backup file",
+              l10n.restore_backup_subtitle,
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
@@ -129,7 +182,7 @@ class BackupAndRestore extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Row(
               children: [
-                Text('Automatic backups',
+                Text(l10n.automatic_backups,
                     style:
                         TextStyle(fontSize: 13, color: primaryColor(context))),
               ],
@@ -140,9 +193,9 @@ class BackupAndRestore extends ConsumerWidget {
               showDialog(
                   context: context,
                   builder: (context) {
-                    final list = _getBackupFrequencyList();
+                    final list = _getBackupFrequencyList(context);
                     return AlertDialog(
-                      title: const Text("Backup frequency"),
+                      title: Text(l10n.backup_frequency),
                       content: SizedBox(
                           width: mediaWidth(context, 0.8),
                           child: ListView.builder(
@@ -186,9 +239,9 @@ class BackupAndRestore extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text("Backup frequency"),
+            title: Text(l10n.backup_frequency),
             subtitle: Text(
-              _getBackupFrequencyList()[backupFrequency],
+              _getBackupFrequencyList(context)[backupFrequency],
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
@@ -200,7 +253,7 @@ class BackupAndRestore extends ConsumerWidget {
                 ref.read(autoBackupLocationStateProvider.notifier).set(result);
               }
             },
-            title: const Text('Backup location'),
+            title: Text(l10n.backup_location),
             subtitle: Text(
               autoBackupLocation.$2.isEmpty
                   ? autoBackupLocation.$1
@@ -210,7 +263,7 @@ class BackupAndRestore extends ConsumerWidget {
           ),
           ListTile(
             onTap: () {
-              final list = _getList();
+              final list = _getList(context);
               List<int> indexList = [];
               indexList.addAll(backupFrequencyOptions);
               showDialog(
@@ -219,8 +272,8 @@ class BackupAndRestore extends ConsumerWidget {
                     return StatefulBuilder(
                       builder: (context, setState) {
                         return AlertDialog(
-                          title: const Text(
-                            "What do you want to backup?",
+                          title: Text(
+                            l10n.backup_options_subtile,
                           ),
                           content: SizedBox(
                               width: mediaWidth(context, 0.8),
@@ -279,9 +332,9 @@ class BackupAndRestore extends ConsumerWidget {
                     );
                   });
             },
-            title: const Text("Backup options"),
+            title: Text(l10n.backup_options),
             subtitle: Text(
-              "What information to include in the backup file",
+              l10n.backup_options_subtile,
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
@@ -297,8 +350,7 @@ class BackupAndRestore extends ConsumerWidget {
                 ],
               ),
             ),
-            subtitle: Text(
-                "You should keep copies of backups in other places as well",
+            subtitle: Text(l10n.backup_and_restore_warning_info,
                 style: TextStyle(fontSize: 11, color: secondaryColor(context))),
           )
         ],
@@ -307,25 +359,27 @@ class BackupAndRestore extends ConsumerWidget {
   }
 }
 
-List<String> _getList() {
+List<String> _getList(BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
   return [
-    "Library entries",
-    "Categories",
-    "Chapters and episode",
-    "Tracking",
-    "History",
-    "Settings",
-    "Extensions"
+    l10n.library_entries,
+    l10n.categories,
+    l10n.chapters_and_episode,
+    l10n.tracking,
+    l10n.history,
+    l10n.settings,
+    l10n.extensions
   ];
 }
 
-List<String> _getBackupFrequencyList() {
+List<String> _getBackupFrequencyList(BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
   return [
-    "Off",
-    "Every 6 hours",
-    "Every 12 hours",
-    "Daily",
-    "Every 2 days",
-    "Weekly"
+    l10n.off,
+    l10n.every_6_hours,
+    l10n.every_12_hours,
+    l10n.daily,
+    l10n.every_2_days,
+    l10n.weekly
   ];
 }

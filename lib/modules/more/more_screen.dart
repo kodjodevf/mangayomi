@@ -56,20 +56,12 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.label_outline_rounded,
               title: l10n.categories,
             ),
-
-            // ListTileWidget(
-            //   onTap: () {
-            //     context.push('/history');
-            //   },
-            //   icon: Icons.history_outlined,
-            //   title: l10n.history,
-            // ),
             ListTileWidget(
               onTap: () {
                 context.push('/backupAndRestore');
               },
               icon: Icons.settings_backup_restore_sharp,
-              title: 'Backup and restore',
+              title: l10n.backup_and_restore,
             ),
             const Divider(),
 
@@ -86,11 +78,11 @@ class MoreScreen extends StatelessWidget {
                 },
                 icon: Icons.info_outline,
                 title: l10n.about),
-            ListTileWidget(
-              onTap: () {},
-              icon: Icons.help_outline,
-              title: l10n.help,
-            ),
+            // ListTileWidget(
+            //   onTap: () {},
+            //   icon: Icons.help_outline,
+            //   title: l10n.help,
+            // ),
           ],
         ),
       ),

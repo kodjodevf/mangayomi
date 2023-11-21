@@ -306,6 +306,10 @@ class Settings {
         : null;
     themeIsDark = json['themeIsDark'];
     userAgent = json['userAgent'];
+    backupFrequency = json['backupFrequency'];
+    backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
+    autoBackupLocation = json['autoBackupLocation'];
+    startDatebackup = json['startDatebackup'];
   }
 
   Map<String, dynamic> toJson() {
@@ -399,6 +403,10 @@ class Settings {
     }
     data['themeIsDark'] = themeIsDark;
     data['userAgent'] = userAgent;
+    data['backupFrequency'] = backupFrequency;
+    data['backupFrequencyOptions'] = backupFrequencyOptions;
+    data['autoBackupLocation'] = autoBackupLocation;
+    data['startDatebackup'] = startDatebackup;
     return data;
   }
 }

@@ -6,7 +6,7 @@ part of 'backup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doBackUpHash() => r'e94ed6a96237dd5efc68bf26f26b276ffd777472';
+String _$doBackUpHash() => r'4418d6aa9ea87ffa30195af59f9e93f95f7915f6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,7 +42,7 @@ class DoBackUpFamily extends Family<void> {
   DoBackUpProvider call({
     required List<int> list,
     required String path,
-    required BuildContext context,
+    required BuildContext? context,
   }) {
     return DoBackUpProvider(
       list: list,
@@ -83,7 +83,7 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
   DoBackUpProvider({
     required List<int> list,
     required String path,
-    required BuildContext context,
+    required BuildContext? context,
   }) : this._internal(
           (ref) => doBackUp(
             ref as DoBackUpRef,
@@ -118,7 +118,7 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
 
   final List<int> list;
   final String path;
-  final BuildContext context;
+  final BuildContext? context;
 
   @override
   Override overrideWith(
@@ -172,7 +172,7 @@ mixin DoBackUpRef on AutoDisposeProviderRef<void> {
   String get path;
 
   /// The parameter `context` of this provider.
-  BuildContext get context;
+  BuildContext? get context;
 }
 
 class _DoBackUpProviderElement extends AutoDisposeProviderElement<void>
@@ -184,7 +184,7 @@ class _DoBackUpProviderElement extends AutoDisposeProviderElement<void>
   @override
   String get path => (origin as DoBackUpProvider).path;
   @override
-  BuildContext get context => (origin as DoBackUpProvider).context;
+  BuildContext? get context => (origin as DoBackUpProvider).context;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

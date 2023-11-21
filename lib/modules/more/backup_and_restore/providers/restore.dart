@@ -6,6 +6,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -45,6 +46,9 @@ void doRestore(DoRestoreRef ref,
       final history = (backup["history"] as List?)
           ?.map((e) => History.fromJson(e))
           .toList();
+      final downloads = (backup["downloads"] as List?)
+          ?.map((e) => Download.fromJson(e))
+          .toList();
       final settings = (backup["settings"] as List?)
           ?.map((e) => Settings.fromJson(e))
           .toList();
@@ -63,6 +67,17 @@ void doRestore(DoRestoreRef ref,
               if (manga != null) {
                 isar.chapters.putSync(chapter..manga.value = manga);
                 chapter.manga.saveSync();
+              }
+            }
+
+            isar.downloads.clearSync();
+            if (downloads != null) {
+              for (var download in downloads) {
+                final chapter = isar.chapters.getSync(download.chapterId!);
+                if (chapter != null) {
+                  isar.downloads.putSync(download..chapter.value = chapter);
+                  download.chapter.saveSync();
+                }
               }
             }
 

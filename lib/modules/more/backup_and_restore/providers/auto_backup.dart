@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auto_backup.g.dart';
@@ -13,10 +14,8 @@ class BackupFrequencyState extends _$BackupFrequencyState {
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..backupFrequency = value));
+    _setBackupFrequency(value);
   }
 }
 
@@ -24,7 +23,7 @@ class BackupFrequencyState extends _$BackupFrequencyState {
 class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
   @override
   List<int> build() {
-    return isar.settings.getSync(227)!.backupFrequencyOptions ?? [];
+    return isar.settings.getSync(227)!.backupFrequencyOptions ?? [0, 1, 2, 3];
   }
 
   void set(List<int> values) {
@@ -54,13 +53,61 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
   Future refresh() async {
     _storageProvider = await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
-    state =
-        ("${_storageProvider!.path}backup", settings!.autoBackupLocation ?? "");
+    state = (
+      "${_storageProvider!.path}backup/",
+      settings!.autoBackupLocation ?? ""
+    );
   }
 }
 
-//  this.personalPageModeList,
-//       this.backupFrequency,
-//       this.backupFrequencyOptions,
-//       this.autoBackupLocation,
-//       this.startDatebackup
+@riverpod
+Future<void> checkAndBackup(CheckAndBackupRef ref) async {
+  final settings = isar.settings.getSync(227);
+  if (settings!.backupFrequency != null) {
+    final backupFrequency = _duration(settings.backupFrequency);
+    if (backupFrequency != null) {
+      if (settings.startDatebackup != null) {
+        final startDatebackup =
+            DateTime.fromMillisecondsSinceEpoch(settings.startDatebackup!);
+        if (DateTime.now().isAfter(startDatebackup)) {
+          _setBackupFrequency(settings.backupFrequency!);
+          final storageProvider = StorageProvider();
+          await storageProvider.requestPermission();
+          final defaulteDirectory = await storageProvider.getDefaultDirectory();
+          final backupLocation = ref.watch(autoBackupLocationStateProvider).$2;
+          final backupDirectory = Directory(backupLocation.isEmpty
+              ? "${defaulteDirectory!.path}backup/"
+              : backupLocation);
+          if (!(await backupDirectory.exists())) {
+            backupDirectory.create();
+          }
+          ref.watch(doBackUpProvider(
+              list: ref.watch(backupFrequencyOptionsStateProvider),
+              path: backupDirectory.path,
+              context: null));
+        }
+      }
+    }
+  }
+}
+
+Duration? _duration(int? backupFrequency) {
+  return switch (backupFrequency) {
+    1 => const Duration(hours: 6),
+    2 => const Duration(hours: 12),
+    3 => const Duration(days: 1),
+    4 => const Duration(days: 2),
+    5 => const Duration(days: 7),
+    _ => null
+  };
+}
+
+void _setBackupFrequency(int value) {
+  final settings = isar.settings.getSync(227);
+  final duration = _duration(value);
+  final now = DateTime.now();
+  final startDate = duration != null ? now.add(duration) : null;
+  isar.writeTxnSync(() => isar.settings.putSync(settings!
+    ..backupFrequency = value
+    ..startDatebackup = startDate?.millisecondsSinceEpoch));
+}

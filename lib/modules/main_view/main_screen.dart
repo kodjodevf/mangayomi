@@ -9,6 +9,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
+import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -29,6 +30,7 @@ class MainScreen extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
     ref.watch(checkForUpdateProvider(context: context));
+    ref.read(checkAndBackupProvider);
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
         final location = ref.watch(

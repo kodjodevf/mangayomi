@@ -7,6 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -22,7 +23,7 @@ part 'backup.g.dart';
 void doBackUp(DoBackUpRef ref,
     {required List<int> list,
     required String path,
-    required BuildContext context}) {
+    required BuildContext? context}) {
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "1"});
   if (list.contains(0)) {
@@ -53,6 +54,13 @@ void doBackUp(DoBackUpRef ref,
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"chapters": res});
+    final res_ = isar.downloads
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"downloads": res_});
   }
   if (list.contains(3)) {
     final res = isar.tracks
@@ -108,28 +116,30 @@ void doBackUp(DoBackUpRef ref,
   encoder.addFile(File(backupFilePath));
   encoder.close();
   Directory(backupFilePath).deleteSync(recursive: true);
-  Navigator.pop(context);
-  BotToast.showNotification(
-      animationDuration: const Duration(milliseconds: 200),
-      animationReverseDuration: const Duration(milliseconds: 200),
-      duration: const Duration(seconds: 5),
-      backButtonBehavior: BackButtonBehavior.none,
-      leading: (cancel) =>
-          Image.asset('assets/app_icons/icon-red.png', height: 40),
-      title: (_) => const Text(
-            "Backup created!",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-      trailing: (_) => UnconstrainedBox(
-            alignment: Alignment.topLeft,
-            child: ElevatedButton(
-                onPressed: () {
-                  Share.shareXFiles([XFile('$path/$name.backup')],
-                      text: '$name.backup');
-                },
-                child: const Text('Share')),
-          ),
-      enableSlideOff: true,
-      onlyOne: true,
-      crossPage: true);
+  if (context != null) {
+    Navigator.pop(context);
+    BotToast.showNotification(
+        animationDuration: const Duration(milliseconds: 200),
+        animationReverseDuration: const Duration(milliseconds: 200),
+        duration: const Duration(seconds: 5),
+        backButtonBehavior: BackButtonBehavior.none,
+        leading: (cancel) =>
+            Image.asset('assets/app_icons/icon-red.png', height: 40),
+        title: (_) => const Text(
+              "Backup created!",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+        trailing: (_) => UnconstrainedBox(
+              alignment: Alignment.topLeft,
+              child: ElevatedButton(
+                  onPressed: () {
+                    Share.shareXFiles([XFile('$path/$name.backup')],
+                        text: '$name.backup');
+                  },
+                  child: const Text('Share')),
+            ),
+        enableSlideOff: true,
+        onlyOne: true,
+        crossPage: true);
+  }
 }
