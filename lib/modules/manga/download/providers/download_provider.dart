@@ -206,19 +206,22 @@ Future<List<String>> downloadChapter(
     }
 
     if (tasks.isEmpty && pageUrls.isNotEmpty) {
-      final model = Download(
+      savePageUrls();
+      final download = Download(
           succeeded: 0,
           failed: 0,
           total: 0,
           isDownload: true,
           taskIds: pageUrls,
           isStartDownload: false,
-          chapterId: chapter.id);
+          chapterId: chapter.id,
+          mangaId: manga.id);
 
       isar.writeTxnSync(() {
-        isar.downloads.putSync(model..chapter.value = chapter);
+        isar.downloads.putSync(download..chapter.value = chapter);
       });
     } else {
+      savePageUrls();
       if (isManga) {
         await FileDownloader().downloadBatch(
           tasks,
@@ -238,25 +241,25 @@ Future<List<String>> downloadChapter(
                 .chapterIdEqualTo(chapter.id!)
                 .isEmptySync();
             if (isEmpty) {
-              final model = Download(
-                succeeded: succeeded,
-                failed: failed,
-                total: tasks.length,
-                isDownload: (succeeded == tasks.length),
-                taskIds: pageUrls,
-                isStartDownload: true,
-                chapterId: chapter.id,
-              );
+              final download = Download(
+                  succeeded: succeeded,
+                  failed: failed,
+                  total: tasks.length,
+                  isDownload: (succeeded == tasks.length),
+                  taskIds: pageUrls,
+                  isStartDownload: true,
+                  chapterId: chapter.id,
+                  mangaId: manga.id);
               isar.writeTxnSync(() {
-                isar.downloads.putSync(model..chapter.value = chapter);
+                isar.downloads.putSync(download..chapter.value = chapter);
               });
             } else {
-              final model = isar.downloads
+              final download = isar.downloads
                   .filter()
                   .chapterIdEqualTo(chapter.id!)
                   .findFirstSync()!;
               isar.writeTxnSync(() {
-                isar.downloads.putSync(model
+                isar.downloads.putSync(download
                   ..succeeded = succeeded
                   ..failed = failed
                   ..isDownload = (succeeded == tasks.length));
@@ -283,32 +286,29 @@ Future<List<String>> downloadChapter(
                 .chapterIdEqualTo(chapter.id!)
                 .isEmptySync();
             if (isEmpty) {
-              final model = Download(
-                succeeded: (progress * 100).toInt(),
-                failed: 0,
-                total: 100,
-                isDownload: (progress == 1.0),
-                taskIds: pageUrls,
-                isStartDownload: true,
-                chapterId: chapter.id,
-              );
+              final download = Download(
+                  succeeded: (progress * 100).toInt(),
+                  failed: 0,
+                  total: 100,
+                  isDownload: (progress == 1.0),
+                  taskIds: pageUrls,
+                  isStartDownload: true,
+                  chapterId: chapter.id,
+                  mangaId: manga.id);
               isar.writeTxnSync(() {
-                isar.downloads.putSync(model..chapter.value = chapter);
+                isar.downloads.putSync(download..chapter.value = chapter);
               });
             } else {
-              final model = isar.downloads
+              final download = isar.downloads
                   .filter()
                   .chapterIdEqualTo(chapter.id!)
                   .findFirstSync()!;
               isar.writeTxnSync(() {
-                isar.downloads.putSync(model
+                isar.downloads.putSync(download
                   ..succeeded = (progress * 100).toInt()
                   ..failed = 0
                   ..isDownload = (progress == 1.0));
               });
-            }
-            if (progress == 1.0) {
-              savePageUrls();
             }
           },
           onStatus: (status) async {

@@ -6,6 +6,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
@@ -436,6 +437,19 @@ class RouterNotifier extends ChangeNotifier {
             return CustomTransition(
               key: state.pageKey,
               child: const DownloadsScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/backupAndRestore",
+          name: "backupAndRestore",
+          builder: (context, state) {
+            return const BackupAndRestore();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const BackupAndRestore(),
             );
           },
         ),

@@ -68,6 +68,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
               ? DateTime.now().millisecondsSinceEpoch.toString()
               : chaps[i].dateUpload.toString(),
           scanlator: chaps[i].scanlator ?? '',
+          mangaId: mangaId,
         )..manga.value = manga;
         chapters.add(chapter);
       }

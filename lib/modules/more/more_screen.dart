@@ -31,7 +31,7 @@ class MoreScreen extends StatelessWidget {
             const Divider(),
             // ListTile(
             //   onTap: () {},
-            //   leading: 
+            //   leading:
             //       const SizedBox(height: 40, child: Icon(Icons.cloud_off)),
             //   subtitle: const Text('Filter all entries in your library'),
             //   title: const Text('Donloaded only'),
@@ -56,24 +56,15 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.label_outline_rounded,
               title: l10n.categories,
             ),
+            ListTileWidget(
+              onTap: () {
+                context.push('/backupAndRestore');
+              },
+              icon: Icons.settings_backup_restore_sharp,
+              title: l10n.backup_and_restore,
+            ),
             const Divider(),
-            // ListTileWidget(
-            //   onTap: () {
-            //     context.push('/history');
-            //   },
-            //   icon: Icons.history_outlined,
-            //   title: l10n.history,
-            // ),
-            // ListTile(
-            //   onTap: () {},
-            //   leading: const SizedBox(
-            //       height: 40,
-            //       child: Icon(Icons.settings_backup_restore_sharp)),
-            //   title: const Text('Backup and restore'),
-            // ),
-            // const Divider(
-            //   color: Colors.grey,
-            // ),
+
             ListTileWidget(
               onTap: () {
                 context.push('/settings');
@@ -87,11 +78,11 @@ class MoreScreen extends StatelessWidget {
                 },
                 icon: Icons.info_outline,
                 title: l10n.about),
-            ListTileWidget(
-              onTap: () {},
-              icon: Icons.help_outline,
-              title: l10n.help,
-            ),
+            // ListTileWidget(
+            //   onTap: () {},
+            //   icon: Icons.help_outline,
+            //   title: l10n.help,
+            // ),
           ],
         ),
       ),

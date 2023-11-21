@@ -143,7 +143,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   )
                 ],
               ),
-        action: widget.manga.favorite
+        action: widget.manga.favorite!
             ? SizedBox(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(

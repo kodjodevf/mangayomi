@@ -17,13 +17,23 @@ const HistorySchema = CollectionSchema(
   name: r'History',
   id: 1676981785059398080,
   properties: {
-    r'date': PropertySchema(
+    r'chapterId': PropertySchema(
       id: 0,
+      name: r'chapterId',
+      type: IsarType.long,
+    ),
+    r'date': PropertySchema(
+      id: 1,
       name: r'date',
       type: IsarType.string,
     ),
+    r'isManga': PropertySchema(
+      id: 2,
+      name: r'isManga',
+      type: IsarType.bool,
+    ),
     r'mangaId': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'mangaId',
       type: IsarType.long,
     )
@@ -70,8 +80,10 @@ void _historySerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.date);
-  writer.writeLong(offsets[1], object.mangaId);
+  writer.writeLong(offsets[0], object.chapterId);
+  writer.writeString(offsets[1], object.date);
+  writer.writeBool(offsets[2], object.isManga);
+  writer.writeLong(offsets[3], object.mangaId);
 }
 
 History _historyDeserialize(
@@ -81,9 +93,11 @@ History _historyDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = History(
-    date: reader.readStringOrNull(offsets[0]),
+    chapterId: reader.readLongOrNull(offsets[0]),
+    date: reader.readStringOrNull(offsets[1]),
     id: id,
-    mangaId: reader.readLongOrNull(offsets[1]),
+    isManga: reader.readBoolOrNull(offsets[2]),
+    mangaId: reader.readLongOrNull(offsets[3]),
   );
   return object;
 }
@@ -96,8 +110,12 @@ P _historyDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -194,6 +212,75 @@ extension HistoryQueryWhere on QueryBuilder<History, History, QWhereClause> {
 
 extension HistoryQueryFilter
     on QueryBuilder<History, History, QFilterCondition> {
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'chapterId',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'chapterId',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'chapterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'chapterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'chapterId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> chapterIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'chapterId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<History, History, QAfterFilterCondition> dateIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -408,6 +495,32 @@ extension HistoryQueryFilter
     });
   }
 
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isManga',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<History, History, QAfterFilterCondition> mangaIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -498,6 +611,18 @@ extension HistoryQueryLinks
 }
 
 extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
+  QueryBuilder<History, History, QAfterSortBy> sortByChapterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'chapterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByChapterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'chapterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -507,6 +632,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
   QueryBuilder<History, History, QAfterSortBy> sortByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
     });
   }
 
@@ -525,6 +662,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
 
 extension HistoryQuerySortThenBy
     on QueryBuilder<History, History, QSortThenBy> {
+  QueryBuilder<History, History, QAfterSortBy> thenByChapterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'chapterId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByChapterIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'chapterId', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -549,6 +698,18 @@ extension HistoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> thenByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> thenByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mangaId', Sort.asc);
@@ -564,10 +725,22 @@ extension HistoryQuerySortThenBy
 
 extension HistoryQueryWhereDistinct
     on QueryBuilder<History, History, QDistinct> {
+  QueryBuilder<History, History, QDistinct> distinctByChapterId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'chapterId');
+    });
+  }
+
   QueryBuilder<History, History, QDistinct> distinctByDate(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<History, History, QDistinct> distinctByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isManga');
     });
   }
 
@@ -586,9 +759,21 @@ extension HistoryQueryProperty
     });
   }
 
+  QueryBuilder<History, int?, QQueryOperations> chapterIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'chapterId');
+    });
+  }
+
   QueryBuilder<History, String?, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
+    });
+  }
+
+  QueryBuilder<History, bool?, QQueryOperations> isMangaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isManga');
     });
   }
 

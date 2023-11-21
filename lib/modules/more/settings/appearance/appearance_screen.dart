@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -19,6 +20,7 @@ class AppearanceScreen extends ConsumerWidget {
     final dateFormatState = ref.watch(dateFormatStateProvider);
     final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
+    final isDarkTheme = ref.watch(themeModeStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n!.appearance),
@@ -42,18 +44,20 @@ class AppearanceScreen extends ConsumerWidget {
                   ),
                   const DarkModeButton(),
                   const ThemeSelector(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: SwitchListTile(
-                        title: Text(l10n.pure_black_dark_mode),
-                        value: pureBlackDarkMode,
-                        onChanged: (value) {
-                          ref
-                              .read(pureBlackDarkModeStateProvider.notifier)
-                              .set(value);
-                        }),
-                  ),
-                  if (!pureBlackDarkMode) const BlendLevelSlider()
+                  if (isDarkTheme)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: SwitchListTile(
+                          title: Text(l10n.pure_black_dark_mode),
+                          value: pureBlackDarkMode,
+                          onChanged: (value) {
+                            ref
+                                .read(pureBlackDarkModeStateProvider.notifier)
+                                .set(value);
+                          }),
+                    ),
+                  if (!pureBlackDarkMode || !isDarkTheme)
+                    const BlendLevelSlider()
                 ],
               ),
             ),
@@ -131,8 +135,8 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.relative_timestamp),
                     subtitle: Text(
                       relativeTimestampsList(context)[relativeTimestamps],
-                      style:
-                          TextStyle(fontSize: 11, color: secondaryColor(context)),
+                      style: TextStyle(
+                          fontSize: 11, color: secondaryColor(context)),
                     ),
                   ),
                   ListTile(
@@ -193,8 +197,8 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.date_format),
                     subtitle: Text(
                       "$dateFormatState (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
-                      style:
-                          TextStyle(fontSize: 11, color: secondaryColor(context)),
+                      style: TextStyle(
+                          fontSize: 11, color: secondaryColor(context)),
                     ),
                   ),
                 ],

@@ -373,12 +373,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   )),
                               PopupMenuButton(itemBuilder: (context) {
                                 return [
-                                  if (widget.manga!.favorite)
+                                  if (widget.manga!.favorite!)
                                     PopupMenuItem<int>(
                                         value: 0,
                                         child: Text(l10n.edit_categories)),
                                   if (!isLocalArchive)
-                                    if (widget.manga!.favorite)
+                                    if (widget.manga!.favorite!)
                                       PopupMenuItem<int>(
                                           value: 1, child: Text(l10n.migrate)),
                                   if (!isLocalArchive)

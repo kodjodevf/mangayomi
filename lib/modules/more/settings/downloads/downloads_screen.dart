@@ -36,9 +36,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(
-                          l10n.download_location,
-                        ),
+                        title: Text(l10n.download_location),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
                             child: ListView(
@@ -69,7 +67,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                     onChanged: (value) async {
                                       String? result = await FilePicker.platform
                                           .getDirectoryPath();
-      
+
                                       if (result != null) {
                                         ref
                                             .read(downloadLocationStateProvider

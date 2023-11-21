@@ -75,24 +75,61 @@ class Source {
       this.headers = '',
       this.isManga = true,
       this.appMinVerReq = ""});
+
   Source.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    id = json['id'];
+    apiUrl = json['apiUrl'];
+    appMinVerReq = json['appMinVerReq'];
     baseUrl = json['baseUrl'];
-    lang = json['lang'];
-    typeSource = json['typeSource'];
-    iconUrl = json['iconUrl'];
     dateFormat = json['dateFormat'];
     dateFormatLocale = json['dateFormatLocale'];
-    isNsfw = json['isNsfw'];
     hasCloudflare = json['hasCloudflare'];
+    headers = json['headers'];
+    iconUrl = json['iconUrl'];
+    id = json['id'];
+    isActive = json['isActive'];
+    isAdded = json['isAdded'];
+    isFullData = json['isFullData'];
+    isManga = json['isManga'];
+    isNsfw = json['isNsfw'];
+    isPinned = json['isPinned'];
+    lang = json['lang'];
+    lastUsed = json['lastUsed'];
+    name = json['name'];
+    sourceCode = json['sourceCode'];
     sourceCodeUrl = json['sourceCodeUrl'];
-    apiUrl = json['apiUrl'];
+    typeSource = json['typeSource'];
     version = json['version'];
-    isManga = json['isManga'] ?? true;
-    isFullData = json['isFullData'] ?? false;
-    appMinVerReq = json['appMinVerReq'];
+    versionLast = json['versionLast'];
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['apiUrl'] = apiUrl;
+    data['appMinVerReq'] = appMinVerReq;
+    data['baseUrl'] = baseUrl;
+    data['dateFormat'] = dateFormat;
+    data['dateFormatLocale'] = dateFormatLocale;
+    data['hasCloudflare'] = hasCloudflare;
+    data['headers'] = headers;
+    data['iconUrl'] = iconUrl;
+    data['id'] = id;
+    data['isActive'] = isActive;
+    data['isAdded'] = isAdded;
+    data['isFullData'] = isFullData;
+    data['isManga'] = isManga;
+    data['isNsfw'] = isNsfw;
+    data['isPinned'] = isPinned;
+    data['lang'] = lang;
+    data['lastUsed'] = lastUsed;
+    data['name'] = name;
+    data['sourceCode'] = sourceCode;
+    data['sourceCodeUrl'] = sourceCodeUrl;
+    data['typeSource'] = typeSource;
+    data['version'] = version;
+    data['versionLast'] = versionLast;
+    return data;
+  }
+
   MSource toMSource() {
     return MSource(
         id: id,

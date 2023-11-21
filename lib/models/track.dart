@@ -23,7 +23,7 @@ class Track {
   int? score;
 
   @enumerated
-  TrackStatus status;
+  late TrackStatus status;
 
   int? startedReadingDate;
 
@@ -45,6 +45,39 @@ class Track {
       this.startedReadingDate,
       this.finishedReadingDate,
       this.trackingUrl});
+  Track.fromJson(Map<String, dynamic> json) {
+    finishedReadingDate = json['finishedReadingDate'];
+    id = json['id'];
+    lastChapterRead = json['lastChapterRead'];
+    libraryId = json['libraryId'];
+    mangaId = json['mangaId'];
+    mediaId = json['mediaId'];
+    score = json['score'];
+    startedReadingDate = json['startedReadingDate'];
+    status = TrackStatus.values[json['status']];
+    syncId = json['syncId'];
+    title = json['title'];
+    totalChapter = json['totalChapter'];
+    trackingUrl = json['trackingUrl'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['finishedReadingDate'] = finishedReadingDate;
+    data['id'] = id;
+    data['lastChapterRead'] = lastChapterRead;
+    data['libraryId'] = libraryId;
+    data['mangaId'] = mangaId;
+    data['mediaId'] = mediaId;
+    data['score'] = score;
+    data['startedReadingDate'] = startedReadingDate;
+    data['status'] = status.index;
+    data['syncId'] = syncId;
+    data['title'] = title;
+    data['totalChapter'] = totalChapter;
+    data['trackingUrl'] = trackingUrl;
+    return data;
+  }
 }
 
 enum TrackStatus {
