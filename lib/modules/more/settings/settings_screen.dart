@@ -44,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
             ListTileWidget(
                 title: l10n.tracking,
                 subtitle: "",
-                icon: Icons.screen_rotation_alt_rounded,
+                icon: Icons.sync_outlined,
                 onTap: () => context.push('/track')),
             ListTileWidget(
                 title: l10n.browse,

@@ -1366,9 +1366,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             return Column(
                               children: [
                                 Icon(
-                                  isNotEmpty
-                                      ? Icons.done
-                                      : Icons.screen_rotation_alt_rounded,
+                                  isNotEmpty ? Icons.done_rounded : Icons.sync_outlined,
                                   size: 20,
                                   color: color,
                                 ),

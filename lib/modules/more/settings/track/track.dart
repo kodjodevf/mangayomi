@@ -8,6 +8,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
+import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 
 class TrackScreen extends ConsumerWidget {
@@ -15,6 +16,7 @@ class TrackScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10nLocalizations(context)!.tracking),
@@ -30,7 +32,19 @@ class TrackScreen extends ConsumerWidget {
                   snapshot.hasData ? snapshot.data : [];
               return Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15, right: 15, bottom: 10, top: 5),
+                    child: Row(
+                      children: [
+                        Text(l10n.services,
+                            style: TextStyle(
+                                fontSize: 13, color: primaryColor(context))),
+                      ],
+                    ),
+                  ),
                   TrackListile(
+                      color: const Color.fromRGBO(18, 25, 35, 1),
                       onTap: () async {
                         await ref
                             .read(anilistProvider(syncId: 2).notifier)
@@ -39,12 +53,14 @@ class TrackScreen extends ConsumerWidget {
                       id: 2,
                       entries: entries!),
                   TrackListile(
+                      color: const Color.fromRGBO(51, 37, 50, 1),
                       onTap: () async {
                         _showDialogLogin(context, ref);
                       },
                       id: 3,
                       entries: entries),
                   TrackListile(
+                      color: const Color.fromRGBO(46, 81, 162, 1),
                       onTap: () async {
                         await ref
                             .read(myAnimeListProvider(syncId: 1, isManga: null)
@@ -52,7 +68,23 @@ class TrackScreen extends ConsumerWidget {
                             .login();
                       },
                       id: 1,
-                      entries: entries)
+                      entries: entries),
+                  ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: secondaryColor(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: Text(l10n.tracking_warning_info,
+                        style: TextStyle(
+                            fontSize: 11, color: secondaryColor(context))),
+                  )
                 ],
               );
             }),

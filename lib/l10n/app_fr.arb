@@ -258,5 +258,7 @@
   "daily":"Tous les jours",
   "every_2_days":"Tous les 2 jours",
   "weekly":"Chaque semaine",
-  "restore_backup_warning_title":"La restauration d'une sauvegarde écrasera toutes les données existantes.\n\nContinuer la restauration ?"
+  "restore_backup_warning_title":"La restauration d'une sauvegarde écrasera toutes les données existantes.\n\nContinuer la restauration ?",
+  "services":"Services",
+  "tracking_warning_info":"Synchronisation à sens unique pour mettre à jour la progression du chapitre dans les services de suivi. Configurez le suivi des entrées individuelles à partir de leur boutton de suivi."
 }
