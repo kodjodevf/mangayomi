@@ -6,7 +6,6 @@
 
 <p align="center">
 
- [![CI](https://github.com/kodjodevf/mangayomi/actions/workflows/release.yml/badge.svg)](https://github.com/kodjodevf/mangayomi/actions/workflows/release.yml)
  [![latest release](https://img.shields.io/github/release/kodjodevf/mangayomi.svg?maxAge=3600&label=download)](https://github.com/kodjodevf/mangayomi/releases)
  [![Discord](https://img.shields.io/discord/1157628512077893666.svg?label=discord&labelColor=7289da&color=2c2f33&style=flat)](https://discord.com/invite/EjfBuYahsP) 
 
@@ -19,14 +18,13 @@ Mangayomi is free an open source manga reader and anime streaming cross-platefor
 Features include:
 * [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions), utilizing the capabilities of the [dart_eval](https://pub.dev/packages/dart_eval) package
 * Online reading from a variety of sources
-* Watch anime from a variety of sources
+* Watching anime from a variety of sources
 * Local reading of downloaded content
-* Read and manage local archives (.cbz, .zip)
-* Watch and manage local Anime
-* A configurable reader with multiple viewers, reading directions.
+* A configurable reader with multiple viewers, reading directions and other settings..
 * Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support
 * Categories to organize your library
 * Light and dark themes
+* Create backups locally to read offline or to your desired cloud service
 
 ## Screenshots :camera:
 
