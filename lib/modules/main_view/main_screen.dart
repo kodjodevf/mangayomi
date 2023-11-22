@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
@@ -29,8 +30,10 @@ class MainScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
     final route = GoRouter.of(context);
-    ref.watch(checkForUpdateProvider(context: context));
     ref.read(checkAndBackupProvider);
+    ref.watch(checkForUpdateProvider(context: context));
+    ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
+    ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
         final location = ref.watch(
@@ -175,7 +178,7 @@ class MainScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Positioned(
-                                    right: 7,
+                                    right: 18,
                                     top: 210,
                                     child: _extensionUpdateTotalNumbers(ref)),
                               ],
