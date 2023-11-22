@@ -18,31 +18,41 @@ class SourcesScreen extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     return Padding(
         padding: const EdgeInsets.only(top: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              StreamBuilder(
-                  stream: isar.sources
-                      .filter()
-                      .idIsNotNull()
-                      .isAddedEqualTo(true)
-                      .and()
-                      .isActiveEqualTo(true)
-                      .and()
-                      .lastUsedEqualTo(true)
-                      .and()
-                      .isMangaEqualTo(isManga)
-                      .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: Text(""));
-                    }
-                    final entries = snapshot.data!
-                        .where((element) => ref.watch(showNSFWStateProvider)
-                            ? true
-                            : element.isNsfw == false)
-                        .toList();
-                    return GroupedListView<Source, String>(
+        child: StreamBuilder(
+            stream: isar.sources
+                .filter()
+                .idIsNotNull()
+                .isAddedEqualTo(true)
+                .and()
+                .isActiveEqualTo(true)
+                .and()
+                .isMangaEqualTo(isManga)
+                .watch(fireImmediately: true),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: Text(l10n.no_result));
+              }
+              final entries = snapshot.data!
+                  .where((element) => ref.watch(showNSFWStateProvider)
+                      ? true
+                      : element.isNsfw == false)
+                  .where((element) => element.lastUsed == true)
+                  .toList();
+              final entries1 = snapshot.data!
+                  .where((element) => ref.watch(showNSFWStateProvider)
+                      ? true
+                      : element.isNsfw == false)
+                  .where((element) => element.isPinned == true)
+                  .toList();
+              final entries2 = snapshot.data!
+                  .where((element) => ref.watch(showNSFWStateProvider)
+                      ? true
+                      : element.isNsfw == false)
+                  .toList();
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => "",
                       groupSeparatorBuilder: (String groupByValue) => Padding(
@@ -69,31 +79,9 @@ class SourcesScreen extends ConsumerWidget {
                       itemComparator: (item1, item2) =>
                           item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
-                    );
-                  }),
-              StreamBuilder(
-                  stream: isar.sources
-                      .filter()
-                      .idIsNotNull()
-                      .isAddedEqualTo(true)
-                      .and()
-                      .isActiveEqualTo(true)
-                      .and()
-                      .isPinnedEqualTo(true)
-                      .and()
-                      .isMangaEqualTo(isManga)
-                      .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: Text(""));
-                    }
-                    final entries = snapshot.data!
-                        .where((element) => ref.watch(showNSFWStateProvider)
-                            ? true
-                            : element.isNsfw == false)
-                        .toList();
-                    return GroupedListView<Source, String>(
-                      elements: entries,
+                    ),
+                    GroupedListView<Source, String>(
+                      elements: entries1,
                       groupBy: (element) => "",
                       groupSeparatorBuilder: (String groupByValue) => Padding(
                         padding: const EdgeInsets.only(left: 12),
@@ -119,31 +107,9 @@ class SourcesScreen extends ConsumerWidget {
                       itemComparator: (item1, item2) =>
                           item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
-                    );
-                  }),
-              StreamBuilder(
-                  stream: isar.sources
-                      .filter()
-                      .idIsNotNull()
-                      .isAddedEqualTo(true)
-                      .and()
-                      .isActiveEqualTo(true)
-                      .and()
-                      .isPinnedEqualTo(false)
-                      .and()
-                      .isMangaEqualTo(isManga)
-                      .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: Text(l10n.no_result));
-                    }
-                    final entries = snapshot.data!
-                        .where((element) => ref.watch(showNSFWStateProvider)
-                            ? true
-                            : element.isNsfw == false)
-                        .toList();
-                    return GroupedListView<Source, String>(
-                      elements: entries,
+                    ),
+                    GroupedListView<Source, String>(
+                      elements: entries2,
                       groupBy: (element) =>
                           completeLanguageName(element.lang!.toLowerCase()),
                       groupSeparatorBuilder: (String groupByValue) => Padding(
@@ -170,10 +136,10 @@ class SourcesScreen extends ConsumerWidget {
                       itemComparator: (item1, item2) =>
                           item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
-                    );
-                  }),
-            ],
-          ),
-        ));
+                    ),
+                  ],
+                ),
+              );
+            }));
   }
 }
