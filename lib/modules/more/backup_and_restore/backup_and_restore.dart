@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
@@ -147,19 +148,22 @@ class BackupAndRestore extends ConsumerWidget {
                                 )),
                             TextButton(
                                 onPressed: () async {
-                                  FilePickerResult? result =
-                                      await FilePicker.platform.pickFiles(
-                                          allowMultiple: false,
-                                          type: FileType.custom,
-                                          allowedExtensions: ['backup']);
+                                  try {
+                                    FilePickerResult? result = await FilePicker
+                                        .platform
+                                        .pickFiles(allowMultiple: false);
 
-                                  if (result != null && context.mounted) {
-                                    ref.watch(doRestoreProvider(
-                                        path: result.files.first.path!,
-                                        context: context));
+                                    if (result != null && context.mounted) {
+                                      ref.watch(doRestoreProvider(
+                                          path: result.files.first.path!,
+                                          context: context));
+                                    }
+                                    if (!context.mounted) return;
+                                    Navigator.pop(context);
+                                  } catch (_) {
+                                    botToast("Error");
+                                    Navigator.pop(context);
                                   }
-                                  if (!context.mounted) return;
-                                  Navigator.pop(context);
                                 },
                                 child: Text(
                                   l10n.ok,
