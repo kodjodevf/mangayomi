@@ -33,39 +33,44 @@ class ExtensionScreen extends ConsumerWidget {
               fetchAnimeSourcesListProvider(id: null, reFresh: true).future),
       child: Padding(
         padding: const EdgeInsets.only(top: 10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              StreamBuilder(
-                  stream: query.isNotEmpty
-                      ? isar.sources
-                          .filter()
-                          .nameContains(query.toLowerCase(),
-                              caseSensitive: false)
-                          .idIsNotNull()
-                          .and()
-                          .isActiveEqualTo(true)
-                          .isMangaEqualTo(isManga)
-                          .watch(fireImmediately: true)
-                      : isar.sources
-                          .filter()
-                          .idIsNotNull()
-                          .and()
-                          .isActiveEqualTo(true)
-                          .isMangaEqualTo(isManga)
-                          .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final entries = snapshot.data!
-                          .where((element) => ref.watch(showNSFWStateProvider)
-                              ? true
-                              : element.isNsfw == false)
-                          .where((element) =>
-                              compareVersions(
-                                  element.version!, element.versionLast!) <
-                              0)
-                          .toList();
-                      return GroupedListView<Source, String>(
+        child: StreamBuilder(
+            stream: query.isNotEmpty
+                ? isar.sources
+                    .filter()
+                    .nameContains(query.toLowerCase(), caseSensitive: false)
+                    .idIsNotNull()
+                    .and()
+                    .isActiveEqualTo(true)
+                    .isMangaEqualTo(isManga)
+                    .watch(fireImmediately: true)
+                : isar.sources
+                    .filter()
+                    .idIsNotNull()
+                    .and()
+                    .isActiveEqualTo(true)
+                    .isMangaEqualTo(isManga)
+                    .watch(fireImmediately: true),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                final entries1 = snapshot.data!
+                    .where((element) => ref.watch(showNSFWStateProvider)
+                        ? true
+                        : element.isNsfw == false)
+                    .where((element) => element.version == element.versionLast!)
+                    .toList();
+                final entries = snapshot.data!
+                    .where((element) => ref.watch(showNSFWStateProvider)
+                        ? true
+                        : element.isNsfw == false)
+                    .where((element) =>
+                        compareVersions(
+                            element.version!, element.versionLast!) <
+                        0)
+                    .toList();
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      GroupedListView<Source, String>(
                         elements: entries,
                         groupBy: (element) => "",
                         groupSeparatorBuilder: (_) => Padding(
@@ -109,39 +114,9 @@ class ExtensionScreen extends ConsumerWidget {
                         itemComparator: (item1, item2) =>
                             item1.name!.compareTo(item2.name!),
                         order: GroupedListOrder.ASC,
-                      );
-                    }
-                    return Container();
-                  }),
-              StreamBuilder(
-                  stream: query.isNotEmpty
-                      ? isar.sources
-                          .filter()
-                          .nameContains(query.toLowerCase(),
-                              caseSensitive: false)
-                          .idIsNotNull()
-                          .and()
-                          .isActiveEqualTo(true)
-                          .isMangaEqualTo(isManga)
-                          .watch(fireImmediately: true)
-                      : isar.sources
-                          .filter()
-                          .idIsNotNull()
-                          .and()
-                          .isActiveEqualTo(true)
-                          .isMangaEqualTo(isManga)
-                          .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final entries = snapshot.data!
-                          .where((element) => ref.watch(showNSFWStateProvider)
-                              ? true
-                              : element.isNsfw == false)
-                          .where((element) =>
-                              element.version == element.versionLast!)
-                          .toList();
-                      return GroupedListView<Source, String>(
-                        elements: entries,
+                      ),
+                      GroupedListView<Source, String>(
+                        elements: entries1,
                         groupBy: (element) =>
                             completeLanguageName(element.lang!.toLowerCase()),
                         groupSeparatorBuilder: (String groupByValue) => Padding(
@@ -167,13 +142,13 @@ class ExtensionScreen extends ConsumerWidget {
                             item1.name!.compareTo(item2.name!),
                         shrinkWrap: true,
                         order: GroupedListOrder.ASC,
-                      );
-                    }
-                    return Container();
-                  }),
-            ],
-          ),
-        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return Container();
+            }),
       ),
     );
   }
