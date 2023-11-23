@@ -112,11 +112,8 @@ class SourceSearchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
-    final search = ref.watch(searchProvider(
-      source: source,
-      page: 1,
-      query: query,
-    ));
+    final search = ref.watch(
+        searchProvider(source: source, page: 1, query: query, filterList: []));
     return Scaffold(
         body: SizedBox(
       height: 260,

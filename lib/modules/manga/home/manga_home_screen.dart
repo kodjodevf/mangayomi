@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
@@ -45,6 +48,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   int _fullDataLength = 50;
   int _page = 1;
   late int _selectedIndex = widget.isSearch ? 2 : 0;
+  List<dynamic> filters = [];
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return [
@@ -72,12 +76,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             source: widget.source,
             page: _page + 1,
           ).future);
-        } else if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
+        } else if (_selectedIndex == 2 &&
+            _isSearch &&
+            (_query.isNotEmpty || _isFiltering)) {
           mangaResList = await ref.watch(searchProvider(
-            source: widget.source,
-            query: _query,
-            page: _page + 1,
-          ).future);
+                  source: widget.source,
+                  query: _query,
+                  page: _page + 1,
+                  filterList: filters)
+              .future);
         }
       }
       if (mounted) {
@@ -94,11 +101,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late bool _isSearch = widget.isSearch;
   AsyncValue<MPages?>? _getManga;
   int _length = 0;
+  bool _isFiltering = false;
   @override
   Widget build(BuildContext context) {
-    if (_selectedIndex == 2 && _isSearch && _query.isNotEmpty) {
-      _getManga = ref
-          .watch(searchProvider(source: widget.source, query: _query, page: 1));
+    final filterList = getFilterList(source: widget.source);
+    if (_selectedIndex == 2 &&
+        _isSearch &&
+        (_query.isNotEmpty || _isFiltering)) {
+      _getManga = ref.watch(searchProvider(
+          source: widget.source, query: _query, page: 1, filterList: filters));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       _getManga =
           ref.watch(getLatestUpdatesProvider(source: widget.source, page: 1));
@@ -138,6 +149,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         if (_textEditingController.text.isEmpty) {
                           _isSearch = false;
                           _query = "";
+                          _isFiltering = false;
                           _selectedIndex = 0;
                           _page = 1;
                           _textEditingController.clear();
@@ -189,11 +201,75 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         icon: _types(context)[index].icon,
                         selected: _selectedIndex == index,
                         text: _types(context)[index].title,
-                        onPressed: () {
-                          setState(() {
-                            _selectedIndex = index;
-                            _page = 1;
-                          });
+                        onPressed: () async {
+                          if (filters.isEmpty) {
+                            filters = filterList;
+                          }
+                          if (filters.isNotEmpty && index == 2) {
+                            final result = await showModalBottomSheet(
+                              context: context,
+                              builder: (context) =>
+                                  StatefulBuilder(builder: (context, setState) {
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                filters = getFilterList(
+                                                    source: widget.source);
+                                              });
+                                            },
+                                            child: Text(l10n.reset),
+                                          ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, 'filter');
+                                            },
+                                            child: Text(l10n.filter),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    Expanded(
+                                      child: FilterWidget(
+                                        filterList: filters,
+                                        onChanged: (values) {
+                                          setState(() {
+                                            filters = values;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }),
+                            );
+                            if (result == 'filter') {
+                              setState(() {
+                                _selectedIndex = 2;
+                                _isFiltering = true;
+                                _isSearch = true;
+                                _page = 1;
+                              });
+                              _getManga = ref.refresh(searchProvider(
+                                  source: widget.source,
+                                  query: _query,
+                                  page: 1,
+                                  filterList: filters));
+                            }
+                          } else if (index != 2) {
+                            setState(() {
+                              _selectedIndex = index;
+                              _isFiltering = false;
+                              _page = 1;
+                            });
+                          }
                         },
                       );
                     },
@@ -215,6 +291,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           },
           child: _getManga!.when(
             data: (data) {
+              if (_getManga!.isLoading) {
+                return const ProgressCenter();
+              }
               Widget buildProgressIndicator() {
                 return !(data!.list.isNotEmpty && (data.hasNextPage))
                     ? Container()
@@ -334,11 +413,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               onPressed: () {
                                 if (_selectedIndex == 2 &&
                                     _isSearch &&
-                                    _query.isNotEmpty) {
+                                    (_query.isNotEmpty || _isFiltering)) {
                                   ref.invalidate(searchProvider(
                                       source: widget.source,
                                       query: _query,
-                                      page: 1));
+                                      page: 1,
+                                      filterList: filters));
                                 } else if (_selectedIndex == 1 &&
                                     !_isSearch &&
                                     _query.isEmpty) {

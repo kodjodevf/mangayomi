@@ -6,7 +6,7 @@ part of 'search.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchHash() => r'a387d6ddc86044bba9c8264c8bec6c1c29393ac5';
+String _$searchHash() => r'b2683242cc45e83f3946339d3490cad6488dd847';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,11 +43,13 @@ class SearchFamily extends Family<AsyncValue<MPages?>> {
     required Source source,
     required String query,
     required int page,
+    required List<dynamic> filterList,
   }) {
     return SearchProvider(
       source: source,
       query: query,
       page: page,
+      filterList: filterList,
     );
   }
 
@@ -59,6 +61,7 @@ class SearchFamily extends Family<AsyncValue<MPages?>> {
       source: provider.source,
       query: provider.query,
       page: provider.page,
+      filterList: provider.filterList,
     );
   }
 
@@ -84,12 +87,14 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
     required Source source,
     required String query,
     required int page,
+    required List<dynamic> filterList,
   }) : this._internal(
           (ref) => search(
             ref as SearchRef,
             source: source,
             query: query,
             page: page,
+            filterList: filterList,
           ),
           from: searchProvider,
           name: r'searchProvider',
@@ -102,6 +107,7 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
           source: source,
           query: query,
           page: page,
+          filterList: filterList,
         );
 
   SearchProvider._internal(
@@ -114,11 +120,13 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
     required this.source,
     required this.query,
     required this.page,
+    required this.filterList,
   }) : super.internal();
 
   final Source source;
   final String query;
   final int page;
+  final List<dynamic> filterList;
 
   @override
   Override overrideWith(
@@ -136,6 +144,7 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
         source: source,
         query: query,
         page: page,
+        filterList: filterList,
       ),
     );
   }
@@ -150,7 +159,8 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
     return other is SearchProvider &&
         other.source == source &&
         other.query == query &&
-        other.page == page;
+        other.page == page &&
+        other.filterList == filterList;
   }
 
   @override
@@ -159,6 +169,7 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, query.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
+    hash = _SystemHash.combine(hash, filterList.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -173,6 +184,9 @@ mixin SearchRef on AutoDisposeFutureProviderRef<MPages?> {
 
   /// The parameter `page` of this provider.
   int get page;
+
+  /// The parameter `filterList` of this provider.
+  List<dynamic> get filterList;
 }
 
 class _SearchProviderElement extends AutoDisposeFutureProviderElement<MPages?>
@@ -185,6 +199,8 @@ class _SearchProviderElement extends AutoDisposeFutureProviderElement<MPages?>
   String get query => (origin as SearchProvider).query;
   @override
   int get page => (origin as SearchProvider).page;
+  @override
+  List<dynamic> get filterList => (origin as SearchProvider).filterList;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
