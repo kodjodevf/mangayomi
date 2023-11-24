@@ -705,23 +705,23 @@ class $TriStateFilter implements TriStateFilter, $Instance {
       constructors: {
         '': BridgeConstructorDef(
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
           BridgeParameter('name',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
           BridgeParameter('value',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+          BridgeParameter('type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
         ], namedParams: [
           BridgeParameter(
               'state', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), true)
         ]))
       },
       fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'name': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'value': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'type': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'state': BridgeFieldDef(BridgeTypeAnnotation(
           BridgeTypeRef(CoreTypes.int),
@@ -731,7 +731,7 @@ class $TriStateFilter implements TriStateFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $TriStateFilter.wrap(TriStateFilter(
-        args[0]!.$value, args[1]!.$value, args[2]!.$value,
+        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value,
         state: args[3]?.$value ?? 0));
   }
 
@@ -844,10 +844,10 @@ class $GroupFilter implements GroupFilter, $Instance {
         args[1]!.$value,
         (args[2]!.$value as List).map((e) {
           if (e is $Value) {
-            if (e.$reified is Map) {
-              final val = e.$reified as Map;
+            final value = e.$reified;
+            if (value is Map) {
               Map<String, dynamic> map = {};
-              map = val.map((key, value) => MapEntry(key.toString(), value));
+              map = value.map((key, value) => MapEntry(key.toString(), value));
               if (map['type'] == 'TriState') {
                 final filter = map['filter'] as Map;
                 return TriStateFilter.fromJson(filter
@@ -858,6 +858,7 @@ class $GroupFilter implements GroupFilter, $Instance {
                     .map((key, value) => MapEntry(key.toString(), value)));
               }
             }
+            return value;
           }
           return e;
         }).toList()));
@@ -933,23 +934,23 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
       constructors: {
         '': BridgeConstructorDef(
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
           BridgeParameter('name',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
           BridgeParameter('value',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+          BridgeParameter('type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
         ], namedParams: [
           BridgeParameter('state',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), true),
         ]))
       },
       fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'name': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'value': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'type': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'state': BridgeFieldDef(BridgeTypeAnnotation(
           BridgeTypeRef(CoreTypes.bool),
@@ -959,7 +960,7 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $CheckBoxFilter.wrap(CheckBoxFilter(
-        args[0]!.$value, args[1]!.$value, args[2]!.$value,
+        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value,
         state: args[3]?.$value ?? false));
   }
 

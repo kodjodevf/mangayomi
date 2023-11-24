@@ -142,6 +142,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     onChanged: (value) {},
                     onSuffixPressed: () {
                       _textEditingController.clear();
+                      _query = "";
                       setState(() {});
                     },
                     onPressed: () {
@@ -252,6 +253,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             );
                             if (result == 'filter') {
                               setState(() {
+                                _query = '';
+                                _textEditingController.clear();
                                 _selectedIndex = 2;
                                 _isFiltering = true;
                                 _isSearch = true;
