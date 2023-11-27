@@ -17,6 +17,10 @@ class SelectFilterOption {
   String value;
 
   SelectFilterOption(this.name, this.value);
+
+  factory SelectFilterOption.fromJson(Map<String, dynamic> json) {
+    return SelectFilterOption(json['name'], json['value']);
+  }
 }
 
 class SeparatorFilter {
@@ -61,15 +65,10 @@ class TriStateFilter {
   int state;
 
   factory TriStateFilter.fromJson(Map<String, dynamic> json) {
-    return TriStateFilter(json['type'], json['name'], json['value']);
+    return TriStateFilter(json['type'], json['name'], json['value'],
+        state: json['state'] ?? 0);
   }
   TriStateFilter(this.type, this.name, this.value, {this.state = 0});
-}
-
-extension TriStateFilterExtension on TriStateFilter {
-  bool get ignored => state == 0;
-  bool get included => state == 1;
-  bool get excluded => state == 2;
 }
 
 class GroupFilter {
@@ -85,8 +84,10 @@ class CheckBoxFilter {
   String name;
   String value;
   bool state;
+
   factory CheckBoxFilter.fromJson(Map<String, dynamic> json) {
-    return CheckBoxFilter(json['type'], json['name'], json['value']);
+    return CheckBoxFilter(json['type'], json['name'], json['value'],
+        state: json['state'] ?? false);
   }
   CheckBoxFilter(this.type, this.name, this.value, {this.state = false});
 }

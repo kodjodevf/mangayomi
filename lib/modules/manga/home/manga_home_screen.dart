@@ -252,14 +252,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               }),
                             );
                             if (result == 'filter') {
-                              setState(() {
-                                _query = '';
-                                _textEditingController.clear();
-                                _selectedIndex = 2;
-                                _isFiltering = true;
-                                _isSearch = true;
-                                _page = 1;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  _selectedIndex = 2;
+                                  _isFiltering = true;
+                                  _isSearch = true;
+                                  _page = 1;
+                                });
+                              }
+
                               _getManga = ref.refresh(searchProvider(
                                   source: widget.source,
                                   query: _query,

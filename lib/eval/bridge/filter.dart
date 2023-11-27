@@ -116,9 +116,22 @@ class $SelectFilter implements SelectFilter, $Instance {
       args[0]!.$value,
       args[1]!.$value,
       args[2]!.$value,
-      (args[3]!.$value as List)
-          .map((e) => SelectFilterOption(e.$reified.name, e.$reified.value))
-          .toList(),
+      (args[3]!.$value as List).map((e) {
+        if (e is $Value) {
+          final value = e.$reified;
+          if (value is Map) {
+            Map<String, dynamic> map = {};
+            map = value.map((key, value) => MapEntry(key.toString(), value));
+            if (map['type'] == 'SelectOption') {
+              final filter = map['filter'] as Map;
+              return SelectFilterOption.fromJson(
+                  filter.map((key, value) => MapEntry(key.toString(), value)));
+            }
+          }
+          return value;
+        }
+        return e;
+      }).toList(),
     ));
   }
 
