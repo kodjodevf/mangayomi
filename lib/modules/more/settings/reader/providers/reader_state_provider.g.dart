@@ -123,5 +123,22 @@ final backgroundColorStateProvider =
 );
 
 typedef _$BackgroundColorState = AutoDisposeNotifier<BackgroundColor>;
+String _$usePageTapZonesStateHash() =>
+    r'476a7831ca38386e6cd9c83e7c8943f1f4ba20b7';
+
+/// See also [UsePageTapZonesState].
+@ProviderFor(UsePageTapZonesState)
+final usePageTapZonesStateProvider =
+    AutoDisposeNotifierProvider<UsePageTapZonesState, bool>.internal(
+  UsePageTapZonesState.new,
+  name: r'usePageTapZonesStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$usePageTapZonesStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$UsePageTapZonesState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

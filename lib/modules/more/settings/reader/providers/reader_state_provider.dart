@@ -107,3 +107,18 @@ class BackgroundColorState extends _$BackgroundColorState {
         () => isar.settings.putSync(settings!..backgroundColor = value));
   }
 }
+
+@riverpod
+class UsePageTapZonesState extends _$UsePageTapZonesState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.usePageTapZones ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..usePageTapZones = value));
+  }
+}

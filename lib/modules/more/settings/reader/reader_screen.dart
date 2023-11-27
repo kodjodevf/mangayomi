@@ -11,7 +11,6 @@ class ReaderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context);
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
     final animatePageTransitions =
         ref.watch(animatePageTransitionsStateProvider);
@@ -21,9 +20,10 @@ class ReaderScreen extends ConsumerWidget {
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
     final scaleType = ref.watch(scaleTypeStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
+    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n!.reader),
+        title: Text(context.l10n.reader),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -34,7 +34,7 @@ class ReaderScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(l10n.default_reading_mode),
+                        title: Text(context.l10n.default_reading_mode),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
                             child: ListView.builder(
@@ -71,7 +71,7 @@ class ReaderScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    l10n.cancel,
+                                    context.l10n.cancel,
                                     style:
                                         TextStyle(color: primaryColor(context)),
                                   )),
@@ -81,7 +81,7 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.default_reading_mode),
+              title: Text(context.l10n.default_reading_mode),
               subtitle: Text(
                 getReaderModeName(defaultReadingMode, context),
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
@@ -94,7 +94,7 @@ class ReaderScreen extends ConsumerWidget {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                          l10n.double_tap_animation_speed,
+                          context.l10n.double_tap_animation_speed,
                         ),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
@@ -133,7 +133,7 @@ class ReaderScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    l10n.cancel,
+                                    context.l10n.cancel,
                                     style:
                                         TextStyle(color: primaryColor(context)),
                                   )),
@@ -143,7 +143,7 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.double_tap_animation_speed),
+              title: Text(context.l10n.double_tap_animation_speed),
               subtitle: Text(
                 getAnimationSpeedName(doubleTapAnimationSpeed, context),
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
@@ -155,7 +155,7 @@ class ReaderScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(l10n.background_color),
+                        title: Text(context.l10n.background_color),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
                             child: ListView.builder(
@@ -193,7 +193,7 @@ class ReaderScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    l10n.cancel,
+                                    context.l10n.cancel,
                                     style:
                                         TextStyle(color: primaryColor(context)),
                                   )),
@@ -203,7 +203,7 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.background_color),
+              title: Text(context.l10n.background_color),
               subtitle: Text(
                 getBackgroundColorName(backgroundColor, context),
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
@@ -217,7 +217,7 @@ class ReaderScreen extends ConsumerWidget {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                          l10n.page_preload_amount,
+                          context.l10n.page_preload_amount,
                         ),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
@@ -252,7 +252,7 @@ class ReaderScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    l10n.cancel,
+                                    context.l10n.cancel,
                                     style:
                                         TextStyle(color: primaryColor(context)),
                                   )),
@@ -262,9 +262,9 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.page_preload_amount),
+              title: Text(context.l10n.page_preload_amount),
               subtitle: Text(
-                l10n.page_preload_amount_subtitle,
+                context.l10n.page_preload_amount_subtitle,
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
               ),
             ),
@@ -275,7 +275,7 @@ class ReaderScreen extends ConsumerWidget {
                     builder: (context) {
                       return AlertDialog(
                         title: Text(
-                          l10n.scale_type,
+                          context.l10n.scale_type,
                         ),
                         content: SizedBox(
                             width: mediaWidth(context, 0.8),
@@ -312,7 +312,7 @@ class ReaderScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
-                                    l10n.cancel,
+                                    context.l10n.cancel,
                                     style:
                                         TextStyle(color: primaryColor(context)),
                                   )),
@@ -322,7 +322,7 @@ class ReaderScreen extends ConsumerWidget {
                       );
                     });
               },
-              title: Text(l10n.scale_type),
+              title: Text(context.l10n.scale_type),
               subtitle: Text(
                 getScaleTypeNames(context)[scaleType.index],
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
@@ -330,7 +330,7 @@ class ReaderScreen extends ConsumerWidget {
             ),
             SwitchListTile(
                 value: animatePageTransitions,
-                title: Text(l10n.animate_page_transitions),
+                title: Text(context.l10n.animate_page_transitions),
                 onChanged: (value) {
                   ref
                       .read(animatePageTransitionsStateProvider.notifier)
@@ -338,9 +338,15 @@ class ReaderScreen extends ConsumerWidget {
                 }),
             SwitchListTile(
                 value: cropBorders,
-                title: Text(l10n.crop_borders),
+                title: Text(context.l10n.crop_borders),
                 onChanged: (value) {
                   ref.read(cropBordersStateProvider.notifier).set(value);
+                }),
+            SwitchListTile(
+                value: usePageTapZones,
+                title: Text(context.l10n.use_page_tap_zones),
+                onChanged: (value) {
+                  ref.read(usePageTapZonesStateProvider.notifier).set(value);
                 }),
           ],
         ),
@@ -350,24 +356,23 @@ class ReaderScreen extends ConsumerWidget {
 }
 
 String getReaderModeName(ReaderMode readerMode, BuildContext context) {
-  final l10n = l10nLocalizations(context);
   return switch (readerMode) {
-    ReaderMode.vertical => l10n!.reading_mode_vertical,
-    ReaderMode.verticalContinuous => l10n!.reading_mode_vertical_continuous,
-    ReaderMode.ltr => l10n!.reading_mode_left_to_right,
-    ReaderMode.rtl => l10n!.reading_mode_right_to_left,
-    _ => l10n!.reading_mode_webtoon
+    ReaderMode.vertical => context.l10n.reading_mode_vertical,
+    ReaderMode.verticalContinuous =>
+      context.l10n.reading_mode_vertical_continuous,
+    ReaderMode.ltr => context.l10n.reading_mode_left_to_right,
+    ReaderMode.rtl => context.l10n.reading_mode_right_to_left,
+    _ => context.l10n.reading_mode_webtoon
   };
 }
 
 String getBackgroundColorName(
     BackgroundColor backgroundColor, BuildContext context) {
-  final l10n = l10nLocalizations(context)!;
   return switch (backgroundColor) {
-    BackgroundColor.white => l10n.white,
-    BackgroundColor.grey => l10n.grey,
-    BackgroundColor.black => l10n.black,
-    _ => l10n.automaic,
+    BackgroundColor.white => context.l10n.white,
+    BackgroundColor.grey => context.l10n.grey,
+    BackgroundColor.black => context.l10n.black,
+    _ => context.l10n.automaic,
   };
 }
 
@@ -381,21 +386,20 @@ Color? getBackgroundColor(BackgroundColor backgroundColor) {
 }
 
 String getAnimationSpeedName(int type, BuildContext context) {
-  final l10n = l10nLocalizations(context);
+
   return switch (type) {
-    0 => l10n!.no_animation,
-    1 => l10n!.normal,
-    _ => l10n!.fast,
+    0 => context.l10n.no_animation,
+    1 => context.l10n.normal,
+    _ => context.l10n.fast,
   };
 }
 
 List<String> getScaleTypeNames(BuildContext context) {
-  final l10n = l10nLocalizations(context)!;
   return [
-    l10n.scale_type_fit_screen,
-    l10n.scale_type_stretch,
-    l10n.scale_type_fit_width,
-    l10n.scale_type_fit_height,
+    context.l10n.scale_type_fit_screen,
+    context.l10n.scale_type_stretch,
+    context.l10n.scale_type_fit_width,
+    context.l10n.scale_type_fit_height,
     // l10n.scale_type_original_size,
     // l10n.scale_type_smart_fit,
   ];

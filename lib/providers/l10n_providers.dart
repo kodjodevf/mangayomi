@@ -35,3 +35,7 @@ AppLocalizations? l10nLocalizations(BuildContext context) =>
 Locale currentLocale(BuildContext context) {
   return Localizations.localeOf(context);
 }
+
+extension L10nExtension on BuildContext {
+  AppLocalizations get l10n => AppLocalizations.of(this)!;
+}

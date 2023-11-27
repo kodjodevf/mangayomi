@@ -38,6 +38,7 @@ class ImageViewCenter extends ConsumerWidget {
     return isLocale
         ? archiveImage != null
             ? ExtendedImage.memory(archiveImage,
+                filterQuality: FilterQuality.medium,
                 fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
@@ -46,6 +47,7 @@ class ImageViewCenter extends ConsumerWidget {
                 onDoubleTap: onDoubleTap)
             : ExtendedImage.file(
                 File("${datas.path!.path}" "${padIndex(datas.index! + 1)}.jpg"),
+                filterQuality: FilterQuality.medium,
                 fit: getBoxFit(scaleType),
                 clearMemoryCacheWhenDispose: true,
                 enableMemoryCache: false,
@@ -54,6 +56,7 @@ class ImageViewCenter extends ConsumerWidget {
                 onDoubleTap: onDoubleTap)
         : ExtendedImage.network(datas.url!.trim().trimLeft().trimRight(),
             fit: getBoxFit(scaleType),
+            filterQuality: FilterQuality.medium,
             headers: ref.watch(headersProvider(
                 source: datas.chapter!.manga.value!.source!,
                 lang: datas.chapter!.manga.value!.lang!)),

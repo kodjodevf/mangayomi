@@ -340,8 +340,13 @@ const SettingsSchema = CollectionSchema(
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
-    r'userAgent': PropertySchema(
+    r'usePageTapZones': PropertySchema(
       id: 61,
+      name: r'usePageTapZones',
+      type: IsarType.bool,
+    ),
+    r'userAgent': PropertySchema(
+      id: 62,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -714,7 +719,8 @@ void _settingsSerialize(
   );
   writer.writeLong(offsets[59], object.startDatebackup);
   writer.writeBool(offsets[60], object.themeIsDark);
-  writer.writeString(offsets[61], object.userAgent);
+  writer.writeBool(offsets[61], object.usePageTapZones);
+  writer.writeString(offsets[62], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -835,7 +841,8 @@ Settings _settingsDeserialize(
     ),
     startDatebackup: reader.readLongOrNull(offsets[59]),
     themeIsDark: reader.readBoolOrNull(offsets[60]),
-    userAgent: reader.readStringOrNull(offsets[61]),
+    usePageTapZones: reader.readBoolOrNull(offsets[61]),
+    userAgent: reader.readStringOrNull(offsets[62]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1064,6 +1071,8 @@ P _settingsDeserializeProp<P>(
     case 60:
       return (reader.readBoolOrNull(offset)) as P;
     case 61:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 62:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5097,6 +5106,34 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      usePageTapZonesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'usePageTapZones',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      usePageTapZonesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'usePageTapZones',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      usePageTapZonesEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'usePageTapZones',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> userAgentIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -6021,6 +6058,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUsePageTapZones() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usePageTapZones', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUsePageTapZonesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usePageTapZones', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUserAgent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.asc);
@@ -6667,6 +6716,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUsePageTapZones() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usePageTapZones', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUsePageTapZonesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'usePageTapZones', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUserAgent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.asc);
@@ -6997,6 +7058,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUsePageTapZones() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'usePageTapZones');
     });
   }
 
@@ -7422,6 +7489,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> themeIsDarkProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> usePageTapZonesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'usePageTapZones');
     });
   }
 

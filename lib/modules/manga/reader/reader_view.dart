@@ -257,6 +257,7 @@ class _MangaChapterPageGalleryState
     _processCropBorders();
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
+    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
       onWillPop: () async {
@@ -653,8 +654,8 @@ class _MangaChapterPageGalleryState
                                     },
                                     itemCount: _uChapDataPreload.length,
                                     onPageChanged: _onPageChanged)),
-                    _gestureRightLeft(failedToLoadImage),
-                    _gestureTopBottom(failedToLoadImage),
+                    _gestureRightLeft(failedToLoadImage, usePageTapZones),
+                    _gestureTopBottom(failedToLoadImage, usePageTapZones),
                     _showMore(),
                     _showPage(),
                   ],
@@ -1565,7 +1566,7 @@ class _MangaChapterPageGalleryState
     return !(index * 2 < pageLength) ? pageLength - 1 : index1 - 1;
   }
 
-  Widget _gestureRightLeft(bool failedToLoadImage) {
+  Widget _gestureRightLeft(bool failedToLoadImage, bool usePageTapZones) {
     return Consumer(
       builder: (context, ref, child) {
         return Row(
@@ -1575,13 +1576,15 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  if (_isReverseHorizontal) {
-                    _onBtnTapped(_currentIndex! + 1, false);
-                  } else {
-                    _onBtnTapped(_currentIndex! - 1, true);
-                  }
-                },
+                onTap: usePageTapZones
+                    ? () {
+                        if (_isReverseHorizontal) {
+                          _onBtnTapped(_currentIndex! + 1, false);
+                        } else {
+                          _onBtnTapped(_currentIndex! - 1, true);
+                        }
+                      }
+                    : null,
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -1618,13 +1621,15 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  if (_isReverseHorizontal) {
-                    _onBtnTapped(_currentIndex! - 1, true);
-                  } else {
-                    _onBtnTapped(_currentIndex! + 1, false);
-                  }
-                },
+                onTap: usePageTapZones
+                    ? () {
+                        if (_isReverseHorizontal) {
+                          _onBtnTapped(_currentIndex! - 1, true);
+                        } else {
+                          _onBtnTapped(_currentIndex! + 1, false);
+                        }
+                      }
+                    : null,
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -1639,7 +1644,7 @@ class _MangaChapterPageGalleryState
     );
   }
 
-  Widget _gestureTopBottom(bool failedToLoadImage) {
+  Widget _gestureTopBottom(bool failedToLoadImage, bool usePageTapZones) {
     return Consumer(
       builder: (context, ref, child) {
         return Column(
@@ -1652,7 +1657,9 @@ class _MangaChapterPageGalleryState
                 onTap: () {
                   failedToLoadImage
                       ? _isViewFunction()
-                      : _onBtnTapped(_currentIndex! - 1, true);
+                      : usePageTapZones
+                          ? _onBtnTapped(_currentIndex! - 1, true)
+                          : null;
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
@@ -1674,7 +1681,9 @@ class _MangaChapterPageGalleryState
                 onTap: () {
                   failedToLoadImage
                       ? _isViewFunction()
-                      : _onBtnTapped(_currentIndex! + 1, false);
+                      : usePageTapZones
+                          ? _onBtnTapped(_currentIndex! + 1, false)
+                          : null;
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
@@ -1696,7 +1705,7 @@ class _MangaChapterPageGalleryState
         readerMode == ReaderMode.webtoon;
   }
 
-  _showModalSettings() {
+  void _showModalSettings() {
     final l10n = l10nLocalizations(context)!;
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
@@ -1732,6 +1741,8 @@ class _MangaChapterPageGalleryState
                         children: [
                           Consumer(builder: (context, ref, chil) {
                             final readerMode = ref.watch(_currentReaderMode);
+                            final usePageTapZones =
+                                ref.watch(usePageTapZonesStateProvider);
                             final cropBorders =
                                 ref.watch(cropBordersStateProvider);
 
@@ -1772,6 +1783,22 @@ class _MangaChapterPageGalleryState
                                         onChanged: (value) {
                                           ref
                                               .read(cropBordersStateProvider
+                                                  .notifier)
+                                              .set(value);
+                                        }),
+                                    SwitchListTile(
+                                        value: usePageTapZones,
+                                        title: Text(l10n.use_page_tap_zones,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge!
+                                                    .color!
+                                                    .withOpacity(0.9),
+                                                fontSize: 14)),
+                                        onChanged: (value) {
+                                          ref
+                                              .read(usePageTapZonesStateProvider
                                                   .notifier)
                                               .set(value);
                                         }),

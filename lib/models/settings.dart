@@ -139,6 +139,8 @@ class Settings {
 
   String? autoBackupLocation;
 
+  bool? usePageTapZones;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -198,7 +200,8 @@ class Settings {
       this.backupFrequency,
       this.backupFrequencyOptions,
       this.autoBackupLocation,
-      this.startDatebackup});
+      this.startDatebackup,
+      this.usePageTapZones = true});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -310,6 +313,7 @@ class Settings {
     backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
+    usePageTapZones = json['usePageTapZones'];
   }
 
   Map<String, dynamic> toJson() {
@@ -407,6 +411,7 @@ class Settings {
     data['backupFrequencyOptions'] = backupFrequencyOptions;
     data['autoBackupLocation'] = autoBackupLocation;
     data['startDatebackup'] = startDatebackup;
+    data['usePageTapZones'] = usePageTapZones;
     return data;
   }
 }

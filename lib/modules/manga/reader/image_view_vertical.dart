@@ -48,7 +48,8 @@ class ImageViewVertical extends ConsumerWidget {
             ? archiveImage != null
                 ? ExtendedImage.memory(archiveImage,
                     fit: getBoxFit(scaleType),
-                    enableMemoryCache: false,
+                    filterQuality: FilterQuality.medium,
+                    enableMemoryCache: true,
                     enableLoadState: true, loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.loading) {
                       return Container(
@@ -60,7 +61,8 @@ class ImageViewVertical extends ConsumerWidget {
                   })
                 : ExtendedImage.file(
                     fit: getBoxFit(scaleType),
-                    enableMemoryCache: false,
+                    enableMemoryCache: true,
+                    filterQuality: FilterQuality.medium,
                     File(
                         '${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'),
                     enableLoadState: true, loadStateChanged: (state) {
@@ -73,6 +75,7 @@ class ImageViewVertical extends ConsumerWidget {
                     return null;
                   })
             : ExtendedImage.network(datas.url!.trim().trimLeft().trimRight(),
+                filterQuality: FilterQuality.medium,
                 headers: ref.watch(headersProvider(
                     source: datas.chapter!.manga.value!.source!,
                     lang: datas.chapter!.manga.value!.lang!)),

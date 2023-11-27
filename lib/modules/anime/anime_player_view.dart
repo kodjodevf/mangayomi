@@ -41,10 +41,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky,
-        overlays: []);
     final serversData = ref.watch(getVideoListProvider(
       episode: widget.episode,
     ));
@@ -576,12 +572,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                           }),
                       if (!isFullScreen)
                         IconButton(
-                          icon: const Icon(Icons.fit_screen_sharp,
+                          icon: const Icon(Icons.fit_screen_outlined,
                               size: 25, color: Colors.white),
                           onPressed: () async {
                             _changeFitLabel(ref);
                           },
                         ),
+                      const MaterialFullscreenButton(iconSize: 25)
                     ],
                   ),
                 ],
@@ -637,38 +634,37 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (_isDesktop)
-                  Row(
-                    children: [
-                      if (hasPrevEpisode)
-                        IconButton(
-                          onPressed: () {
-                            pushReplacementMangaReaderView(
-                                context: context,
-                                chapter: _streamController.getPrevEpisode());
-                          },
-                          icon: const Icon(
-                            Icons.skip_previous,
-                            size: 25,
-                            color: Colors.white,
-                          ),
-                        ),
-                      const MaterialDesktopPlayOrPauseButton(iconSize: 25),
-                      if (hasNextEpisode)
-                        IconButton(
-                          onPressed: () {
-                            pushReplacementMangaReaderView(
+                Row(
+                  children: [
+                    if (hasPrevEpisode)
+                      IconButton(
+                        onPressed: () {
+                          pushReplacementMangaReaderView(
                               context: context,
-                              chapter: _streamController.getNextEpisode(),
-                            );
-                          },
-                          icon: const Icon(Icons.skip_next,
-                              size: 25, color: Colors.white),
+                              chapter: _streamController.getPrevEpisode());
+                        },
+                        icon: const Icon(
+                          Icons.skip_previous,
+                          size: 25,
+                          color: Colors.white,
                         ),
-                      const MaterialDesktopVolumeButton(iconSize: 25),
-                      const MaterialDesktopPositionIndicator()
-                    ],
-                  ),
+                      ),
+                    const MaterialDesktopPlayOrPauseButton(iconSize: 25),
+                    if (hasNextEpisode)
+                      IconButton(
+                        onPressed: () {
+                          pushReplacementMangaReaderView(
+                            context: context,
+                            chapter: _streamController.getNextEpisode(),
+                          );
+                        },
+                        icon: const Icon(Icons.skip_next,
+                            size: 25, color: Colors.white),
+                      ),
+                    const MaterialDesktopVolumeButton(iconSize: 25),
+                    const MaterialDesktopPositionIndicator()
+                  ],
+                ),
                 Row(
                   children: [
                     if (!isFullScreen)
@@ -701,8 +697,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                           _changeFitLabel(ref);
                         },
                       ),
-                    if (_isDesktop)
-                      const MaterialDesktopFullscreenButton(iconSize: 25)
+                    const MaterialDesktopFullscreenButton(iconSize: 25)
                   ],
                 ),
               ],
