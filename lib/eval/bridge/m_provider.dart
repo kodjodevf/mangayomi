@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:mangayomi/eval/bridge/filter.dart';
 import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/bridge/m_manga.dart';
 import 'package:mangayomi/eval/bridge/m_pages.dart';
 import 'package:mangayomi/eval/bridge/m_status.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
 import 'package:mangayomi/eval/bridge/m_video.dart';
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
@@ -127,6 +129,9 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 false,
               ),
             ])),
+        'getFilterList': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(
+                CoreTypes.future, [BridgeTypeRef(CoreTypes.dynamic)])))),
         'cryptoHandler': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
@@ -963,9 +968,14 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       await $_invoke('getPopular', [$MSource.wrap(source), $int(page)]);
 
   @override
-  Future<MPages> search(MSource source, String query, int page) async =>
-      await $_invoke(
-          'search', [$MSource.wrap(source), $String(query), $int(page)]);
+  Future<MPages> search(MSource source, String query, int page,
+          FilterList filterList) async =>
+      await $_invoke('search', [
+        $MSource.wrap(source),
+        $String(query),
+        $int(page),
+        $FilterList.wrap(FilterList(_toValueList(filterList.filters)))
+      ]);
 
   @override
   Future<List<String>> getPageList(MSource source, String url) async {
@@ -973,6 +983,15 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         await $_invoke('getPageList', [$MSource.wrap(source), $String(url)]);
     if (res is $List) {
       return res.$reified.map((e) => e as String).toList();
+    }
+    return res;
+  }
+
+  @override
+  List getFilterList() {
+    final res = $_invoke('getFilterList', []);
+    if (res is $List) {
+      return res.$reified;
     }
     return res;
   }
@@ -1000,4 +1019,35 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             : e.audios!
                 .map((t) => $MTrack.wrap(Track(file: t.file, label: t.label)))
                 .toList()));
+  _toValueList(List filters) {
+    return (filters).map((e) {
+      if (e is SelectFilter) {
+        return $SelectFilter
+            .wrap(SelectFilter(e.type, e.name, e.state, _toValueList(e.values)));
+      } else if (e is TextFilter) {
+        return $TextFilter.wrap(e);
+      } else if (e is HeaderFilter) {
+        return $HeaderFilter.wrap(e);
+      } else if (e is CheckBoxFilter) {
+        return $CheckBoxFilter.wrap(e);
+      } else if (e is TriStateFilter) {
+        return $TriStateFilter.wrap(e);
+      } else if (e is SeparatorFilter) {
+        return $SeparatorFilter.wrap(e);
+      } else if (e is SortFilter) {
+        return $SortFilter
+            .wrap(SortFilter(e.type, e.name, e.state, _toValueList(e.values)));
+      } else if (e is SortState) {
+        return $SortState.wrap(e);
+      } else if (e is CheckBoxFilter) {
+        return $CheckBoxFilter.wrap(e);
+      } else if (e is SelectFilterOption) {
+        return $SelectFilterOption.wrap(e);
+      } else if (e is GroupFilter) {
+        return $GroupFilter
+            .wrap(GroupFilter(e.type, e.name, _toValueList(e.state)));
+      }
+      return e;
+    }).toList();
+  }
 }

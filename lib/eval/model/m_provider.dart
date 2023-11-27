@@ -1,3 +1,4 @@
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -10,7 +11,8 @@ abstract class MProvider {
 
   Future<MPages> getPopular(MSource source, int page);
 
-  Future<MPages> search(MSource source, String query, int page);
+  Future<MPages> search(
+      MSource source, String query, int page, FilterList filterList);
 
   Future<MManga> getDetail(MSource source, String url);
 
@@ -18,5 +20,5 @@ abstract class MProvider {
 
   Future<List<Video>> getVideoList(MSource source, String url);
 
-  // FilterList getFilterList();
+  List<dynamic> getFilterList();
 }
