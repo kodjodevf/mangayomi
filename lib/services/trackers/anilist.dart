@@ -25,7 +25,7 @@ class Anilist extends _$Anilist {
       : 'G2fFUiGtgFd60D0lCkhgGKvMmrCfDmZXADQIzWXr';
 
   @override
- void build({required int syncId, bool? isManga}) {}
+  void build({required int syncId, bool? isManga}) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)
@@ -109,7 +109,6 @@ class Anilist extends _$Anilist {
       }
     }
     ''';
-
     final body = {
       "query": query,
       "variables": {
@@ -418,7 +417,7 @@ class Anilist extends _$Anilist {
       track.libraryId = jsonRes['id'];
       track.syncId = syncId;
       track.mediaId = jsonRes['media']['id'];
-      track.status = _getALTrackStatus(jsonRes['status']);
+      track.status = _getALTrackStatusManga(jsonRes['status']);
       track.title = jsonRes['media']['title']['userPreferred'] ?? '';
       track.score = jsonRes['scoreRaw'] ?? 0;
       track.lastChapterRead = jsonRes['progress'] ?? 0;
@@ -500,7 +499,7 @@ class Anilist extends _$Anilist {
       track.libraryId = jsonRes['id'];
       track.syncId = syncId;
       track.mediaId = jsonRes['media']['id'];
-      track.status = _getALTrackStatus(jsonRes['status']);
+      track.status = _getALTrackStatusAnime(jsonRes['status']);
       track.title = jsonRes['media']['title']['userPreferred'] ?? '';
       track.score = jsonRes['scoreRaw'] ?? 0;
       track.lastChapterRead = jsonRes['progress'] ?? 0;
@@ -582,7 +581,7 @@ class Anilist extends _$Anilist {
     };
   }
 
-  TrackStatus _getALTrackStatus(String status) {
+  TrackStatus _getALTrackStatusManga(String status) {
     return switch (status) {
       "CURRENT" => TrackStatus.reading,
       "COMPLETED" => TrackStatus.completed,
@@ -590,6 +589,17 @@ class Anilist extends _$Anilist {
       "DROPPED" => TrackStatus.dropped,
       "PLANNING" => TrackStatus.planToRead,
       _ => TrackStatus.rereading,
+    };
+  }
+
+  TrackStatus _getALTrackStatusAnime(String status) {
+    return switch (status) {
+      "CURRENT" => TrackStatus.watching,
+      "COMPLETED" => TrackStatus.completed,
+      "PAUSED" => TrackStatus.onHold,
+      "DROPPED" => TrackStatus.dropped,
+      "PLANNING" => TrackStatus.planToWatch,
+      _ => TrackStatus.reWatching,
     };
   }
 
