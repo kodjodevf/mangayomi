@@ -243,7 +243,7 @@
   "create_backup_subtitle":"Peut être utilisé pour restaurer la bibliothèque actuelle",
   "restore_backup":"Restaurer une sauvegarde",
   "restore_backup_subtitle":"Restaurer la bibliothèque à partir d'un fichier de sauvegarde",
-  "automatic_backups":"Sauvegarders automatiques",
+  "automatic_backups":"Sauvegardes automatiques",
   "backup_frequency":"Fréquence de sauvegarde",
   "backup_location":"Dossier de sauvegarde",
   "backup_options":"Options de sauvegarde",
@@ -262,5 +262,7 @@
   "services":"Services",
   "tracking_warning_info":"Synchronisation à sens unique pour mettre à jour la progression du chapitre dans les services de suivi. Configurez le suivi des entrées individuelles à partir de leur boutton de suivi.",
   "use_page_tap_zones":"Utiliser les zones tactiles",
-  "manage_trackers":"Gérer les suivis"
+  "manage_trackers":"Gérer les suivis",
+  "restore":"Restaurer",
+  "backups":"Sauvegardes"
 }

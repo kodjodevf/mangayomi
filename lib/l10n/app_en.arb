@@ -262,6 +262,8 @@
   "services":"Services",
   "tracking_warning_info":"One-way sync yo update the chapter progress in tracking services. Set up tracking for individual entries from their tracking button.",
   "use_page_tap_zones":"Use page tap zones" ,
-  "manage_trackers":"Manage trackers"
+  "manage_trackers":"Manage trackers",
+  "restore":"Restore",
+  "backups":"Backups"
 
 }
