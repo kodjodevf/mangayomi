@@ -11,13 +11,11 @@ class TrackListile extends ConsumerWidget {
   final int id;
   final List<TrackPreference> entries;
   final String? text;
-  final Color? color;
   const TrackListile(
       {super.key,
       required this.onTap,
       required this.id,
       required this.entries,
-      this.color,
       this.text});
 
   @override
@@ -31,9 +29,8 @@ class TrackListile extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         leading: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: color,
-          ),
+              borderRadius: BorderRadius.circular(10),
+              color: trackInfos(id).$3),
           width: 60,
           height: 70,
           child: Image.asset(
@@ -72,9 +69,11 @@ class TrackListile extends ConsumerWidget {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text(l10n.cancel,
-                                    style:
-                                        TextStyle(color: secondaryColor(context)),)),
+                                  child: Text(
+                                    l10n.cancel,
+                                    style: TextStyle(
+                                        color: secondaryColor(context)),
+                                  )),
                               const SizedBox(width: 15),
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -82,14 +81,15 @@ class TrackListile extends ConsumerWidget {
                                           Colors.red.withOpacity(0.7)),
                                   onPressed: () {
                                     ref
-                                        .read(tracksProvider(syncId: id).notifier)
+                                        .read(
+                                            tracksProvider(syncId: id).notifier)
                                         .logout();
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     l10n.log_out,
-                                    style:
-                                        TextStyle(color: secondaryColor(context)),
+                                    style: TextStyle(
+                                        color: secondaryColor(context)),
                                   )),
                             ],
                           )

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
+import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
@@ -44,7 +46,6 @@ class TrackScreen extends ConsumerWidget {
                     ),
                   ),
                   TrackListile(
-                      color: const Color.fromRGBO(18, 25, 35, 1),
                       onTap: () async {
                         await ref
                             .read(anilistProvider(syncId: 2).notifier)
@@ -53,14 +54,12 @@ class TrackScreen extends ConsumerWidget {
                       id: 2,
                       entries: entries!),
                   TrackListile(
-                      color: const Color.fromRGBO(51, 37, 50, 1),
                       onTap: () async {
                         _showDialogLogin(context, ref);
                       },
                       id: 3,
                       entries: entries),
                   TrackListile(
-                      color: const Color.fromRGBO(46, 81, 162, 1),
                       onTap: () async {
                         await ref
                             .read(myAnimeListProvider(syncId: 1, isManga: null)
@@ -84,7 +83,11 @@ class TrackScreen extends ConsumerWidget {
                     subtitle: Text(l10n.tracking_warning_info,
                         style: TextStyle(
                             fontSize: 11, color: secondaryColor(context))),
-                  )
+                  ),
+                  ListTileWidget(
+                      title: l10n.manage_trackers,
+                      icon: Icons.settings,
+                      onTap: () => context.push('/manageTrackers')),
                 ],
               );
             }),

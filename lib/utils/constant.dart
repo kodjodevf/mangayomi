@@ -55,11 +55,23 @@ TrackStatus toTrackStatus(TrackStatus status, bool isManga, int syncId) {
       : status;
 }
 
-(String, String) trackInfos(int id) {
+(String, String, Color) trackInfos(int id) {
   return switch (id) {
-    1 => ("assets/trackers_icons/tracker_mal.webp", "MyAnimeList"),
-    2 => ("assets/trackers_icons/tracker_anilist.webp", "Anilist"),
-    _ => ("assets/trackers_icons/tracker_kitsu.webp", "Kitsu"),
+    1 => (
+        "assets/trackers_icons/tracker_mal.webp",
+        "MyAnimeList",
+        const Color.fromRGBO(46, 81, 162, 1)
+      ),
+    2 => (
+        "assets/trackers_icons/tracker_anilist.webp",
+        "Anilist",
+        const Color.fromRGBO(51, 37, 50, 1)
+      ),
+    _ => (
+        "assets/trackers_icons/tracker_kitsu.webp",
+        "Kitsu",
+        const Color.fromRGBO(18, 25, 35, 1)
+      ),
   };
 }
 

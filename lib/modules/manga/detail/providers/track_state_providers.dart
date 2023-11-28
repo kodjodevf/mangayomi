@@ -52,7 +52,7 @@ class TrackState extends _$TrackState {
 
     ref
         .read(tracksProvider(syncId: track!.syncId!).notifier)
-        .updateTrackManga(updateTrack!);
+        .updateTrackManga(updateTrack!, isManga);
   }
 
   int getScoreMaxValue() {
@@ -133,14 +133,12 @@ class TrackState extends _$TrackState {
               .read(anilistProvider(syncId: syncId, isManga: isManga).notifier)
               .findLibAnime(track);
       findManga ??= isManga!
-            ? await ref
-                .read(
-                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
-                .addLibManga(track)
-            : await ref
-                .read(
-                    anilistProvider(syncId: syncId, isManga: isManga).notifier)
-                .addLibAnime(track);
+          ? await ref
+              .read(anilistProvider(syncId: syncId, isManga: isManga).notifier)
+              .addLibManga(track)
+          : await ref
+              .read(anilistProvider(syncId: syncId, isManga: isManga).notifier)
+              .addLibAnime(track);
     } else if (syncId == 3) {
       findManga = isManga!
           ? await ref
@@ -152,7 +150,7 @@ class TrackState extends _$TrackState {
     }
     ref
         .read(tracksProvider(syncId: syncId).notifier)
-        .updateTrackManga(findManga!);
+        .updateTrackManga(findManga!, isManga);
   }
 
   List<TrackStatus> getStatusList() {

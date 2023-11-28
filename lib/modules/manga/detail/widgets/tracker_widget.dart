@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
@@ -18,13 +17,15 @@ class TrackerWidget extends ConsumerStatefulWidget {
   final bool isManga;
   final Track trackRes;
   final int mangaId;
-  final TrackPreference trackPreference;
+  final int syncId;
+  final bool hide;
   const TrackerWidget(
       {super.key,
       required this.isManga,
-      required this.trackPreference,
+      required this.syncId,
       required this.trackRes,
-      required this.mangaId});
+      required this.mangaId,
+      this.hide = false});
 
   @override
   ConsumerState<TrackerWidget> createState() => _TrackerWidgetState();
@@ -46,8 +47,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
         .findManga();
     if (mounted) {
       ref
-          .read(tracksProvider(syncId: widget.trackPreference.syncId!).notifier)
-          .updateTrackManga(findManga!);
+          .read(tracksProvider(syncId: widget.syncId).notifier)
+          .updateTrackManga(findManga!, widget.isManga);
     }
   }
 
@@ -65,39 +66,43 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
         children: [
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
+              if (!widget.hide)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
                   child: Container(
-                    color: const Color.fromRGBO(18, 25, 35, 1),
-                    width: 70,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: trackInfos(widget.syncId).$3),
+                    width: 50,
+                    height: 45,
                     child: Image.asset(
-                      trackInfos(widget.trackPreference.syncId!).$1,
+                      trackInfos(widget.syncId).$1,
                       height: 30,
                     ),
                   ),
                 ),
-              ),
               Expanded(
                 child: _elevatedButton(
                   context,
-                  borderRadius:
-                      const BorderRadius.only(topRight: Radius.circular(20)),
-                  onPressed: () async {
-                    final trackSearch = await trackersSearchraggableMenu(
-                        context,
-                        isManga: widget.isManga,
-                        track: widget.trackRes) as TrackSearch?;
-                    if (trackSearch != null) {
-                      await ref
-                          .read(trackStateProvider(
-                                  track: null, isManga: widget.isManga)
-                              .notifier)
-                          .setTrackSearch(trackSearch, widget.mangaId,
-                              widget.trackPreference.syncId!);
-                    }
-                  },
+                  borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20)),
+                  onPressed: !widget.hide
+                      ? () async {
+                          final trackSearch = await trackersSearchraggableMenu(
+                              context,
+                              isManga: widget.isManga,
+                              track: widget.trackRes) as TrackSearch?;
+                          if (trackSearch != null) {
+                            await ref
+                                .read(trackStateProvider(
+                                        track: null, isManga: widget.isManga)
+                                    .notifier)
+                                .setTrackSearch(
+                                    trackSearch, widget.mangaId, widget.syncId);
+                          }
+                        }
+                      : null,
                   child: Row(
                     children: [
                       Expanded(
@@ -120,8 +125,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       IconButton(
                           onPressed: () {
                             ref
-                                .read(tracksProvider(
-                                        syncId: widget.trackPreference.syncId!)
+                                .read(tracksProvider(syncId: widget.syncId)
                                     .notifier)
                                 .deleteTrackManga(widget.trackRes);
                           },
@@ -445,7 +449,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
 }
 
 Widget _elevatedButton(BuildContext context,
-    {required VoidCallback onPressed,
+    {required Function()? onPressed,
     String text = "",
     Widget? child,
     BorderRadiusGeometry? borderRadius}) {

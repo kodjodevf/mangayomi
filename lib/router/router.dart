@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
@@ -10,6 +11,8 @@ import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dar
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
+import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
+import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
@@ -39,7 +42,7 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
     observers: [BotToastNavigatorObserver()],
     initialLocation: '/MangaLibrary',
-    debugLogDiagnostics: false,
+    debugLogDiagnostics: true,
     refreshListenable: router,
     routes: router._routes,
   );
@@ -453,6 +456,34 @@ class RouterNotifier extends ChangeNotifier {
             );
           },
         ),
+        GoRoute(
+          path: "/manageTrackers",
+          name: "manageTrackers",
+          builder: (context, state) {
+            return const ManageTrackersScreen();
+          },
+          pageBuilder: (context, state) {
+            return CustomTransition(
+              key: state.pageKey,
+              child: const ManageTrackersScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/trackingDetail",
+          name: "trackingDetail",
+          builder: (context, state) {
+            final trackerPref = state.extra as TrackPreference;
+            return TrackingDetail(trackerPref: trackerPref);
+          },
+          pageBuilder: (context, state) {
+            final trackerPref = state.extra as TrackPreference;
+            return CustomTransition(
+              key: state.pageKey,
+              child: TrackingDetail(trackerPref: trackerPref),
+            );
+          },
+        ),
       ];
 }
 
@@ -473,11 +504,3 @@ Route createRoute({required Widget page}) {
     },
   );
 }
-// I/vrf     ( 6408): 4�~
-// I/URL_SAFE( 6408): NJV-
-// I/DEFAULT ( 6408): TkpWLQ==
-// I/shift   ( 6408): QnlYJVAB
-// I/shift_default( 6408): UW5sWUpWQUI=
-// I/rot13   ( 6408): HJ5fJHcJDHV=
-// I/vrfEncrypt( 6408): HJ5fJHcJDHV=
-// I/flutter ( 6408): vrf=HJ5fJHcJDHV%3D%0A

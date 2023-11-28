@@ -1366,7 +1366,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             return Column(
                               children: [
                                 Icon(
-                                  isNotEmpty ? Icons.done_rounded : Icons.sync_outlined,
+                                  isNotEmpty
+                                      ? Icons.done_rounded
+                                      : Icons.sync_outlined,
                                   size: 20,
                                   color: color,
                                 ),
@@ -1688,7 +1690,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         return trackRes!.isNotEmpty
                             ? TrackerWidget(
                                 mangaId: widget.manga!.id!,
-                                trackPreference: entries[index],
+                                syncId: entries[index].syncId!,
                                 trackRes: trackRes.first,
                                 isManga: widget.manga!.isManga!)
                             : TrackListile(

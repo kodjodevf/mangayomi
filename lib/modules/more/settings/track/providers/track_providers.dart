@@ -24,7 +24,7 @@ class Tracks extends _$Tracks {
     });
   }
 
-  void updateTrackManga(Track track) {
+  void updateTrackManga(Track track, bool? isManga) {
     final tra = isar.tracks
         .filter()
         .syncIdEqualTo(syncId)
@@ -36,7 +36,9 @@ class Tracks extends _$Tracks {
       }
     }
 
-    isar.writeTxnSync(() => isar.tracks.putSync(track..syncId = syncId));
+    isar.writeTxnSync(() => isar.tracks.putSync(track
+      ..syncId = syncId
+      ..isManga = isManga));
   }
 
   void deleteTrackManga(Track track) {

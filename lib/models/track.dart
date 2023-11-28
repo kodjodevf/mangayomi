@@ -31,6 +31,8 @@ class Track {
 
   String? trackingUrl;
 
+  bool? isManga;
+
   Track(
       {this.id = Isar.autoIncrement,
       this.libraryId,
@@ -44,7 +46,8 @@ class Track {
       required this.status,
       this.startedReadingDate,
       this.finishedReadingDate,
-      this.trackingUrl});
+      this.trackingUrl,
+      this.isManga});
   Track.fromJson(Map<String, dynamic> json) {
     finishedReadingDate = json['finishedReadingDate'];
     id = json['id'];
@@ -59,6 +62,7 @@ class Track {
     title = json['title'];
     totalChapter = json['totalChapter'];
     trackingUrl = json['trackingUrl'];
+    isManga = json['isManga'];
   }
 
   Map<String, dynamic> toJson() {
@@ -76,6 +80,7 @@ class Track {
     data['title'] = title;
     data['totalChapter'] = totalChapter;
     data['trackingUrl'] = trackingUrl;
+    data['isManga'] = isManga;
     return data;
   }
 }
