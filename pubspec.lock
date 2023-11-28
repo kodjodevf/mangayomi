@@ -283,12 +283,11 @@ packages:
   dart_eval:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "9d2d4a7"
-      resolved-ref: "9d2d4a79cb77d2274bedde98ac0f7bb63b013776"
-      url: "https://github.com/ethanblake4/dart_eval.git"
-    source: git
-    version: "0.7.1"
+      name: dart_eval
+      sha256: c3ef388d9846ed032fa0cf0a69acae40d4c15ad7ad570ac3a37fa060de93c8ec
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.2"
   dart_style:
     dependency: transitive
     description:
@@ -849,8 +848,8 @@ packages:
     dependency: "direct main"
     description:
       path: media_kit_video
-      ref: e01d534
-      resolved-ref: e01d5344135922289d38a709639a686d92d1a531
+      ref: "0ab6b10ea660ead8e8e1694517aabe3582f25d5c"
+      resolved-ref: "0ab6b10ea660ead8e8e1694517aabe3582f25d5c"
       url: "https://github.com/media-kit/media-kit.git"
     source: git
     version: "1.2.4"

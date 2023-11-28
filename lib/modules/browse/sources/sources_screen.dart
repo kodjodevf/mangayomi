@@ -48,6 +48,7 @@ class SourcesScreen extends ConsumerWidget {
                   .where((element) => ref.watch(showNSFWStateProvider)
                       ? true
                       : element.isNsfw == false)
+                  .where((element) => element.isPinned == false)
                   .toList();
               return SingleChildScrollView(
                 child: Column(
