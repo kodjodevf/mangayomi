@@ -82,11 +82,12 @@ class BackupAndRestore extends ConsumerWidget {
                                 TextButton(
                                     onPressed: () async {
                                       // if (isIOS) {
-                                        // ref.watch(doBackUpProvider(
-                                        //     list: indexList,
-                                        //     path: autoBackupLocation.$1,
-                                        //     context: context));
+                                      //   ref.watch(doBackUpProvider(
+                                      //       list: indexList,
+                                      //       path: autoBackupLocation.$1,
+                                      //       context: context));
                                       // } else {
+
                                         final result = await FilePicker.platform
                                             .getDirectoryPath();
 
@@ -95,8 +96,8 @@ class BackupAndRestore extends ConsumerWidget {
                                               list: indexList,
                                               path: result,
                                               context: context));
-                                        }
-                                      // }
+                                        // }
+                                      }
                                     },
                                     child: Text(
                                       l10n.ok,
@@ -355,7 +356,7 @@ class BackupAndRestore extends ConsumerWidget {
             ),
           ),
           // if (isIOS)
-            ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
+          //   ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
           ListTile(
             title: Padding(
               padding: const EdgeInsets.only(bottom: 8),

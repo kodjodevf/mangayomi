@@ -184,59 +184,59 @@ jobs:
           allowUpdates: true
 
 
-  build-and-release-windows-zip:
-    permissions:
-      contents: write
-    runs-on: windows-latest
-    steps:
+  # build-and-release-windows-zip:
+  #   permissions:
+  #     contents: write
+  #   runs-on: windows-latest
+  #   steps:
       
-      - name: checkout branch
-        uses: actions/checkout@v3
+  #     - name: checkout branch
+  #       uses: actions/checkout@v3
 
-      - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
-        with:
-          channel: 'stable'
+  #     - name: setup flutter
+  #       uses: subosito/flutter-action@v2.10.0
+  #       with:
+  #         channel: 'stable'
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Setup Protobuf compiler
+  #       uses: arduino/setup-protoc@v2
+  #       with:
+  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install the CLI tool
-        run: cargo install rinf
+  #     - name: Install the CLI tool
+  #       run: cargo install rinf
         
-      - name: Generate message files
-        run: rinf message
+  #     - name: Generate message files
+  #       run: rinf message
 
-      - name: flutter pub get
-        run: |
-          git config --global core.longpaths true
-          flutter pub get
+  #     - name: flutter pub get
+  #       run: |
+  #         git config --global core.longpaths true
+  #         flutter pub get
 
-      - name: build windows
-        run: |
-          flutter build windows --release
-          $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
-          $SrcDir = "build\windows\runner\Release"
-          New-Item -Path $DestDir -ItemType Directory
-          Copy-Item $SrcDir\* -Recurse $DestDir
-          Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
-          Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
+  #     - name: build windows
+  #       run: |
+  #         flutter build windows --release
+  #         $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
+  #         $SrcDir = "build\windows\runner\Release"
+  #         New-Item -Path $DestDir -ItemType Directory
+  #         Copy-Item $SrcDir\* -Recurse $DestDir
+  #         Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
+  #         Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
 
-      - name: upload artifact windows zip
-        uses: actions/upload-artifact@v3
-        with:
-          path: build\windows\Mangayomi-*.zip
+  #     - name: upload artifact windows zip
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: build\windows\Mangayomi-*.zip
 
-      - name: release package windows zip
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: build\windows\Mangayomi-*.zip
-          allowUpdates: true
+  #     - name: release package windows zip
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         artifacts: build\windows\Mangayomi-*.zip
+  #         allowUpdates: true
 
           
   build-and-release-linux-zip:
