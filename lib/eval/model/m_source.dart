@@ -17,6 +17,8 @@ class MSource {
 
   String? apiUrl;
 
+  String? additionalParams;
+
   MSource(
       {this.id,
       this.name,
@@ -26,5 +28,6 @@ class MSource {
       this.hasCloudflare,
       this.dateFormat,
       this.dateFormatLocale,
-      this.apiUrl});
+      this.apiUrl,
+      this.additionalParams});
 }

@@ -15,23 +15,25 @@ class $MSource implements MSource, $Instance {
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []))
       },
       fields: {
-        'id': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
+        'id':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
         'name': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'baseUrl': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'lang': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'isFullData': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
-        'hasCloudflare': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
+        'isFullData':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
+        'hasCloudflare':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
         'dateFormat': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'dateFormatLocale': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'apiUrl': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'additionalParams': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
       },
       wrap: true);
@@ -69,6 +71,8 @@ class $MSource implements MSource, $Instance {
         return $String($value.dateFormatLocale!);
       case 'apiUrl':
         return $String($value.apiUrl!);
+      case 'additionalParams':
+        return $String($value.additionalParams!);
 
       default:
         return _superclass.$getProperty(runtime, identifier);
@@ -99,6 +103,8 @@ class $MSource implements MSource, $Instance {
         $value.dateFormatLocale = value.$reified;
       case 'apiUrl':
         $value.apiUrl = value.$reified;
+      case 'additionalParams':
+        $value.additionalParams = value.$reified;
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -132,6 +138,9 @@ class $MSource implements MSource, $Instance {
   String? get name => $value.name;
 
   @override
+  String? get additionalParams => $value.additionalParams;
+
+  @override
   set apiUrl(String? apiUrl) {}
 
   @override
@@ -157,4 +166,7 @@ class $MSource implements MSource, $Instance {
 
   @override
   set name(String? name) {}
+
+  @override
+  set additionalParams(String? additionalParams) {}
 }

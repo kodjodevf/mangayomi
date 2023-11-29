@@ -18,7 +18,7 @@ class BackupAndRestore extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isIOS = Platform.isIOS;
+    // final isIOS = Platform.isIOS;
     final backupFrequency = ref.watch(backupFrequencyStateProvider);
     final backupFrequencyOptions =
         ref.watch(backupFrequencyOptionsStateProvider);
@@ -81,12 +81,12 @@ class BackupAndRestore extends ConsumerWidget {
                                     )),
                                 TextButton(
                                     onPressed: () async {
-                                      if (isIOS) {
-                                        ref.watch(doBackUpProvider(
-                                            list: indexList,
-                                            path: autoBackupLocation.$1,
-                                            context: context));
-                                      } else {
+                                      // if (isIOS) {
+                                        // ref.watch(doBackUpProvider(
+                                        //     list: indexList,
+                                        //     path: autoBackupLocation.$1,
+                                        //     context: context));
+                                      // } else {
                                         final result = await FilePicker.platform
                                             .getDirectoryPath();
 
@@ -96,7 +96,7 @@ class BackupAndRestore extends ConsumerWidget {
                                               path: result,
                                               context: context));
                                         }
-                                      }
+                                      // }
                                     },
                                     child: Text(
                                       l10n.ok,
@@ -258,7 +258,7 @@ class BackupAndRestore extends ConsumerWidget {
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
-          if (!isIOS)
+          // if (!isIOS)
             ListTile(
               onTap: () async {
                 String? result = await FilePicker.platform.getDirectoryPath();
@@ -354,7 +354,7 @@ class BackupAndRestore extends ConsumerWidget {
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
-          if (isIOS)
+          // if (isIOS)
             ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
           ListTile(
             title: Padding(

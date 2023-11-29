@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/media_query.dart';
 
 class FilterWidget extends StatelessWidget {
   final List<dynamic> filterList;
@@ -19,26 +20,13 @@ class FilterWidget extends StatelessWidget {
         final filterState = filterList[idx];
         Widget? widget;
         if (filterState is TextFilter) {
-          widget = Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
+          widget = SeachFormTextFieldWidget(
+              text: filterState.state,
               onChanged: (val) {
                 filterList[idx] = filterState..state = val;
                 onChanged(filterList);
               },
-              decoration: InputDecoration(
-                isDense: true,
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: secondaryColor(context)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: primaryColor(context)),
-                ),
-                border: const OutlineInputBorder(borderSide: BorderSide()),
-                labelText: filterState.name,
-              ),
-            ),
-          );
+              labelText: filterState.name);
         } else if (filterState is HeaderFilter) {
           widget = ListTile(dense: true, title: Text(filterState.name));
         } else if (filterState is SeparatorFilter) {
@@ -117,47 +105,90 @@ class FilterWidget extends StatelessWidget {
             }).toList(),
           );
         } else if (filterState is SelectFilter) {
-          widget = Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: ListTile(
-                  dense: true,
-                  title: Text(filterState.name),
+          widget = SizedBox(
+            width: mediaWidth(context, 1),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: ListTile(
+                    dense: true,
+                    title: Text(filterState.name),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: DropdownButtonHideUnderline(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
-                    child: DropdownButton(
-                      icon: const Icon(Icons.keyboard_arrow_down),
-                      isExpanded: true,
-                      value: filterState.values[filterState.state],
-                      hint: Text(filterState.name,
-                          style: const TextStyle(fontSize: 13)),
-                      items: filterState.values
-                          .map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e.name,
-                                    style: const TextStyle(fontSize: 13)),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        filterState.state = filterState.values
-                            .indexWhere((element) => element == value);
-                        onChanged(filterList);
-                      },
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 25),
+                      child: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        value: filterState.values[filterState.state],
+                        hint: Text(filterState.name,
+                            style: const TextStyle(fontSize: 13)),
+                        items: filterState.values
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e.name,
+                                      style: const TextStyle(fontSize: 13)),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          filterState.state = filterState.values
+                              .indexWhere((element) => element == value);
+                          onChanged(filterList);
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         }
         return widget ?? const SizedBox.shrink();
       },
     );
+  }
+}
+
+class SeachFormTextFieldWidget extends StatefulWidget {
+  final String labelText;
+  final String text;
+  final Function(String) onChanged;
+  const SeachFormTextFieldWidget(
+      {super.key,
+      required this.text,
+      required this.onChanged,
+      required this.labelText});
+
+  @override
+  State<SeachFormTextFieldWidget> createState() =>
+      _SeachFormTextFieldWidgetState();
+}
+
+class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {
+  late final _controller = TextEditingController(text: widget.text);
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextField(
+          controller: _controller,
+          onChanged: widget.onChanged,
+          decoration: InputDecoration(
+            isDense: true,
+            filled: false,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: secondaryColor(context)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: primaryColor(context)),
+            ),
+            border: const OutlineInputBorder(borderSide: BorderSide()),
+            labelText: widget.labelText,
+          ),
+        ));
   }
 }

@@ -76,9 +76,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             source: widget.source,
             page: _page + 1,
           ).future);
-        } else if (_selectedIndex == 2 &&
-            _isSearch &&
-            (_query.isNotEmpty || _isFiltering)) {
+        } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
+            _isFiltering) {
           mangaResList = await ref.watch(searchProvider(
                   source: widget.source,
                   query: _query,
@@ -105,19 +104,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final filterList = getFilterList(source: widget.source);
-    if (_selectedIndex == 2 &&
-        _isSearch &&
-        (_query.isNotEmpty || _isFiltering)) {
+    if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
+        _isFiltering) {
       _getManga = ref.watch(searchProvider(
           source: widget.source, query: _query, page: 1, filterList: filters));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       _getManga =
           ref.watch(getLatestUpdatesProvider(source: widget.source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-      _getManga = ref.watch(getPopularProvider(
-        source: widget.source,
-        page: 1,
-      ));
+      _getManga = ref.watch(getPopularProvider(source: widget.source, page: 1));
     }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
@@ -198,6 +193,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     shrinkWrap: true,
                     itemCount: 3,
                     itemBuilder: (context, index) {
+                      if (filterList.isEmpty && index == 2) {
+                        return const SizedBox.shrink();
+                      }
                       return MangasCardSelector(
                         icon: _types(context)[index].icon,
                         selected: _selectedIndex == index,
@@ -206,7 +204,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                           if (filters.isEmpty) {
                             filters = filterList;
                           }
-                          if (filters.isNotEmpty && index == 2) {
+                          if (index == 2) {
                             final result = await showModalBottomSheet(
                               context: context,
                               builder: (context) =>
@@ -228,10 +226,18 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           ),
                                           const Spacer(),
                                           ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    primaryColor(context)),
                                             onPressed: () {
                                               Navigator.pop(context, 'filter');
                                             },
-                                            child: Text(l10n.filter),
+                                            child: Text(
+                                              l10n.filter,
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .scaffoldBackgroundColor),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -256,7 +262,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                 setState(() {
                                   _selectedIndex = 2;
                                   _isFiltering = true;
-                                  _isSearch = true;
                                   _page = 1;
                                 });
                               }
@@ -271,6 +276,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             setState(() {
                               _selectedIndex = index;
                               _isFiltering = false;
+                              _isSearch = false;
                               _page = 1;
                             });
                           }
@@ -416,8 +422,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                           IconButton(
                               onPressed: () {
                                 if (_selectedIndex == 2 &&
-                                    _isSearch &&
-                                    (_query.isNotEmpty || _isFiltering)) {
+                                        (_isSearch && _query.isNotEmpty) ||
+                                    _isFiltering) {
                                   ref.invalidate(searchProvider(
                                       source: widget.source,
                                       query: _query,

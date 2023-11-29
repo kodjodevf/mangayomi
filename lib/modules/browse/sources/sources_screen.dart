@@ -6,6 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
@@ -53,6 +54,8 @@ class SourcesScreen extends ConsumerWidget {
               return SingleChildScrollView(
                 child: Column(
                   children: [
+                    if (useTestSourceCode)
+                      SourceListTile(source: testSourceModel, isManga: isManga),
                     GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => "",

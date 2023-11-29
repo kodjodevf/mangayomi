@@ -51,6 +51,8 @@ class Source {
 
   String? appMinVerReq;
 
+  String? additionalParams;
+
   Source(
       {this.id = 0,
       this.name = '',
@@ -74,7 +76,8 @@ class Source {
       this.sourceCode = '',
       this.headers = '',
       this.isManga = true,
-      this.appMinVerReq = ""});
+      this.appMinVerReq = "",
+      this.additionalParams = ""});
 
   Source.fromJson(Map<String, dynamic> json) {
     apiUrl = json['apiUrl'];
@@ -100,6 +103,7 @@ class Source {
     typeSource = json['typeSource'];
     version = json['version'];
     versionLast = json['versionLast'];
+    additionalParams = json['additionalParams'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -127,6 +131,7 @@ class Source {
     data['typeSource'] = typeSource;
     data['version'] = version;
     data['versionLast'] = versionLast;
+    data['additionalParams'] = additionalParams;
     return data;
   }
 
@@ -140,6 +145,7 @@ class Source {
         baseUrl: baseUrl,
         apiUrl: apiUrl,
         dateFormat: dateFormat,
-        dateFormatLocale: dateFormatLocale);
+        dateFormatLocale: dateFormatLocale,
+        additionalParams: additionalParams);
   }
 }
