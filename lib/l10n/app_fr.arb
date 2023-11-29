@@ -264,5 +264,8 @@
   "use_page_tap_zones":"Utiliser les zones tactiles",
   "manage_trackers":"Gérer les suivis",
   "restore":"Restaurer",
-  "backups":"Sauvegardes"
+  "backups":"Sauvegardes",
+  "by_scanlator":"Par traducteur",
+  "by_name":"Par nom",
+  "installed":"Installé"
 }

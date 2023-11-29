@@ -354,7 +354,8 @@ class BackupAndRestore extends ConsumerWidget {
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
-          ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
+          if (isIOS)
+            ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
           ListTile(
             title: Padding(
               padding: const EdgeInsets.only(bottom: 8),

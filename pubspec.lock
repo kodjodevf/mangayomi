@@ -60,9 +60,11 @@ packages:
   background_downloader:
     dependency: "direct main"
     description:
-      path: "packages/background_downloader"
-      relative: true
-    source: path
+      path: "."
+      ref: "357595bb930360f2a153f84aeb85b8614a0eb4c3"
+      resolved-ref: "357595bb930360f2a153f84aeb85b8614a0eb4c3"
+      url: "https://github.com/kodjodevf/background_downloader.git"
+    source: git
     version: "7.12.3"
   boolean_selector:
     dependency: transitive

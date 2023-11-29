@@ -10,10 +10,9 @@ import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
-  const ExtensionListTileWidget({
-    super.key,
-    required this.source,
-  });
+  final bool installed;
+  const ExtensionListTileWidget(
+      {super.key, required this.source, this.installed = false});
 
   @override
   ConsumerState<ExtensionListTileWidget> createState() =>
@@ -128,25 +127,29 @@ class _ExtensionListTileWidgetState
           ],
         ),
         trailing: TextButton(
-          onPressed: !updateAivalable && sourceNotEmpty
-              ? null
-              : () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  widget.source.isManga!
-                      ? await ref.watch(fetchMangaSourcesListProvider(
-                              id: widget.source.id, reFresh: true)
-                          .future)
-                      : await ref.watch(fetchAnimeSourcesListProvider(
-                              id: widget.source.id, reFresh: true)
-                          .future);
-                  if (mounted) {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  }
-                },
+          onPressed: widget.installed
+              ? () {
+                  context.push('/extension_detail', extra: widget.source);
+                }
+              : !updateAivalable && sourceNotEmpty
+                  ? null
+                  : () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      widget.source.isManga!
+                          ? await ref.watch(fetchMangaSourcesListProvider(
+                                  id: widget.source.id, reFresh: true)
+                              .future)
+                          : await ref.watch(fetchAnimeSourcesListProvider(
+                                  id: widget.source.id, reFresh: true)
+                              .future);
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
+                    },
           child: _isLoading
               ? const SizedBox(
                   height: 20,
@@ -154,11 +157,13 @@ class _ExtensionListTileWidgetState
                   child: CircularProgressIndicator(
                     strokeWidth: 2.0,
                   ))
-              : Text(!sourceNotEmpty
-                  ? l10n.install
-                  : updateAivalable
-                      ? l10n.update
-                      : l10n.latest),
+              : Text(widget.installed
+                  ? l10n.settings
+                  : !sourceNotEmpty
+                      ? l10n.install
+                      : updateAivalable
+                          ? l10n.update
+                          : l10n.latest),
         ));
   }
 }

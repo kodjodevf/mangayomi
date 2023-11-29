@@ -11,6 +11,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -29,24 +30,52 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
   List<String> _pageUrls = [];
 
   final StorageProvider _storageProvider = StorageProvider();
-  _startDownload(bool? useWifi) async {
+
+  void _startDownload(bool? useWifi) async {
     await ref.watch(
         downloadChapterProvider(chapter: widget.chapter, useWifi: useWifi)
             .future);
   }
 
   late final manga = widget.chapter.manga.value!;
-  _deleteFile(List pageUrl) async {
+
+  void _sendFile() async {
+    final mangaDir =
+        await _storageProvider.getMangaMainDirectory(widget.chapter);
+    final path =
+        await _storageProvider.getMangaChapterDirectory(widget.chapter);
+
+    List<XFile> files = [];
+
+    final cbzFileExist =
+        File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync();
+    final mp4FileExist =
+        File("${mangaDir.path}${widget.chapter.name}.mp4").existsSync();
+    if (cbzFileExist) {
+      final cbzFile = File("${mangaDir.path}${widget.chapter.name}.cbz");
+      files = [XFile(cbzFile.path)];
+    } else if (mp4FileExist) {
+      final mp4File = File("${mangaDir.path}${widget.chapter.name}.mp4");
+      files = [XFile(mp4File.path)];
+    } else {
+      files = path!.listSync().map((e) => XFile(e.path)).toList();
+    }
+    if (files.isNotEmpty) {
+      Share.shareXFiles(files, text: widget.chapter.name);
+    }
+  }
+
+  void _deleteFile() async {
     final mangaDir =
         await _storageProvider.getMangaMainDirectory(widget.chapter);
     final path =
         await _storageProvider.getMangaChapterDirectory(widget.chapter);
 
     try {
-      if (await File("${mangaDir!.path}${widget.chapter.name}.cbz").exists()) {
+      if (File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync()) {
         File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
       }
-      if (await File("${mangaDir.path}${widget.chapter.name}.mp4").exists()) {
+      if (File("${mangaDir.path}${widget.chapter.name}.mp4").existsSync()) {
         File("${mangaDir.path}${widget.chapter.name}.mp4").deleteSync();
       }
       path!.deleteSync(recursive: true);
@@ -90,11 +119,10 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                             Theme.of(context).iconTheme.color!.withOpacity(0.7),
                       ),
                       onSelected: (value) {
-                        if (value == 1) {
-                          setState(() {
-                            _isStarted = false;
-                          });
-                          _deleteFile(entries.first.taskIds!);
+                        if (value == 0) {
+                          _sendFile();
+                        } else if (value == 1) {
+                          _deleteFile();
                         }
                       },
                       itemBuilder: (context) => [
@@ -272,7 +300,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     );
   }
 
-  _cancelTasks() async {
+  void _cancelTasks() async {
     setState(() {
       _isStarted = false;
     });

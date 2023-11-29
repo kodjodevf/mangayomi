@@ -35,37 +35,27 @@ class ImageViewCenter extends ConsumerWidget {
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage, WidgetRef ref) {
     final scaleType = ref.watch(scaleTypeStateProvider);
-    return isLocale
+    final image = isLocale
         ? archiveImage != null
-            ? ExtendedImage.memory(archiveImage,
-                filterQuality: FilterQuality.medium,
-                fit: getBoxFit(scaleType),
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                loadStateChanged: loadStateChanged,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap)
-            : ExtendedImage.file(
-                File("${datas.path!.path}" "${padIndex(datas.index! + 1)}.jpg"),
-                filterQuality: FilterQuality.medium,
-                fit: getBoxFit(scaleType),
-                clearMemoryCacheWhenDispose: true,
-                enableMemoryCache: false,
-                loadStateChanged: loadStateChanged,
-                initGestureConfigHandler: initGestureConfigHandler,
-                onDoubleTap: onDoubleTap)
-        : ExtendedImage.network(datas.url!.trim().trimLeft().trimRight(),
-            fit: getBoxFit(scaleType),
-            filterQuality: FilterQuality.medium,
+            ? ExtendedMemoryImageProvider(archiveImage)
+            : ExtendedFileImageProvider(
+                File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'))
+        : ExtendedNetworkImageProvider(datas.url!.trim().trimLeft().trimRight(),
+            cache: true,
+            cacheMaxAge: const Duration(days: 7),
             headers: ref.watch(headersProvider(
                 source: datas.chapter!.manga.value!.source!,
-                lang: datas.chapter!.manga.value!.lang!)),
-            enableMemoryCache: true,
-            mode: ExtendedImageMode.gesture,
-            cacheMaxAge: const Duration(days: 7),
-            handleLoadingProgress: true,
-            loadStateChanged: loadStateChanged,
-            initGestureConfigHandler: initGestureConfigHandler,
-            onDoubleTap: onDoubleTap);
+                lang: datas.chapter!.manga.value!.lang!)));
+
+    return ExtendedImage(
+        image: image as ImageProvider<Object>,
+        fit: getBoxFit(scaleType),
+        filterQuality: FilterQuality.medium,
+        enableMemoryCache: true,
+        mode: ExtendedImageMode.gesture,
+        handleLoadingProgress: true,
+        loadStateChanged: loadStateChanged,
+        initGestureConfigHandler: initGestureConfigHandler,
+        onDoubleTap: onDoubleTap);
   }
 }

@@ -261,11 +261,12 @@ class ReaderController {
           ..chapterId = chapter.id
           ..index = newIndex);
         final chap = chapter;
+        final isRead = (newIndex + 1) == getPageLength([]);
         isar.writeTxnSync(() {
           isar.settings.putSync(
               getIsarSetting()..chapterPageIndexList = chapterPageIndexs);
-          chap.isRead = (newIndex + 1) == getPageLength([]);
-          chap.lastPageRead = (newIndex + 1).toString();
+          chap.isRead = isRead;
+          chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
           isar.chapters.putSync(chap);
         });
       }

@@ -197,6 +197,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
         },
       );
+    } else if (sortChapter == 3) {
+      chapters.sort(
+        (a, b) {
+          return (a.name == null || b.name == null)
+              ? 0
+              : a.name!.compareTo(b.name!);
+        },
+      );
     }
     return chapterList;
   }
@@ -377,10 +385,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     PopupMenuItem<int>(
                                         value: 0,
                                         child: Text(l10n.edit_categories)),
-                                  if (!isLocalArchive)
-                                    if (widget.manga!.favorite!)
-                                      PopupMenuItem<int>(
-                                          value: 1, child: Text(l10n.migrate)),
+                                  // if (!isLocalArchive)
+                                  //   if (widget.manga!.favorite!)
+                                  //     PopupMenuItem<int>(
+                                  //         value: 1, child: Text(l10n.migrate)),
                                   if (!isLocalArchive)
                                     PopupMenuItem<int>(
                                         value: 2, child: Text(l10n.share)),
@@ -610,6 +618,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               isar.writeTxnSync(() {
                                 for (var chapter in chapters) {
                                   chapter.isRead = !chapter.isRead!;
+                                  if (!chapter.isRead!) {
+                                    chapter.lastPageRead = "1";
+                                  }
                                   isar.chapters.putSync(
                                       chapter..manga.value = widget.manga);
                                   chapter.manga.saveSync();
@@ -1009,12 +1020,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             mangaId: widget.manga!.id!)
                                         .notifier)
                                     .isReverse();
+                                final scanlators = ref.watch(
+                                    scanlatorsFilterStateProvider(
+                                        widget.manga!));
                                 final reverseChapter = ref.watch(
                                     sortChapterStateProvider(
                                         mangaId: widget.manga!.id!));
                                 return Column(
                                   children: [
-                                    for (var i = 0; i < 3; i++)
+                                    if (scanlators.$1.isNotEmpty)
+                                      ListTileChapterSort(
+                                        label: _getSortNameByIndex(0, context),
+                                        reverse: reverse,
+                                        onTap: () {
+                                          ref
+                                              .read(sortChapterStateProvider(
+                                                      mangaId:
+                                                          widget.manga!.id!)
+                                                  .notifier)
+                                              .set(0);
+                                        },
+                                        showLeading: reverseChapter.index == 0,
+                                      ),
+                                    for (var i = 1; i < 4; i++)
                                       ListTileChapterSort(
                                         label: _getSortNameByIndex(i, context),
                                         reverse: reverse,
@@ -1068,11 +1096,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   String _getSortNameByIndex(int index, BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     if (index == 0) {
-      return l10n.by_source;
+      return l10n.by_scanlator;
     } else if (index == 1) {
       return l10n.by_chapter_number;
+    } else if (index == 2) {
+      return l10n.by_upload_date;
     }
-    return l10n.by_upload_date;
+    return l10n.by_name;
   }
 
   Widget _bodyContainer({required int chapterLength}) {

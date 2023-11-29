@@ -264,6 +264,9 @@
   "use_page_tap_zones":"Use page tap zones" ,
   "manage_trackers":"Manage trackers",
   "restore":"Restore",
-  "backups":"Backups"
+  "backups":"Backups",
+  "by_scanlator":"By scanlator",
+  "by_name":"By name",
+  "installed":"Installed"
 
 }

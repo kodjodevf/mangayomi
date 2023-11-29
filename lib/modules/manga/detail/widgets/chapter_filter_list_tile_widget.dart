@@ -12,24 +12,22 @@ class ListTileChapterFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      iconColor: Theme.of(context).primaryColor,
+    return CheckboxListTile(
       dense: true,
-      leading: type == 0
-          ? const SizedBox(
-              height: 20, width: 20, child: Icon(Icons.check_box_outline_blank))
+      tristate: true,
+      value: type == 0
+          ? false
           : type == 1
-              ? const SizedBox(
-                  height: 20, width: 20, child: Icon(Icons.check_box))
-              : const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: Icon(Icons.indeterminate_check_box_rounded)),
+              ? true
+              : null,
       title: Text(
         label,
         style: const TextStyle(fontSize: 14),
       ),
-      onTap: onTap,
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (value) {
+        onTap.call();
+      },
     );
   }
 }

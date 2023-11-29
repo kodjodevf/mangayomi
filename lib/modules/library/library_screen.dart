@@ -567,7 +567,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     }, error: (error, e) {
       return ErrorText(error);
     }, loading: () {
-      return ProgressCenter();
+      return const ProgressCenter();
     });
   }
 
@@ -880,8 +880,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     } else if (sortType == 5) {
       mangas.sort(
         (a, b) {
-          return a.chapters.first.dateUpload!
-              .compareTo(b.chapters.first.dateUpload!);
+          return a.chapters.last.dateUpload!
+              .compareTo(b.chapters.last.dateUpload!);
         },
       );
     } else if (sortType == 6) {
@@ -1394,6 +1394,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .map(
                                                   (e) => RadioListTile<
                                                       DisplayType>(
+                                                    dense: true,
                                                     title: Text(
                                                       displayV
                                                           .getLibraryDisplayTypeName(
@@ -1429,8 +1430,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 5),
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(
@@ -1482,14 +1483,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           padding: const EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Row(
-                                            children: [
-                                              Text(l10n.tabs),
-                                            ],
+                                            children: [Text(l10n.tabs)],
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 5),
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(
@@ -1537,8 +1536,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, top: 5),
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
                                           child: Column(
                                             children: [
                                               ListTileChapterFilter(

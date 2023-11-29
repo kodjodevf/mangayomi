@@ -57,6 +57,14 @@ class ExtensionScreen extends ConsumerWidget {
                         ? true
                         : element.isNsfw == false)
                     .where((element) => element.version == element.versionLast!)
+                    .where((element) => !element.isAdded!)
+                    .toList();
+                final entries2 = snapshot.data!
+                    .where((element) => ref.watch(showNSFWStateProvider)
+                        ? true
+                        : element.isNsfw == false)
+                    .where((element) => element.version == element.versionLast!)
+                    .where((element) => element.isAdded!)
                     .toList();
                 final entries = snapshot.data!
                     .where((element) => ref.watch(showNSFWStateProvider)
@@ -107,6 +115,28 @@ class ExtensionScreen extends ConsumerWidget {
                           return ExtensionListTileWidget(
                             source: element,
                           );
+                        },
+                        groupComparator: (group1, group2) =>
+                            group1.compareTo(group2),
+                        shrinkWrap: true,
+                        itemComparator: (item1, item2) =>
+                            item1.name!.compareTo(item2.name!),
+                        order: GroupedListOrder.ASC,
+                      ),
+                      GroupedListView<Source, String>(
+                        elements: entries2,
+                        groupBy: (element) => "",
+                        groupSeparatorBuilder: (_) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            l10n.installed,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 13),
+                          ),
+                        ),
+                        itemBuilder: (context, Source element) {
+                          return ExtensionListTileWidget(
+                              source: element, installed: true);
                         },
                         groupComparator: (group1, group2) =>
                             group1.compareTo(group2),
