@@ -21,4 +21,6 @@ abstract class MProvider {
   Future<List<Video>> getVideoList(MSource source, String url);
 
   List<dynamic> getFilterList();
+
+  List<dynamic> getSourcePreferences();
 }

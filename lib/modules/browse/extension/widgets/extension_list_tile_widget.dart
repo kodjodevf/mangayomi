@@ -11,8 +11,12 @@ import 'package:mangayomi/utils/language.dart';
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
   final bool installed;
+  final bool isTestSource;
   const ExtensionListTileWidget(
-      {super.key, required this.source, this.installed = false});
+      {super.key,
+      required this.source,
+      this.installed = false,
+      this.isTestSource = false});
 
   @override
   ConsumerState<ExtensionListTileWidget> createState() =>
@@ -27,8 +31,10 @@ class _ExtensionListTileWidgetState
     BuildContext context,
   ) {
     final l10n = l10nLocalizations(context)!;
-    final updateAivalable =
-        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
+    final updateAivalable = widget.isTestSource
+        ? false
+        : compareVersions(widget.source.version!, widget.source.versionLast!) <
+            0;
     final sourceNotEmpty = widget.source.sourceCode != null &&
         widget.source.sourceCode!.isNotEmpty;
 
@@ -82,16 +88,13 @@ class _ExtensionListTileWidgetState
         subtitle: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              completeLanguageName(widget.source.lang!.toLowerCase()),
-              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-            ),
+            Text(completeLanguageName(widget.source.lang!.toLowerCase()),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w300, fontSize: 12)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4),
                 Text(widget.source.version!,
                     style: const TextStyle(
                         fontWeight: FontWeight.w300, fontSize: 10)),

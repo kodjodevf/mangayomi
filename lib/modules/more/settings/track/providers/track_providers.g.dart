@@ -6,7 +6,7 @@ part of 'track_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tracksHash() => r'65e6092128a8d24edcecb215287d4a774df1b180';
+String _$tracksHash() => r'8fbe5a46115adda0135e97386f4de57f22dc4149';
 
 /// Copied from Dart SDK
 class _SystemHash {

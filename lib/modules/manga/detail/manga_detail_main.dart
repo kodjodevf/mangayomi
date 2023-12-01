@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_pro
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/sources/source_test.dart';
 
 class MangaReaderDetail extends ConsumerStatefulWidget {
   final int mangaId;
@@ -61,7 +62,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
               final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(
                 onRefresh: () async {
-                  if (sourceExist) {
+                  if (sourceExist || useTestSourceCode) {
                     await ref.read(updateMangaDetailProvider(
                             mangaId: manga.id, isInit: false)
                         .future);
