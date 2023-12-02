@@ -22,5 +22,5 @@ abstract class MProvider {
 
   List<dynamic> getFilterList();
 
-  List<dynamic> getSourcePreferences();
+  List<dynamic> getSourcePreferences(MSource source);
 }

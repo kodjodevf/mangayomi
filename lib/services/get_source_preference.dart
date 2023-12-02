@@ -15,7 +15,7 @@ List<SourcePreference> getSourcePreference({required Source source}) {
 
     var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
     sourcePreference = (res as MProvider)
-        .getSourcePreferences()
+        .getSourcePreferences(source.toMSource())
         .map((e) => (e is $Value ? e.$reified : e) as SourcePreference)
         .toList();
   } catch (_) {

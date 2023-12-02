@@ -70,7 +70,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 BridgeTypeRef(CoreTypes.future, [$MManga.$type])),
             params: [
               BridgeParameter(
-                  'source', BridgeTypeAnnotation($MManga.$type), false),
+                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
@@ -80,7 +80,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
             params: [
               BridgeParameter(
-                  'source', BridgeTypeAnnotation($MManga.$type), false),
+                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
@@ -90,7 +90,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
             params: [
               BridgeParameter(
-                  'source', BridgeTypeAnnotation($MManga.$type), false),
+                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
@@ -762,8 +762,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               .then((value) => $String(value)));
         }),
       'getPreferenceValue' => $Function((_, __, List<$Value?> args) {
-          final value = getPreferenceValue(
-              args[1]!.$reified, args[0]!.$reified);
+          final value =
+              getPreferenceValue(args[0]!.$reified, args[1]!.$reified);
           if (value is String) {
             return $String(value);
           } else if (value is bool) {
@@ -983,8 +983,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  List getSourcePreferences() {
-    final res = $_invoke('getSourcePreferences', []);
+  List getSourcePreferences(MSource source) {
+    final res = $_invoke('getSourcePreferences', [$MSource.wrap(source)]);
     if (res is $List) {
       return res.$reified;
     }
@@ -1014,6 +1014,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             : e.audios!
                 .map((t) => $MTrack.wrap(Track(file: t.file, label: t.label)))
                 .toList()));
+
   _toValueList(List filters) {
     return (filters).map((e) {
       if (e is SelectFilter) {

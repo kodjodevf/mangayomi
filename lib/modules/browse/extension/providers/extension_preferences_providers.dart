@@ -20,7 +20,7 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
   });
 }
 
-getPreferenceValue(String key, int sourceId) {
+getPreferenceValue(int sourceId, String key) {
   final sourcePreference = getSourcePreferenceEntry(key, sourceId);
 
   if (sourcePreference.listPreference != null) {

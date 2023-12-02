@@ -73,7 +73,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             ),
           );
         }
-        data.$1.sort((a, b) => a.quality.compareTo(b.quality));
+
         return AnimeStreamPage(
           episode: widget.episode,
           videos: data.$1,
