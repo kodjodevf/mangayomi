@@ -9,6 +9,7 @@ import 'package:mangayomi/eval/bridge/m_manga.dart';
 import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/bridge/m_track.dart';
 import 'package:mangayomi/eval/bridge/m_video.dart';
+import 'package:mangayomi/eval/bridge/source_preference.dart';
 
 class MEvalPlugin extends EvalPlugin {
   @override
@@ -36,6 +37,13 @@ class MEvalPlugin extends EvalPlugin {
     registry.defineBridgeClass($CheckBoxFilter.$declaration);
     registry.defineBridgeClass($SortState.$declaration);
     registry.defineBridgeClass($SelectFilterOption.$declaration);
+    //SourcePreferences
+    registry.defineBridgeClass($CheckBoxPreference.$declaration);
+    registry.defineBridgeClass($SwitchPreferenceCompat.$declaration);
+    registry.defineBridgeClass($ListPreference.$declaration);
+    registry.defineBridgeClass($MultiSelectListPreference.$declaration);
+    registry.defineBridgeClass($CheckBoxPreference.$declaration);
+    registry.defineBridgeClass($EditTextPreference.$declaration);
   }
 
   @override
@@ -80,5 +88,16 @@ class MEvalPlugin extends EvalPlugin {
         'package:mangayomi/bridge_lib.dart', 'SortState.', $SortState.$new);
     runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
         'SelectFilterOption.', $SelectFilterOption.$new);
+    //Sources preferences
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'CheckBoxPreference.', $CheckBoxPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'SwitchPreferenceCompat.', $SwitchPreferenceCompat.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'ListPreference.', $ListPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'MultiSelectListPreference.', $MultiSelectListPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'EditTextPreference.', $EditTextPreference.$new);
   }
 }

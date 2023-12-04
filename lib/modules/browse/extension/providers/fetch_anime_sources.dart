@@ -50,9 +50,10 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
                       ..versionLast = source.version
                       ..isManga = source.isManga
                       ..isFullData = source.isFullData ?? false
-                      ..appMinVerReq = source.appMinVerReq);
+                      ..appMinVerReq = source.appMinVerReq
+                      ..additionalParams = source.additionalParams ?? "");
                   });
-                  // log("successfully installed");
+                  // log("successfully installed or updated");
                 }
               } else if (isar.sources.getSync(source.id!) != null) {
                 // log("exist");
@@ -86,7 +87,8 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
                           ..versionLast = source.version
                           ..isManga = source.isManga
                           ..isFullData = source.isFullData ?? false
-                          ..appMinVerReq = source.appMinVerReq);
+                          ..appMinVerReq = source.appMinVerReq
+                          ..additionalParams = source.additionalParams ?? "");
                       });
                     } else {
                       // log("update aivalable");

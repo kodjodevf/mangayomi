@@ -7,6 +7,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -78,6 +79,10 @@ class ExtensionScreen extends ConsumerWidget {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
+                      if (useTestSourceCode)
+                        ExtensionListTileWidget(
+                            source: testSourceModel,
+                            isTestSource: useTestSourceCode),
                       GroupedListView<Source, String>(
                         elements: entries,
                         groupBy: (element) => "",
@@ -135,8 +140,7 @@ class ExtensionScreen extends ConsumerWidget {
                           ),
                         ),
                         itemBuilder: (context, Source element) {
-                          return ExtensionListTileWidget(
-                              source: element, installed: true);
+                          return ExtensionListTileWidget(source: element);
                         },
                         groupComparator: (group1, group2) =>
                             group1.compareTo(group2),

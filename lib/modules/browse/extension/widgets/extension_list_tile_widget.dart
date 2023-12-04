@@ -10,9 +10,9 @@ import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
-  final bool installed;
+  final bool isTestSource;
   const ExtensionListTileWidget(
-      {super.key, required this.source, this.installed = false});
+      {super.key, required this.source, this.isTestSource = false});
 
   @override
   ConsumerState<ExtensionListTileWidget> createState() =>
@@ -27,14 +27,16 @@ class _ExtensionListTileWidgetState
     BuildContext context,
   ) {
     final l10n = l10nLocalizations(context)!;
-    final updateAivalable =
-        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
+    final updateAivalable = widget.isTestSource
+        ? false
+        : compareVersions(widget.source.version!, widget.source.versionLast!) <
+            0;
     final sourceNotEmpty = widget.source.sourceCode != null &&
         widget.source.sourceCode!.isNotEmpty;
 
     return ListTile(
         onTap: () async {
-          if (sourceNotEmpty) {
+          if (sourceNotEmpty || widget.isTestSource) {
             context.push('/extension_detail', extra: widget.source);
           } else {
             setState(() {
@@ -82,16 +84,13 @@ class _ExtensionListTileWidgetState
         subtitle: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(
-              completeLanguageName(widget.source.lang!.toLowerCase()),
-              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-            ),
+            Text(completeLanguageName(widget.source.lang!.toLowerCase()),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w300, fontSize: 12)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4),
                 Text(widget.source.version!,
                     style: const TextStyle(
                         fontWeight: FontWeight.w300, fontSize: 10)),
@@ -127,7 +126,7 @@ class _ExtensionListTileWidgetState
           ],
         ),
         trailing: TextButton(
-          onPressed: widget.installed
+          onPressed: widget.isTestSource
               ? () {
                   context.push('/extension_detail', extra: widget.source);
                 }
@@ -157,7 +156,7 @@ class _ExtensionListTileWidgetState
                   child: CircularProgressIndicator(
                     strokeWidth: 2.0,
                   ))
-              : Text(widget.installed
+              : Text(widget.isTestSource
                   ? l10n.settings
                   : !sourceNotEmpty
                       ? l10n.install

@@ -73,7 +73,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             ),
           );
         }
-        data.$1.sort((a, b) => a.quality.compareTo(b.quality));
+
         return AnimeStreamPage(
           episode: widget.episode,
           videos: data.$1,
@@ -162,9 +162,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       headers: _firstVid.headers));
 
   late final ValueNotifier<SubtitleTrack?> _subtitle = ValueNotifier(
-      SubtitleTrack.uri(_firstVid.subtitles!.first.file!,
-          title: _firstVid.subtitles!.first.label,
-          language: _firstVid.subtitles!.first.label));
+      SubtitleTrack.uri(_firstVid.subtitles?.first.file ?? "",
+          title: _firstVid.subtitles?.first.label,
+          language: _firstVid.subtitles?.first.label));
 
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
@@ -191,10 +191,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       } else {
         _currentPosition = position;
       }
-      if (_firstVid.subtitles!.isNotEmpty) {
+      if ((_firstVid.subtitles ?? []).isNotEmpty) {
         if (_initSubtitle) {
           try {
-            _player.setSubtitleTrack(_subtitle.value!);
+            _player.setSubtitleTrack(_subtitle.value ?? SubtitleTrack.no());
           } catch (_) {}
           _initSubtitle = false;
         }
@@ -415,7 +415,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     List<String> subs = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
-        for (var sub in video.subtitles!) {
+        for (var sub in video.subtitles ?? []) {
           if (!subs.contains(sub.file)) {
             videoSubtitle.add(VideoPrefs(
                 isLocal: false,

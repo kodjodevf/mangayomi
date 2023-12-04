@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/get_source_preference.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/media_query.dart';
@@ -19,6 +22,11 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = widget.source;
+  late List<SourcePreference> sourcePreference =
+      getSourcePreference(source: source)
+          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
+          .toList();
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -178,85 +186,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                   )),
             ),
           ),
-          ref.watch(getMirrorPrefProvider(widget.source.sourceCode!)).when(
-                data: (data) => data != null
-                    ? ListTile(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    l10n.preferred_domain,
-                                  ),
-                                  content: SizedBox(
-                                      width: mediaWidth(context, 0.8),
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: data.entries.length,
-                                        itemBuilder: (context, index) {
-                                          return RadioListTile(
-                                            dense: true,
-                                            contentPadding:
-                                                const EdgeInsets.all(0),
-                                            value: data.entries
-                                                .toList()[index]
-                                                .value,
-                                            groupValue: widget.source.baseUrl!,
-                                            onChanged: (value) {
-                                              isar.writeTxnSync(() => isar
-                                                  .sources
-                                                  .putSync(widget.source
-                                                    ..baseUrl = data.entries
-                                                        .toList()[index]
-                                                        .value));
-                                              setState(() {
-                                                source = isar.sources
-                                                    .getSync(source.id!)!;
-                                              });
-
-                                              Navigator.pop(context);
-                                            },
-                                            title: Row(
-                                              children: [
-                                                Text(data.entries
-                                                    .toList()[index]
-                                                    .key)
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      )),
-                                  actions: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextButton(
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                              l10n.cancel,
-                                              style: TextStyle(
-                                                  color: primaryColor(context)),
-                                            )),
-                                      ],
-                                    )
-                                  ],
-                                );
-                              });
-                        },
-                        title: Text(l10n.preferred_domain),
-                        subtitle: Text(
-                          widget.source.baseUrl!,
-                          style: TextStyle(
-                              fontSize: 11, color: secondaryColor(context)),
-                        ),
-                      )
-                    : Container(),
-                error: (error, stackTrace) => Text(error.toString()),
-                loading: () => Container(),
-              )
+          SourcePreferenceWidget(
+              sourcePreference: sourcePreference, source: source)
         ],
       ),
     );

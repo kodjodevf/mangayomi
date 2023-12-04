@@ -1,26 +1,54 @@
-import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/compiler/compiler.dart';
-import 'package:mangayomi/eval/runtime/runtime.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'extension_preferences_providers.g.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/get_source_preference.dart';
+import 'package:mangayomi/sources/source_test.dart';
 
-@riverpod
-Future<Map<String, String>?> getMirrorPref(
-    GetMirrorPrefRef ref, String codeSource) async {
-  try {
-    final bytecode = compilerEval(codeSource);
-    final runtime = runtimeEval(bytecode);
-    var res = await runtime.executeLib(
-      'package:mangayomi/main.dart',
-      'getMirrorPref',
-    );
-    Map<String, String> headers = {};
-    if (res is $Map) {
-      headers = res.$reified
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
+  final sourcePref = isar.sourcePreferences
+      .filter()
+      .sourceIdEqualTo(source.id)
+      .keyEqualTo(sourcePreference.key)
+      .findFirstSync();
+  isar.writeTxnSync(() {
+    if (sourcePref != null) {
+      isar.sourcePreferences.putSync(sourcePreference);
+    } else {
+      isar.sourcePreferences.putSync(sourcePreference..sourceId = source.id);
     }
-    return headers;
-  } catch (_) {
-    return null;
+  });
+}
+
+getPreferenceValue(int sourceId, String key) {
+  final sourcePreference = getSourcePreferenceEntry(key, sourceId);
+
+  if (sourcePreference.listPreference != null) {
+    final pref = sourcePreference.listPreference!;
+    return pref.entryValues![pref.valueIndex!];
+  } else if (sourcePreference.checkBoxPreference != null) {
+    return sourcePreference.checkBoxPreference!.value;
+  } else if (sourcePreference.switchPreferenceCompat != null) {
+    return sourcePreference.switchPreferenceCompat!.value;
+  } else if (sourcePreference.editTextPreference != null) {
+    return sourcePreference.editTextPreference!.value;
   }
+  return sourcePreference.multiSelectListPreference!.values;
+}
+
+SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
+  SourcePreference? sourcePreference = isar.sourcePreferences
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
+  final source =
+      useTestSourceCode ? testSourceModel : isar.sources.getSync(sourceId)!;
+  if (sourcePreference == null) {
+    sourcePreference = getSourcePreference(source: source)
+        .firstWhere((element) => element.key == key, orElse: () => throw "Error when getting source preference");
+    setPreferenceSetting(sourcePreference, source);
+  }
+
+  return sourcePreference;
 }

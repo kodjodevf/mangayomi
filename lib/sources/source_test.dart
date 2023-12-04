@@ -7,6 +7,8 @@ final testSourceModel = Source(
     name: "Test Source",
     // Example: https://gogoanime3.net
     baseUrl: "",
+    //
+    sourceCode: testSourceCode,
     // Example: en
     lang: "",
     // Example: false for anime or true for manga
@@ -53,7 +55,12 @@ class TestSource extends MProvider {
   }
 
   @override
-  List<dynamic> getFilterList() {
+  List<dynamic> getFilterList(MSource source) {
+    // TODO: implement
+  }
+
+  @override
+  List<dynamic> getSourcePreferences(MSource source) {
     // TODO: implement
   }
 }

@@ -535,7 +535,7 @@ class ChapterPageurls {
   ChapterPageurls({this.chapterId, this.urls});
   ChapterPageurls.fromJson(Map<String, dynamic> json) {
     chapterId = json['chapterId'];
-    urls = json['urls'].cast<String>();
+    urls = json['urls']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -638,7 +638,7 @@ class FilterScanlator {
   FilterScanlator({this.mangaId, this.scanlators});
   FilterScanlator.fromJson(Map<String, dynamic> json) {
     mangaId = json['mangaId'];
-    scanlators = json['scanlators'].cast<String>();
+    scanlators = json['scanlators']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {

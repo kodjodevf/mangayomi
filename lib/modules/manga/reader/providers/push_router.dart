@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/sources/source_test.dart';
 
 pushMangaReaderView({
   required BuildContext context,
@@ -22,7 +23,9 @@ pushMangaReaderView({
       .isAddedEqualTo(true)
       .findAllSync()
       .isNotEmpty;
-  if (sourceExist || chapter.manga.value!.isLocalArchive!) {
+  if (sourceExist ||
+      useTestSourceCode ||
+      chapter.manga.value!.isLocalArchive!) {
     if (chapter.manga.value!.isManga!) {
       context.push('/mangareaderview', extra: chapter);
     } else {
