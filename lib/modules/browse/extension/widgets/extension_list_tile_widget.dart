@@ -10,13 +10,9 @@ import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
-  final bool installed;
   final bool isTestSource;
   const ExtensionListTileWidget(
-      {super.key,
-      required this.source,
-      this.installed = false,
-      this.isTestSource = false});
+      {super.key, required this.source, this.isTestSource = false});
 
   @override
   ConsumerState<ExtensionListTileWidget> createState() =>
@@ -40,7 +36,7 @@ class _ExtensionListTileWidgetState
 
     return ListTile(
         onTap: () async {
-          if (sourceNotEmpty) {
+          if (sourceNotEmpty || widget.isTestSource) {
             context.push('/extension_detail', extra: widget.source);
           } else {
             setState(() {
@@ -130,7 +126,7 @@ class _ExtensionListTileWidgetState
           ],
         ),
         trailing: TextButton(
-          onPressed: widget.installed
+          onPressed: widget.isTestSource
               ? () {
                   context.push('/extension_detail', extra: widget.source);
                 }
@@ -160,7 +156,7 @@ class _ExtensionListTileWidgetState
                   child: CircularProgressIndicator(
                     strokeWidth: 2.0,
                   ))
-              : Text(widget.installed
+              : Text(widget.isTestSource
                   ? l10n.settings
                   : !sourceNotEmpty
                       ? l10n.install

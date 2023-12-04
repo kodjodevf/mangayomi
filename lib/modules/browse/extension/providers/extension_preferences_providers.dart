@@ -46,7 +46,7 @@ SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
       useTestSourceCode ? testSourceModel : isar.sources.getSync(sourceId)!;
   if (sourcePreference == null) {
     sourcePreference = getSourcePreference(source: source)
-        .firstWhere((element) => element.key == key, orElse: () => throw ());
+        .firstWhere((element) => element.key == key, orElse: () => throw "Error when getting source preference");
     setPreferenceSetting(sourcePreference, source);
   }
 

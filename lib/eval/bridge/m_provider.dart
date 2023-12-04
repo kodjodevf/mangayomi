@@ -96,10 +96,18 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
         'getFilterList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])))),
+                CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+            params: [
+              BridgeParameter(
+                  'source', BridgeTypeAnnotation($MSource.$type), false)
+            ])),
         'getSourcePreferences': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
-                CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])))),
+                CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+            params: [
+              BridgeParameter(
+                  'source', BridgeTypeAnnotation($MSource.$type), false)
+            ])),
         'getPreferenceValue': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.dynamic)),
             params: [
@@ -974,8 +982,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  List getFilterList() {
-    final res = $_invoke('getFilterList', []);
+  List getFilterList(MSource source) {
+    final res = $_invoke('getFilterList', [$MSource.wrap(source)]);
     if (res is $List) {
       return res.$reified;
     }

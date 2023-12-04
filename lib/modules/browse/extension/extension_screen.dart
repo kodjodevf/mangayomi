@@ -140,8 +140,7 @@ class ExtensionScreen extends ConsumerWidget {
                           ),
                         ),
                         itemBuilder: (context, Source element) {
-                          return ExtensionListTileWidget(
-                              source: element, installed: true);
+                          return ExtensionListTileWidget(source: element);
                         },
                         groupComparator: (group1, group2) =>
                             group1.compareTo(group2),

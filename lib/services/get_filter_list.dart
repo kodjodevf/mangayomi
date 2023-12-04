@@ -16,7 +16,7 @@ List<dynamic> getFilterList({required Source source}) {
 
     var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
     filterList = (res as MProvider)
-        .getFilterList()
+        .getFilterList(source.toMSource())
         .map((e) => e is $Value ? e.$reified : e)
         .toList();
   } catch (_) {
