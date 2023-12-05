@@ -203,7 +203,8 @@ class Settings {
       this.backupFrequencyOptions,
       this.autoBackupLocation,
       this.startDatebackup,
-      this.usePageTapZones = true});
+      this.usePageTapZones = true,
+      this.autoScrollPages});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -309,6 +310,11 @@ class Settings {
     sortLibraryManga = json['sortLibraryManga'] != null
         ? SortLibraryManga.fromJson(json['sortLibraryManga'])
         : null;
+    if (json['sortChapterList'] != null) {
+      autoScrollPages = (json['autoScrollPages'] as List)
+          .map((e) => AutoScrollPages.fromJson(e))
+          .toList();
+    }
     themeIsDark = json['themeIsDark'];
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
@@ -390,6 +396,8 @@ class Settings {
         'showPagesNumber': showPagesNumber,
         if (sortChapterList != null)
           'sortChapterList': sortChapterList!.map((v) => v.toJson()).toList(),
+        if (sortChapterList != null)
+          'autoScrollPages': autoScrollPages!.map((v) => v.toJson()).toList(),
         'sortLibraryAnime': sortLibraryAnime,
         if (sortLibraryManga != null)
           'sortLibraryManga': sortLibraryManga!.toJson(),
