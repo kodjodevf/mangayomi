@@ -4,6 +4,7 @@ import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -104,6 +105,14 @@ void doBackUp(DoBackUpRef ref,
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions": res});
+    final resSourePref = isar.sourcePreferences
+        .filter()
+        .idIsNotNull()
+        .keyIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"extensions_preferences": resSourePref});
   }
   final name =
       'mangayomi_${DateTime.now().toString().substringBefore(' ').replaceAll('-', '_')}';

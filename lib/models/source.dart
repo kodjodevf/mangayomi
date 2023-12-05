@@ -106,34 +106,32 @@ class Source {
     additionalParams = json['additionalParams'] ?? "";
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['apiUrl'] = apiUrl;
-    data['appMinVerReq'] = appMinVerReq;
-    data['baseUrl'] = baseUrl;
-    data['dateFormat'] = dateFormat;
-    data['dateFormatLocale'] = dateFormatLocale;
-    data['hasCloudflare'] = hasCloudflare;
-    data['headers'] = headers;
-    data['iconUrl'] = iconUrl;
-    data['id'] = id;
-    data['isActive'] = isActive;
-    data['isAdded'] = isAdded;
-    data['isFullData'] = isFullData;
-    data['isManga'] = isManga;
-    data['isNsfw'] = isNsfw;
-    data['isPinned'] = isPinned;
-    data['lang'] = lang;
-    data['lastUsed'] = lastUsed;
-    data['name'] = name;
-    data['sourceCode'] = sourceCode;
-    data['sourceCodeUrl'] = sourceCodeUrl;
-    data['typeSource'] = typeSource;
-    data['version'] = version;
-    data['versionLast'] = versionLast;
-    data['additionalParams'] = additionalParams;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'apiUrl': apiUrl,
+        'appMinVerReq': appMinVerReq,
+        'baseUrl': baseUrl,
+        'dateFormat': dateFormat,
+        'dateFormatLocale': dateFormatLocale,
+        'hasCloudflare': hasCloudflare,
+        'headers': headers,
+        'iconUrl': iconUrl,
+        'id': id,
+        'isActive': isActive,
+        'isAdded': isAdded,
+        'isFullData': isFullData,
+        'isManga': isManga,
+        'isNsfw': isNsfw,
+        'isPinned': isPinned,
+        'lang': lang,
+        'lastUsed': lastUsed,
+        'name': name,
+        'sourceCode': sourceCode,
+        'sourceCodeUrl': sourceCodeUrl,
+        'typeSource': typeSource,
+        'version': version,
+        'versionLast': versionLast,
+        'additionalParams': additionalParams,
+      };
 
   MSource toMSource() {
     return MSource(

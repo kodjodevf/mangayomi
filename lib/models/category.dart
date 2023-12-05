@@ -18,12 +18,6 @@ class Category {
     forManga = json['forManga'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['forManga'] = forManga;
-
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'forManga': forManga};
 }

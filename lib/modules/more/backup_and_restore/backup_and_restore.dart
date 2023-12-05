@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,16 +8,13 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart'
 import 'package:mangayomi/modules/more/backup_and_restore/providers/restore.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/media_query.dart';
-import 'package:share_plus/share_plus.dart';
 
 class BackupAndRestore extends ConsumerWidget {
   const BackupAndRestore({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final isIOS = Platform.isIOS;
     final backupFrequency = ref.watch(backupFrequencyStateProvider);
     final backupFrequencyOptions =
         ref.watch(backupFrequencyOptionsStateProvider);
@@ -81,22 +77,14 @@ class BackupAndRestore extends ConsumerWidget {
                                     )),
                                 TextButton(
                                     onPressed: () async {
-                                      // if (isIOS) {
-                                      //   ref.watch(doBackUpProvider(
-                                      //       list: indexList,
-                                      //       path: autoBackupLocation.$1,
-                                      //       context: context));
-                                      // } else {
+                                      final result = await FilePicker.platform
+                                          .getDirectoryPath();
 
-                                        final result = await FilePicker.platform
-                                            .getDirectoryPath();
-
-                                        if (result != null && context.mounted) {
-                                          ref.watch(doBackUpProvider(
-                                              list: indexList,
-                                              path: result,
-                                              context: context));
-                                        // }
+                                      if (result != null && context.mounted) {
+                                        ref.watch(doBackUpProvider(
+                                            list: indexList,
+                                            path: result,
+                                            context: context));
                                       }
                                     },
                                     child: Text(
@@ -260,24 +248,22 @@ class BackupAndRestore extends ConsumerWidget {
             ),
           ),
           // if (!isIOS)
-            ListTile(
-              onTap: () async {
-                String? result = await FilePicker.platform.getDirectoryPath();
+          ListTile(
+            onTap: () async {
+              String? result = await FilePicker.platform.getDirectoryPath();
 
-                if (result != null) {
-                  ref
-                      .read(autoBackupLocationStateProvider.notifier)
-                      .set(result);
-                }
-              },
-              title: Text(l10n.backup_location),
-              subtitle: Text(
-                autoBackupLocation.$2.isEmpty
-                    ? autoBackupLocation.$1
-                    : autoBackupLocation.$2,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-              ),
+              if (result != null) {
+                ref.read(autoBackupLocationStateProvider.notifier).set(result);
+              }
+            },
+            title: Text(l10n.backup_location),
+            subtitle: Text(
+              autoBackupLocation.$2.isEmpty
+                  ? autoBackupLocation.$1
+                  : autoBackupLocation.$2,
+              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
+          ),
           ListTile(
             onTap: () {
               final list = _getList(context);
@@ -355,8 +341,6 @@ class BackupAndRestore extends ConsumerWidget {
               style: TextStyle(fontSize: 11, color: secondaryColor(context)),
             ),
           ),
-          // if (isIOS)
-          //   ListBackupFilesFromDirectory(directory: autoBackupLocation.$1),
           ListTile(
             title: Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -399,68 +383,4 @@ List<String> _getBackupFrequencyList(BuildContext context) {
     l10n.every_2_days,
     l10n.weekly
   ];
-}
-
-class ListBackupFilesFromDirectory extends ConsumerWidget {
-  final String directory;
-  const ListBackupFilesFromDirectory({super.key, required this.directory});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final files = Directory(directory)
-        .listSync()
-        .where((element) =>
-            element.path.contains('mangayomi_') &&
-            element.path.endsWith('.backup'))
-        .toList()
-        .reversed
-        .toList();
-    return files.isNotEmpty
-        ? SizedBox(
-            height: 200,
-            child: Column(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  child: Row(
-                    children: [
-                      Text(context.l10n.backups,
-                          style: TextStyle(
-                              fontSize: 13, color: primaryColor(context))),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: files.length,
-                      itemBuilder: (_, index) {
-                        final file = files[index];
-                        final name =
-                            'mangayomi_${file.path.substringAfter('mangayomi_')}';
-                        return ListTile(
-                          title: Text(name),
-                          trailing: PopupMenuButton(itemBuilder: (context) {
-                            return [
-                              PopupMenuItem<int>(
-                                  value: 0, child: Text(context.l10n.share)),
-                              PopupMenuItem<int>(
-                                  value: 1, child: Text(context.l10n.restore)),
-                            ];
-                          }, onSelected: (value) {
-                            if (value == 0) {
-                              Share.shareXFiles([XFile(file.path)], text: name);
-                            } else if (value == 1) {
-                              ref.watch(doRestoreProvider(
-                                  path: file.path, context: context));
-                            }
-                          }),
-                        );
-                      }),
-                ),
-              ],
-            ),
-          )
-        : Container();
-  }
 }

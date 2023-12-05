@@ -141,6 +141,8 @@ class Settings {
 
   bool? usePageTapZones;
 
+  List<AutoScrollPages>? autoScrollPages;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -316,104 +318,89 @@ class Settings {
     usePageTapZones = json['usePageTapZones'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['animatePageTransitions'] = animatePageTransitions;
-    data['animeDisplayType'] = animeDisplayType.index;
-    data['animeLibraryDownloadedChapters'] = animeLibraryDownloadedChapters;
-    data['animeLibraryLocalSource'] = animeLibraryLocalSource;
-    data['animeLibraryShowCategoryTabs'] = animeLibraryShowCategoryTabs;
-    data['animeLibraryShowContinueReadingButton'] =
-        animeLibraryShowContinueReadingButton;
-    data['animeLibraryShowLanguage'] = animeLibraryShowLanguage;
-    data['animeLibraryShowNumbersOfItems'] = animeLibraryShowNumbersOfItems;
-    data['autoExtensionsUpdates'] = autoExtensionsUpdates;
-    data['backgroundColor'] = backgroundColor.index;
-    if (chapterFilterBookmarkedList != null) {
-      data['chapterFilterBookmarkedList'] =
-          chapterFilterBookmarkedList!.map((v) => v.toJson()).toList();
-    }
-    if (chapterFilterDownloadedList != null) {
-      data['chapterFilterDownloadedList'] =
-          chapterFilterDownloadedList!.map((v) => v.toJson()).toList();
-    }
-    if (chapterFilterUnreadList != null) {
-      data['chapterFilterUnreadList'] =
-          chapterFilterUnreadList!.map((v) => v.toJson()).toList();
-    }
-    if (chapterPageIndexList != null) {
-      data['chapterPageIndexList'] =
-          chapterPageIndexList!.map((v) => v.toJson()).toList();
-    }
-    if (chapterPageUrlsList != null) {
-      data['chapterPageUrlsList'] =
-          chapterPageUrlsList!.map((v) => v.toJson()).toList();
-    }
-    data['checkForExtensionUpdates'] = checkForExtensionUpdates;
-    data['cookiesList'] = cookiesList;
-    data['cropBorders'] = cropBorders;
-    data['dateFormat'] = dateFormat;
-    data['defaultReaderMode'] = defaultReaderMode.index;
-    data['displayType'] = displayType.index;
-    data['doubleTapAnimationSpeed'] = doubleTapAnimationSpeed;
-    data['downloadLocation'] = downloadLocation;
-    data['downloadOnlyOnWifi'] = downloadOnlyOnWifi;
-    data['filterScanlatorList'] = filterScanlatorList;
-    data['flexColorSchemeBlendLevel'] = flexColorSchemeBlendLevel;
-    data['flexSchemeColorIndex'] = flexSchemeColorIndex;
-    data['id'] = id;
-    data['incognitoMode'] = incognitoMode;
-    data['libraryDownloadedChapters'] = libraryDownloadedChapters;
-    data['libraryFilterAnimeBookMarkedType'] = libraryFilterAnimeBookMarkedType;
-    data['libraryFilterAnimeDownloadType'] = libraryFilterAnimeDownloadType;
-    data['libraryFilterAnimeStartedType'] = libraryFilterAnimeStartedType;
-    data['libraryFilterAnimeUnreadType'] = libraryFilterAnimeUnreadType;
-    data['libraryFilterMangasBookMarkedType'] =
-        libraryFilterMangasBookMarkedType;
-    data['libraryFilterMangasDownloadType'] = libraryFilterMangasDownloadType;
-    data['libraryFilterMangasStartedType'] = libraryFilterMangasStartedType;
-    data['libraryFilterMangasUnreadType'] = libraryFilterMangasUnreadType;
-    data['libraryLocalSource'] = libraryLocalSource;
-    data['libraryShowCategoryTabs'] = libraryShowCategoryTabs;
-    data['libraryShowContinueReadingButton'] = libraryShowContinueReadingButton;
-    data['libraryShowLanguage'] = libraryShowLanguage;
-    data['libraryShowNumbersOfItems'] = libraryShowNumbersOfItems;
-    if (locale != null) {
-      data['locale'] = locale!.toJson();
-    }
-    data['onlyIncludePinnedSources'] = onlyIncludePinnedSources;
-    data['pagePreloadAmount'] = pagePreloadAmount;
-    if (personalPageModeList != null) {
-      data['personalPageModeList'] =
-          personalPageModeList!.map((v) => v.toJson()).toList();
-    }
-    if (personalReaderModeList != null) {
-      data['personalReaderModeList'] =
-          personalReaderModeList!.map((v) => v.toJson()).toList();
-    }
-    data['pureBlackDarkMode'] = pureBlackDarkMode;
-    data['relativeTimesTamps'] = relativeTimesTamps;
-    data['saveAsCBZArchive'] = saveAsCBZArchive;
-    data['scaleType'] = scaleType.index;
-    data['showNSFW'] = showNSFW;
-    data['showPagesNumber'] = showPagesNumber;
-    if (sortChapterList != null) {
-      data['sortChapterList'] =
-          sortChapterList!.map((v) => v.toJson()).toList();
-    }
-    data['sortLibraryAnime'] = sortLibraryAnime;
-    if (sortLibraryManga != null) {
-      data['sortLibraryManga'] = sortLibraryManga!.toJson();
-    }
-    data['themeIsDark'] = themeIsDark;
-    data['userAgent'] = userAgent;
-    data['backupFrequency'] = backupFrequency;
-    data['backupFrequencyOptions'] = backupFrequencyOptions;
-    data['autoBackupLocation'] = autoBackupLocation;
-    data['startDatebackup'] = startDatebackup;
-    data['usePageTapZones'] = usePageTapZones;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'animatePageTransitions': animatePageTransitions,
+        'animeDisplayType': animeDisplayType.index,
+        'animeLibraryDownloadedChapters': animeLibraryDownloadedChapters,
+        'animeLibraryLocalSource': animeLibraryLocalSource,
+        'animeLibraryShowCategoryTabs': animeLibraryShowCategoryTabs,
+        'animeLibraryShowContinueReadingButton':
+            animeLibraryShowContinueReadingButton,
+        'animeLibraryShowLanguage': animeLibraryShowLanguage,
+        'animeLibraryShowNumbersOfItems': animeLibraryShowNumbersOfItems,
+        'autoExtensionsUpdates': autoExtensionsUpdates,
+        'backgroundColor': backgroundColor.index,
+        if (chapterFilterBookmarkedList != null)
+          'chapterFilterBookmarkedList':
+              chapterFilterBookmarkedList!.map((v) => v.toJson()).toList(),
+        if (chapterFilterDownloadedList != null)
+          'chapterFilterDownloadedList':
+              chapterFilterDownloadedList!.map((v) => v.toJson()).toList(),
+        if (chapterFilterUnreadList != null)
+          'chapterFilterUnreadList':
+              chapterFilterUnreadList!.map((v) => v.toJson()).toList(),
+        if (chapterPageIndexList != null)
+          'chapterPageIndexList':
+              chapterPageIndexList!.map((v) => v.toJson()).toList(),
+        if (chapterPageUrlsList != null)
+          'chapterPageUrlsList':
+              chapterPageUrlsList!.map((v) => v.toJson()).toList(),
+        'checkForExtensionUpdates': checkForExtensionUpdates,
+        'cookiesList': cookiesList,
+        'cropBorders': cropBorders,
+        'dateFormat': dateFormat,
+        'defaultReaderMode': defaultReaderMode.index,
+        'displayType': displayType.index,
+        'doubleTapAnimationSpeed': doubleTapAnimationSpeed,
+        'downloadLocation': downloadLocation,
+        'downloadOnlyOnWifi': downloadOnlyOnWifi,
+        'filterScanlatorList': filterScanlatorList,
+        'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
+        'flexSchemeColorIndex': flexSchemeColorIndex,
+        'id': id,
+        'incognitoMode': incognitoMode,
+        'libraryDownloadedChapters': libraryDownloadedChapters,
+        'libraryFilterAnimeBookMarkedType': libraryFilterAnimeBookMarkedType,
+        'libraryFilterAnimeDownloadType': libraryFilterAnimeDownloadType,
+        'libraryFilterAnimeStartedType': libraryFilterAnimeStartedType,
+        'libraryFilterAnimeUnreadType': libraryFilterAnimeUnreadType,
+        'libraryFilterMangasBookMarkedType': libraryFilterMangasBookMarkedType,
+        'libraryFilterMangasDownloadType': libraryFilterMangasDownloadType,
+        'libraryFilterMangasStartedType': libraryFilterMangasStartedType,
+        'libraryFilterMangasUnreadType': libraryFilterMangasUnreadType,
+        'libraryLocalSource': libraryLocalSource,
+        'libraryShowCategoryTabs': libraryShowCategoryTabs,
+        'libraryShowContinueReadingButton': libraryShowContinueReadingButton,
+        'libraryShowLanguage': libraryShowLanguage,
+        'libraryShowNumbersOfItems': libraryShowNumbersOfItems,
+        if (locale != null) 'locale': locale!.toJson(),
+        'onlyIncludePinnedSources': onlyIncludePinnedSources,
+        'pagePreloadAmount': pagePreloadAmount,
+        if (personalPageModeList != null)
+          'personalPageModeList':
+              personalPageModeList!.map((v) => v.toJson()).toList(),
+        if (personalReaderModeList != null)
+          'personalReaderModeList':
+              personalReaderModeList!.map((v) => v.toJson()).toList(),
+        'pureBlackDarkMode': pureBlackDarkMode,
+        'relativeTimesTamps': relativeTimesTamps,
+        'saveAsCBZArchive': saveAsCBZArchive,
+        'scaleType': scaleType.index,
+        'showNSFW': showNSFW,
+        'showPagesNumber': showPagesNumber,
+        if (sortChapterList != null)
+          'sortChapterList': sortChapterList!.map((v) => v.toJson()).toList(),
+        'sortLibraryAnime': sortLibraryAnime,
+        if (sortLibraryManga != null)
+          'sortLibraryManga': sortLibraryManga!.toJson(),
+        'themeIsDark': themeIsDark,
+        'userAgent': userAgent,
+        'backupFrequency': backupFrequency,
+        'backupFrequencyOptions': backupFrequencyOptions,
+        'autoBackupLocation': autoBackupLocation,
+        'startDatebackup': startDatebackup,
+        'usePageTapZones': usePageTapZones
+      };
 }
 
 enum DisplayType {
@@ -444,12 +431,7 @@ class SortLibraryManga {
     reverse = json['reverse'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['index'] = index;
-    data['reverse'] = reverse;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'index': index, 'reverse': reverse};
 }
 
 @embedded
@@ -464,13 +446,8 @@ class SortChapter {
     reverse = json['reverse'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['index'] = index;
-    data['mangaId'] = mangaId;
-    data['reverse'] = reverse;
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'index': index, 'mangaId': mangaId, 'reverse': reverse};
 }
 
 @embedded
@@ -483,12 +460,7 @@ class ChapterFilterDownloaded {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['type'] = type;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'mangaId': mangaId, 'type': type};
 }
 
 @embedded
@@ -501,12 +473,7 @@ class ChapterFilterUnread {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['type'] = type;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'mangaId': mangaId, 'type': type};
 }
 
 @embedded
@@ -519,12 +486,7 @@ class ChapterFilterBookmarked {
     type = json['type'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['type'] = type;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'mangaId': mangaId, 'type': type};
 }
 
 @embedded
@@ -538,12 +500,7 @@ class ChapterPageurls {
     urls = json['urls']?.cast<String>();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['chapterId'] = chapterId;
-    data['urls'] = urls;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'chapterId': chapterId, 'urls': urls};
 }
 
 @embedded
@@ -557,12 +514,7 @@ class ChapterPageIndex {
     index = json['index'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['chapterId'] = chapterId;
-    data['index'] = index;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'chapterId': chapterId, 'index': index};
 }
 
 @embedded
@@ -576,12 +528,7 @@ class Cookie {
     cookie = json['cookie'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['idSource'] = idSource;
-    data['cookie'] = cookie;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {'idSource': idSource, 'cookie': cookie};
 }
 
 @embedded
@@ -597,12 +544,26 @@ class PersonalReaderMode {
     readerMode = ReaderMode.values[json['readerMode']];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['readerMode'] = readerMode.index;
-    return data;
+  Map<String, dynamic> toJson() =>
+      {'mangaId': mangaId, 'readerMode': readerMode.index};
+}
+
+@embedded
+class AutoScrollPages {
+  int? mangaId;
+  double? pageOffset;
+  bool? autoScroll;
+  AutoScrollPages(
+      {this.mangaId, this.pageOffset = 10, this.autoScroll = false});
+
+  AutoScrollPages.fromJson(Map<String, dynamic> json) {
+    mangaId = json['mangaId'];
+    pageOffset = json['pageOffset'];
+    autoScroll = json['autoScroll'];
   }
+
+  Map<String, dynamic> toJson() =>
+      {'mangaId': mangaId, 'pageOffset': pageOffset, 'autoScroll': autoScroll};
 }
 
 @embedded
@@ -618,17 +579,13 @@ class PersonalPageMode {
     pageMode = PageMode.values[json['pageMode']];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['pageMode'] = pageMode.index;
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'mangaId': mangaId, 'pageMode': pageMode.index};
 }
 
 enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }
 
-enum PageMode { onePage, doubleColumm }
+enum PageMode { onePage, doublePage }
 
 @embedded
 class FilterScanlator {
@@ -641,12 +598,8 @@ class FilterScanlator {
     scanlators = json['scanlators']?.cast<String>();
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['mangaId'] = mangaId;
-    data['scanlators'] = scanlators;
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'mangaId': mangaId, 'scanlators': scanlators};
 }
 
 @embedded
@@ -660,10 +613,6 @@ class L10nLocale {
     languageCode = json['languageCode'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['countryCode'] = countryCode;
-    data['languageCode'] = languageCode;
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'countryCode': countryCode, 'languageCode': languageCode};
 }

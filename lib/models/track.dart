@@ -65,24 +65,22 @@ class Track {
     isManga = json['isManga'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['finishedReadingDate'] = finishedReadingDate;
-    data['id'] = id;
-    data['lastChapterRead'] = lastChapterRead;
-    data['libraryId'] = libraryId;
-    data['mangaId'] = mangaId;
-    data['mediaId'] = mediaId;
-    data['score'] = score;
-    data['startedReadingDate'] = startedReadingDate;
-    data['status'] = status.index;
-    data['syncId'] = syncId;
-    data['title'] = title;
-    data['totalChapter'] = totalChapter;
-    data['trackingUrl'] = trackingUrl;
-    data['isManga'] = isManga;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'finishedReadingDate': finishedReadingDate,
+        'id': id,
+        'lastChapterRead': lastChapterRead,
+        'libraryId': libraryId,
+        'mangaId': mangaId,
+        'mediaId': mediaId,
+        'score': score,
+        'startedReadingDate': startedReadingDate,
+        'status': status.index,
+        'syncId': syncId,
+        'title': title,
+        'totalChapter': totalChapter,
+        'trackingUrl': trackingUrl,
+        'isManga': isManga,
+      };
 }
 
 enum TrackStatus {

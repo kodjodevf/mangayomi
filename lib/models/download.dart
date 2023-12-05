@@ -49,17 +49,15 @@ class Download {
     total = json['total'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['chapterId'] = chapterId;
-    data['failed'] = failed;
-    data['id'] = id;
-    data['isDownload'] = isDownload;
-    data['isStartDownload'] = isStartDownload;
-    data['mangaId'] = mangaId;
-    data['succeeded'] = succeeded;
-    data['taskIds'] = taskIds;
-    data['total'] = total;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'chapterId': chapterId,
+        'failed': failed,
+        'id': id,
+        'isDownload': isDownload,
+        'isStartDownload': isStartDownload,
+        'mangaId': mangaId,
+        'succeeded': succeeded,
+        'taskIds': taskIds,
+        'total': total
+      };
 }

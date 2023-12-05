@@ -32,7 +32,7 @@ dependencies:
   background_downloader: 
     git:
       url: https://github.com/kodjodevf/background_downloader.git
-      ref: 357595bb930360f2a153f84aeb85b8614a0eb4c3
+      ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
   permission_handler: ^11.0.1
   flutter_inappwebview: ^5.7.2+3
   draggable_menu: ^4.4.0

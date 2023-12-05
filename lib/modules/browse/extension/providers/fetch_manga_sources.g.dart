@@ -7,7 +7,7 @@ part of 'fetch_manga_sources.dart';
 // **************************************************************************
 
 String _$fetchMangaSourcesListHash() =>
-    r'4830433a410607ed401c6c004af2377c0262a733';
+    r'a74557098c49877942a296abe110fb6ef1dce580';
 
 /// Copied from Dart SDK
 class _SystemHash {

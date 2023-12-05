@@ -86,28 +86,26 @@ class Manga {
     status = Status.values[json['status']];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['author'] = author;
-    data['categories'] = categories;
-    data['customCoverImage'] = customCoverImage;
-    data['dateAdded'] = dateAdded;
-    data['description'] = description;
-    data['favorite'] = favorite;
-    data['genre'] = genre;
-    data['id'] = id;
-    data['imageUrl'] = imageUrl;
-    data['isLocalArchive'] = isLocalArchive;
-    data['isManga'] = isManga;
-    data['lang'] = lang;
-    data['lastRead'] = lastRead;
-    data['lastUpdate'] = lastUpdate;
-    data['link'] = link;
-    data['name'] = name;
-    data['source'] = source;
-    data['status'] = status.index;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'author': author,
+        'categories': categories,
+        'customCoverImage': customCoverImage,
+        'dateAdded': dateAdded,
+        'description': description,
+        'favorite': favorite,
+        'genre': genre,
+        'id': id,
+        'imageUrl': imageUrl,
+        'isLocalArchive': isLocalArchive,
+        'isManga': isManga,
+        'lang': lang,
+        'lastRead': lastRead,
+        'lastUpdate': lastUpdate,
+        'link': link,
+        'name': name,
+        'source': source,
+        'status': status.index
+      };
 }
 
 enum Status {

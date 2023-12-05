@@ -267,6 +267,7 @@
   "backups":"Backups",
   "by_scanlator":"By scanlator",
   "by_name":"By name",
-  "installed":"Installed"
+  "installed":"Installed",
+  "auto_scroll":"Auto scroll"
 
 }

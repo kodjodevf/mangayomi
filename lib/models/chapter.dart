@@ -53,18 +53,16 @@ class Chapter {
     url = json['url'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['archivePath'] = archivePath;
-    data['dateUpload'] = dateUpload;
-    data['id'] = id;
-    data['isBookmarked'] = isBookmarked;
-    data['isRead'] = isRead;
-    data['lastPageRead'] = lastPageRead;
-    data['mangaId'] = mangaId;
-    data['name'] = name;
-    data['scanlator'] = scanlator;
-    data['url'] = url;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'archivePath': archivePath,
+        'dateUpload': dateUpload,
+        'id': id,
+        'isBookmarked': isBookmarked,
+        'isRead': isRead,
+        'lastPageRead': lastPageRead,
+        'mangaId': mangaId,
+        'name': name,
+        'scanlator': scanlator,
+        'url': url
+      };
 }

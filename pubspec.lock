@@ -61,8 +61,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "357595bb930360f2a153f84aeb85b8614a0eb4c3"
-      resolved-ref: "357595bb930360f2a153f84aeb85b8614a0eb4c3"
+      ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
+      resolved-ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
       url: "https://github.com/kodjodevf/background_downloader.git"
     source: git
     version: "7.12.3"

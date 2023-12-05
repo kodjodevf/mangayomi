@@ -62,6 +62,34 @@ class ReaderController {
     return isar.settings.getSync(227)!.defaultReaderMode;
   }
 
+  (bool, double) isAutoValues() {
+    final autoScrollPagesList = getIsarSetting().autoScrollPages ?? [];
+    final autoScrollPages = autoScrollPagesList
+        .where((element) => element.mangaId == getManga().id);
+    if (autoScrollPages.isNotEmpty) {
+      return (
+        autoScrollPages.first.autoScroll ?? false,
+        autoScrollPages.first.pageOffset ?? 10
+      );
+    }
+    return (false, 10);
+  }
+
+  void setAutoScroll(bool value, double offset) {
+    List<AutoScrollPages>? autoScrollPagesList = [];
+    for (var autoScrollPages in getIsarSetting().autoScrollPages ?? []) {
+      if (autoScrollPages.mangaId != getManga().id) {
+        autoScrollPagesList.add(autoScrollPages);
+      }
+    }
+    autoScrollPagesList.add(AutoScrollPages()
+      ..mangaId = getManga().id
+      ..pageOffset = offset
+      ..autoScroll = value);
+    isar.writeTxnSync(() => isar.settings
+        .putSync(getIsarSetting()..autoScrollPages = autoScrollPagesList));
+  }
+
   PageMode getPageMode() {
     final personalPageModeList = getIsarSetting().personalPageModeList ?? [];
     final personalPageMode = personalPageModeList

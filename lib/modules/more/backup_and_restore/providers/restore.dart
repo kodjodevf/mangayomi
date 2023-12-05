@@ -3,6 +3,7 @@ import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -54,6 +55,9 @@ void doRestore(DoRestoreRef ref,
           .toList();
       final extensions = (backup["extensions"] as List?)
           ?.map((e) => Source.fromJson(e))
+          .toList();
+      final extensionsPref = (backup["extensions_preferences"] as List?)
+          ?.map((e) => SourcePreference.fromJson(e))
           .toList();
 
       isar.writeTxnSync(() {
@@ -112,6 +116,11 @@ void doRestore(DoRestoreRef ref,
         isar.sources.clearSync();
         if (extensions != null) {
           isar.sources.putAllSync(extensions);
+        }
+
+        isar.sourcePreferences.clearSync();
+        if (extensionsPref != null) {
+          isar.sourcePreferences.putAllSync(extensionsPref);
         }
 
         isar.settings.clearSync();

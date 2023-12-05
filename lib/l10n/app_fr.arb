@@ -267,5 +267,6 @@
   "backups":"Sauvegardes",
   "by_scanlator":"Par traducteur",
   "by_name":"Par nom",
-  "installed":"Installé"
+  "installed":"Installé",
+  "auto_scroll":"Défilement automatique"
 }

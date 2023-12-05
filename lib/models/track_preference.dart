@@ -26,13 +26,6 @@ class TrackPreference {
     prefs = json['prefs'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['syncId'] = syncId;
-    data['username'] = username;
-    data['oAuth'] = oAuth;
-    data['prefs'] = prefs;
-
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'syncId': syncId, 'username': username, 'oAuth': oAuth, 'prefs': prefs};
 }
