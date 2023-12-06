@@ -36,15 +36,17 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   }
 
   void setLibraryDisplayType(DisplayType displayType) {
+    Settings appSettings = Settings();
+
     state = displayType.name;
     if (isManga) {
-      settings = settings..displayType = displayType;
+      appSettings = settings..displayType = displayType;
     } else {
-      settings = settings..animeDisplayType = displayType;
+      appSettings = settings..animeDisplayType = displayType;
     }
 
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+      isar.settings.putSync(appSettings);
     });
   }
 }

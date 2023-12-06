@@ -769,6 +769,12 @@ Settings _settingsDeserialize(
     animeLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[7]),
     autoBackupLocation: reader.readStringOrNull(offsets[8]),
     autoExtensionsUpdates: reader.readBoolOrNull(offsets[9]),
+    autoScrollPages: reader.readObjectList<AutoScrollPages>(
+      offsets[10],
+      AutoScrollPagesSchema.deserialize,
+      allOffsets,
+      AutoScrollPages(),
+    ),
     backgroundColor: _SettingsbackgroundColorValueEnumMap[
             reader.readByteOrNull(offsets[11])] ??
         BackgroundColor.black,
@@ -870,12 +876,6 @@ Settings _settingsDeserialize(
     themeIsDark: reader.readBoolOrNull(offsets[61]),
     usePageTapZones: reader.readBoolOrNull(offsets[62]),
     userAgent: reader.readStringOrNull(offsets[63]),
-  );
-  object.autoScrollPages = reader.readObjectList<AutoScrollPages>(
-    offsets[10],
-    AutoScrollPagesSchema.deserialize,
-    allOffsets,
-    AutoScrollPages(),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(

@@ -310,7 +310,7 @@ class Settings {
     sortLibraryManga = json['sortLibraryManga'] != null
         ? SortLibraryManga.fromJson(json['sortLibraryManga'])
         : null;
-    if (json['sortChapterList'] != null) {
+    if (json['autoScrollPages'] != null) {
       autoScrollPages = (json['autoScrollPages'] as List)
           .map((e) => AutoScrollPages.fromJson(e))
           .toList();
@@ -396,7 +396,7 @@ class Settings {
         'showPagesNumber': showPagesNumber,
         if (sortChapterList != null)
           'sortChapterList': sortChapterList!.map((v) => v.toJson()).toList(),
-        if (sortChapterList != null)
+        if (autoScrollPages != null)
           'autoScrollPages': autoScrollPages!.map((v) => v.toJson()).toList(),
         'sortLibraryAnime': sortLibraryAnime,
         if (sortLibraryManga != null)

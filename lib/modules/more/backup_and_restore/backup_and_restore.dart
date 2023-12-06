@@ -26,335 +26,337 @@ class BackupAndRestore extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.backup_and_restore),
       ),
-      body: Column(
-        children: [
-          ListTile(
-            onTap: () {
-              final list = _getList(context);
-              List<int> indexList = [];
-              indexList.addAll(backupFrequencyOptions);
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return AlertDialog(
-                          title: Text(l10n.create_backup_dialog_title),
-                          content: SizedBox(
-                              width: mediaWidth(context, 0.8),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: list.length,
-                                itemBuilder: (context, index) {
-                                  return ListTileChapterFilter(
-                                      label: list[index],
-                                      type: indexList.contains(index) ? 1 : 0,
-                                      onTap: () {
-                                        if (indexList.contains(index)) {
-                                          setState(() {
-                                            indexList.remove(index);
-                                          });
-                                        } else {
-                                          setState(() {
-                                            indexList.add(index);
-                                          });
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              onTap: () {
+                final list = _getList(context);
+                List<int> indexList = [];
+                indexList.addAll(backupFrequencyOptions);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return AlertDialog(
+                            title: Text(l10n.create_backup_dialog_title),
+                            content: SizedBox(
+                                width: mediaWidth(context, 0.8),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTileChapterFilter(
+                                        label: list[index],
+                                        type: indexList.contains(index) ? 1 : 0,
+                                        onTap: () {
+                                          if (indexList.contains(index)) {
+                                            setState(() {
+                                              indexList.remove(index);
+                                            });
+                                          } else {
+                                            setState(() {
+                                              indexList.add(index);
+                                            });
+                                          }
+                                        });
+                                  },
+                                )),
+                            actions: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        l10n.cancel,
+                                        style: TextStyle(
+                                            color: primaryColor(context)),
+                                      )),
+                                  TextButton(
+                                      onPressed: () async {
+                                        final result = await FilePicker.platform
+                                            .getDirectoryPath();
+        
+                                        if (result != null && context.mounted) {
+                                          ref.watch(doBackUpProvider(
+                                              list: indexList,
+                                              path: result,
+                                              context: context));
                                         }
-                                      });
-                                },
-                              )),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                                      },
+                                      child: Text(
+                                        l10n.ok,
+                                        style: TextStyle(
+                                            color: primaryColor(context)),
+                                      )),
+                                ],
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    });
+              },
+              title: Text(l10n.create_backup),
+              subtitle: Text(
+                l10n.create_backup_subtitle,
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(l10n.restore_backup),
+                        content: SizedBox(
+                            width: mediaWidth(context, 0.8),
+                            child: ListView(
+                              shrinkWrap: true,
                               children: [
-                                TextButton(
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      l10n.cancel,
-                                      style: TextStyle(
-                                          color: primaryColor(context)),
-                                    )),
-                                TextButton(
-                                    onPressed: () async {
-                                      final result = await FilePicker.platform
-                                          .getDirectoryPath();
-
+                                Row(
+                                  children: [
+                                    Icon(Icons.info_outline_rounded,
+                                        color: secondaryColor(context)),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Text(l10n.restore_backup_warning_title),
+                                ),
+                              ],
+                            )),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    l10n.cancel,
+                                    style:
+                                        TextStyle(color: primaryColor(context)),
+                                  )),
+                              TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      FilePickerResult? result = await FilePicker
+                                          .platform
+                                          .pickFiles(allowMultiple: false);
+        
                                       if (result != null && context.mounted) {
-                                        ref.watch(doBackUpProvider(
-                                            list: indexList,
-                                            path: result,
+                                        ref.watch(doRestoreProvider(
+                                            path: result.files.first.path!,
                                             context: context));
                                       }
-                                    },
-                                    child: Text(
-                                      l10n.ok,
-                                      style: TextStyle(
-                                          color: primaryColor(context)),
-                                    )),
-                              ],
-                            )
-                          ],
-                        );
-                      },
-                    );
-                  });
-            },
-            title: Text(l10n.create_backup),
-            subtitle: Text(
-              l10n.create_backup_subtitle,
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.restore_backup),
-                      content: SizedBox(
-                          width: mediaWidth(context, 0.8),
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.info_outline_rounded,
-                                      color: secondaryColor(context)),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5),
-                                child: Text(l10n.restore_backup_warning_title),
-                              ),
-                            ],
-                          )),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  l10n.cancel,
-                                  style:
-                                      TextStyle(color: primaryColor(context)),
-                                )),
-                            TextButton(
-                                onPressed: () async {
-                                  try {
-                                    FilePickerResult? result = await FilePicker
-                                        .platform
-                                        .pickFiles(allowMultiple: false);
-
-                                    if (result != null && context.mounted) {
-                                      ref.watch(doRestoreProvider(
-                                          path: result.files.first.path!,
-                                          context: context));
+                                      if (!context.mounted) return;
+                                      Navigator.pop(context);
+                                    } catch (_) {
+                                      botToast("Error");
+                                      Navigator.pop(context);
                                     }
-                                    if (!context.mounted) return;
-                                    Navigator.pop(context);
-                                  } catch (_) {
-                                    botToast("Error");
-                                    Navigator.pop(context);
-                                  }
-                                },
-                                child: Text(
-                                  l10n.ok,
-                                  style:
-                                      TextStyle(color: primaryColor(context)),
-                                )),
-                          ],
-                        )
-                      ],
-                    );
-                  });
-            },
-            title: Text(l10n.restore_backup),
-            subtitle: Text(
-              l10n.restore_backup_subtitle,
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                                  },
+                                  child: Text(
+                                    l10n.ok,
+                                    style:
+                                        TextStyle(color: primaryColor(context)),
+                                  )),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              title: Text(l10n.restore_backup),
+              subtitle: Text(
+                l10n.restore_backup_subtitle,
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-            child: Row(
-              children: [
-                Text(l10n.automatic_backups,
-                    style:
-                        TextStyle(fontSize: 13, color: primaryColor(context))),
-              ],
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    final list = _getBackupFrequencyList(context);
-                    return AlertDialog(
-                      title: Text(l10n.backup_frequency),
-                      content: SizedBox(
-                          width: mediaWidth(context, 0.8),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: list.length,
-                            itemBuilder: (context, index) {
-                              return RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: index,
-                                groupValue: backupFrequency,
-                                onChanged: (value) {
-                                  ref
-                                      .read(
-                                          backupFrequencyStateProvider.notifier)
-                                      .set(value!);
-                                  Navigator.pop(context);
-                                },
-                                title: Row(
-                                  children: [Text(list[index])],
-                                ),
-                              );
-                            },
-                          )),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  l10n.cancel,
-                                  style:
-                                      TextStyle(color: primaryColor(context)),
-                                )),
-                          ],
-                        )
-                      ],
-                    );
-                  });
-            },
-            title: Text(l10n.backup_frequency),
-            subtitle: Text(
-              _getBackupFrequencyList(context)[backupFrequency],
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            ),
-          ),
-          // if (!isIOS)
-          ListTile(
-            onTap: () async {
-              String? result = await FilePicker.platform.getDirectoryPath();
-
-              if (result != null) {
-                ref.read(autoBackupLocationStateProvider.notifier).set(result);
-              }
-            },
-            title: Text(l10n.backup_location),
-            subtitle: Text(
-              autoBackupLocation.$2.isEmpty
-                  ? autoBackupLocation.$1
-                  : autoBackupLocation.$2,
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            ),
-          ),
-          ListTile(
-            onTap: () {
-              final list = _getList(context);
-              List<int> indexList = [];
-              indexList.addAll(backupFrequencyOptions);
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return AlertDialog(
-                          title: Text(
-                            l10n.backup_options_subtile,
-                          ),
-                          content: SizedBox(
-                              width: mediaWidth(context, 0.8),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: list.length,
-                                itemBuilder: (context, index) {
-                                  return ListTileChapterFilter(
-                                      label: list[index],
-                                      type: indexList.contains(index) ? 1 : 0,
-                                      onTap: () {
-                                        if (indexList.contains(index)) {
-                                          setState(() {
-                                            indexList.remove(index);
-                                          });
-                                        } else {
-                                          setState(() {
-                                            indexList.add(index);
-                                          });
-                                        }
-                                      });
-                                },
-                              )),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      l10n.cancel,
-                                      style: TextStyle(
-                                          color: primaryColor(context)),
-                                    )),
-                                TextButton(
-                                    onPressed: () async {
-                                      ref
-                                          .read(
-                                              backupFrequencyOptionsStateProvider
-                                                  .notifier)
-                                          .set(indexList);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      l10n.ok,
-                                      style: TextStyle(
-                                          color: primaryColor(context)),
-                                    )),
-                              ],
-                            )
-                          ],
-                        );
-                      },
-                    );
-                  });
-            },
-            title: Text(l10n.backup_options),
-            subtitle: Text(
-              l10n.backup_options_subtile,
-              style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            ),
-          ),
-          ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline_rounded,
-                      color: secondaryColor(context)),
+                  Text(l10n.automatic_backups,
+                      style:
+                          TextStyle(fontSize: 13, color: primaryColor(context))),
                 ],
               ),
             ),
-            subtitle: Text(l10n.backup_and_restore_warning_info,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context))),
-          )
-        ],
+            ListTile(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      final list = _getBackupFrequencyList(context);
+                      return AlertDialog(
+                        title: Text(l10n.backup_frequency),
+                        content: SizedBox(
+                            width: mediaWidth(context, 0.8),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: list.length,
+                              itemBuilder: (context, index) {
+                                return RadioListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: index,
+                                  groupValue: backupFrequency,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(
+                                            backupFrequencyStateProvider.notifier)
+                                        .set(value!);
+                                    Navigator.pop(context);
+                                  },
+                                  title: Row(
+                                    children: [Text(list[index])],
+                                  ),
+                                );
+                              },
+                            )),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    l10n.cancel,
+                                    style:
+                                        TextStyle(color: primaryColor(context)),
+                                  )),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              title: Text(l10n.backup_frequency),
+              subtitle: Text(
+                _getBackupFrequencyList(context)[backupFrequency],
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
+            // if (!isIOS)
+            ListTile(
+              onTap: () async {
+                String? result = await FilePicker.platform.getDirectoryPath();
+        
+                if (result != null) {
+                  ref.read(autoBackupLocationStateProvider.notifier).set(result);
+                }
+              },
+              title: Text(l10n.backup_location),
+              subtitle: Text(
+                autoBackupLocation.$2.isEmpty
+                    ? autoBackupLocation.$1
+                    : autoBackupLocation.$2,
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                final list = _getList(context);
+                List<int> indexList = [];
+                indexList.addAll(backupFrequencyOptions);
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return AlertDialog(
+                            title: Text(
+                              l10n.backup_options_subtile,
+                            ),
+                            content: SizedBox(
+                                width: mediaWidth(context, 0.8),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTileChapterFilter(
+                                        label: list[index],
+                                        type: indexList.contains(index) ? 1 : 0,
+                                        onTap: () {
+                                          if (indexList.contains(index)) {
+                                            setState(() {
+                                              indexList.remove(index);
+                                            });
+                                          } else {
+                                            setState(() {
+                                              indexList.add(index);
+                                            });
+                                          }
+                                        });
+                                  },
+                                )),
+                            actions: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        l10n.cancel,
+                                        style: TextStyle(
+                                            color: primaryColor(context)),
+                                      )),
+                                  TextButton(
+                                      onPressed: () async {
+                                        ref
+                                            .read(
+                                                backupFrequencyOptionsStateProvider
+                                                    .notifier)
+                                            .set(indexList);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        l10n.ok,
+                                        style: TextStyle(
+                                            color: primaryColor(context)),
+                                      )),
+                                ],
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    });
+              },
+              title: Text(l10n.backup_options),
+              subtitle: Text(
+                l10n.backup_options_subtile,
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
+            ListTile(
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded,
+                        color: secondaryColor(context)),
+                  ],
+                ),
+              ),
+              subtitle: Text(l10n.backup_and_restore_warning_info,
+                  style: TextStyle(fontSize: 11, color: secondaryColor(context))),
+            )
+          ],
+        ),
       ),
     );
   }

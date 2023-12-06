@@ -20,205 +20,209 @@ class SourcePreferenceWidget extends StatefulWidget {
 class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: widget.sourcePreference.length,
-        itemBuilder: (context, index) {
-          final preference = widget.sourcePreference[index];
-          Widget? w;
-          if (preference.editTextPreference != null) {
-            final pref = preference.editTextPreference!;
-            w = ListTile(
-              title: Text(pref.title!),
-              subtitle: Text(pref.summary!,
-                  style:
-                      TextStyle(fontSize: 11, color: secondaryColor(context))),
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => EditTextDialogWidget(
-                        text: pref.value!,
-                        onChanged: (value) {
-                          setState(() {
-                            pref.value = value;
-                          });
-                          setPreferenceSetting(preference, widget.source);
-                        },
-                        dialogTitle: pref.dialogTitle!,
-                        dialogMessage: pref.dialogMessage!));
-              },
-            );
-          } else if (preference.checkBoxPreference != null) {
-            final pref = preference.checkBoxPreference!;
-            w = CheckboxListTile(
-              title: Text(pref.title!),
-              subtitle: Text(pref.summary!,
-                  style:
-                      TextStyle(fontSize: 11, color: secondaryColor(context))),
-              value: pref.value,
-              onChanged: (value) {
-                setState(() {
-                  pref.value = value;
-                });
-                setPreferenceSetting(preference, widget.source);
-              },
-              controlAffinity: ListTileControlAffinity.trailing,
-            );
-          } else if (preference.switchPreferenceCompat != null) {
-            final pref = preference.switchPreferenceCompat!;
-            w = SwitchListTile(
-              title: Text(pref.title!),
-              subtitle: Text(pref.summary!,
-                  style:
-                      TextStyle(fontSize: 11, color: secondaryColor(context))),
-              value: pref.value!,
-              onChanged: (value) {
-                setState(() {
-                  pref.value = value;
-                });
-                setPreferenceSetting(preference, widget.source);
-              },
-              controlAffinity: ListTileControlAffinity.trailing,
-            );
-          } else if (preference.listPreference != null) {
-            final pref = preference.listPreference!;
-            w = ListTile(
-                title: Text(pref.title!),
-                subtitle: Text(pref.entries![pref.valueIndex!],
-                    style: TextStyle(
-                        fontSize: 11, color: secondaryColor(context))),
-                onTap: () async {
-                  final res = await showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(pref.title!),
-                      content: SizedBox(
-                          width: mediaWidth(context, 0.8),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: pref.entries!.length,
-                            itemBuilder: (context, index) {
-                              return RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: index,
-                                groupValue: pref.valueIndex,
-                                onChanged: (value) {
-                                  Navigator.pop(context, index);
-                                },
-                                title: Row(
-                                  children: [Text(pref.entries![index])],
-                                ),
-                              );
+    return Column(
+      children: [
+        for (var index = 0; index < widget.sourcePreference.length; index++)
+          Builder(
+            builder: (context) {
+              final preference = widget.sourcePreference[index];
+              Widget? w;
+              if (preference.editTextPreference != null) {
+                final pref = preference.editTextPreference!;
+                w = ListTile(
+                  title: Text(pref.title!),
+                  subtitle: Text(pref.summary!,
+                      style: TextStyle(
+                          fontSize: 11, color: secondaryColor(context))),
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) => EditTextDialogWidget(
+                            text: pref.value!,
+                            onChanged: (value) {
+                              setState(() {
+                                pref.value = value;
+                              });
+                              setPreferenceSetting(preference, widget.source);
                             },
-                          )),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  context.l10n.cancel,
-                                  style:
-                                      TextStyle(color: primaryColor(context)),
-                                )),
-                          ],
-                        )
-                      ],
-                    ),
-                  );
-                  if (res != null) {
+                            dialogTitle: pref.dialogTitle!,
+                            dialogMessage: pref.dialogMessage!));
+                  },
+                );
+              } else if (preference.checkBoxPreference != null) {
+                final pref = preference.checkBoxPreference!;
+                w = CheckboxListTile(
+                  title: Text(pref.title!),
+                  subtitle: Text(pref.summary!,
+                      style: TextStyle(
+                          fontSize: 11, color: secondaryColor(context))),
+                  value: pref.value,
+                  onChanged: (value) {
                     setState(() {
-                      pref.valueIndex = res;
+                      pref.value = value;
                     });
-                  }
-                  setPreferenceSetting(preference, widget.source);
-                });
-          } else if (preference.multiSelectListPreference != null) {
-            final pref = preference.multiSelectListPreference!;
-            w = ListTile(
-                title: Text(pref.title!),
-                subtitle: Text(pref.summary!,
-                    style: TextStyle(
-                        fontSize: 11, color: secondaryColor(context))),
-                onTap: () {
-                  List<String> indexList = [];
-                  indexList.addAll(pref.values!);
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            return AlertDialog(
-                              title: Text(pref.title!),
-                              content: SizedBox(
-                                  width: mediaWidth(context, 0.8),
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: pref.entries!.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTileChapterFilter(
-                                          label: pref.entries![index],
-                                          type: indexList.contains(
-                                                  pref.entryValues![index])
-                                              ? 1
-                                              : 0,
-                                          onTap: () {
-                                            if (indexList.contains(
-                                                pref.entryValues![index])) {
-                                              setState(() {
-                                                indexList.remove(
-                                                    pref.entryValues![index]);
-                                                pref.values = indexList;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                indexList.add(
-                                                    pref.entryValues![index]);
-                                                pref.values = indexList;
-                                              });
-                                            }
-                                            setPreferenceSetting(
-                                                preference, widget.source);
-                                          });
+                    setPreferenceSetting(preference, widget.source);
+                  },
+                  controlAffinity: ListTileControlAffinity.trailing,
+                );
+              } else if (preference.switchPreferenceCompat != null) {
+                final pref = preference.switchPreferenceCompat!;
+                w = SwitchListTile(
+                  title: Text(pref.title!),
+                  subtitle: Text(pref.summary!,
+                      style: TextStyle(
+                          fontSize: 11, color: secondaryColor(context))),
+                  value: pref.value!,
+                  onChanged: (value) {
+                    setState(() {
+                      pref.value = value;
+                    });
+                    setPreferenceSetting(preference, widget.source);
+                  },
+                  controlAffinity: ListTileControlAffinity.trailing,
+                );
+              } else if (preference.listPreference != null) {
+                final pref = preference.listPreference!;
+                w = ListTile(
+                    title: Text(pref.title!),
+                    subtitle: Text(pref.entries![pref.valueIndex!],
+                        style: TextStyle(
+                            fontSize: 11, color: secondaryColor(context))),
+                    onTap: () async {
+                      final res = await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(pref.title!),
+                          content: SizedBox(
+                              width: mediaWidth(context, 0.8),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: pref.entries!.length,
+                                itemBuilder: (context, index) {
+                                  return RadioListTile(
+                                    dense: true,
+                                    contentPadding: const EdgeInsets.all(0),
+                                    value: index,
+                                    groupValue: pref.valueIndex,
+                                    onChanged: (value) {
+                                      Navigator.pop(context, index);
                                     },
-                                  )),
-                              actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          context.l10n.cancel,
-                                          style: TextStyle(
-                                              color: primaryColor(context)),
-                                        )),
-                                    TextButton(
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          context.l10n.ok,
-                                          style: TextStyle(
-                                              color: primaryColor(context)),
-                                        )),
-                                  ],
-                                )
+                                    title: Row(
+                                      children: [Text(pref.entries![index])],
+                                    ),
+                                  );
+                                },
+                              )),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      context.l10n.cancel,
+                                      style: TextStyle(
+                                          color: primaryColor(context)),
+                                    )),
                               ],
+                            )
+                          ],
+                        ),
+                      );
+                      if (res != null) {
+                        setState(() {
+                          pref.valueIndex = res;
+                        });
+                      }
+                      setPreferenceSetting(preference, widget.source);
+                    });
+              } else if (preference.multiSelectListPreference != null) {
+                final pref = preference.multiSelectListPreference!;
+                w = ListTile(
+                    title: Text(pref.title!),
+                    subtitle: Text(pref.summary!,
+                        style: TextStyle(
+                            fontSize: 11, color: secondaryColor(context))),
+                    onTap: () {
+                      List<String> indexList = [];
+                      indexList.addAll(pref.values!);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text(pref.title!),
+                                  content: SizedBox(
+                                      width: mediaWidth(context, 0.8),
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: pref.entries!.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTileChapterFilter(
+                                              label: pref.entries![index],
+                                              type: indexList.contains(
+                                                      pref.entryValues![index])
+                                                  ? 1
+                                                  : 0,
+                                              onTap: () {
+                                                if (indexList.contains(
+                                                    pref.entryValues![index])) {
+                                                  setState(() {
+                                                    indexList.remove(pref
+                                                        .entryValues![index]);
+                                                    pref.values = indexList;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    indexList.add(pref
+                                                        .entryValues![index]);
+                                                    pref.values = indexList;
+                                                  });
+                                                }
+                                                setPreferenceSetting(
+                                                    preference, widget.source);
+                                              });
+                                        },
+                                      )),
+                                  actions: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              context.l10n.cancel,
+                                              style: TextStyle(
+                                                  color: primaryColor(context)),
+                                            )),
+                                        TextButton(
+                                            onPressed: () async {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              context.l10n.ok,
+                                              style: TextStyle(
+                                                  color: primaryColor(context)),
+                                            )),
+                                      ],
+                                    )
+                                  ],
+                                );
+                              },
                             );
-                          },
-                        );
-                      });
-                });
-          }
-          return w ?? Container();
-        });
+                          });
+                    });
+              }
+              return w ?? Container();
+            },
+          )
+      ],
+    );
   }
 }
 
