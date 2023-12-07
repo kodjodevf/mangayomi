@@ -94,13 +94,12 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref,
                       });
                     } else {
                       // log("update aivalable");
-                      isar.writeTxnSync(() => isar.sources
-                          .putSync(sourc..versionLast = source.version));
+                      isar.sources.putSync(sourc..versionLast = source.version);
                     }
                   }
                 }
               } else {
-                isar.writeTxnSync(() => isar.sources.putSync(Source()
+                isar.sources.putSync(Source()
                   ..sourceCodeUrl = source.sourceCodeUrl
                   ..id = source.id
                   ..sourceCode = source.sourceCode
@@ -118,7 +117,7 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref,
                   ..versionLast = source.version
                   ..isManga = source.isManga
                   ..isFullData = source.isFullData ?? false
-                  ..appMinVerReq = source.appMinVerReq));
+                  ..appMinVerReq = source.appMinVerReq);
                 // log("new source");
               }
             }
