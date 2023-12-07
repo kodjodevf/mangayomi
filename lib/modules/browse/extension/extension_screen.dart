@@ -64,9 +64,9 @@ class ExtensionScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   if (useTestSourceCode)
-                    ExtensionListTileWidget(
-                        source: testSourceModel,
-                        isTestSource: useTestSourceCode),
+                    for (var e in testSourceModelList)
+                      ExtensionListTileWidget(
+                          source: e, isTestSource: useTestSourceCode),
                   GroupedListView<Source, String>(
                     elements: entries,
                     groupBy: (element) => "",

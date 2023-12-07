@@ -152,9 +152,9 @@ class MultiSelectListPreference {
     return MultiSelectListPreference(
         title: json['title'],
         summary: json['summary'],
-        entries: json['entries'],
-        entryValues: json['entryValues'],
-        values: json['values']);
+        entries: json['entries']?.cast<String>(),
+        entryValues: json['entryValues']?.cast<String>(),
+        values: json['values']?.cast<String>());
   }
 }
 

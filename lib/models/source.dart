@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/sources/source_test.dart';
 part 'source.g.dart';
 
 @collection
@@ -54,7 +55,7 @@ class Source {
   String? additionalParams;
 
   Source(
-      {this.id = 0,
+      {this.id = Isar.autoIncrement,
       this.name = '',
       this.baseUrl = '',
       this.lang = '',
@@ -71,9 +72,9 @@ class Source {
       this.lastUsed = false,
       this.apiUrl = "",
       this.sourceCodeUrl = "",
-      this.version = "",
-      this.versionLast = "",
-      this.sourceCode = '',
+      this.version = "0.0.1",
+      this.versionLast = "0.0.1",
+      this.sourceCode = testSourceCode,
       this.headers = '',
       this.isManga = true,
       this.appMinVerReq = "",

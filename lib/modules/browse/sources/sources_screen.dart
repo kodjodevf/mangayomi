@@ -55,7 +55,8 @@ class SourcesScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     if (useTestSourceCode)
-                      SourceListTile(source: testSourceModel, isManga: isManga),
+                      for (var e in testSourceModelList)
+                        SourceListTile(source: e, isManga: isManga),
                     GroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => "",

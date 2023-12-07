@@ -3,7 +3,7 @@ import 'package:mangayomi/models/source.dart';
 //For testing purposes, set to true
 const useTestSourceCode = false;
 
-final testSourceModel = Source(
+final testSourceModelList = [Source(
     name: "Test Source",
     // Example: https://gogoanime3.net
     baseUrl: "",
@@ -12,7 +12,7 @@ final testSourceModel = Source(
     // Example: en
     lang: "",
     // Example: false for anime or true for manga
-    isManga: false);
+    isManga: false)];
 
 const testSourceCode = r'''
 import 'package:mangayomi/bridge_lib.dart';

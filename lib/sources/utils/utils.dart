@@ -4,8 +4,9 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/sources/source_test.dart';
 
 Source? getSource(String lang, String name) {
-  if (useTestSourceCode) {
-    return testSourceModel;
+  if (testSourceModelList.isNotEmpty && useTestSourceCode) {
+    return testSourceModelList
+        .firstWhere((element) => element.lang == lang && element.name == name);
   }
   try {
     final sourcesList = isar.sources.filter().idIsNotNull().findAllSync();

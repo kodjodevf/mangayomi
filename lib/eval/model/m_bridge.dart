@@ -456,7 +456,15 @@ class MBridge {
     List<dynamic> valD = [];
     for (var date in val) {
       if (date.toString().isNotEmpty) {
-        valD.add(parseChapterDate(date, dateFormat, dateFormatLocale));
+        valD.add(parseChapterDate(
+          date,
+          dateFormat,
+          dateFormatLocale,
+          (val) {
+            dateFormat = val.$1;
+            dateFormatLocale = val.$2;
+          },
+        ));
       }
     }
     return valD;
@@ -610,8 +618,8 @@ class MBridge {
   }
 
   //Parse a chapter date to millisecondsSinceEpoch
-  static String parseChapterDate(
-      String date, String dateFormat, String dateFormatLocale) {
+  static String parseChapterDate(String date, String dateFormat,
+      String dateFormatLocale, Function((String, String)) newLocale) {
     int parseRelativeDate(String date) {
       final number = int.tryParse(RegExp(r"(\d+)").firstMatch(date)!.group(0)!);
       if (number == null) return 0;
@@ -703,6 +711,7 @@ class MBridge {
 
       for (var locale in supportedLocales) {
         for (var dateFormat in _dateFormats) {
+          newLocale((dateFormat, locale));
           try {
             initializeDateFormatting(locale);
             if (WordSet(["yesterday", "يوم واحد"]).startsWith(date)) {

@@ -3,7 +3,6 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
-import 'package:mangayomi/sources/source_test.dart';
 
 void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
   final sourcePref = isar.sourcePreferences
@@ -42,11 +41,11 @@ SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
       .sourceIdEqualTo(sourceId)
       .keyEqualTo(key)
       .findFirstSync();
-  final source =
-      useTestSourceCode ? testSourceModel : isar.sources.getSync(sourceId)!;
+  final source = isar.sources.getSync(sourceId)!;
   if (sourcePreference == null) {
-    sourcePreference = getSourcePreference(source: source)
-        .firstWhere((element) => element.key == key, orElse: () => throw "Error when getting source preference");
+    sourcePreference = getSourcePreference(source: source).firstWhere(
+        (element) => element.key == key,
+        orElse: () => throw "Error when getting source preference");
     setPreferenceSetting(sourcePreference, source);
   }
 
