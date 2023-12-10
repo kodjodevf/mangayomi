@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/search_.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -66,10 +67,16 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            onFieldSubmitted: (value) {
-              setState(() {
-                query = value;
-              });
+            onFieldSubmitted: (value) async {
+              if (!(query == _textEditingController.text)) {
+                setState(() {
+                  query = "";
+                });
+                await Future.delayed(const Duration(milliseconds: 10));
+                setState(() {
+                  query = value;
+                });
+              }
             },
             onSuffixPressed: () {
               _textEditingController.clear();
@@ -84,12 +91,12 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
       body: query.isNotEmpty
           ? ListView(
               children: [
-                for (var i = 0; i < sourceList.length; i++)
+                for (var source in sourceList)
                   SizedBox(
                     height: 260,
                     child: SourceSearchScreen(
                       query: query,
-                      source: sourceList[i],
+                      source: source,
                     ),
                   ),
               ],
@@ -99,7 +106,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   }
 }
 
-class SourceSearchScreen extends ConsumerWidget {
+class SourceSearchScreen extends StatefulWidget {
   final String query;
 
   final Source source;
@@ -110,10 +117,43 @@ class SourceSearchScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<SourceSearchScreen> createState() => _SourceSearchScreenState();
+}
+
+class _SourceSearchScreenState extends State<SourceSearchScreen> {
+  @override
+  void initState() {
+    _init();
+    super.initState();
+  }
+
+  String _errorMessage = "";
+  bool _isLoading = true;
+  MPages? pages;
+  _init() async {
+    try {
+      _errorMessage = "";
+      pages = await search(
+          source: widget.source, page: 1, query: widget.query, filterList: []);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final search = ref.watch(
-        searchProvider(source: source, page: 1, query: query, filterList: []));
+
     return Scaffold(
         body: SizedBox(
       height: 260,
@@ -126,42 +166,47 @@ class SourceSearchScreen extends ConsumerWidget {
                   context,
                   createRoute(
                       page: MangaHomeScreen(
-                    query: query,
-                    source: source,
+                    query: widget.query,
+                    source: widget.source,
                     isSearch: true,
                   )));
             },
-            title: Text(source.name!),
+            title: Text(widget.source.name!),
             subtitle: Text(
-              completeLanguageName(source.lang!),
+              completeLanguageName(widget.source.lang!),
               style: const TextStyle(fontSize: 10),
             ),
             trailing: const Icon(Icons.arrow_forward_sharp),
           ),
           Flexible(
-            child: search.when(
-                loading: () => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                error: (error, stackTrace) =>
-                    Center(child: Text(error.toString())),
-                data: (data) {
-                  if (data!.list.isNotEmpty) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: data.list.length,
-                      itemBuilder: (context, index) {
-                        return MangaGlobalImageCard(
-                          manga: data.list[index],
-                          source: source,
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Builder(
+                    builder: (context) {
+                      if (_errorMessage.isNotEmpty) {
+                        return Center(
+                          child: Text(_errorMessage),
                         );
-                      },
-                    );
-                  }
-                  return Center(
-                    child: Text(l10n.no_result),
-                  );
-                }),
+                      }
+                      if (pages!.list.isNotEmpty) {
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: pages!.list.length,
+                          itemBuilder: (context, index) {
+                            return MangaGlobalImageCard(
+                              manga: pages!.list[index],
+                              source: widget.source,
+                            );
+                          },
+                        );
+                      }
+                      return Center(
+                        child: Text(l10n.no_result),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

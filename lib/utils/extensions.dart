@@ -7,6 +7,10 @@ extension StringExtensions on String {
     return substring(start);
   }
 
+  String substringAfterLast(String pattern) {
+    return split(pattern).last;
+  }
+
   String substringBefore(String pattern) {
     final endIndex = indexOf(pattern);
     if (endIndex == -1) return substring(0);
