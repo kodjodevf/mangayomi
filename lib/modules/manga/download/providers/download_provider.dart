@@ -112,24 +112,24 @@ Future<List<String>> downloadChapter(
             Directory("${path4.path}${manga.name!.replaceAll(regExp, '_')}/");
 
         if (!(await path1.exists())) {
-          path1.create();
+          await path1.create();
         }
         if (Platform.isAndroid) {
           if (!(await File("${path1.path}" ".nomedia").exists())) {
-            File("${path1.path}" ".nomedia").create();
+            await File("${path1.path}" ".nomedia").create();
           }
         }
         if (!(await path2.exists())) {
-          path2.create();
+          await path2.create();
         }
         if (!(await path5.exists())) {
-          path5.create();
+          await path5.create();
         }
         if (!(await path4.exists())) {
-          path4.create();
+          await path4.create();
         }
         if (!(await path3.exists())) {
-          path3.create();
+          await path3.create();
         }
         if (isManga) {
           if ((await path.exists())) {
@@ -150,7 +150,7 @@ Future<List<String>> downloadChapter(
                   requiresWiFi: onlyOnWifi));
             }
           } else {
-            path.create();
+            await path.create();
             if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
                 .exists()) {
             } else {
@@ -185,7 +185,7 @@ Future<List<String>> downloadChapter(
                   requiresWiFi: onlyOnWifi));
             }
           } else {
-            path.create();
+            await path.create();
             if (await File("${path.path}${chapter.name}.mp4").exists()) {
             } else {
               tasks.add(DownloadTask(

@@ -126,29 +126,27 @@ class _ExtensionListTileWidgetState
           ],
         ),
         trailing: TextButton(
-          onPressed: widget.isTestSource
+          onPressed: widget.isTestSource || !updateAivalable && sourceNotEmpty
               ? () {
                   context.push('/extension_detail', extra: widget.source);
                 }
-              : !updateAivalable && sourceNotEmpty
-                  ? null
-                  : () async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      widget.source.isManga!
-                          ? await ref.watch(fetchMangaSourcesListProvider(
-                                  id: widget.source.id, reFresh: true)
-                              .future)
-                          : await ref.watch(fetchAnimeSourcesListProvider(
-                                  id: widget.source.id, reFresh: true)
-                              .future);
-                      if (mounted) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                      }
-                    },
+              : () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  widget.source.isManga!
+                      ? await ref.watch(fetchMangaSourcesListProvider(
+                              id: widget.source.id, reFresh: true)
+                          .future)
+                      : await ref.watch(fetchAnimeSourcesListProvider(
+                              id: widget.source.id, reFresh: true)
+                          .future);
+                  if (mounted) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                },
           child: _isLoading
               ? const SizedBox(
                   height: 20,
@@ -162,7 +160,7 @@ class _ExtensionListTileWidgetState
                       ? l10n.install
                       : updateAivalable
                           ? l10n.update
-                          : l10n.latest),
+                          : l10n.settings),
         ));
   }
 }
