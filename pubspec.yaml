@@ -12,13 +12,13 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^12.1.1
-  flutter_riverpod: ^2.4.4
+  go_router: ^12.1.3
+  flutter_riverpod: ^2.4.9
   cached_network_image: ^3.3.0
-  http: ^1.1.0
-  riverpod_annotation: ^2.2.1
+  http: ^1.1.2
+  riverpod_annotation: ^2.3.3
   html: ^0.15.4
-  font_awesome_flutter: ^10.5.0
+  font_awesome_flutter: ^10.6.0
   expandable_text: ^2.3.0
   flex_color_scheme: ^7.3.1
   extended_image: ^8.2.0
@@ -26,29 +26,29 @@ dependencies:
   draggable_scrollbar: ^0.1.0
   grouped_list: ^5.1.2
   intl: ^0.18.0
-  google_fonts: ^5.1.0
-  url_launcher: ^6.1.12
-  package_info_plus: ^4.1.0
+  google_fonts: ^6.1.0
+  url_launcher: ^6.2.2
+  package_info_plus: ^5.0.1
   background_downloader: 
     git:
       url: https://github.com/kodjodevf/background_downloader.git
       ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
-  permission_handler: ^11.0.1
+  permission_handler: ^11.1.0
   flutter_inappwebview: ^5.7.2+3
-  draggable_menu: ^4.4.0
+  draggable_menu: ^4.4.1
   isar: 3.1.0+1
   isar_flutter_libs: 3.1.0+1
   share_plus: ^7.2.1 
   xpath_selector_html_parser: ^3.0.1
   desktop_webview_window: ^0.2.3
-  archive: ^3.4.6
-  file_picker: ^5.3.3
-  path_provider: ^2.1.0
+  archive: ^3.4.9
+  file_picker: ^6.1.1
+  path_provider: ^2.1.1
   scrollable_positioned_list: ^0.3.5
   dart_eval: ^0.7.2
   json_path: ^0.6.2
   bot_toast: ^4.1.3
-  flutter_web_auth_2: ^3.0.2
+  flutter_web_auth_2: ^3.0.4
   numberpicker: ^2.1.2
   encrypt: ^5.0.3
   js_packer: ^0.0.5
@@ -60,7 +60,7 @@ dependencies:
       ref: 0ab6b10ea660ead8e8e1694517aabe3582f25d5c
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
-  rinf: ^4.16.3
+  rinf: ^4.19.0
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.2
   
