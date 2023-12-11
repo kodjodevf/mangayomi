@@ -3,16 +3,18 @@ import 'package:mangayomi/models/source.dart';
 //For testing purposes, set to true
 const useTestSourceCode = false;
 
-final testSourceModelList = [Source(
-    name: "Test Source",
-    // Example: https://gogoanime3.net
-    baseUrl: "",
-    // source code
-    sourceCode: testSourceCode,
-    // Example: en
-    lang: "",
-    // Example: false for anime or true for manga
-    isManga: false)];
+final testSourceModelList = [
+  Source(
+      name: "Test Source",
+      // Example: https://gogoanime3.net
+      baseUrl: "",
+      // source code
+      sourceCode: testSourceCode,
+      // Example: en
+      lang: "",
+      // Example: false for anime or true for manga
+      isManga: false)
+];
 
 const testSourceCode = r'''
 import 'package:mangayomi/bridge_lib.dart';
@@ -42,13 +44,13 @@ class TestSource extends MProvider {
     // TODO: implement
   }
   
-  // For anime videos
+  // For anime episode video list
   @override
   Future<List<MVideo>> getVideoList(MSource source, String url) async {
     // TODO: implement
   }
 
-  // For manga pages
+  // For manga chapter pages
   @override
   Future<List<String>> getPageList(MSource source, String url) {
     // TODO: implement

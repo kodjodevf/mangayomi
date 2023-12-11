@@ -312,7 +312,7 @@ class MBridge {
     return html!;
   }
 
-  ///Deobfuscate a JS code
+  ///Unpack a JS code
   static const $Function evalJs = $Function(_evalJs);
 
   static $Value? _evalJs(_, __, List<$Value?> args) {

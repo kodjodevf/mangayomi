@@ -5,6 +5,9 @@ import 'package:mangayomi/sources/source_test.dart';
 
 Source? getSource(String lang, String name) {
   if (testSourceModelList.isNotEmpty && useTestSourceCode) {
+    if (lang.isEmpty || name.isEmpty) {
+      return testSourceModelList.first;
+    }
     return testSourceModelList
         .firstWhere((element) => element.lang == lang && element.name == name);
   }
@@ -14,7 +17,7 @@ Source? getSource(String lang, String name) {
       (element) =>
           element.name!.toLowerCase() == name.toLowerCase() &&
           element.lang == lang,
-      orElse: () => throw (),
+      orElse: () => throw ("Error when getting source"),
     );
   } catch (_) {
     return null;

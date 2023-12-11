@@ -27,17 +27,4 @@ class MManga {
       this.status = Status.unknown,
       this.description,
       this.chapters});
-
-  // Manga toManga(Manga? manga, String source) {
-  //   return Manga(
-  //       source: manga?.source ?? source,
-  //       author: author,
-  //       genre: genre,
-  //       imageUrl: imageUrl,
-  //       lang: "lang",
-  //       link: link,
-  //       name: name,
-  //       status: status!,
-  //       description: description);
-  // }
 }
