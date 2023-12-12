@@ -7,7 +7,7 @@ part of 'extensions_provider.dart';
 // **************************************************************************
 
 String _$getExtensionsStreamHash() =>
-    r'2f3ed044cd49c1b08587196c27d727ed9d815468';
+    r'010b67dcc4ccc0736c5ca779c33751302ab28cd8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,13 +40,11 @@ class GetExtensionsStreamFamily extends Family<AsyncValue<List<Source>>> {
   const GetExtensionsStreamFamily();
 
   /// See also [getExtensionsStream].
-  GetExtensionsStreamProvider call({
-    required String query,
-    required bool? isManga,
-  }) {
+  GetExtensionsStreamProvider call(
+    bool? isManga,
+  ) {
     return GetExtensionsStreamProvider(
-      query: query,
-      isManga: isManga,
+      isManga,
     );
   }
 
@@ -55,8 +53,7 @@ class GetExtensionsStreamFamily extends Family<AsyncValue<List<Source>>> {
     covariant GetExtensionsStreamProvider provider,
   ) {
     return call(
-      query: provider.query,
-      isManga: provider.isManga,
+      provider.isManga,
     );
   }
 
@@ -79,14 +76,12 @@ class GetExtensionsStreamFamily extends Family<AsyncValue<List<Source>>> {
 class GetExtensionsStreamProvider
     extends AutoDisposeStreamProvider<List<Source>> {
   /// See also [getExtensionsStream].
-  GetExtensionsStreamProvider({
-    required String query,
-    required bool? isManga,
-  }) : this._internal(
+  GetExtensionsStreamProvider(
+    bool? isManga,
+  ) : this._internal(
           (ref) => getExtensionsStream(
             ref as GetExtensionsStreamRef,
-            query: query,
-            isManga: isManga,
+            isManga,
           ),
           from: getExtensionsStreamProvider,
           name: r'getExtensionsStreamProvider',
@@ -97,7 +92,6 @@ class GetExtensionsStreamProvider
           dependencies: GetExtensionsStreamFamily._dependencies,
           allTransitiveDependencies:
               GetExtensionsStreamFamily._allTransitiveDependencies,
-          query: query,
           isManga: isManga,
         );
 
@@ -108,11 +102,9 @@ class GetExtensionsStreamProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.query,
     required this.isManga,
   }) : super.internal();
 
-  final String query;
   final bool? isManga;
 
   @override
@@ -128,7 +120,6 @@ class GetExtensionsStreamProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        query: query,
         isManga: isManga,
       ),
     );
@@ -141,15 +132,12 @@ class GetExtensionsStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetExtensionsStreamProvider &&
-        other.query == query &&
-        other.isManga == isManga;
+    return other is GetExtensionsStreamProvider && other.isManga == isManga;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, query.hashCode);
     hash = _SystemHash.combine(hash, isManga.hashCode);
 
     return _SystemHash.finish(hash);
@@ -157,9 +145,6 @@ class GetExtensionsStreamProvider
 }
 
 mixin GetExtensionsStreamRef on AutoDisposeStreamProviderRef<List<Source>> {
-  /// The parameter `query` of this provider.
-  String get query;
-
   /// The parameter `isManga` of this provider.
   bool? get isManga;
 }
@@ -169,8 +154,6 @@ class _GetExtensionsStreamProviderElement
     with GetExtensionsStreamRef {
   _GetExtensionsStreamProviderElement(super.provider);
 
-  @override
-  String get query => (origin as GetExtensionsStreamProvider).query;
   @override
   bool? get isManga => (origin as GetExtensionsStreamProvider).isManga;
 }

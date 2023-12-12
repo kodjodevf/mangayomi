@@ -166,6 +166,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           title: _firstVid.subtitles?.first.label,
           language: _firstVid.subtitles?.first.label));
 
+  late final ValueNotifier<AudioTrack?> _audio = ValueNotifier(AudioTrack.uri(
+      _firstVid.audios?.first.file ?? "",
+      title: _firstVid.audios?.first.label,
+      language: _firstVid.audios?.first.label));
+
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
   bool _initSubtitle = true;
@@ -391,6 +396,40 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                             ),
                             const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5)),
+                            _videoAudios(context)
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                        color: Colors.white,
+                        width: 0.2,
+                        height: mediaHeight(context, 1)),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8, left: 12, bottom: 5),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "l10n.subtitle",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5)),
                             _videoSubtitle(context)
                           ],
                         ),
@@ -405,8 +444,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   Widget _videoSubtitle(BuildContext context) {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .where((element) =>
-            element.title != null && element.language != null && widget.isLocal)
+        .where((element) => element.title != null && element.language != null)
         .toList()
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
         .toList();
@@ -460,9 +498,84 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
               ),
               Expanded(
                 child: Text(
-                  sub.subtitle!.title ??
-                      sub.subtitle!.language ??
-                      sub.subtitle!.channels ??
+                  sub.subtitle?.title ??
+                      sub.subtitle?.language ??
+                      sub.subtitle?.channels ??
+                      "None",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                      color: selected
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.6)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _videoAudios(BuildContext context) {
+    List<VideoPrefs> videoAudio = _player.state.tracks.audio
+        .where((element) => element.title != null && element.language != null)
+        .toList()
+        .map((e) => VideoPrefs(isLocal: true, audio: e))
+        .toList();
+    AudioTrack? audio;
+
+    List<String> audios = [];
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        for (var audio in video.audios ?? []) {
+          if (!audios.contains(audio.file)) {
+            videoAudio.add(VideoPrefs(
+                isLocal: false,
+                audio: AudioTrack.uri(audio.file!,
+                    title: audio.label, language: audio.label)));
+            audios.add(audio.file!);
+          }
+        }
+      }
+    }
+    if (widget.isLocal) {
+      audio = _player.state.track.audio;
+    } else {
+      try {
+        audio = _audio.value;
+      } catch (_) {}
+    }
+
+    videoAudio.sort((a, b) => a.audio!.title!.compareTo(b.audio!.title!));
+    videoAudio.insert(
+        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+    return Column(
+      children: videoAudio.toSet().toList().map((aud) {
+        final selected = audio != null && aud.audio == audio;
+        return GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+            try {
+              _player.setAudioTrack(aud.audio!);
+              if (!widget.isLocal) _audio.value = aud.audio;
+            } catch (_) {}
+          },
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(
+                  Icons.check,
+                  color: selected ? Colors.white : Colors.transparent,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  aud.audio?.title ??
+                      aud.audio?.language ??
+                      aud.audio?.channels ??
                       "None",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontSize: 16,
@@ -1017,8 +1130,13 @@ class MaterialMobilePositionIndicatorState
 class VideoPrefs {
   VideoTrack? videoTrack;
   SubtitleTrack? subtitle;
+  AudioTrack? audio;
   bool isLocal;
   final Map<String, String>? headers;
   VideoPrefs(
-      {this.videoTrack, this.isLocal = true, this.headers, this.subtitle});
+      {this.videoTrack,
+      this.isLocal = true,
+      this.headers,
+      this.subtitle,
+      this.audio});
 }
