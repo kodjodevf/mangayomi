@@ -16,6 +16,16 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
+bool _canBeDownloaded(String url) {
+  List<String> extensions = ['mp4', 'mov', 'avi', 'mkv'];
+  for (String extension in extensions) {
+    if (url.toLowerCase().endsWith(extension)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 @riverpod
 Future<List<String>> downloadChapter(
   DownloadChapterRef ref, {
@@ -77,7 +87,7 @@ Future<List<String>> downloadChapter(
     ).future)
         .then((value) {
       final videosUrls = value.$1
-          .where((element) => element.originalUrl.endsWith(".mp4"))
+          .where((element) => _canBeDownloaded(element.originalUrl))
           .toList();
       if (videosUrls.isNotEmpty) {
         pageUrls = [videosUrls.first.url];
