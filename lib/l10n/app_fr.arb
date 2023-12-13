@@ -214,8 +214,8 @@
   "page_preload_amount_subtitle":"Le nombre de pages à précharger pendant la lecture. De plus grandes valeurs rendront la lecture plus fluide au coût d'un plus grand cache et d'une plus grande utilisation de données.",
   "image_loading_error":"L'image n'a pas pu être chargée",
   "add_episodes":"Ajouter Épisodes",
-  "video_quality":"Modifier la qualité de la video",
-  "subtitle":"Changez la piste des sous-titres",  
+  "video_quality":"Qualité",
+  "video_subtitle":"Sous-titre",  
   "check_for_extension_updates":"Vérifier les mise à jour d'extensions",
   "auto_extensions_updates":"Mises à jour auto des extensions",
   "auto_extensions_updates_subtitle":"Mettra automatiquement à jour l'extension lorsqu'une nouvelle version est disponible.",
@@ -268,5 +268,6 @@
   "by_scanlator":"Par traducteur",
   "by_name":"Par nom",
   "installed":"Installé",
-  "auto_scroll":"Défilement automatique"
+  "auto_scroll":"Défilement automatique",
+  "video_audio":"audio"
 }

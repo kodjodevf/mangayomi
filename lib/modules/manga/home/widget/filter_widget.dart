@@ -35,18 +35,18 @@ class FilterWidget extends StatelessWidget {
           final state = filterState.state;
           widget = CheckboxListTile(
             dense: true,
-            value: state == 0
-                ? false
-                : state == 1
-                    ? true
-                    : null,
+            value: switch (state) {
+              0 => false,
+              1 => true,
+              _ => null,
+            },
             onChanged: (value) {
               filterList[idx] = filterState
-                ..state = value == null
-                    ? 2
-                    : value == true
-                        ? 1
-                        : 0;
+                ..state = switch (value) {
+                  null => 2,
+                  true => 1,
+                  _ => 0,
+                };
               onChanged(filterList);
             },
             title: Text(filterState.name),

@@ -5,22 +5,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'extensions_provider.g.dart';
 
 @riverpod
-Stream<List<Source>> getExtensionsStream(GetExtensionsStreamRef ref,
-    {required String query, required bool? isManga}) async* {
-  yield* query.isNotEmpty
-      ? isar.sources
-          .filter()
-          .nameContains(query.toLowerCase(), caseSensitive: false)
-          .idIsNotNull()
-          .and()
-          .isActiveEqualTo(true)
-          .isMangaEqualTo(isManga)
-          .watch(fireImmediately: true)
-      : isar.sources
-          .filter()
-          .idIsNotNull()
-          .and()
-          .isActiveEqualTo(true)
-          .isMangaEqualTo(isManga)
-          .watch(fireImmediately: true);
+Stream<List<Source>> getExtensionsStream(
+    GetExtensionsStreamRef ref, bool? isManga) async* {
+  yield* isar.sources
+      .filter()
+      .idIsNotNull()
+      .and()
+      .isActiveEqualTo(true)
+      .isMangaEqualTo(isManga)
+      .watch(fireImmediately: true);
 }
