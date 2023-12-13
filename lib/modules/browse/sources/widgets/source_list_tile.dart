@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,9 +17,6 @@ class SourceListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        if (useTestSourceCode) {
-          isar.writeTxnSync(() => isar.sources.putSync(source));
-        }
         final sources = isar.sources
             .filter()
             .idIsNotNull()

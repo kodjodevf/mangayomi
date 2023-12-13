@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
@@ -38,9 +37,6 @@ class _ExtensionListTileWidgetState
     return ListTile(
         onTap: () async {
           if (sourceNotEmpty || widget.isTestSource) {
-            if (widget.isTestSource) {
-              isar.writeTxnSync(() => isar.sources.putSync(widget.source));
-            }
             context.push('/extension_detail', extra: widget.source);
           } else {
             setState(() {

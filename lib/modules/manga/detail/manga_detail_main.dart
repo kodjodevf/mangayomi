@@ -40,7 +40,6 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
-    print(widget.mangaId);
     final manga =
         ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
     return Scaffold(
@@ -60,12 +59,10 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                 .isAddedEqualTo(true)
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
-              final sourceExist = useTestSourceCode
-                  ? true
-                  : snapshot.hasData && snapshot.data!.isNotEmpty;
+              final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(
                 onRefresh: () async {
-                  if (sourceExist) {
+                  if (sourceExist || useTestSourceCode) {
                     await ref.read(updateMangaDetailProvider(
                             mangaId: manga.id, isInit: false)
                         .future);

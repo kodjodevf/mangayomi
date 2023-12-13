@@ -41,8 +41,8 @@ SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
       .sourceIdEqualTo(sourceId)
       .keyEqualTo(key)
       .findFirstSync();
+  final source = isar.sources.getSync(sourceId)!;
   if (sourcePreference == null) {
-    final source = isar.sources.getSync(sourceId)!;
     sourcePreference = getSourcePreference(source: source).firstWhere(
         (element) => element.key == key,
         orElse: () => throw "Error when getting source preference");

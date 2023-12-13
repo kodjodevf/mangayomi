@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
@@ -483,6 +482,7 @@ class MBridge {
 
   //Utility to use RegExp
   static String regExp(
+      //RegExp(r'\[a\]'), "[123]")
       String expression,
       String source,
       String replace,
@@ -550,18 +550,14 @@ class MBridge {
         res = await request.send();
       }
       if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
-        log("Http request: ${res.statusCode}, Cloudflare");
         return await cloudflareBypass(
             url: url, sourceId: source!.id.toString(), method: 0);
       } else if (res.statusCode == 200) {
-        log("Http request: ${res.statusCode}");
         return await res.stream.bytesToString();
       } else {
-        log("Http request: ${res.statusCode}, reasonPhrase: ${res.reasonPhrase}");
         return "error";
       }
     } catch (e) {
-      log("Http error: $e");
       botToast(e.toString());
       return "error";
     }
