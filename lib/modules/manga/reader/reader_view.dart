@@ -164,13 +164,14 @@ class _MangaChapterPageGalleryState
         _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!));
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
-    _autoScroll = false;
+    _autoScroll.value = false;
     clearGestureDetailsCache();
     super.dispose();
   }
 
-  late bool _autoScroll = _readerController.isAutoValues().$1;
-  late final _autoScrollPage = ValueNotifier(_autoScroll);
+  late final _autoScroll =
+      ValueNotifier(_readerController.autoScrollValues().$1);
+  late final _autoScrollPage = ValueNotifier(_autoScroll.value);
   late GetChapterPagesModel _chapterUrlModel = widget.chapterUrlModel;
 
   late Chapter chapter = widget.chapter;
@@ -651,6 +652,7 @@ class _MangaChapterPageGalleryState
                     _appBar(),
                     _bottomBar(),
                     _showPage(),
+                    _autoScrollPlayPauseBtn()
                   ],
                 );
               }),
@@ -826,7 +828,7 @@ class _MangaChapterPageGalleryState
     }
     if (readerMode != ReaderMode.verticalContinuous &&
         readerMode != ReaderMode.webtoon) {
-      _autoScroll = false;
+      _autoScroll.value = false;
     }
     autoPagescroll();
   }
@@ -873,12 +875,13 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  late final _pageOffset = ValueNotifier(_readerController.isAutoValues().$2);
+  late final _pageOffset =
+      ValueNotifier(_readerController.autoScrollValues().$2);
 
   void autoPagescroll() async {
     for (int i = 0; i < 1; i++) {
       await Future.delayed(const Duration(milliseconds: 100));
-      if (!_autoScroll) {
+      if (!_autoScroll.value) {
         return;
       }
       _pageOffsetController.animateScroll(
@@ -994,11 +997,11 @@ class _MangaChapterPageGalleryState
 
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
     if (value != ReaderMode.verticalContinuous && value != ReaderMode.webtoon) {
-      _autoScroll = false;
+      _autoScroll.value = false;
     } else {
       if (_autoScrollPage.value) {
         autoPagescroll();
-        _autoScroll = true;
+        _autoScroll.value = true;
       }
     }
 
@@ -1185,6 +1188,30 @@ class _MangaChapterPageGalleryState
         ),
       ),
     );
+  }
+
+  Widget _autoScrollPlayPauseBtn() {
+    return Positioned(
+        bottom: 0,
+        right: 0,
+        child: !_isView
+            ? ValueListenableBuilder(
+              valueListenable: _autoScrollPage,
+              builder: (context, valueT, child) => valueT
+                  ? ValueListenableBuilder(
+                      valueListenable: _autoScroll,
+                      builder: (context, value, child) => IconButton(
+                          onPressed: () {
+                            autoPagescroll();
+                            _autoScroll.value = !value;
+                          },
+                          icon: Icon(value
+                              ? Icons.pause_circle
+                              : Icons.play_circle)),
+                    )
+                  : Container(),
+            )
+            : Container());
   }
 
   Widget _bottomBar() {
@@ -1730,7 +1757,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _showModalSettings() async {
-    _autoScroll = false;
+    _autoScroll.value = false;
     final l10n = l10nLocalizations(context)!;
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
@@ -1851,9 +1878,9 @@ class _MangaChapterPageGalleryState
                                                       .setAutoScroll(val,
                                                           _pageOffset.value);
                                                   _autoScrollPage.value = val;
-                                                  _autoScroll = val;
+                                                  _autoScroll.value = val;
                                                 }),
-                                            if (_autoScrollPage.value)
+                                            if (valueT)
                                               ValueListenableBuilder(
                                                 valueListenable: _pageOffset,
                                                 builder: (context, value,
@@ -1991,7 +2018,7 @@ class _MangaChapterPageGalleryState
             )));
     if (_autoScrollPage.value) {
       autoPagescroll();
-      _autoScroll = true;
+      _autoScroll.value = true;
     }
   }
 }
