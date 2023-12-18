@@ -19,7 +19,7 @@ checkForUpdate(CheckForUpdateRef ref,
     BotToast.showText(text: l10n.searching_for_updates);
   }
   final info = await PackageInfo.fromPlatform();
-
+  print(info.data);
   final updateAvailable = await _checkUpdate();
   if (compareVersions(info.version, updateAvailable.$1) < 0) {
     if (manualUpdate) {

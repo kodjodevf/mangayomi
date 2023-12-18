@@ -749,9 +749,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   List<Widget> _desktopBottomButtonBar(
       BuildContext context, bool isFullScreen) {
-    bool hasPrevEpisode = _streamController.getEpisodeIndex() + 1 !=
-        _streamController.getEpisodesLength();
-    bool hasNextEpisode = _streamController.getEpisodeIndex() != 0;
+    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
+        _streamController
+            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
+    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
     return [
       Flexible(
         child: Column(
@@ -1010,9 +1011,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   List<Widget> _mobilePrimaryButtonBar() {
-    bool hasPrevEpisode = _streamController.getEpisodeIndex() + 1 !=
-        _streamController.getEpisodesLength();
-    bool hasNextEpisode = _streamController.getEpisodeIndex() != 0;
+    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
+        _streamController
+            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
+    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
     return [
       const Spacer(flex: 3),
       IconButton(

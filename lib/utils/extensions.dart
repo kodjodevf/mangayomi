@@ -35,6 +35,25 @@ extension StringExtensions on String {
     startIndex = rightIndex + right.length;
     return substring(leftIndex, rightIndex);
   }
+
+  bool isMediaVideo() {
+    return [
+      "3gp",
+      "avi",
+      "mpg",
+      "mpeg",
+      "webm",
+      "ogg",
+      "flv",
+      "m4v",
+      "mvp",
+      "mp4",
+      "wmv",
+      "mkv",
+      "mov",
+      "ts"
+    ].any((extension) => toLowerCase().endsWith(extension));
+  }
 }
 
 extension LetExtension<T> on T {
