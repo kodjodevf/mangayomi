@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -196,57 +197,84 @@ class ReaderController {
     return isar.chapters.getSync(chapter.id!)!.isBookmarked!;
   }
 
-  int getPrevChapterIndex() {
-    final chapters = getManga().chapters.toList().reversed.toList();
+  (int, bool) getPrevChapterIndex() {
+    final chapters = _filterAndSortChapters();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
         index = i + 1;
       }
     }
-    return index!;
+    if (index == null) {
+      final chapters = getManga().chapters.toList().reversed.toList();
+      for (var i = 0; i < chapters.length; i++) {
+        if (chapters[i].id == chapter.id) {
+          index = i + 1;
+        }
+      }
+      return (index!, false);
+    }
+    return (index, true);
   }
 
-  int getNextChapterIndex() {
-    final chapters = getManga().chapters.toList().reversed.toList();
+  (int, bool) getNextChapterIndex() {
+    final chapters = _filterAndSortChapters();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
         index = i - 1;
       }
     }
-    return index!;
+    if (index == null) {
+      final chapters = getManga().chapters.toList().reversed.toList();
+      for (var i = 0; i < chapters.length; i++) {
+        if (chapters[i].id == chapter.id) {
+          index = i - 1;
+        }
+      }
+      return (index!, false);
+    }
+    return (index, true);
   }
 
-  int getChapterIndex() {
-    final chapters = getManga().chapters.toList().reversed.toList();
+  (int, bool) getChapterIndex() {
+    final chapters = _filterAndSortChapters();
     int? index;
     for (var i = 0; i < chapters.length; i++) {
       if (chapters[i].id == chapter.id) {
         index = i;
       }
     }
-    return index!;
+    if (index == null) {
+      final chapters = getManga().chapters.toList().reversed.toList();
+      for (var i = 0; i < chapters.length; i++) {
+        if (chapters[i].id == chapter.id) {
+          index = i;
+        }
+      }
+      return (index!, false);
+    }
+    return (index, true);
   }
 
   Chapter getPrevChapter() {
-    return getManga()
-        .chapters
-        .toList()
-        .reversed
-        .toList()[getPrevChapterIndex()];
+    final prevChapIdx = getPrevChapterIndex();
+    return prevChapIdx.$2
+        ? _filterAndSortChapters()[prevChapIdx.$1]
+        : getManga().chapters.toList().reversed.toList()[prevChapIdx.$1];
   }
 
   Chapter getNextChapter() {
-    return getManga()
-        .chapters
-        .toList()
-        .reversed
-        .toList()[getNextChapterIndex()];
+    final nextChapIdx = getNextChapterIndex();
+    return nextChapIdx.$2
+        ? _filterAndSortChapters()[nextChapIdx.$1]
+        : getManga().chapters.toList().reversed.toList()[nextChapIdx.$1];
   }
 
-  int getChaptersLength() {
-    return getManga().chapters.length;
+  int getChaptersLength(bool isInFilterList) {
+    return isInFilterList
+        ? _filterAndSortChapters().length
+        : getManga().chapters.length;
   }
 
   int getPageIndex() {
@@ -299,6 +327,109 @@ class ReaderController {
         });
       }
     }
+  }
+
+  List<String>? _getFilterScanlator() {
+    final scanlators = isar.settings.getSync(227)!.filterScanlatorList ?? [];
+    final filter = scanlators
+        .where((element) => element.mangaId == getManga().id)
+        .toList();
+    return filter.isEmpty ? null : filter.first.scanlators;
+  }
+
+  List<Chapter> _filterAndSortChapters() {
+    final data = getManga().chapters.toList().reversed.toList();
+    final filterUnread = isar.settings
+        .getSync(227)!
+        .chapterFilterUnreadList!
+        .where((element) => element.mangaId == getManga().id)
+        .toList()
+        .first
+        .type!;
+
+    final filterBookmarked = isar.settings
+        .getSync(227)!
+        .chapterFilterBookmarkedList!
+        .where((element) => element.mangaId == getManga().id)
+        .toList()
+        .first
+        .type!;
+    final filterDownloaded = isar.settings
+        .getSync(227)!
+        .chapterFilterDownloadedList!
+        .where((element) => element.mangaId == getManga().id)
+        .toList()
+        .first
+        .type!;
+
+    final sortChapter = isar.settings
+        .getSync(227)!
+        .sortChapterList!
+        .where((element) => element.mangaId == getManga().id)
+        .toList()
+        .first
+        .index;
+    final filterScanlator = _getFilterScanlator() ?? [];
+    List<Chapter>? chapterList;
+    chapterList = data
+        .where((element) => filterUnread == 1
+            ? element.isRead == false
+            : filterUnread == 2
+                ? element.isRead == true
+                : true)
+        .where((element) => filterBookmarked == 1
+            ? element.isBookmarked == true
+            : filterBookmarked == 2
+                ? element.isBookmarked == false
+                : true)
+        .where((element) {
+          final modelChapDownload = isar.downloads
+              .filter()
+              .idIsNotNull()
+              .chapterIdEqualTo(element.id)
+              .findAllSync();
+          return filterDownloaded == 1
+              ? modelChapDownload.isNotEmpty &&
+                  modelChapDownload.first.isDownload == true
+              : filterDownloaded == 2
+                  ? !(modelChapDownload.isNotEmpty &&
+                      modelChapDownload.first.isDownload == true)
+                  : true;
+        })
+        .where((element) => !filterScanlator.contains(element.scanlator))
+        .toList();
+    List<Chapter> chapters =
+        sortChapter == 1 ? chapterList.reversed.toList() : chapterList;
+    if (sortChapter == 0) {
+      chapters.sort(
+        (a, b) {
+          return (a.scanlator == null ||
+                  b.scanlator == null ||
+                  a.dateUpload == null ||
+                  b.dateUpload == null)
+              ? 0
+              : a.scanlator!.compareTo(b.scanlator!) |
+                  a.dateUpload!.compareTo(b.dateUpload!);
+        },
+      );
+    } else if (sortChapter == 2) {
+      chapters.sort(
+        (a, b) {
+          return (a.dateUpload == null || b.dateUpload == null)
+              ? 0
+              : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
+        },
+      );
+    } else if (sortChapter == 3) {
+      chapters.sort(
+        (a, b) {
+          return (a.name == null || b.name == null)
+              ? 0
+              : a.name!.compareTo(b.name!);
+        },
+      );
+    }
+    return chapterList;
   }
 
   String getMangaName() {

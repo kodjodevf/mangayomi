@@ -272,9 +272,10 @@ class _MangaChapterPageGalleryState
           if (event is KeyDownEvent) {
             return;
           }
-          bool hasNextChapter = _readerController.getChapterIndex() != 0;
-          bool hasPrevChapter = _readerController.getChapterIndex() + 1 !=
-              _readerController.getChaptersLength();
+          bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+          bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
+              _readerController
+                  .getChaptersLength(_readerController.getChapterIndex().$2);
           final action = switch (event.logicalKey) {
             LogicalKeyboardKey.escape => _goBack(context),
             LogicalKeyboardKey.backspace => _goBack(context),
@@ -1196,28 +1197,29 @@ class _MangaChapterPageGalleryState
         right: 0,
         child: !_isView
             ? ValueListenableBuilder(
-              valueListenable: _autoScrollPage,
-              builder: (context, valueT, child) => valueT
-                  ? ValueListenableBuilder(
-                      valueListenable: _autoScroll,
-                      builder: (context, value, child) => IconButton(
-                          onPressed: () {
-                            autoPagescroll();
-                            _autoScroll.value = !value;
-                          },
-                          icon: Icon(value
-                              ? Icons.pause_circle
-                              : Icons.play_circle)),
-                    )
-                  : Container(),
-            )
+                valueListenable: _autoScrollPage,
+                builder: (context, valueT, child) => valueT
+                    ? ValueListenableBuilder(
+                        valueListenable: _autoScroll,
+                        builder: (context, value, child) => IconButton(
+                            onPressed: () {
+                              autoPagescroll();
+                              _autoScroll.value = !value;
+                            },
+                            icon: Icon(value
+                                ? Icons.pause_circle
+                                : Icons.play_circle)),
+                      )
+                    : Container(),
+              )
             : Container());
   }
 
   Widget _bottomBar() {
-    bool hasPrevChapter = _readerController.getChapterIndex() + 1 !=
-        _readerController.getChaptersLength();
-    bool hasNextChapter = _readerController.getChapterIndex() != 0;
+    bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
+        _readerController
+            .getChaptersLength(_readerController.getChapterIndex().$2);
+    bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
     final readerMode = ref.watch(_currentReaderMode);
     return Positioned(
       bottom: 0,

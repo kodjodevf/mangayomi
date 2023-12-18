@@ -10,21 +10,12 @@ import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_st
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
+import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
-
-bool _canBeDownloaded(String url) {
-  List<String> extensions = ['mp4', 'mov', 'avi', 'mkv'];
-  for (String extension in extensions) {
-    if (url.toLowerCase().endsWith(extension)) {
-      return true;
-    }
-  }
-  return false;
-}
 
 @riverpod
 Future<List<String>> downloadChapter(
@@ -87,7 +78,7 @@ Future<List<String>> downloadChapter(
     ).future)
         .then((value) {
       final videosUrls = value.$1
-          .where((element) => _canBeDownloaded(element.originalUrl))
+          .where((element) => element.originalUrl.isMediaVideo())
           .toList();
       if (videosUrls.isNotEmpty) {
         pageUrls = [videosUrls.first.url];
