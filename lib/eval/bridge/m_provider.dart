@@ -32,6 +32,11 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         '': BridgeConstructorDef(
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type)))
       },
+      getters: {
+        'supportsLatest': BridgeMethodDef(BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+        )),
+      },
       methods: {
         'getLatestUpdates': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(
@@ -948,6 +953,9 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   void $bridgeSet(String identifier, $Value value) {
     throw UnimplementedError();
   }
+
+  @override
+  bool get supportsLatest => $_get('supportsLatest');
 
   @override
   Future<MManga> getDetail(MSource source, String url) async =>

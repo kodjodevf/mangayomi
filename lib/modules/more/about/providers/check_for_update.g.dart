@@ -6,7 +6,7 @@ part of 'check_for_update.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkForUpdateHash() => r'e32dea3bda782fc470006c1d3758b523629a091d';
+String _$checkForUpdateHash() => r'2c53166482e6584a6004d6788beb7d27d89bc67c';
 
 /// Copied from Dart SDK
 class _SystemHash {

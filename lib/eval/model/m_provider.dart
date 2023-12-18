@@ -7,6 +7,8 @@ import 'package:mangayomi/models/video.dart';
 abstract class MProvider {
   MProvider();
 
+  bool get supportsLatest => true;
+
   Future<MPages> getLatestUpdates(MSource source, int page);
 
   Future<MPages> getPopular(MSource source, int page);

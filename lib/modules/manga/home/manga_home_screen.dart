@@ -12,6 +12,7 @@ import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
+import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -103,6 +104,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   bool _isFiltering = false;
   @override
   Widget build(BuildContext context) {
+    final supportsLatest =
+        ref.watch(supportsLatestProvider(source: widget.source));
     final filterList = getFilterList(source: widget.source);
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
@@ -194,6 +197,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       if (filterList.isEmpty && index == 2) {
+                        return const SizedBox.shrink();
+                      }
+                      if (!supportsLatest && index == 1) {
                         return const SizedBox.shrink();
                       }
                       return MangasCardSelector(

@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_video_list.dart';
+part of 'supports_latest.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'924c2961d148f9ebb0952239c0528d5269a4526a';
+String _$supportsLatestHash() => r'14d8db1a09da5467ba96f3d62a80fdd44d303b9c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,30 +29,30 @@ class _SystemHash {
   }
 }
 
-/// See also [getVideoList].
-@ProviderFor(getVideoList)
-const getVideoListProvider = GetVideoListFamily();
+/// See also [supportsLatest].
+@ProviderFor(supportsLatest)
+const supportsLatestProvider = SupportsLatestFamily();
 
-/// See also [getVideoList].
-class GetVideoListFamily extends Family<AsyncValue<(List<Video>, bool)>> {
-  /// See also [getVideoList].
-  const GetVideoListFamily();
+/// See also [supportsLatest].
+class SupportsLatestFamily extends Family<bool> {
+  /// See also [supportsLatest].
+  const SupportsLatestFamily();
 
-  /// See also [getVideoList].
-  GetVideoListProvider call({
-    required Chapter episode,
+  /// See also [supportsLatest].
+  SupportsLatestProvider call({
+    required Source source,
   }) {
-    return GetVideoListProvider(
-      episode: episode,
+    return SupportsLatestProvider(
+      source: source,
     );
   }
 
   @override
-  GetVideoListProvider getProviderOverride(
-    covariant GetVideoListProvider provider,
+  SupportsLatestProvider getProviderOverride(
+    covariant SupportsLatestProvider provider,
   ) {
     return call(
-      episode: provider.episode,
+      source: provider.source,
     );
   }
 
@@ -68,93 +68,91 @@ class GetVideoListFamily extends Family<AsyncValue<(List<Video>, bool)>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getVideoListProvider';
+  String? get name => r'supportsLatestProvider';
 }
 
-/// See also [getVideoList].
-class GetVideoListProvider
-    extends AutoDisposeFutureProvider<(List<Video>, bool)> {
-  /// See also [getVideoList].
-  GetVideoListProvider({
-    required Chapter episode,
+/// See also [supportsLatest].
+class SupportsLatestProvider extends AutoDisposeProvider<bool> {
+  /// See also [supportsLatest].
+  SupportsLatestProvider({
+    required Source source,
   }) : this._internal(
-          (ref) => getVideoList(
-            ref as GetVideoListRef,
-            episode: episode,
+          (ref) => supportsLatest(
+            ref as SupportsLatestRef,
+            source: source,
           ),
-          from: getVideoListProvider,
-          name: r'getVideoListProvider',
+          from: supportsLatestProvider,
+          name: r'supportsLatestProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getVideoListHash,
-          dependencies: GetVideoListFamily._dependencies,
+                  : _$supportsLatestHash,
+          dependencies: SupportsLatestFamily._dependencies,
           allTransitiveDependencies:
-              GetVideoListFamily._allTransitiveDependencies,
-          episode: episode,
+              SupportsLatestFamily._allTransitiveDependencies,
+          source: source,
         );
 
-  GetVideoListProvider._internal(
+  SupportsLatestProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.episode,
+    required this.source,
   }) : super.internal();
 
-  final Chapter episode;
+  final Source source;
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool)> Function(GetVideoListRef provider) create,
+    bool Function(SupportsLatestRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetVideoListProvider._internal(
-        (ref) => create(ref as GetVideoListRef),
+      override: SupportsLatestProvider._internal(
+        (ref) => create(ref as SupportsLatestRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        episode: episode,
+        source: source,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<(List<Video>, bool)> createElement() {
-    return _GetVideoListProviderElement(this);
+  AutoDisposeProviderElement<bool> createElement() {
+    return _SupportsLatestProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetVideoListProvider && other.episode == episode;
+    return other is SupportsLatestProvider && other.source == source;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, episode.hashCode);
+    hash = _SystemHash.combine(hash, source.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin GetVideoListRef on AutoDisposeFutureProviderRef<(List<Video>, bool)> {
-  /// The parameter `episode` of this provider.
-  Chapter get episode;
+mixin SupportsLatestRef on AutoDisposeProviderRef<bool> {
+  /// The parameter `source` of this provider.
+  Source get source;
 }
 
-class _GetVideoListProviderElement
-    extends AutoDisposeFutureProviderElement<(List<Video>, bool)>
-    with GetVideoListRef {
-  _GetVideoListProviderElement(super.provider);
+class _SupportsLatestProviderElement extends AutoDisposeProviderElement<bool>
+    with SupportsLatestRef {
+  _SupportsLatestProviderElement(super.provider);
 
   @override
-  Chapter get episode => (origin as GetVideoListProvider).episode;
+  Source get source => (origin as SupportsLatestProvider).source;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
