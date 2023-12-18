@@ -29,9 +29,9 @@ class AnimeStreamController {
       }
     }
     if (index == null) {
-      final chapters = getAnime().chapters.toList().reversed.toList();
-      for (var i = 0; i < chapters.length; i++) {
-        if (chapters[i].id == episode.id) {
+      final episodes = getAnime().chapters.toList().reversed.toList();
+      for (var i = 0; i < episodes.length; i++) {
+        if (episodes[i].id == episode.id) {
           index = i;
         }
       }
@@ -49,9 +49,9 @@ class AnimeStreamController {
       }
     }
     if (index == null) {
-      final chapters = getAnime().chapters.toList().reversed.toList();
-      for (var i = 0; i < chapters.length; i++) {
-        if (chapters[i].id == episode.id) {
+      final episodes = getAnime().chapters.toList().reversed.toList();
+      for (var i = 0; i < episodes.length; i++) {
+        if (episodes[i].id == episode.id) {
           index = i + 1;
         }
       }
@@ -69,9 +69,9 @@ class AnimeStreamController {
       }
     }
     if (index == null) {
-      final chapters = getAnime().chapters.toList().reversed.toList();
-      for (var i = 0; i < chapters.length; i++) {
-        if (chapters[i].id == episode.id) {
+      final episodes = getAnime().chapters.toList().reversed.toList();
+      for (var i = 0; i < episodes.length; i++) {
+        if (episodes[i].id == episode.id) {
           index = i - 1;
         }
       }
@@ -166,7 +166,7 @@ class AnimeStreamController {
   }
 
   List<Chapter> _filterAndSortEpisodes() {
-    final data = _filterAndSortEpisodes();
+    final data = getAnime().chapters.toList().reversed.toList();
     final filterUnread = isar.settings
         .getSync(227)!
         .chapterFilterUnreadList!
@@ -174,7 +174,6 @@ class AnimeStreamController {
         .toList()
         .first
         .type!;
-
     final filterBookmarked = isar.settings
         .getSync(227)!
         .chapterFilterBookmarkedList!

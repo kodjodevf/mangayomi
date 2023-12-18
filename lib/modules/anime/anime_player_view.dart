@@ -845,12 +845,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       Flexible(
         child: Row(
           children: [
-            if (isFullScreen)
-              MaterialDesktopFullscreenButton(
+            if (isFullScreen &&
+                (Platform.isIOS || Platform.isMacOS || Platform.isAndroid)) ...[
+              MaterialFullscreenButton(
                 icon: Icon(Platform.isIOS || Platform.isMacOS
                     ? Icons.arrow_back_ios
                     : Icons.arrow_back),
-              ),
+              )
+            ] else ...[
+              if (isFullScreen)
+                const MaterialDesktopFullscreenButton(
+                    icon: Icon(Icons.arrow_back))
+            ],
             if (!isFullScreen)
               BackButton(
                 color: Colors.white,
