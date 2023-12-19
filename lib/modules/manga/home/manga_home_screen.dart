@@ -368,7 +368,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               _scrollController.addListener(() {
                 if (_scrollController.position.pixels ==
                     _scrollController.position.maxScrollExtent) {
-                  if (data.list.isNotEmpty && (data.hasNextPage)) {
+                  if (data.list.isNotEmpty &&
+                      (data.hasNextPage) &&
+                      !_isLoading) {
                     if (mounted) {
                       setState(() {
                         _isLoading = true;
