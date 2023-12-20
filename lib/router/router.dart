@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +35,7 @@ import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter/cupertino.dart';
 part 'router.g.dart';
 
 @riverpod
@@ -80,7 +83,7 @@ class RouterNotifier extends ChangeNotifier {
                 builder: (context, state) => const LibraryScreen(
                   isManga: true,
                 ),
-                pageBuilder: (context, state) => CustomTransition(
+                pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const LibraryScreen(
                     isManga: true,
@@ -93,7 +96,7 @@ class RouterNotifier extends ChangeNotifier {
                 builder: (context, state) => const LibraryScreen(
                   isManga: false,
                 ),
-                pageBuilder: (context, state) => CustomTransition(
+                pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const LibraryScreen(
                     isManga: false,
@@ -104,7 +107,7 @@ class RouterNotifier extends ChangeNotifier {
                 name: "history",
                 path: '/history',
                 builder: (context, state) => const HistoryScreen(),
-                pageBuilder: (context, state) => CustomTransition(
+                pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const HistoryScreen(),
                 ),
@@ -113,7 +116,7 @@ class RouterNotifier extends ChangeNotifier {
                 name: "browse",
                 path: '/browse',
                 builder: (context, state) => const BrowseScreen(),
-                pageBuilder: (context, state) => CustomTransition(
+                pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const BrowseScreen(),
                 ),
@@ -122,7 +125,7 @@ class RouterNotifier extends ChangeNotifier {
                 name: "more",
                 path: '/more',
                 builder: (context, state) => const MoreScreen(),
-                pageBuilder: (context, state) => CustomTransition(
+                pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const MoreScreen(),
                 ),
@@ -132,7 +135,7 @@ class RouterNotifier extends ChangeNotifier {
           name: "updates",
           path: '/updates',
           builder: (context, state) => const UpdatesScreen(),
-          pageBuilder: (context, state) => CustomTransition(
+          pageBuilder: (context, state) => transitionPage(
             key: state.pageKey,
             child: const UpdatesScreen(),
           ),
@@ -148,7 +151,7 @@ class RouterNotifier extends ChangeNotifier {
             },
             pageBuilder: (context, state) {
               final source = state.extra as Source?;
-              return CustomTransition(
+              return transitionPage(
                 key: state.pageKey,
                 child: MangaHomeScreen(
                   source: source!,
@@ -167,7 +170,7 @@ class RouterNotifier extends ChangeNotifier {
             pageBuilder: (context, state) {
               int mangaId = state.extra as int;
 
-              return CustomTransition(
+              return transitionPage(
                   key: state.pageKey,
                   child: MangaReaderDetail(
                     mangaId: mangaId,
@@ -184,7 +187,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final chapter = state.extra as Chapter;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: MangaReaderView(
                 chapter: chapter,
@@ -203,7 +206,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final episode = state.extra as Chapter;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: AnimePlayerView(
                 episode: episode,
@@ -222,7 +225,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final isManga = state.extra as bool;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: ExtensionsLang(
                 isManga: isManga,
@@ -237,7 +240,7 @@ class RouterNotifier extends ChangeNotifier {
             return const SettingsScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const SettingsScreen(),
             );
@@ -250,7 +253,7 @@ class RouterNotifier extends ChangeNotifier {
             return const AppearanceScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const AppearanceScreen(),
             );
@@ -267,7 +270,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final source = state.extra as Source;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: ExtensionDetail(
                 source: source,
@@ -286,7 +289,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final isManga = state.extra as bool;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: GlobalSearchScreen(
                 isManga: isManga,
@@ -301,7 +304,7 @@ class RouterNotifier extends ChangeNotifier {
             return const AboutScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const AboutScreen(),
             );
@@ -314,7 +317,7 @@ class RouterNotifier extends ChangeNotifier {
             return const TrackScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const TrackScreen(),
             );
@@ -331,7 +334,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final isManga = state.extra as bool;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: SourcesFilterScreen(
                 isManga: isManga,
@@ -346,7 +349,7 @@ class RouterNotifier extends ChangeNotifier {
             return const DownloadQueueScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const DownloadQueueScreen(),
             );
@@ -364,7 +367,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final data = state.extra as Map<String, String>;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: MangaWebView(
                 url: data["url"]!,
@@ -383,7 +386,7 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final data = state.extra as (bool, int);
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: CategoriesScreen(
                 data: data,
@@ -398,7 +401,7 @@ class RouterNotifier extends ChangeNotifier {
             return const GeneralScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const GeneralScreen(),
             );
@@ -411,7 +414,7 @@ class RouterNotifier extends ChangeNotifier {
             return const ReaderScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const ReaderScreen(),
             );
@@ -424,7 +427,7 @@ class RouterNotifier extends ChangeNotifier {
             return const BrowseSScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const BrowseSScreen(),
             );
@@ -437,7 +440,7 @@ class RouterNotifier extends ChangeNotifier {
             return const DownloadsScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const DownloadsScreen(),
             );
@@ -450,7 +453,7 @@ class RouterNotifier extends ChangeNotifier {
             return const BackupAndRestore();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const BackupAndRestore(),
             );
@@ -463,7 +466,7 @@ class RouterNotifier extends ChangeNotifier {
             return const ManageTrackersScreen();
           },
           pageBuilder: (context, state) {
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: const ManageTrackersScreen(),
             );
@@ -478,13 +481,19 @@ class RouterNotifier extends ChangeNotifier {
           },
           pageBuilder: (context, state) {
             final trackerPref = state.extra as TrackPreference;
-            return CustomTransition(
+            return transitionPage(
               key: state.pageKey,
               child: TrackingDetail(trackerPref: trackerPref),
             );
           },
         ),
       ];
+}
+
+dynamic transitionPage({required LocalKey key, required child}) {
+  return Platform.isIOS
+      ? CupertinoPage(key: key, child: child)
+      : CustomTransition(child: child, key: key);
 }
 
 class CustomTransition extends CustomTransitionPage {
@@ -497,10 +506,12 @@ class CustomTransition extends CustomTransitionPage {
 }
 
 Route createRoute({required Widget page}) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => page,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(opacity: animation, child: child);
-    },
-  );
+  return Platform.isIOS
+      ? CupertinoPageRoute(builder: (context) => page)
+      : PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        );
 }

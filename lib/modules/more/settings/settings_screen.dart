@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
@@ -29,20 +26,6 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: l10n.appearance_subtitle,
                 icon: Icons.color_lens_rounded,
                 onTap: () => context.push('/appearance')),
-            ListTileWidget(
-                title: l10n.library,
-                subtitle: 'Categories',
-                icon: Icons.collections_bookmark_rounded,
-                onTap: () async {
-                  final process = await Process.start(
-                    "C:/DEV/flutter/mangayomi/server/TorrServer.exe",
-                    [],
-                    workingDirectory: "C:/DEV/flutter/mangayomi/server",
-                  );
-                  await process.stderr.forEach((e) {
-                    print(utf8.decode(e));
-                  });
-                }),
             ListTileWidget(
                 title: l10n.reader,
                 subtitle: l10n.reader_subtitle,
