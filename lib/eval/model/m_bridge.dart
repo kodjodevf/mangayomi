@@ -41,7 +41,6 @@ import 'package:mangayomi/utils/extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
-import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as hp;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
@@ -67,125 +66,6 @@ class WordSet {
 }
 
 class MBridge {
-  ///Seaches for the first descendant node matching the given selectors, using a preorder traversal.
-  static const $Function querySelector = $Function(_querySelector);
-
-  static $Value? _querySelector(_, __, List<$Value?> args) {
-    String html = args[0]!.$reified;
-    String selector = args[0]!.$reified;
-    int typeElement = args[0]!.$reified;
-    String attributes = args[0]!.$reified;
-
-    String res = "";
-    try {
-      var parse = parser.parse(html);
-
-      // return querySelector text
-      if (typeElement == 0) {
-        res = parse.querySelector(selector)!.text.trim().trimLeft().trimRight();
-
-        // return querySelector innerHtml
-      } else if (typeElement == 1) {
-        res = parse
-            .querySelector(selector)!
-            .innerHtml
-            .trim()
-            .trimLeft()
-            .trimRight();
-
-        // return querySelector outerHtml
-      } else if (typeElement == 2) {
-        res = parse
-            .querySelector(selector)!
-            .outerHtml
-            .trim()
-            .trimLeft()
-            .trimRight();
-      }
-      // return querySelector attributes
-      res = parse
-          .querySelector(selector)!
-          .attributes[attributes]!
-          .trim()
-          .trimLeft()
-          .trimRight();
-      return $String(res);
-    } catch (_) {
-      return $String("");
-    }
-  }
-
-  ///Returns all descendant nodes matching the given selectors, using a preorder traversal.
-  static const $Function querySelectorAll = $Function(_querySelectorAll);
-
-  static $Value? _querySelectorAll(_, __, List<$Value?> args) {
-    String html = args[0]!.$value;
-    String selector = args[1]!.$value;
-    int typeElement = args[2]!.$value;
-    String attributes = args[3]!.$value;
-    int typeRegExp = args[4]!.$value;
-    try {
-      var parse = parser.parse(html);
-      final a = parse.querySelectorAll(selector);
-
-      List<String> res = [];
-      for (var element in a) {
-        //text
-        if (typeElement == 0) {
-          res.add(element.text.trim().trimLeft().trimRight());
-        }
-
-        //innerHtml
-        else if (typeElement == 1) {
-          res.add(element.innerHtml.trim().trimLeft().trimRight());
-        }
-
-        //outerHtml
-        else if (typeElement == 2) {
-          res.add(element.outerHtml.trim().trimLeft().trimRight());
-        }
-
-        //attributes
-        else if (typeElement == 3) {
-          res.add(
-              element.attributes[attributes]!.trim().trimLeft().trimRight());
-        }
-      }
-      // if (typeRegExp == 0) is the default parameter
-      if (typeRegExp == 0) {
-        return $List.wrap(res.map((e) => $String(e)).toList());
-      }
-
-      List<String> resRegExp = [];
-      for (var element in res) {
-        //get first element of href that match
-        if (typeRegExp == 1) {
-          resRegExp.add(regHrefMatcher(element.trim().trimLeft().trimRight()));
-        }
-
-        //get first element of src that match
-        else if (typeRegExp == 2) {
-          resRegExp.add(regSrcMatcher(element.trim().trimLeft().trimRight()));
-        }
-
-        //get first element of datasrc that match
-        else if (typeRegExp == 3) {
-          resRegExp
-              .add(regDataSrcMatcher(element.trim().trimLeft().trimRight()));
-        }
-
-        //get first element of img that match
-        else if (typeRegExp == 4) {
-          resRegExp.add(regImgMatcher(element.trim().trimLeft().trimRight()));
-        }
-      }
-      return $List.wrap(resRegExp.map((e) => $String(e)).toList());
-    } catch (_) {
-      // botToast(e.toString());
-      return $List.wrap([]);
-    }
-  }
-
   static MDocument parsHtml(String html) {
     return MDocument(Document.html(html));
   }

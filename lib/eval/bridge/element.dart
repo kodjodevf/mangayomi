@@ -22,7 +22,7 @@ class $MElement implements MElement, $Instance {
         'element': BridgeFieldDef(BridgeTypeAnnotation($Element.$type)),
       },
       getters: {
-        'outerHTML': BridgeMethodDef(BridgeFunctionDef(
+        'outerHtml': BridgeMethodDef(BridgeFunctionDef(
           returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
               nullable: true),
         )),
@@ -129,8 +129,8 @@ class $MElement implements MElement, $Instance {
   @override
   $Value? $getProperty(Runtime runtime, String identifier) {
     switch (identifier) {
-      case 'outerHTML':
-        final res = $value.outerHTML;
+      case 'outerHtml':
+        final res = $value.outerHtml;
         return res == null ? const $null() : $String(res);
       case 'innerHtml':
         final res = $value.innerHtml;
@@ -253,7 +253,7 @@ class $MElement implements MElement, $Instance {
   MElement? get nextElementSibling => $value.nextElementSibling;
 
   @override
-  String? get outerHTML => $value.outerHTML;
+  String? get outerHtml => $value.outerHtml;
 
   @override
   MElement? get parent => $value.parent;

@@ -6,7 +6,7 @@ class MElement {
 
   final Element? _element;
 
-  String? get outerHTML => _element?.outerHtml;
+  String? get outerHtml => _element?.outerHtml;
 
   String? get innerHtml => _element?.innerHtml;
 

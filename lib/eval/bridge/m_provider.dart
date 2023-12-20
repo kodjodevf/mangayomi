@@ -513,51 +513,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
-        'querySelector': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              params: [
-                BridgeParameter(
-                    'html',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter(
-                    'selector',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter('typeElement',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-                BridgeParameter(
-                    'attributes',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-              ]),
-        ),
-        'querySelectorAll': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
-              params: [
-                BridgeParameter(
-                    'html',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-              ],
-              namedParams: [
-                BridgeParameter(
-                    'selector',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter('typeElement',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-                BridgeParameter(
-                    'attributes',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter('typeRegExp',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-              ]),
-        ),
         'xpath': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(
@@ -956,8 +911,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               .map((e) => $String(e))
               .toList());
         }),
-      "querySelector" => MBridge.querySelector,
-      "querySelectorAll" => MBridge.querySelectorAll,
       "xpath" => MBridge.xpath,
       _ => $Function((_, __, List<$Value?> args) {
           throw UnimplementedError('Unknown property $identifier');
