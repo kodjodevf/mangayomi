@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:mangayomi/eval/bridge/document.dart';
 import 'package:mangayomi/eval/bridge/filter.dart';
 import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/bridge/m_manga.dart';
@@ -760,6 +761,17 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
               ]),
         ),
+        'parseHtml': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation($MDocument.$type),
+                params: [
+                  BridgeParameter(
+                      'html',
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
       },
       bridge: true);
 
@@ -773,6 +785,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       'http' => $Function((_, __, List<$Value?> args) {
           return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
               .then((value) => $String(value)));
+        }),
+      'parseHtml' => $Function((_, __, List<$Value?> args) {
+          final res = MBridge.parsHtml(args[0]!.$reified);
+          return $MDocument.wrap(res);
         }),
       'getPreferenceValue' => $Function((_, __, List<$Value?> args) {
           final value =

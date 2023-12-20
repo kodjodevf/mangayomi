@@ -7,10 +7,12 @@ import 'package:dart_eval/stdlib/core.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:html/dom.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
+import 'package:mangayomi/eval/model/document.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
@@ -182,6 +184,10 @@ class MBridge {
       // botToast(e.toString());
       return $List.wrap([]);
     }
+  }
+
+  static MDocument parsHtml(String html) {
+    return MDocument(Document.html(html));
   }
 
   ///Create query by html string
@@ -483,11 +489,7 @@ class MBridge {
 
   //Utility to use RegExp
   static String regExp(
-      String expression,
-      String source,
-      String replace,
-      int type,
-      int group) {
+      String expression, String source, String replace, int type, int group) {
     if (type == 0) {
       return expression.replaceAll(RegExp(source), replace);
     }
