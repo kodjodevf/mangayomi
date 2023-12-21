@@ -256,9 +256,11 @@ class _MangaChapterPageGalleryState
 
   @override
   Widget build(BuildContext context) {
-    _processCropBorders();
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
+    if (cropBorders) {
+      _processCropBorders();
+    }
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
     return WillPopScope(
@@ -715,14 +717,17 @@ class _MangaChapterPageGalleryState
 
   void _readProgressListener() {
     _currentIndex = _itemPositionsListener.itemPositions.value.first.index;
-    _readerController.setPageIndex(
-        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), false);
+
     int pagesLength = _pageMode == PageMode.doublePage
         ? (_uChapDataPreload.length / 2).ceil() + 1
         : _uChapDataPreload.length;
+
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
       if (_readerController.chapter.id !=
           _uChapDataPreload[_currentIndex!].chapter!.id) {
+        _readerController.setPageIndex(
+            _geCurrentIndex(_uChapDataPreload[_currentIndex! - 1].index!),
+            false);
         if (mounted) {
           setState(() {
             _readerController = ref.read(readerControllerProvider(
@@ -735,29 +740,27 @@ class _MangaChapterPageGalleryState
           });
         }
       }
+      if (_itemPositionsListener.itemPositions.value.last.index ==
+          pagesLength - 1) {
+        _isBookmarked = _readerController.getChapterBookmarked();
+        try {
+          bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+
+          final chapter =
+              hasNextChapter ? _readerController.getNextChapter() : null;
+          if (chapter != null) {
+            ref
+                .watch(getChapterPagesProvider(
+                  chapter: chapter,
+                ).future)
+                .then((value) => _preloadNextChapter(value, chapter));
+          }
+        } catch (_) {}
+      }
 
       ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(
             _uChapDataPreload[_currentIndex!].index!,
           );
-    }
-    if (_itemPositionsListener.itemPositions.value.last.index ==
-        pagesLength - 1) {
-      _isBookmarked = _readerController.getChapterBookmarked();
-      try {
-        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-
-        final chapter =
-            hasNextChapter ? _readerController.getNextChapter() : null;
-        if (chapter != null) {
-          ref
-              .watch(getChapterPagesProvider(
-            chapter: chapter,
-          ).future)
-              .then((value) {
-            _preloadNextChapter(value, chapter);
-          });
-        }
-      } catch (_) {}
     }
   }
 
@@ -840,14 +843,19 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    _processCropBordersByIndex(index);
+    final cropBorders = ref.watch(cropBordersStateProvider);
+    if (cropBorders) {
+      _processCropBordersByIndex(index);
+    }
+
     for (var i = 1; i < pagePreloadAmount + 1; i++) {
       _precacheImages(index + i);
       _precacheImages(index - i);
     }
-    _readerController.setPageIndex(
-        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), false);
+
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
+      _readerController.setPageIndex(
+          _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), false);
       if (mounted) {
         setState(() {
           _readerController = ref.read(readerControllerProvider(
