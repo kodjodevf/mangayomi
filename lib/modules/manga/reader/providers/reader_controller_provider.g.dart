@@ -6,7 +6,7 @@ part of 'reader_controller_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'a5103d732efaeec89b719a14e060ac7aab16c8f4';
+String _$currentIndexHash() => r'c2b912af925d9efd3e36e7a810914ef11393c1da';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -167,6 +167,148 @@ class _CurrentIndexProviderElement
 
   @override
   Chapter get chapter => (origin as CurrentIndexProvider).chapter;
+}
+
+String _$readerControllerHash() => r'611b6eca40a398fe9c71911db2ca9714d6cc05a0';
+
+abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
+  late final Chapter chapter;
+
+  void build({
+    required Chapter chapter,
+  });
+}
+
+/// See also [ReaderController].
+@ProviderFor(ReaderController)
+const readerControllerProvider = ReaderControllerFamily();
+
+/// See also [ReaderController].
+class ReaderControllerFamily extends Family<void> {
+  /// See also [ReaderController].
+  const ReaderControllerFamily();
+
+  /// See also [ReaderController].
+  ReaderControllerProvider call({
+    required Chapter chapter,
+  }) {
+    return ReaderControllerProvider(
+      chapter: chapter,
+    );
+  }
+
+  @override
+  ReaderControllerProvider getProviderOverride(
+    covariant ReaderControllerProvider provider,
+  ) {
+    return call(
+      chapter: provider.chapter,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'readerControllerProvider';
+}
+
+/// See also [ReaderController].
+class ReaderControllerProvider
+    extends AutoDisposeNotifierProviderImpl<ReaderController, void> {
+  /// See also [ReaderController].
+  ReaderControllerProvider({
+    required Chapter chapter,
+  }) : this._internal(
+          () => ReaderController()..chapter = chapter,
+          from: readerControllerProvider,
+          name: r'readerControllerProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$readerControllerHash,
+          dependencies: ReaderControllerFamily._dependencies,
+          allTransitiveDependencies:
+              ReaderControllerFamily._allTransitiveDependencies,
+          chapter: chapter,
+        );
+
+  ReaderControllerProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapter,
+  }) : super.internal();
+
+  final Chapter chapter;
+
+  @override
+  void runNotifierBuild(
+    covariant ReaderController notifier,
+  ) {
+    return notifier.build(
+      chapter: chapter,
+    );
+  }
+
+  @override
+  Override overrideWith(ReaderController Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ReaderControllerProvider._internal(
+        () => create()..chapter = chapter,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapter: chapter,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ReaderController, void> createElement() {
+    return _ReaderControllerProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReaderControllerProvider && other.chapter == chapter;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ReaderControllerRef on AutoDisposeNotifierProviderRef<void> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
+}
+
+class _ReaderControllerProviderElement
+    extends AutoDisposeNotifierProviderElement<ReaderController, void>
+    with ReaderControllerRef {
+  _ReaderControllerProviderElement(super.provider);
+
+  @override
+  Chapter get chapter => (origin as ReaderControllerProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

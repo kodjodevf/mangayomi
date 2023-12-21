@@ -155,13 +155,14 @@ class _MangaChapterPageGalleryState
     with TickerProviderStateMixin {
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
-  late ReaderController _readerController = ReaderController(chapter: chapter);
+  late ReaderController _readerController =
+      ref.read(readerControllerProvider(chapter: chapter).notifier);
 
   @override
   void dispose() {
     _readerController.setMangaHistoryUpdate();
     _readerController.setPageIndex(
-        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!));
+        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), true);
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     _autoScroll.value = false;
@@ -714,7 +715,8 @@ class _MangaChapterPageGalleryState
 
   void _readProgressListener() {
     _currentIndex = _itemPositionsListener.itemPositions.value.first.index;
-
+    _readerController.setPageIndex(
+        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), false);
     int pagesLength = _pageMode == PageMode.doublePage
         ? (_uChapDataPreload.length / 2).ceil() + 1
         : _uChapDataPreload.length;
@@ -723,8 +725,10 @@ class _MangaChapterPageGalleryState
           _uChapDataPreload[_currentIndex!].chapter!.id) {
         if (mounted) {
           setState(() {
-            _readerController = ReaderController(
-                chapter: _uChapDataPreload[_currentIndex!].chapter!);
+            _readerController = ref.read(readerControllerProvider(
+                    chapter: _uChapDataPreload[_currentIndex!].chapter!)
+                .notifier);
+
             chapter = _uChapDataPreload[_currentIndex!].chapter!;
             _chapterUrlModel =
                 _uChapDataPreload[_currentIndex!].chapterUrlModel!;
@@ -740,7 +744,8 @@ class _MangaChapterPageGalleryState
         pagesLength - 1) {
       _isBookmarked = _readerController.getChapterBookmarked();
       try {
-        bool hasNextChapter = _readerController.getChapterIndex() != 0;
+        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+
         final chapter =
             hasNextChapter ? _readerController.getNextChapter() : null;
         if (chapter != null) {
@@ -840,12 +845,14 @@ class _MangaChapterPageGalleryState
       _precacheImages(index + i);
       _precacheImages(index - i);
     }
-
+    _readerController.setPageIndex(
+        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), false);
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
       if (mounted) {
         setState(() {
-          _readerController =
-              ReaderController(chapter: _uChapDataPreload[index].chapter!);
+          _readerController = ref.read(readerControllerProvider(
+                  chapter: _uChapDataPreload[_currentIndex!].chapter!)
+              .notifier);
           chapter = _uChapDataPreload[_currentIndex!].chapter!;
           _chapterUrlModel = _uChapDataPreload[index].chapterUrlModel!;
         });
@@ -860,14 +867,12 @@ class _MangaChapterPageGalleryState
     if (_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) {
       _isBookmarked = _readerController.getChapterBookmarked();
       try {
-        bool hasNextChapter = _readerController.getChapterIndex() != 0;
+        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
         final chapter =
             hasNextChapter ? _readerController.getNextChapter() : null;
         if (chapter != null) {
           ref
-              .watch(getChapterPagesProvider(
-            chapter: chapter,
-          ).future)
+              .watch(getChapterPagesProvider(chapter: chapter).future)
               .then((value) {
             _preloadNextChapter(value, chapter);
           });

@@ -154,7 +154,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final Player _player = Player();
   late final VideoController _controller = VideoController(_player);
-  late final _streamController = AnimeStreamController(episode: widget.episode);
+  late final _streamController =
+      ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
   late final _firstVid = widget.videos.first;
 
   late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(VideoPrefs(
@@ -176,6 +177,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   bool _seekToCurrentPosition = true;
   bool _initSubtitle = true;
   late Duration _currentPosition = _streamController.geTCurrentPosition();
+  Duration? _currentTotalDuration;
   final _showFitLabel = StateProvider((ref) => false);
   final _showSeekTo = StateProvider((ref) => false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
@@ -208,10 +210,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     },
   );
 
+  late final StreamSubscription<Duration> _currentTotalDurationSub =
+      _player.stream.duration.listen(
+    (position) {
+      _currentTotalDuration = position;
+    },
+  );
+
   @override
   void initState() {
-    _setCurrentPosition();
+    _setCurrentPosition(true);
     _currentPositionSub;
+    _currentTotalDurationSub;
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
     super.initState();
@@ -219,14 +229,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   @override
   void dispose() {
-    _setCurrentPosition();
+    _setCurrentPosition(true);
     _player.dispose();
     _currentPositionSub.cancel();
+    _currentTotalDurationSub.cancel();
     super.dispose();
   }
 
-  void _setCurrentPosition() {
-    _streamController.setCurrentPosition(_currentPosition.inMilliseconds);
+  void _setCurrentPosition(bool save) {
+    _streamController.setCurrentPosition(
+        _currentPosition, _currentTotalDuration,
+        save: save);
     _streamController.setAnimeHistoryUpdate();
   }
 

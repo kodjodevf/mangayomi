@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
@@ -490,7 +488,7 @@ class RouterNotifier extends ChangeNotifier {
       ];
 }
 
-dynamic transitionPage({required LocalKey key, required child}) {
+Page transitionPage({required LocalKey key, required child}) {
   return Platform.isIOS
       ? CupertinoPage(key: key, child: child)
       : CustomTransition(child: child, key: key);

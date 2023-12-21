@@ -23,7 +23,6 @@ pushMangaReaderView({
       .isAddedEqualTo(true)
       .findAllSync()
       .isNotEmpty;
-      print(sourceExist);
   if (sourceExist ||
       useTestSourceCode ||
       chapter.manga.value!.isLocalArchive!) {
