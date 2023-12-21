@@ -151,6 +151,8 @@ class Settings {
 
   double? defaultPlayBackSpeed;
 
+  bool? updateProgressAfterReading;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -216,7 +218,8 @@ class Settings {
       this.markEpisodeAsSeenType = 85,
       this.defaultSkipIntroLength = 85,
       this.defaultDoubleTapToSkipLength = 10,
-      this.defaultPlayBackSpeed = 1.0});
+      this.defaultPlayBackSpeed = 1.0,
+      this.updateProgressAfterReading = true});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -338,6 +341,7 @@ class Settings {
     defaultSkipIntroLength = json['defaultSkipIntroLength'];
     defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
     defaultPlayBackSpeed = json['defaultPlayBackSpeed'];
+    updateProgressAfterReading = json['updateProgressAfterReading'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -427,7 +431,8 @@ class Settings {
         'markEpisodeAsSeenType': markEpisodeAsSeenType,
         'defaultSkipIntroLength': defaultSkipIntroLength,
         'defaultDoubleTapToSkipLength': defaultDoubleTapToSkipLength,
-        'defaultPlayBackSpeed': defaultPlayBackSpeed
+        'defaultPlayBackSpeed': defaultPlayBackSpeed,
+        'updateProgressAfterReading': updateProgressAfterReading
       };
 }
 

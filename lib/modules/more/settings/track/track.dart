@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -18,6 +19,7 @@ class TrackScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final updateProgressAfterReading = ref.watch(updateProgressAfterReadingStateProvider);
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -34,6 +36,14 @@ class TrackScreen extends ConsumerWidget {
                   snapshot.hasData ? snapshot.data : [];
               return Column(
                 children: [
+                  SwitchListTile(
+                      value: updateProgressAfterReading,
+                      title: Text(context.l10n.updateProgressAfterReading),
+                      onChanged: (value) {
+                        ref
+                            .read(updateProgressAfterReadingStateProvider.notifier)
+                            .set(value);
+                      }),
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 15, right: 15, bottom: 10, top: 5),

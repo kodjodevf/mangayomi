@@ -366,13 +366,18 @@ const SettingsSchema = CollectionSchema(
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
-    r'usePageTapZones': PropertySchema(
+    r'updateProgressAfterReading': PropertySchema(
       id: 66,
+      name: r'updateProgressAfterReading',
+      type: IsarType.bool,
+    ),
+    r'usePageTapZones': PropertySchema(
+      id: 67,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 67,
+      id: 68,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -770,8 +775,9 @@ void _settingsSerialize(
   );
   writer.writeLong(offsets[64], object.startDatebackup);
   writer.writeBool(offsets[65], object.themeIsDark);
-  writer.writeBool(offsets[66], object.usePageTapZones);
-  writer.writeString(offsets[67], object.userAgent);
+  writer.writeBool(offsets[66], object.updateProgressAfterReading);
+  writer.writeBool(offsets[67], object.usePageTapZones);
+  writer.writeString(offsets[68], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -902,8 +908,9 @@ Settings _settingsDeserialize(
     ),
     startDatebackup: reader.readLongOrNull(offsets[64]),
     themeIsDark: reader.readBoolOrNull(offsets[65]),
-    usePageTapZones: reader.readBoolOrNull(offsets[66]),
-    userAgent: reader.readStringOrNull(offsets[67]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[66]),
+    usePageTapZones: reader.readBoolOrNull(offsets[67]),
+    userAgent: reader.readStringOrNull(offsets[68]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1149,6 +1156,8 @@ P _settingsDeserializeProp<P>(
     case 66:
       return (reader.readBoolOrNull(offset)) as P;
     case 67:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 68:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -5596,6 +5605,34 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      updateProgressAfterReadingIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updateProgressAfterReading',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      updateProgressAfterReadingIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updateProgressAfterReading',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      updateProgressAfterReadingEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updateProgressAfterReading',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       usePageTapZonesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -6608,6 +6645,20 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByUpdateProgressAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updateProgressAfterReading', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByUpdateProgressAfterReadingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updateProgressAfterReading', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUsePageTapZones() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'usePageTapZones', Sort.asc);
@@ -7320,6 +7371,20 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByUpdateProgressAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updateProgressAfterReading', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByUpdateProgressAfterReadingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updateProgressAfterReading', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUsePageTapZones() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'usePageTapZones', Sort.asc);
@@ -7689,6 +7754,13 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByUpdateProgressAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updateProgressAfterReading');
     });
   }
 
@@ -8155,6 +8227,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> themeIsDarkProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      updateProgressAfterReadingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updateProgressAfterReading');
     });
   }
 

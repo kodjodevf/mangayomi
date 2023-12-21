@@ -167,5 +167,23 @@ class _TracksProviderElement
   @override
   int? get syncId => (origin as TracksProvider).syncId;
 }
+
+String _$updateProgressAfterReadingStateHash() =>
+    r'ad615c0c03d376adf8bc4728aac4288e61facee5';
+
+/// See also [UpdateProgressAfterReadingState].
+@ProviderFor(UpdateProgressAfterReadingState)
+final updateProgressAfterReadingStateProvider =
+    AutoDisposeNotifierProvider<UpdateProgressAfterReadingState, bool>.internal(
+  UpdateProgressAfterReadingState.new,
+  name: r'updateProgressAfterReadingStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$updateProgressAfterReadingStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$UpdateProgressAfterReadingState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

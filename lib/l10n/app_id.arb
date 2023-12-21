@@ -272,5 +272,6 @@
     "player": "Pemain",
     "markEpisodeAsSeenSetting": "Pada titik mana menandai episode sebagai terlihat",
     "default_skip_intro_length": "Panjang lewati intro default",
-    "default_playback_speed_length": "Panjang kecepatan pemutaran default"
+    "default_playback_speed_length": "Panjang kecepatan pemutaran default",
+    "updateProgressAfterReading": "Perbarui kemajuan setelah membaca"
 }

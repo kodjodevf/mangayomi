@@ -10,6 +10,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
@@ -350,6 +351,9 @@ class ReaderController extends _$ReaderController {
 
 extension ChapterExtensions on Chapter {
   void updateTrackChapterRead(AutoDisposeNotifierProviderRef ref) {
+    final updateProgressAfterReading =
+        ref.watch(updateProgressAfterReadingStateProvider);
+    if (!updateProgressAfterReading) return;
     final manga = this.manga.value!;
     final chapterNumber =
         ChapterRecognition().parseChapterNumber(manga.name!, name!);

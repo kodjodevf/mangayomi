@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -43,5 +44,20 @@ class Tracks extends _$Tracks {
 
   void deleteTrackManga(Track track) {
     isar.writeTxnSync(() => isar.tracks.deleteSync(track.id!));
+  }
+}
+
+@riverpod
+class UpdateProgressAfterReadingState extends _$UpdateProgressAfterReadingState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.updateProgressAfterReading ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..updateProgressAfterReading = value));
   }
 }

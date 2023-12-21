@@ -272,5 +272,6 @@
     "player": "Oyuncu",
     "markEpisodeAsSeenSetting": "Bölümün izlendiği olarak işaretleneceği nokta",
     "default_skip_intro_length": "Varsayılan Giriş Atla süresi",
-    "default_playback_speed_length": "Varsayılan Oynatma hızı süresi"
+    "default_playback_speed_length": "Varsayılan Oynatma hızı süresi",
+    "updateProgressAfterReading": "Okuduktan Sonra İlerlemeyi Güncelle"
 }
