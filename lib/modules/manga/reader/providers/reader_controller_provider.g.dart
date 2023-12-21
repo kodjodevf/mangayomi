@@ -6,7 +6,7 @@ part of 'reader_controller_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'c2b912af925d9efd3e36e7a810914ef11393c1da';
+String _$currentIndexHash() => r'7cf7d12cc79f02fec4de750e4aedf5c9e09e5284';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -169,7 +169,7 @@ class _CurrentIndexProviderElement
   Chapter get chapter => (origin as CurrentIndexProvider).chapter;
 }
 
-String _$readerControllerHash() => r'611b6eca40a398fe9c71911db2ca9714d6cc05a0';
+String _$readerControllerHash() => r'e6191b82e9cbbe2856c4c46b407ccd5da9206c8e';
 
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter chapter;

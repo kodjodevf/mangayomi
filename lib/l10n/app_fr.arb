@@ -268,5 +268,9 @@
   "by_name": "Par nom",
   "installed": "Installé",
   "auto_scroll": "Défilement automatique",
-  "video_audio": "Audio"
+  "video_audio": "Audio",
+  "player": "Lecteur",
+  "markEpisodeAsSeenSetting": "À quel moment marquer l'épisode comme vu",
+  "default_skip_intro_length": "Longueur par défaut du passage de l'intro",
+  "default_playback_speed_length": "Longueur par défaut de la vitesse de lecture"
 }

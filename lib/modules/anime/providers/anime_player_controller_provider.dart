@@ -5,6 +5,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anime_player_controller_provider.g.dart';
 
@@ -148,9 +149,10 @@ class AnimeStreamController extends _$AnimeStreamController {
       {bool save = false}) {
     if (episode.isRead!) return;
     if (incognitoMode) return;
-
+    final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
     final isWatch = totalDuration != null
-        ? duration.inSeconds >= (totalDuration.inSeconds - 120)
+        ? duration.inSeconds >=
+            ((totalDuration.inSeconds * markEpisodeAsSeenType) / 100).ceil()
         : false;
     if (isWatch || save) {
       final ep = episode;

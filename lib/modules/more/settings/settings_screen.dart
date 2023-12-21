@@ -32,6 +32,11 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.chrome_reader_mode_rounded,
                 onTap: () => context.push('/readerMode')),
             ListTileWidget(
+                title: l10n.player,
+                subtitle: l10n.reader_subtitle,
+                icon: Icons.play_circle_outline_outlined,
+                onTap: () => context.push('/playerMode')),
+            ListTileWidget(
                 title: l10n.downloads,
                 subtitle: l10n.downloads_subtitle,
                 icon: Icons.download_outlined,

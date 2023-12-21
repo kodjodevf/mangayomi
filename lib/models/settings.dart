@@ -143,6 +143,14 @@ class Settings {
 
   List<AutoScrollPages>? autoScrollPages;
 
+  int? markEpisodeAsSeenType;
+
+  int? defaultSkipIntroLength;
+
+  int? defaultDoubleTapToSkipLength;
+
+  double? defaultPlayBackSpeed;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -204,7 +212,11 @@ class Settings {
       this.autoBackupLocation,
       this.startDatebackup,
       this.usePageTapZones = true,
-      this.autoScrollPages});
+      this.autoScrollPages,
+      this.markEpisodeAsSeenType = 85,
+      this.defaultSkipIntroLength = 85,
+      this.defaultDoubleTapToSkipLength = 10,
+      this.defaultPlayBackSpeed = 1.0});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -322,6 +334,10 @@ class Settings {
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
+    markEpisodeAsSeenType = json['markEpisodeAsSeenType'];
+    defaultSkipIntroLength = json['defaultSkipIntroLength'];
+    defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
+    defaultPlayBackSpeed = json['defaultPlayBackSpeed'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -407,7 +423,11 @@ class Settings {
         'backupFrequencyOptions': backupFrequencyOptions,
         'autoBackupLocation': autoBackupLocation,
         'startDatebackup': startDatebackup,
-        'usePageTapZones': usePageTapZones
+        'usePageTapZones': usePageTapZones,
+        'markEpisodeAsSeenType': markEpisodeAsSeenType,
+        'defaultSkipIntroLength': defaultSkipIntroLength,
+        'defaultDoubleTapToSkipLength': defaultDoubleTapToSkipLength,
+        'defaultPlayBackSpeed': defaultPlayBackSpeed
       };
 }
 

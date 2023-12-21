@@ -268,5 +268,9 @@
     "by_name": "По имени",
     "installed": "Установлено",
     "auto_scroll": "Автопрокрутка",
-    "video_audio": "Аудио"
+    "video_audio": "Аудио",
+    "player": "Игрок",
+    "markEpisodeAsSeenSetting": "В какой момент отметить эпизод как просмотренный",
+    "default_skip_intro_length": "Стандартная длина пропуска вступления",
+    "default_playback_speed_length": "Стандартная длина скорости воспроизведения"
 }

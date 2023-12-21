@@ -9,6 +9,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_video_list.dart';
@@ -224,6 +225,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _currentTotalDurationSub;
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
+    _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
     super.initState();
   }
 
@@ -667,19 +669,21 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   Widget _seekToWidget() {
+    final defaultSkipIntroLength =
+        ref.watch(defaultSkipIntroLengthStateProvider);
     return SizedBox(
       height: 30,
       child: ElevatedButton(
           onPressed: () async {
-            ref.read(_seekTo.notifier).state = 85;
+            ref.read(_seekTo.notifier).state = defaultSkipIntroLength;
             ref.read(_showSeekTo.notifier).state = true;
-            await _player
-                .seek(Duration(seconds: _currentPosition.inSeconds + 85));
+            await _player.seek(Duration(
+                seconds: _currentPosition.inSeconds + defaultSkipIntroLength));
             ref.read(_seekTo.notifier).state = 0;
             ref.read(_showSeekTo.notifier).state = false;
           },
-          child:
-              const Text("+85", style: TextStyle(fontWeight: FontWeight.bold))),
+          child: Text("+$defaultSkipIntroLength",
+              style: const TextStyle(fontWeight: FontWeight.bold))),
     );
   }
 

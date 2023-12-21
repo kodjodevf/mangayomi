@@ -268,5 +268,9 @@
     "by_name": "حسب الاسم",
     "installed": "مثبت",
     "auto_scroll": "التمرير التلقائي",
-    "video_audio": "الصوت"
+    "video_audio": "الصوت",
+    "player": "لاعب",
+    "markEpisodeAsSeenSetting": "في أي نقطة لوضع علامة على الحلقة كمشاهدة",
+    "default_skip_intro_length": "طول تخطي المقدمة الافتراضي",
+    "default_playback_speed_length": "طول سرعة التشغيل الافتراضية"
 }

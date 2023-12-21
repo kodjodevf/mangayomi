@@ -268,5 +268,9 @@
   "by_name": "By name",
   "installed": "Installed",
   "auto_scroll": "Auto scroll",
-  "video_audio": "Audio"
+  "video_audio": "Audio",
+  "player": "Player",
+  "markEpisodeAsSeenSetting": "At what point to mark the episode as seen",
+  "default_skip_intro_length": "Default Skip intro length",
+  "default_playback_speed_length": "Default Playback speed length"
 }

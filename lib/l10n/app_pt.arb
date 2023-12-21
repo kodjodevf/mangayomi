@@ -268,5 +268,9 @@
     "by_name": "Por nome",
     "installed": "Instalado",
     "auto_scroll": "Auto rolagem",
-    "video_audio": "Áudio"
+    "video_audio": "Áudio",
+    "player": "Jogador",
+    "markEpisodeAsSeenSetting": "Em que ponto marcar o episódio como visto",
+    "default_skip_intro_length": "Duração padrão para pular a introdução",
+    "default_playback_speed_length": "Duração padrão da velocidade de reprodução"
 }

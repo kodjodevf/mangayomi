@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
+import 'package:mangayomi/modules/more/settings/player/player_screen.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
@@ -482,6 +483,19 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: TrackingDetail(trackerPref: trackerPref),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/playerMode",
+          name: "playerMode",
+          builder: (context, state) {
+            return const PlayerScreen();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const PlayerScreen(),
             );
           },
         ),

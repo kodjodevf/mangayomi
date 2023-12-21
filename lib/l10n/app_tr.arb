@@ -268,5 +268,9 @@
     "by_name": "İsme Göre",
     "installed": "Yüklendi",
     "auto_scroll": "Otomatik Kaydırma",
-    "video_audio": "Ses"
+    "video_audio": "Ses",
+    "player": "Oyuncu",
+    "markEpisodeAsSeenSetting": "Bölümün izlendiği olarak işaretleneceği nokta",
+    "default_skip_intro_length": "Varsayılan Giriş Atla süresi",
+    "default_playback_speed_length": "Varsayılan Oynatma hızı süresi"
 }
