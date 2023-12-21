@@ -37,7 +37,7 @@ class Kitsu extends _$Kitsu {
   }
 
   @override
- void build({required int syncId, bool? isManga}) {}
+  void build({required int syncId, bool? isManga}) {}
 
   Future<(bool, String)> login(String username, String password) async {
     try {
@@ -115,7 +115,7 @@ class Kitsu extends _$Kitsu {
       'data': {
         'type': 'libraryEntries',
         'attributes': {
-          'status': toKitsuStatusManga(track.status),
+          'status': tokitsuStatusAnime(track.status),
           'progress': track.lastChapterRead,
         },
         'relationships': {
@@ -179,7 +179,7 @@ class Kitsu extends _$Kitsu {
         "type": "libraryEntries",
         "id": track.mediaId,
         "attributes": {
-          "status": toKitsuStatusManga(track.status),
+          "status": tokitsuStatusAnime(track.status),
           "progress": track.lastChapterRead,
           "ratingTwenty": _toKitsuScore(track.score!),
           "startedAt": _convertDate(track.startedReadingDate!),
@@ -305,7 +305,7 @@ class Kitsu extends _$Kitsu {
         track.libraryId = int.parse(obj["id"]);
         track.syncId = syncId;
         track.trackingUrl = _mangaUrl(int.parse(obj["id"]));
-        track.status = _getKitsuTrackStatus(obj["attributes"]["status"]);
+        track.status = _getKitsuTrackStatusManga(obj["attributes"]["status"]);
         track.title =
             jsonResponse['included'][0]["attributes"]["canonicalTitle"];
         track.totalChapter =
@@ -344,7 +344,7 @@ class Kitsu extends _$Kitsu {
             jsonResponse['included'][0]["attributes"]["canonicalTitle"];
         track.totalChapter =
             jsonResponse['included'][0]["attributes"]["chapterCount"] ?? 0;
-        track.status = _getKitsuTrackStatus(obj["attributes"]["status"]);
+        track.status = _getKitsuTrackStatusManga(obj["attributes"]["status"]);
         track.score = ((obj["attributes"]["ratingTwenty"] ?? 0) / 2).toInt();
         track.lastChapterRead = obj["attributes"]["progress"];
         track.startedReadingDate = _parseDate(obj["attributes"]["startedAt"]);
@@ -374,7 +374,8 @@ class Kitsu extends _$Kitsu {
         track.libraryId = int.parse(data[0]["id"]);
         track.syncId = syncId;
         track.trackingUrl = _mangaUrl(int.parse(data[0]["id"]));
-        track.status = _getKitsuTrackStatus(data[0]["attributes"]["status"]);
+        track.status =
+            _getKitsuTrsackStatusAnime(data[0]["attributes"]["status"]);
         track.title =
             jsonResponse['included'][0]["attributes"]["canonicalTitle"];
         track.totalChapter =
@@ -409,7 +410,8 @@ class Kitsu extends _$Kitsu {
         track.libraryId = int.parse(data[0]["id"]);
         track.syncId = syncId;
         track.trackingUrl = _mangaUrl(int.parse(data[0]["id"]));
-        track.status = _getKitsuTrackStatus(data[0]["attributes"]["status"]);
+        track.status =
+            _getKitsuTrsackStatusAnime(data[0]["attributes"]["status"]);
         track.score =
             ((data[0]["attributes"]["ratingTwenty"] ?? 0) / 2).toInt();
         track.title =
@@ -460,11 +462,22 @@ class Kitsu extends _$Kitsu {
     return track!.username!;
   }
 
-  TrackStatus _getKitsuTrackStatus(String status) {
+  TrackStatus _getKitsuTrsackStatusAnime(String status) {
+    return switch (status) {
+      "current" => TrackStatus.watching,
+      "completed" => TrackStatus.completed,
+      "on_hold" => TrackStatus.onHold,
+      "dropped" => TrackStatus.dropped,
+      _ => TrackStatus.planToWatch,
+    };
+  }
+
+  TrackStatus _getKitsuTrackStatusManga(String status) {
     return switch (status) {
       "current" => TrackStatus.reading,
       "completed" => TrackStatus.completed,
       "on_hold" => TrackStatus.onHold,
+      "dropped" => TrackStatus.dropped,
       _ => TrackStatus.planToRead,
     };
   }

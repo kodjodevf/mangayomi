@@ -122,7 +122,6 @@ void doRestore(DoRestoreRef ref,
         if (extensionsPref != null) {
           isar.sourcePreferences.putAllSync(extensionsPref);
         }
-        print("object");
         isar.settings.clearSync();
         if (settings != null) {
           isar.settings.putAllSync(settings);
@@ -134,7 +133,6 @@ void doRestore(DoRestoreRef ref,
         ref.invalidate(l10nLocaleStateProvider);
       });
     } catch (e) {
-      print(e);
       botToast(e.toString());
     }
     BotToast.showNotification(

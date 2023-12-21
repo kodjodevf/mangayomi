@@ -40,7 +40,6 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
-    print(widget.mangaId);
     final manga =
         ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
     return Scaffold(
