@@ -792,6 +792,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     if (hasPrevEpisode)
                       IconButton(
                         onPressed: () {
+                          if (isFullScreen) {
+                            _key.currentState?.exitFullscreen();
+                          }
                           pushReplacementMangaReaderView(
                               context: context,
                               chapter: _streamController.getPrevEpisode());
@@ -805,6 +808,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     if (hasNextEpisode)
                       IconButton(
                         onPressed: () {
+                          if (isFullScreen) {
+                            _key.currentState?.exitFullscreen();
+                          }
                           pushReplacementMangaReaderView(
                             context: context,
                             chapter: _streamController.getNextEpisode(),
@@ -1022,7 +1028,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             },
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: _mobilePrimaryButtonBar(),
+            primaryButtonBar: _mobilePrimaryButtonBar(isFullScreen),
             topButtonBarMargin: const EdgeInsets.all(0),
             topButtonBar: _topButtonBar(context, isFullScreen),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
@@ -1033,7 +1039,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         child: _videoPlayer(context));
   }
 
-  List<Widget> _mobilePrimaryButtonBar() {
+  List<Widget> _mobilePrimaryButtonBar(bool isFullScreen) {
     bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
         _streamController
             .getEpisodesLength(_streamController.getEpisodeIndex().$2);
@@ -1043,6 +1049,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       IconButton(
         onPressed: hasPrevEpisode
             ? () {
+                if (isFullScreen) {
+                  _key.currentState?.exitFullscreen();
+                }
                 pushReplacementMangaReaderView(
                     context: context,
                     chapter: _streamController.getPrevEpisode());
@@ -1060,6 +1069,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       IconButton(
         onPressed: hasNextEpisode
             ? () {
+                if (isFullScreen) {
+                  _key.currentState?.exitFullscreen();
+                }
                 pushReplacementMangaReaderView(
                   context: context,
                   chapter: _streamController.getNextEpisode(),
