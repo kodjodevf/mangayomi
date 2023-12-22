@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -321,7 +322,7 @@ class ReaderController extends _$ReaderController {
       }
       chapterPageIndexs.add(ChapterPageIndex()
         ..chapterId = chapter.id
-        ..index = newIndex);
+        ..index = isRead ? 0 : newIndex);
       final chap = chapter;
       isar.writeTxnSync(() {
         isar.settings.putSync(
@@ -350,7 +351,8 @@ class ReaderController extends _$ReaderController {
 }
 
 extension ChapterExtensions on Chapter {
-  void updateTrackChapterRead(AutoDisposeNotifierProviderRef ref) {
+  void updateTrackChapterRead(dynamic ref) {
+    if (!(ref is WidgetRef || ref is AutoDisposeNotifierProviderRef)) return;
     final updateProgressAfterReading =
         ref.watch(updateProgressAfterReadingStateProvider);
     if (!updateProgressAfterReading) return;

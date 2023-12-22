@@ -23,11 +23,13 @@ import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
   final bool isSearch;
+  final bool isLatest;
   final String query;
   const MangaHomeScreen(
       {required this.source,
       this.query = "",
       this.isSearch = false,
+      this.isLatest = false,
       super.key});
 
   @override
@@ -48,7 +50,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   final ScrollController _scrollController = ScrollController();
   int _fullDataLength = 50;
   int _page = 1;
-  late int _selectedIndex = widget.isSearch ? 2 : 0;
+  late int _selectedIndex = widget.isLatest
+      ? 1
+      : widget.isSearch
+          ? 2
+          : 0;
   List<dynamic> filters = [];
   final List<MManga> _mangaList = [];
   List<TypeMangaSelector> _types(BuildContext context) {

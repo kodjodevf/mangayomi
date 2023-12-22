@@ -143,17 +143,19 @@ class RouterNotifier extends ChangeNotifier {
             path: "/mangaHome",
             name: "mangaHome",
             builder: (context, state) {
-              final source = state.extra as Source?;
+              final source = state.extra as (Source?, bool);
               return MangaHomeScreen(
-                source: source!,
+                source: source.$1!,
+                isLatest: source.$2,
               );
             },
             pageBuilder: (context, state) {
-              final source = state.extra as Source?;
+              final source = state.extra as (Source?, bool);
               return transitionPage(
                 key: state.pageKey,
                 child: MangaHomeScreen(
-                  source: source!,
+                  source: source.$1!,
+                  isLatest: source.$2,
                 ),
               );
             }),

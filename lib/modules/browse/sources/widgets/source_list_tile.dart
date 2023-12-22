@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class SourceListTile extends StatelessWidget {
+class SourceListTile extends ConsumerWidget {
   final bool isManga;
   final Source source;
   const SourceListTile(
       {super.key, required this.source, required this.isManga});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final supportsLatest = ref.watch(supportsLatestProvider(source: source));
     return ListTile(
       onTap: () {
         if (useTestSourceCode) {
@@ -34,7 +38,7 @@ class SourceListTile extends StatelessWidget {
           }
         });
 
-        context.push('/mangaHome', extra: source);
+        context.push('/mangaHome', extra: (source, false));
       },
       leading: Container(
         height: 37,
@@ -96,15 +100,32 @@ class SourceListTile extends StatelessWidget {
         ],
       ),
       title: Text(source.name!),
-      trailing: IconButton(
-          onPressed: () {
-            isar.writeTxnSync(() =>
-                isar.sources.putSync(source..isPinned = !source.isPinned!));
-          },
-          icon: Icon(
-            Icons.push_pin_outlined,
-            color: source.isPinned! ? primaryColor(context) : null,
-          )),
+      trailing: SizedBox(
+        width: 150,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (supportsLatest)
+              TextButton(
+                  style: const ButtonStyle(
+                      padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
+                  onPressed: () =>
+                      context.push('/mangaHome', extra: (source, true)),
+                  child: Text(context.l10n.latest)),
+            const SizedBox(width: 10),
+            IconButton(
+                padding: const EdgeInsets.all(0),
+                onPressed: () {
+                  isar.writeTxnSync(() => isar.sources
+                      .putSync(source..isPinned = !source.isPinned!));
+                },
+                icon: Icon(
+                  Icons.push_pin_outlined,
+                  color: source.isPinned! ? primaryColor(context) : null,
+                )),
+          ],
+        ),
+      ),
     );
   }
 }

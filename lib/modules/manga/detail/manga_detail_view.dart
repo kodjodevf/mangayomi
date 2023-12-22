@@ -20,6 +20,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -624,6 +625,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   isar.chapters.putSync(
                                       chapter..manga.value = widget.manga);
                                   chapter.manga.saveSync();
+                                  if (chapter.isRead!) {
+                                    chapter.updateTrackChapterRead(ref);
+                                  }
                                 }
                               });
                               ref
@@ -655,14 +659,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               ),
                               onPressed: () {
                                 int index = chapters.indexOf(chap.first);
+                                chapters[index + 1].updateTrackChapterRead(ref);
                                 isar.writeTxnSync(() {
                                   for (var i = index + 1;
                                       i < chapters.length;
                                       i++) {
-                                    chapters[i].isRead = true;
-                                    isar.chapters.putSync(chapters[i]
-                                      ..manga.value = widget.manga);
-                                    chapters[i].manga.saveSync();
+                                    if (!chapters[i].isRead!) {
+                                      chapters[i].isRead = true;
+                                      chapters[i].lastPageRead = "1";
+                                      isar.chapters.putSync(chapters[i]
+                                        ..manga.value = widget.manga);
+                                      chapters[i].manga.saveSync();
+                                    }
                                   }
                                   ref
                                       .read(isLongPressedStateProvider.notifier)

@@ -1130,34 +1130,36 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   for (var manga in mangasList) {
                                     if (manga.isLocalArchive ?? false) {
                                       for (var chapter in manga.chapters) {
-                                        final storageProvider =
-                                            StorageProvider();
-                                        final mangaDir = await storageProvider
-                                            .getMangaMainDirectory(chapter);
-                                        final path = await storageProvider
-                                            .getMangaChapterDirectory(
-                                          chapter,
-                                        );
-
                                         try {
-                                          if (await File(
-                                                  "${mangaDir!.path}${chapter.name}.cbz")
-                                              .exists()) {
-                                            File("${mangaDir.path}${chapter.name}.cbz")
-                                                .deleteSync();
-                                          }
-                                          path!.deleteSync(recursive: true);
+                                          final storageProvider =
+                                              StorageProvider();
+                                          final mangaDir = await storageProvider
+                                              .getMangaMainDirectory(chapter);
+                                          final path = await storageProvider
+                                              .getMangaChapterDirectory(
+                                            chapter,
+                                          );
+
+                                          try {
+                                            if (await File(
+                                                    "${mangaDir!.path}${chapter.name}.cbz")
+                                                .exists()) {
+                                              File("${mangaDir.path}${chapter.name}.cbz")
+                                                  .deleteSync();
+                                            }
+                                            path!.deleteSync(recursive: true);
+                                          } catch (_) {}
+                                          isar.writeTxnSync(() {
+                                            final download = isar.downloads
+                                                .filter()
+                                                .chapterIdEqualTo(chapter.id!)
+                                                .findAllSync();
+                                            if (download.isNotEmpty) {
+                                              isar.downloads.deleteSync(
+                                                  download.first.id!);
+                                            }
+                                          });
                                         } catch (_) {}
-                                        isar.writeTxnSync(() {
-                                          final download = isar.downloads
-                                              .filter()
-                                              .chapterIdEqualTo(chapter.id!)
-                                              .findAllSync();
-                                          if (download.isNotEmpty) {
-                                            isar.downloads
-                                                .deleteSync(download.first.id!);
-                                          }
-                                        });
                                       }
                                     }
                                   }

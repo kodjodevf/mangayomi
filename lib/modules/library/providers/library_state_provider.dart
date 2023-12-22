@@ -3,6 +3,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
@@ -620,17 +621,21 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
   @override
   void build({required List<int> mangaIds}) {}
 
-  set() {
+  void set() {
     for (var mangaid in mangaIds) {
       final manga = isar.mangas.getSync(mangaid)!;
       final chapters = manga.chapters;
-      isar.writeTxnSync(() {
-        for (var chapter in chapters) {
-          chapter.isRead = true;
-          isar.chapters.putSync(chapter..manga.value = manga);
-          chapter.manga.saveSync();
-        }
-      });
+      if (chapters.isNotEmpty) {
+        chapters.last.updateTrackChapterRead(ref);
+        isar.writeTxnSync(() {
+          for (var chapter in chapters) {
+            chapter.isRead = true;
+            chapter.lastPageRead = "1";
+            isar.chapters.putSync(chapter..manga.value = manga);
+            chapter.manga.saveSync();
+          }
+        });
+      }
     }
 
     ref.read(isLongPressedMangaStateProvider.notifier).update(false);
@@ -643,7 +648,7 @@ class MangasSetUnReadState extends _$MangasSetUnReadState {
   @override
   void build({required List<int> mangaIds}) {}
 
-  set() {
+  void set() {
     for (var mangaid in mangaIds) {
       final manga = isar.mangas.getSync(mangaid)!;
       final chapters = manga.chapters;
