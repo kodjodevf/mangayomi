@@ -5,21 +5,19 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class SourceListTile extends ConsumerWidget {
+class SourceListTile extends StatelessWidget {
   final bool isManga;
   final Source source;
   const SourceListTile(
       {super.key, required this.source, required this.isManga});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final supportsLatest = ref.watch(supportsLatestProvider(source: source));
+  Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
         if (useTestSourceCode) {
@@ -105,13 +103,20 @@ class SourceListTile extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (supportsLatest)
-              TextButton(
-                  style: const ButtonStyle(
-                      padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
-                  onPressed: () =>
-                      context.push('/mangaHome', extra: (source, true)),
-                  child: Text(context.l10n.latest)),
+            Consumer(
+              builder: (context, ref, child) {
+                // final supportsLatest =  ref.watch(supportsLatestProvider(source: source));
+                // if (supportsLatest) {
+                return TextButton(
+                    style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
+                    onPressed: () =>
+                        context.push('/mangaHome', extra: (source, true)),
+                    child: Text(context.l10n.latest));
+                // }
+                // return const SizedBox.shrink();
+              },
+            ),
             const SizedBox(width: 10),
             IconButton(
                 padding: const EdgeInsets.all(0),

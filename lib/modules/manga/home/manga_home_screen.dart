@@ -133,6 +133,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             _isSearch
                 ? SeachFormTextField(
                     onFieldSubmitted: (submit) {
+                      _mangaList.clear();
                       setState(() {
                         if (submit.isNotEmpty) {
                           _selectedIndex = 2;
