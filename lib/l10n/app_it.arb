@@ -248,7 +248,7 @@
     "backup_location": "Posizione del backup",
     "backup_options": "Opzioni di backup",
     "backup_options_dialog_title": "Cosa vuoi eseguire il backup?",
-    "backup_options_subtile": "Quali informazioni includere nel file di backup",
+    "backup_options_subtitle": "Quali informazioni includere nel file di backup",
     "backup_and_restore_warning_info": "È consigliabile conservare copie dei backup in altri luoghi",
     "library_entries": "Voci della libreria",
     "chapters_and_episode": "Capitoli ed episodi",

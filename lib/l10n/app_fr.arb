@@ -248,7 +248,7 @@
   "backup_location": "Dossier de sauvegarde",
   "backup_options": "Options de sauvegarde",
   "backup_options_dialog_title": "Que voulez-vous sauvegarder ?",
-  "backup_options_subtile": "Quelle information inclure dans le fichier de sauvegarde",
+  "backup_options_subtitle": "Quelle information inclure dans le fichier de sauvegarde",
   "backup_and_restore_warning_info": "Vous devez égalemement conserver des copies des sauvegardes à d'atures endroits",
   "library_entries": "Entrées de la bibliothèque",
   "chapters_and_episode": "Chapitres et épisodes",

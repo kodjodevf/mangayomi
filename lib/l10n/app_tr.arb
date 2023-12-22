@@ -248,7 +248,7 @@
     "backup_location": "Yedekleme Konumu",
     "backup_options": "Yedekleme Seçenekleri",
     "backup_options_dialog_title": "Ne yedeklemek istiyorsun?",
-    "backup_options_subtile": "Yedek dosyasına hangi bilgilerin dahil edileceği",
+    "backup_options_subtitle": "Yedek dosyasına hangi bilgilerin dahil edileceği",
     "backup_and_restore_warning_info": "Yedeklerin başka yerlerde de kopyalarını tutmalısınız",
     "library_entries": "Kütüphane Girişleri",
     "chapters_and_episode": "Bölümler ve Bölüm",

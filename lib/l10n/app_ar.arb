@@ -248,7 +248,7 @@
     "backup_location": "موقع النسخ الاحتياطي",
     "backup_options": "خيارات النسخ الاحتياطي",
     "backup_options_dialog_title": "ما الذي ترغب في أخذ نسخة احتياطية منه؟",
-    "backup_options_subtile": "المعلومات التي يجب تضمينها في ملف النسخة الاحتياطية",
+    "backup_options_subtitle": "المعلومات التي يجب تضمينها في ملف النسخة الاحتياطية",
     "backup_and_restore_warning_info": "يجب الاحتفاظ بنسخ من النسخ الاحتياطية في أماكن أخرى كذلك",
     "library_entries": "مدخلات المكتبة",
     "chapters_and_episode": "الفصول والحلقات",

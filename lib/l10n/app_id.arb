@@ -248,7 +248,7 @@
     "backup_location": "Lokasi cadangan",
     "backup_options": "Opsi cadangan",
     "backup_options_dialog_title": "Apa yang ingin Anda cadangkan?",
-    "backup_options_subtile": "Informasi apa yang akan disertakan dalam berkas cadangan",
+    "backup_options_subtitle": "Informasi apa yang akan disertakan dalam berkas cadangan",
     "backup_and_restore_warning_info": "Anda harus menyimpan salinan cadangan di tempat lain juga",
     "library_entries": "Entri perpustakaan",
     "chapters_and_episode": "Bab dan episode",

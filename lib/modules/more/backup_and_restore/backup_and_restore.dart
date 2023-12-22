@@ -277,7 +277,7 @@ class BackupAndRestore extends ConsumerWidget {
                         builder: (context, setState) {
                           return AlertDialog(
                             title: Text(
-                              l10n.backup_options_subtile,
+                              l10n.backup_options_subtitle,
                             ),
                             content: SizedBox(
                                 width: mediaWidth(context, 0.8),
@@ -338,7 +338,7 @@ class BackupAndRestore extends ConsumerWidget {
               },
               title: Text(l10n.backup_options),
               subtitle: Text(
-                l10n.backup_options_subtile,
+                l10n.backup_options_subtitle,
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
               ),
             ),

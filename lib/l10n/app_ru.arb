@@ -248,7 +248,7 @@
     "backup_location": "Место хранения резервных копий",
     "backup_options": "Опции резервного копирования",
     "backup_options_dialog_title": "Что вы хотите включить в резервную копию?",
-    "backup_options_subtile": "Какую информацию включить в резервную копию",
+    "backup_options_subtitle": "Какую информацию включить в резервную копию",
     "backup_and_restore_warning_info": "Следует хранить копии резервных копий в других местах",
     "library_entries": "Записи библиотеки",
     "chapters_and_episode": "Главы и эпизоды",
