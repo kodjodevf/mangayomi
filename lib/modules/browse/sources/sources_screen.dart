@@ -11,8 +11,10 @@ import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class SourcesScreen extends ConsumerWidget {
+  final Function(int) tabIndex;
   final bool isManga;
-  const SourcesScreen({required this.isManga, super.key});
+  const SourcesScreen(
+      {required this.tabIndex, required this.isManga, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,11 +34,29 @@ class SourcesScreen extends ConsumerWidget {
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(child: Text(l10n.no_result));
+                return const SizedBox.shrink();
               }
               List<Source> sources = snapshot.data!
                   .where((element) => showNSFW ? true : element.isNsfw == false)
                   .toList();
+              if (sources.isEmpty) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(context.l10n.no_sources_installed),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton.icon(
+                          onPressed: () => tabIndex(isManga ? 2 : 3),
+                          icon: const Icon(Icons.extension_rounded),
+                          label: Text(context.l10n.show_extensions)),
+                    )
+                  ],
+                );
+              }
               final lastUsedEntries =
                   sources.where((element) => element.lastUsed!).toList();
               final isPinnedEntries =

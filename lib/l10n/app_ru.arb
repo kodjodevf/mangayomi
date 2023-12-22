@@ -273,5 +273,7 @@
     "markEpisodeAsSeenSetting": "В какой момент отметить эпизод как просмотренный",
     "default_skip_intro_length": "Стандартная длина пропуска вступления",
     "default_playback_speed_length": "Стандартная длина скорости воспроизведения",
-    "updateProgressAfterReading": "Обновить прогресс после чтения"
+    "updateProgressAfterReading": "Обновить прогресс после чтения",
+    "no_sources_installed": "Источники не установлены!",
+    "show_extensions": "Показать расширения"
 }

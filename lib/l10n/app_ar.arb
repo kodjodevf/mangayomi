@@ -273,5 +273,7 @@
     "markEpisodeAsSeenSetting": "في أي نقطة لوضع علامة على الحلقة كمشاهدة",
     "default_skip_intro_length": "طول تخطي المقدمة الافتراضي",
     "default_playback_speed_length": "طول سرعة التشغيل الافتراضية",
-    "updateProgressAfterReading": "تحديث التقدم بعد القراءة"
+    "updateProgressAfterReading": "تحديث التقدم بعد القراءة",
+    "no_sources_installed": "لم يتم تثبيت مصادر!",
+    "show_extensions": "عرض الإضافات"
 }

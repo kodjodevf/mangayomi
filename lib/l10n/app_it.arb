@@ -273,5 +273,7 @@
     "markEpisodeAsSeenSetting": "In quale momento contrassegnare l'episodio come visto",
     "default_skip_intro_length": "Durata predefinita per saltare l'introduzione",
     "default_playback_speed_length": "Durata predefinita per la velocità di riproduzione",
-    "updateProgressAfterReading": "Aggiorna il progresso dopo aver letto"
+    "updateProgressAfterReading": "Aggiorna il progresso dopo aver letto",
+    "no_sources_installed": "Nessuna fonte installata!",
+    "show_extensions": "Mostra estensioni"
 }

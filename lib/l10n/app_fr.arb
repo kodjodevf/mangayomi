@@ -273,5 +273,7 @@
   "markEpisodeAsSeenSetting": "À quel moment marquer l'épisode comme vu",
   "default_skip_intro_length": "Longueur par défaut du passage de l'intro",
   "default_playback_speed_length": "Longueur par défaut de la vitesse de lecture",
-  "updateProgressAfterReading": "Synchroniser la progression après lecture"
+  "updateProgressAfterReading": "Synchroniser la progression après lecture",
+  "no_sources_installed": "Aucune source installée !",
+  "show_extensions": "Afficher les extensions"
 }

@@ -151,11 +151,17 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           ),
         ),
         body: TabBarView(controller: _tabBarController, children: [
-          const SourcesScreen(
+          SourcesScreen(
             isManga: true,
+            tabIndex: (index) {
+              _tabBarController.animateTo(index);
+            },
           ),
-          const SourcesScreen(
+          SourcesScreen(
             isManga: false,
+            tabIndex: (index) {
+              _tabBarController.animateTo(index);
+            },
           ),
           ExtensionScreen(
             query: _textEditingController.text,

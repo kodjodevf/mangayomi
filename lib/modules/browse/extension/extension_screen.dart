@@ -5,7 +5,6 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/source_test.dart';
@@ -160,7 +159,19 @@ class ExtensionScreen extends ConsumerWidget {
               ],
             );
           },
-          error: (error, _) => ErrorText(error),
+          error: (error, _) => Center(
+            child: ElevatedButton(
+                onPressed: () {
+                  if (isManga) {
+                    ref.invalidate(
+                        fetchMangaSourcesListProvider(id: null, reFresh: true));
+                  } else {
+                    ref.invalidate(
+                        fetchAnimeSourcesListProvider(id: null, reFresh: true));
+                  }
+                },
+                child: Text(context.l10n.refresh)),
+          ),
           loading: () => const ProgressCenter(),
         ),
       ),

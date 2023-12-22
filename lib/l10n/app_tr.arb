@@ -273,5 +273,7 @@
     "markEpisodeAsSeenSetting": "Bölümün izlendiği olarak işaretleneceği nokta",
     "default_skip_intro_length": "Varsayılan Giriş Atla süresi",
     "default_playback_speed_length": "Varsayılan Oynatma hızı süresi",
-    "updateProgressAfterReading": "Okuduktan Sonra İlerlemeyi Güncelle"
+    "updateProgressAfterReading": "Okuduktan Sonra İlerlemeyi Güncelle",
+    "no_sources_installed": "Hiçbir kaynak yüklü değil!",
+    "show_extensions": "uzantıları göster"
 }
