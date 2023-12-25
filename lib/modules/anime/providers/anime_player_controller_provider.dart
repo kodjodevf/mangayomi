@@ -150,7 +150,9 @@ class AnimeStreamController extends _$AnimeStreamController {
     if (episode.isRead!) return;
     if (incognitoMode) return;
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
-    final isWatch = totalDuration != null
+    final isWatch = totalDuration != null &&
+            totalDuration != Duration.zero &&
+            duration != Duration.zero
         ? duration.inSeconds >=
             ((totalDuration.inSeconds * markEpisodeAsSeenType) / 100).ceil()
         : false;

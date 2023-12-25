@@ -39,7 +39,7 @@ class SourcesScreen extends ConsumerWidget {
               List<Source> sources = snapshot.data!
                   .where((element) => showNSFW ? true : element.isNsfw == false)
                   .toList();
-              if (sources.isEmpty) {
+              if (sources.isEmpty && !useTestSourceCode) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
+import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -18,7 +20,6 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
@@ -177,13 +178,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
   bool _initSubtitle = true;
-  late Duration _currentPosition = _streamController.geTCurrentPosition();
-  Duration? _currentTotalDuration;
-  final _showFitLabel = StateProvider((ref) => false);
-  final _showSeekTo = StateProvider((ref) => false);
+  late final ValueNotifier<Duration> _currentPosition =
+      ValueNotifier(_streamController.geTCurrentPosition());
+  final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
+  final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
+  final ValueNotifier<bool> _showSeekTo = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
-  final _fit = StateProvider((ref) => BoxFit.contain);
-  final _seekTo = StateProvider((ref) => 0);
+  final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
+  final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
+  final ValueNotifier<int> _seekTo = ValueNotifier(0);
 
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
@@ -191,14 +194,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (position) async {
-      if (_seekToCurrentPosition && _currentPosition != Duration.zero) {
+      if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
         await _player.stream.buffer.first;
-        _player.seek(_currentPosition);
-        _isCompleted.value =
-            _player.state.duration.inSeconds - _currentPosition.inSeconds <= 10;
+        _player.seek(_currentPosition.value);
+        _isCompleted.value = _player.state.duration.inSeconds -
+                _currentPosition.value.inSeconds <=
+            10;
         _seekToCurrentPosition = false;
       } else {
-        _currentPosition = position;
+        _currentPosition.value = position;
       }
       if ((_firstVid.subtitles ?? []).isNotEmpty) {
         if (_initSubtitle) {
@@ -213,8 +217,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   late final StreamSubscription<Duration> _currentTotalDurationSub =
       _player.stream.duration.listen(
-    (position) {
-      _currentTotalDuration = position;
+    (duration) {
+      _currentTotalDuration.value = duration;
     },
   );
 
@@ -240,7 +244,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
 
   void _setCurrentPosition(bool save) {
     _streamController.setCurrentPosition(
-        _currentPosition, _currentTotalDuration,
+        _currentPosition.value, _currentTotalDuration.value,
         save: save);
     _streamController.setAnimeHistoryUpdate();
   }
@@ -310,16 +314,16 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             _currentPositionSub = _player.stream.position.listen(
               (position) async {
                 if (_seekToCurrentPosition &&
-                    _currentPosition != Duration.zero) {
+                    _currentPosition.value != Duration.zero) {
                   await _player.stream.buffer.first;
-                  _player.seek(_currentPosition);
+                  _player.seek(_currentPosition.value);
                   try {
                     _player.setSubtitleTrack(_subtitle.value!);
                   } catch (_) {}
 
                   _seekToCurrentPosition = false;
                 } else {
-                  _currentPosition = position;
+                  _currentPosition.value = position;
                 }
               },
             );
@@ -655,35 +659,39 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       BoxFit.fitWidth,
       BoxFit.none
     ];
-    ref.read(_showFitLabel.notifier).state = true;
+    _showFitLabel.value = true;
     BoxFit? fit;
-    if (fitList.indexOf(ref.watch(_fit)) < fitList.length - 1) {
-      fit = fitList[fitList.indexOf(ref.watch(_fit)) + 1];
+    if (fitList.indexOf(_fit.value) < fitList.length - 1) {
+      fit = fitList[fitList.indexOf(_fit.value) + 1];
     } else {
       fit = fitList[0];
     }
-    ref.read(_fit.notifier).state = fit;
+    _fit.value = fit;
     _key.currentState?.update(fit: fit);
     await Future.delayed(const Duration(seconds: 2));
-    ref.read(_showFitLabel.notifier).state = false;
+    _showFitLabel.value = false;
   }
 
   Widget _seekToWidget() {
     final defaultSkipIntroLength =
         ref.watch(defaultSkipIntroLengthStateProvider);
     return SizedBox(
-      height: 30,
+      height: 35,
       child: ElevatedButton(
           onPressed: () async {
-            ref.read(_seekTo.notifier).state = defaultSkipIntroLength;
-            ref.read(_showSeekTo.notifier).state = true;
+            _seekTo.value = defaultSkipIntroLength;
+            _showSeekTo.value = true;
             await _player.seek(Duration(
-                seconds: _currentPosition.inSeconds + defaultSkipIntroLength));
-            ref.read(_seekTo.notifier).state = 0;
-            ref.read(_showSeekTo.notifier).state = false;
+                seconds:
+                    _currentPosition.value.inSeconds + defaultSkipIntroLength));
+            _seekTo.value = 0;
+            _showSeekTo.value = false;
           },
-          child: Text("+$defaultSkipIntroLength",
-              style: const TextStyle(fontWeight: FontWeight.bold))),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("+$defaultSkipIntroLength",
+                style: const TextStyle(fontWeight: FontWeight.w100)),
+          )),
     );
   }
 
@@ -736,26 +744,16 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 70,
-                      child: Center(
-                          child: MaterialMobilePositionIndicator(left: true))),
-                  Expanded(
-                    child: SizedBox(
-                        height: 20,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 7),
-                            child: MaterialSeekBar())),
-                  ),
-                  SizedBox(
-                      width: 70,
-                      child: Center(
-                          child: MaterialMobilePositionIndicator(left: false)))
-                ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: CustomSeekBar(
+                player: _controller.player,
+                onSeekStart: (start) {
+                  _tempPosition.value = start;
+                },
+                onSeekEnd: (end) {
+                  _tempPosition.value = null;
+                },
               ),
             ),
           ],
@@ -783,7 +781,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20, child: MaterialDesktopSeekBar()),
+            SizedBox(
+                height: 20,
+                child: CustomSeekBar(
+                  player: _controller.player,
+                  onSeekStart: (start) {
+                    _tempPosition.value = start;
+                  },
+                  onSeekEnd: (end) {
+                    _tempPosition.value = null;
+                  },
+                )),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -931,9 +939,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   Widget _videoPlayer(BuildContext context) {
-    final fit = ref.watch(_fit);
+    final fit = _fit.value;
     _resize(fit);
-    final seekTo = ref.watch(_seekTo);
     return Stack(
       children: [
         Video(
@@ -953,38 +960,42 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           height: mediaHeight(context, 1),
           resumeUponEnteringForegroundMode: true,
         ),
-        if (ref.watch(_showSeekTo))
-          Positioned.fill(
-            child: UnconstrainedBox(
-              child: Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(64.0),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-                  child: Text(
-                    "+ $seekTo",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        if (ref.watch(_showFitLabel))
-          Positioned.fill(
-              child: Center(
-                  child: Text(
-            fit.name.toUpperCase(),
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-          )))
+        ValueListenableBuilder(
+            valueListenable: _showSeekTo,
+            builder: (context, showSeekTo, child) => showSeekTo
+                ? ValueListenableBuilder(
+                    valueListenable: _seekTo,
+                    builder: (context, seekTo, child) => Positioned.fill(
+                      child: UnconstrainedBox(
+                        child: Text(
+                          "[+${Duration(seconds: seekTo).label()}]",
+                          style: const TextStyle(
+                              fontSize: 40.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container()),
+        ValueListenableBuilder(
+            valueListenable: _showFitLabel,
+            builder: (context, showFitLabel, child) => showFitLabel
+                ? ValueListenableBuilder(
+                    valueListenable: _fit,
+                    builder: (context, fit, child) => Positioned.fill(
+                      child: Positioned.fill(
+                          child: Center(
+                              child: Text(
+                        fit.name.toUpperCase(),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 40.0),
+                      ))),
+                    ),
+                  )
+                : Container()),
       ],
     );
   }
@@ -998,37 +1009,36 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             seekOnDoubleTap: true,
             seekGesture: true,
             horizontalGestureSensitivity: 5000,
-            verticalGestureSensitivity: 300,
-            controlsHoverDuration: const Duration(seconds: 10),
+            verticalGestureSensitivity: 1000,
+            controlsHoverDuration: const Duration(seconds: 10000),
             volumeGesture: true,
             brightnessGesture: true,
             seekBarThumbSize: 15,
             seekBarHeight: 5,
             displaySeekBar: false,
+            volumeIndicatorBuilder: (_, value) =>
+                MediaIndicatorBuilder(value: value, isVolumeIndicator: true),
+            brightnessIndicatorBuilder: (_, value) =>
+                MediaIndicatorBuilder(value: value, isVolumeIndicator: false),
             seekIndicatorBuilder: (context, duration) {
-              final swipeDuration = duration.inSeconds;
-              final value = _currentPosition.inSeconds + swipeDuration;
-              return Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(64.0),
-                ),
-                height: 52.0,
-                width: 108.0,
-                child: Text(
-                  Duration(seconds: value).label(),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Color(0xFFFFFFFF),
-                  ),
-                ),
-              );
+              return _seekIndicatorTextWidget(duration, _currentPosition.value);
             },
             seekBarPositionColor: primaryColor(context),
             seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: _mobilePrimaryButtonBar(isFullScreen),
+            primaryButtonBar: [
+              ValueListenableBuilder<Duration?>(
+                  valueListenable: _tempPosition,
+                  builder: (context, snapshot, _) {
+                    return snapshot != null
+                        ? _seekIndicatorTextWidget(
+                            snapshot, _currentPosition.value)
+                        : Expanded(
+                            child: Row(
+                              children: _mobilePrimaryButtonBar(isFullScreen),
+                            ),
+                          );
+                  })
+            ],
             topButtonBarMargin: const EdgeInsets.all(0),
             topButtonBar: _topButtonBar(context, isFullScreen),
             bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
@@ -1057,14 +1067,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     chapter: _streamController.getPrevEpisode());
               }
             : null,
-        icon: const Icon(
+        icon: Icon(
           Icons.skip_previous,
-          size: 30,
-          color: Colors.white,
+          size: 35,
+          color: hasPrevEpisode ? Colors.white : Colors.grey,
         ),
       ),
       const Spacer(),
-      const MaterialPlayOrPauseButton(iconSize: 55),
+      const MaterialPlayOrPauseButton(iconSize: 65),
       const Spacer(),
       IconButton(
         onPressed: hasNextEpisode
@@ -1078,7 +1088,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 );
               }
             : null,
-        icon: const Icon(Icons.skip_next, size: 30, color: Colors.white),
+        icon: Icon(Icons.skip_next,
+            size: 35, color: hasPrevEpisode ? Colors.white : Colors.grey),
       ),
       const Spacer(flex: 3)
     ];
@@ -1095,7 +1106,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             topButtonBarMargin: const EdgeInsets.all(0),
             bottomButtonBarMargin: const EdgeInsets.all(0),
             topButtonBar: _topButtonBar(context, isFullScreen),
-            buttonBarHeight: 100,
+            primaryButtonBar: [
+              ValueListenableBuilder<Duration?>(
+                  valueListenable: _tempPosition,
+                  builder: (context, snapshot, _) {
+                    return snapshot != null
+                        ? _seekIndicatorTextWidget(
+                            snapshot, _currentPosition.value)
+                        : const SizedBox.shrink();
+                  })
+            ],
+            buttonBarHeight: 110,
             displaySeekBar: false,
             seekBarThumbSize: 15,
             bottomButtonBar: _desktopBottomButtonBar(context, isFullScreen));
@@ -1121,77 +1142,24 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 }
 
-class MaterialMobilePositionIndicator extends StatefulWidget {
-  final bool left;
-
-  /// Overriden [TextStyle] for the [MaterialMobilePositionIndicator].
-  final TextStyle? style;
-  const MaterialMobilePositionIndicator(
-      {super.key, this.style, required this.left});
-
-  @override
-  MaterialMobilePositionIndicatorState createState() =>
-      MaterialMobilePositionIndicatorState();
-}
-
-class MaterialMobilePositionIndicatorState
-    extends State<MaterialMobilePositionIndicator> {
-  late Duration position = controller(context).player.state.position;
-  late Duration duration = controller(context).player.state.duration;
-
-  final List<StreamSubscription> subscriptions = [];
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (subscriptions.isEmpty) {
-      subscriptions.addAll(
-        [
-          controller(context).player.stream.position.listen((event) {
-            setState(() {
-              position = event;
-            });
-          }),
-          controller(context).player.stream.duration.listen((event) {
-            setState(() {
-              duration = event;
-            });
-          }),
-        ],
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final subscription in subscriptions) {
-      subscription.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.left
-        ? Text(
-            position.label(reference: duration),
-            style: widget.style ??
-                const TextStyle(
-                  height: 1.0,
-                  fontSize: 12.0,
-                  color: Colors.white,
-                ),
-          )
-        : Text(
-            duration.label(reference: duration),
-            style: widget.style ??
-                const TextStyle(
-                  height: 1.0,
-                  fontSize: 12.0,
-                  color: Colors.white,
-                ),
-          );
-  }
+Widget _seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
+  final swipeDuration = duration.inSeconds;
+  final value = currentPosition.inSeconds + swipeDuration;
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Text(
+        Duration(seconds: value).label(),
+        style: const TextStyle(
+            fontSize: 65.0, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      Text(
+        "[${swipeDuration > 0 ? "+${Duration(seconds: swipeDuration).label()}" : "-${Duration(seconds: swipeDuration).label()}"}]",
+        style: const TextStyle(
+            fontSize: 40.0, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    ],
+  );
 }
 
 class VideoPrefs {
