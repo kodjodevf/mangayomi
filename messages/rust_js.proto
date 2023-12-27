@@ -1,0 +1,9 @@
+syntax = "proto3";
+package rust_js;
+
+message ReadRequest {
+  string code_script = 1;
+}
+message ReadResponse {
+  string response = 1;
+}

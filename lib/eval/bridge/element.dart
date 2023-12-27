@@ -115,6 +115,54 @@ class $MElement implements MElement, $Instance {
                     false)
               ]),
         ),
+        'getElementsByClassName': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(
+                  BridgeTypeRef(CoreTypes.list, [$type]),
+                  nullable: true),
+              params: [
+                BridgeParameter(
+                    'classNames',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
+        'getElementsByTagName': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(
+                  BridgeTypeRef(CoreTypes.list, [$type]),
+                  nullable: true),
+              params: [
+                BridgeParameter(
+                    'localNames',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
+        'xpath': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(
+                  BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]),
+                  nullable: true),
+              params: [
+                BridgeParameter(
+                    'xpath',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
+        'xpathFirst': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                  nullable: true),
+              params: [
+                BridgeParameter(
+                    'xpath',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
       },
       wrap: true);
 
@@ -137,28 +185,44 @@ class $MElement implements MElement, $Instance {
         return res == null ? const $null() : $String(res);
       case 'text':
         final res = $value.text;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'className':
         final res = $value.className;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'localName':
         final res = $value.localName;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'namespaceUri':
         final res = $value.namespaceUri;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'getSrc':
         final res = $value.getSrc;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'getImg':
         final res = $value.getImg;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'getHref':
         final res = $value.getHref;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'getDataSrc':
         final res = $value.getDataSrc;
-        return res == null ? const $null() : $String(res.trim().trimLeft().trimRight());
+        return res == null
+            ? const $null()
+            : $String(res.trim().trimLeft().trimRight());
       case 'parent':
         final res = $value.parent;
         return res == null ? const $null() : $MElement.wrap(res);
@@ -174,6 +238,14 @@ class $MElement implements MElement, $Instance {
         return __select;
       case 'selectFirst':
         return __selectFirst;
+      case 'getElementsByClassName':
+        return __getElementsByClassName;
+      case 'getElementsByTagName':
+        return __getElementsByTagName;
+      case 'xpath':
+        return __xpath;
+      case 'xpathFirst':
+        return __xpathFirst;
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -213,6 +285,50 @@ class $MElement implements MElement, $Instance {
     return res == null ? const $null() : $MElement.wrap(res);
   }
 
+  static const $Function __getElementsByClassName =
+      $Function(_getElementsByClassName);
+  static $Value? _getElementsByClassName(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res =
+        (target!.$value as MElement).getElementsByClassName(args[0]?.$value);
+    return res == null
+        ? const $null()
+        : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
+  }
+
+  static const $Function __getElementsByTagName =
+      $Function(_getElementsByTagName);
+  static $Value? _getElementsByTagName(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res =
+        (target!.$value as MElement).getElementsByTagName(args[0]?.$value);
+    return res == null
+        ? const $null()
+        : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
+  }
+
+  static const $Function __xpath = $Function(_xpath);
+  static $Value? _xpath(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res = (target!.$value as MElement).xpath(args[0]?.$value);
+    return res == null
+        ? const $null()
+        : $List.wrap(res.map((e) => $String(e)).toList());
+  }
+
+  static const $Function __xpathFirst = $Function(_xpathFirst);
+  static $Value? _xpathFirst(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res = (target!.$value as MElement).xpathFirst(args[0]?.$value);
+    return res == null ? const $null() : $String(res);
+  }
+
+  @override
+  List<String>? xpath(String xpath) => $value.xpath(xpath);
+
+  @override
+  String? xpathFirst(String xpath) => $value.xpathFirst(xpath);
+
   @override
   String? attr(String attr) => $value.attr(attr);
 
@@ -224,6 +340,14 @@ class $MElement implements MElement, $Instance {
 
   @override
   List<MElement>? get children => $value.children;
+
+  @override
+  List<MElement>? getElementsByClassName(String classNames) =>
+      $value.getElementsByClassName(classNames);
+
+  @override
+  List<MElement>? getElementsByTagName(String localNames) =>
+      $value.getElementsByTagName(localNames);
 
   @override
   String? get className => $value.className;

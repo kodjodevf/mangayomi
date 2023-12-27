@@ -9,7 +9,7 @@ class MediaIndicatorBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Row(
         mainAxisAlignment:
             isVolumeIndicator ? MainAxisAlignment.start : MainAxisAlignment.end,
@@ -26,7 +26,10 @@ class MediaIndicatorBuilder extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Column(
                   children: [
-                    Text((value * 100).ceil().toString()),
+                    Text(
+                      (value * 100).ceil().toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(5),
                       child: RotatedBox(
@@ -34,15 +37,14 @@ class MediaIndicatorBuilder extends StatelessWidget {
                         child: Container(
                           clipBehavior: Clip.antiAlias,
                           decoration: BoxDecoration(
-                            color: Colors.white54,
+                            color: Colors.transparent,
                             borderRadius: BorderRadius.circular(100),
                           ),
                           child: SizedBox.fromSize(
-                            size: const Size(170, 10),
-                            child: LinearProgressIndicator(
-                                value: value,
-                                backgroundColor: Colors.transparent),
-                          ),
+                              size: const Size(130, 20),
+                              child: LinearProgressIndicator(
+                                  value: value,
+                                  backgroundColor: Colors.transparent)),
                         ),
                       ),
                     ),

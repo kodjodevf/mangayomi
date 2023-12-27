@@ -200,9 +200,9 @@ class MBridge {
   }
 
   ///Unpack a JS code
-  static const $Function evalJs = $Function(_evalJs);
+  static const $Function unpackJs = $Function(_unpackJs);
 
-  static $Value? _evalJs(_, __, List<$Value?> args) {
+  static $Value? _unpackJs(_, __, List<$Value?> args) {
     String code = args[0]!.$reified;
     try {
       final jsPacker = JSPacker(code);

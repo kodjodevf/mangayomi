@@ -2,5 +2,8 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "githubPullRequests.ignoredPullRequestBranches": [
         "main"
+    ],
+    "rust-analyzer.linkedProjects": [
+        ".\\native\\hub\\Cargo.toml"
     ]
 }

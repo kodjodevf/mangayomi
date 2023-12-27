@@ -18,6 +18,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/services/eval_js.dart';
 
 class $MProvider extends MProvider with $Bridge<MProvider> {
   static $MProvider $construct(
@@ -667,9 +668,20 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
-        'evalJs': BridgeMethodDef(
+        'unpackJs': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              params: [
+                BridgeParameter(
+                    'code',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+              ]),
+        ),
+        'evalJs': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(
+                  CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
               params: [
                 BridgeParameter(
                     'code',
@@ -737,6 +749,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   $Value? $bridgeGet(String identifier) {
     return switch (identifier) {
+      'evalJs' => $Function((_, __, List<$Value?> args) {
+          return $Future
+              .wrap(evalJs(args[0]!.$reified).then((value) => $String(value)));
+        }),
       'http' => $Function((_, __, List<$Value?> args) {
           return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
               .then((value) => $String(value)));
@@ -868,7 +884,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               MBridge.getHtmlViaWebview(args[0]!.$value, args[1]!.$value)
                   .then((value) => $String(value)));
         }),
-      "evalJs" => MBridge.evalJs,
+      "unpackJs" => MBridge.unpackJs,
       "regExp" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.regExp(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value, args[4]!.$value));

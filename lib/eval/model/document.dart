@@ -26,6 +26,36 @@ class MDocument {
     return _document?.select(selector)?.map((e) => MElement(e)).toList();
   }
 
+  String? xpathFirst(String xpath) {
+    return _document?.outerHtml == null
+        ? null
+        : _document?.xpathFirst(xpath, _document.outerHtml);
+  }
+
+  List<String>? xpath(String xpath) {
+    return _document?.outerHtml == null
+        ? null
+        : _document?.xpath(xpath, _document.outerHtml);
+  }
+
+  List<MElement>? getElementsByClassName(String classNames) {
+    return _document
+        ?.getElementsByClassName(classNames)
+        .map((e) => MElement(e))
+        .toList();
+  }
+
+  List<MElement>? getElementsByTagName(String localNames) {
+    return _document
+        ?.getElementsByTagName(localNames)
+        .map((e) => MElement(e))
+        .toList();
+  }
+
+  MElement? getElementById(String id) {
+    return MElement(_document?.getElementById(id));
+  }
+
   MElement? selectFirst(String selector) {
     return MElement(_document?.selectFirst(selector));
   }

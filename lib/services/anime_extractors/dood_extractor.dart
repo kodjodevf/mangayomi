@@ -26,6 +26,7 @@ class DoodExtractor {
         Uri.parse('https://$doodHost/pass_md5/$md5'),
         headers: {'referer': newUrl},
       );
+      if (videoUrlStart.statusCode != 200) return [];
 
       final videoUrl =
           '${videoUrlStart.body}$randomString?token=$token&expiry=$expiry';

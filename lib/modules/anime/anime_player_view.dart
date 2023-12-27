@@ -20,6 +20,7 @@ import 'package:mangayomi/utils/media_query.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
@@ -31,21 +32,11 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
-    ]);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final serversData = ref.watch(getVideoListProvider(
       episode: widget.episode,
     ));
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
         if (data.$1.isEmpty &&
@@ -178,15 +169,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _seekToCurrentPosition = true;
   bool _initSubtitle = true;
+  final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
       ValueNotifier(_streamController.geTCurrentPosition());
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
-  final ValueNotifier<bool> _showSeekTo = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
-  final ValueNotifier<int> _seekTo = ValueNotifier(0);
 
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
@@ -221,7 +211,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _currentTotalDuration.value = duration;
     },
   );
-
+  double _brightnessValue = 0.0;
   @override
   void initState() {
     _setCurrentPosition(true);
@@ -230,6 +220,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
+    Future.microtask(() async {
+      try {
+        _brightnessValue = await ScreenBrightness().current;
+        ScreenBrightness().onCurrentBrightnessChanged.listen((value) {
+          if (mounted) {
+            setState(() {
+              _brightnessValue = value;
+            });
+          }
+        });
+      } catch (_) {}
+    });
     super.initState();
   }
 
@@ -239,6 +241,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.dispose();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
+    _setFullscreen(false);
     super.dispose();
   }
 
@@ -247,6 +250,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         _currentPosition.value, _currentTotalDuration.value,
         save: save);
     _streamController.setAnimeHistoryUpdate();
+  }
+
+  void _setFullscreen(bool state) {
+    if (state) {
+      SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    } else {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight
+      ]);
+    }
   }
 
   Widget _videoQualityWidget(BuildContext context) {
@@ -675,23 +692,27 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   Widget _seekToWidget() {
     final defaultSkipIntroLength =
         ref.watch(defaultSkipIntroLengthStateProvider);
-    return SizedBox(
-      height: 35,
-      child: ElevatedButton(
-          onPressed: () async {
-            _seekTo.value = defaultSkipIntroLength;
-            _showSeekTo.value = true;
-            await _player.seek(Duration(
-                seconds:
-                    _currentPosition.value.inSeconds + defaultSkipIntroLength));
-            _seekTo.value = 0;
-            _showSeekTo.value = false;
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("+$defaultSkipIntroLength",
-                style: const TextStyle(fontWeight: FontWeight.w100)),
-          )),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: SizedBox(
+        height: 35,
+        child: ElevatedButton(
+            onPressed: () async {
+              _tempPosition.value = Duration(
+                  seconds: defaultSkipIntroLength +
+                      _currentPosition.value.inSeconds -
+                      _currentPosition.value.inSeconds);
+              await _player.seek(Duration(
+                  seconds: _currentPosition.value.inSeconds +
+                      defaultSkipIntroLength));
+              _tempPosition.value = null;
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("+$defaultSkipIntroLength",
+                  style: const TextStyle(fontWeight: FontWeight.w100)),
+            )),
+      ),
     );
   }
 
@@ -738,7 +759,21 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                           _changeFitLabel(ref);
                         },
                       ),
-                      const MaterialFullscreenButton()
+                      ValueListenableBuilder<bool>(
+                          valueListenable: _enterFullScreen,
+                          builder: (context, snapshot, _) {
+                            return IconButton(
+                              onPressed: () {
+                                _setFullscreen(!snapshot);
+                                _enterFullScreen.value = !snapshot;
+                              },
+                              icon: Icon(snapshot
+                                  ? Icons.fullscreen_exit
+                                  : Icons.fullscreen),
+                              iconSize: 25,
+                              color: Colors.white,
+                            );
+                          })
                     ],
                   ),
                 ],
@@ -783,14 +818,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             ),
             SizedBox(
                 height: 20,
-                child: CustomSeekBar(
-                  player: _controller.player,
-                  onSeekStart: (start) {
-                    _tempPosition.value = start;
-                  },
-                  onSeekEnd: (end) {
-                    _tempPosition.value = null;
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: CustomSeekBar(
+                    player: _controller.player,
+                    onSeekStart: (start) {
+                      _tempPosition.value = start;
+                    },
+                    onSeekEnd: (end) {
+                      _tempPosition.value = null;
+                    },
+                  ),
                 )),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -876,8 +914,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       Flexible(
         child: Row(
           children: [
-            if (isFullScreen &&
-                (Platform.isIOS || Platform.isMacOS || Platform.isAndroid)) ...[
+            if (isFullScreen && (Platform.isIOS || Platform.isAndroid)) ...[
               MaterialFullscreenButton(
                 icon: Icon(Platform.isIOS || Platform.isMacOS
                     ? Icons.arrow_back_ios
@@ -885,8 +922,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
               )
             ] else ...[
               if (isFullScreen)
-                const MaterialDesktopFullscreenButton(
-                    icon: Icon(Icons.arrow_back))
+                MaterialDesktopFullscreenButton(
+                    icon: Icon(Platform.isMacOS
+                        ? Icons.arrow_back_ios
+                        : Icons.arrow_back))
             ],
             if (!isFullScreen)
               BackButton(
@@ -961,24 +1000,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           resumeUponEnteringForegroundMode: true,
         ),
         ValueListenableBuilder(
-            valueListenable: _showSeekTo,
-            builder: (context, showSeekTo, child) => showSeekTo
-                ? ValueListenableBuilder(
-                    valueListenable: _seekTo,
-                    builder: (context, seekTo, child) => Positioned.fill(
-                      child: UnconstrainedBox(
-                        child: Text(
-                          "[+${Duration(seconds: seekTo).label()}]",
-                          style: const TextStyle(
-                              fontSize: 40.0,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  )
-                : Container()),
-        ValueListenableBuilder(
             valueListenable: _showFitLabel,
             builder: (context, showFitLabel, child) => showFitLabel
                 ? ValueListenableBuilder(
@@ -1009,8 +1030,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             seekOnDoubleTap: true,
             seekGesture: true,
             horizontalGestureSensitivity: 5000,
-            verticalGestureSensitivity: 1000,
-            controlsHoverDuration: const Duration(seconds: 10000),
+            verticalGestureSensitivity: 500,
+            controlsHoverDuration: const Duration(seconds: 15),
             volumeGesture: true,
             brightnessGesture: true,
             seekBarThumbSize: 15,
@@ -1018,8 +1039,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             displaySeekBar: false,
             volumeIndicatorBuilder: (_, value) =>
                 MediaIndicatorBuilder(value: value, isVolumeIndicator: true),
-            brightnessIndicatorBuilder: (_, value) =>
-                MediaIndicatorBuilder(value: value, isVolumeIndicator: false),
+            brightnessIndicatorBuilder: (_, value) => MediaIndicatorBuilder(
+                value: _brightnessValue, isVolumeIndicator: false),
             seekIndicatorBuilder: (context, duration) {
               return _seekIndicatorTextWidget(duration, _currentPosition.value);
             },
@@ -1116,7 +1137,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                         : const SizedBox.shrink();
                   })
             ],
-            buttonBarHeight: 110,
+            buttonBarHeight: 120,
             displaySeekBar: false,
             seekBarThumbSize: 15,
             bottomButtonBar: _desktopBottomButtonBar(context, isFullScreen));

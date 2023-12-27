@@ -4,6 +4,7 @@
 
 use crate::bridge::{RustRequestUnique, RustResponse, RustResponseUnique};
 use crate::imagecrop;
+use crate::js;
 use crate::messages;
 
 pub async fn handle_request(request_unique: RustRequestUnique) -> RustResponseUnique {
@@ -16,6 +17,9 @@ pub async fn handle_request(request_unique: RustRequestUnique) -> RustResponseUn
     let rust_response = match rust_resource {
         messages::crop_borders::ID => {
             imagecrop::start_croping(rust_request).await // ADD THIS BLOCK
+        }
+        messages::rust_js::ID => {
+            js::eval_js_sync(rust_request).await // ADD THIS BLOCK
         }
         _ => RustResponse::default(),
     };

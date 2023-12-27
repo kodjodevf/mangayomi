@@ -1,5 +1,6 @@
 import 'package:html/dom.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 
 extension StringExtensions on String {
   String substringAfter(String pattern) {
@@ -65,7 +66,7 @@ extension LetExtension<T> on T {
   }
 }
 
-extension SelectDocumentExtension on Document? {
+extension DocumentExtension on Document? {
   List<Element>? select(String selector) {
     try {
       return this?.querySelectorAll(selector);
@@ -81,15 +82,45 @@ extension SelectDocumentExtension on Document? {
       return null;
     }
   }
+
+  String? xpathFirst(String xpath, String outerHtml) {
+    var htmlXPath = HtmlXPath.html(outerHtml);
+    var query = htmlXPath.query(xpath);
+    return query.attr;
+  }
+
+  List<String> xpath(String xpath, String outerHtml) {
+    var htmlXPath = HtmlXPath.html(outerHtml);
+    var query = htmlXPath.query(xpath);
+    if (query.nodes.length > 1) {
+      return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();
+    }
+    return [];
+  }
 }
 
-extension SelectElementtExtension on Element {
+extension ElementtExtension on Element {
   List<Element>? select(String selector) {
     try {
       return querySelectorAll(selector);
     } catch (e) {
       return null;
     }
+  }
+
+  String? xpathFirst(String xpath) {
+    var htmlXPath = HtmlXPath.html(outerHtml);
+    var query = htmlXPath.query(xpath);
+    return query.attr;
+  }
+
+  List<String> xpath(String xpath) {
+    var htmlXPath = HtmlXPath.html(outerHtml);
+    var query = htmlXPath.query(xpath);
+    if (query.nodes.length > 1) {
+      return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();
+    }
+    return [];
   }
 
   Element? selectFirst(String selector) {

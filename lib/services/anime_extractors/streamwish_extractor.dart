@@ -19,8 +19,16 @@ class StreamWishExtractor {
       if (jsEval.isEmpty) {
         return [];
       }
-
-      String? masterUrl = (JSPacker(jsEval.first!).unpack() ?? "")
+      
+      String? masterUrl = jsEval.first
+          .let(
+            (script) {
+              if (script!.contains("function(p,a,c")) {
+                return JSPacker(script).unpack() ?? "";
+              }
+              return script;
+            },
+          )
           .substringAfter('source')
           .substringAfter('file:"')
           .substringBefore('"');
