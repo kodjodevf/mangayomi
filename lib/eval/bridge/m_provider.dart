@@ -191,6 +191,11 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     'url',
                     BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                     false),
+                BridgeParameter(
+                    'prefix',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                        nullable: true),
+                    true),
               ]),
         ),
         'myTvExtractor': BridgeMethodDef(
@@ -799,7 +804,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         }),
       "substringBeforeLast" => $Function((_, __, List<$Value?> args) {
           return $String(
-              MBridge.substringBefore(args[0]!.$value, args[1]!.$value));
+              MBridge.substringBeforeLast(args[0]!.$value, args[1]!.$value));
         }),
       "substringAfterLast" => $Function((_, __, List<$Value?> args) {
           return $String(
@@ -808,9 +813,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
 
       ///////////////////////////////////////////////////////////////////////
 
-      "sibnetExtractor" => $Function((_, __, List<$Value?> args) =>
-          $Future.wrap(MBridge.sibnetExtractor(args[0]!.$value).then(
-              (value) => $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
+      "sibnetExtractor" => $Function((_, __, List<$Value?> args) => $Future
+          .wrap(MBridge.sibnetExtractor(args[0]!.$value, args[1]?.$value ?? "")
+              .then((value) =>
+                  $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "myTvExtractor" => $Function((_, __, List<$Value?> args) => $Future.wrap(
           MBridge.myTvExtractor(args[0]!.$value).then(
               (value) => $List.wrap(value.map((e) => _toMVideo(e)).toList())))),

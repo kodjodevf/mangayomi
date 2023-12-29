@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,19 +9,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
-import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
-import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_video_list.dart';
-import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/media_query.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
-import 'package:screen_brightness/screen_brightness.dart';
+import 'package:window_manager/window_manager.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
@@ -211,7 +211,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _currentTotalDuration.value = duration;
     },
   );
-  double _brightnessValue = 0.0;
+
   @override
   void initState() {
     _setCurrentPosition(true);
@@ -220,18 +220,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-    Future.microtask(() async {
-      try {
-        _brightnessValue = await ScreenBrightness().current;
-        ScreenBrightness().onCurrentBrightnessChanged.listen((value) {
-          if (mounted) {
-            setState(() {
-              _brightnessValue = value;
-            });
-          }
-        });
-      } catch (_) {}
-    });
     super.initState();
   }
 
@@ -241,7 +229,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.dispose();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
-    _setFullscreen(false);
+    _setLandscapeMode(false);
     super.dispose();
   }
 
@@ -252,7 +240,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _streamController.setAnimeHistoryUpdate();
   }
 
-  void _setFullscreen(bool state) {
+  void _setLandscapeMode(bool state) {
     if (state) {
       SystemChrome.setPreferredOrientations(
           [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
@@ -685,8 +673,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     }
     _fit.value = fit;
     _key.currentState?.update(fit: fit);
-    await Future.delayed(const Duration(seconds: 2));
-    _showFitLabel.value = false;
+    BotToast.showText(
+        onlyOne: true,
+        align: const Alignment(0, 0.90),
+        duration: const Duration(seconds: 1),
+        text: fit.name.toUpperCase());
   }
 
   Widget _seekToWidget() {
@@ -716,168 +707,28 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     );
   }
 
-  List<Widget> _mobileBottomButtonBar(BuildContext context, bool isFullScreen) {
-    return [
-      Flexible(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _seekToWidget(),
-                  Row(
-                    children: [
-                      if (!isFullScreen)
-                        IconButton(
-                          padding: const EdgeInsets.all(5),
-                          onPressed: () => _videoSettingDraggableMenu(context),
-                          icon: const Icon(
-                            Icons.video_settings,
-                            color: Colors.white,
-                          ),
-                        ),
-                      TextButton(
-                          child: ValueListenableBuilder<double>(
-                            valueListenable: _playbackSpeed,
-                            builder: (context, value, child) {
-                              return Text(
-                                "${value}x",
-                                style: const TextStyle(color: Colors.white),
-                              );
-                            },
-                          ),
-                          onPressed: () {
-                            _togglePlaybackSpeed();
-                          }),
-                      IconButton(
-                        icon: const Icon(Icons.fit_screen_outlined,
-                            color: Colors.white),
-                        onPressed: () async {
-                          _changeFitLabel(ref);
-                        },
-                      ),
-                      ValueListenableBuilder<bool>(
-                          valueListenable: _enterFullScreen,
-                          builder: (context, snapshot, _) {
-                            return IconButton(
-                              onPressed: () {
-                                _setFullscreen(!snapshot);
-                                _enterFullScreen.value = !snapshot;
-                              },
-                              icon: Icon(snapshot
-                                  ? Icons.fullscreen_exit
-                                  : Icons.fullscreen),
-                              iconSize: 25,
-                              color: Colors.white,
-                            );
-                          })
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: CustomSeekBar(
-                player: _controller.player,
-                onSeekStart: (start) {
-                  _tempPosition.value = start;
-                },
-                onSeekEnd: (end) {
-                  _tempPosition.value = null;
-                },
-              ),
-            ),
-          ],
-        ),
-      )
-    ];
-  }
-
-  List<Widget> _desktopBottomButtonBar(
-      BuildContext context, bool isFullScreen) {
-    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController
-            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
-    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
-    return [
-      Flexible(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Row(
-                children: [
-                  _seekToWidget(),
-                ],
-              ),
-            ),
-            SizedBox(
-                height: 20,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: CustomSeekBar(
-                    player: _controller.player,
-                    onSeekStart: (start) {
-                      _tempPosition.value = start;
-                    },
-                    onSeekEnd: (end) {
-                      _tempPosition.value = null;
-                    },
-                  ),
-                )),
-            Row(
+  Widget _mobileBottomButtonBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                _seekToWidget(),
                 Row(
                   children: [
-                    if (hasPrevEpisode)
-                      IconButton(
-                        onPressed: () {
-                          if (isFullScreen) {
-                            _key.currentState?.exitFullscreen();
-                          }
-                          pushReplacementMangaReaderView(
-                              context: context,
-                              chapter: _streamController.getPrevEpisode());
-                        },
-                        icon: const Icon(
-                          Icons.skip_previous,
-                          color: Colors.white,
-                        ),
+                    IconButton(
+                      padding: const EdgeInsets.all(5),
+                      onPressed: () => _videoSettingDraggableMenu(context),
+                      icon: const Icon(
+                        Icons.video_settings,
+                        color: Colors.white,
                       ),
-                    const MaterialDesktopPlayOrPauseButton(iconSize: 25),
-                    if (hasNextEpisode)
-                      IconButton(
-                        onPressed: () {
-                          if (isFullScreen) {
-                            _key.currentState?.exitFullscreen();
-                          }
-                          pushReplacementMangaReaderView(
-                            context: context,
-                            chapter: _streamController.getNextEpisode(),
-                          );
-                        },
-                        icon: const Icon(Icons.skip_next, color: Colors.white),
-                      ),
-                    const MaterialDesktopVolumeButton(iconSize: 25),
-                    const MaterialDesktopPositionIndicator()
-                  ],
-                ),
-                Row(
-                  children: [
-                    if (!isFullScreen)
-                      IconButton(
-                        onPressed: () => _videoSettingDraggableMenu(context),
-                        icon: const Icon(
-                          Icons.video_settings,
-                          color: Colors.white,
-                        ),
-                      ),
+                    ),
                     TextButton(
                         child: ValueListenableBuilder<double>(
                           valueListenable: _playbackSpeed,
@@ -898,73 +749,187 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                         _changeFitLabel(ref);
                       },
                     ),
-                    const MaterialDesktopFullscreenButton()
+                    ValueListenableBuilder<bool>(
+                        valueListenable: _enterFullScreen,
+                        builder: (context, snapshot, _) {
+                          return IconButton(
+                            onPressed: () {
+                              _setLandscapeMode(!snapshot);
+                              _enterFullScreen.value = !snapshot;
+                            },
+                            icon: Icon(snapshot
+                                ? Icons.fullscreen_exit
+                                : Icons.fullscreen),
+                            iconSize: 25,
+                            color: Colors.white,
+                          );
+                        })
                   ],
                 ),
               ],
             ),
-          ],
-        ),
-      )
-    ];
+          ),
+        ],
+      ),
+    );
   }
 
-  List<Widget> _topButtonBar(BuildContext context, bool isFullScreen) {
-    return [
-      Flexible(
-        child: Row(
+  Widget _desktopBottomButtonBar(BuildContext context) {
+    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
+        _streamController
+            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
+    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (isFullScreen && (Platform.isIOS || Platform.isAndroid)) ...[
-              MaterialFullscreenButton(
-                icon: Icon(Platform.isIOS || Platform.isMacOS
-                    ? Icons.arrow_back_ios
-                    : Icons.arrow_back),
-              )
-            ] else ...[
-              if (isFullScreen)
-                MaterialDesktopFullscreenButton(
-                    icon: Icon(Platform.isMacOS
-                        ? Icons.arrow_back_ios
-                        : Icons.arrow_back))
-            ],
-            if (!isFullScreen)
-              BackButton(
-                color: Colors.white,
-                onPressed: () {
-                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                      overlays: SystemUiOverlay.values);
-                  Navigator.pop(context);
-                },
-              ),
-            Flexible(
-              child: ListTile(
-                dense: true,
-                title: SizedBox(
-                  width: mediaWidth(context, 0.8),
-                  child: Text(
-                    widget.episode.manga.value!.name!,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
-                    overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                if (hasPrevEpisode)
+                  IconButton(
+                    onPressed: () async {
+                      if (_isDesktop) {
+                        final isFullScreen = await windowManager.isFullScreen();
+                        if (isFullScreen) {
+                          await setFullScreen(value: false);
+                        }
+                      }
+                      if (mounted) {
+                        pushReplacementMangaReaderView(
+                            context: context,
+                            chapter: _streamController.getPrevEpisode());
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.skip_previous,
+                      color: Colors.white,
+                    ),
+                  ),
+                CustomeMaterialDesktopPlayOrPauseButton(
+                  controller: _controller,
+                ),
+                if (hasNextEpisode)
+                  IconButton(
+                    onPressed: () async {
+                      if (_isDesktop) {
+                        final isFullScreen = await windowManager.isFullScreen();
+                        if (isFullScreen) {
+                          await setFullScreen(value: false);
+                        }
+                      }
+                      if (mounted) {
+                        pushReplacementMangaReaderView(
+                          context: context,
+                          chapter: _streamController.getNextEpisode(),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.skip_next, color: Colors.white),
+                  ),
+                CustomMaterialDesktopVolumeButton(
+                  controller: _controller,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: _tempPosition,
+                  builder: (context, value, child) =>
+                      CustomMaterialDesktopPositionIndicator(
+                          delta: value, controller: _controller),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () => _videoSettingDraggableMenu(context),
+                  icon: const Icon(
+                    Icons.video_settings,
+                    color: Colors.white,
                   ),
                 ),
-                subtitle: SizedBox(
-                  width: mediaWidth(context, 0.8),
-                  child: Text(
-                    widget.episode.name!,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withOpacity(0.7)),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                TextButton(
+                    child: ValueListenableBuilder<double>(
+                      valueListenable: _playbackSpeed,
+                      builder: (context, value, child) {
+                        return Text(
+                          "${value}x",
+                          style: const TextStyle(color: Colors.white),
+                        );
+                      },
+                    ),
+                    onPressed: () {
+                      _togglePlaybackSpeed();
+                    }),
+                IconButton(
+                  icon: const Icon(Icons.fit_screen_outlined,
+                      color: Colors.white),
+                  onPressed: () async {
+                    _changeFitLabel(ref);
+                  },
                 ),
-              ),
+                CustomMaterialDesktopFullscreenButton(
+                  controller: _controller,
+                )
+              ],
             ),
           ],
         ),
-      ),
-    ];
+      ],
+    );
+  }
+
+  Widget _topButtonBar(BuildContext context) {
+    return Row(
+      children: [
+        BackButton(
+          color: Colors.white,
+          onPressed: () async {
+            if (_isDesktop) {
+              final isFullScreen = await windowManager.isFullScreen();
+              if (isFullScreen) {
+                setFullScreen(value: false);
+              } else {
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              }
+            } else {
+              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                  overlays: SystemUiOverlay.values);
+              if (mounted) {
+                Navigator.pop(context);
+              }
+            }
+          },
+        ),
+        Flexible(
+          child: ListTile(
+            dense: true,
+            title: SizedBox(
+              width: mediaWidth(context, 0.8),
+              child: Text(
+                widget.episode.manga.value!.name!,
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            subtitle: SizedBox(
+              width: mediaWidth(context, 0.8),
+              child: Text(
+                widget.episode.name!,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withOpacity(0.7)),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   void _resize(BoxFit fit) async {
@@ -980,171 +945,49 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   Widget _videoPlayer(BuildContext context) {
     final fit = _fit.value;
     _resize(fit);
-    return Stack(
-      children: [
-        Video(
-          subtitleViewConfiguration: const SubtitleViewConfiguration(
-            style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: "",
-                shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
-                backgroundColor: Colors.transparent),
-          ),
-          fit: fit,
-          key: _key,
-          controller: _controller,
-          width: mediaWidth(context, 1),
-          height: mediaHeight(context, 1),
-          resumeUponEnteringForegroundMode: true,
-        ),
-        ValueListenableBuilder(
-            valueListenable: _showFitLabel,
-            builder: (context, showFitLabel, child) => showFitLabel
-                ? ValueListenableBuilder(
-                    valueListenable: _fit,
-                    builder: (context, fit, child) => Positioned.fill(
-                      child: Positioned.fill(
-                          child: Center(
-                              child: Text(
-                        fit.name.toUpperCase(),
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 40.0),
-                      ))),
-                    ),
-                  )
-                : Container()),
-      ],
+    return Video(
+      subtitleViewConfiguration: const SubtitleViewConfiguration(
+        style: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: "",
+            shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
+            backgroundColor: Colors.transparent),
+      ),
+      fit: fit,
+      key: _key,
+      controls: (state) => _isDesktop
+          ? DestopControllerWidget(
+              videoController: _controller,
+              topButtonBarWidget: _topButtonBar(context),
+              videoStatekey: _key,
+              bottomButtonBarWidget: _desktopBottomButtonBar(context),
+              streamController: _streamController,
+              seekToWidget: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    _seekToWidget(),
+                  ],
+                ),
+              ),
+              tempDuration: (value) {
+                _tempPosition.value = value;
+              },
+            )
+          : MobileControllerWidget(
+              videoController: _controller,
+              topButtonBarWidget: _topButtonBar(context),
+              videoStatekey: _key,
+              bottomButtonBarWidget: _mobileBottomButtonBar(context),
+              streamController: _streamController,
+            ),
+      controller: _controller,
+      width: mediaWidth(context, 1),
+      height: mediaHeight(context, 1),
+      resumeUponEnteringForegroundMode: true,
     );
-  }
-
-  Widget _mobilePlayer() {
-    MaterialVideoControlsThemeData materialVideoControlsThemeData(
-            bool isFullScreen) =>
-        MaterialVideoControlsThemeData(
-            visibleOnMount: true,
-            buttonBarHeight: 100,
-            seekOnDoubleTap: true,
-            seekGesture: true,
-            horizontalGestureSensitivity: 5000,
-            verticalGestureSensitivity: 500,
-            controlsHoverDuration: const Duration(seconds: 15),
-            volumeGesture: true,
-            brightnessGesture: true,
-            seekBarThumbSize: 15,
-            seekBarHeight: 5,
-            displaySeekBar: false,
-            volumeIndicatorBuilder: (_, value) =>
-                MediaIndicatorBuilder(value: value, isVolumeIndicator: true),
-            brightnessIndicatorBuilder: (_, value) => MediaIndicatorBuilder(
-                value: _brightnessValue, isVolumeIndicator: false),
-            seekIndicatorBuilder: (context, duration) {
-              return _seekIndicatorTextWidget(duration, _currentPosition.value);
-            },
-            seekBarPositionColor: primaryColor(context),
-            seekBarThumbColor: primaryColor(context),
-            primaryButtonBar: [
-              ValueListenableBuilder<Duration?>(
-                  valueListenable: _tempPosition,
-                  builder: (context, snapshot, _) {
-                    return snapshot != null
-                        ? _seekIndicatorTextWidget(
-                            snapshot, _currentPosition.value)
-                        : Expanded(
-                            child: Row(
-                              children: _mobilePrimaryButtonBar(isFullScreen),
-                            ),
-                          );
-                  })
-            ],
-            topButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, isFullScreen),
-            bottomButtonBarMargin: const EdgeInsets.only(left: 8, right: 8),
-            bottomButtonBar: _mobileBottomButtonBar(context, isFullScreen));
-    return MaterialVideoControlsTheme(
-        normal: materialVideoControlsThemeData(false),
-        fullscreen: materialVideoControlsThemeData(true),
-        child: _videoPlayer(context));
-  }
-
-  List<Widget> _mobilePrimaryButtonBar(bool isFullScreen) {
-    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController
-            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
-    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
-    return [
-      const Spacer(flex: 3),
-      IconButton(
-        onPressed: hasPrevEpisode
-            ? () {
-                if (isFullScreen) {
-                  _key.currentState?.exitFullscreen();
-                }
-                pushReplacementMangaReaderView(
-                    context: context,
-                    chapter: _streamController.getPrevEpisode());
-              }
-            : null,
-        icon: Icon(
-          Icons.skip_previous,
-          size: 35,
-          color: hasPrevEpisode ? Colors.white : Colors.grey,
-        ),
-      ),
-      const Spacer(),
-      const MaterialPlayOrPauseButton(iconSize: 65),
-      const Spacer(),
-      IconButton(
-        onPressed: hasNextEpisode
-            ? () {
-                if (isFullScreen) {
-                  _key.currentState?.exitFullscreen();
-                }
-                pushReplacementMangaReaderView(
-                  context: context,
-                  chapter: _streamController.getNextEpisode(),
-                );
-              }
-            : null,
-        icon: Icon(Icons.skip_next,
-            size: 35, color: hasPrevEpisode ? Colors.white : Colors.grey),
-      ),
-      const Spacer(flex: 3)
-    ];
-  }
-
-  Widget _desktopPlayer() {
-    MaterialDesktopVideoControlsThemeData materialVideoControlsThemeData(
-            bool isFullScreen) =>
-        MaterialDesktopVideoControlsThemeData(
-            visibleOnMount: true,
-            controlsHoverDuration: const Duration(seconds: 2),
-            seekBarPositionColor: primaryColor(context),
-            seekBarThumbColor: primaryColor(context),
-            topButtonBarMargin: const EdgeInsets.all(0),
-            bottomButtonBarMargin: const EdgeInsets.all(0),
-            topButtonBar: _topButtonBar(context, isFullScreen),
-            primaryButtonBar: [
-              ValueListenableBuilder<Duration?>(
-                  valueListenable: _tempPosition,
-                  builder: (context, snapshot, _) {
-                    return snapshot != null
-                        ? _seekIndicatorTextWidget(
-                            snapshot, _currentPosition.value)
-                        : const SizedBox.shrink();
-                  })
-            ],
-            buttonBarHeight: 120,
-            displaySeekBar: false,
-            seekBarThumbSize: 15,
-            bottomButtonBar: _desktopBottomButtonBar(context, isFullScreen));
-    return MaterialDesktopVideoControlsTheme(
-        normal: materialVideoControlsThemeData(false),
-        fullscreen: materialVideoControlsThemeData(true),
-        child: _videoPlayer(context));
   }
 
   @override
@@ -1157,13 +1000,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           Navigator.pop(context);
           return false;
         },
-        child: _isDesktop ? _desktopPlayer() : _mobilePlayer(),
+        child: _videoPlayer(context),
       ),
     );
   }
 }
 
-Widget _seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
+Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
   final swipeDuration = duration.inSeconds;
   final value = currentPosition.inSeconds + swipeDuration;
   return Column(

@@ -168,4 +168,5 @@ class AnimeStreamController extends _$AnimeStreamController {
       }
     }
   }
+  
 }

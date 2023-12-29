@@ -63,6 +63,7 @@ dependencies:
   rinf: ^4.19.0
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.2
+  window_manager: ^0.3.7
   
 
 dependency_overrides:

@@ -17,9 +17,7 @@ class SendvidExtractor {
       final masterUrl =
           document.querySelector("source#video_source")?.attributes["src"];
 
-      if (masterUrl == null) {
-        return videoList;
-      }
+      if (masterUrl == null) return videoList;
 
       final masterHeaders = Map<String, String>.from(headers)
         ..addAll({
@@ -34,7 +32,7 @@ class SendvidExtractor {
       final masterPlaylist = masterPlaylistResponse.body;
 
       final masterBase =
-          "https://${Uri.parse(masterUrl).host}${Uri.parse(masterUrl).pathSegments.join("/")}/";
+          "${"https://${Uri.parse(masterUrl).host}${Uri.parse(masterUrl).path}".substringBeforeLast("/")}/";
 
       masterPlaylist
           .substringAfter("#EXT-X-STREAM-INF:")
@@ -52,9 +50,8 @@ class SendvidExtractor {
             "Origin": "https://${Uri.parse(url).host}",
             "Referer": "https://${Uri.parse(url).host}/",
           });
-
-        videoList.add(
-            Video(videoUrl, "$prefix - $quality", videoUrl, headers: videoHeaders));
+        videoList.add(Video(videoUrl, "$prefix - $quality", videoUrl,
+            headers: videoHeaders));
       });
 
       return videoList;

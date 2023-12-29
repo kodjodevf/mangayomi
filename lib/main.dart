@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:rinf/rinf.dart';
+import 'package:window_manager/window_manager.dart';
 
 // Global instance of the Isar database.
 late Isar isar;
@@ -46,7 +47,7 @@ void main(List<String> args) async {
   // Ensure widget and media kits are initialized.
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
-
+  await windowManager.ensureInitialized();
   // Initialize the Isar database.
   isar = await StorageProvider().initDB(null);
   await StorageProvider().requestPermission();

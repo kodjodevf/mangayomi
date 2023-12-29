@@ -5,7 +5,7 @@ import 'package:mangayomi/utils/extensions.dart';
 class SibnetExtractor {
   final http.Client client = http.Client();
 
-  Future<List<Video>> videosFromUrl(String url) async {
+  Future<List<Video>> videosFromUrl(String url, {String prefix = ""}) async {
     List<Video> videoList = [];
     try {
       final response = await client.get(Uri.parse(url));
@@ -28,7 +28,7 @@ class SibnetExtractor {
       };
 
       videoList.add(
-        Video(videoUrl, "Sibnet", videoUrl, headers: videoHeaders),
+        Video(videoUrl, "$prefix - Sibnet", videoUrl, headers: videoHeaders),
       );
 
       return videoList;

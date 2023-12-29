@@ -646,8 +646,8 @@ class MBridge {
     return Deobfuscator.deobfuscateJsPassword(inputString);
   }
 
-  static Future<List<Video>> sibnetExtractor(String url) async {
-    return await SibnetExtractor().videosFromUrl(url);
+  static Future<List<Video>> sibnetExtractor(String url, String prefix) async {
+    return await SibnetExtractor().videosFromUrl(url, prefix: prefix);
   }
 
   static Future<List<Video>> sendVidExtractor(

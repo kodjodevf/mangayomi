@@ -7,14 +7,16 @@ import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions
 
 class CustomSeekBar extends StatefulWidget {
   final Player player;
-  final Function(Duration) onSeekStart;
-  final Function(Duration) onSeekEnd;
+  final Duration? delta;
+  final Function(Duration)? onSeekStart;
+  final Function(Duration)? onSeekEnd;
 
   const CustomSeekBar(
       {super.key,
-      required this.onSeekStart,
-      required this.onSeekEnd,
-      required this.player});
+      this.onSeekStart,
+      this.onSeekEnd,
+      required this.player,
+      this.delta});
 
   @override
   CustomSeekBarState createState() => CustomSeekBarState();
@@ -68,9 +70,8 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                 width: 70,
                 child: Center(
                     child: Text(
-                  tempPosition != null
-                      ? tempPosition!.label(reference: duration)
-                      : position.label(reference: duration),
+                  (widget.delta ?? tempPosition ?? position)
+                      .label(reference: duration),
                   style: const TextStyle(
                     height: 1.0,
                     fontSize: 12.0,
@@ -86,10 +87,13 @@ class CustomSeekBarState extends State<CustomSeekBar> {
               child: Slider(
                 max: max(duration.inMilliseconds.toDouble(), 0),
                 value: max(
-                    (tempPosition ?? position).inMilliseconds.toDouble(), 0),
+                    (widget.delta ?? tempPosition ?? position)
+                        .inMilliseconds
+                        .toDouble(),
+                    0),
                 secondaryTrackValue: max(buffer.inMilliseconds.toDouble(), 0),
                 onChanged: (value) {
-                  widget.onSeekStart(Duration(
+                  widget.onSeekStart?.call(Duration(
                       milliseconds: value.toInt() - position.inMilliseconds));
                   if (mounted) {
                     setState(() {
@@ -98,7 +102,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                   }
                 },
                 onChangeEnd: (value) async {
-                  widget.onSeekEnd(Duration(
+                  widget.onSeekEnd?.call(Duration(
                       milliseconds: value.toInt() - position.inMilliseconds));
                   widget.player.seek(Duration(milliseconds: value.toInt()));
                   await Future.delayed(const Duration(milliseconds: 500));
