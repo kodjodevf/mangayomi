@@ -44,9 +44,7 @@ Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/rele
 
 ## Using Rust Inside Flutter
 
-This project use Rust for the [auto-image-cropper](https://github.com/ritiek/auto-image-cropper) crate,
-utilizing the capabilities of the
-[Rinf](https://pub.dev/packages/rinf) framework.
+This project use Rust for the [auto-image-cropper](https://github.com/ritiek/auto-image-cropper) crate and [boa](https://github.com/boa-dev/boa) crate utilizing the capabilities of the [Rinf](https://pub.dev/packages/rinf) framework.
 
 To run and build this app, you need to have
 [Flutter SDK](https://docs.flutter.dev/get-started/install),
