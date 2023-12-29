@@ -275,5 +275,6 @@
     "default_playback_speed_length": "Varsayılan Oynatma hızı süresi",
     "updateProgressAfterReading": "Okuduktan Sonra İlerlemeyi Güncelle",
     "no_sources_installed": "Hiçbir kaynak yüklü değil!",
-    "show_extensions": "uzantıları göster"
+    "show_extensions": "uzantıları göster",
+    "default_skip_forward_skip_length": "Varsayılan ileri atlama atlama uzunluğu"
 }

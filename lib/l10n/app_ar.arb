@@ -275,5 +275,6 @@
     "default_playback_speed_length": "طول سرعة التشغيل الافتراضية",
     "updateProgressAfterReading": "تحديث التقدم بعد القراءة",
     "no_sources_installed": "لم يتم تثبيت مصادر!",
-    "show_extensions": "عرض الإضافات"
+    "show_extensions": "عرض الإضافات",
+    "default_skip_forward_skip_length": "طول التخطي الافتراضي للأمام"
 }

@@ -275,5 +275,6 @@
     "default_playback_speed_length": "Стандартная длина скорости воспроизведения",
     "updateProgressAfterReading": "Обновить прогресс после чтения",
     "no_sources_installed": "Источники не установлены!",
-    "show_extensions": "Показать расширения"
+    "show_extensions": "Показать расширения",
+    "default_skip_forward_skip_length": "Длина пропуска вперед по умолчанию"
 }

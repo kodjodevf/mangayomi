@@ -15,8 +15,8 @@ class PlayerScreen extends ConsumerWidget {
     final defaultSkipIntroLength =
         ref.watch(defaultSkipIntroLengthStateProvider);
 
-    // final defaultDoubleTapToSkipLength =
-    //     ref.watch(defaultDoubleTapToSkipLengthStateProvider);
+    final defaultDoubleTapToSkipLength =
+        ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     final defaultPlayBackSpeed = ref.watch(defaultPlayBackSpeedStateProvider);
 
     return Scaffold(
@@ -150,64 +150,65 @@ class PlayerScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: secondaryColor(context)),
               ),
             ),
-            // ListTile(
-            //   onTap: () {
-            //     final values = [30, 20, 10, 5, 3, 0];
-            //     showDialog(
-            //         context: context,
-            //         builder: (context) {
-            //           return AlertDialog(
-            //             title: Text("Default Double tap to skip length"),
-            //             content: SizedBox(
-            //                 width: mediaWidth(context, 0.8),
-            //                 child: ListView.builder(
-            //                   shrinkWrap: true,
-            //                   itemCount: values.length,
-            //                   itemBuilder: (context, index) {
-            //                     return RadioListTile(
-            //                       dense: true,
-            //                       contentPadding: const EdgeInsets.all(0),
-            //                       value: values[index],
-            //                       groupValue: defaultDoubleTapToSkipLength,
-            //                       onChanged: (value) {
-            //                         ref
-            //                             .read(
-            //                                 defaultDoubleTapToSkipLengthStateProvider
-            //                                     .notifier)
-            //                             .set(value!);
-            //                         Navigator.pop(context);
-            //                       },
-            //                       title: Row(
-            //                         children: [Text("${values[index]}s")],
-            //                       ),
-            //                     );
-            //                   },
-            //                 )),
-            //             actions: [
-            //               Row(
-            //                 mainAxisAlignment: MainAxisAlignment.end,
-            //                 children: [
-            //                   TextButton(
-            //                       onPressed: () async {
-            //                         Navigator.pop(context);
-            //                       },
-            //                       child: Text(
-            //                         context.l10n.cancel,
-            //                         style:
-            //                             TextStyle(color: primaryColor(context)),
-            //                       )),
-            //                 ],
-            //               )
-            //             ],
-            //           );
-            //         });
-            //   },
-            //   title: Text("Default Double tap to skip length"),
-            //   subtitle: Text(
-            //     "${defaultDoubleTapToSkipLength}s",
-            //     style: TextStyle(fontSize: 11, color: secondaryColor(context)),
-            //   ),
-            // ),
+            ListTile(
+              onTap: () {
+                final values = [30, 20, 10, 5, 3, 1];
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title:
+                            Text(context.l10n.default_skip_forward_skip_length),
+                        content: SizedBox(
+                            width: mediaWidth(context, 0.8),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: values.length,
+                              itemBuilder: (context, index) {
+                                return RadioListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: values[index],
+                                  groupValue: defaultDoubleTapToSkipLength,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(
+                                            defaultDoubleTapToSkipLengthStateProvider
+                                                .notifier)
+                                        .set(value!);
+                                    Navigator.pop(context);
+                                  },
+                                  title: Row(
+                                    children: [Text("${values[index]}s")],
+                                  ),
+                                );
+                              },
+                            )),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    context.l10n.cancel,
+                                    style:
+                                        TextStyle(color: primaryColor(context)),
+                                  )),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              title: Text(context.l10n.default_skip_forward_skip_length),
+              subtitle: Text(
+                "${defaultDoubleTapToSkipLength}s",
+                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+              ),
+            ),
             ListTile(
               onTap: () {
                 final values = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];

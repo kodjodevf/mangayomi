@@ -275,5 +275,6 @@
     "default_playback_speed_length": "Standardlänge für Wiedergabegeschwindigkeit",
     "updateProgressAfterReading": "Fortschritt nach dem Lesen aktualisieren",
     "no_sources_installed": "Keine Quellen installiert!",
-    "show_extensions": "Erweiterungen anzeigen"
+    "show_extensions": "Erweiterungen anzeigen",
+    "default_skip_forward_skip_length": "Standardmäßige Länge des Vorwärtsspringens"
 }

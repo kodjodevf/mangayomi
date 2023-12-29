@@ -1,17 +1,19 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
-class MobileControllerWidget extends StatefulWidget {
+class MobileControllerWidget extends ConsumerStatefulWidget {
   final AnimeStreamController streamController;
   final VideoController videoController;
   final Widget topButtonBarWidget;
@@ -26,16 +28,19 @@ class MobileControllerWidget extends StatefulWidget {
       required this.videoStatekey});
 
   @override
-  State<MobileControllerWidget> createState() => _MobileControllerWidgetState();
+  ConsumerState<MobileControllerWidget> createState() =>
+      _MobileControllerWidgetState();
 }
 
-class _MobileControllerWidgetState extends State<MobileControllerWidget> {
+class _MobileControllerWidgetState
+    extends ConsumerState<MobileControllerWidget> {
   bool mount = true;
   bool visible = true;
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
   Color backdropColor = const Color(0x66000000);
   Timer? _timer;
-
+  late final skipDuration =
+      ref.watch(defaultDoubleTapToSkipLengthStateProvider);
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
   Timer? _brightnessTimer;
@@ -78,7 +83,7 @@ class _MobileControllerWidgetState extends State<MobileControllerWidget> {
     }
   }
 
-  final horizontalGestureSensitivity = 5000;
+  final horizontalGestureSensitivity = 7500;
   final verticalGestureSensitivity = 500;
   @override
   void didChangeDependencies() {
@@ -556,30 +561,31 @@ class _MobileControllerWidgetState extends State<MobileControllerWidget> {
                               }
                             },
                             child: _BackwardSeekIndicator(
-                              onChanged: (value) {
-                                setState(() {
-                                  _seekBarDeltaValueNotifier = widget
-                                          .videoController
-                                          .player
-                                          .state
-                                          .position -
+                                onChanged: (value) {
+                                  setState(() {
+                                    _seekBarDeltaValueNotifier = widget
+                                            .videoController
+                                            .player
+                                            .state
+                                            .position -
+                                        value;
+                                  });
+                                },
+                                onSubmitted: (value) {
+                                  setState(() {
+                                    _hideSeekBackwardButton = true;
+                                  });
+                                  var result = widget.videoController.player
+                                          .state.position -
                                       value;
-                                });
-                              },
-                              onSubmitted: (value) {
-                                setState(() {
-                                  _hideSeekBackwardButton = true;
-                                });
-                                var result = widget
-                                        .videoController.player.state.position -
-                                    value;
-                                result = result.clamp(
-                                  Duration.zero,
-                                  widget.videoController.player.state.duration,
-                                );
-                                widget.videoController.player.seek(result);
-                              },
-                            ),
+                                  result = result.clamp(
+                                    Duration.zero,
+                                    widget
+                                        .videoController.player.state.duration,
+                                  );
+                                  widget.videoController.player.seek(result);
+                                },
+                                skipDuration: skipDuration),
                           )
                         : const SizedBox(),
                   ),
@@ -604,30 +610,31 @@ class _MobileControllerWidgetState extends State<MobileControllerWidget> {
                               }
                             },
                             child: _ForwardSeekIndicator(
-                              onChanged: (value) {
-                                setState(() {
-                                  _seekBarDeltaValueNotifier = widget
-                                          .videoController
-                                          .player
-                                          .state
-                                          .position +
+                                onChanged: (value) {
+                                  setState(() {
+                                    _seekBarDeltaValueNotifier = widget
+                                            .videoController
+                                            .player
+                                            .state
+                                            .position +
+                                        value;
+                                  });
+                                },
+                                onSubmitted: (value) {
+                                  setState(() {
+                                    _hideSeekForwardButton = true;
+                                  });
+                                  var result = widget.videoController.player
+                                          .state.position +
                                       value;
-                                });
-                              },
-                              onSubmitted: (value) {
-                                setState(() {
-                                  _hideSeekForwardButton = true;
-                                });
-                                var result = widget
-                                        .videoController.player.state.position +
-                                    value;
-                                result = result.clamp(
-                                  Duration.zero,
-                                  widget.videoController.player.state.duration,
-                                );
-                                widget.videoController.player.seek(result);
-                              },
-                            ),
+                                  result = result.clamp(
+                                    Duration.zero,
+                                    widget
+                                        .videoController.player.state.duration,
+                                  );
+                                  widget.videoController.player.seek(result);
+                                },
+                                skipDuration: skipDuration),
                           )
                         : const SizedBox(),
                   ),
@@ -643,9 +650,11 @@ class _MobileControllerWidgetState extends State<MobileControllerWidget> {
 class _BackwardSeekIndicator extends StatefulWidget {
   final void Function(Duration) onChanged;
   final void Function(Duration) onSubmitted;
+  final int skipDuration;
   const _BackwardSeekIndicator({
     required this.onChanged,
     required this.onSubmitted,
+    required this.skipDuration,
   });
 
   @override
@@ -653,7 +662,7 @@ class _BackwardSeekIndicator extends StatefulWidget {
 }
 
 class _BackwardSeekIndicatorState extends State<_BackwardSeekIndicator> {
-  Duration value = const Duration(seconds: 10);
+  late Duration value = Duration(seconds: widget.skipDuration);
 
   Timer? timer;
 
@@ -679,7 +688,7 @@ class _BackwardSeekIndicatorState extends State<_BackwardSeekIndicator> {
     });
     widget.onChanged.call(value);
     setState(() {
-      value += const Duration(seconds: 10);
+      value += Duration(seconds: widget.skipDuration);
     });
   }
 
@@ -729,9 +738,11 @@ class _BackwardSeekIndicatorState extends State<_BackwardSeekIndicator> {
 class _ForwardSeekIndicator extends StatefulWidget {
   final void Function(Duration) onChanged;
   final void Function(Duration) onSubmitted;
+  final int skipDuration;
   const _ForwardSeekIndicator({
     required this.onChanged,
     required this.onSubmitted,
+    required this.skipDuration,
   });
 
   @override
@@ -739,7 +750,7 @@ class _ForwardSeekIndicator extends StatefulWidget {
 }
 
 class _ForwardSeekIndicatorState extends State<_ForwardSeekIndicator> {
-  Duration value = const Duration(seconds: 10);
+  late Duration value = Duration(seconds: widget.skipDuration);
 
   Timer? timer;
 
@@ -765,7 +776,7 @@ class _ForwardSeekIndicatorState extends State<_ForwardSeekIndicator> {
     });
     widget.onChanged.call(value);
     setState(() {
-      value += const Duration(seconds: 10);
+      value += Duration(seconds: widget.skipDuration);
     });
   }
 

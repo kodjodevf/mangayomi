@@ -47,7 +47,10 @@ void main(List<String> args) async {
   // Ensure widget and media kits are initialized.
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
-  await windowManager.ensureInitialized();
+  if (!(Platform.isAndroid || Platform.isIOS)) {
+    await windowManager.ensureInitialized();
+  }
+
   // Initialize the Isar database.
   isar = await StorageProvider().initDB(null);
   await StorageProvider().requestPermission();

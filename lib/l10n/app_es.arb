@@ -275,5 +275,6 @@
     "default_playback_speed_length": "Duración predeterminada de la velocidad de reproducción",
     "updateProgressAfterReading": "Actualizar el progreso después de leer",
     "no_sources_installed": "¡No hay fuentes instaladas!",
-    "show_extensions": "Mostrar extensiones"
+    "show_extensions": "Mostrar extensiones",
+    "default_skip_forward_skip_length": "Longitud de salto hacia adelante predeterminada"
 }

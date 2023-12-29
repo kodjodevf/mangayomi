@@ -10,7 +10,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:window_manager/window_manager.dart';
 
-class DestopControllerWidget extends StatefulWidget {
+class DesktopControllerWidget extends StatefulWidget {
   final Function(Duration?) tempDuration;
   final AnimeStreamController streamController;
   final VideoController videoController;
@@ -18,7 +18,7 @@ class DestopControllerWidget extends StatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final Widget seekToWidget;
-  const DestopControllerWidget(
+  const DesktopControllerWidget(
       {super.key,
       required this.videoController,
       required this.topButtonBarWidget,
@@ -29,10 +29,10 @@ class DestopControllerWidget extends StatefulWidget {
       required this.tempDuration});
 
   @override
-  State<DestopControllerWidget> createState() => _DestopControllerWidgetState();
+  State<DesktopControllerWidget> createState() => _DesktopControllerWidgetState();
 }
 
-class _DestopControllerWidgetState extends State<DestopControllerWidget> {
+class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
   bool mount = true;
   bool visible = true;
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);

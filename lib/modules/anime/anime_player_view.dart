@@ -691,7 +691,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
             onPressed: () async {
               _tempPosition.value = Duration(
                   seconds: defaultSkipIntroLength +
-                      _currentPosition.value.inSeconds -
                       _currentPosition.value.inSeconds);
               await _player.seek(Duration(
                   seconds: _currentPosition.value.inSeconds +
@@ -779,6 +778,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         _streamController
             .getEpisodesLength(_streamController.getEpisodeIndex().$2);
     bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
+    final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -809,6 +809,78 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                   ),
                 CustomeMaterialDesktopPlayOrPauseButton(
                   controller: _controller,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: IconButton(
+                    onPressed: () async {
+                      _tempPosition.value = Duration(
+                          seconds:
+                              skipDuration - _currentPosition.value.inSeconds);
+                      await _player.seek(Duration(
+                          seconds:
+                              _currentPosition.value.inSeconds - skipDuration));
+                      _tempPosition.value = null;
+                    },
+                    icon: Stack(
+                      children: [
+                        const Positioned.fill(
+                          child: Icon(
+                            Icons.rotate_left_outlined,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              skipDuration.toString(),
+                              style: const TextStyle(fontSize: 9),
+                            ),
+                          )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: IconButton(
+                    onPressed: () async {
+                      _tempPosition.value = Duration(
+                          seconds:
+                              skipDuration + _currentPosition.value.inSeconds);
+                      await _player.seek(Duration(
+                          seconds:
+                              _currentPosition.value.inSeconds + skipDuration));
+                      _tempPosition.value = null;
+                    },
+                    icon: Stack(
+                      children: [
+                        const Positioned.fill(
+                          child: Icon(
+                            Icons.rotate_right_outlined,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: Center(
+                              child: Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              skipDuration.toString(),
+                              style: const TextStyle(fontSize: 9),
+                            ),
+                          )),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 if (hasNextEpisode)
                   IconButton(
@@ -958,7 +1030,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       fit: fit,
       key: _key,
       controls: (state) => _isDesktop
-          ? DestopControllerWidget(
+          ? DesktopControllerWidget(
               videoController: _controller,
               topButtonBarWidget: _topButtonBar(context),
               videoStatekey: _key,
