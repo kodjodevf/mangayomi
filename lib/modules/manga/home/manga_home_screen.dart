@@ -50,6 +50,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   final ScrollController _scrollController = ScrollController();
   int _fullDataLength = 50;
   int _page = 1;
+  bool _hasNextPage = true;
   late int _selectedIndex = widget.isLatest
       ? 1
       : widget.isSearch
@@ -97,6 +98,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       if (mounted) {
         setState(() {
           _page = _page + 1;
+          _hasNextPage = mangaResList!.hasNextPage;
         });
       }
     }
@@ -325,7 +327,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 return const ProgressCenter();
               }
               Widget buildProgressIndicator() {
-                return !(data!.list.isNotEmpty && (data.hasNextPage))
+                return !(data!.list.isNotEmpty && (_hasNextPage))
                     ? Container()
                     : _isLoading
                         ? const Center(
@@ -346,19 +348,21 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(5))),
                                     onPressed: () {
-                                      if (mounted) {
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                      }
-                                      _loadMore().then((value) {
-                                        if (mounted && value != null) {
+                                      if (!_getManga!.isLoading) {
+                                        if (mounted) {
                                           setState(() {
-                                            _mangaList.addAll(value.list);
-                                            _isLoading = false;
+                                            _isLoading = true;
                                           });
                                         }
-                                      });
+                                        _loadMore().then((value) {
+                                          if (mounted && value != null) {
+                                            setState(() {
+                                              _mangaList.addAll(value.list);
+                                              _isLoading = false;
+                                            });
+                                          }
+                                        });
+                                      }
                                     },
                                     child: Column(
                                       mainAxisAlignment:
@@ -383,8 +387,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 if (_scrollController.position.pixels ==
                     _scrollController.position.maxScrollExtent) {
                   if (_mangaList.isNotEmpty &&
-                      (data.hasNextPage) &&
-                      !_isLoading) {
+                      (_hasNextPage) &&
+                      !_isLoading &&
+                      !_getManga!.isLoading) {
                     if (mounted) {
                       setState(() {
                         _isLoading = true;

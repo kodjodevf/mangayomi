@@ -499,5 +499,5 @@ List<String>? _getFilterScanlator(Manga manga) {
   final scanlators = isar.settings.getSync(227)!.filterScanlatorList ?? [];
   final filter =
       scanlators.where((element) => element.mangaId == manga.id).toList();
-  return filter.isEmpty ? null : filter.first.scanlators;
+  return filter.firstOrNull?.scanlators;
 }

@@ -373,7 +373,7 @@ class Kitsu extends _$Kitsu {
         track.mediaId = int.parse(data[0]["id"]);
         track.libraryId = int.parse(data[0]["id"]);
         track.syncId = syncId;
-        track.trackingUrl = _mangaUrl(int.parse(data[0]["id"]));
+        track.trackingUrl = _animeUrl(int.parse(data[0]["id"]));
         track.status =
             _getKitsuTrsackStatusAnime(data[0]["attributes"]["status"]);
         track.title =
@@ -409,7 +409,7 @@ class Kitsu extends _$Kitsu {
         track.mediaId = int.parse(data[0]["id"]);
         track.libraryId = int.parse(data[0]["id"]);
         track.syncId = syncId;
-        track.trackingUrl = _mangaUrl(int.parse(data[0]["id"]));
+        track.trackingUrl = _animeUrl(int.parse(data[0]["id"]));
         track.status =
             _getKitsuTrsackStatusAnime(data[0]["attributes"]["status"]);
         track.score =

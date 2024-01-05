@@ -27,15 +27,11 @@ class MDocument {
   }
 
   String? xpathFirst(String xpath) {
-    return _document?.outerHtml == null
-        ? null
-        : _document?.xpathFirst(xpath, _document.outerHtml);
+    return _document?.xpathFirst(xpath);
   }
 
-  List<String>? xpath(String xpath) {
-    return _document?.outerHtml == null
-        ? null
-        : _document?.xpath(xpath, _document.outerHtml);
+  List<String> xpath(String xpath) {
+    return _document?.xpath(xpath) ?? [];
   }
 
   List<MElement>? getElementsByClassName(String classNames) {

@@ -9,10 +9,11 @@ class DoodExtractor {
     String? quality,
     bool redirect = true,
   }) async {
+    final http.Client client = http.Client();
     final newQuality = quality ?? ('Doodstream ${redirect ? ' mirror' : ''}');
 
     try {
-      final response = await http.Client().get(Uri.parse(url));
+      final response = await client.get(Uri.parse(url));
       final newUrl = redirect ? response.request!.url.toString() : url;
 
       final doodHost = RegExp('https://(.*?)/').firstMatch(newUrl)!.group(1)!;
@@ -22,17 +23,18 @@ class DoodExtractor {
       final token = md5.substring(md5.lastIndexOf('/') + 1);
       final randomString = getRandomString();
       final expiry = DateTime.now().millisecondsSinceEpoch;
-      final videoUrlStart = await http.Client().get(
+      final videoUrlStart = await client.get(
         Uri.parse('https://$doodHost/pass_md5/$md5'),
         headers: {'referer': newUrl},
       );
-      if (videoUrlStart.statusCode != 200) return [];
 
       final videoUrl =
           '${videoUrlStart.body}$randomString?token=$token&expiry=$expiry';
-
       return [
-        Video(newUrl, newQuality, videoUrl, headers: doodHeaders(doodHost))
+        Video(newUrl, newQuality, videoUrl, headers: {
+          'User-Agent': 'Mangayomi',
+          'Referer': 'https://$doodHost/',
+        })
       ];
     } catch (_) {
       return [];
@@ -46,12 +48,5 @@ class DoodExtractor {
         length,
         (index) => allowedChars.runes
             .elementAt(Random().nextInt(allowedChars.length))).join();
-  }
-
-  Map<String, String> doodHeaders(String host) {
-    return {
-      'User-Agent': 'Aniyomi',
-      'Referer': 'https://$host/',
-    };
   }
 }

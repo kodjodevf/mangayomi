@@ -61,8 +61,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
-      resolved-ref: c66de6ad76ddaf74399cbdeeed42d04126e88e4b
+      ref: "2cc16eeb475788ec0443b64badc325c00d7dab90"
+      resolved-ref: "2cc16eeb475788ec0443b64badc325c00d7dab90"
       url: "https://github.com/kodjodevf/background_downloader.git"
     source: git
     version: "7.12.3"
@@ -286,10 +286,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_eval
-      sha256: c3ef388d9846ed032fa0cf0a69acae40d4c15ad7ad570ac3a37fa060de93c8ec
+      sha256: "8896832008bb5379caad1c55109ef357566365ec1abb4f49819c79021cc0e0e1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.2"
+    version: "0.7.3"
   dart_style:
     dependency: transitive
     description:

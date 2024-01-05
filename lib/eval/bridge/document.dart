@@ -111,10 +111,8 @@ class $MDocument implements MDocument, $Instance {
         ),
         'xpath': BridgeMethodDef(
           BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(
-                  BridgeTypeRef(
-                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]),
-                  nullable: true),
+              returns: BridgeTypeAnnotation(BridgeTypeRef(
+                  CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
               params: [
                 BridgeParameter(
                     'xpath',
@@ -249,9 +247,7 @@ class $MDocument implements MDocument, $Instance {
   static $Value? _xpath(
       final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MDocument).xpath(args[0]?.$value);
-    return res == null
-        ? const $null()
-        : $List.wrap(res.map((e) => $String(e)).toList());
+    return $List.wrap(res.map((e) => $String(e)).toList());
   }
 
   static const $Function __xpathFirst = $Function(_xpathFirst);
@@ -268,7 +264,7 @@ class $MDocument implements MDocument, $Instance {
   MElement? selectFirst(String selector) => $value.selectFirst(selector);
 
   @override
-  List<String>? xpath(String xpath) => $value.xpath(xpath);
+  List<String> xpath(String xpath) => $value.xpath(xpath);
 
   @override
   String? xpathFirst(String xpath) => $value.xpathFirst(xpath);

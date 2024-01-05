@@ -1,4 +1,5 @@
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -77,6 +78,23 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
       for (var chap in chapters.reversed.toList()) {
         isar.chapters.putSync(chap);
         chap.manga.saveSync();
+      }
+    }
+    final oldChapers =
+        isar.mangas.getSync(mangaId)!.chapters.toList().reversed.toList();
+    if (oldChapers.length == chaps.length) {
+      for (var oldChap in oldChapers) {
+        final newChap = chaps.firstWhere(
+          (e) => e.name == oldChap.name,
+          orElse: () => MChapter(),
+        );
+        if (newChap.url != null &&
+            newChap.url!.isNotEmpty &&
+            newChap.url != oldChap.url) {
+          oldChap.url = newChap.url;
+          isar.chapters.putSync(oldChap);
+          oldChap.manga.saveSync();
+        }
       }
     }
   });

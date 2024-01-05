@@ -122,7 +122,6 @@ class MangaReaderView extends ConsumerWidget {
             onWillPop: () async {
               SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
                   overlays: SystemUiOverlay.values);
-              ;
               Navigator.pop(context);
               return false;
             },

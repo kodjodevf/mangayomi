@@ -83,14 +83,18 @@ extension DocumentExtension on Document? {
     }
   }
 
-  String? xpathFirst(String xpath, String outerHtml) {
-    var htmlXPath = HtmlXPath.html(outerHtml);
+  String? xpathFirst(String xpath) {
+    final dom = this?.documentElement;
+    if (dom == null) return null;
+    var htmlXPath = HtmlXPath.node(dom);
     var query = htmlXPath.query(xpath);
     return query.attr;
   }
 
-  List<String> xpath(String xpath, String outerHtml) {
-    var htmlXPath = HtmlXPath.html(outerHtml);
+  List<String> xpath(String xpath) {
+    final dom = this?.documentElement;
+    if (dom == null) return [];
+    var htmlXPath = HtmlXPath.node(dom);
     var query = htmlXPath.query(xpath);
     if (query.nodes.length > 1) {
       return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();
