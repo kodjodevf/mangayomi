@@ -6,12 +6,8 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/http_service/cloudflare/cookie.dart';
-import 'package:mangayomi/services/http_service/cloudflare/providers/cookie_providers.dart';
-import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/services/cloudflare/cookie.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
@@ -57,7 +53,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     );
     webview!
       ..setBrightness(Brightness.dark)
-      ..setApplicationNameForUserAgent(defaultUserAgent)
       ..launch(widget.url)
       ..onClose.whenComplete(() {
         Navigator.pop(context);
@@ -70,7 +65,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   late String _title = widget.title;
   bool _canGoback = false;
   bool _canGoForward = false;
-
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
@@ -220,9 +214,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                       },
                       onUpdateVisitedHistory:
                           (controller, url, isReload) async {
-                        await ref.watch(
-                            setCookieProvider(widget.sourceId, url.toString())
-                                .future);
+                        final ua = await controller.evaluateJavascript(
+                                source: "navigator.userAgent") ??
+                            "";
+                        await addCookie(widget.sourceId, url.toString(), ua);
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
                         final title = await controller.getTitle();
@@ -233,10 +228,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _canGoForward = canGoForward;
                         });
                       },
-                      initialOptions: InAppWebViewGroupOptions(
-                        crossPlatform: InAppWebViewOptions(
-                            userAgent: isar.settings.getSync(227)!.userAgent!),
-                      ),
                       initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
                     ),
                   ),
@@ -259,9 +250,12 @@ Future<String?> decodeHtml(Webview webview, {String? sourceId}) async {
   try {
     final html = await webview
         .evaluateJavaScript("window.document.documentElement.outerHTML;");
-    final cookie = await webview.evaluateJavaScript("window.document.cookie;");
-    if (cookie != null && sourceId != null) {
-      setCookieBA(cookie, sourceId);
+    final ua = await webview.evaluateJavaScript("navigator.userAgent") ?? "";
+    final newCookie =
+        await webview.evaluateJavaScript("window.document.cookie;");
+    if (newCookie != null && sourceId != null) {
+      CookieState(idSource: sourceId)
+          .set(jsonDecode(newCookie), ua.isNotEmpty ? jsonDecode(ua) : "");
     }
 
     final res = jsonDecode(html!) as String;

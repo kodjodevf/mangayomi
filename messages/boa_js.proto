@@ -1,5 +1,5 @@
 syntax = "proto3";
-package rust_js;
+package boa_js;
 
 message ReadRequest {
   string code_script = 1;

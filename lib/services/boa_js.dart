@@ -1,4 +1,4 @@
-import 'package:mangayomi/messages/rust_js.pb.dart' as rust_js;
+import 'package:mangayomi/messages/boa_js.pb.dart' as rust_js;
 import 'package:rinf/rinf.dart';
 
 Future<String> evalJs(String script) async {

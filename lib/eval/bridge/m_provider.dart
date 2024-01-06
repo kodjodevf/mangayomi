@@ -18,7 +18,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
-import 'package:mangayomi/services/eval_js.dart';
+import 'package:mangayomi/services/boa_js.dart';
 
 class $MProvider extends MProvider with $Bridge<MProvider> {
   static $MProvider $construct(

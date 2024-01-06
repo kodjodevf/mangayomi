@@ -6,7 +6,7 @@ mod bridge;
 mod imagecrop;
 mod messages;
 mod with_request;
-mod js;
+mod boa_js;
 
 /// This `hub` crate is the entry point for the Rust logic.
 /// Always use non-blocking async functions such as `tokio::fs::File::open`.

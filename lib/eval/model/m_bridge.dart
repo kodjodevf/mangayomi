@@ -33,7 +33,7 @@ import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
-import 'package:mangayomi/services/http_service/cloudflare/cloudflare_bypass.dart';
+import 'package:mangayomi/services/cloudflare/cloudflare.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
@@ -434,7 +434,7 @@ class MBridge {
       if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
         log("Http request: ${res.statusCode}, Cloudflare");
         return await cloudflareBypass(
-            url: url, sourceId: source!.id.toString(), method: 0);
+            url: url, sourceId: source!.id.toString());
       } else if (res.statusCode == 200) {
         log("Http request: ${res.statusCode}");
         return await res.stream.bytesToString();

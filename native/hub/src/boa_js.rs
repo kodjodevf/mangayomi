@@ -2,8 +2,8 @@ use crate::bridge::{RustOperation, RustRequest, RustResponse};
 use boa_engine::{Context, Source};
 use prost::Message;
 
-pub async fn eval_js_sync(rust_request: RustRequest) -> RustResponse {
-    use crate::messages::rust_js::{ReadRequest, ReadResponse};
+pub async fn eval_js(rust_request: RustRequest) -> RustResponse {
+    use crate::messages::boa_js::{ReadRequest, ReadResponse};
 
     match rust_request.operation {
         RustOperation::Create => RustResponse::default(),
