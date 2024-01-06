@@ -1,15 +1,15 @@
-import 'package:mangayomi/messages/boa_js.pb.dart' as rust_js;
+import 'package:mangayomi/messages/boa_js.pb.dart';
 import 'package:rinf/rinf.dart';
 
 Future<String> evalJs(String script) async {
-  final requestMessage = rust_js.ReadRequest(codeScript: script);
+  final requestMessage = ReadRequest(codeScript: script);
   final rustRequest = RustRequest(
-      resource: rust_js.ID,
+      resource: ID,
       operation: RustOperation.Read,
       message: requestMessage.writeToBuffer());
   final rustResponse = await requestToRust(rustRequest);
   if (rustResponse.successful) {
-    final responseMessage = rust_js.ReadResponse.fromBuffer(
+    final responseMessage = ReadResponse.fromBuffer(
       rustResponse.message!,
     );
     return responseMessage.response;
