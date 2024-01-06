@@ -2,6 +2,7 @@ import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:mangayomi/eval/bridge/document.dart';
 import 'package:mangayomi/eval/bridge/element.dart';
+import 'package:mangayomi/eval/bridge/http.dart';
 import 'package:mangayomi/eval/bridge/m_chapter.dart';
 import 'package:mangayomi/eval/bridge/filter.dart';
 import 'package:mangayomi/eval/bridge/m_pages.dart';
@@ -51,6 +52,12 @@ class MEvalPlugin extends EvalPlugin {
     registry.defineBridgeClass($Element.$declaration);
     registry.defineBridgeClass($MDocument.$declaration);
     registry.defineBridgeClass($Document.$declaration);
+    //HTTP CLIENT
+    registry.defineBridgeClass($Client.$declaration);
+    registry.defineBridgeClass($Response.$declaration);
+    registry.defineBridgeClass($BaseRequest.$declaration);
+    registry.defineBridgeClass($StreamedResponse.$declaration);
+    registry.defineBridgeClass($ByteStream.$declaration);
   }
 
   @override
@@ -111,5 +118,8 @@ class MEvalPlugin extends EvalPlugin {
         'package:mangayomi/bridge_lib.dart', 'MElement.', $MElement.$new);
     runtime.registerBridgeFunc(
         'package:mangayomi/bridge_lib.dart', 'MDocument.', $MDocument.$new);
+    //HTTP CLIENT
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'Client.', $Client.$new);
   }
 }
