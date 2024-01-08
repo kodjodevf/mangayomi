@@ -27,78 +27,83 @@ const MangaSchema = CollectionSchema(
       name: r'categories',
       type: IsarType.longList,
     ),
-    r'customCoverImage': PropertySchema(
+    r'customCoverFromTracker': PropertySchema(
       id: 2,
+      name: r'customCoverFromTracker',
+      type: IsarType.string,
+    ),
+    r'customCoverImage': PropertySchema(
+      id: 3,
       name: r'customCoverImage',
       type: IsarType.byteList,
     ),
     r'dateAdded': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'dateAdded',
       type: IsarType.long,
     ),
     r'description': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'description',
       type: IsarType.string,
     ),
     r'favorite': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'favorite',
       type: IsarType.bool,
     ),
     r'genre': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'genre',
       type: IsarType.stringList,
     ),
     r'imageUrl': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'imageUrl',
       type: IsarType.string,
     ),
     r'isLocalArchive': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isLocalArchive',
       type: IsarType.bool,
     ),
     r'isManga': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'isManga',
       type: IsarType.bool,
     ),
     r'lang': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastRead': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'lastRead',
       type: IsarType.long,
     ),
     r'lastUpdate': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'lastUpdate',
       type: IsarType.long,
     ),
     r'link': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'link',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'name',
       type: IsarType.string,
     ),
     r'source': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'source',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
@@ -142,6 +147,12 @@ int _mangaEstimateSize(
     final value = object.categories;
     if (value != null) {
       bytesCount += 3 + value.length * 8;
+    }
+  }
+  {
+    final value = object.customCoverFromTracker;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
     }
   }
   {
@@ -209,21 +220,22 @@ void _mangaSerialize(
 ) {
   writer.writeString(offsets[0], object.author);
   writer.writeLongList(offsets[1], object.categories);
-  writer.writeByteList(offsets[2], object.customCoverImage);
-  writer.writeLong(offsets[3], object.dateAdded);
-  writer.writeString(offsets[4], object.description);
-  writer.writeBool(offsets[5], object.favorite);
-  writer.writeStringList(offsets[6], object.genre);
-  writer.writeString(offsets[7], object.imageUrl);
-  writer.writeBool(offsets[8], object.isLocalArchive);
-  writer.writeBool(offsets[9], object.isManga);
-  writer.writeString(offsets[10], object.lang);
-  writer.writeLong(offsets[11], object.lastRead);
-  writer.writeLong(offsets[12], object.lastUpdate);
-  writer.writeString(offsets[13], object.link);
-  writer.writeString(offsets[14], object.name);
-  writer.writeString(offsets[15], object.source);
-  writer.writeByte(offsets[16], object.status.index);
+  writer.writeString(offsets[2], object.customCoverFromTracker);
+  writer.writeByteList(offsets[3], object.customCoverImage);
+  writer.writeLong(offsets[4], object.dateAdded);
+  writer.writeString(offsets[5], object.description);
+  writer.writeBool(offsets[6], object.favorite);
+  writer.writeStringList(offsets[7], object.genre);
+  writer.writeString(offsets[8], object.imageUrl);
+  writer.writeBool(offsets[9], object.isLocalArchive);
+  writer.writeBool(offsets[10], object.isManga);
+  writer.writeString(offsets[11], object.lang);
+  writer.writeLong(offsets[12], object.lastRead);
+  writer.writeLong(offsets[13], object.lastUpdate);
+  writer.writeString(offsets[14], object.link);
+  writer.writeString(offsets[15], object.name);
+  writer.writeString(offsets[16], object.source);
+  writer.writeByte(offsets[17], object.status.index);
 }
 
 Manga _mangaDeserialize(
@@ -235,22 +247,23 @@ Manga _mangaDeserialize(
   final object = Manga(
     author: reader.readStringOrNull(offsets[0]),
     categories: reader.readLongList(offsets[1]),
-    customCoverImage: reader.readByteList(offsets[2]),
-    dateAdded: reader.readLongOrNull(offsets[3]),
-    description: reader.readStringOrNull(offsets[4]),
-    favorite: reader.readBoolOrNull(offsets[5]),
-    genre: reader.readStringList(offsets[6]),
+    customCoverFromTracker: reader.readStringOrNull(offsets[2]),
+    customCoverImage: reader.readByteList(offsets[3]),
+    dateAdded: reader.readLongOrNull(offsets[4]),
+    description: reader.readStringOrNull(offsets[5]),
+    favorite: reader.readBoolOrNull(offsets[6]),
+    genre: reader.readStringList(offsets[7]),
     id: id,
-    imageUrl: reader.readStringOrNull(offsets[7]),
-    isLocalArchive: reader.readBoolOrNull(offsets[8]),
-    isManga: reader.readBoolOrNull(offsets[9]),
-    lang: reader.readStringOrNull(offsets[10]),
-    lastRead: reader.readLongOrNull(offsets[11]),
-    lastUpdate: reader.readLongOrNull(offsets[12]),
-    link: reader.readStringOrNull(offsets[13]),
-    name: reader.readStringOrNull(offsets[14]),
-    source: reader.readStringOrNull(offsets[15]),
-    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[16])] ??
+    imageUrl: reader.readStringOrNull(offsets[8]),
+    isLocalArchive: reader.readBoolOrNull(offsets[9]),
+    isManga: reader.readBoolOrNull(offsets[10]),
+    lang: reader.readStringOrNull(offsets[11]),
+    lastRead: reader.readLongOrNull(offsets[12]),
+    lastUpdate: reader.readLongOrNull(offsets[13]),
+    link: reader.readStringOrNull(offsets[14]),
+    name: reader.readStringOrNull(offsets[15]),
+    source: reader.readStringOrNull(offsets[16]),
+    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[17])] ??
         Status.ongoing,
   );
   return object;
@@ -268,34 +281,36 @@ P _mangaDeserializeProp<P>(
     case 1:
       return (reader.readLongList(offset)) as P;
     case 2:
-      return (reader.readByteList(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readByteList(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 5:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 6:
-      return (reader.readStringList(offset)) as P;
-    case 7:
       return (reader.readStringOrNull(offset)) as P;
-    case 8:
+    case 6:
       return (reader.readBoolOrNull(offset)) as P;
+    case 7:
+      return (reader.readStringList(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readBoolOrNull(offset)) as P;
     case 10:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 11:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 12:
       return (reader.readLongOrNull(offset)) as P;
     case 13:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 14:
       return (reader.readStringOrNull(offset)) as P;
     case 15:
       return (reader.readStringOrNull(offset)) as P;
     case 16:
+      return (reader.readStringOrNull(offset)) as P;
+    case 17:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
           Status.ongoing) as P;
     default:
@@ -705,6 +720,162 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'customCoverFromTracker',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'customCoverFromTracker',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'customCoverFromTracker',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'customCoverFromTracker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'customCoverFromTracker',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customCoverFromTracker',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition>
+      customCoverFromTrackerIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'customCoverFromTracker',
+        value: '',
+      ));
     });
   }
 
@@ -2448,6 +2619,18 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByCustomCoverFromTracker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customCoverFromTracker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByCustomCoverFromTrackerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customCoverFromTracker', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> sortByDateAdded() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateAdded', Sort.asc);
@@ -2615,6 +2798,18 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
   QueryBuilder<Manga, Manga, QAfterSortBy> thenByAuthorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'author', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByCustomCoverFromTracker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customCoverFromTracker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByCustomCoverFromTrackerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customCoverFromTracker', Sort.desc);
     });
   }
 
@@ -2801,6 +2996,14 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QDistinct> distinctByCustomCoverFromTracker(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'customCoverFromTracker',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QDistinct> distinctByCustomCoverImage() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'customCoverImage');
@@ -2914,6 +3117,13 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, List<int>?, QQueryOperations> categoriesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'categories');
+    });
+  }
+
+  QueryBuilder<Manga, String?, QQueryOperations>
+      customCoverFromTrackerProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'customCoverFromTracker');
     });
   }
 

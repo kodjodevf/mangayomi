@@ -99,7 +99,9 @@ class LibraryListViewWidget extends StatelessWidget {
                                         ? MemoryImage(entry.customCoverImage
                                             as Uint8List) as ImageProvider
                                         : CachedNetworkImageProvider(
-                                            toImgUrl(entry.imageUrl!),
+                                            toImgUrl(
+                                                entry.customCoverFromTracker ??
+                                                    entry.imageUrl!),
                                             headers: ref.watch(headersProvider(
                                                 source: entry.source!,
                                                 lang: entry.lang!)),

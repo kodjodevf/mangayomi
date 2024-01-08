@@ -235,7 +235,6 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
   Widget build(BuildContext context) {
     super.build(context);
     final getMangaDetail = widget.manga;
-    final l10n = l10nLocalizations(context)!;
     return GestureDetector(
       onTap: () async {
         pushToMangaReaderDetail(
@@ -254,6 +253,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
               .sourceEqualTo(widget.source.name)
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
+            final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
             return Padding(
               padding: const EdgeInsets.only(left: 10),
               child: Stack(
@@ -261,26 +261,30 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                   SizedBox(
                     width: 110,
                     child: Column(children: [
-                      snapshot.hasData &&
-                              snapshot.data!.isNotEmpty &&
-                              snapshot.data!.first.customCoverImage != null
-                          ? Image.memory(snapshot.data!.first.customCoverImage
-                              as Uint8List)
-                          : ClipRRect(
+                      Builder(
+                        builder: (context) {
+                          if (hasData &&
+                              snapshot.data!.first.customCoverImage != null) {
+                            return Image.memory(snapshot
+                                .data!.first.customCoverImage as Uint8List);
+                          }
+                          return ClipRRect(
                               borderRadius: BorderRadius.circular(5),
                               child: cachedNetworkImage(
                                   headers: ref.watch(headersProvider(
                                       source: widget.source.name!,
                                       lang: widget.source.lang!)),
-                                  imageUrl: snapshot.hasData &&
-                                          snapshot.data!.isNotEmpty &&
-                                          snapshot.data!.first.imageUrl != null
-                                      ? toImgUrl(snapshot.data!.first.imageUrl!)
-                                      : toImgUrl(getMangaDetail.imageUrl!),
+                                  imageUrl: toImgUrl(hasData
+                                      ? snapshot.data!.first
+                                              .customCoverFromTracker ??
+                                          snapshot.data!.first.imageUrl ??
+                                          ""
+                                      : getMangaDetail.imageUrl!),
                                   width: 110,
                                   height: 150,
-                                  fit: BoxFit.fill),
-                            ),
+                                  fit: BoxFit.fill));
+                        },
+                      ),
                       BottomTextWidget(
                         fontSize: 12.0,
                         text: widget.manga.name!,
@@ -293,33 +297,19 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                   Container(
                     width: 110,
                     height: 150,
-                    color: snapshot.hasData &&
-                            snapshot.data!.isNotEmpty &&
-                            snapshot.data!.first.favorite!
+                    color: hasData && snapshot.data!.first.favorite!
                         ? Colors.black.withOpacity(0.7)
                         : null,
                   ),
-                  if (snapshot.hasData &&
-                      snapshot.data!.isNotEmpty &&
-                      snapshot.data!.first.favorite!)
+                  if (hasData && snapshot.data!.first.favorite!)
                     Positioned(
                         top: 0,
                         left: 0,
                         child: Padding(
                           padding: const EdgeInsets.all(4),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: primaryColor(context),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                l10n.in_library,
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ),
-                          ),
-                        )),
+                          child: Icon(Icons.collections_bookmark,
+                              color: primaryColor(context)),
+                        ))
                 ],
               ),
             );
