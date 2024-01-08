@@ -12,7 +12,6 @@ import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/colors.dart';
@@ -269,8 +268,18 @@ class MainScreen extends ConsumerWidget {
           ],
         );
       });
-    }, error: (Object error, StackTrace stackTrace) {
-      return ErrorText(error);
+    }, error: (error, _) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Image.asset(
+            "assets/app_icons/icon.png",
+            color: Colors.black,
+            fit: BoxFit.fill,
+            height: 100,
+          ),
+        ),
+      );
     }, loading: () {
       return Scaffold(
         backgroundColor: Colors.white,

@@ -728,6 +728,17 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 ],
                 namedParams: []),
             isStatic: true),
+        'getUrlWithoutDomain': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns: BridgeTypeAnnotation($MDocument.$type),
+                params: [
+                  BridgeParameter(
+                      'url',
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
       },
       bridge: true);
 
@@ -741,6 +752,17 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       'evalJs' => $Function((_, __, List<$Value?> args) {
           return $Future
               .wrap(evalJs(args[0]!.$reified).then((value) => $String(value)));
+        }),
+      'getUrlWithoutDomain' => $Function((_, __, List<$Value?> args) {
+          final uri = Uri.parse(args[0]!.$value.replaceAll(' ', '%20'));
+          String out = uri.path;
+          if (uri.query.isNotEmpty) {
+            out += '?${uri.query}';
+          }
+          if (uri.fragment.isNotEmpty) {
+            out += '#${uri.fragment}';
+          }
+          return $String(out);
         }),
       'http' => $Function((_, __, List<$Value?> args) {
           return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
