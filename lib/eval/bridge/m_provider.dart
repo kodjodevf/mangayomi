@@ -730,7 +730,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             isStatic: true),
         'getUrlWithoutDomain': BridgeMethodDef(
             BridgeFunctionDef(
-                returns: BridgeTypeAnnotation($MDocument.$type),
+                returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
                 params: [
                   BridgeParameter(
                       'url',
