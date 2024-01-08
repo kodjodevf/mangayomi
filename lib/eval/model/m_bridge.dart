@@ -20,7 +20,6 @@ import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mp4upload_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/mytv_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/okru_extractor.dart';
-import 'package:mangayomi/services/anime_extractors/rapidcloud_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sendvid_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
@@ -693,11 +692,6 @@ class MBridge {
       String url, String prefix, String suffix) async {
     return await StreamlareExtractor()
         .videosFromUrl(url, prefix: prefix, suffix: suffix);
-  }
-
-  static Future<List<Video>> rapidCloudExtractor(
-      String url, String prefix) async {
-    return await RapidCloudExtractor().videosFromUrl(url, prefix);
   }
 
   static String encryptAESCryptoJS(String plainText, String passphrase) {

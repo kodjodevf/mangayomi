@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 
 /// dart_eval wrapper for [Client]
 class $Client implements $Instance {
@@ -236,84 +238,82 @@ class $Client implements $Instance {
 
   static $Value? _get(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
+    final headers = _toMapString(args[1]?.$value);
 
     final request = (target!.$value as Client).get(url, headers: headers);
-    return $Future.wrap(request.then((value) => $Response.wrap(value)));
+    return $Future.wrap(request
+        .then((value) => $Response.wrap(value.message()))
+        .onErrorMessage());
   }
 
   static const $Function __post = $Function(_post);
 
   static $Value? _post(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
-    final body = args[2]?.$value as Object?;
+    final headers = _toMapString(args[1]?.$value);
+    final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
     final request = (target!.$value as Client)
         .post(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request.then((value) => $Response.wrap(value)));
+    return $Future.wrap(request
+        .then((value) => $Response.wrap(value.message()))
+        .onErrorMessage());
   }
 
   static const $Function __put = $Function(_put);
 
   static $Value? _put(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
-    final body = args[2]?.$value as Object?;
+    final headers = _toMapString(args[1]?.$value);
+    final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
     final request = (target!.$value as Client)
         .put(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request.then((value) => $Response.wrap(value)));
+    return $Future.wrap(request
+        .then((value) => $Response.wrap(value.message()))
+        .onErrorMessage());
   }
 
   static const $Function __delete = $Function(_delete);
 
   static $Value? _delete(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
-    final body = args[2]?.$value as Object?;
+    final headers = _toMapString(args[1]?.$value);
+    final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
     final request = (target!.$value as Client)
         .delete(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request.then((value) => $Response.wrap(value)));
+    return $Future.wrap(request
+        .then((value) => $Response.wrap(value.message()))
+        .onErrorMessage());
   }
 
   static const $Function __patch = $Function(_patch);
 
   static $Value? _patch(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
-    final body = args[2]?.$value as Object?;
+    final headers = _toMapString(args[1]?.$value);
+    final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
     final request = (target!.$value as Client)
         .patch(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request.then((value) => $Response.wrap(value)));
+    return $Future
+        .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
   }
 
   static const $Function __read = $Function(_read);
 
   static $Value? _read(Runtime runtime, $Value? target, List<$Value?> args) {
     final url = args[0]!.$value as Uri;
-    final headers = (args[1]?.$value as Map<$Value, $Value>?)?.map(
-        (key, value) =>
-            MapEntry((key.$reified).toString(), (value.$reified).toString()));
+    final headers = _toMapString(args[1]?.$value);
 
     final request = (target!.$value as Client).read(url, headers: headers);
-    return $Future.wrap(request.then((value) => $String(value)));
+    return $Future
+        .wrap(request.then((value) => $String(value)).onErrorMessage());
   }
 
   static const $Function __readBytes = $Function(_readBytes);
@@ -326,7 +326,8 @@ class $Client implements $Instance {
             MapEntry((key.$reified).toString(), (value.$reified).toString()));
 
     final request = (target!.$value as Client).readBytes(url, headers: headers);
-    return $Future.wrap(request.then((value) => $List.wrap(value)));
+    return $Future
+        .wrap(request.then((value) => $List.wrap(value)).onErrorMessage());
   }
 
   static const $Function __close = $Function(_close);
@@ -677,5 +678,52 @@ class $ByteStream implements $Instance {
   @override
   void $setProperty(Runtime runtime, String identifier, $Value value) {
     _superclass.$setProperty(runtime, identifier, value);
+  }
+}
+
+Map<String, String>? _toMapString(Map<$Value, $Value>? value) {
+  return value?.map((key, value) =>
+      MapEntry((key.$reified).toString(), (value.$reified).toString()));
+}
+
+Object? _toBodyObject(Object? value) {
+  Object? body;
+  if (value is Map<$Value, $Value>) {
+    body = value.map((key, value) =>
+        MapEntry((key.$reified).toString(), (value.$reified).toString()));
+  } else if (value is List<$Value>) {
+    body = value.map((e) => e.$reified).toList();
+  } else {
+    body = value;
+  }
+  return body;
+}
+
+extension FutureResponseExtension<T> on Future<T> {
+  Future<T> onErrorMessage() {
+    onError((error, stackTrace) {
+      if (kDebugMode) {
+        print("Http error: $error");
+      }
+      botToast(error.toString());
+      throw error.toString();
+    });
+    return this;
+  }
+}
+
+extension ResponseExtension on Response {
+  Response message() {
+    final cloudflare = [403, 503].contains(statusCode) &&
+        ["cloudflare-nginx", "cloudflare"].contains(headers["server"]);
+    if (kDebugMode) {
+      print(
+          "${request?.method}: ${request?.url}, statusCode: $statusCode ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
+    }
+    if (cloudflare) {
+      botToast("$statusCode Failed to bypass Cloudflare");
+    }
+
+    return this;
   }
 }

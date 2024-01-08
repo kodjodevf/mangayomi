@@ -271,22 +271,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
-        'rapidCloudExtractor': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-                BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
-              ])),
-              params: [
-                BridgeParameter(
-                    'url',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter(
-                    'prefix',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-              ]),
-        ),
         'sendVidExtractor': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
@@ -832,10 +816,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       "streamlareExtractor" => $Function((_, __, List<$Value?> args) =>
           $Future.wrap(MBridge.streamlareExtractor(
                   args[0]!.$value, args[1]?.$value, args[2]?.$value)
-              .then((value) =>
-                  $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
-      "rapidCloudExtractor" => $Function((_, __, List<$Value?> args) => $Future
-          .wrap(MBridge.rapidCloudExtractor(args[0]!.$value, args[1]?.$value)
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "sendVidExtractor" => $Function((_, __, List<$Value?> args) =>
