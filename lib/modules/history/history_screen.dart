@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -260,7 +261,9 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                       headers: ref.watch(headersProvider(
                                           source: manga.source!,
                                           lang: manga.lang!)),
-                                      imageUrl: manga.imageUrl!,
+                                      imageUrl: toImgUrl(
+                                          manga.customCoverFromTracker ??
+                                              manga.imageUrl!),
                                       width: 60,
                                       height: 90,
                                       fit: BoxFit.cover),

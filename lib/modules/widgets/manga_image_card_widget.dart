@@ -10,7 +10,6 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/colors.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -32,7 +31,6 @@ class MangaImageCardWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context);
     return StreamBuilder(
         stream: isar.mangas
             .filter()
@@ -41,19 +39,18 @@ class MangaImageCardWidget extends ConsumerWidget {
             .sourceEqualTo(source.name)
             .watch(fireImmediately: true),
         builder: (context, snapshot) {
+          final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
           return CoverViewWidget(
-              image: snapshot.hasData &&
-                      snapshot.data!.isNotEmpty &&
-                      snapshot.data!.first.customCoverImage != null
+              image: hasData && snapshot.data!.first.customCoverImage != null
                   ? MemoryImage(
                           snapshot.data!.first.customCoverImage as Uint8List)
                       as ImageProvider
                   : CachedNetworkImageProvider(
-                      snapshot.hasData &&
-                              snapshot.data!.isNotEmpty &&
-                              snapshot.data!.first.imageUrl != null
-                          ? toImgUrl(snapshot.data!.first.imageUrl!)
-                          : toImgUrl(getMangaDetail!.imageUrl!),
+                      toImgUrl(hasData
+                          ? snapshot.data!.first.customCoverFromTracker ??
+                              snapshot.data!.first.imageUrl ??
+                              ""
+                          : getMangaDetail!.imageUrl!),
                       headers: ref.watch(headersProvider(
                           source: source.name!, lang: source.lang!)),
                     ),
@@ -67,35 +64,18 @@ class MangaImageCardWidget extends ConsumerWidget {
               },
               children: [
                 Container(
-                  color: snapshot.hasData &&
-                          snapshot.data!.isNotEmpty &&
-                          snapshot.data!.first.favorite!
-                      ? Colors.black.withOpacity(0.7)
+                  color: hasData && snapshot.data!.first.favorite!
+                      ? Colors.black.withOpacity(0.6)
                       : null,
                 ),
-                if (snapshot.hasData &&
-                    snapshot.data!.isNotEmpty &&
-                    snapshot.data!.first.favorite!)
+                if (hasData && snapshot.data!.first.favorite!)
                   Positioned(
                       top: 0,
                       left: 0,
                       child: Padding(
                         padding: const EdgeInsets.all(4),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: primaryColor(context),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Text(
-                              l10n!.in_library,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor),
-                            ),
-                          ),
-                        ),
+                        child: Icon(Icons.collections_bookmark,
+                            color: primaryColor(context)),
                       )),
                 BottomTextWidget(text: getMangaDetail!.name!)
               ]);

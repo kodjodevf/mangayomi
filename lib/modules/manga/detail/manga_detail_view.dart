@@ -234,7 +234,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 headers: ref.watch(headersProvider(
                                     source: widget.manga!.source!,
                                     lang: widget.manga!.lang!)),
-                                imageUrl: toImgUrl(widget.manga!.imageUrl!),
+                                imageUrl: toImgUrl(
+                                    widget.manga!.customCoverFromTracker ??
+                                        widget.manga!.imageUrl!),
                                 width: mediaWidth(context, 1),
                                 height: 300,
                                 fit: BoxFit.cover),
@@ -1320,7 +1322,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final imageProvider = widget.manga!.customCoverImage != null
         ? MemoryImage(widget.manga!.customCoverImage as Uint8List)
             as ImageProvider
-        : CachedNetworkImageProvider(toImgUrl(widget.manga!.imageUrl!),
+        : CachedNetworkImageProvider(
+            toImgUrl(widget.manga!.customCoverFromTracker ??
+                widget.manga!.imageUrl!),
             headers: ref.watch(headersProvider(
                 source: widget.manga!.source!, lang: widget.manga!.lang!)));
     return Padding(
@@ -1506,23 +1510,91 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   right: 0,
                   child: Row(
                     children: [
-                      if (!isLocalArchive)
-                        if (widget.manga!.customCoverImage != null)
+                      Column(
+                        children: [
+                          StreamBuilder(
+                            stream: isar.trackPreferences
+                                .filter()
+                                .syncIdIsNotNull()
+                                .watch(fireImmediately: true),
+                            builder: (context, snapshot) {
+                              List<TrackPreference>? entries =
+                                  snapshot.hasData ? snapshot.data! : [];
+                              if (entries.isEmpty) {
+                                return Container();
+                              }
+                              return Column(
+                                children: entries
+                                    .map((e) => Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: MaterialButton(
+                                            padding: const EdgeInsets.all(0),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            onPressed: () async {
+                                              final trackSearch =
+                                                  await trackersSearchraggableMenu(
+                                                context,
+                                                isManga: widget.manga!.isManga!,
+                                                track: Track(
+                                                    status:
+                                                        TrackStatus.planToRead,
+                                                    syncId: e.syncId!,
+                                                    title: widget.manga!.name!),
+                                              ) as TrackSearch?;
+                                              if (trackSearch != null) {
+                                                isar.writeTxnSync(() {
+                                                  isar.mangas.putSync(widget
+                                                      .manga!
+                                                    ..customCoverFromTracker =
+                                                        trackSearch.coverUrl);
+                                                });
+                                                if (mounted) {
+                                                  Navigator.pop(context);
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color:
+                                                      trackInfos(e.syncId!).$3),
+                                              width: 45,
+                                              height: 50,
+                                              child: Image.asset(
+                                                trackInfos(e.syncId!).$1,
+                                                height: 30,
+                                              ),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              );
+                            },
+                          ),
+
                           PopupMenuButton(
                             itemBuilder: (context) {
                               return [
-                                const PopupMenuItem<int>(
-                                    value: 0, child: Text("Delete")),
-                                const PopupMenuItem<int>(
-                                    value: 1, child: Text("Edit")),
+                                if (widget.manga!.customCoverImage != null ||
+                                    widget.manga!.customCoverFromTracker !=
+                                        null)
+                                  PopupMenuItem<int>(
+                                      value: 0,
+                                      child: Text(context.l10n.delete)),
+                                PopupMenuItem<int>(
+                                    value: 1, child: Text(context.l10n.edit)),
                               ];
                             },
                             onSelected: (value) async {
                               final manga = widget.manga!;
                               if (value == 0) {
                                 isar.writeTxnSync(() {
-                                  isar.mangas
-                                      .putSync(manga..customCoverImage = null);
+                                  isar.mangas.putSync(manga
+                                    ..customCoverImage = null
+                                    ..customCoverFromTracker = null);
                                 });
                               } else if (value == 1) {
                                 FilePickerResult? result =
@@ -1544,9 +1616,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     });
                                   }
                                 }
-                              }
-                              if (mounted) {
-                                Navigator.pop(context);
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                }
                               }
                             },
                             child: const Padding(
@@ -1555,51 +1627,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   child: Icon(Icons.edit_outlined)),
                             ),
                           ),
-                      // IconButton(
-                      //     onPressed: () async {
-                      //       Uint8List? bytes;
-                      //       if (isLocalArchive) {
-                      //         bytes =
-                      //             widget.manga!.customCoverImage as Uint8List?;
-                      //       }
-                      //       await Share.shareXFiles([
-                      //         XFile.fromData(bytes!,
-                      //             name: widget.manga!.name,
-                      //             mimeType: 'image/jpeg')
-                      //       ]);
-                      //     },
-                      //     icon: const CircleAvatar(child: Icon(Icons.share))),
-
-                      if (isLocalArchive ||
-                          widget.manga!.customCoverImage == null)
-                        IconButton(
-                            onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles(
-                                      type: FileType.custom,
-                                      allowedExtensions: [
-                                    'png',
-                                    'jpg',
-                                    'jpeg'
-                                  ]);
-                              if (result != null) {
-                                if (result.files.first.size < 5000000) {
-                                  final manga = widget.manga!;
-                                  final customCoverImage =
-                                      File(result.files.first.path!)
-                                          .readAsBytesSync();
-                                  isar.writeTxnSync(() {
-                                    isar.mangas.putSync(manga
-                                      ..customCoverImage = customCoverImage);
-                                  });
-                                  if (mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                }
-                              }
-                            },
-                            icon: const CircleAvatar(
-                                child: Icon(Icons.edit_outlined))),
+                          // IconButton(
+                          //     onPressed: () async {
+                          //       Uint8List? bytes;
+                          //       if (isLocalArchive) {
+                          //         bytes =
+                          //             widget.manga!.customCoverImage as Uint8List?;
+                          //       }
+                          //       await Share.shareXFiles([
+                          //         XFile.fromData(bytes!,
+                          //             name: widget.manga!.name,
+                          //             mimeType: 'image/jpeg')
+                          //       ]);
+                          //     },
+                          //     icon: const CircleAvatar(child: Icon(Icons.share))),
+                        ],
+                      ),
                     ],
                   ),
                 )
