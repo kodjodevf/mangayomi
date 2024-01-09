@@ -4,9 +4,8 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/extensions.dart';
-import 'package:mangayomi/utils/utils.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
 
@@ -27,11 +26,11 @@ class ChapterListTileWidget extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     return Container(
       color: chapterList.contains(chapter)
-          ? primaryColor(context).withOpacity(0.4)
+          ? context.primaryColor.withOpacity(0.4)
           : null,
       child: ListTile(
         textColor: chapter.isRead!
-            ? isLight(context)
+            ? context.isLight
                 ? Colors.black.withOpacity(0.4)
                 : Colors.white.withOpacity(0.3)
             : null,
@@ -61,7 +60,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                 ? Icon(
                     Icons.bookmark,
                     size: 16,
-                    color: primaryColor(context),
+                    color: context.primaryColor,
                   )
                 : Container(),
             Flexible(
@@ -99,7 +98,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                           : l10n.page(chapter.lastPageRead!),
                       style: TextStyle(
                           fontSize: 11,
-                          color: isLight(context)
+                          color: context.isLight
                               ? Colors.black.withOpacity(0.4)
                               : Colors.white.withOpacity(0.3)),
                     ),
@@ -114,7 +113,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                     style: TextStyle(
                         fontSize: 11,
                         color: chapter.isRead!
-                            ? isLight(context)
+                            ? context.isLight
                                 ? Colors.black.withOpacity(0.4)
                                 : Colors.white.withOpacity(0.3)
                             : null),

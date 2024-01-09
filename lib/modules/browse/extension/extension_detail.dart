@@ -8,9 +8,8 @@ import 'package:mangayomi/modules/browse/extension/providers/extension_preferenc
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
-import 'package:mangayomi/utils/media_query.dart';
 
 class ExtensionDetail extends ConsumerStatefulWidget {
   final Source source;
@@ -67,7 +66,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.all(12),
               child: Text(
                 widget.source.name!,
-                style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -75,7 +75,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                    color: primaryColor(context).withOpacity(0.2),
+                    color: context.primaryColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -130,12 +130,12 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: mediaWidth(context, 1),
+                width: context.mediaWidth(1),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
                         side:
-                            BorderSide(color: primaryColor(context), width: 0.3),
+                            BorderSide(color: context.primaryColor, width: 0.3),
                         backgroundColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
@@ -149,8 +149,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                               title: Text(
                                 widget.source.name!,
                               ),
-                              content: Text(
-                                  l10n.uninstall_extension(widget.source.name!)),
+                              content: Text(l10n
+                                  .uninstall_extension(widget.source.name!)),
                               actions: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,

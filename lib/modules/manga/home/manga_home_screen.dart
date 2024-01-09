@@ -13,8 +13,7 @@ import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/services/supports_latest.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
@@ -192,7 +191,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               icon: Icon(
                 Icons.public,
                 size: 22,
-                color: secondaryColor(context),
+                color: context.secondaryColor,
               ),
             )
           ],
@@ -201,7 +200,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  width: mediaWidth(context, 1),
+                  width: context.mediaWidth(1),
                   height: 45,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -247,7 +246,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                                 backgroundColor:
-                                                    primaryColor(context)),
+                                                    context.primaryColor),
                                             onPressed: () {
                                               Navigator.pop(context, 'filter');
                                             },
@@ -305,9 +304,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   ),
                 ),
                 Container(
-                  color: primaryColor(context),
+                  color: context.primaryColor,
                   height: 0.3,
-                  width: mediaWidth(context, 1),
+                  width: context.mediaWidth(1),
                 )
               ],
             ),
@@ -339,7 +338,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               ),
                             ),
                           )
-                        : isTablet(context)
+                        : context.isTablet
                             ? Padding(
                                 padding: const EdgeInsets.all(4),
                                 child: ElevatedButton(
@@ -491,7 +490,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             icon: Icon(
                               Icons.public,
                               size: 22,
-                              color: secondaryColor(context),
+                              color: context.secondaryColor,
                             ),
                           ),
                           const Text("Webview")

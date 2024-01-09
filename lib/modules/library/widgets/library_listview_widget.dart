@@ -9,7 +9,7 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
@@ -73,7 +73,7 @@ class LibraryListViewWidget extends StatelessWidget {
               },
               child: Container(
                 color: mangaIdsList.contains(entry.id)
-                    ? primaryColor(context).withOpacity(0.4)
+                    ? context.primaryColor.withOpacity(0.4)
                     : Colors.transparent,
                 child: Padding(
                   padding:
@@ -109,7 +109,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                     child: InkWell(
                                         child: Container(
                                       color: mangaIdsList.contains(entry.id)
-                                          ? primaryColor(context)
+                                          ? context.primaryColor
                                               .withOpacity(0.4)
                                           : Colors.transparent,
                                     )),
@@ -131,7 +131,7 @@ class LibraryListViewWidget extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(3),
-                                color: primaryColor(context)),
+                                color: context.primaryColor),
                             child: SizedBox(
                               height: 22,
                               child: Row(
@@ -216,7 +216,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                   ),
                                   if (language && entry.lang!.isNotEmpty)
                                     Container(
-                                      color: primaryColor(context),
+                                      color: context.primaryColor,
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.only(
@@ -266,7 +266,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: primaryColor(context)
+                                          color: context.primaryColor
                                               .withOpacity(0.9),
                                         ),
                                         child: const Padding(
@@ -292,7 +292,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        color: primaryColor(context)
+                                        color: context.primaryColor
                                             .withOpacity(0.9),
                                       ),
                                       child: const Padding(

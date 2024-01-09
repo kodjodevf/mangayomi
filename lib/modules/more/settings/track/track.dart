@@ -11,15 +11,15 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class TrackScreen extends ConsumerWidget {
   const TrackScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final updateProgressAfterReading = ref.watch(updateProgressAfterReadingStateProvider);
+    final updateProgressAfterReading =
+        ref.watch(updateProgressAfterReadingStateProvider);
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +41,8 @@ class TrackScreen extends ConsumerWidget {
                       title: Text(context.l10n.updateProgressAfterReading),
                       onChanged: (value) {
                         ref
-                            .read(updateProgressAfterReadingStateProvider.notifier)
+                            .read(updateProgressAfterReadingStateProvider
+                                .notifier)
                             .set(value);
                       }),
                   Padding(
@@ -51,7 +52,7 @@ class TrackScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.services,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -85,14 +86,14 @@ class TrackScreen extends ConsumerWidget {
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
-                            color: secondaryColor(context),
+                            color: context.secondaryColor,
                           ),
                         ],
                       ),
                     ),
                     subtitle: Text(l10n.tracking_warning_info,
                         style: TextStyle(
-                            fontSize: 11, color: secondaryColor(context))),
+                            fontSize: 11, color: context.secondaryColor)),
                   ),
                   ListTileWidget(
                       title: l10n.manage_trackers,
@@ -188,7 +189,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: SizedBox(
-                    width: mediaWidth(context, 1),
+                    width: context.mediaWidth(1),
                     height: 50,
                     child: ElevatedButton(
                         onPressed: isLoading

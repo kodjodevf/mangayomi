@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class MangasCardSelector extends StatelessWidget {
   final String text;
@@ -20,8 +20,8 @@ class MangasCardSelector extends StatelessWidget {
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(0),
-            side: BorderSide(width: 0.6, color: primaryColor(context)),
-            backgroundColor: selected ? primaryColor(context) : null,
+            side: BorderSide(width: 0.6, color: context.primaryColor),
+            backgroundColor: selected ? context.primaryColor : null,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           ),

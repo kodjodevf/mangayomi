@@ -18,8 +18,7 @@ import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart'
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -455,13 +454,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             return AnimatedContainer(
               curve: Curves.easeIn,
               decoration: BoxDecoration(
-                  color: primaryColor(context).withOpacity(0.2),
+                  color: context.primaryColor.withOpacity(0.2),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
               duration: const Duration(milliseconds: 100),
               height: isLongPressed ? 70 : 0,
-              width: mediaWidth(context, 1),
+              width: context.mediaWidth(1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -661,10 +660,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 )
               : LibraryGridViewWidget(
                   entriesManga: entriesManga,
-                  isCoverOnlyGrid:
-                      displayType == DisplayType.compactGrid ? false : true,
-                  isComfortableGrid:
-                      displayType == DisplayType.comfortableGrid ? true : false,
+                  isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
+                  isComfortableGrid: displayType == DisplayType.comfortableGrid,
                   continueReaderBtn: continueReaderBtn,
                   downloadedChapter: downloadedChapter,
                   language: language,
@@ -730,10 +727,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 )
               : LibraryGridViewWidget(
                   entriesManga: entriesManga,
-                  isCoverOnlyGrid:
-                      displayType == DisplayType.compactGrid ? false : true,
-                  isComfortableGrid:
-                      displayType == DisplayType.comfortableGrid ? true : false,
+                  isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
+                  isComfortableGrid: displayType == DisplayType.comfortableGrid,
                   continueReaderBtn: continueReaderBtn,
                   downloadedChapter: downloadedChapter,
                   language: language,
@@ -921,7 +916,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           l10n.set_categories,
                         ),
                         content: SizedBox(
-                          width: mediaWidth(context, 0.8),
+                          width: context.mediaWidth(0.8),
                           child: Builder(builder: (context) {
                             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                               final entries = snapshot.data!;
@@ -1057,7 +1052,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   ),
                   content: SizedBox(
                       height: 100,
-                      width: mediaWidth(context, 0.8),
+                      width: context.mediaWidth(0.8),
                       child: Column(
                         children: [
                           ListTileChapterFilter(
@@ -1381,6 +1376,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.only(
@@ -1391,37 +1388,84 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             ],
                                           ),
                                         ),
-                                        Column(
-                                            children: DisplayType.values
-                                                .map(
-                                                  (e) => RadioListTile<
-                                                      DisplayType>(
-                                                    dense: true,
-                                                    title: Text(
-                                                      displayV
-                                                          .getLibraryDisplayTypeName(
-                                                              e.name, context),
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .bodyLarge!
-                                                                  .color,
-                                                          fontSize: 14),
-                                                    ),
-                                                    value: e,
-                                                    groupValue: displayV
-                                                        .getLibraryDisplayTypeValue(
-                                                            display),
-                                                    selected: true,
-                                                    onChanged: (value) {
-                                                      displayV
-                                                          .setLibraryDisplayType(
-                                                              value!);
-                                                    },
-                                                  ),
-                                                )
-                                                .toList()),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 5, horizontal: 20),
+                                          child: Wrap(
+                                              children: DisplayType.values.map(
+                                                  (e) {
+                                            final selected = e ==
+                                                displayV
+                                                    .getLibraryDisplayTypeValue(
+                                                        display);
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                              horizontal: 15),
+                                                      surfaceTintColor:
+                                                          Colors.transparent,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                      side: selected
+                                                          ? null
+                                                          : BorderSide(
+                                                              color: context
+                                                                      .isLight
+                                                                  ? Colors.black
+                                                                  : Colors
+                                                                      .white,
+                                                              width: 0.8),
+                                                      shadowColor:
+                                                          Colors.transparent,
+                                                      elevation: 0,
+                                                      backgroundColor: selected
+                                                          ? context.primaryColor
+                                                              .withOpacity(0.2)
+                                                          : Colors.transparent),
+                                                  onPressed: () {
+                                                    displayV
+                                                        .setLibraryDisplayType(
+                                                            e);
+                                                  },
+                                                  child: Text(
+                                                    displayV
+                                                        .getLibraryDisplayTypeName(
+                                                            e.name, context),
+                                                    style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge!
+                                                            .color,
+                                                        fontSize: 14),
+                                                  )),
+                                            );
+                                          }
+
+                                                  // RadioListTile<
+                                                  //     DisplayType>(
+                                                  //   dense: true,
+                                                  //   title: ,
+                                                  //   value: e,
+                                                  //   groupValue: displayV
+                                                  //       .getLibraryDisplayTypeValue(
+                                                  //           display),
+                                                  //   selected: true,
+                                                  //   onChanged: (value) {
+                                                  //     displayV
+                                                  //         .setLibraryDisplayType(
+                                                  //             value!);
+                                                  //   },
+                                                  // ),
+                                                  ).toList()),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               left: 20, top: 10),
@@ -1478,6 +1522,22 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                             .notifier)
                                                         .set(!localSource);
                                                   }),
+                                              ListTileChapterFilter(
+                                                  label: l10n
+                                                      .show_continue_reading_buttons,
+                                                  type:
+                                                      continueReaderBtn ? 1 : 0,
+                                                  onTap: () {
+                                                    ref
+                                                        .read(libraryShowContinueReadingButtonStateProvider(
+                                                                isManga: widget
+                                                                    .isManga,
+                                                                settings:
+                                                                    settings)
+                                                            .notifier)
+                                                        .set(
+                                                            !continueReaderBtn);
+                                                  }),
                                             ],
                                           ),
                                         ),
@@ -1528,39 +1588,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             ],
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 10),
-                                          child: Row(
-                                            children: [
-                                              Text(l10n.other),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: Column(
-                                            children: [
-                                              ListTileChapterFilter(
-                                                  label: l10n
-                                                      .show_continue_reading_buttons,
-                                                  type:
-                                                      continueReaderBtn ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryShowContinueReadingButtonStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(
-                                                            !continueReaderBtn);
-                                                  }),
-                                            ],
-                                          ),
-                                        )
                                       ],
                                     ),
                                   );
@@ -1616,7 +1643,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: AppBar(
                     title: Text(mangaIdsList.length.toString()),
-                    backgroundColor: primaryColor(context).withOpacity(0.2),
+                    backgroundColor: context.primaryColor.withOpacity(0.2),
                     leading: IconButton(
                         onPressed: () {
                           ref.read(mangasListStateProvider.notifier).clear();
@@ -1832,8 +1859,8 @@ _importLocal(BuildContext context, bool isManga) {
                       ),
                       if (isLoading)
                         Container(
-                          width: mediaWidth(context, 1),
-                          height: mediaHeight(context, 1),
+                          width: context.mediaWidth(1),
+                          height: context.mediaHeight(1),
                           color: Colors.transparent,
                           child: UnconstrainedBox(
                             child: Container(

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class PlayerScreen extends ConsumerWidget {
@@ -35,7 +34,7 @@ class PlayerScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.markEpisodeAsSeenSetting),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -69,7 +68,7 @@ class PlayerScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -80,7 +79,7 @@ class PlayerScreen extends ConsumerWidget {
               title: Text(context.l10n.markEpisodeAsSeenSetting),
               subtitle: Text(
                 "$markEpisodeAsSeenType%",
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -122,7 +121,7 @@ class PlayerScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                               TextButton(
                                   onPressed: () async {
@@ -136,7 +135,7 @@ class PlayerScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.ok,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -147,7 +146,7 @@ class PlayerScreen extends ConsumerWidget {
               title: Text(context.l10n.default_skip_intro_length),
               subtitle: Text(
                 "${defaultSkipIntroLength}s",
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -160,7 +159,7 @@ class PlayerScreen extends ConsumerWidget {
                         title:
                             Text(context.l10n.default_skip_forward_skip_length),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -195,7 +194,7 @@ class PlayerScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -206,7 +205,7 @@ class PlayerScreen extends ConsumerWidget {
               title: Text(context.l10n.default_skip_forward_skip_length),
               subtitle: Text(
                 "${defaultDoubleTapToSkipLength}s",
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -218,7 +217,7 @@ class PlayerScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.default_playback_speed_length),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -252,7 +251,7 @@ class PlayerScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -263,7 +262,7 @@ class PlayerScreen extends ConsumerWidget {
               title: Text(context.l10n.default_playback_speed_length),
               subtitle: Text(
                 "x$defaultPlayBackSpeed",
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
           ],

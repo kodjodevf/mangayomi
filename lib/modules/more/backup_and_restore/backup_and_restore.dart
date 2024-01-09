@@ -7,8 +7,7 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/restore.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class BackupAndRestore extends ConsumerWidget {
   const BackupAndRestore({super.key});
@@ -42,7 +41,7 @@ class BackupAndRestore extends ConsumerWidget {
                           return AlertDialog(
                             title: Text(l10n.create_backup_dialog_title),
                             content: SizedBox(
-                                width: mediaWidth(context, 0.8),
+                                width: context.mediaWidth(0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: list.length,
@@ -74,13 +73,13 @@ class BackupAndRestore extends ConsumerWidget {
                                       child: Text(
                                         l10n.cancel,
                                         style: TextStyle(
-                                            color: primaryColor(context)),
+                                            color: context.primaryColor),
                                       )),
                                   TextButton(
                                       onPressed: () async {
                                         final result = await FilePicker.platform
                                             .getDirectoryPath();
-        
+
                                         if (result != null && context.mounted) {
                                           ref.watch(doBackUpProvider(
                                               list: indexList,
@@ -91,7 +90,7 @@ class BackupAndRestore extends ConsumerWidget {
                                       child: Text(
                                         l10n.ok,
                                         style: TextStyle(
-                                            color: primaryColor(context)),
+                                            color: context.primaryColor),
                                       )),
                                 ],
                               )
@@ -104,7 +103,7 @@ class BackupAndRestore extends ConsumerWidget {
               title: Text(l10n.create_backup),
               subtitle: Text(
                 l10n.create_backup_subtitle,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -115,20 +114,21 @@ class BackupAndRestore extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(l10n.restore_backup),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView(
                               shrinkWrap: true,
                               children: [
                                 Row(
                                   children: [
                                     Icon(Icons.info_outline_rounded,
-                                        color: secondaryColor(context)),
+                                        color: context.secondaryColor),
                                   ],
                                 ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(l10n.restore_backup_warning_title),
+                                  child:
+                                      Text(l10n.restore_backup_warning_title),
                                 ),
                               ],
                             )),
@@ -143,15 +143,15 @@ class BackupAndRestore extends ConsumerWidget {
                                   child: Text(
                                     l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                               TextButton(
                                   onPressed: () async {
                                     try {
-                                      FilePickerResult? result = await FilePicker
-                                          .platform
-                                          .pickFiles(allowMultiple: false);
-        
+                                      FilePickerResult? result =
+                                          await FilePicker.platform
+                                              .pickFiles(allowMultiple: false);
+
                                       if (result != null && context.mounted) {
                                         ref.watch(doRestoreProvider(
                                             path: result.files.first.path!,
@@ -167,7 +167,7 @@ class BackupAndRestore extends ConsumerWidget {
                                   child: Text(
                                     l10n.ok,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -178,7 +178,7 @@ class BackupAndRestore extends ConsumerWidget {
               title: Text(l10n.restore_backup),
               subtitle: Text(
                 l10n.restore_backup_subtitle,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             Padding(
@@ -187,7 +187,7 @@ class BackupAndRestore extends ConsumerWidget {
                 children: [
                   Text(l10n.automatic_backups,
                       style:
-                          TextStyle(fontSize: 13, color: primaryColor(context))),
+                          TextStyle(fontSize: 13, color: context.primaryColor)),
                 ],
               ),
             ),
@@ -200,7 +200,7 @@ class BackupAndRestore extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(l10n.backup_frequency),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: list.length,
@@ -212,8 +212,8 @@ class BackupAndRestore extends ConsumerWidget {
                                   groupValue: backupFrequency,
                                   onChanged: (value) {
                                     ref
-                                        .read(
-                                            backupFrequencyStateProvider.notifier)
+                                        .read(backupFrequencyStateProvider
+                                            .notifier)
                                         .set(value!);
                                     Navigator.pop(context);
                                   },
@@ -234,7 +234,7 @@ class BackupAndRestore extends ConsumerWidget {
                                   child: Text(
                                     l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -245,16 +245,18 @@ class BackupAndRestore extends ConsumerWidget {
               title: Text(l10n.backup_frequency),
               subtitle: Text(
                 _getBackupFrequencyList(context)[backupFrequency],
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             // if (!isIOS)
             ListTile(
               onTap: () async {
                 String? result = await FilePicker.platform.getDirectoryPath();
-        
+
                 if (result != null) {
-                  ref.read(autoBackupLocationStateProvider.notifier).set(result);
+                  ref
+                      .read(autoBackupLocationStateProvider.notifier)
+                      .set(result);
                 }
               },
               title: Text(l10n.backup_location),
@@ -262,7 +264,7 @@ class BackupAndRestore extends ConsumerWidget {
                 autoBackupLocation.$2.isEmpty
                     ? autoBackupLocation.$1
                     : autoBackupLocation.$2,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -280,7 +282,7 @@ class BackupAndRestore extends ConsumerWidget {
                               l10n.backup_options_subtitle,
                             ),
                             content: SizedBox(
-                                width: mediaWidth(context, 0.8),
+                                width: context.mediaWidth(0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: list.length,
@@ -312,7 +314,7 @@ class BackupAndRestore extends ConsumerWidget {
                                       child: Text(
                                         l10n.cancel,
                                         style: TextStyle(
-                                            color: primaryColor(context)),
+                                            color: context.primaryColor),
                                       )),
                                   TextButton(
                                       onPressed: () async {
@@ -326,7 +328,7 @@ class BackupAndRestore extends ConsumerWidget {
                                       child: Text(
                                         l10n.ok,
                                         style: TextStyle(
-                                            color: primaryColor(context)),
+                                            color: context.primaryColor),
                                       )),
                                 ],
                               )
@@ -339,7 +341,7 @@ class BackupAndRestore extends ConsumerWidget {
               title: Text(l10n.backup_options),
               subtitle: Text(
                 l10n.backup_options_subtitle,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -348,12 +350,13 @@ class BackupAndRestore extends ConsumerWidget {
                 child: Row(
                   children: [
                     Icon(Icons.info_outline_rounded,
-                        color: secondaryColor(context)),
+                        color: context.secondaryColor),
                   ],
                 ),
               ),
               subtitle: Text(l10n.backup_and_restore_warning_info,
-                  style: TextStyle(fontSize: 11, color: secondaryColor(context))),
+                  style:
+                      TextStyle(fontSize: 11, color: context.secondaryColor)),
             )
           ],
         ),

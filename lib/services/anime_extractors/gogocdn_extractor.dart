@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:html/parser.dart' as parser;
-import 'package:mangayomi/utils/extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class GogoCdnExtractor {
   final http.Client client = http.Client();

@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/utils/extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class OkruExtractor {
   final http.Client client = http.Client();

@@ -14,8 +14,7 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
@@ -62,7 +61,7 @@ class MainScreen extends ConsumerWidget {
                       : 0,
                   curve: Curves.easeIn,
                   duration: const Duration(milliseconds: 150),
-                  color: primaryColor(context),
+                  color: context.primaryColor,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +82,7 @@ class MainScreen extends ConsumerWidget {
               ),
             Flexible(
               child: Scaffold(
-                body: isTablet(context)
+                body: context.isTablet
                     ? Row(
                         children: [
                           AnimatedContainer(
@@ -186,11 +185,11 @@ class MainScreen extends ConsumerWidget {
                         ],
                       )
                     : child,
-                bottomNavigationBar: isTablet(context)
+                bottomNavigationBar: context.isTablet
                     ? null
                     : AnimatedContainer(
                         duration: const Duration(milliseconds: 0),
-                        width: mediaWidth(context, 1),
+                        width: context.mediaWidth(1),
                         height: switch (isLongPressed) {
                           true => 0,
                           _ => switch (location) {

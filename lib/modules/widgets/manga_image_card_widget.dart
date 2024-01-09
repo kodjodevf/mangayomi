@@ -11,7 +11,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
@@ -75,7 +75,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(4),
                         child: Icon(Icons.collections_bookmark,
-                            color: primaryColor(context)),
+                            color: context.primaryColor),
                       )),
                 BottomTextWidget(text: getMangaDetail!.name!)
               ]);

@@ -7,8 +7,7 @@ import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
@@ -137,14 +136,12 @@ class _DoubleColummViewState extends State<DoubleColummView>
                                 state.loadingProgress;
                             final double progress =
                                 loadingProgress?.expectedTotalBytes != null
-                                    ? loadingProgress!
-                                            .cumulativeBytesLoaded /
+                                    ? loadingProgress!.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : 0;
                             return Container(
-                              color: getBackgroundColor(
-                                  widget.backgroundColor),
-                              height: mediaHeight(context, 0.8),
+                              color: getBackgroundColor(widget.backgroundColor),
+                              height: context.mediaHeight(0.8),
                               child: CircularProgressIndicatorAnimateRotate(
                                   progress: progress),
                             );
@@ -158,44 +155,38 @@ class _DoubleColummViewState extends State<DoubleColummView>
                               LoadState.failed) {
                             widget.isFailedToLoadImage(true);
                             return Container(
-                                color: getBackgroundColor(
-                                    widget.backgroundColor),
-                                height: mediaHeight(context, 0.8),
+                                color:
+                                    getBackgroundColor(widget.backgroundColor),
+                                height: context.mediaHeight(0.8),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       l10n.image_loading_error,
                                       style: TextStyle(
-                                          color: Colors.white
-                                              .withOpacity(0.7)),
+                                          color: Colors.white.withOpacity(0.7)),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: GestureDetector(
                                           onLongPress: () {
                                             state.reLoadImage();
-                                            widget
-                                                .isFailedToLoadImage(false);
+                                            widget.isFailedToLoadImage(false);
                                           },
                                           onTap: () {
                                             state.reLoadImage();
-                                            widget
-                                                .isFailedToLoadImage(false);
+                                            widget.isFailedToLoadImage(false);
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color:
-                                                    primaryColor(context),
+                                                color: context.primaryColor,
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        30)),
+                                                    BorderRadius.circular(30)),
                                             child: Padding(
-                                              padding: const EdgeInsets
-                                                  .symmetric(
-                                                  vertical: 8,
-                                                  horizontal: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 16),
                                               child: Text(
                                                 l10n.retry,
                                               ),
@@ -222,14 +213,12 @@ class _DoubleColummViewState extends State<DoubleColummView>
                                 state.loadingProgress;
                             final double progress =
                                 loadingProgress?.expectedTotalBytes != null
-                                    ? loadingProgress!
-                                            .cumulativeBytesLoaded /
+                                    ? loadingProgress!.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : 0;
                             return Container(
-                              color: getBackgroundColor(
-                                  widget.backgroundColor),
-                              height: mediaHeight(context, 0.8),
+                              color: getBackgroundColor(widget.backgroundColor),
+                              height: context.mediaHeight(0.8),
                               child: CircularProgressIndicatorAnimateRotate(
                                   progress: progress),
                             );
@@ -243,44 +232,38 @@ class _DoubleColummViewState extends State<DoubleColummView>
                               LoadState.failed) {
                             widget.isFailedToLoadImage(true);
                             return Container(
-                                color: getBackgroundColor(
-                                    widget.backgroundColor),
-                                height: mediaHeight(context, 0.8),
+                                color:
+                                    getBackgroundColor(widget.backgroundColor),
+                                height: context.mediaHeight(0.8),
                                 child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       l10n.image_loading_error,
                                       style: TextStyle(
-                                          color: Colors.white
-                                              .withOpacity(0.7)),
+                                          color: Colors.white.withOpacity(0.7)),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: GestureDetector(
                                           onLongPress: () {
                                             state.reLoadImage();
-                                            widget
-                                                .isFailedToLoadImage(false);
+                                            widget.isFailedToLoadImage(false);
                                           },
                                           onTap: () {
                                             state.reLoadImage();
-                                            widget
-                                                .isFailedToLoadImage(false);
+                                            widget.isFailedToLoadImage(false);
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color:
-                                                    primaryColor(context),
+                                                color: context.primaryColor,
                                                 borderRadius:
-                                                    BorderRadius.circular(
-                                                        30)),
+                                                    BorderRadius.circular(30)),
                                             child: Padding(
-                                              padding: const EdgeInsets
-                                                  .symmetric(
-                                                  vertical: 8,
-                                                  horizontal: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 16),
                                               child: Text(
                                                 l10n.retry,
                                               ),

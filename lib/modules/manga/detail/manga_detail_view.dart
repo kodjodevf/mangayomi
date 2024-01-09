@@ -26,10 +26,8 @@ import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/media_query.dart';
-import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
@@ -227,7 +225,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         widget.manga!.customCoverImage != null
                             ? Image.memory(
                                 widget.manga!.customCoverImage as Uint8List,
-                                width: mediaWidth(context, 1),
+                                width: context.mediaWidth(1),
                                 height: 300,
                                 fit: BoxFit.cover)
                             : cachedNetworkImage(
@@ -237,7 +235,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 imageUrl: toImgUrl(
                                     widget.manga!.customCoverFromTracker ??
                                         widget.manga!.imageUrl!),
-                                width: mediaWidth(context, 1),
+                                width: context.mediaWidth(1),
                                 height: 300,
                                 fit: BoxFit.cover),
                         Stack(
@@ -245,9 +243,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             Column(
                               children: [
                                 Container(
-                                  width: mediaWidth(context, 1),
+                                  width: context.mediaWidth(1),
                                   height: AppBar().preferredSize.height,
-                                  color: isTablet(context)
+                                  color: context.isTablet
                                       ? Theme.of(context)
                                           .scaffoldBackgroundColor
                                       : Theme.of(context)
@@ -255,9 +253,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .withOpacity(0.9),
                                 ),
                                 Container(
-                                  width: mediaWidth(context, 1),
+                                  width: context.mediaWidth(1),
                                   height: 465,
-                                  color: isTablet(context)
+                                  color: context.isTablet
                                       ? Theme.of(context)
                                           .scaffoldBackgroundColor
                                       : Theme.of(context)
@@ -269,7 +267,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             Positioned(
                               bottom: 0,
                               child: Container(
-                                  width: mediaWidth(context, 1),
+                                  width: context.mediaWidth(1),
                                   height: 100,
                                   color: Theme.of(context)
                                       .scaffoldBackgroundColor),
@@ -299,7 +297,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             child: AppBar(
                               title: Text(chapterList.length.toString()),
                               backgroundColor:
-                                  primaryColor(context).withOpacity(0.2),
+                                  context.primaryColor.withOpacity(0.2),
                               leading: IconButton(
                                   onPressed: () {
                                     ref
@@ -420,10 +418,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             body: SafeArea(
               child: Row(
                 children: [
-                  if (isTablet(context))
+                  if (context.isTablet)
                     SizedBox(
-                        width: mediaWidth(context, 0.5),
-                        height: mediaHeight(context, 1),
+                        width: context.mediaWidth(0.5),
+                        height: context.mediaHeight(1),
                         child: SingleChildScrollView(
                             child: _bodyContainer(
                                 chapterLength: chapters.length))),
@@ -431,7 +429,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     child: DraggableScrollbar(
                         padding: const EdgeInsets.only(right: 7),
                         heightScrollThumb: 48.0,
-                        backgroundColor: primaryColor(context),
+                        backgroundColor: context.primaryColor,
                         scrollThumbBuilder: (backgroundColor, thumbAnimation,
                             labelAnimation, height,
                             {labelConstraints, labelText}) {
@@ -456,7 +454,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               final l10n = l10nLocalizations(context)!;
                               int finalIndex = index - 1;
                               if (index == 0) {
-                                return isTablet(context)
+                                return context.isTablet
                                     ? Column(
                                         children: [
                                           Padding(
@@ -469,7 +467,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               children: [
                                                 Container(
                                                   height: chapters.isEmpty
-                                                      ? mediaHeight(context, 1)
+                                                      ? context.mediaHeight(1)
                                                       : null,
                                                   color: Theme.of(context)
                                                       .scaffoldBackgroundColor,
@@ -501,8 +499,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                     .circular(
                                                                         5))),
                                                     icon: Icon(Icons.add,
-                                                        color: secondaryColor(
-                                                            context)),
+                                                        color: context
+                                                            .secondaryColor),
                                                     label: Text(
                                                       widget.manga!.isManga!
                                                           ? l10n.add_chapters
@@ -510,8 +508,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: secondaryColor(
-                                                              context)),
+                                                          color: context
+                                                              .secondaryColor),
                                                     ),
                                                     onPressed: () async {
                                                       await ref.watch(
@@ -559,13 +557,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
-                    color: primaryColor(context).withOpacity(0.2),
+                    color: context.primaryColor.withOpacity(0.2),
                     borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20))),
                 duration: const Duration(milliseconds: 100),
                 height: isLongPressed ? 70 : 0,
-                width: mediaWidth(context, 1),
+                width: context.mediaWidth(1),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -935,9 +933,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                 l10n.filter_scanlator_groups,
                                                               ),
                                                               content: SizedBox(
-                                                                  width:
-                                                                      mediaWidth(
-                                                                          context,
+                                                                  width: context
+                                                                      .mediaWidth(
                                                                           0.8),
                                                                   child: ListView
                                                                       .builder(
@@ -978,7 +975,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                   },
                                                                                   child: Text(
                                                                                     l10n.reset,
-                                                                                    style: TextStyle(color: primaryColor(context)),
+                                                                                    style: TextStyle(color: context.primaryColor),
                                                                                   )),
                                                                             ],
                                                                           ),
@@ -993,7 +990,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                 },
                                                                                 child: Text(
                                                                                   l10n.cancel,
-                                                                                  style: TextStyle(color: primaryColor(context)),
+                                                                                  style: TextStyle(color: context.primaryColor),
                                                                                 )),
                                                                             TextButton(
                                                                                 onPressed: () {
@@ -1002,7 +999,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                                 },
                                                                                 child: Text(
                                                                                   l10n.filter,
-                                                                                  style: TextStyle(color: primaryColor(context)),
+                                                                                  style: TextStyle(color: context.primaryColor),
                                                                                 )),
                                                                           ],
                                                                         ),
@@ -1138,7 +1135,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             Stack(
               children: [
                 SizedBox(
-                  width: mediaWidth(context, 1),
+                  width: context.mediaWidth(1),
                   child: Row(
                     children: [
                       _coverCard(),
@@ -1182,7 +1179,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ? const SizedBox(
                               height: 30,
                             )
-                          : _expanded || isTablet(context)
+                          : _expanded || context.isTablet
                               ? Wrap(
                                   children: [
                                     for (var i = 0;
@@ -1207,7 +1204,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               widget.manga!.genre![i],
                                               style: TextStyle(
                                                   fontSize: 11.5,
-                                                  color: isLight(context)
+                                                  color: context.isLight
                                                       ? Colors.black
                                                       : Colors.white),
                                             ),
@@ -1243,7 +1240,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                 widget.manga!.genre![i],
                                                 style: TextStyle(
                                                     fontSize: 11.5,
-                                                    color: isLight(context)
+                                                    color: context.isLight
                                                         ? Colors.black
                                                         : Colors.white),
                                               ),
@@ -1253,7 +1250,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ],
                                   ),
                                 )),
-                  if (!isTablet(context))
+                  if (!context.isTablet)
                     Column(
                       children: [
                         //Description
@@ -1283,12 +1280,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           borderRadius:
                                               BorderRadius.circular(5))),
                                   icon: Icon(Icons.add,
-                                      color: secondaryColor(context)),
+                                      color: context.secondaryColor),
                                   label: Text(
                                     l10n.add_chapters,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: secondaryColor(context)),
+                                        color: context.secondaryColor),
                                   ),
                                   onPressed: () async {
                                     await ref.watch(
@@ -1309,8 +1306,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             if (chapterLength == 0)
               Container(
-                  width: mediaWidth(context, 1),
-                  height: mediaHeight(context, 1),
+                  width: context.mediaWidth(1),
+                  height: context.mediaHeight(1),
                   color: Theme.of(context).scaffoldBackgroundColor)
           ],
         ),
@@ -1403,8 +1400,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 snapshot.hasData ? snapshot.data : [];
                             bool isNotEmpty = trackRes!.isNotEmpty;
                             Color color = isNotEmpty
-                                ? primaryColor(context)
-                                : secondaryColor(context);
+                                ? context.primaryColor
+                                : context.secondaryColor;
                             return Column(
                               children: [
                                 Icon(
@@ -1459,7 +1456,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     Icon(
                       Icons.public,
                       size: 20,
-                      color: secondaryColor(context),
+                      color: context.secondaryColor,
                     ),
                     const SizedBox(
                       height: 4,
@@ -1467,7 +1464,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     Text(
                       'WebView',
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context)),
+                          fontSize: 11, color: context.secondaryColor),
                     )
                   ],
                 ),
@@ -1742,7 +1739,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               barItem: Container(),
               color: Theme.of(context).scaffoldBackgroundColor),
           child: Material(
-            color: isLight(context)
+            color: context.isLight
                 ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
                 : !ref.watch(pureBlackDarkModeStateProvider)
                     ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)

@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/utils/extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class SendvidExtractor {
   final http.Client client = http.Client();

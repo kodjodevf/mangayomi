@@ -7,9 +7,8 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
@@ -75,7 +74,7 @@ class ImageViewVertical extends ConsumerWidget {
                         : 0;
                 return Container(
                   color: Colors.black,
-                  height: mediaHeight(context, 0.8),
+                  height: context.mediaHeight(0.8),
                   child: CircularProgressIndicatorAnimateRotate(
                       progress: progress),
                 );
@@ -84,7 +83,7 @@ class ImageViewVertical extends ConsumerWidget {
                 failedToLoadImage(true);
                 return Container(
                     color: Colors.black,
-                    height: mediaHeight(context, 0.8),
+                    height: context.mediaHeight(0.8),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -104,7 +103,7 @@ class ImageViewVertical extends ConsumerWidget {
                               },
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: primaryColor(context),
+                                    color: context.primaryColor,
                                     borderRadius: BorderRadius.circular(30)),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(

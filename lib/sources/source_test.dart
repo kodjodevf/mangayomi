@@ -24,6 +24,9 @@ class TestSource extends MProvider {
   TestSource();
 
   @override
+  bool get supportsLatest => true;
+  
+  @override
   Future<MPages> getPopular(MSource source, int page) async {
     // TODO: implement
   }

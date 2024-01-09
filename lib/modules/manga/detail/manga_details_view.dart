@@ -9,9 +9,8 @@ import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_bt
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
@@ -203,7 +202,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     Icon(
                       Icons.favorite_border_rounded,
                       size: 20,
-                      color: secondaryColor(context),
+                      color: context.secondaryColor,
                     ),
                     const SizedBox(
                       height: 4,
@@ -211,7 +210,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     Text(
                       l10n.add_to_library,
                       style: TextStyle(
-                          color: secondaryColor(context), fontSize: 11),
+                          color: context.secondaryColor, fontSize: 11),
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -240,7 +239,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   l10n.set_categories,
                 ),
                 content: SizedBox(
-                  width: mediaWidth(context, 0.8),
+                  width: context.mediaWidth(0.8),
                   child: StreamBuilder(
                       stream: isar.categorys
                           .filter()

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class CoverViewWidget extends StatelessWidget {
   final List<Widget> children;
@@ -35,7 +35,7 @@ class CoverViewWidget extends StatelessWidget {
                     onLongPress: onLongPress,
                     child: Container(
                       color: isLongPressed != null && isLongPressed!
-                          ? primaryColor(context).withOpacity(0.4)
+                          ? context.primaryColor.withOpacity(0.4)
                           : Colors.transparent,
                       child: image == null
                           ? isComfortableGrid

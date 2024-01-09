@@ -16,7 +16,7 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_state_pr
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_video_list.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
@@ -395,7 +395,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     Container(
                         color: Colors.white,
                         width: 0.2,
-                        height: mediaHeight(context, 1)),
+                        height: context.mediaHeight(1)),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -429,7 +429,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     Container(
                         color: Colors.white,
                         width: 0.2,
-                        height: mediaHeight(context, 1)),
+                        height: context.mediaHeight(1)),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
@@ -979,7 +979,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           child: ListTile(
             dense: true,
             title: SizedBox(
-              width: mediaWidth(context, 0.8),
+              width: context.mediaWidth(0.8),
               child: Text(
                 widget.episode.manga.value!.name!,
                 style: const TextStyle(
@@ -988,7 +988,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
               ),
             ),
             subtitle: SizedBox(
-              width: mediaWidth(context, 0.8),
+              width: context.mediaWidth(0.8),
               child: Text(
                 widget.episode.name!,
                 style: TextStyle(
@@ -1009,8 +1009,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     if (mounted) {
       _key.currentState?.update(
           fit: fit,
-          width: mediaWidth(context, 1),
-          height: mediaHeight(context, 1));
+          width: context.mediaWidth(1),
+          height: context.mediaHeight(1));
     }
   }
 
@@ -1056,8 +1056,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
               streamController: _streamController,
             ),
       controller: _controller,
-      width: mediaWidth(context, 1),
-      height: mediaHeight(context, 1),
+      width: context.mediaWidth(1),
+      height: context.mediaHeight(1),
       resumeUponEnteringForegroundMode: true,
     );
   }
