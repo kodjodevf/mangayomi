@@ -12,7 +12,7 @@ import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/search_.dart';
 import 'package:mangayomi/utils/cached_network.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -308,7 +308,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                         child: Padding(
                           padding: const EdgeInsets.all(4),
                           child: Icon(Icons.collections_bookmark,
-                              color: primaryColor(context)),
+                              color: context.primaryColor),
                         ))
                 ],
               ),

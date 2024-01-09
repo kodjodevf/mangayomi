@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/blend_level_slider.dart';
@@ -38,7 +37,7 @@ class AppearanceScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.theme,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -71,7 +70,7 @@ class AppearanceScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.timestamp,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -85,7 +84,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 l10n.relative_timestamp,
                               ),
                               content: SizedBox(
-                                  width: mediaWidth(context, 0.8),
+                                  width: context.mediaWidth(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount:
@@ -124,7 +123,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         child: Text(
                                           l10n.cancel,
                                           style: TextStyle(
-                                              color: primaryColor(context)),
+                                              color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -136,7 +135,7 @@ class AppearanceScreen extends ConsumerWidget {
                     subtitle: Text(
                       relativeTimestampsList(context)[relativeTimestamps],
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context)),
+                          fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                   ListTile(
@@ -149,7 +148,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 l10n.date_format,
                               ),
                               content: SizedBox(
-                                  width: mediaWidth(context, 0.8),
+                                  width: context.mediaWidth(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: dateFormatsList.length,
@@ -186,7 +185,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         child: Text(
                                           l10n.cancel,
                                           style: TextStyle(
-                                              color: primaryColor(context)),
+                                              color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -198,7 +197,7 @@ class AppearanceScreen extends ConsumerWidget {
                     subtitle: Text(
                       "$dateFormatState (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context)),
+                          fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                 ],

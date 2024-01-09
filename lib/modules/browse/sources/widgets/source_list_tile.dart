@@ -6,7 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/source_test.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -126,7 +126,7 @@ class SourceListTile extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.push_pin_outlined,
-                  color: source.isPinned! ? primaryColor(context) : null,
+                  color: source.isPinned! ? context.primaryColor : null,
                 )),
           ],
         ),

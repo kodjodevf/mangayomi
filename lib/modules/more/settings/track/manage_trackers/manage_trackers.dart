@@ -6,7 +6,7 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class ManageTrackersScreen extends StatefulWidget {
   const ManageTrackersScreen({super.key});
@@ -55,7 +55,7 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
                               borderRadius: BorderRadius.circular(10)),
                           child: trackerPref.syncId == -1
                               ? SizedBox(
-                                  width: mediaWidth(context, 1),
+                                  width: context.mediaWidth(1),
                                   child: const Icon(Icons.local_library_rounded,
                                       size: 60))
                               : Image.asset(

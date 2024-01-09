@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class DownloadsScreen extends ConsumerStatefulWidget {
   const DownloadsScreen({super.key});
@@ -38,7 +37,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                       return AlertDialog(
                         title: Text(l10n.download_location),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView(
                               shrinkWrap: true,
                               children: [
@@ -91,7 +90,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                   child: Text(
                                     l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -104,7 +103,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 downloadLocationState.$2.isEmpty
                     ? downloadLocationState.$1
                     : downloadLocationState.$2,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             SwitchListTile(

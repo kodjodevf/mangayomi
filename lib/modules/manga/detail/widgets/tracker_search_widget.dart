@@ -6,8 +6,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
   final bool isManga;
@@ -56,7 +55,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: SizedBox(
-                height: mediaHeight(context, 0.8),
+                height: context.mediaHeight(0.8),
                 child: Column(
                   children: [
                     Flexible(
@@ -97,7 +96,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
-                                            width: mediaWidth(context, 0.6),
+                                            width: context.mediaWidth(0.6),
                                             child: Text(
                                               tracks![index].title!,
                                               style: const TextStyle(
@@ -196,15 +195,15 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                     icon: const Icon(Icons.clear)),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: primaryColor(context)),
+                                  BorderSide(color: context.primaryColor),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: primaryColor(context)),
+                                  BorderSide(color: context.primaryColor),
                             ),
                             border: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(color: primaryColor(context)))),
+                                    BorderSide(color: context.primaryColor))),
                       ),
                     ),
                   ],

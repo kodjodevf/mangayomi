@@ -9,7 +9,7 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
@@ -102,7 +102,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
-                              color: primaryColor(context),
+                              color: context.primaryColor,
                             ),
                             child: Row(
                               children: [
@@ -194,7 +194,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: Container(
-                              color: primaryColor(context),
+                              color: context.primaryColor,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.only(
@@ -248,7 +248,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: primaryColor(context)
+                                          color: context.primaryColor
                                               .withOpacity(0.9),
                                         ),
                                         child: const Padding(
@@ -274,7 +274,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        color: primaryColor(context)
+                                        color: context.primaryColor
                                             .withOpacity(0.9),
                                       ),
                                       child: const Padding(

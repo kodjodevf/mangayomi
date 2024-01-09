@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class CustomFloatingActionBtn extends StatelessWidget {
   final bool isExtended;
@@ -24,7 +24,7 @@ class CustomFloatingActionBtn extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeIn,
       child: FloatingActionButton(
-        backgroundColor: primaryColor(context),
+        backgroundColor: context.primaryColor,
         onPressed: onPressed,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

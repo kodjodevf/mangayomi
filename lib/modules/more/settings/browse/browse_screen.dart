@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class BrowseSScreen extends ConsumerWidget {
@@ -33,7 +33,7 @@ class BrowseSScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.extensions,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -52,7 +52,7 @@ class BrowseSScreen extends ConsumerWidget {
                         subtitle: Text(
                             l10n.auto_extensions_updates_subtitle,
                             style: TextStyle(
-                                fontSize: 11, color: secondaryColor(context))),
+                                fontSize: 11, color: context.secondaryColor)),
                         onChanged: (value) {
                           ref
                               .read(autoUpdateExtensionsStateProvider.notifier)
@@ -71,7 +71,7 @@ class BrowseSScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.global_search,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -96,7 +96,7 @@ class BrowseSScreen extends ConsumerWidget {
                       children: [
                         Text(l10n.nsfw_sources,
                             style: TextStyle(
-                                fontSize: 13, color: primaryColor(context))),
+                                fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -113,14 +113,14 @@ class BrowseSScreen extends ConsumerWidget {
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
-                            color: secondaryColor(context),
+                            color: context.secondaryColor,
                           ),
                         ],
                       ),
                     ),
                     subtitle: Text(l10n.nsfw_sources_info,
                         style: TextStyle(
-                            fontSize: 11, color: secondaryColor(context))),
+                            fontSize: 11, color: context.secondaryColor)),
                   )
                 ],
               ),

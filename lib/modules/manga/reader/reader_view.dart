@@ -20,9 +20,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
@@ -364,7 +363,7 @@ class _MangaChapterPageGalleryState
                                     onScaleEnd: _onScaleEnd,
                                     child: ScrollablePositionedList.separated(
                                       minCacheExtent: pagePreloadAmount *
-                                          mediaHeight(context, 1),
+                                          context.mediaHeight(1),
                                       initialScrollIndex:
                                           _readerController.getPageIndex(),
                                       itemCount:
@@ -514,7 +513,7 @@ class _MangaChapterPageGalleryState
                                             return Container(
                                               color: getBackgroundColor(
                                                   backgroundColor),
-                                              height: mediaHeight(context, 0.8),
+                                              height: context.mediaHeight(0.8),
                                               child:
                                                   CircularProgressIndicatorAnimateRotate(
                                                       progress: progress),
@@ -560,7 +559,7 @@ class _MangaChapterPageGalleryState
                                                 color: getBackgroundColor(
                                                     backgroundColor),
                                                 height:
-                                                    mediaHeight(context, 0.8),
+                                                    context.mediaHeight(0.8),
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -589,9 +588,8 @@ class _MangaChapterPageGalleryState
                                                           },
                                                           child: Container(
                                                             decoration: BoxDecoration(
-                                                                color:
-                                                                    primaryColor(
-                                                                        context),
+                                                                color: context
+                                                                    .primaryColor,
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
@@ -1150,7 +1148,7 @@ class _MangaChapterPageGalleryState
     return Positioned(
       top: 0,
       child: AnimatedContainer(
-        width: mediaWidth(context, 1),
+        width: context.mediaWidth(1),
         height: _isView
             ? Platform.isIOS
                 ? 120
@@ -1176,7 +1174,7 @@ class _MangaChapterPageGalleryState
             title: ListTile(
               dense: true,
               title: SizedBox(
-                width: mediaWidth(context, 0.8),
+                width: context.mediaWidth(0.8),
                 child: Text(
                   '${_readerController.getMangaName()} ',
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -1184,7 +1182,7 @@ class _MangaChapterPageGalleryState
                 ),
               ),
               subtitle: SizedBox(
-                width: mediaWidth(context, 0.8),
+                width: context.mediaWidth(0.8),
                 child: Text(
                   _readerController.getChapterTitle(),
                   style: const TextStyle(
@@ -1265,7 +1263,7 @@ class _MangaChapterPageGalleryState
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 300),
-        width: mediaWidth(context, 1),
+        width: context.mediaWidth(1),
         height: (_isView ? 130 : 0),
         child: Column(
           children: [
@@ -1691,8 +1689,8 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: failedToLoadImage
                   ? SizedBox(
-                      width: mediaWidth(context, 1),
-                      height: mediaHeight(context, 0.7),
+                      width: context.mediaWidth(1),
+                      height: context.mediaHeight(0.7),
                     )
                   : GestureDetector(
                       behavior: HitTestBehavior.translucent,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class BottomTextWidget extends StatelessWidget {
   final bool isLoading;
@@ -30,7 +30,7 @@ class BottomTextWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.w600,
-                      color: textColor ?? primaryColor(context),
+                      color: textColor ?? context.primaryColor,
                     ),
                     maxLines: maxLines,
                     overflow: TextOverflow.ellipsis,

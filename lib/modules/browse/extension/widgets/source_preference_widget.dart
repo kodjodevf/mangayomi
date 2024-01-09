@@ -4,8 +4,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class SourcePreferenceWidget extends StatefulWidget {
   final List<SourcePreference> sourcePreference;
@@ -33,7 +32,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                   title: Text(pref.title!),
                   subtitle: Text(pref.summary!,
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context))),
+                          fontSize: 11, color: context.secondaryColor)),
                   onTap: () {
                     showDialog(
                         context: context,
@@ -55,7 +54,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                   title: Text(pref.title!),
                   subtitle: Text(pref.summary!,
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context))),
+                          fontSize: 11, color: context.secondaryColor)),
                   value: pref.value,
                   onChanged: (value) {
                     setState(() {
@@ -71,7 +70,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                   title: Text(pref.title!),
                   subtitle: Text(pref.summary!,
                       style: TextStyle(
-                          fontSize: 11, color: secondaryColor(context))),
+                          fontSize: 11, color: context.secondaryColor)),
                   value: pref.value!,
                   onChanged: (value) {
                     setState(() {
@@ -87,14 +86,14 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                     title: Text(pref.title!),
                     subtitle: Text(pref.entries![pref.valueIndex!],
                         style: TextStyle(
-                            fontSize: 11, color: secondaryColor(context))),
+                            fontSize: 11, color: context.secondaryColor)),
                     onTap: () async {
                       final res = await showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text(pref.title!),
                           content: SizedBox(
-                              width: mediaWidth(context, 0.8),
+                              width: context.mediaWidth(0.8),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: pref.entries!.length,
@@ -124,7 +123,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                     child: Text(
                                       context.l10n.cancel,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -144,7 +143,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                     title: Text(pref.title!),
                     subtitle: Text(pref.summary!,
                         style: TextStyle(
-                            fontSize: 11, color: secondaryColor(context))),
+                            fontSize: 11, color: context.secondaryColor)),
                     onTap: () {
                       List<String> indexList = [];
                       indexList.addAll(pref.values!);
@@ -156,7 +155,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                 return AlertDialog(
                                   title: Text(pref.title!),
                                   content: SizedBox(
-                                      width: mediaWidth(context, 0.8),
+                                      width: context.mediaWidth(0.8),
                                       child: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: pref.entries!.length,
@@ -198,7 +197,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                             child: Text(
                                               context.l10n.cancel,
                                               style: TextStyle(
-                                                  color: primaryColor(context)),
+                                                  color: context.primaryColor),
                                             )),
                                         TextButton(
                                             onPressed: () async {
@@ -207,7 +206,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                             child: Text(
                                               context.l10n.ok,
                                               style: TextStyle(
-                                                  color: primaryColor(context)),
+                                                  color: context.primaryColor),
                                             )),
                                       ],
                                     )
@@ -264,10 +263,10 @@ class _EditTextDialogWidgetState extends State<EditTextDialogWidget> {
                   isDense: true,
                   filled: false,
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: secondaryColor(context)),
+                    borderSide: BorderSide(color: context.secondaryColor),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: primaryColor(context)),
+                    borderSide: BorderSide(color: context.primaryColor),
                   ),
                   border: const OutlineInputBorder(borderSide: BorderSide()),
                 ),

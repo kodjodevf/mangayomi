@@ -1,10 +1,11 @@
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class ReadMoreWidget extends StatefulWidget {
-  const ReadMoreWidget({super.key, required this.text, required this.onChanged});
+  const ReadMoreWidget(
+      {super.key, required this.text, required this.onChanged});
   final Function(bool) onChanged;
   final String text;
 
@@ -54,7 +55,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                       right: 0,
                       left: 0,
                       child: Container(
-                        width: mediaWidth(context, 1),
+                        width: context.mediaWidth(1),
                         height: 30,
                         decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
@@ -77,7 +78,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
               ),
               if (expanded)
                 SizedBox(
-                  width: mediaWidth(context, 1),
+                  width: context.mediaWidth(1),
                   height: 20,
                   child: const Icon(Icons.keyboard_arrow_up_sharp),
                 )

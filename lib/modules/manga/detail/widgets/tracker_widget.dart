@@ -6,11 +6,9 @@ import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.d
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/utils/media_query.dart';
-import 'package:mangayomi/utils/utils.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class TrackerWidget extends ConsumerStatefulWidget {
@@ -58,7 +56,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
     final l10nLocale = ref.watch(l10nLocaleStateProvider);
     return Container(
       decoration: BoxDecoration(
-          color: isLight(context)
+          color: context.isLight
               ? Theme.of(context).scaffoldBackgroundColor
               : Colors.black,
           borderRadius: BorderRadius.circular(20)),
@@ -68,7 +66,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
             children: [
               if (!widget.hide)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -148,7 +147,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                             l10n!.status,
                           ),
                           content: SizedBox(
-                              width: mediaWidth(context, 0.8),
+                              width: context.mediaWidth(0.8),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: ref
@@ -199,7 +198,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     child: Text(
                                       l10n.cancel,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -254,7 +253,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     child: Text(
                                       l10n.cancel,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                                 TextButton(
                                     onPressed: () async {
@@ -271,7 +270,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     child: Text(
                                       l10n.ok,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -341,7 +340,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     child: Text(
                                       l10n.cancel,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                                 TextButton(
                                     onPressed: () async {
@@ -357,7 +356,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     child: Text(
                                       l10n.ok,
                                       style: TextStyle(
-                                          color: primaryColor(context)),
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -456,14 +455,14 @@ Widget _elevatedButton(BuildContext context,
   return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: isLight(context)
+          backgroundColor: context.isLight
               ? Theme.of(context).scaffoldBackgroundColor
               : Colors.black,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
               side: BorderSide(
-                  width: 0, color: secondaryColor(context).withOpacity(0.1)),
+                  width: 0, color: context.secondaryColor.withOpacity(0.1)),
               borderRadius: borderRadius ?? BorderRadius.circular(0))),
       onPressed: onPressed,
       child: child ??

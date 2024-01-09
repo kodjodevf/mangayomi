@@ -1,6 +1,6 @@
 import 'package:html/dom.dart';
 import 'package:mangayomi/eval/model/element.dart';
-import 'package:mangayomi/utils/extensions.dart';
+import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 class MDocument {
   const MDocument(this._document);

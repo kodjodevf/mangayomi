@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
-import 'package:mangayomi/utils/media_query.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GeneralScreen extends ConsumerWidget {
@@ -30,10 +29,11 @@ class GeneralScreen extends ConsumerWidget {
                           l10n.app_language,
                         ),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount: AppLocalizations.supportedLocales.length,
+                              itemCount:
+                                  AppLocalizations.supportedLocales.length,
                               itemBuilder: (context, index) {
                                 final locale =
                                     AppLocalizations.supportedLocales[index];
@@ -64,7 +64,7 @@ class GeneralScreen extends ConsumerWidget {
                                   child: Text(
                                     l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -75,7 +75,7 @@ class GeneralScreen extends ConsumerWidget {
               title: Text(l10n.app_language),
               subtitle: Text(
                 completeLanguageName(l10nLocale.toLanguageTag()),
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
           ],

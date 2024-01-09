@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class ListTileWidget extends StatelessWidget {
   final VoidCallback onTap;
@@ -22,14 +22,14 @@ class ListTileWidget extends StatelessWidget {
       // subtitle: subtitle != null
       //     ? Text(
       //         subtitle!,
-      //         style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+      //         style: TextStyle(fontSize: 11, color: context.secondaryColor),
       //       )
       //     : null,
       leading: SizedBox(
           height: 40,
           child: Icon(
             icon,
-            color: primaryColor(context),
+            color: context.primaryColor,
           )),
       title: Text(title),
       trailing: trailing,

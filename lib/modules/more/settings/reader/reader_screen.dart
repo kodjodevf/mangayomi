@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 
 class ReaderScreen extends ConsumerWidget {
@@ -36,7 +35,7 @@ class ReaderScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.default_reading_mode),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: ReaderMode.values.length,
@@ -73,7 +72,7 @@ class ReaderScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -84,7 +83,7 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.default_reading_mode),
               subtitle: Text(
                 getReaderModeName(defaultReadingMode, context),
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -97,7 +96,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.double_tap_animation_speed,
                         ),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: 3,
@@ -135,7 +134,7 @@ class ReaderScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -146,7 +145,7 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.double_tap_animation_speed),
               subtitle: Text(
                 getAnimationSpeedName(doubleTapAnimationSpeed, context),
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -157,7 +156,7 @@ class ReaderScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.background_color),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: BackgroundColor.values.length,
@@ -195,7 +194,7 @@ class ReaderScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -206,7 +205,7 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.background_color),
               subtitle: Text(
                 getBackgroundColorName(backgroundColor, context),
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -220,7 +219,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.page_preload_amount,
                         ),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: numbers.length,
@@ -254,7 +253,7 @@ class ReaderScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -265,7 +264,7 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.page_preload_amount),
               subtitle: Text(
                 context.l10n.page_preload_amount_subtitle,
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             ListTile(
@@ -278,7 +277,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.scale_type,
                         ),
                         content: SizedBox(
-                            width: mediaWidth(context, 0.8),
+                            width: context.mediaWidth(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: getScaleTypeNames(context).length,
@@ -314,7 +313,7 @@ class ReaderScreen extends ConsumerWidget {
                                   child: Text(
                                     context.l10n.cancel,
                                     style:
-                                        TextStyle(color: primaryColor(context)),
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -325,7 +324,7 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.scale_type),
               subtitle: Text(
                 getScaleTypeNames(context)[scaleType.index],
-                style: TextStyle(fontSize: 11, color: secondaryColor(context)),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
             SwitchListTile(
@@ -386,7 +385,6 @@ Color? getBackgroundColor(BackgroundColor backgroundColor) {
 }
 
 String getAnimationSpeedName(int type, BuildContext context) {
-
   return switch (type) {
     0 => context.l10n.no_animation,
     1 => context.l10n.normal,

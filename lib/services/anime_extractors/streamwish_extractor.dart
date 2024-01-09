@@ -1,7 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'package:js_packer/js_packer.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/utils/extensions.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class StreamWishExtractor {
@@ -19,11 +20,11 @@ class StreamWishExtractor {
       if (jsEval.isEmpty) {
         return [];
       }
-      
-      String? masterUrl = jsEval.first
+
+      String? masterUrl = jsEval.first!
           .let(
             (script) {
-              if (script!.contains("function(p,a,c")) {
+              if (script.contains("function(p,a,c")) {
                 return JSPacker(script).unpack() ?? "";
               }
               return script;

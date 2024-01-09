@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/utils/colors.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 
 class ThemeSelector extends ConsumerStatefulWidget {
@@ -96,7 +96,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               backgroundColor: theme.primaryColorLight,
                               child: Icon(
                                 FontAwesomeIcons.check,
-                                color: secondaryColor(context),
+                                color: context.secondaryColor,
                                 size: 16,
                               )),
                         )

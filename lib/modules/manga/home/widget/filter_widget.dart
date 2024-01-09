@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/filter.dart';
-import 'package:mangayomi/utils/colors.dart';
-import 'package:mangayomi/utils/media_query.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class FilterWidget extends StatelessWidget {
   final List<dynamic> filterList;
@@ -106,7 +105,7 @@ class FilterWidget extends StatelessWidget {
           );
         } else if (filterState is SelectFilter) {
           widget = SizedBox(
-            width: mediaWidth(context, 1),
+            width: context.mediaWidth(1),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -181,10 +180,10 @@ class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {
             isDense: true,
             filled: false,
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: secondaryColor(context)),
+              borderSide: BorderSide(color: context.secondaryColor),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: primaryColor(context)),
+              borderSide: BorderSide(color: context.primaryColor),
             ),
             border: const OutlineInputBorder(borderSide: BorderSide()),
             labelText: widget.labelText,
