@@ -22,6 +22,8 @@ class $MManga implements MManga, $Instance {
       fields: {
         'author': BridgeFieldDef(
             BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'artist': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'status': BridgeFieldDef(BridgeTypeAnnotation($MStatus.$type)),
         'genre': BridgeFieldDef(
           BridgeTypeAnnotation(
@@ -58,6 +60,8 @@ class $MManga implements MManga, $Instance {
     switch (identifier) {
       case 'author':
         return $String($value.author!);
+      case 'artist':
+        return $String($value.artist!);
       case 'status':
         return $MStatus.wrap($value.status!);
       case 'genre':
@@ -88,6 +92,8 @@ class $MManga implements MManga, $Instance {
     switch (identifier) {
       case 'author':
         $value.author = value.$reified;
+      case 'artist':
+        $value.artist = value.$reified;
       case 'status':
         $value.status = value.$reified;
       case 'genre':
@@ -119,6 +125,9 @@ class $MManga implements MManga, $Instance {
   String? get author => $value.author;
 
   @override
+  String? get artist => $value.artist;
+
+  @override
   String? get description => $value.description;
 
   @override
@@ -142,6 +151,11 @@ class $MManga implements MManga, $Instance {
   @override
   set author(String? author) {
     //  implement author
+  }
+
+  @override
+  set artist(String? artist) {
+    //  implement artist
   }
 
   @override

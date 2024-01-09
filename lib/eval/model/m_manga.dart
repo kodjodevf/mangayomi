@@ -12,6 +12,8 @@ class MManga {
 
   String? author;
 
+  String? artist;
+
   Status? status;
 
   List<String>? genre;
@@ -20,6 +22,7 @@ class MManga {
 
   MManga(
       {this.author,
+      this.artist,
       this.genre,
       this.imageUrl,
       this.link,

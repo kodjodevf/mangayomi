@@ -17,6 +17,8 @@ class Manga {
 
   String? author;
 
+  String? artist;
+
   @enumerated
   late Status status;
 
@@ -51,6 +53,7 @@ class Manga {
       {this.id = Isar.autoIncrement,
       required this.source,
       required this.author,
+      required this.artist,
       this.favorite = false,
       required this.genre,
       required this.imageUrl,
@@ -70,6 +73,7 @@ class Manga {
 
   Manga.fromJson(Map<String, dynamic> json) {
     author = json['author'];
+    artist = json['artist'];
     categories = json['categories']?.cast<int>();
     customCoverImage = json['customCoverImage']?.cast<int>();
     dateAdded = json['dateAdded'];
@@ -92,6 +96,7 @@ class Manga {
 
   Map<String, dynamic> toJson() => {
         'author': author,
+        'artist': artist,
         'categories': categories,
         'customCoverImage': customCoverImage,
         'dateAdded': dateAdded,

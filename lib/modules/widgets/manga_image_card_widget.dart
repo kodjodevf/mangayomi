@@ -106,7 +106,8 @@ void pushToMangaReaderDetail(
             source: source,
             lang: lang,
             lastUpdate: 0,
-            isManga: isManga ?? true);
+            isManga: isManga ?? true,
+            artist: getManga.artist ?? '');
     final empty = isar.mangas
         .filter()
         .langEqualTo(lang)

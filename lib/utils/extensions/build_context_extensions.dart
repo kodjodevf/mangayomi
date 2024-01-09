@@ -13,6 +13,10 @@ extension BuildContextExtensions on BuildContext {
     return Theme.of(this).iconTheme.color!.withOpacity(0.7);
   }
 
+  ThemeData get themeData {
+    return Theme.of(this);
+  }
+
   double mediaHeight(double data) {
     return MediaQuery.of(this).size.height * data;
   }

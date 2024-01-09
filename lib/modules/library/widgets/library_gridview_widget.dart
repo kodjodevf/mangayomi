@@ -194,7 +194,7 @@ class LibraryGridViewWidget extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(5),
                             child: Container(
-                              color: context.primaryColor,
+                              color: context.themeData.cardColor,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.only(

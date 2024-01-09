@@ -35,6 +35,7 @@ Future importArchivesFromFile(ImportArchivesFromFileRef ref, Manga? mManga,
           status: Status.unknown,
           description: '',
           isLocalArchive: true,
+          artist: '',
         );
     for (var file in result.files.reversed.toList()) {
       (String, LocalExtensionType, Uint8List, String)? data = isManga
