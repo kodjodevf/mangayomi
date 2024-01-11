@@ -9,12 +9,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
@@ -211,7 +213,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _currentTotalDuration.value = duration;
     },
   );
-
+  Results? _openingResult;
+  Results? _endingResult;
+  bool _hasOpeningSkip = false;
+  bool _hasEndingSkip = false;
+  final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
+  final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
   @override
   void initState() {
     _setCurrentPosition(true);
@@ -220,7 +227,29 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
+    _initAniSkip();
     super.initState();
+  }
+
+  void _initAniSkip() async {
+    await _player.stream.buffer.first;
+    _streamController.getAniSkipResults((result) {
+      final openingRes =
+          result.where((element) => element.skipType == "op").toList();
+      _hasOpeningSkip = openingRes.isNotEmpty;
+      if (_hasOpeningSkip) {
+        _openingResult = openingRes.first;
+      }
+      final endingRes =
+          result.where((element) => element.skipType == "ed").toList();
+      _hasEndingSkip = endingRes.isNotEmpty;
+      if (_hasEndingSkip) {
+        _endingResult = endingRes.first;
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -838,7 +867,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               skipDuration.toString(),
-                              style: const TextStyle(fontSize: 9),
+                              style: const TextStyle(
+                                  fontSize: 9, color: Colors.white),
                             ),
                           )),
                         ),
@@ -874,7 +904,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               skipDuration.toString(),
-                              style: const TextStyle(fontSize: 9),
+                              style: const TextStyle(
+                                  fontSize: 9, color: Colors.white),
                             ),
                           )),
                         ),
@@ -1017,48 +1048,126 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   Widget _videoPlayer(BuildContext context) {
     final fit = _fit.value;
     _resize(fit);
-    return Video(
-      subtitleViewConfiguration: const SubtitleViewConfiguration(
-        style: TextStyle(
-            fontSize: 50,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: "",
-            shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
-            backgroundColor: Colors.transparent),
-      ),
-      fit: fit,
-      key: _key,
-      controls: (state) => _isDesktop
-          ? DesktopControllerWidget(
-              videoController: _controller,
-              topButtonBarWidget: _topButtonBar(context),
-              videoStatekey: _key,
-              bottomButtonBarWidget: _desktopBottomButtonBar(context),
-              streamController: _streamController,
-              seekToWidget: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    _seekToWidget(),
-                  ],
+    return Stack(
+      children: [
+        Video(
+          subtitleViewConfiguration: const SubtitleViewConfiguration(
+            style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontFamily: "",
+                shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
+                backgroundColor: Colors.transparent),
+          ),
+          fit: fit,
+          key: _key,
+          controls: (state) => _isDesktop
+              ? DesktopControllerWidget(
+                  videoController: _controller,
+                  topButtonBarWidget: _topButtonBar(context),
+                  videoStatekey: _key,
+                  bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                  streamController: _streamController,
+                  seekToWidget: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        _seekToWidget(),
+                      ],
+                    ),
+                  ),
+                  tempDuration: (value) {
+                    _tempPosition.value = value;
+                  },
+                )
+              : MobileControllerWidget(
+                  videoController: _controller,
+                  topButtonBarWidget: _topButtonBar(context),
+                  videoStatekey: _key,
+                  bottomButtonBarWidget: _mobileBottomButtonBar(context),
+                  streamController: _streamController,
                 ),
-              ),
-              tempDuration: (value) {
-                _tempPosition.value = value;
-              },
-            )
-          : MobileControllerWidget(
-              videoController: _controller,
-              topButtonBarWidget: _topButtonBar(context),
-              videoStatekey: _key,
-              bottomButtonBarWidget: _mobileBottomButtonBar(context),
-              streamController: _streamController,
-            ),
-      controller: _controller,
-      width: context.mediaWidth(1),
-      height: context.mediaHeight(1),
-      resumeUponEnteringForegroundMode: true,
+          controller: _controller,
+          width: context.mediaWidth(1),
+          height: context.mediaHeight(1),
+          resumeUponEnteringForegroundMode: true,
+        ),
+        Positioned(
+          right: 0,
+          bottom: 80,
+          child: ValueListenableBuilder(
+            valueListenable: _currentPosition,
+            builder: (context, value, child) {
+              if (_hasOpeningSkip || _hasEndingSkip) {
+                if (_hasOpeningSkip) {
+                  if (_openingResult!.interval!.startTime!.ceil() <=
+                          value.inSeconds &&
+                      _openingResult!.interval!.endTime!.toInt() >
+                          value.inSeconds) {
+                    _showAniSkipOpeningButton.value = true;
+                    _showAniSkipEndingButton.value = false;
+                  } else {
+                    _showAniSkipOpeningButton.value = false;
+                  }
+                }
+                if (_hasEndingSkip) {
+                  if (_endingResult!.interval!.startTime!.ceil() <=
+                          value.inSeconds &&
+                      _endingResult!.interval!.endTime!.toInt() >
+                          value.inSeconds) {
+                    _showAniSkipEndingButton.value = true;
+                    _showAniSkipOpeningButton.value = false;
+                  }
+                } else {
+                  _showAniSkipEndingButton.value = false;
+                }
+              }
+              return Consumer(builder: (context, ref, _) {
+                late final enableAniSkip =
+                    ref.watch(enableAniSkipStateProvider);
+                late final enableAutoSkip =
+                    ref.watch(enableAutoSkipStateProvider);
+                late final aniSkipTimeoutLength =
+                    ref.watch(aniSkipTimeoutLengthStateProvider);
+                return ValueListenableBuilder(
+                  valueListenable: _showAniSkipOpeningButton,
+                  builder: (context, showAniSkipOpENINGButton, child) {
+                    return ValueListenableBuilder(
+                      valueListenable: _showAniSkipEndingButton,
+                      builder: (context, showAniSkipENDINGButton, child) {
+                        return showAniSkipOpENINGButton
+                            ? Container(
+                                key: const Key('skip_opening'),
+                                child: AniSkipCountDownButton(
+                                  active: enableAniSkip,
+                                  autoSkip: enableAutoSkip,
+                                  timeoutLength: aniSkipTimeoutLength,
+                                  skipTypeText: context.l10n.skip_opening,
+                                  player: _player,
+                                  aniSkipResult: _openingResult,
+                                ))
+                            : showAniSkipENDINGButton
+                                ? Container(
+                                    key: const Key('skip_ending'),
+                                    child: AniSkipCountDownButton(
+                                      active: enableAniSkip,
+                                      autoSkip: enableAutoSkip,
+                                      timeoutLength: aniSkipTimeoutLength,
+                                      skipTypeText: context.l10n.skip_ending,
+                                      player: _player,
+                                      aniSkipResult: _endingResult,
+                                    ))
+                                : const SizedBox.shrink();
+                      },
+                    );
+                  },
+                );
+              });
+            },
+          ),
+        ),
+      ],
     );
   }
 

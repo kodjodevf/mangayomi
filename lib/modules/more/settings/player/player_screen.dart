@@ -18,6 +18,10 @@ class PlayerScreen extends ConsumerWidget {
         ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     final defaultPlayBackSpeed = ref.watch(defaultPlayBackSpeedStateProvider);
 
+    final enableAniSkip = ref.watch(enableAniSkipStateProvider);
+    final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
+    final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.player),
@@ -264,6 +268,103 @@ class PlayerScreen extends ConsumerWidget {
                 "x$defaultPlayBackSpeed",
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
+            ),
+            ListTile(
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: context.secondaryColor,
+                    ),
+                  ],
+                ),
+              ),
+              subtitle: Text(context.l10n.aniskip_requires_info,
+                  style:
+                      TextStyle(fontSize: 11, color: context.secondaryColor)),
+            ),
+            ExpansionTile(
+              title: Text(context.l10n.enable_aniskip),
+              shape: const StarBorder(),
+              initiallyExpanded: enableAniSkip,
+              trailing: IgnorePointer(
+                child: Switch(
+                  value: enableAniSkip,
+                  onChanged: (_) {},
+                ),
+              ),
+              onExpansionChanged: (value) =>
+                  ref.read(enableAniSkipStateProvider.notifier).set(value),
+              children: [
+                SwitchListTile(
+                    value: enableAutoSkip,
+                    title: Text(context.l10n.enable_auto_skip),
+                    onChanged: (value) {
+                      ref.read(enableAutoSkipStateProvider.notifier).set(value);
+                    }),
+                ListTile(
+                  onTap: () {
+                    final values = [5, 6, 7, 8, 9, 10];
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                context.l10n.default_playback_speed_length),
+                            content: SizedBox(
+                                width: context.mediaWidth(0.8),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: values.length,
+                                  itemBuilder: (context, index) {
+                                    return RadioListTile(
+                                      dense: true,
+                                      contentPadding: const EdgeInsets.all(0),
+                                      value: values[index],
+                                      groupValue: aniSkipTimeoutLength,
+                                      onChanged: (value) {
+                                        ref
+                                            .read(
+                                                aniSkipTimeoutLengthStateProvider
+                                                    .notifier)
+                                            .set(value!);
+                                        Navigator.pop(context);
+                                      },
+                                      title: Row(
+                                        children: [Text("${values[index]}s")],
+                                      ),
+                                    );
+                                  },
+                                )),
+                            actions: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text(
+                                        context.l10n.cancel,
+                                        style: TextStyle(
+                                            color: context.primaryColor),
+                                      )),
+                                ],
+                              )
+                            ],
+                          );
+                        });
+                  },
+                  title: Text(context.l10n.aniskip_button_timeout),
+                  subtitle: Text(
+                    "${aniSkipTimeoutLength}s",
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

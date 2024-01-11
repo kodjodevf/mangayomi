@@ -74,5 +74,56 @@ final defaultPlayBackSpeedStateProvider =
 );
 
 typedef _$DefaultPlayBackSpeedState = AutoDisposeNotifier<double>;
+String _$enableAniSkipStateHash() =>
+    r'1b448453e54f2a261820d40ca2d82971d165372a';
+
+/// See also [EnableAniSkipState].
+@ProviderFor(EnableAniSkipState)
+final enableAniSkipStateProvider =
+    AutoDisposeNotifierProvider<EnableAniSkipState, bool>.internal(
+  EnableAniSkipState.new,
+  name: r'enableAniSkipStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$enableAniSkipStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$EnableAniSkipState = AutoDisposeNotifier<bool>;
+String _$enableAutoSkipStateHash() =>
+    r'5f4d5e669cadf98396afe52635e2ec5f2ee7ff2f';
+
+/// See also [EnableAutoSkipState].
+@ProviderFor(EnableAutoSkipState)
+final enableAutoSkipStateProvider =
+    AutoDisposeNotifierProvider<EnableAutoSkipState, bool>.internal(
+  EnableAutoSkipState.new,
+  name: r'enableAutoSkipStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$enableAutoSkipStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$EnableAutoSkipState = AutoDisposeNotifier<bool>;
+String _$aniSkipTimeoutLengthStateHash() =>
+    r'fc1c16c22fb129e1a2ea5434282baf2dcfa79c82';
+
+/// See also [AniSkipTimeoutLengthState].
+@ProviderFor(AniSkipTimeoutLengthState)
+final aniSkipTimeoutLengthStateProvider =
+    AutoDisposeNotifierProvider<AniSkipTimeoutLengthState, int>.internal(
+  AniSkipTimeoutLengthState.new,
+  name: r'aniSkipTimeoutLengthStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$aniSkipTimeoutLengthStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AniSkipTimeoutLengthState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

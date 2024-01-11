@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "Обновить прогресс после чтения",
     "no_sources_installed": "Источники не установлены!",
     "show_extensions": "Показать расширения",
-    "default_skip_forward_skip_length": "Длина пропуска вперед по умолчанию"
+    "default_skip_forward_skip_length": "Длина пропуска вперед по умолчанию",
+    "aniskip_requires_info": "AniSkip требует отслеживания аниме с использованием MAL или Anilist для работы.",
+    "enable_aniskip": "Включить AniSkip",
+    "enable_auto_skip": "Включить автоматическое пропускание",
+    "aniskip_button_timeout": "Тайм-аут кнопки"
 }

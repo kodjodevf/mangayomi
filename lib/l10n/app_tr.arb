@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "Okuduktan Sonra İlerlemeyi Güncelle",
     "no_sources_installed": "Hiçbir kaynak yüklü değil!",
     "show_extensions": "uzantıları göster",
-    "default_skip_forward_skip_length": "Varsayılan ileri atlama atlama uzunluğu"
+    "default_skip_forward_skip_length": "Varsayılan ileri atlama atlama uzunluğu",
+    "aniskip_requires_info": "AniSkip, çalışması için animenin MAL veya Anilist ile takip edilmesini gerektirir.",
+    "enable_aniskip": "AniSkip'i Etkinleştir",
+    "enable_auto_skip": "Otomatik Atla'yı Etkinleştir",
+    "aniskip_button_timeout": "Düğme Zaman Aşımı"
 }

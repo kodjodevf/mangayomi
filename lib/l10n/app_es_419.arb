@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "Actualizar el progreso después de leer",
     "no_sources_installed": "¡No hay fuentes instaladas!",
     "show_extensions": "Mostrar extensiones",
-    "default_skip_forward_skip_length": "Longitud de salto hacia adelante predeterminada"
+    "default_skip_forward_skip_length": "Longitud de salto hacia adelante predeterminada",
+    "aniskip_requires_info": "AniSkip requiere que el anime esté registrado en MAL o Anilist para funcionar.",
+    "enable_aniskip": "Habilitar AniSkip",
+    "enable_auto_skip": "Habilitar salto automático",
+    "aniskip_button_timeout": "Tiempo de espera del botón"
 }

@@ -63,3 +63,48 @@ class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
         () => isar.settings.putSync(settings!..defaultPlayBackSpeed = value));
   }
 }
+
+@riverpod
+class EnableAniSkipState extends _$EnableAniSkipState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.enableAniSkip ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..enableAniSkip = value));
+  }
+}
+
+@riverpod
+class EnableAutoSkipState extends _$EnableAutoSkipState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.enableAutoSkip ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..enableAutoSkip = value));
+  }
+}
+
+@riverpod
+class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.aniSkipTimeoutLength ?? 5;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..aniSkipTimeoutLength = value));
+  }
+}

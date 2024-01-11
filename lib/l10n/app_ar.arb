@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "تحديث التقدم بعد القراءة",
     "no_sources_installed": "لم يتم تثبيت مصادر!",
     "show_extensions": "عرض الإضافات",
-    "default_skip_forward_skip_length": "طول التخطي الافتراضي للأمام"
+    "default_skip_forward_skip_length": "طول التخطي الافتراضي للأمام",
+    "aniskip_requires_info": "AniSkip يتطلب تتبع الأنمي باستخدام MAL أو Anilist للعمل.",
+    "enable_aniskip": "تمكين AniSkip",
+    "enable_auto_skip": "تمكين التخطي التلقائي",
+    "aniskip_button_timeout": "مهلة زر"
 }

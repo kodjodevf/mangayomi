@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "Aggiorna il progresso dopo aver letto",
     "no_sources_installed": "Nessuna fonte installata!",
     "show_extensions": "Mostra estensioni",
-    "default_skip_forward_skip_length": "Lunghezza predefinita del salto in avanti"
+    "default_skip_forward_skip_length": "Lunghezza predefinita del salto in avanti",
+    "aniskip_requires_info": "AniSkip richiede che l'anime sia tracciato con MAL o Anilist per funzionare.",
+    "enable_aniskip": "Abilita AniSkip",
+    "enable_auto_skip": "Abilita l'auto-skip",
+    "aniskip_button_timeout": "Timeout del pulsante"
 }

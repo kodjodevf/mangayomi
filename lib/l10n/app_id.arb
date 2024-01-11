@@ -276,5 +276,9 @@
     "updateProgressAfterReading": "Perbarui kemajuan setelah membaca",
     "no_sources_installed": "Tidak ada sumber yang terpasang!",
     "show_extensions": "Tampilkan ekstensi",
-    "default_skip_forward_skip_length": "Panjang lompatan maju default"
+    "default_skip_forward_skip_length": "Panjang lompatan maju default",
+    "aniskip_requires_info": "AniSkip memerlukan informasi anime dilacak dengan MAL atau Anilist untuk berfungsi.",
+    "enable_aniskip": "Aktifkan AniSkip",
+    "enable_auto_skip": "Aktifkan pengabaian otomatis",
+    "aniskip_button_timeout": "Timeout tombol"
 }
