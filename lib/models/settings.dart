@@ -153,6 +153,12 @@ class Settings {
 
   bool? updateProgressAfterReading;
 
+  bool? enableAniSkip;
+
+  bool? enableAutoSkip;
+
+  int? aniSkipTimeoutLength;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -219,7 +225,10 @@ class Settings {
       this.defaultSkipIntroLength = 85,
       this.defaultDoubleTapToSkipLength = 10,
       this.defaultPlayBackSpeed = 1.0,
-      this.updateProgressAfterReading = true});
+      this.updateProgressAfterReading = true,
+      this.enableAniSkip,
+      this.enableAutoSkip,
+      this.aniSkipTimeoutLength});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -342,6 +351,9 @@ class Settings {
     defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
     defaultPlayBackSpeed = json['defaultPlayBackSpeed'];
     updateProgressAfterReading = json['updateProgressAfterReading'];
+    enableAniSkip = json['enableAniSkip'];
+    enableAutoSkip = json['enableAutoSkip'];
+    aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -432,7 +444,10 @@ class Settings {
         'defaultSkipIntroLength': defaultSkipIntroLength,
         'defaultDoubleTapToSkipLength': defaultDoubleTapToSkipLength,
         'defaultPlayBackSpeed': defaultPlayBackSpeed,
-        'updateProgressAfterReading': updateProgressAfterReading
+        'updateProgressAfterReading': updateProgressAfterReading,
+        'enableAniSkip': enableAniSkip,
+        'enableAutoSkip': enableAutoSkip,
+        'aniSkipTimeoutLength': aniSkipTimeoutLength
       };
 }
 

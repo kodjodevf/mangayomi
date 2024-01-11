@@ -4,8 +4,11 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/services/aniskip.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anime_player_controller_provider.g.dart';
 
@@ -168,5 +171,42 @@ class AnimeStreamController extends _$AnimeStreamController {
       }
     }
   }
-  
+
+  (int, int)? _getTrackId() {
+    final malId = isar.tracks
+        .filter()
+        .syncIdEqualTo(1)
+        .mangaIdEqualTo(episode.manga.value!.id!)
+        .findFirstSync()
+        ?.mediaId;
+    final aniId = isar.tracks
+        .filter()
+        .syncIdEqualTo(2)
+        .mangaIdEqualTo(episode.manga.value!.id!)
+        .findFirstSync()
+        ?.mediaId;
+    return switch (malId) {
+      != null => (malId, 1),
+      == null => switch (aniId) { != null => (aniId, 2), _ => null },
+      _ => null
+    };
+  }
+
+  Future<List<Results>?> getAniSkipResults(
+      Function(List<Results>) result) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (ref.watch(enableAniSkipStateProvider)) {
+      final id = _getTrackId();
+      if (id != null) {
+        final res = await ref.read(aniSkipProvider.notifier).getResult(
+            id,
+            ChapterRecognition()
+                .parseChapterNumber(episode.manga.value!.name!, episode.name!),
+            0);
+        result.call(res ?? []);
+        return res;
+      }
+    }
+    return null;
+  }
 }

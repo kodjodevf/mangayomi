@@ -276,5 +276,11 @@
     "updateProgressAfterReading": "阅读后更新进度",
     "no_sources_installed": "未安装任何来源！",
     "show_extensions": "显示扩展",
-    "default_skip_forward_skip_length": "默认向前跳过长度"
+    "default_skip_forward_skip_length": "默认向前跳过长度",
+    "aniskip_requires_info": "AniSkip需要跟踪使用MAL或Anilist进行的动漫才能工作。",
+    "enable_aniskip": "启用AniSkip",
+    "enable_auto_skip": "启用自动跳过",
+    "aniskip_button_timeout": "按钮超时",
+    "skip_opening": "跳过开头",
+    "skip_ending": "跳过结尾"
 }

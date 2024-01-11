@@ -276,5 +276,11 @@
   "updateProgressAfterReading": "Update progress after reading",
   "no_sources_installed": "No sources installed!",
   "show_extensions": "Show extensions",
-  "default_skip_forward_skip_length": "Default skip forward skip length"
+  "default_skip_forward_skip_length": "Default skip forward skip length",
+  "aniskip_requires_info": "AniSkip requires the anime to be tracked with MAL or Anilist to work.",
+  "enable_aniskip": "Enable AniSkip",
+  "enable_auto_skip": "Enable auto skip",
+  "aniskip_button_timeout": "Button timeout",
+  "skip_opening": "Skip opening",
+  "skip_ending": "Skip ending"
 }
