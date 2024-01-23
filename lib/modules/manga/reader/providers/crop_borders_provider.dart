@@ -8,7 +8,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'crop_borders_provider.g.dart';
 
-int currentId = 0;
+int nextId = 0;
 
 @Riverpod(keepAlive: true)
 Future<Uint8List?> cropBorders(CropBordersRef ref,
@@ -32,6 +32,8 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
       return null;
     }
 
+    final currentId = nextId;
+    nextId++;
     final completer = Completer<Uint8List>();
     CropBordersInput(
       interactionId: currentId,
@@ -44,7 +46,6 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
     });
     final image = await completer.future;
     subscription.cancel();
-    currentId++;
 
     return image;
   }

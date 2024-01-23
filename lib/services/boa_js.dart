@@ -1,9 +1,11 @@
 import 'package:mangayomi/messages/boa_js.pb.dart';
 import 'dart:async';
 
-int currentId = 0;
+int nextId = 0;
 
 Future<String> evalJs(String script) async {
+  final currentId = nextId;
+  nextId++;
   final completer = Completer<String>();
   BoaInput(
     interactionId: currentId,
@@ -17,7 +19,6 @@ Future<String> evalJs(String script) async {
   });
   final response = await completer.future;
   subscription.cancel();
-  currentId++;
 
   return response;
 }
