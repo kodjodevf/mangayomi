@@ -19,9 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
-use crate::bridge::{RustOperation, RustRequest, RustResponse};
+use crate::messages;
 use image::{DynamicImage, GenericImageView, ImageOutputFormat, ImageResult, Rgba};
-use prost::Message;
 use std::io::Cursor;
 
 pub struct Point {
@@ -138,27 +137,19 @@ fn crop_image(image: Vec<u8>) -> DynamicImage {
     return sub_image;
 }
 
-pub async fn start_croping(rust_request: RustRequest) -> RustResponse {
-    use crate::messages::crop_borders::ReadRequest;
+pub async fn start_croping() {
+    use messages::crop_borders::*;
 
-    match rust_request.operation {
-        RustOperation::Create => RustResponse::default(),
-        RustOperation::Read => {
-            let message_bytes = rust_request.message.unwrap();
-            let request_message = ReadRequest::decode(message_bytes.as_slice()).unwrap();
-
-            let res = crop_image(request_message.image);
-            let mut image_data: Vec<u8> = Vec::new();
-            res.write_to(&mut Cursor::new(&mut image_data), ImageOutputFormat::Png)
-                .unwrap();
-
-            RustResponse {
-                successful: true,
-                message: None,
-                blob: Some(image_data),
-            }
+    let mut receiver = CropBordersInput::get_dart_signal_receiver();
+    while let Some(dart_signal) = receiver.recv().await {
+        let image = dart_signal.blob.unwrap();
+        let res = crop_image(image);
+        let mut image_data: Vec<u8> = Vec::new();
+        res.write_to(&mut Cursor::new(&mut image_data), ImageOutputFormat::Png)
+            .unwrap();
+        CropBordersOutput {
+            interaction_id: dart_signal.message.interaction_id,
         }
-        RustOperation::Delete => RustResponse::default(),
-        RustOperation::Update => RustResponse::default(),
+        .send_signal_to_dart(Some(image_data));
     }
 }
