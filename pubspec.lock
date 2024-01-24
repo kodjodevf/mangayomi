@@ -1115,10 +1115,10 @@ packages:
     dependency: "direct main"
     description:
       name: rinf
-      sha256: "1b86528233c20b2ec9c5f08d94a1cfae471cdb279aa22ea2afdfeca189dd890c"
+      sha256: "780cc8e6c5390957b26b17510baf51e59f9b8f2562c50cb073b9f40a17d439a1"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.1"
+    version: "6.1.0"
   riverpod:
     dependency: transitive
     description:

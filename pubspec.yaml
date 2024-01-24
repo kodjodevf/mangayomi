@@ -60,7 +60,7 @@ dependencies:
       ref: 0ab6b10ea660ead8e8e1694517aabe3582f25d5c
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
-  rinf: ^6.0.1
+  rinf: ^6.1.0
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.2
   window_manager: ^0.3.7
