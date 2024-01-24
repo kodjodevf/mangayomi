@@ -21,8 +21,8 @@ class MainActivity: FlutterActivity() {
         ).setMethodCallHandler { call, result ->
             when (call.method) {
                 "start" -> {
-                    val path = call.argument<String>("path")
-                    Libmtorrentserver.start(path)
+                    val config = call.argument<String>("config")
+                    Libmtorrentserver.start(config)
                     result.success("ok")
                 }
                 else -> {

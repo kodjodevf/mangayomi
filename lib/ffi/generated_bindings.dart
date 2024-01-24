@@ -864,10 +864,10 @@ class TorrentLibrary {
       __FCmulcrPtr.asFunction<_Fcomplex Function(_Fcomplex, double)>();
 
   void Start(
-    ffi.Pointer<ffi.Char> path,
+    ffi.Pointer<ffi.Char> mcfg,
   ) {
     return _Start(
-      path,
+      mcfg,
     );
   }
 

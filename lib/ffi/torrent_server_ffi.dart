@@ -10,7 +10,7 @@ import 'generated_bindings.dart';
 /// For very short-lived functions, it is fine to call them on the main isolate.
 /// They will block the Dart execution while running the native function, so
 /// only do this for native functions which are guaranteed to be short-lived.
-void start(String path) => _bindings.Start(path.toNativeUtf8().cast());
+void start(String mcfg) => _bindings.Start(mcfg.toNativeUtf8().cast());
 
 const String _libName = 'libmtorrentserver';
 

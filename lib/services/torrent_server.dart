@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/services.dart';
@@ -10,7 +11,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'torrent_server.g.dart';
 
 class MTorrentServer {
-  final _baseUrl = "http://127.0.0.1:8090";
+  final _baseUrl =
+      Platform.isLinux ? "http://127.0.0.1:8090" : "http://127.0.0.1:3535";
 
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
@@ -54,19 +56,24 @@ class MTorrentServer {
   }
 
   Future<(List<Video>, String?)> getTorrentPlaylist(String url) async {
-    final path = (await StorageProvider().getBtDirectory())!.path;
     final isRunning = await check();
     if (!isRunning) {
+      final address =
+          _baseUrl.replaceAll("http://", "").replaceAll("https://", "");
+      final path = (await StorageProvider().getBtDirectory())!.path;
+      final config = jsonEncode({"path": path, "address": address});
+
       if (Platform.isAndroid) {
         const channel =
             MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
-        channel.invokeMethod('start', {"path": path});
+        channel.invokeMethod('start', {"config": config});
       } else {
         await Isolate.run(() async {
-          libmtorrentserver_ffi.start(path);
+          libmtorrentserver_ffi.start(config);
         });
       }
     }
+
     bool isMagnet = !url.startsWith("http");
     String finalUrl = "";
     String? infohash;

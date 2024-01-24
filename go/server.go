@@ -23,10 +23,11 @@ import (
 var torrentCli *torrent.Client
 var torrentcliCfg *torrent.ClientConfig
 
-func Start(path string) {
+func Start(config *Config) {
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
-	torrentcliCfg.DataDir = filepath.Clean(path)
+
+	torrentcliCfg.DataDir = filepath.Clean(config.Path)
 
 	log.Printf("[INFO] Download directory is set to: %s\n", torrentcliCfg.DataDir)
 
@@ -69,8 +70,8 @@ func Start(path string) {
 		AllowCredentials: true,
 	})
 
-	log.Printf("[INFO] Listening on 127.0.0.1:8090")
-	log.Fatalln(http.ListenAndServe("127.0.0.1:8090", c.Handler(mux)))
+	log.Printf("[INFO] Listening on %s\n", config.Address)
+	log.Fatalln(http.ListenAndServe(config.Address, c.Handler(mux)))
 
 }
 
@@ -510,4 +511,9 @@ type torrentStatsFilesOnDisk struct {
 	StreamURL       string
 	BytesDownloaded int
 	FileSizeBytes   int
+}
+
+type Config struct {
+	Address string `json:"address"`
+	Path    string `json:"path"`
 }
