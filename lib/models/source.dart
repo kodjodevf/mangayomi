@@ -133,6 +133,8 @@ class Source {
         'additionalParams': additionalParams,
       };
 
+  bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";
+
   MSource toMSource() {
     return MSource(
         id: id,

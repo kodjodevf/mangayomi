@@ -92,43 +92,48 @@ const SourceSchema = CollectionSchema(
       name: r'isPinned',
       type: IsarType.bool,
     ),
-    r'lang': PropertySchema(
+    r'isTorrent': PropertySchema(
       id: 15,
+      name: r'isTorrent',
+      type: IsarType.bool,
+    ),
+    r'lang': PropertySchema(
+      id: 16,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'name',
       type: IsarType.string,
     ),
     r'sourceCode': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -267,14 +272,15 @@ void _sourceSerialize(
   writer.writeBool(offsets[12], object.isManga);
   writer.writeBool(offsets[13], object.isNsfw);
   writer.writeBool(offsets[14], object.isPinned);
-  writer.writeString(offsets[15], object.lang);
-  writer.writeBool(offsets[16], object.lastUsed);
-  writer.writeString(offsets[17], object.name);
-  writer.writeString(offsets[18], object.sourceCode);
-  writer.writeString(offsets[19], object.sourceCodeUrl);
-  writer.writeString(offsets[20], object.typeSource);
-  writer.writeString(offsets[21], object.version);
-  writer.writeString(offsets[22], object.versionLast);
+  writer.writeBool(offsets[15], object.isTorrent);
+  writer.writeString(offsets[16], object.lang);
+  writer.writeBool(offsets[17], object.lastUsed);
+  writer.writeString(offsets[18], object.name);
+  writer.writeString(offsets[19], object.sourceCode);
+  writer.writeString(offsets[20], object.sourceCodeUrl);
+  writer.writeString(offsets[21], object.typeSource);
+  writer.writeString(offsets[22], object.version);
+  writer.writeString(offsets[23], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -300,14 +306,14 @@ Source _sourceDeserialize(
     isManga: reader.readBoolOrNull(offsets[12]),
     isNsfw: reader.readBoolOrNull(offsets[13]),
     isPinned: reader.readBoolOrNull(offsets[14]),
-    lang: reader.readStringOrNull(offsets[15]),
-    lastUsed: reader.readBoolOrNull(offsets[16]),
-    name: reader.readStringOrNull(offsets[17]),
-    sourceCode: reader.readStringOrNull(offsets[18]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[19]),
-    typeSource: reader.readStringOrNull(offsets[20]),
-    version: reader.readStringOrNull(offsets[21]),
-    versionLast: reader.readStringOrNull(offsets[22]),
+    lang: reader.readStringOrNull(offsets[16]),
+    lastUsed: reader.readBoolOrNull(offsets[17]),
+    name: reader.readStringOrNull(offsets[18]),
+    sourceCode: reader.readStringOrNull(offsets[19]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[20]),
+    typeSource: reader.readStringOrNull(offsets[21]),
+    version: reader.readStringOrNull(offsets[22]),
+    versionLast: reader.readStringOrNull(offsets[23]),
   );
   return object;
 }
@@ -350,11 +356,11 @@ P _sourceDeserializeProp<P>(
     case 14:
       return (reader.readBoolOrNull(offset)) as P;
     case 15:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 16:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 17:
       return (reader.readStringOrNull(offset)) as P;
+    case 17:
+      return (reader.readBoolOrNull(offset)) as P;
     case 18:
       return (reader.readStringOrNull(offset)) as P;
     case 19:
@@ -364,6 +370,8 @@ P _sourceDeserializeProp<P>(
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
+      return (reader.readStringOrNull(offset)) as P;
+    case 23:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1886,6 +1894,16 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> isTorrentEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isTorrent',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> langIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3119,6 +3137,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsTorrent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isTorrent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsTorrentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isTorrent', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -3409,6 +3439,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsTorrent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isTorrent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsTorrentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isTorrent', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -3607,6 +3649,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByIsTorrent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isTorrent');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByLang(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3758,6 +3806,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, bool?, QQueryOperations> isPinnedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isPinned');
+    });
+  }
+
+  QueryBuilder<Source, bool, QQueryOperations> isTorrentProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isTorrent');
     });
   }
 
