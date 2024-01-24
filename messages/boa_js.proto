@@ -1,9 +1,14 @@
 syntax = "proto3";
 package boa_js;
 
-message ReadRequest {
-  string code_script = 1;
+// [RINF:DART-SIGNAL]
+message BoaInput {
+  int32 interaction_id = 1;
+  string code_script = 2;
 }
-message ReadResponse {
-  string response = 1;
+
+// [RINF:RUST-SIGNAL]
+message BoaOutput {
+  int32 interaction_id = 1;
+  string response = 2;
 }

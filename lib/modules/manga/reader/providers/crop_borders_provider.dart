@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mangayomi/messages/crop_borders.pb.dart' as crop_borders;
+import 'package:mangayomi/messages/crop_borders.pb.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
-import 'package:rinf/rinf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'crop_borders_provider.g.dart';
+
+int nextId = 0;
 
 @Riverpod(keepAlive: true)
 Future<Uint8List?> cropBorders(CropBordersRef ref,
@@ -29,15 +31,23 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
     if (imageBytes == null) {
       return null;
     }
-    final requestMessage = crop_borders.ReadRequest(
-      image: imageBytes,
-    );
-    final rustRequest = RustRequest(
-        resource: crop_borders.ID,
-        operation: RustOperation.Read,
-        message: requestMessage.writeToBuffer());
-    final rustResponse = await requestToRust(rustRequest);
-    return rustResponse.blob;
+
+    final currentId = nextId;
+    nextId++;
+    final completer = Completer<Uint8List>();
+    CropBordersInput(
+      interactionId: currentId,
+    ).sendSignalToRust(imageBytes);
+    final stream = CropBordersOutput.rustSignalStream;
+    final subscription = stream.listen((rustSignal) {
+      if (rustSignal.message.interactionId == currentId) {
+        completer.complete(rustSignal.blob!);
+      }
+    });
+    final image = await completer.future;
+    subscription.cancel();
+
+    return image;
   }
   return null;
 }

@@ -27,11 +27,6 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Java toolchain (Only Android target)
         uses: actions/setup-java@v3
@@ -92,11 +87,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install the CLI tool
         run: cargo install rinf
         
@@ -147,11 +137,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install the CLI tool
         run: cargo install rinf
         
@@ -200,11 +185,6 @@ jobs:
 
   #     - name: Setup Rust toolchain
   #       uses: dtolnay/rust-toolchain@stable
-
-  #     - name: Setup Protobuf compiler
-  #       uses: arduino/setup-protoc@v2
-  #       with:
-  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   #     - name: Install the CLI tool
   #       run: cargo install rinf
@@ -261,11 +241,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install the CLI tool
         run: cargo install rinf
         
@@ -316,11 +291,6 @@ jobs:
           
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Setup Protobuf compiler
-        uses: arduino/setup-protoc@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install the CLI tool
         run: cargo install rinf

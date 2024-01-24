@@ -17,7 +17,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:rinf/rinf.dart';
+import 'package:mangayomi/messages/generated.dart';
 import 'package:window_manager/window_manager.dart';
 
 // Global instance of the Isar database.
@@ -35,7 +35,7 @@ class MyHttpoverrides extends HttpOverrides {
 
 /// Entry point of the application.
 void main(List<String> args) async {
-  await Rinf.ensureInitialized();
+  await Rinf.initialize();
   // Override the default HTTP client.
   HttpOverrides.global = MyHttpoverrides();
   // If running on desktop platforms and web view title bar widget is active, exit.

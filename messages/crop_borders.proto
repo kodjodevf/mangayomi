@@ -1,6 +1,8 @@
 syntax = "proto3";
 package crop_borders;
 
-message ReadRequest {
-  bytes image = 1;
-}
+// [RINF:DART-SIGNAL]
+message CropBordersInput { int32 interaction_id = 1; }
+
+// [RINF:RUST-SIGNAL]
+message CropBordersOutput { int32 interaction_id = 1; }
