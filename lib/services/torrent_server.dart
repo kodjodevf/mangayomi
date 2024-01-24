@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'torrent_server.g.dart';
 
 class MTorrentServer {
-  final _baseUrl = "http://127.0.0.1:3535";
+  final _baseUrl = "http://127.0.0.1:8090";
 
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
