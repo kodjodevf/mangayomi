@@ -69,8 +69,8 @@ func Start(path string) {
 		AllowCredentials: true,
 	})
 
-	log.Printf("[INFO] Listening on 127.0.0.1:3535")
-	log.Fatalln(http.ListenAndServe("127.0.0.1:3535", c.Handler(mux)))
+	log.Printf("[INFO] Listening on 127.0.0.1:8090")
+	log.Fatalln(http.ListenAndServe("127.0.0.1:8090", c.Handler(mux)))
 
 }
 
