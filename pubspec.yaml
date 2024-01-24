@@ -64,6 +64,8 @@ dependencies:
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.2
   window_manager: ^0.3.7
+  ffi: ^2.1.0
+  ffigen: ^11.0.0
   
 
 dependency_overrides:
