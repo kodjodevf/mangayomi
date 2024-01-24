@@ -1212,9 +1212,9 @@ dependencies = [
 
 [[package]]
 name = "rinf"
-version = "6.0.1"
+version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "394a11182639141467cd388456a9fcb091ea0db5cfb3e8297eda242dfaa23860"
+checksum = "90aa69e1a7ff87d0aba9d172c3cfe3f87dd40b4c1cf9bec2b4fc79e9339de1c1"
 dependencies = [
  "backtrace",
  "home",
