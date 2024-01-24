@@ -73,6 +73,11 @@ android {
            signingConfig signingConfigs.release
        }
    }
+   repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 flutter {
@@ -81,4 +86,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation(name: 'libmtorrentserver', ext: 'aar')
 }
