@@ -17,7 +17,7 @@ const String _libName = 'libmtorrentserver';
 /// The dynamic library in which the symbols for [NativeAddBindings] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS) {
-    return DynamicLibrary.open('$_libName.framework/$_libName');
+    return DynamicLibrary.open('$_libName.dylib');
   }
   if (Platform.isLinux) {
     return DynamicLibrary.open('$_libName.so');
