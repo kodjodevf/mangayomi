@@ -6,7 +6,7 @@ part of 'get_video_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'924c2961d148f9ebb0952239c0528d5269a4526a';
+String _$getVideoListHash() => r'd1e21cd01a2d2eda2050c199f255eb0502d67fad';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,8 @@ class _SystemHash {
 const getVideoListProvider = GetVideoListFamily();
 
 /// See also [getVideoList].
-class GetVideoListFamily extends Family<AsyncValue<(List<Video>, bool)>> {
+class GetVideoListFamily
+    extends Family<AsyncValue<(List<Video>, bool, String?)>> {
   /// See also [getVideoList].
   const GetVideoListFamily();
 
@@ -73,7 +74,7 @@ class GetVideoListFamily extends Family<AsyncValue<(List<Video>, bool)>> {
 
 /// See also [getVideoList].
 class GetVideoListProvider
-    extends AutoDisposeFutureProvider<(List<Video>, bool)> {
+    extends AutoDisposeFutureProvider<(List<Video>, bool, String?)> {
   /// See also [getVideoList].
   GetVideoListProvider({
     required Chapter episode,
@@ -108,7 +109,8 @@ class GetVideoListProvider
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool)> Function(GetVideoListRef provider) create,
+    FutureOr<(List<Video>, bool, String?)> Function(GetVideoListRef provider)
+        create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -125,7 +127,8 @@ class GetVideoListProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<(List<Video>, bool)> createElement() {
+  AutoDisposeFutureProviderElement<(List<Video>, bool, String?)>
+      createElement() {
     return _GetVideoListProviderElement(this);
   }
 
@@ -143,13 +146,14 @@ class GetVideoListProvider
   }
 }
 
-mixin GetVideoListRef on AutoDisposeFutureProviderRef<(List<Video>, bool)> {
+mixin GetVideoListRef
+    on AutoDisposeFutureProviderRef<(List<Video>, bool, String?)> {
   /// The parameter `episode` of this provider.
   Chapter get episode;
 }
 
 class _GetVideoListProviderElement
-    extends AutoDisposeFutureProviderElement<(List<Video>, bool)>
+    extends AutoDisposeFutureProviderElement<(List<Video>, bool, String?)>
     with GetVideoListRef {
   _GetVideoListProviderElement(super.provider);
 

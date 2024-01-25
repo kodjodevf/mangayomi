@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -33,6 +34,13 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 }
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
+  String? _infoHash;
+  @override
+  void dispose() {
+    MTorrentServer().removeTorrent(_infoHash);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final serversData = ref.watch(getVideoListProvider(
@@ -41,6 +49,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
+        _infoHash = data.$3;
         if (data.$1.isEmpty &&
             !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(

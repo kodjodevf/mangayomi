@@ -45,6 +45,13 @@ class StorageProvider {
     return directory;
   }
 
+  Future<Directory?> getBtDirectory() async {
+    final gefaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(gefaultDirectory!.path, 'torrents');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
+  }
+
   Future<Directory?> getDirectory() async {
     Directory? directory;
     String path = isar.settings.getSync(227)!.downloadLocation ?? "";
