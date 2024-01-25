@@ -63,7 +63,7 @@ class MTorrentServer {
       final path = (await StorageProvider().getBtDirectory())!.path;
       final config = jsonEncode({"path": path, "address": address});
 
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid || Platform.isIOS) {
         const channel =
             MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
         channel.invokeMethod('start', {"config": config});
