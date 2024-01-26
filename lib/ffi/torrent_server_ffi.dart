@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -10,7 +11,16 @@ import 'generated_bindings.dart';
 /// For very short-lived functions, it is fine to call them on the main isolate.
 /// They will block the Dart execution while running the native function, so
 /// only do this for native functions which are guaranteed to be short-lived.
-void start(String mcfg) => _bindings.Start(mcfg.toNativeUtf8().cast());
+Future<int> start(String mcfg) async {
+  var completer = Completer<int>();
+  var res = _bindings.Start(mcfg.toNativeUtf8().cast());
+  if (res.r1 != nullptr) {
+    completer.completeError(Exception(res.r1.cast<Utf8>().toDartString()));
+  } else {
+    completer.complete(res.r0);
+  }
+  return completer.future;
+}
 
 const String _libName = 'libmtorrentserver';
 

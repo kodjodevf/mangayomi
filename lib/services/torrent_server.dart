@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/services.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -11,9 +13,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'torrent_server.g.dart';
 
 class MTorrentServer {
-  final _baseUrl =
-      Platform.isLinux ? "http://127.0.0.1:8090" : "http://127.0.0.1:3535";
-
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
     try {
@@ -58,22 +57,20 @@ class MTorrentServer {
   Future<(List<Video>, String?)> getTorrentPlaylist(String url) async {
     final isRunning = await check();
     if (!isRunning) {
-      final address =
-          _baseUrl.replaceAll("http://", "").replaceAll("https://", "");
       final path = (await StorageProvider().getBtDirectory())!.path;
-      final config = jsonEncode({"path": path, "address": address});
-
+      final config = jsonEncode({"path": path, "address": "127.0.0.1:0"});
+      int port = 0;
       if (Platform.isAndroid || Platform.isIOS) {
         const channel =
             MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
-        channel.invokeMethod('start', {"config": config});
+        port = await channel.invokeMethod('start', {"config": config});
       } else {
-        await Isolate.run(() async {
-          libmtorrentserver_ffi.start(config);
+        port = await Isolate.run(() async {
+          return libmtorrentserver_ffi.start(config);
         });
       }
+      _setBtServerPort(port);
     }
-
     bool isMagnet = !url.startsWith("http");
     String finalUrl = "";
     String? infohash;
@@ -97,6 +94,18 @@ class MTorrentServer {
 
     return (videoList, infohash);
   }
+}
+
+String get _baseUrl {
+  final settings = isar.settings.getSync(227);
+  final port = settings!.btServerPort ?? 0;
+  final address = settings.btServerAddress ?? "127.0.0.1";
+  return "http://$address:$port";
+}
+
+void _setBtServerPort(int newPort) {
+  isar.writeTxnSync(() => isar.settings
+      .putSync(isar.settings.getSync(227)!..btServerPort = newPort));
 }
 
 @riverpod

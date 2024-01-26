@@ -16,7 +16,13 @@ import Libmtorrentserver
                   case "start":
                       let args = call.arguments as? Dictionary<String, Any>
                       let config = args?["config"] as? String
-                      LibmtorrentserverStart(config)
+                      var error: NSError?
+                      let mPort = UnsafeMutablePointer<Int>.allocate(capacity: MemoryLayout<Int>.stride)
+                      if LibmtorrentserverStart(config, mPort, &error){
+                          result(mPort.pointee)
+                      }else{
+                          result(FlutterError(code: "ERROR", message: error.debugDescription, details: nil))
+                      }
                   default:
                       result(FlutterMethodNotImplemented)
                   }

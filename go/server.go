@@ -23,7 +23,7 @@ import (
 var torrentCli *torrent.Client
 var torrentcliCfg *torrent.ClientConfig
 
-func Start(config *Config) {
+func Start(config *Config) (int, error) {
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
 
@@ -70,9 +70,21 @@ func Start(config *Config) {
 		AllowCredentials: true,
 	})
 
-	log.Printf("[INFO] Listening on %s\n", config.Address)
-	log.Fatalln(http.ListenAndServe(config.Address, c.Handler(mux)))
+	listener, err := net.Listen("tcp", config.Address)
+	if err != nil {
+		return 0, err
+	}
+	addr := listener.Addr().(*net.TCPAddr)
 
+	log.Printf("[INFO] Listening on %s\n", addr.AddrPort())
+
+	go func() {
+		if err := http.Serve(listener, c.Handler(mux)); err != nil && err != http.ErrServerClosed {
+			panic(err)
+		}
+	}()
+
+	return addr.Port, nil
 }
 
 func safenDisplayPath(displayPath string) string {
