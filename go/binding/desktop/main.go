@@ -1,17 +1,20 @@
 package main
 
 import (
+	"C"
 	"encoding/json"
 	"server"
 )
 
-import "C"
-
 //export Start
-func Start(mcfg *C.char) {
+func Start(mcfg *C.char) (int, *C.char) {
 	var config server.Config
 	json.Unmarshal([]byte(C.GoString(mcfg)), &config)
-	server.Start(&config)
+	port, err := server.Start(&config)
+	if err != nil {
+		return 0, C.CString(err.Error())
+	}
+	return port, nil
 }
 
 func main() {}

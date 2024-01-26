@@ -11,19 +11,21 @@ class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        val taskQueue =
-            flutterEngine.dartExecutor.binaryMessenger.makeBackgroundTaskQueue()
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             "com.kodjodevf.mangayomi.libmtorrentserver",
             StandardMethodCodec.INSTANCE,
-            taskQueue
+            flutterEngine.dartExecutor.binaryMessenger.makeBackgroundTaskQueue()
         ).setMethodCallHandler { call, result ->
             when (call.method) {
                 "start" -> {
                     val config = call.argument<String>("config")
-                    Libmtorrentserver.start(config)
-                    result.success("ok")
+                    try {
+                        val port = Libmtorrentserver.start(config)
+                        result.success(port)
+                    } catch (e: Exception) {
+                        result.error("ERROR", e.message, null)
+                    }
                 }
                 else -> {
                     result.notImplemented()

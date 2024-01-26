@@ -863,7 +863,7 @@ class TorrentLibrary {
   late final __FCmulcr =
       __FCmulcrPtr.asFunction<_Fcomplex Function(_Fcomplex, double)>();
 
-  void Start(
+  Start_return Start(
     ffi.Pointer<ffi.Char> mcfg,
   ) {
     return _Start(
@@ -872,10 +872,10 @@ class TorrentLibrary {
   }
 
   late final _StartPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
+      _lookup<ffi.NativeFunction<Start_return Function(ffi.Pointer<ffi.Char>)>>(
           'Start');
   late final _Start =
-      _StartPtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
+      _StartPtr.asFunction<Start_return Function(ffi.Pointer<ffi.Char>)>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;
@@ -958,6 +958,14 @@ final class GoSlice extends ffi.Struct {
 typedef GoInt = GoInt64;
 typedef GoInt64 = ffi.LongLong;
 typedef DartGoInt64 = int;
+
+/// Return type for Start
+final class Start_return extends ffi.Struct {
+  @GoInt()
+  external int r0;
+
+  external ffi.Pointer<ffi.Char> r1;
+}
 
 const int _VCRT_COMPILER_PREPROCESSOR = 1;
 

@@ -159,6 +159,10 @@ class Settings {
 
   int? aniSkipTimeoutLength;
 
+  String? btServerAddress;
+
+  int? btServerPort;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -228,7 +232,9 @@ class Settings {
       this.updateProgressAfterReading = true,
       this.enableAniSkip,
       this.enableAutoSkip,
-      this.aniSkipTimeoutLength});
+      this.aniSkipTimeoutLength,
+      this.btServerAddress = "127.0.0.1",
+      this.btServerPort});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -354,6 +360,8 @@ class Settings {
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
+    btServerAddress = json['btServerAddress'];
+    btServerPort = json['btServerPort'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -447,7 +455,9 @@ class Settings {
         'updateProgressAfterReading': updateProgressAfterReading,
         'enableAniSkip': enableAniSkip,
         'enableAutoSkip': enableAutoSkip,
-        'aniSkipTimeoutLength': aniSkipTimeoutLength
+        'aniSkipTimeoutLength': aniSkipTimeoutLength,
+        'btServerAddress': btServerAddress,
+        'btServerPort': btServerPort
       };
 }
 

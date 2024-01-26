@@ -11,6 +11,6 @@
 #include "Universe.objc.h"
 
 
-FOUNDATION_EXPORT void LibmtorrentserverStart(NSString* _Nullable mcfg);
+FOUNDATION_EXPORT BOOL LibmtorrentserverStart(NSString* _Nullable mcfg, long* _Nullable ret0_, NSError* _Nullable* _Nullable error);
 
 #endif

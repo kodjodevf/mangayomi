@@ -8,9 +8,8 @@ import (
 )
 
 //export Start
-func Start(mcfg string) {
+func Start(mcfg string) (int, error) {
 	var config server.Config
 	json.Unmarshal([]byte(mcfg), &config)
-	server.Start(&config)
-
+	return server.Start(&config)
 }
