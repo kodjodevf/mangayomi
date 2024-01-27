@@ -40,7 +40,7 @@ Future<void> addCookie(String sourceId, String url, String ua) async {
       flutter_inappwebview.CookieManager.instance();
 
   final cookie = (await cookieManager.getCookie(
-      url: Uri.parse(url), name: "cf_clearance"));
+      url: flutter_inappwebview.WebUri(url), name: "cf_clearance"));
   if (cookie != null) {
     final newCookie = "${cookie.name}=${cookie.value}";
 

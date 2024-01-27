@@ -183,7 +183,7 @@ class MBridge {
           headlessWebView!.dispose();
         },
         initialUrlRequest: URLRequest(
-          url: Uri.parse(url),
+          url: WebUri(url),
         ),
       );
       headlessWebView.run();

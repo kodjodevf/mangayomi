@@ -992,56 +992,65 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   }
 
   Widget _topButtonBar(BuildContext context) {
-    return Row(
-      children: [
-        BackButton(
-          color: Colors.white,
-          onPressed: () async {
-            if (_isDesktop) {
-              final isFullScreen = await windowManager.isFullScreen();
-              if (isFullScreen) {
-                setFullScreen(value: false);
-              } else {
-                if (mounted) {
-                  Navigator.pop(context);
-                }
-              }
-            } else {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
-              if (mounted) {
-                Navigator.pop(context);
-              }
-            }
-          },
-        ),
-        Flexible(
-          child: ListTile(
-            dense: true,
-            title: SizedBox(
-              width: context.mediaWidth(0.8),
-              child: Text(
-                widget.episode.manga.value!.name!,
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
+    return ValueListenableBuilder<bool>(
+        valueListenable: _enterFullScreen,
+        builder: (context, fullScreen, _) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: !_isDesktop && !fullScreen
+                    ? MediaQuery.of(context).padding.top
+                    : 0),
+            child: Row(
+              children: [
+                BackButton(
+                  color: Colors.white,
+                  onPressed: () async {
+                    if (_isDesktop) {
+                      if (fullScreen) {
+                        setFullScreen(value: false);
+                      } else {
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    } else {
+                      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+                          overlays: SystemUiOverlay.values);
+                      if (mounted) {
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                ),
+                Flexible(
+                  child: ListTile(
+                    dense: true,
+                    title: SizedBox(
+                      width: context.mediaWidth(0.8),
+                      child: Text(
+                        widget.episode.manga.value!.name!,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    subtitle: SizedBox(
+                      width: context.mediaWidth(0.8),
+                      child: Text(
+                        widget.episode.name!,
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white.withOpacity(0.7)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            subtitle: SizedBox(
-              width: context.mediaWidth(0.8),
-              child: Text(
-                widget.episode.name!,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white.withOpacity(0.7)),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+          );
+        });
   }
 
   void _resize(BoxFit fit) async {

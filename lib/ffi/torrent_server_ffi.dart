@@ -24,7 +24,6 @@ Future<int> start(String mcfg) async {
 
 const String _libName = 'libmtorrentserver';
 
-/// The dynamic library in which the symbols for [NativeAddBindings] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS) {
     return DynamicLibrary.open('$_libName.dylib');

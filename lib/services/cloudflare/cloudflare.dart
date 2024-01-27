@@ -10,7 +10,7 @@ Future<String> cloudflareBypass(
   String ua = "";
   bool isOk = false;
   String? html;
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  if (Platform.isWindows || Platform.isLinux) {
     final webview = await WebviewWindow.create(
       configuration: CreateConfiguration(
         windowHeight: 500,
@@ -56,7 +56,7 @@ Future<String> cloudflareBypass(
         isOk = true;
         headlessWebView!.dispose();
       },
-      initialUrlRequest: URLRequest(url: Uri.parse(url)),
+      initialUrlRequest: URLRequest(url: WebUri(url)),
     );
 
     headlessWebView.run();
