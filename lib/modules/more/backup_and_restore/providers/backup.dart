@@ -15,6 +15,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 part 'backup.g.dart';
@@ -113,8 +114,9 @@ void doBackUp(DoBackUpRef ref,
         .toList();
     datas.addAll({"extensions_preferences": resSourePref});
   }
+  final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =
-      'mangayomi_${DateTime.now().toString().replaceAll(' ','_').replaceAll('-', '_')}';
+      'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
   final backupFilePath = '$path/$name.backup.db';
   final file = File(backupFilePath);
 
@@ -144,7 +146,7 @@ void doBackUp(DoBackUpRef ref,
                     Share.shareXFiles([XFile('$path/$name.backup')],
                         text: '$name.backup');
                   },
-                  child: const Text('Share')),
+                  child: Text(context.l10n.share)),
             ),
         enableSlideOff: true,
         onlyOne: true,
