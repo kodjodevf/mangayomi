@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
@@ -825,6 +826,8 @@ class _MangaChapterPageGalleryState
   }
 
   void _initCurrentIndex() async {
+    await Rinf.finalize();
+    await Rinf.initialize();
     final readerMode = _readerController.getReaderMode();
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();

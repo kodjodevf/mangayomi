@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip, çalışması için animenin MAL veya Anilist ile takip edilmesini gerektirir.",
     "enable_aniskip": "AniSkip'i Etkinleştir",
     "enable_auto_skip": "Otomatik Atla'yı Etkinleştir",
-    "aniskip_button_timeout": "Düğme Zaman Aşımı"
+    "aniskip_button_timeout": "Düğme Zaman Aşımı",
+    "fullscreen": "Tam ekran",
+    "update_library": "Kütüphaneyi güncelle",
+    "updating_library": "Kütüphaneyi güncelleme"
 }

@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip erfordert, dass der Anime mit MAL oder Anilist verfolgt wird, um zu funktionieren.",
     "enable_aniskip": "AniSkip aktivieren",
     "enable_auto_skip": "Automatisches Überspringen aktivieren",
-    "aniskip_button_timeout": "Timeout für Taste"
+    "aniskip_button_timeout": "Timeout für Taste",
+    "fullscreen": "Vollbild",
+    "update_library": "Bibliothek aktualisieren",
+    "updating_library": "Bibliothek wird aktualisiert"
 }

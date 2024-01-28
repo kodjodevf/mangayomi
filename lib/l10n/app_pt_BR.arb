@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip requer que o anime seja rastreado com MAL ou Anilist para funcionar.",
     "enable_aniskip": "Habilitar AniSkip",
     "enable_auto_skip": "Habilitar auto skip",
-    "aniskip_button_timeout": "Timeout do botão"
+    "aniskip_button_timeout": "Timeout do botão",
+    "fullscreen": "Tela cheia",
+    "update_library": "Atualizar biblioteca",
+    "updating_library": "Atualizando biblioteca"
 }

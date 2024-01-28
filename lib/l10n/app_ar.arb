@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip يتطلب تتبع الأنمي باستخدام MAL أو Anilist للعمل.",
     "enable_aniskip": "تمكين AniSkip",
     "enable_auto_skip": "تمكين التخطي التلقائي",
-    "aniskip_button_timeout": "مهلة زر"
+    "aniskip_button_timeout": "مهلة زر",
+    "fullscreen": "شاشة كاملة",
+    "update_library": "تحديث المكتبة",
+    "updating_library": "جاري تحديث المكتبة"
 }

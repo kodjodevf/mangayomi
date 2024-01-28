@@ -443,7 +443,7 @@ class MBridge {
       }
     } catch (e) {
       log("Http error: $e");
-      botToast(e.toString());
+      // botToast(e.toString());
       return "error";
     }
   }
@@ -636,7 +636,7 @@ class MBridge {
           } catch (_) {}
         }
       }
-      botToast(e.toString());
+      // botToast(e.toString());
       throw Exception(e);
     }
   }
@@ -766,12 +766,17 @@ final List<String> _dateFormats = [
   "MMM dd,yyyy"
 ];
 
-void botToast(String title) {
+void botToast(String title,
+    {int second = 10,
+    double? fontSize,
+    double alignX = 0,
+    double alignY = 0.99}) {
   BotToast.showSimpleNotification(
+      titleStyle: TextStyle(fontSize: fontSize),
       onlyOne: true,
       dismissDirections: [DismissDirection.horizontal, DismissDirection.down],
-      align: const Alignment(0, 0.99),
-      duration: const Duration(seconds: 10),
+      align: Alignment(alignX, alignY),
+      duration: Duration(seconds: second),
       title: title);
 }
 

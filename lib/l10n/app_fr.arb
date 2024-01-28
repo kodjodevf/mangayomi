@@ -282,5 +282,7 @@
   "enable_auto_skip": "Activer le saut automatique",
   "aniskip_button_timeout": "Délai du bouton",
   "skip_opening": "Passer l'opening",
-  "skip_ending": "Passer l'ending"
+  "skip_ending": "Passer l'ending",
+  "update_library": "Mettre à jour la bibliothèque",
+  "updating_library": "Mise à jour de la bibliothèque"
 }

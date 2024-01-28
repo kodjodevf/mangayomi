@@ -282,5 +282,8 @@
     "enable_auto_skip": "启用自动跳过",
     "aniskip_button_timeout": "按钮超时",
     "skip_opening": "跳过开头",
-    "skip_ending": "跳过结尾"
+    "skip_ending": "跳过结尾",
+    "fullscreen": "全屏",
+    "update_library": "更新库",
+    "updating_library": "正在更新库"
 }

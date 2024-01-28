@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
+import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/eval/runtime/runtime.dart';
@@ -35,14 +36,15 @@ Future<(List<Video>, bool, String?)> getVideoList(
         await MTorrentServer().getTorrentPlaylist(episode.url!);
     return (videos, false, infohash);
   }
+  await Rinf.finalize();
+  await Rinf.initialize();
+   final bytecode =
+        compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
-  final bytecode =
-      compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
+    final runtime = runtimeEval(bytecode);
 
-  final runtime = runtimeEval(bytecode);
-
-  var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
-  final dd =
-      (await (res as MProvider).getVideoList(source.toMSource(), episode.url!));
-  return (dd, false, null);
+    var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
+    final dd = (await (res as MProvider)
+        .getVideoList(source.toMSource(), episode.url!));
+    return (dd, false, null);
 }

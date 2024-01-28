@@ -283,5 +283,7 @@
   "aniskip_button_timeout": "Button timeout",
   "skip_opening": "Skip opening",
   "skip_ending": "Skip ending",
-  "fullscreen": "Fullscreen"
+  "fullscreen": "Fullscreen",
+  "update_library": "Update library",
+  "updating_library": "Updating library"
 }

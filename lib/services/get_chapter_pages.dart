@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
@@ -60,6 +61,8 @@ Future<GetChapterPagesModel> getChapterPages(
         isarPageUrls.first.urls!.isNotEmpty) {
       pageUrls = isarPageUrls.first.urls!;
     } else {
+      await Rinf.finalize();
+      await Rinf.initialize();
       final bytecode =
           compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 

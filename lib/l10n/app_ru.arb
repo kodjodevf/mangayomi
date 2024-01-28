@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip требует отслеживания аниме с использованием MAL или Anilist для работы.",
     "enable_aniskip": "Включить AniSkip",
     "enable_auto_skip": "Включить автоматическое пропускание",
-    "aniskip_button_timeout": "Тайм-аут кнопки"
+    "aniskip_button_timeout": "Тайм-аут кнопки",
+    "fullscreen": "Полноэкранный режим",
+    "update_library": "Обновить библиотеку",
+    "updating_library": "Обновление библиотеки"
 }

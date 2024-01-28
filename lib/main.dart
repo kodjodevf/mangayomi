@@ -61,7 +61,7 @@ void main(List<String> args) async {
 }
 
 /// Initialize date formatting based on available locales.
-_iniDateFormatting() {
+iniDateFormatting() {
   initializeDateFormatting();
   final supportedLocales = DateFormat.allLocalesWithSymbols();
   for (var locale in supportedLocales) {
@@ -82,7 +82,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     // Initialize date formatting upon app start.
-    _iniDateFormatting();
+    iniDateFormatting();
     super.initState();
   }
 

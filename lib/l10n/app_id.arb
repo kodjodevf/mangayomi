@@ -280,5 +280,8 @@
     "aniskip_requires_info": "AniSkip memerlukan informasi anime dilacak dengan MAL atau Anilist untuk berfungsi.",
     "enable_aniskip": "Aktifkan AniSkip",
     "enable_auto_skip": "Aktifkan pengabaian otomatis",
-    "aniskip_button_timeout": "Timeout tombol"
+    "aniskip_button_timeout": "Timeout tombol",
+    "fullscreen": "Layar Penuh",
+    "update_library": "Perbarui perpustakaan",
+    "updating_library": "Memperbarui perpustakaan"
 }

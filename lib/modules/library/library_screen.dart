@@ -1,11 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -14,6 +16,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -45,6 +48,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   final _textEditingController = TextEditingController();
   late TabController tabBarController;
   int _tabIndex = 0;
+
+  Future<void> _updateLibrary(List<Manga> mangaList) async {
+    botToast(context.l10n.updating_library,
+        fontSize: 13, second: 1600, alignY: 0.8);
+    int numbers = 0;
+    try {
+      for (var manga in mangaList) {
+        ref
+            .watch(updateMangaDetailProvider(mangaId: manga.id, isInit: false)
+                .future)
+            .then((value) {
+          numbers++;
+        });
+      }
+      await Future.doWhile(() async {
+        await Future.delayed(const Duration(seconds: 1));
+        if (mangaList.length == numbers) {
+          return false;
+        }
+        return true;
+      });
+      BotToast.cleanAll();
+    } catch (e) {
+      BotToast.cleanAll();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final settingsStream = ref.watch(getSettingsStreamProvider);
@@ -649,25 +679,31 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             sortType: sortType!);
         if (entries.isNotEmpty) {
           final entriesManga = reverse ? entries.reversed.toList() : entries;
-          return displayType == DisplayType.list
-              ? LibraryListViewWidget(
-                  entriesManga: entriesManga,
-                  continueReaderBtn: continueReaderBtn,
-                  downloadedChapter: downloadedChapter,
-                  language: language,
-                  mangaIdsList: mangaIdsList,
-                  localSource: localSource,
-                )
-              : LibraryGridViewWidget(
-                  entriesManga: entriesManga,
-                  isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
-                  isComfortableGrid: displayType == DisplayType.comfortableGrid,
-                  continueReaderBtn: continueReaderBtn,
-                  downloadedChapter: downloadedChapter,
-                  language: language,
-                  mangaIdsList: mangaIdsList,
-                  localSource: localSource,
-                );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await _updateLibrary(data);
+            },
+            child: displayType == DisplayType.list
+                ? LibraryListViewWidget(
+                    entriesManga: entriesManga,
+                    continueReaderBtn: continueReaderBtn,
+                    downloadedChapter: downloadedChapter,
+                    language: language,
+                    mangaIdsList: mangaIdsList,
+                    localSource: localSource,
+                  )
+                : LibraryGridViewWidget(
+                    entriesManga: entriesManga,
+                    isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
+                    isComfortableGrid:
+                        displayType == DisplayType.comfortableGrid,
+                    continueReaderBtn: continueReaderBtn,
+                    downloadedChapter: downloadedChapter,
+                    language: language,
+                    mangaIdsList: mangaIdsList,
+                    localSource: localSource,
+                  ),
+          );
         }
         return Center(child: Text(l10n.empty_library));
       },
@@ -716,25 +752,31 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             sortType: sortType!);
         if (entries.isNotEmpty) {
           final entriesManga = reverse ? entries.reversed.toList() : entries;
-          return displayType == DisplayType.list
-              ? LibraryListViewWidget(
-                  entriesManga: entriesManga,
-                  continueReaderBtn: continueReaderBtn,
-                  downloadedChapter: downloadedChapter,
-                  language: language,
-                  mangaIdsList: mangaIdsList,
-                  localSource: localSource,
-                )
-              : LibraryGridViewWidget(
-                  entriesManga: entriesManga,
-                  isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
-                  isComfortableGrid: displayType == DisplayType.comfortableGrid,
-                  continueReaderBtn: continueReaderBtn,
-                  downloadedChapter: downloadedChapter,
-                  language: language,
-                  mangaIdsList: mangaIdsList,
-                  localSource: localSource,
-                );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await _updateLibrary(data);
+            },
+            child: displayType == DisplayType.list
+                ? LibraryListViewWidget(
+                    entriesManga: entriesManga,
+                    continueReaderBtn: continueReaderBtn,
+                    downloadedChapter: downloadedChapter,
+                    language: language,
+                    mangaIdsList: mangaIdsList,
+                    localSource: localSource,
+                  )
+                : LibraryGridViewWidget(
+                    entriesManga: entriesManga,
+                    isCoverOnlyGrid: !(displayType == DisplayType.compactGrid),
+                    isComfortableGrid:
+                        displayType == DisplayType.comfortableGrid,
+                    continueReaderBtn: continueReaderBtn,
+                    downloadedChapter: downloadedChapter,
+                    language: language,
+                    mangaIdsList: mangaIdsList,
+                    localSource: localSource,
+                  ),
+          );
         }
         return Center(child: Text(l10n.empty_library));
       },
@@ -1769,11 +1811,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   PopupMenuButton(itemBuilder: (context) {
                     return [
                       PopupMenuItem<int>(
-                          value: 0, child: Text(l10n.open_random_entry)),
-                      PopupMenuItem<int>(value: 1, child: Text(l10n.import)),
+                        value: 0,
+                        child: Text(context.l10n.update_library),
+                      ),
+                      PopupMenuItem<int>(
+                          value: 1, child: Text(l10n.open_random_entry)),
+                      PopupMenuItem<int>(value: 2, child: Text(l10n.import)),
                     ];
                   }, onSelected: (value) {
                     if (value == 0) {
+                      manga.whenData((value) {
+                        _updateLibrary(value);
+                      });
+                    } else if (value == 1) {
                       manga.whenData((value) {
                         var randomManga = (value..shuffle()).first;
                         pushToMangaReaderDetail(
