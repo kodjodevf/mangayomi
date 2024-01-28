@@ -52,6 +52,13 @@ class StorageProvider {
     return Directory(dbDir);
   }
 
+  Future<Directory?> getIosBackupDirectory() async {
+    final gefaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(gefaultDirectory!.path, 'backup');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
+  }
+
   Future<Directory?> getDirectory() async {
     Directory? directory;
     String path = isar.settings.getSync(227)!.downloadLocation ?? "";

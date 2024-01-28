@@ -15,7 +15,6 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 part 'backup.g.dart';
@@ -115,7 +114,7 @@ void doBackUp(DoBackUpRef ref,
     datas.addAll({"extensions_preferences": resSourePref});
   }
   final name =
-      'mangayomi_${DateTime.now().toString().substringBefore(' ').replaceAll('-', '_')}';
+      'mangayomi_${DateTime.now().toString().replaceAll(' ','_').replaceAll('-', '_')}';
   final backupFilePath = '$path/$name.backup.db';
   final file = File(backupFilePath);
 

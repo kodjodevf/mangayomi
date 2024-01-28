@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/restore.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class BackupAndRestore extends ConsumerWidget {
@@ -77,8 +79,15 @@ class BackupAndRestore extends ConsumerWidget {
                                       )),
                                   TextButton(
                                       onPressed: () async {
-                                        final result = await FilePicker.platform
-                                            .getDirectoryPath();
+                                        String? result;
+                                        if (Platform.isIOS) {
+                                          result = (await StorageProvider()
+                                                  .getIosBackupDirectory())!
+                                              .path;
+                                        } else {
+                                          result = await FilePicker.platform
+                                              .getDirectoryPath();
+                                        }
 
                                         if (result != null && context.mounted) {
                                           ref.watch(doBackUpProvider(
@@ -248,25 +257,25 @@ class BackupAndRestore extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            // if (!isIOS)
-            ListTile(
-              onTap: () async {
-                String? result = await FilePicker.platform.getDirectoryPath();
+            if (!Platform.isIOS)
+              ListTile(
+                onTap: () async {
+                  String? result = await FilePicker.platform.getDirectoryPath();
 
-                if (result != null) {
-                  ref
-                      .read(autoBackupLocationStateProvider.notifier)
-                      .set(result);
-                }
-              },
-              title: Text(l10n.backup_location),
-              subtitle: Text(
-                autoBackupLocation.$2.isEmpty
-                    ? autoBackupLocation.$1
-                    : autoBackupLocation.$2,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                  if (result != null) {
+                    ref
+                        .read(autoBackupLocationStateProvider.notifier)
+                        .set(result);
+                  }
+                },
+                title: Text(l10n.backup_location),
+                subtitle: Text(
+                  autoBackupLocation.$2.isEmpty
+                      ? autoBackupLocation.$1
+                      : autoBackupLocation.$2,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
               ),
-            ),
             ListTile(
               onTap: () {
                 final list = _getList(context);
