@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
@@ -32,6 +33,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:window_manager/window_manager.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -44,7 +46,6 @@ class MangaReaderView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     final chapterData = ref.watch(getChapterPagesProvider(
       chapter: chapter,
     ));
@@ -65,16 +66,8 @@ class MangaReaderView extends ConsumerWidget {
                 },
               ),
             ),
-            body: WillPopScope(
-              onWillPop: () async {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
-                Navigator.pop(context);
-                return false;
-              },
-              child: const Center(
-                child: Text("Error"),
-              ),
+            body: const Center(
+              child: Text("Error"),
             ),
           );
         }
@@ -86,22 +79,12 @@ class MangaReaderView extends ConsumerWidget {
           title: const Text(''),
           leading: BackButton(
             onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
               Navigator.pop(context);
             },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                overlays: SystemUiOverlay.values);
-            Navigator.pop(context);
-            return false;
-          },
-          child: Center(
-            child: Text(error.toString()),
-          ),
+        body: Center(
+          child: Text(error.toString()),
         ),
       ),
       loading: () {
@@ -111,21 +94,11 @@ class MangaReaderView extends ConsumerWidget {
             title: const Text(''),
             leading: BackButton(
               onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
               },
             ),
           ),
-          body: WillPopScope(
-            onWillPop: () async {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
-              Navigator.pop(context);
-              return false;
-            },
-            child: const ProgressCenter(),
-          ),
+          body: const ProgressCenter(),
         );
       },
     );
@@ -155,6 +128,7 @@ class _MangaChapterPageGalleryState
   late Animation<double> _animation;
   late ReaderController _readerController =
       ref.read(readerControllerProvider(chapter: chapter).notifier);
+  bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
   @override
   void dispose() {
@@ -165,6 +139,12 @@ class _MangaChapterPageGalleryState
     _doubleClickAnimationController.dispose();
     _autoScroll.value = false;
     clearGestureDetailsCache();
+    if (isDesktop) {
+      setFullScreen(value: false);
+    } else {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: SystemUiOverlay.values);
+    }
     super.dispose();
   }
 
@@ -252,100 +232,106 @@ class _MangaChapterPageGalleryState
 
   final List<int> _cropBorderCheckList = [];
 
+  void _setFullScreen({bool? value}) async {
+    if (isDesktop) {
+      value = await windowManager.isFullScreen();
+      setFullScreen(value: !value);
+    }
+    ref.read(fullScreenReaderStateProvider.notifier).set(!value!);
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
+    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
     if (cropBorders) {
       _processCropBorders();
     }
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
-    return WillPopScope(
-      onWillPop: () async {
-        _goBack(context);
-        return false;
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (event) {
+        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+        bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
+            _readerController
+                .getChaptersLength(_readerController.getChapterIndex().$2);
+        final action = switch (event.logicalKey) {
+          LogicalKeyboardKey.f11 =>
+            (!event.isKeyPressed(LogicalKeyboardKey.f11) || event.repeat)
+                ? _setFullScreen()
+                : null,
+          LogicalKeyboardKey.escape =>
+            (!event.isKeyPressed(LogicalKeyboardKey.escape) || event.repeat)
+                ? _goBack(context)
+                : null,
+          LogicalKeyboardKey.backspace =>
+            (!event.isKeyPressed(LogicalKeyboardKey.backspace) || event.repeat)
+                ? _goBack(context)
+                : null,
+          LogicalKeyboardKey.arrowUp =>
+            (!event.isKeyPressed(LogicalKeyboardKey.arrowUp) || event.repeat)
+                ? _onBtnTapped(_currentIndex! - 1, true)
+                : null,
+          LogicalKeyboardKey.arrowLeft =>
+            (!event.isKeyPressed(LogicalKeyboardKey.arrowLeft) || event.repeat)
+                ? _isReverseHorizontal
+                    ? _onBtnTapped(_currentIndex! + 1, false)
+                    : _onBtnTapped(_currentIndex! - 1, true)
+                : null,
+          LogicalKeyboardKey.arrowRight =>
+            (!event.isKeyPressed(LogicalKeyboardKey.arrowRight) || event.repeat)
+                ? _isReverseHorizontal
+                    ? _onBtnTapped(_currentIndex! - 1, true)
+                    : _onBtnTapped(_currentIndex! + 1, false)
+                : null,
+          LogicalKeyboardKey.arrowDown =>
+            (!event.isKeyPressed(LogicalKeyboardKey.arrowDown) || event.repeat)
+                ? _onBtnTapped(_currentIndex! + 1, true)
+                : null,
+          LogicalKeyboardKey.keyN ||
+          LogicalKeyboardKey.pageDown =>
+            ((!event.isKeyPressed(LogicalKeyboardKey.keyN) ||
+                        !event.isKeyPressed(LogicalKeyboardKey.pageDown)) ||
+                    event.repeat)
+                ? switch (hasNextChapter) {
+                    true => pushReplacementMangaReaderView(
+                        context: context,
+                        chapter: _readerController.getNextChapter(),
+                      ),
+                    _ => null
+                  }
+                : null,
+          LogicalKeyboardKey.keyP ||
+          LogicalKeyboardKey.pageUp =>
+            ((!event.isKeyPressed(LogicalKeyboardKey.keyP) ||
+                        !event.isKeyPressed(LogicalKeyboardKey.pageUp)) ||
+                    event.repeat)
+                ? switch (hasPrevChapter) {
+                    true => pushReplacementMangaReaderView(
+                        context: context,
+                        chapter: _readerController.getPrevChapter()),
+                    _ => null
+                  }
+                : null,
+          _ => null
+        };
+        action;
       },
-      child: RawKeyboardListener(
-        autofocus: true,
-        focusNode: FocusNode(),
-        onKey: (event) {
-          bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-          bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
-              _readerController
-                  .getChaptersLength(_readerController.getChapterIndex().$2);
-          final action = switch (event.logicalKey) {
-            LogicalKeyboardKey.escape =>
-              (!event.isKeyPressed(LogicalKeyboardKey.escape) || event.repeat)
-                  ? _goBack(context)
-                  : null,
-            LogicalKeyboardKey.backspace =>
-              (!event.isKeyPressed(LogicalKeyboardKey.backspace) ||
-                      event.repeat)
-                  ? _goBack(context)
-                  : null,
-            LogicalKeyboardKey.arrowUp =>
-              (!event.isKeyPressed(LogicalKeyboardKey.arrowUp) || event.repeat)
-                  ? _onBtnTapped(_currentIndex! - 1, true)
-                  : null,
-            LogicalKeyboardKey.arrowLeft =>
-              (!event.isKeyPressed(LogicalKeyboardKey.arrowLeft) ||
-                      event.repeat)
-                  ? _isReverseHorizontal
-                      ? _onBtnTapped(_currentIndex! + 1, false)
-                      : _onBtnTapped(_currentIndex! - 1, true)
-                  : null,
-            LogicalKeyboardKey.arrowRight =>
-              (!event.isKeyPressed(LogicalKeyboardKey.arrowRight) ||
-                      event.repeat)
-                  ? _isReverseHorizontal
-                      ? _onBtnTapped(_currentIndex! - 1, true)
-                      : _onBtnTapped(_currentIndex! + 1, false)
-                  : null,
-            LogicalKeyboardKey.arrowDown =>
-              (!event.isKeyPressed(LogicalKeyboardKey.arrowDown) ||
-                      event.repeat)
-                  ? _onBtnTapped(_currentIndex! + 1, true)
-                  : null,
-            LogicalKeyboardKey.keyN ||
-            LogicalKeyboardKey.pageDown =>
-              ((!event.isKeyPressed(LogicalKeyboardKey.keyN) ||
-                          !event.isKeyPressed(LogicalKeyboardKey.pageDown)) ||
-                      event.repeat)
-                  ? switch (hasNextChapter) {
-                      true => pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getNextChapter(),
-                        ),
-                      _ => null
-                    }
-                  : null,
-            LogicalKeyboardKey.keyP ||
-            LogicalKeyboardKey.pageUp =>
-              ((!event.isKeyPressed(LogicalKeyboardKey.keyP) ||
-                          !event.isKeyPressed(LogicalKeyboardKey.pageUp)) ||
-                      event.repeat)
-                  ? switch (hasPrevChapter) {
-                      true => pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getPrevChapter()),
-                      _ => null
-                    }
-                  : null,
-            _ => null
-          };
-          action;
-        },
-        child: NotificationListener<UserScrollNotification>(
-          onNotification: (notification) {
-            if (notification.direction == ScrollDirection.idle) {
-              if (_isView) {
-                _isViewFunction();
-              }
+      child: NotificationListener<UserScrollNotification>(
+        onNotification: (notification) {
+          if (notification.direction == ScrollDirection.idle) {
+            if (_isView) {
+              _isViewFunction();
             }
+          }
 
-            return true;
-          },
+          return true;
+        },
+        child: SafeArea(
+          top: !fullScreenReader,
           child: ValueListenableBuilder(
               valueListenable: _failedToLoadImage,
               builder: (context, failedToLoadImage, child) {
@@ -843,6 +829,14 @@ class _MangaChapterPageGalleryState
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
+    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    if (fullScreenReader) {
+      if (isDesktop) {
+        setFullScreen(value: true);
+      } else {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      }
+    }
     ref.read(_currentReaderMode.notifier).state = readerMode;
     if (mounted) {
       setState(() {
@@ -1145,23 +1139,23 @@ class _MangaChapterPageGalleryState
   }
 
   Widget _appBar() {
+    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    double height = _isView
+        ? Platform.isIOS
+            ? 120
+            : !fullScreenReader && !isDesktop
+                ? 55
+                : 80
+        : 0;
     return Positioned(
       top: 0,
       child: AnimatedContainer(
         width: context.mediaWidth(1),
-        height: _isView
-            ? Platform.isIOS
-                ? 120
-                : 80
-            : 0,
+        height: height,
         curve: Curves.ease,
         duration: const Duration(milliseconds: 200),
         child: PreferredSize(
-          preferredSize: Size.fromHeight(_isView
-              ? Platform.isIOS
-                  ? 120
-                  : 80
-              : 0),
+          preferredSize: Size.fromHeight(height),
           child: AppBar(
             centerTitle: false,
             automaticallyImplyLeading: false,
@@ -1620,17 +1614,19 @@ class _MangaChapterPageGalleryState
   }
 
   void _isViewFunction() {
+    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     if (mounted) {
       setState(() {
         _isView = !_isView;
       });
     }
-
-    if (_isView) {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: SystemUiOverlay.values);
-    } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    if (fullScreenReader) {
+      if (_isView) {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+            overlays: SystemUiOverlay.values);
+      } else {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      }
     }
   }
 
@@ -1803,7 +1799,7 @@ class _MangaChapterPageGalleryState
     await DraggableMenu.open(
         context,
         DraggableMenu(
-            ui: SoftModernDraggableMenu(barItem: Container(), radius: 20),
+            ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
             minimizeThreshold: 0.6,
             levels: [
               DraggableMenuLevel.ratio(ratio: 1.5 / 3),
@@ -1951,6 +1947,8 @@ class _MangaChapterPageGalleryState
                             final animatePageTransitions =
                                 ref.watch(animatePageTransitionsStateProvider);
                             final scaleType = ref.watch(scaleTypeStateProvider);
+                            final fullScreenReader =
+                                ref.watch(fullScreenReaderStateProvider);
                             final backgroundColor =
                                 ref.watch(backgroundColorStateProvider);
                             return SingleChildScrollView(
@@ -2002,6 +2000,21 @@ class _MangaChapterPageGalleryState
                                             context)[scale.index];
                                       },
                                     ),
+                                    SwitchListTile(
+                                        value: fullScreenReader,
+                                        title: Text(
+                                          l10n.fullscreen,
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .color!
+                                                  .withOpacity(0.9),
+                                              fontSize: 14),
+                                        ),
+                                        onChanged: (value) {
+                                          _setFullScreen(value: value);
+                                        }),
                                     SwitchListTile(
                                         value: showPageNumber,
                                         title: Text(

@@ -302,7 +302,6 @@ class MyInAppBrowser extends InAppBrowser {
   late BuildContext context;
   @override
   Future onBrowserCreated() async {
-    print("\n\nBrowser Created!\n\n");
   }
 
   @override
@@ -312,9 +311,9 @@ class MyInAppBrowser extends InAppBrowser {
   Future onLoadStop(url) async {}
 
   @override
-  Future<PermissionResponse> onPermissionRequest(request) async {
+  Future<PermissionResponse> onPermissionRequest(permissionRequest) async {
     return PermissionResponse(
-        resources: request.resources, action: PermissionResponseAction.GRANT);
+        resources: permissionRequest.resources, action: PermissionResponseAction.GRANT);
   }
 
   @override

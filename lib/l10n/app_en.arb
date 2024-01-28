@@ -282,5 +282,6 @@
   "enable_auto_skip": "Enable auto skip",
   "aniskip_button_timeout": "Button timeout",
   "skip_opening": "Skip opening",
-  "skip_ending": "Skip ending"
+  "skip_ending": "Skip ending",
+  "fullscreen": "Fullscreen"
 }

@@ -140,5 +140,22 @@ final usePageTapZonesStateProvider =
 );
 
 typedef _$UsePageTapZonesState = AutoDisposeNotifier<bool>;
+String _$fullScreenReaderStateHash() =>
+    r'fe95b7d8cb6aee8910466f86bba97c854994b2d1';
+
+/// See also [FullScreenReaderState].
+@ProviderFor(FullScreenReaderState)
+final fullScreenReaderStateProvider =
+    AutoDisposeNotifierProvider<FullScreenReaderState, bool>.internal(
+  FullScreenReaderState.new,
+  name: r'fullScreenReaderStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fullScreenReaderStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

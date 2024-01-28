@@ -122,3 +122,18 @@ class UsePageTapZonesState extends _$UsePageTapZonesState {
         () => isar.settings.putSync(settings!..usePageTapZones = value));
   }
 }
+
+@riverpod
+class FullScreenReaderState extends _$FullScreenReaderState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.fullScreenReader ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..fullScreenReader = value));
+  }
+}

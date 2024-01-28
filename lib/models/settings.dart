@@ -163,6 +163,8 @@ class Settings {
 
   int? btServerPort;
 
+  bool? fullScreenReader;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -234,7 +236,8 @@ class Settings {
       this.enableAutoSkip,
       this.aniSkipTimeoutLength,
       this.btServerAddress = "127.0.0.1",
-      this.btServerPort});
+      this.btServerPort,
+      this.fullScreenReader = true});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -362,6 +365,7 @@ class Settings {
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
+    fullScreenReader = json['fullScreenReader'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -457,7 +461,8 @@ class Settings {
         'enableAutoSkip': enableAutoSkip,
         'aniSkipTimeoutLength': aniSkipTimeoutLength,
         'btServerAddress': btServerAddress,
-        'btServerPort': btServerPort
+        'btServerPort': btServerPort,
+        'fullScreenReader': fullScreenReader
       };
 }
 

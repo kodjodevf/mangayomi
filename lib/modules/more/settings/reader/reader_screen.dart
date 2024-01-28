@@ -20,6 +20,7 @@ class ReaderScreen extends ConsumerWidget {
     final scaleType = ref.watch(scaleTypeStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
+    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.reader),
@@ -327,6 +328,12 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+            SwitchListTile(
+                value: fullScreenReader,
+                title: Text(context.l10n.fullscreen),
+                onChanged: (value) {
+                  ref.read(fullScreenReaderStateProvider.notifier).set(value);
+                }),
             SwitchListTile(
                 value: animatePageTransitions,
                 title: Text(context.l10n.animate_page_transitions),

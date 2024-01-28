@@ -9,6 +9,8 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/widgets/blend_level_slider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/dark_mode_button.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/theme_selector.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/utils/language.dart';
 
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
@@ -20,6 +22,7 @@ class AppearanceScreen extends ConsumerWidget {
     final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     final isDarkTheme = ref.watch(themeModeStateProvider);
+    final l10nLocale = ref.watch(l10nLocaleStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n!.appearance),
@@ -28,7 +31,7 @@ class AppearanceScreen extends ConsumerWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(bottom: 30),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Column(
                 children: [
                   Padding(
@@ -57,6 +60,84 @@ class AppearanceScreen extends ConsumerWidget {
                     ),
                   if (!pureBlackDarkMode || !isDarkTheme)
                     const BlendLevelSlider()
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Text(l10n.appearance,
+                            style: TextStyle(
+                                fontSize: 13, color: context.primaryColor)),
+                      ],
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                l10n.app_language,
+                              ),
+                              content: SizedBox(
+                                  width: context.mediaWidth(0.8),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: AppLocalizations
+                                        .supportedLocales.length,
+                                    itemBuilder: (context, index) {
+                                      final locale = AppLocalizations
+                                          .supportedLocales[index];
+                                      return RadioListTile(
+                                        dense: true,
+                                        contentPadding: const EdgeInsets.all(0),
+                                        value: locale,
+                                        groupValue: l10nLocale,
+                                        onChanged: (value) {
+                                          ref
+                                              .read(l10nLocaleStateProvider
+                                                  .notifier)
+                                              .setLocale(locale);
+                                          Navigator.pop(context);
+                                        },
+                                        title: Text(completeLanguageName(
+                                            locale.toLanguageTag())),
+                                      );
+                                    },
+                                  )),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          l10n.cancel,
+                                          style: TextStyle(
+                                              color: context.primaryColor),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            );
+                          });
+                    },
+                    title: Text(l10n.app_language),
+                    subtitle: Text(
+                      completeLanguageName(l10nLocale.toLanguageTag()),
+                      style: TextStyle(
+                          fontSize: 11, color: context.secondaryColor),
+                    ),
+                  ),
                 ],
               ),
             ),

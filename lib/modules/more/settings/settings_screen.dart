@@ -17,11 +17,6 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             ListTileWidget(
-                title: l10n.general,
-                subtitle: l10n.general_subtitle,
-                icon: Icons.tune_rounded,
-                onTap: () => context.push('/general')),
-            ListTileWidget(
                 title: l10n.appearance,
                 subtitle: l10n.appearance_subtitle,
                 icon: Icons.color_lens_rounded,

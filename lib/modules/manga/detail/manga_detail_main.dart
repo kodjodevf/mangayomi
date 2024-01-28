@@ -70,45 +70,39 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                         .future);
                   }
                 },
-                child: WillPopScope(
-                  onWillPop: () async {
-                    Navigator.pop(context);
-                    return false;
-                  },
-                  child: Stack(
-                    children: [
-                      MangaDetailsView(
-                        manga: manga,
-                        sourceExist: sourceExist,
-                        checkForUpdate: (value) async {
-                          if (!_isLoading) {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            if (sourceExist) {
-                              await ref.read(updateMangaDetailProvider(
-                                      mangaId: manga.id, isInit: false)
-                                  .future);
-                            }
-                            if (mounted) {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            }
+                child: Stack(
+                  children: [
+                    MangaDetailsView(
+                      manga: manga,
+                      sourceExist: sourceExist,
+                      checkForUpdate: (value) async {
+                        if (!_isLoading) {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          if (sourceExist) {
+                            await ref.read(updateMangaDetailProvider(
+                                    mangaId: manga.id, isInit: false)
+                                .future);
                           }
-                        },
-                      ),
-                      if (_isLoading)
-                        const Positioned(
-                            top: 0,
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            )),
-                    ],
-                  ),
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        }
+                      },
+                    ),
+                    if (_isLoading)
+                      const Positioned(
+                          top: 0,
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          )),
+                  ],
                 ),
               );
             });

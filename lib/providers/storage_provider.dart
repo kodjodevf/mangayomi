@@ -98,7 +98,7 @@ class StorageProvider {
     }
   }
 
-  Future<Isar> initDB(String? path, {bool? inspector = true}) async {
+  Future<Isar> initDB(String? path, {bool? inspector = false}) async {
     Directory? dir;
     if (path == null) {
       dir = await getDatabaseDirectory();

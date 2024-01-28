@@ -38,6 +38,8 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   @override
   void dispose() {
     MTorrentServer().removeTorrent(_infoHash);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -58,22 +60,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               title: const Text(''),
               leading: BackButton(
                 onPressed: () {
-                  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                      overlays: SystemUiOverlay.values);
                   Navigator.pop(context);
                 },
               ),
             ),
-            body: WillPopScope(
-              onWillPop: () async {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
-                Navigator.pop(context);
-                return false;
-              },
-              child: const Center(
-                child: Text("Error"),
-              ),
+            body: const Center(
+              child: Text("Error"),
             ),
           );
         }
@@ -96,17 +88,8 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             },
           ),
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                overlays: SystemUiOverlay.values);
-
-            Navigator.pop(context);
-            return false;
-          },
-          child: Center(
-            child: Text(error.toString()),
-          ),
+        body: Center(
+          child: Text(error.toString()),
         ),
       ),
       loading: () {
@@ -124,16 +107,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               },
             ),
           ),
-          body: WillPopScope(
-            onWillPop: () async {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
-
-              Navigator.pop(context);
-              return false;
-            },
-            child: const ProgressCenter(),
-          ),
+          body: const ProgressCenter(),
         );
       },
     );
@@ -1192,15 +1166,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-              overlays: SystemUiOverlay.values);
-          Navigator.pop(context);
-          return false;
-        },
-        child: _videoPlayer(context),
-      ),
+      body: _videoPlayer(context),
     );
   }
 }
