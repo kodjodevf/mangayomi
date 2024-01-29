@@ -28,6 +28,7 @@ class MTorrentServer {
   }
 
   Future<bool> check() async {
+    if (_baseUrl == "http://127.0.0.1:0") return false;
     try {
       final res = await http.get(Uri.parse("$_baseUrl/"));
       if (res.statusCode == 200) {
