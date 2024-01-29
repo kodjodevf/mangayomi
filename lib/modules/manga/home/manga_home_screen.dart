@@ -281,6 +281,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   _selectedIndex = 2;
                                   _isFiltering = true;
                                   _page = 1;
+                                  _isLoading = false;
                                 });
                               }
 
@@ -296,6 +297,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               _isFiltering = false;
                               _isSearch = false;
                               _page = 1;
+                              _isLoading = false;
                             });
                           }
                         },
@@ -359,21 +361,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                     }
                                   },
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(l10n.load_more),
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      const Icon(
-                                          Icons.arrow_forward_outlined),
+                                      const Icon(Icons.arrow_forward_outlined),
                                     ],
                                   )),
                             )
                           : Container();
             }
-        
+
             if (data!.list.isEmpty) {
               return Center(child: Text(l10n.no_result));
             }
@@ -400,10 +400,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 }
               }
             });
-        
-            _length = widget.source.isFullData!
-                ? _fullDataLength
-                : _mangaList.length;
+
+            _length =
+                widget.source.isFullData! ? _fullDataLength : _mangaList.length;
             _length =
                 (_mangaList.length < _length ? _mangaList.length : _length);
             return Padding(

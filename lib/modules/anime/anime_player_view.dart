@@ -170,12 +170,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _player.stream.position.listen(
     (position) async {
       if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
-        await _player.stream.buffer.first;
-        _player.seek(_currentPosition.value);
-        _isCompleted.value = _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _seekToCurrentPosition = false;
       } else {
         _currentPosition.value = position;
       }
@@ -204,6 +198,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
   @override
   void initState() {
+    _initToCurrentPosition();
     _setCurrentPosition(true);
     _currentPositionSub;
     _currentTotalDurationSub;
@@ -212,6 +207,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
     _initAniSkip();
     super.initState();
+  }
+
+  void _initToCurrentPosition() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 100));
+      await _player.stream.buffer.first;
+      if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
+        _player.seek(_currentPosition.value);
+        _isCompleted.value = _player.state.duration.inSeconds -
+                _currentPosition.value.inSeconds <=
+            10;
+        _seekToCurrentPosition = false;
+      }
+    } catch (_) {}
   }
 
   void _initAniSkip() async {

@@ -8,6 +8,7 @@ class BottomTextWidget extends StatelessWidget {
   final double? fontSize;
   final int? maxLines;
   final Color? textColor;
+  final bool? isTorrent;
   const BottomTextWidget(
       {super.key,
       required this.text,
@@ -15,7 +16,8 @@ class BottomTextWidget extends StatelessWidget {
       this.isComfortableGrid = false,
       this.fontSize = 12.0,
       this.maxLines = 2,
-      this.textColor});
+      this.textColor,
+      this.isTorrent = false});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class BottomTextWidget extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: textColor ?? context.primaryColor,
                     ),
-                    maxLines: maxLines,
+                    maxLines: isTorrent! ? 8 : maxLines,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.start,
                   ),
@@ -60,7 +62,7 @@ class BottomTextWidget extends StatelessWidget {
                               Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0)
                             ],
                           ),
-                          maxLines: maxLines,
+                          maxLines: isTorrent! ? 8 : maxLines,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                         ),
@@ -68,7 +70,7 @@ class BottomTextWidget extends StatelessWidget {
                     ],
                   )
                 : Container(
-                    height: 70,
+                    height: isTorrent! ? 200 : 70,
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       gradient: LinearGradient(
@@ -97,7 +99,7 @@ class BottomTextWidget extends StatelessWidget {
                                     offset: Offset(0.5, 0.9), blurRadius: 3.0)
                               ],
                             ),
-                            maxLines: maxLines,
+                            maxLines: isTorrent! ? 8 : maxLines,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.start,
                           ),

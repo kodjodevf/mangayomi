@@ -1338,7 +1338,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               image: DecorationImage(
                 image: imageProvider,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           ),

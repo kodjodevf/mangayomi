@@ -77,7 +77,8 @@ class MangaImageCardWidget extends ConsumerWidget {
                         child: Icon(Icons.collections_bookmark,
                             color: context.primaryColor),
                       )),
-                BottomTextWidget(text: getMangaDetail!.name!)
+                BottomTextWidget(
+                    isTorrent: source.isTorrent, text: getMangaDetail!.name!)
               ]);
         });
   }
