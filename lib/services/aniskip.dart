@@ -35,7 +35,6 @@ class AniSkip extends _$AniSkip {
         Media(id:${id.$1}){idMal}
       }
     """;
-
     final response = await _client.post(
       Uri.parse("https://graphql.anilist.co"),
       body: json.encode({"query": query}),
@@ -91,8 +90,8 @@ class Interval {
 
   factory Interval.fromJson(Map<String, dynamic> json) {
     return Interval(
-      startTime: json['startTime'],
-      endTime: json['endTime'],
+      startTime: double.parse(json['startTime'].toString()),
+      endTime: double.parse(json['endTime'].toString()),
     );
   }
 }

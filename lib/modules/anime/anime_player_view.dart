@@ -170,6 +170,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _player.stream.position.listen(
     (position) async {
       if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
+        await _player.stream.buffer.first;
+        _player.seek(_currentPosition.value);
+        _isCompleted.value = _player.state.duration.inSeconds -
+                _currentPosition.value.inSeconds <=
+            10;
+        _seekToCurrentPosition = false;
       } else {
         _currentPosition.value = position;
       }
@@ -198,7 +204,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
   @override
   void initState() {
-    _initToCurrentPosition();
     _setCurrentPosition(true);
     _currentPositionSub;
     _currentTotalDurationSub;
@@ -207,20 +212,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
     _initAniSkip();
     super.initState();
-  }
-
-  void _initToCurrentPosition() async {
-    try {
-      await Future.delayed(const Duration(milliseconds: 100));
-      await _player.stream.buffer.first;
-      if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
-        _player.seek(_currentPosition.value);
-        _isCompleted.value = _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _seekToCurrentPosition = false;
-      }
-    } catch (_) {}
   }
 
   void _initAniSkip() async {
@@ -386,6 +377,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
+                      flex: 2,
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -831,6 +823,24 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 CustomeMaterialDesktopPlayOrPauseButton(
                   controller: _controller,
                 ),
+                if (hasNextEpisode)
+                  IconButton(
+                    onPressed: () async {
+                      if (_isDesktop) {
+                        final isFullScreen = await windowManager.isFullScreen();
+                        if (isFullScreen) {
+                          await setFullScreen(value: false);
+                        }
+                      }
+                      if (mounted) {
+                        pushReplacementMangaReaderView(
+                          context: context,
+                          chapter: _streamController.getNextEpisode(),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.skip_next, color: Colors.white),
+                  ),
                 SizedBox(
                   height: 50,
                   width: 50,
@@ -905,24 +915,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                     ),
                   ),
                 ),
-                if (hasNextEpisode)
-                  IconButton(
-                    onPressed: () async {
-                      if (_isDesktop) {
-                        final isFullScreen = await windowManager.isFullScreen();
-                        if (isFullScreen) {
-                          await setFullScreen(value: false);
-                        }
-                      }
-                      if (mounted) {
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _streamController.getNextEpisode(),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.skip_next, color: Colors.white),
-                  ),
                 CustomMaterialDesktopVolumeButton(
                   controller: _controller,
                 ),

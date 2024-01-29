@@ -20,7 +20,6 @@ class MyAnimeList extends _$MyAnimeList {
   String clientId = (Platform.isWindows || Platform.isLinux)
       ? '39e9be346b4e7dbcc59a98357e2f8472'
       : '0c9100ccd443ddb441a319a881180f7f';
-  int listPaginationAmount = 250;
 
   @override
   void build({required int syncId, required bool? isManga}) {}
