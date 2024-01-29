@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,11 +30,10 @@ class MangaWebView extends ConsumerStatefulWidget {
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
   final GlobalKey webViewKey = GlobalKey();
-  late final MyInAppBrowser browser;
+
   double progress = 0;
   @override
   void initState() {
-    browser = MyInAppBrowser(context: context);
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       _runWebViewDesktop();
     } else {
@@ -48,33 +46,17 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   Webview? webview;
   _runWebViewDesktop() async {
-    if (Platform.isMacOS) {
-      await browser.openUrlRequest(
-        urlRequest: URLRequest(url: WebUri(widget.url)),
-        settings: InAppBrowserClassSettings(
-          browserSettings: InAppBrowserSettings(
-              toolbarTopBackgroundColor: Colors.blue,
-              presentationStyle: ModalPresentationStyle.POPOVER),
-          webViewSettings: InAppWebViewSettings(
-            isInspectable: kDebugMode,
-            useShouldOverrideUrlLoading: true,
-            useOnLoadResource: true,
-          ),
-        ),
-      );
-    } else {
-      webview = await WebviewWindow.create(
-        configuration: CreateConfiguration(
-          userDataFolderWindows: await getWebViewPath(),
-        ),
-      );
-      webview!
-        ..setBrightness(Brightness.dark)
-        ..launch(widget.url)
-        ..onClose.whenComplete(() {
-          Navigator.pop(context);
-        });
-    }
+    webview = await WebviewWindow.create(
+      configuration: CreateConfiguration(
+        userDataFolderWindows: await getWebViewPath(),
+      ),
+    );
+    webview!
+      ..setBrightness(Brightness.dark)
+      ..launch(widget.url)
+      ..onClose.whenComplete(() {
+        Navigator.pop(context);
+      });
   }
 
   bool isNotDesktop = false;
@@ -97,14 +79,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                   onPressed: () {
-                    if (Platform.isMacOS) {
-                      if (browser.isOpened()) {
-                        browser.close();
-                      }
-                    } else {
-                      webview!.close();
-                    }
-
+                    webview!.close();
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.close)),
@@ -180,7 +155,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             Share.share(_url);
                           } else if (value == 2) {
                             await InAppBrowser.openWithSystemBrowser(
-                                url: WebUri(_url));
+                                url: Uri.parse(_url));
                           } else if (value == 3) {
                             CookieManager.instance().deleteAllCookies();
                           }
@@ -253,7 +228,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _canGoForward = canGoForward;
                         });
                       },
-                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
                     ),
                   ),
                 ],
@@ -290,71 +265,5 @@ Future<String?> decodeHtml(Webview webview, {String? sourceId}) async {
         : res;
   } catch (_) {
     return null;
-  }
-}
-
-class MyInAppBrowser extends InAppBrowser {
-  MyInAppBrowser(
-      {super.windowId,
-      super.initialUserScripts,
-      super.pullToRefreshController,
-      required this.context});
-  late BuildContext context;
-  @override
-  Future onBrowserCreated() async {
-  }
-
-  @override
-  Future onLoadStart(url) async {}
-
-  @override
-  Future onLoadStop(url) async {}
-
-  @override
-  Future<PermissionResponse> onPermissionRequest(permissionRequest) async {
-    return PermissionResponse(
-        resources: permissionRequest.resources, action: PermissionResponseAction.GRANT);
-  }
-
-  @override
-  void onLoadError(url, code, message) {
-    pullToRefreshController?.endRefreshing();
-  }
-
-  @override
-  void onProgressChanged(progress) {
-    if (progress == 100) {
-      pullToRefreshController?.endRefreshing();
-    }
-  }
-
-  @override
-  void onExit() {
-    Navigator.pop(context);
-  }
-
-  @override
-  Future<NavigationActionPolicy> shouldOverrideUrlLoading(
-      navigationAction) async {
-    var uri = navigationAction.request.url!;
-
-    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
-        .contains(uri.scheme)) {
-      if (await canLaunchUrl(uri)) {
-        // Launch the App
-        await launchUrl(
-          uri,
-        );
-        // and cancel the request
-        return NavigationActionPolicy.CANCEL;
-      }
-    }
-
-    return NavigationActionPolicy.ALLOW;
-  }
-
-  @override
-  void onMainWindowWillClose() {
-    close();
   }
 }
