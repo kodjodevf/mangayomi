@@ -62,8 +62,8 @@ Future<GetChapterPagesModel> getChapterPages(
         isarPageUrls.first.urls!.isNotEmpty) {
       pageUrls = isarPageUrls.first.urls!;
     } else {
-      await Rinf.finalize();
-      await Rinf.initialize();
+      await finalizeRust();
+      await initializeRust();
       final bytecode =
           compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 

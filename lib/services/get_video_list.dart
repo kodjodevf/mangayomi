@@ -37,8 +37,8 @@ Future<(List<Video>, bool, String?)> getVideoList(
         await MTorrentServer().getTorrentPlaylist(episode.url!);
     return (videos, false, infohash);
   }
-  await Rinf.finalize();
-  await Rinf.initialize();
+  await finalizeRust();
+  await initializeRust();
   final bytecode =
       compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 

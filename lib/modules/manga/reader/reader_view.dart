@@ -826,8 +826,8 @@ class _MangaChapterPageGalleryState
   }
 
   void _initCurrentIndex() async {
-    await Rinf.finalize();
-    await Rinf.initialize();
+    await finalizeRust();
+    await initializeRust();
     final readerMode = _readerController.getReaderMode();
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();

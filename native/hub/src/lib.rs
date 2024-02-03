@@ -1,9 +1,10 @@
 use tokio_with_wasm::tokio;
 
 mod boa_js;
-mod bridge;
 mod imagecrop;
 mod messages;
+
+rinf::write_interface!();
 
 /// This `hub` crate is the entry point for the Rust logic.
 /// Always use non-blocking async functions such as `tokio::fs::File::open`.

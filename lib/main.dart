@@ -36,7 +36,7 @@ class MyHttpoverrides extends HttpOverrides {
 
 /// Entry point of the application.
 void main(List<String> args) async {
-  await Rinf.initialize();
+  await initializeRust();
   // Override the default HTTP client.
   HttpOverrides.global = MyHttpoverrides();
   // If running on desktop platforms and web view title bar widget is active, exit.
