@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
@@ -25,9 +26,10 @@ Future<MManga> getDetail(
 
     final runtime = runtimeEval(bytecode);
 
-    var res = await runtime.executeLib('package:mangayomi/main.dart', 'main');
+    var res = await runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
     try {
-      mangadetail = await (res as MProvider).getDetail(source.toMSource(), url);
+      mangadetail = await (res as MProvider).getDetail(url);
     } catch (e) {
       throw Exception(e);
     }

@@ -1,3 +1,4 @@
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/models/source.dart';
@@ -16,7 +17,8 @@ bool supportsLatest(SupportsLatestRef ref, {required Source source}) {
 
     final runtime = runtimeEval(bytecode);
 
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
+    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
     supportsLatest = (res as MProvider).supportsLatest;
   } catch (e) {
     supportsLatest = true;

@@ -51,3 +51,37 @@ SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
 
   return sourcePreference;
 }
+
+String getSourcePreferenceStringValue(
+    int sourceId, String key, String defaultValue) {
+  SourcePreferenceStringValue? sourcePreferenceStringValue = isar
+      .sourcePreferenceStringValues
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
+  if (sourcePreferenceStringValue == null) {
+    setSourcePreferenceStringValue(sourceId, key, defaultValue);
+    return defaultValue;
+  }
+
+  return sourcePreferenceStringValue.value ?? "";
+}
+
+void setSourcePreferenceStringValue(int sourceId, String key, String value) {
+  final sourcePref = isar.sourcePreferenceStringValues
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
+  isar.writeTxnSync(() {
+    if (sourcePref != null) {
+      isar.sourcePreferenceStringValues.putSync(sourcePref..value = value);
+    } else {
+      isar.sourcePreferenceStringValues.putSync(SourcePreferenceStringValue()
+        ..key = key
+        ..sourceId = sourceId
+        ..value = value);
+    }
+  });
+}

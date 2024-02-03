@@ -6,7 +6,7 @@ part of 'get_video_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'd1e21cd01a2d2eda2050c199f255eb0502d67fad';
+String _$getVideoListHash() => r'c7e36c244ebbac9dad01945be0e2ed5712236855';
 
 /// Copied from Dart SDK
 class _SystemHash {

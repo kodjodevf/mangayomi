@@ -4,7 +4,6 @@ import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:mangayomi/eval/bridge/document.dart';
 import 'package:mangayomi/eval/bridge/filter.dart';
-import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/bridge/m_manga.dart';
 import 'package:mangayomi/eval/bridge/m_pages.dart';
 import 'package:mangayomi/eval/bridge/m_status.dart';
@@ -13,7 +12,6 @@ import 'package:mangayomi/eval/bridge/m_video.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
@@ -44,8 +42,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             returns: BridgeTypeAnnotation(
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('page',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
             ])),
@@ -53,8 +49,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             returns: BridgeTypeAnnotation(
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('page',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
             ])),
@@ -62,8 +56,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             returns: BridgeTypeAnnotation(
                 BridgeTypeRef(CoreTypes.future, [$MPages.$type])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('query',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
               BridgeParameter(
@@ -76,8 +68,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             returns: BridgeTypeAnnotation(
                 BridgeTypeRef(CoreTypes.future, [$MManga.$type])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
@@ -86,8 +76,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])
             ])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
@@ -96,31 +84,43 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
             ])),
             params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false),
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
         'getFilterList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-            params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false)
-            ])),
+            params: [])),
         'getSourcePreferences': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-            params: [
-              BridgeParameter(
-                  'source', BridgeTypeAnnotation($MSource.$type), false)
-            ])),
+            params: [])),
         'getPreferenceValue': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.dynamic)),
             params: [
               BridgeParameter('sourceId',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
               BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
+        'getPrefStringValue': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+            params: [
+              BridgeParameter('sourceId',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('value',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
+        'setPrefStringValue': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.voidType)),
+            params: [
+              BridgeParameter('sourceId',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('value',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
         'cryptoHandler': BridgeMethodDef(
@@ -782,6 +782,16 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
           }
           return $List.wrap(value.map((e) => $String(e)).toList());
         }),
+      'getPrefStringValue' => $Function((_, __, List<$Value?> args) {
+          final value = getSourcePreferenceStringValue(
+              args[0]!.$reified, args[1]!.$reified, args[2]!.$reified);
+          return $String(value);
+        }),
+      'setPrefStringValue' => $Function((_, __, List<$Value?> args) {
+          setSourcePreferenceStringValue(
+              args[0]!.$reified, args[1]!.$reified, args[2]!.$reified);
+          return;
+        }),
       "cryptoHandler" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.cryptoHandler(args[0]!.$value, args[1]!.$value,
               args[2]!.$value, args[3]!.$value));
@@ -951,31 +961,28 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   bool get supportsLatest => $_get('supportsLatest');
 
   @override
-  Future<MManga> getDetail(MSource source, String url) async =>
-      await $_invoke('getDetail', [$MSource.wrap(source), $String(url)]);
+  Future<MManga> getDetail(String url) async =>
+      await $_invoke('getDetail', [$String(url)]);
 
   @override
-  Future<MPages> getLatestUpdates(MSource source, int page) async =>
-      await $_invoke('getLatestUpdates', [$MSource.wrap(source), $int(page)]);
+  Future<MPages> getLatestUpdates(int page) async =>
+      await $_invoke('getLatestUpdates', [$int(page)]);
 
   @override
-  Future<MPages> getPopular(MSource source, int page) async =>
-      await $_invoke('getPopular', [$MSource.wrap(source), $int(page)]);
+  Future<MPages> getPopular(int page) async =>
+      await $_invoke('getPopular', [$int(page)]);
 
   @override
-  Future<MPages> search(MSource source, String query, int page,
-          FilterList filterList) async =>
+  Future<MPages> search(String query, int page, FilterList filterList) async =>
       await $_invoke('search', [
-        $MSource.wrap(source),
         $String(query),
         $int(page),
         $FilterList.wrap(FilterList(_toValueList(filterList.filters)))
       ]);
 
   @override
-  Future<List<String>> getPageList(MSource source, String url) async {
-    final res =
-        await $_invoke('getPageList', [$MSource.wrap(source), $String(url)]);
+  Future<List<String>> getPageList(String url) async {
+    final res = await $_invoke('getPageList', [$String(url)]);
     if (res is $List) {
       return res.$reified.map((e) => e as String).toList();
     }
@@ -983,8 +990,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  List getFilterList(MSource source) {
-    final res = $_invoke('getFilterList', [$MSource.wrap(source)]);
+  List getFilterList() {
+    final res = $_invoke('getFilterList', []);
     if (res is $List) {
       return res.$reified;
     }
@@ -992,8 +999,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  List getSourcePreferences(MSource source) {
-    final res = $_invoke('getSourcePreferences', [$MSource.wrap(source)]);
+  List getSourcePreferences() {
+    final res = $_invoke('getSourcePreferences', []);
     if (res is $List) {
       return res.$reified;
     }
@@ -1001,9 +1008,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  Future<List<Video>> getVideoList(MSource source, String url) async {
-    final res =
-        await $_invoke('getVideoList', [$MSource.wrap(source), $String(url)]);
+  Future<List<Video>> getVideoList(String url) async {
+    final res = await $_invoke('getVideoList', [$String(url)]);
     if (res is $List) {
       return res.$reified.map((e) => e as Video).toList();
     }

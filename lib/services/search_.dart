@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
@@ -20,10 +21,11 @@ Future<MPages?> search(
     final bytecode =
         compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
     final runtime = runtimeEval(bytecode);
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
+    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
     try {
-      manga = await (res as MProvider)
-          .search(source.toMSource(), query, page, FilterList(filterList));
+      manga =
+          await (res as MProvider).search(query, page, FilterList(filterList));
     } catch (e) {
       throw Exception(e);
     }

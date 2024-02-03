@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -105,12 +104,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                   widget.onSeekEnd?.call(Duration(
                       milliseconds: value.toInt() - position.inMilliseconds));
                   widget.player.seek(Duration(milliseconds: value.toInt()));
-                  await Future.delayed(const Duration(milliseconds: 500));
-                  if (mounted) {
-                    setState(() {
-                      tempPosition = null;
-                    });
-                  }
                 },
               ),
             ),

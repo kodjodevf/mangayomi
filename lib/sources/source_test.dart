@@ -21,57 +21,60 @@ import 'package:mangayomi/bridge_lib.dart';
 import 'dart:convert';
 
 class TestSource extends MProvider {
-  TestSource();
+  TestSource({required this.source});
+
+  MSource source;
+
+  final Client client = Client(source);
 
   @override
   bool get supportsLatest => true;
   
   @override
-  Future<MPages> getPopular(MSource source, int page) async {
+  Future<MPages> getPopular(int page) async {
     // TODO: implement
   }
 
   @override
-  Future<MPages> getLatestUpdates(MSource source, int page) async {
+  Future<MPages> getLatestUpdates(int page) async {
     // TODO: implement
   }
 
   @override
-  Future<MPages> search(
-      MSource source, String query, int page, FilterList filterList) async {
+  Future<MPages> search(String query, int page, FilterList filterList) async {
     // TODO: implement
   }
 
   @override
-  Future<MManga> getDetail(MSource source, String url) async {
+  Future<MManga> getDetail(String url) async {
     // TODO: implement
   }
   
   // For anime episode video list
   @override
-  Future<List<MVideo>> getVideoList(MSource source, String url) async {
+  Future<List<MVideo>> getVideoList(String url) async {
     // TODO: implement
   }
 
   // For manga chapter pages
   @override
-  Future<List<String>> getPageList(MSource source, String url) {
+  Future<List<String>> getPageList(String url) {
     // TODO: implement
   }
 
   @override
-  List<dynamic> getFilterList(MSource source) {
+  List<dynamic> getFilterList() {
     // TODO: implement
   }
 
   @override
-  List<dynamic> getSourcePreferences(MSource source) {
+  List<dynamic> getSourcePreferences() {
     // TODO: implement
   }
 }
 
-TestSource main() {
-  return TestSource();
+TestSource main(MSource source) {
+  return TestSource(source:source);
 }
 
 ''';

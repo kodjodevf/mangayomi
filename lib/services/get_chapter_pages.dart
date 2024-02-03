@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/main.dart';
@@ -68,9 +69,9 @@ Future<GetChapterPagesModel> getChapterPages(
 
       final runtime = runtimeEval(bytecode);
 
-      var res = await runtime.executeLib('package:mangayomi/main.dart', 'main');
-      pageUrls = (await (res as MProvider)
-          .getPageList(source.toMSource(), chapter.url!));
+      var res = await runtime.executeLib('package:mangayomi/main.dart', 'main',
+          [$MSource.wrap(source.toMSource())]);
+      pageUrls = (await (res as MProvider).getPageList(chapter.url!));
     }
   }
 

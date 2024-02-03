@@ -3,7 +3,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
-import 'package:mangayomi/services/cloudflare/cookie.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 
 Future<String> cloudflareBypass(
     {required String url, required String sourceId}) async {
@@ -24,7 +24,7 @@ Future<String> cloudflareBypass(
 
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
-      html = await decodeHtml(webview, sourceId: sourceId);
+      html = await decodeHtml(webview);
       if (html == null ||
           html!.contains("Just a moment") ||
           html!.contains("challenges.cloudflare.com")) {
@@ -67,7 +67,7 @@ Future<String> cloudflareBypass(
       }
       return true;
     });
-    await addCookie(sourceId, url, ua);
+    await MInterceptor.setCookie(url, ua);
   }
   return html!;
 }

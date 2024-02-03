@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/messages/generated.dart';
@@ -38,13 +39,13 @@ Future<(List<Video>, bool, String?)> getVideoList(
   }
   await Rinf.finalize();
   await Rinf.initialize();
-   final bytecode =
-        compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
+  final bytecode =
+      compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
-    final runtime = runtimeEval(bytecode);
+  final runtime = runtimeEval(bytecode);
 
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
-    final dd = (await (res as MProvider)
-        .getVideoList(source.toMSource(), episode.url!));
-    return (dd, false, null);
+  var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+      [$MSource.wrap(source.toMSource())]);
+  final dd = (await (res as MProvider).getVideoList(episode.url!));
+  return (dd, false, null);
 }

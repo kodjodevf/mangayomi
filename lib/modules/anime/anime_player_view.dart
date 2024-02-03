@@ -152,7 +152,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       language: _firstVid.audios?.first.label));
 
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  bool _seekToCurrentPosition = true;
   bool _initSubtitle = true;
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
@@ -166,19 +165,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final bool _isDesktop =
       Platform.isWindows || Platform.isMacOS || Platform.isLinux;
 
-  late StreamSubscription<Duration> _currentPositionSub =
+  late final StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (position) async {
-      if (_seekToCurrentPosition && _currentPosition.value != Duration.zero) {
-        await _player.stream.buffer.first;
-        _player.seek(_currentPosition.value);
-        _isCompleted.value = _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _seekToCurrentPosition = false;
-      } else {
-        _currentPosition.value = position;
-      }
+      _isCompleted.value =
+          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
+              10;
+      _currentPosition.value = position;
+
       if ((_firstVid.subtitles ?? []).isNotEmpty) {
         if (_initSubtitle) {
           try {
@@ -205,6 +199,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   @override
   void initState() {
     _setCurrentPosition(true);
+    _seekToCurrentPosition();
     _currentPositionSub;
     _currentTotalDurationSub;
     _player.open(Media(_video.value!.videoTrack!.id,
@@ -212,6 +207,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
     _initAniSkip();
     super.initState();
+  }
+
+  void _seekToCurrentPosition({Duration? duration}) async {
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(milliseconds: 300));
+      await _player.stream.buffer.first;
+      _player.seek(duration ?? _streamController.geTCurrentPosition());
+      return false;
+    });
   }
 
   void _initAniSkip() async {
@@ -327,23 +331,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
               _player.open(
                   Media(quality.videoTrack!.id, httpHeaders: quality.headers));
             }
-            _seekToCurrentPosition = true;
-            _currentPositionSub = _player.stream.position.listen(
-              (position) async {
-                if (_seekToCurrentPosition &&
-                    _currentPosition.value != Duration.zero) {
-                  await _player.stream.buffer.first;
-                  _player.seek(_currentPosition.value);
-                  try {
-                    _player.setSubtitleTrack(_subtitle.value!);
-                  } catch (_) {}
-
-                  _seekToCurrentPosition = false;
-                } else {
-                  _currentPosition.value = position;
-                }
-              },
-            );
+            _seekToCurrentPosition(duration: _currentPosition.value);
             Navigator.pop(context);
           },
         );

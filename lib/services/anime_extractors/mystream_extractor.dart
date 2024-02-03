@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class MyStreamExtractor {
@@ -8,7 +9,7 @@ class MyStreamExtractor {
       String url, Map<String, String> headers) async {
     final host = url.substringBefore("/watch");
 
-    final client = http.Client();
+    final InterceptedClient client = MInterceptor.init();
 
     try {
       final response = await client.get(Uri.parse(url), headers: headers);

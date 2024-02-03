@@ -61,8 +61,6 @@ class Settings {
 
   String? userAgent;
 
-  List<Cookie>? cookiesList;
-
   @enumerated
   late ReaderMode defaultReaderMode;
 
@@ -165,6 +163,8 @@ class Settings {
 
   bool? fullScreenReader;
 
+  String? defaultAppStoragePath;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -190,7 +190,6 @@ class Settings {
       this.showPagesNumber = true,
       this.chapterPageIndexList,
       this.userAgent = defaultUserAgent,
-      this.cookiesList,
       this.defaultReaderMode = ReaderMode.vertical,
       this.personalReaderModeList,
       this.animatePageTransitions = true,
@@ -237,7 +236,8 @@ class Settings {
       this.aniSkipTimeoutLength,
       this.btServerAddress = "127.0.0.1",
       this.btServerPort,
-      this.fullScreenReader = true});
+      this.fullScreenReader = true,
+      this.defaultAppStoragePath});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -279,10 +279,6 @@ class Settings {
           .toList();
     }
     checkForExtensionUpdates = json['checkForExtensionUpdates'];
-    if (json['cookiesList'] != null) {
-      cookiesList =
-          (json['cookiesList'] as List).map((e) => Cookie.fromJson(e)).toList();
-    }
     cropBorders = json['cropBorders'];
     dateFormat = json['dateFormat'];
     defaultReaderMode = ReaderMode.values[json['defaultReaderMode']];
@@ -366,6 +362,7 @@ class Settings {
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
     fullScreenReader = json['fullScreenReader'];
+    defaultAppStoragePath = json['defaultAppStoragePath'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -396,7 +393,6 @@ class Settings {
           'chapterPageUrlsList':
               chapterPageUrlsList!.map((v) => v.toJson()).toList(),
         'checkForExtensionUpdates': checkForExtensionUpdates,
-        'cookiesList': cookiesList,
         'cropBorders': cropBorders,
         'dateFormat': dateFormat,
         'defaultReaderMode': defaultReaderMode.index,
@@ -462,7 +458,8 @@ class Settings {
         'aniSkipTimeoutLength': aniSkipTimeoutLength,
         'btServerAddress': btServerAddress,
         'btServerPort': btServerPort,
-        'fullScreenReader': fullScreenReader
+        'fullScreenReader': fullScreenReader,
+        'defaultAppStoragePath': defaultAppStoragePath
       };
 }
 
@@ -578,20 +575,6 @@ class ChapterPageIndex {
   }
 
   Map<String, dynamic> toJson() => {'chapterId': chapterId, 'index': index};
-}
-
-@embedded
-class Cookie {
-  String? idSource;
-  String? cookie;
-  Cookie({this.idSource, this.cookie});
-
-  Cookie.fromJson(Map<String, dynamic> json) {
-    idSource = json['idSource'];
-    cookie = json['cookie'];
-  }
-
-  Map<String, dynamic> toJson() => {'idSource': idSource, 'cookie': cookie};
 }
 
 @embedded

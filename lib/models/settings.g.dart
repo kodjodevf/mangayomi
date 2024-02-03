@@ -140,20 +140,19 @@ const SettingsSchema = CollectionSchema(
       name: r'checkForExtensionUpdates',
       type: IsarType.bool,
     ),
-    r'cookiesList': PropertySchema(
-      id: 23,
-      name: r'cookiesList',
-      type: IsarType.objectList,
-      target: r'Cookie',
-    ),
     r'cropBorders': PropertySchema(
-      id: 24,
+      id: 23,
       name: r'cropBorders',
       type: IsarType.bool,
     ),
     r'dateFormat': PropertySchema(
-      id: 25,
+      id: 24,
       name: r'dateFormat',
+      type: IsarType.string,
+    ),
+    r'defaultAppStoragePath': PropertySchema(
+      id: 25,
+      name: r'defaultAppStoragePath',
       type: IsarType.string,
     ),
     r'defaultDoubleTapToSkipLength': PropertySchema(
@@ -434,7 +433,6 @@ const SettingsSchema = CollectionSchema(
     r'ChapterFilterBookmarked': ChapterFilterBookmarkedSchema,
     r'ChapterPageurls': ChapterPageurlsSchema,
     r'ChapterPageIndex': ChapterPageIndexSchema,
-    r'Cookie': CookieSchema,
     r'PersonalReaderMode': PersonalReaderModeSchema,
     r'FilterScanlator': FilterScanlatorSchema,
     r'L10nLocale': L10nLocaleSchema,
@@ -556,20 +554,13 @@ int _settingsEstimateSize(
     }
   }
   {
-    final list = object.cookiesList;
-    if (list != null) {
-      bytesCount += 3 + list.length * 3;
-      {
-        final offsets = allOffsets[Cookie]!;
-        for (var i = 0; i < list.length; i++) {
-          final value = list[i];
-          bytesCount += CookieSchema.estimateSize(value, offsets, allOffsets);
-        }
-      }
+    final value = object.dateFormat;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
     }
   }
   {
-    final value = object.dateFormat;
+    final value = object.defaultAppStoragePath;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -728,14 +719,9 @@ void _settingsSerialize(
     object.chapterPageUrlsList,
   );
   writer.writeBool(offsets[22], object.checkForExtensionUpdates);
-  writer.writeObjectList<Cookie>(
-    offsets[23],
-    allOffsets,
-    CookieSchema.serialize,
-    object.cookiesList,
-  );
-  writer.writeBool(offsets[24], object.cropBorders);
-  writer.writeString(offsets[25], object.dateFormat);
+  writer.writeBool(offsets[23], object.cropBorders);
+  writer.writeString(offsets[24], object.dateFormat);
+  writer.writeString(offsets[25], object.defaultAppStoragePath);
   writer.writeLong(offsets[26], object.defaultDoubleTapToSkipLength);
   writer.writeDouble(offsets[27], object.defaultPlayBackSpeed);
   writer.writeByte(offsets[28], object.defaultReaderMode.index);
@@ -874,14 +860,9 @@ Settings _settingsDeserialize(
       ChapterPageurls(),
     ),
     checkForExtensionUpdates: reader.readBoolOrNull(offsets[22]),
-    cookiesList: reader.readObjectList<Cookie>(
-      offsets[23],
-      CookieSchema.deserialize,
-      allOffsets,
-      Cookie(),
-    ),
-    cropBorders: reader.readBoolOrNull(offsets[24]),
-    dateFormat: reader.readStringOrNull(offsets[25]),
+    cropBorders: reader.readBoolOrNull(offsets[23]),
+    dateFormat: reader.readStringOrNull(offsets[24]),
+    defaultAppStoragePath: reader.readStringOrNull(offsets[25]),
     defaultDoubleTapToSkipLength: reader.readLongOrNull(offsets[26]),
     defaultPlayBackSpeed: reader.readDoubleOrNull(offsets[27]),
     defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
@@ -1075,14 +1056,9 @@ P _settingsDeserializeProp<P>(
     case 22:
       return (reader.readBoolOrNull(offset)) as P;
     case 23:
-      return (reader.readObjectList<Cookie>(
-        offset,
-        CookieSchema.deserialize,
-        allOffsets,
-        Cookie(),
-      )) as P;
-    case 24:
       return (reader.readBoolOrNull(offset)) as P;
+    case 24:
+      return (reader.readStringOrNull(offset)) as P;
     case 25:
       return (reader.readStringOrNull(offset)) as P;
     case 26:
@@ -3077,111 +3053,6 @@ extension SettingsQueryFilter
     });
   }
 
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> cookiesListIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cookiesList',
-      ));
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cookiesList',
-      ));
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        length,
-        true,
-        length,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> cookiesListIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        0,
-        true,
-        0,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        0,
-        false,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        0,
-        true,
-        length,
-        include,
-      );
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        length,
-        include,
-        999999,
-        true,
-      );
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition>
-      cookiesListLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'cookiesList',
-        lower,
-        includeLower,
-        upper,
-        includeUpper,
-      );
-    });
-  }
-
   QueryBuilder<Settings, Settings, QAfterFilterCondition> cropBordersIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3352,6 +3223,161 @@ extension SettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'dateFormat',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'defaultAppStoragePath',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'defaultAppStoragePath',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'defaultAppStoragePath',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'defaultAppStoragePath',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'defaultAppStoragePath',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'defaultAppStoragePath',
         value: '',
       ));
     });
@@ -6297,13 +6323,6 @@ extension SettingsQueryObject
     });
   }
 
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> cookiesListElement(
-      FilterQuery<Cookie> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.object(q, r'cookiesList');
-    });
-  }
-
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       filterScanlatorListElement(FilterQuery<FilterScanlator> q) {
     return QueryBuilder.apply(this, (query) {
@@ -6649,6 +6668,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByDateFormatDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateFormat', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByDefaultAppStoragePath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByDefaultAppStoragePathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.desc);
     });
   }
 
@@ -7439,6 +7471,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByDefaultAppStoragePath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByDefaultAppStoragePathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       thenByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -8130,6 +8175,14 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByDefaultAppStoragePath(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'defaultAppStoragePath',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
       distinctByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -8571,13 +8624,6 @@ extension SettingsQueryProperty
     });
   }
 
-  QueryBuilder<Settings, List<Cookie>?, QQueryOperations>
-      cookiesListProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'cookiesList');
-    });
-  }
-
   QueryBuilder<Settings, bool?, QQueryOperations> cropBordersProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cropBorders');
@@ -8587,6 +8633,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, String?, QQueryOperations> dateFormatProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateFormat');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations>
+      defaultAppStoragePathProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'defaultAppStoragePath');
     });
   }
 
@@ -10666,386 +10719,6 @@ extension ChapterPageIndexQueryFilter
 
 extension ChapterPageIndexQueryObject
     on QueryBuilder<ChapterPageIndex, ChapterPageIndex, QFilterCondition> {}
-
-// coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
-
-const CookieSchema = Schema(
-  name: r'Cookie',
-  id: -4750069831156363626,
-  properties: {
-    r'cookie': PropertySchema(
-      id: 0,
-      name: r'cookie',
-      type: IsarType.string,
-    ),
-    r'idSource': PropertySchema(
-      id: 1,
-      name: r'idSource',
-      type: IsarType.string,
-    )
-  },
-  estimateSize: _cookieEstimateSize,
-  serialize: _cookieSerialize,
-  deserialize: _cookieDeserialize,
-  deserializeProp: _cookieDeserializeProp,
-);
-
-int _cookieEstimateSize(
-  Cookie object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  {
-    final value = object.cookie;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.idSource;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  return bytesCount;
-}
-
-void _cookieSerialize(
-  Cookie object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeString(offsets[0], object.cookie);
-  writer.writeString(offsets[1], object.idSource);
-}
-
-Cookie _cookieDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = Cookie(
-    cookie: reader.readStringOrNull(offsets[0]),
-    idSource: reader.readStringOrNull(offsets[1]),
-  );
-  return object;
-}
-
-P _cookieDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readStringOrNull(offset)) as P;
-    case 1:
-      return (reader.readStringOrNull(offset)) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-extension CookieQueryFilter on QueryBuilder<Cookie, Cookie, QFilterCondition> {
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cookie',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cookie',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cookie',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cookie',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cookie',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cookie',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'idSource',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'idSource',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'idSource',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'idSource',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idSource',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'idSource',
-        value: '',
-      ));
-    });
-  }
-}
-
-extension CookieQueryObject on QueryBuilder<Cookie, Cookie, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types

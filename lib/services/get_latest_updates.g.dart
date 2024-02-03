@@ -6,7 +6,7 @@ part of 'get_latest_updates.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getLatestUpdatesHash() => r'19ccde133a23148dd90f29110b5f9804cd2cb942';
+String _$getLatestUpdatesHash() => r'288b2ce3b2e79c1924c8e2a312282900fd9e645f';
 
 /// Copied from Dart SDK
 class _SystemHash {

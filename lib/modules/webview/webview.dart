@@ -1,13 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
-
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/cloudflare/cookie.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
@@ -54,6 +54,11 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     webview!
       ..setBrightness(Brightness.dark)
       ..launch(widget.url)
+      ..addOnUrlRequestCallback((url) async {
+        final newCookie =
+            await webview!.evaluateJavaScript("window.document.cookie;");
+        log(newCookie.toString());
+      })
       ..onClose.whenComplete(() {
         Navigator.pop(context);
       });
@@ -217,7 +222,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         final ua = await controller.evaluateJavascript(
                                 source: "navigator.userAgent") ??
                             "";
-                        await addCookie(widget.sourceId, url.toString(), ua);
+                        await MInterceptor.setCookie(url.toString(), ua);
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
                         final title = await controller.getTitle();
@@ -246,16 +251,16 @@ Future<String> getWebViewPath() async {
   );
 }
 
-Future<String?> decodeHtml(Webview webview, {String? sourceId}) async {
+Future<String?> decodeHtml(Webview webview) async {
   try {
     final html = await webview
         .evaluateJavaScript("window.document.documentElement.outerHTML;");
     final ua = await webview.evaluateJavaScript("navigator.userAgent") ?? "";
     final newCookie =
         await webview.evaluateJavaScript("window.document.cookie;");
-    if (newCookie != null && sourceId != null) {
-      CookieState(idSource: sourceId)
-          .set(jsonDecode(newCookie), ua.isNotEmpty ? jsonDecode(ua) : "");
+    if (newCookie != null) {
+      await MInterceptor.setCookie(
+          jsonDecode(newCookie), ua.isNotEmpty ? jsonDecode(ua) : "");
     }
 
     final res = jsonDecode(html!) as String;

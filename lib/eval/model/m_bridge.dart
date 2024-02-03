@@ -32,7 +32,7 @@ import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
-import 'package:mangayomi/services/cloudflare/cloudflare.dart';
+import 'package:mangayomi/services/http/cloudflare.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
