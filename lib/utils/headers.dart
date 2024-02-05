@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'headers.g.dart';
@@ -13,6 +14,9 @@ Map<String, String> headers(HeadersRef ref,
     headers = (jsonDecode(mSource!.headers!) as Map)
         .map((key, value) => MapEntry(key.toString(), value.toString()));
   }
+
+  final cookies = MInterceptor.getCookiesPref(mSource!.baseUrl!);
+  headers.addAll(cookies);
 
   return headers;
 }

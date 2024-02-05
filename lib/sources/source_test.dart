@@ -58,7 +58,7 @@ class TestSource extends MProvider {
 
   // For manga chapter pages
   @override
-  Future<List<String>> getPageList(String url) {
+  Future<List<String>> getPageList(String url) async{
     // TODO: implement
   }
 

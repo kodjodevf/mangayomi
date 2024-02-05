@@ -1,6 +1,4 @@
-// import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -86,15 +84,14 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     final oldChapers =
         isar.mangas.getSync(mangaId)!.chapters.toList().reversed.toList();
     if (oldChapers.length == chaps.length) {
-      for (var oldChap in oldChapers) {
-        final newChap = chaps.firstWhere(
-          (e) => e.name == oldChap.name,
-          orElse: () => MChapter(),
-        );
+      for (var i = 0; i < oldChapers.length; i++) {
+        final oldChap = oldChapers[i];
+        final newChap = chaps[i];
         if (newChap.url != null &&
             newChap.url!.isNotEmpty &&
             newChap.url != oldChap.url) {
           oldChap.url = newChap.url;
+          oldChap.scanlator = newChap.scanlator;
           isar.chapters.putSync(oldChap);
           oldChap.manga.saveSync();
         }

@@ -15,7 +15,10 @@ class MInterceptor {
       ignoreExpires: true,
       storage: cookie_jar.FileStorage(
           "${isar.settings.getSync(227)!.defaultAppStoragePath}.cookies/"));
-  MInterceptor({required String idSource});
+  static final flutter_inappwebview.CookieManager _cookieManager =
+      flutter_inappwebview.CookieManager.instance();
+
+  MInterceptor();
 
   static InterceptedClient init({MSource? source}) {
     return InterceptedClient.build(interceptors: [
@@ -24,13 +27,50 @@ class MInterceptor {
     ]);
   }
 
-  static Future<void> setCookie(String url, String ua) async {
-    flutter_inappwebview.CookieManager cookieManager =
-        flutter_inappwebview.CookieManager.instance();
+  static Map<String, String> getCookiesPref(String url) {
+    final cookiesList = isar.settings.getSync(227)!.cookiesList ?? [];
+    if (cookiesList.isEmpty) return {};
+    final cookies = cookiesList
+        .firstWhere(
+          (element) => element.host == Uri.parse(url).host,
+          orElse: () => MCookie(cookie: ""),
+        )
+        .cookie!;
+    if (cookies.isEmpty) return {};
+    return {HttpHeaders.cookieHeader: cookies};
+  }
 
-    final cookies = (await cookieManager.getCookies(url: Uri.parse(url)))
-        .map((e) => "${e.name}=${e.value}")
-        .toList();
+  static Future<void> setCookiesPref(String url) async {
+    final host = Uri.parse(url).host;
+    final newCookie = (await _cookieJar.loadForRequest(Uri.parse(url)))
+        .map((e) => e.toString())
+        .join(";");
+    final settings = isar.settings.getSync(227);
+    List<MCookie>? cookieList = [];
+    for (var cookie in settings!.cookiesList ?? []) {
+      if (cookie.host != host) {
+        cookieList.add(cookie);
+      }
+    }
+    cookieList.add(MCookie()
+      ..host = host
+      ..cookie = newCookie);
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings..cookiesList = cookieList));
+  }
+
+  static Future<void> setCookie(String url, String ua, {String? cookie}) async {
+    List<String> cookies = [];
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      cookies = cookie!
+          .split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+          .where((cookie) => cookie.isNotEmpty)
+          .toList();
+    } else {
+      cookies = (await _cookieManager.getCookies(url: Uri.parse(url)))
+          .map((e) => "${e.name}=${e.value}")
+          .toList();
+    }
 
     if (cookies.isNotEmpty) {
       for (final cookie in cookies) {
@@ -39,6 +79,7 @@ class MInterceptor {
           [Cookie.fromSetCookieValue(cookie)],
         );
       }
+      await setCookiesPref(url);
       final settings = isar.settings.getSync(227);
 
       isar.writeTxnSync(() => isar.settings.putSync(settings!..userAgent = ua));
@@ -98,23 +139,30 @@ class MCookieManager extends InterceptorContract {
     if (setCookies == null || setCookies.isEmpty) {
       return;
     }
-    final List<Cookie> cookies = setCookies
-        .split(RegExp('(?<=)(,)(?=[^;]+?=)'))
-        .where((cookie) => cookie.isNotEmpty)
-        .map((str) => Cookie.fromSetCookieValue(str))
-        .toList();
-    final statusCode = response.statusCode;
-    final isRedirectRequest = statusCode >= 300 && statusCode < 400;
-    final location = response.headers[HttpHeaders.locationHeader] ?? "";
-    final originalUri = response.request!.url;
-    final realUri = originalUri
-        .resolveUri(isRedirectRequest ? Uri.parse(location) : originalUri);
-    await cookieJar.saveFromResponse(realUri, cookies);
-    if (isRedirectRequest && location.isNotEmpty) {
-      await Future.wait(
-        [cookieJar.saveFromResponse(originalUri.resolve(location), cookies)],
-      );
-    }
+    try {
+      final List<Cookie> cookies = setCookies
+          .split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+          .where((cookie) => cookie.isNotEmpty)
+          .map((str) => Cookie.fromSetCookieValue(str))
+          .toList();
+      final statusCode = response.statusCode;
+      final isRedirectRequest = statusCode >= 300 && statusCode < 400;
+      final location = response.headers[HttpHeaders.locationHeader] ?? "";
+      final originalUri = response.request!.url;
+      final realUri = originalUri
+          .resolveUri(isRedirectRequest ? Uri.parse(location) : originalUri);
+      await cookieJar.saveFromResponse(realUri, cookies);
+      await MInterceptor.setCookiesPref(realUri.toString());
+
+      if (isRedirectRequest && location.isNotEmpty) {
+        await Future.wait(
+          [cookieJar.saveFromResponse(originalUri.resolve(location), cookies)],
+        );
+
+        await MInterceptor.setCookiesPref(
+            originalUri.resolve(location).toString());
+      }
+    } catch (_) {}
   }
 }
 

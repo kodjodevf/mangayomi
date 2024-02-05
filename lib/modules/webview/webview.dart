@@ -55,9 +55,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
       ..setBrightness(Brightness.dark)
       ..launch(widget.url)
       ..addOnUrlRequestCallback((url) async {
-        final newCookie =
-            await webview!.evaluateJavaScript("window.document.cookie;");
-        log(newCookie.toString());
+        decodeHtml(webview!, url);
+        // final newCookie =
+        //     await webview!.evaluateJavaScript("window.document.cookie;");
+        // log(newCookie.toString());
       })
       ..onClose.whenComplete(() {
         Navigator.pop(context);
@@ -251,16 +252,17 @@ Future<String> getWebViewPath() async {
   );
 }
 
-Future<String?> decodeHtml(Webview webview) async {
+Future<String?> decodeHtml(Webview webview, String url) async {
   try {
     final html = await webview
         .evaluateJavaScript("window.document.documentElement.outerHTML;");
     final ua = await webview.evaluateJavaScript("navigator.userAgent") ?? "";
     final newCookie =
         await webview.evaluateJavaScript("window.document.cookie;");
+    log(ua);
     if (newCookie != null) {
-      await MInterceptor.setCookie(
-          jsonDecode(newCookie), ua.isNotEmpty ? jsonDecode(ua) : "");
+      await MInterceptor.setCookie(url, jsonDecode(ua),
+          cookie: jsonDecode(newCookie));
     }
 
     final res = jsonDecode(html!) as String;

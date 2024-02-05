@@ -61,6 +61,8 @@ class Settings {
 
   String? userAgent;
 
+  List<MCookie>? cookiesList;
+
   @enumerated
   late ReaderMode defaultReaderMode;
 
@@ -190,6 +192,7 @@ class Settings {
       this.showPagesNumber = true,
       this.chapterPageIndexList,
       this.userAgent = defaultUserAgent,
+      this.cookiesList,
       this.defaultReaderMode = ReaderMode.vertical,
       this.personalReaderModeList,
       this.animatePageTransitions = true,
@@ -279,6 +282,11 @@ class Settings {
           .toList();
     }
     checkForExtensionUpdates = json['checkForExtensionUpdates'];
+    if (json['cookiesList'] != null) {
+      cookiesList = (json['cookiesList'] as List)
+          .map((e) => MCookie.fromJson(e))
+          .toList();
+    }
     cropBorders = json['cropBorders'];
     dateFormat = json['dateFormat'];
     defaultReaderMode = ReaderMode.values[json['defaultReaderMode']];
@@ -393,6 +401,7 @@ class Settings {
           'chapterPageUrlsList':
               chapterPageUrlsList!.map((v) => v.toJson()).toList(),
         'checkForExtensionUpdates': checkForExtensionUpdates,
+        'cookiesList': cookiesList,
         'cropBorders': cropBorders,
         'dateFormat': dateFormat,
         'defaultReaderMode': defaultReaderMode.index,
@@ -480,6 +489,20 @@ enum ScaleType {
 }
 
 enum BackgroundColor { black, grey, white, automatic }
+
+@embedded
+class MCookie {
+  String? host;
+  String? cookie;
+  MCookie({this.host, this.cookie});
+
+  MCookie.fromJson(Map<String, dynamic> json) {
+    host = json['host'];
+    cookie = json['cookie'];
+  }
+
+  Map<String, dynamic> toJson() => {'host': host, 'cookie': cookie};
+}
 
 @embedded
 class SortLibraryManga {

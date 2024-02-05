@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:html/dom.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -27,18 +24,15 @@ import 'package:mangayomi/services/anime_extractors/streamtape_extractor.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/services/http/cloudflare.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
-import 'package:mangayomi/utils/xpath_selector.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:http/http.dart' as hp;
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -127,75 +121,6 @@ class MBridge {
       }
     }
     return Status.unknown;
-  }
-
-  ///Get Html content via webview when http request not working
-  static Future<String> getHtmlViaWebview(String url, String rule) async {
-    bool isOk = false;
-    String? html;
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      final webview = await WebviewWindow.create(
-        configuration: CreateConfiguration(
-          windowHeight: 500,
-          windowWidth: 500,
-          userDataFolderWindows: await getWebViewPath(),
-        ),
-      );
-      webview
-        ..setApplicationNameForUserAgent(defaultUserAgent)
-        ..launch(url);
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 3));
-        html = await decodeHtml(
-          webview,
-        );
-        if (html == null || xpathSelector(html!).query(rule).attrs.isEmpty) {
-          html = await decodeHtml(webview);
-          return true;
-        }
-        return false;
-      });
-      html = await decodeHtml(webview);
-      webview.close();
-    } else {
-      HeadlessInAppWebView? headlessWebView;
-      headlessWebView = HeadlessInAppWebView(
-        onLoadStop: (controller, u) async {
-          html = await controller.evaluateJavascript(
-              source:
-                  "window.document.getElementsByTagName('html')[0].outerHTML;");
-          await Future.doWhile(() async {
-            html = await controller.evaluateJavascript(
-                source:
-                    "window.document.getElementsByTagName('html')[0].outerHTML;");
-            if (xpathSelector(html!).query(rule).attrs.isEmpty) {
-              html = await controller.evaluateJavascript(
-                  source:
-                      "window.document.getElementsByTagName('html')[0].outerHTML;");
-              return true;
-            }
-            return false;
-          });
-          html = await controller.evaluateJavascript(
-              source:
-                  "window.document.getElementsByTagName('html')[0].outerHTML;");
-          isOk = true;
-          headlessWebView!.dispose();
-        },
-        initialUrlRequest: URLRequest(
-          url: Uri.parse(url),
-        ),
-      );
-      headlessWebView.run();
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        if (isOk == true) {
-          return false;
-        }
-        return true;
-      });
-    }
-    return html!;
   }
 
   ///Unpack a JS code

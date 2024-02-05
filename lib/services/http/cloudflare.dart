@@ -24,7 +24,7 @@ Future<String> cloudflareBypass(
 
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
-      html = await decodeHtml(webview);
+      html = await decodeHtml(webview, url);
       if (html == null ||
           html!.contains("Just a moment") ||
           html!.contains("challenges.cloudflare.com")) {

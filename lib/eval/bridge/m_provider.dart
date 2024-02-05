@@ -897,11 +897,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
 
       ///////////////////////////////////////////////////////////////////////
 
-      "getHtmlViaWebview" => $Function((_, __, List<$Value?> args) {
-          return $Future.wrap(
-              MBridge.getHtmlViaWebview(args[0]!.$value, args[1]!.$value)
-                  .then((value) => $String(value)));
-        }),
       "unpackJs" => MBridge.unpackJs,
       "regExp" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.regExp(args[0]!.$value, args[1]!.$value,
