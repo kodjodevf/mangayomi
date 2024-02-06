@@ -27,7 +27,7 @@ class $Client implements $Instance {
         '': BridgeConstructorDef(
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
           BridgeParameter(
-              'source', BridgeTypeAnnotation($MSource.$type), false),
+              'source', BridgeTypeAnnotation($MSource.$type), true),
         ], namedParams: []))
       },
       methods: {

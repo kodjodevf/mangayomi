@@ -1,11 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_windows_webview/flutter_windows_webview.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,12 +17,13 @@ class MangaWebView extends ConsumerStatefulWidget {
   final String url;
   final String sourceId;
   final String title;
-  const MangaWebView({
-    super.key,
-    required this.url,
-    required this.sourceId,
-    required this.title,
-  });
+  final bool hasCloudFlare;
+  const MangaWebView(
+      {super.key,
+      required this.url,
+      required this.sourceId,
+      required this.title,
+      required this.hasCloudFlare});
 
   @override
   ConsumerState<MangaWebView> createState() => _MangaWebViewState();
@@ -30,6 +31,7 @@ class MangaWebView extends ConsumerStatefulWidget {
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
   final GlobalKey webViewKey = GlobalKey();
+  late final MyInAppBrowser _macOSbrowser;
 
   double progress = 0;
   @override
@@ -44,25 +46,57 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     super.initState();
   }
 
-  Webview? webview;
-  _runWebViewDesktop() async {
-    webview = await WebviewWindow.create(
-      configuration: CreateConfiguration(
-        userDataFolderWindows: await getWebViewPath(),
-      ),
-    );
-    webview!
-      ..setBrightness(Brightness.dark)
-      ..launch(widget.url)
-      ..addOnUrlRequestCallback((url) async {
-        decodeHtml(webview!, url);
-        // final newCookie =
-        //     await webview!.evaluateJavaScript("window.document.cookie;");
-        // log(newCookie.toString());
-      })
-      ..onClose.whenComplete(() {
-        Navigator.pop(context);
-      });
+  final _windowsWebview = FlutterWindowsWebview();
+  Webview? _linuxWebview;
+  void _runWebViewDesktop() async {
+    if (Platform.isLinux) {
+      _linuxWebview = await WebviewWindow.create(
+        configuration: CreateConfiguration(
+          userDataFolderWindows: await getWebViewPath(),
+        ),
+      );
+      _linuxWebview!
+        ..launch(widget.url)
+        ..onClose.whenComplete(() {
+          Navigator.pop(context);
+        });
+    } else if (Platform.isWindows &&
+        await FlutterWindowsWebview.isAvailable()) {
+      _windowsWebview.launchWebview(
+          widget.url,
+          WebviewOptions(messageReceiver: (s) {
+            if (s.substring(0, 2) == "UA") {
+              MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+            }
+          }, onNavigation: (url) {
+            if (Uri.parse(url).host != Uri.parse(widget.url).host) return false;
+
+            _windowsWebview.runScript(
+                "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
+
+            _windowsWebview.getCookies(widget.url).then((cookies) {
+              final cookie =
+                  cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
+              MInterceptor.setCookie(_url, "", cookie: cookie);
+            });
+
+            return false;
+          }));
+    } else if (Platform.isMacOS) {
+      await _macOSbrowser.openUrlRequest(
+        urlRequest: URLRequest(url: WebUri(widget.url)),
+        settings: InAppBrowserClassSettings(
+          browserSettings: InAppBrowserSettings(
+              toolbarTopBackgroundColor: Colors.blue,
+              presentationStyle: ModalPresentationStyle.POPOVER),
+          webViewSettings: InAppWebViewSettings(
+            isInspectable: kDebugMode,
+            useShouldOverrideUrlLoading: true,
+            useOnLoadResource: true,
+          ),
+        ),
+      );
+    }
   }
 
   bool isNotDesktop = false;
@@ -85,7 +119,13 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                   onPressed: () {
-                    webview!.close();
+                    if (Platform.isMacOS) {
+                      if (_macOSbrowser.isOpened()) {
+                        _macOSbrowser.close();
+                      }
+                    } else if (Platform.isLinux) {
+                      _linuxWebview!.close();
+                    }
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.close)),
@@ -161,7 +201,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             Share.share(_url);
                           } else if (value == 2) {
                             await InAppBrowser.openWithSystemBrowser(
-                                url: Uri.parse(_url));
+                                url: WebUri(_url));
                           } else if (value == 3) {
                             CookieManager.instance().deleteAllCookies();
                           }
@@ -234,7 +274,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           _canGoForward = canGoForward;
                         });
                       },
-                      initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
                     ),
                   ),
                 ],
@@ -252,25 +292,60 @@ Future<String> getWebViewPath() async {
   );
 }
 
-Future<String?> decodeHtml(Webview webview, String url) async {
-  try {
-    final html = await webview
-        .evaluateJavaScript("window.document.documentElement.outerHTML;");
-    final ua = await webview.evaluateJavaScript("navigator.userAgent") ?? "";
-    final newCookie =
-        await webview.evaluateJavaScript("window.document.cookie;");
-    log(ua);
-    if (newCookie != null) {
-      await MInterceptor.setCookie(url, jsonDecode(ua),
-          cookie: jsonDecode(newCookie));
+class MyInAppBrowser extends InAppBrowser {
+  MyInAppBrowser({required this.context});
+  late BuildContext context;
+  @override
+  Future onBrowserCreated() async {}
+
+  @override
+  void onUpdateVisitedHistory(WebUri? url, bool? isReload) async {
+    final ua = await webViewController?.evaluateJavascript(
+            source: "navigator.userAgent") ??
+        "";
+    await MInterceptor.setCookie(url.toString(), ua);
+  }
+
+  @override
+  Future onLoadStart(url) async {}
+
+  @override
+  Future onLoadStop(url) async {}
+
+  @override
+  void onProgressChanged(progress) {
+    if (progress == 100) {
+      pullToRefreshController?.endRefreshing();
+    }
+  }
+
+  @override
+  void onExit() {
+    Navigator.pop(context);
+  }
+
+  @override
+  Future<NavigationActionPolicy> shouldOverrideUrlLoading(
+      navigationAction) async {
+    var uri = navigationAction.request.url!;
+
+    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
+        .contains(uri.scheme)) {
+      if (await canLaunchUrl(uri)) {
+        // Launch the App
+        await launchUrl(
+          uri,
+        );
+        // and cancel the request
+        return NavigationActionPolicy.CANCEL;
+      }
     }
 
-    final res = jsonDecode(html!) as String;
+    return NavigationActionPolicy.ALLOW;
+  }
 
-    return res == "<html><head></head><body></body></html>" || res.isEmpty
-        ? null
-        : res;
-  } catch (_) {
-    return null;
+  @override
+  void onMainWindowWillClose() {
+    close();
   }
 }

@@ -518,21 +518,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
-        'http': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
-              params: [
-                BridgeParameter(
-                    'method',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-                BridgeParameter(
-                    'datas',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false),
-              ]),
-        ),
         'gogoCdnExtractor': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
@@ -763,10 +748,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             out += '#${uri.fragment}';
           }
           return $String(out);
-        }),
-      'http' => $Function((_, __, List<$Value?> args) {
-          return $Future.wrap(MBridge.http(args[0]!.$reified, args[1]!.$reified)
-              .then((value) => $String(value)));
         }),
       'parseHtml' => $Function((_, __, List<$Value?> args) {
           final res = MBridge.parsHtml(args[0]!.$reified);

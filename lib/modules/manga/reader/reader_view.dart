@@ -1209,10 +1209,11 @@ class _MangaChapterPageGalleryState
                       String url = chapter.url!.startsWith('/')
                           ? "${source.baseUrl}/${chapter.url!}"
                           : chapter.url!;
-                      Map<String, String> data = {
+                      Map<String, dynamic> data = {
                         'url': url,
                         'sourceId': source.id.toString(),
-                        'title': chapter.name!
+                        'title': chapter.name!,
+                        "hasCloudFlare": source.hasCloudflare ?? false
                       };
                       context.push("/mangawebview", extra: data);
                     },

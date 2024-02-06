@@ -40,7 +40,7 @@ void main(List<String> args) async {
   // Override the default HTTP client.
   HttpOverrides.global = MyHttpoverrides();
   // If running on desktop platforms and web view title bar widget is active, exit.
-  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+  if (Platform.isLinux) {
     if (runWebViewTitleBarWidget(args)) {
       return;
     }

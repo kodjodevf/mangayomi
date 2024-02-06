@@ -1,0 +1,28 @@
+name: desktop_webview_window
+description: Show a webview window on your flutter desktop application.
+version: 0.2.3
+homepage: https://github.com/MixinNetwork/flutter-plugins/tree/main/packages/desktop_webview_window
+
+environment:
+  sdk: ">=2.14.0 <4.0.0"
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path: ^1.8.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+  plugin:
+    platforms:
+      linux:
+        pluginClass: DesktopWebviewWindowPlugin

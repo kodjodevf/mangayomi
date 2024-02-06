@@ -61,13 +61,15 @@ class MInterceptor {
 
   static Future<void> setCookie(String url, String ua, {String? cookie}) async {
     List<String> cookies = [];
-    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-      cookies = cookie!
-          .split(RegExp('(?<=)(,)(?=[^;]+?=)'))
-          .where((cookie) => cookie.isNotEmpty)
-          .toList();
+    if (Platform.isWindows || Platform.isLinux) {
+      cookies = cookie
+              ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+              .where((cookie) => cookie.isNotEmpty)
+              .toList() ??
+          [];
     } else {
-      cookies = (await _cookieManager.getCookies(url: Uri.parse(url)))
+      cookies = (await _cookieManager.getCookies(
+              url: flutter_inappwebview.WebUri(url)))
           .map((e) => "${e.name}=${e.value}")
           .toList();
     }
@@ -80,8 +82,9 @@ class MInterceptor {
         );
       }
       await setCookiesPref(url);
+    }
+    if (ua.isNotEmpty) {
       final settings = isar.settings.getSync(227);
-
       isar.writeTxnSync(() => isar.settings.putSync(settings!..userAgent = ua));
     }
   }

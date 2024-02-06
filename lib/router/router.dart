@@ -360,20 +360,23 @@ class RouterNotifier extends ChangeNotifier {
           path: "/mangawebview",
           name: "mangawebview",
           builder: (context, state) {
-            final data = state.extra as Map<String, String>;
+            final data = state.extra as Map<String, dynamic>;
             return MangaWebView(
-                url: data["url"]!,
-                sourceId: data["sourceId"]!,
-                title: data['title']!);
+              url: data["url"]!,
+              sourceId: data["sourceId"]!,
+              title: data['title']!,
+              hasCloudFlare: data["hasCloudFlare"]!,
+            );
           },
           pageBuilder: (context, state) {
-            final data = state.extra as Map<String, String>;
+            final data = state.extra as Map<String, dynamic>;
             return transitionPage(
               key: state.pageKey,
               child: MangaWebView(
                 url: data["url"]!,
                 sourceId: data["sourceId"]!,
                 title: data['title']!,
+                hasCloudFlare: data["hasCloudFlare"]!,
               ),
             );
           },

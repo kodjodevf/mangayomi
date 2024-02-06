@@ -181,10 +181,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         Icon(Icons.search, color: Theme.of(context).hintColor)),
             IconButton(
               onPressed: () {
-                Map<String, String> data = {
+                Map<String, dynamic> data = {
                   'url': widget.source.baseUrl!,
                   'sourceId': widget.source.id.toString(),
-                  'title': ''
+                  'title': '',
+                  "hasCloudFlare": widget.source.hasCloudflare ?? false
                 };
                 context.push("/mangawebview", extra: data);
               },
@@ -474,10 +475,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            Map<String, String> data = {
+                            Map<String, dynamic> data = {
                               'url': widget.source.baseUrl!,
                               'sourceId': widget.source.id.toString(),
-                              'title': ''
+                              'title': '',
+                              "hasCloudFlare":
+                                  widget.source.hasCloudflare ?? false
                             };
                             context.push("/mangawebview", extra: data);
                           },

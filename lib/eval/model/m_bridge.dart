@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
@@ -21,20 +20,16 @@ import 'package:mangayomi/services/anime_extractors/sendvid_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamtape_extractor.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
-import 'package:mangayomi/services/http/cloudflare.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
-import 'package:http/http.dart' as hp;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class WordSet {
@@ -298,79 +293,6 @@ class MBridge {
       return expression.replaceAll(RegExp(source), replace);
     }
     return regCustomMatcher(expression, source, group);
-  }
-
-  //http request and also webview
-  static Future<String> http(String method, String datas) async {
-    try {
-      hp.StreamedResponse? res;
-
-      //Get headers
-      final headersMap = jsonDecode(datas)["headers"] as Map?;
-
-      //Get sourceId
-      final sourceId = jsonDecode(datas)["sourceId"] as int?;
-
-      //Get body
-      final bodyMap = jsonDecode(datas)["body"] as Map?;
-
-      final useFormBuilder =
-          (jsonDecode(datas)["useFormBuilder"] as bool?) ?? false;
-
-      final url = jsonDecode(datas)["url"] as String;
-      //Convert body Map<dynamic,dynamic> to Map<String,String>
-      Map<String, dynamic> body = {};
-      if (bodyMap != null) {
-        body = bodyMap.map((key, value) => MapEntry(key.toString(), value));
-      }
-
-      //Convert headers Map<dynamic,dynamic> to Map<String,String>
-      Map<String, String> headers = {};
-      if (headersMap != null) {
-        headers = headersMap
-            .map((key, value) => MapEntry(key.toString(), value.toString()));
-      }
-
-      //Get the serie source
-      final source = sourceId != null ? isar.sources.getSync(sourceId) : null;
-
-      if (useFormBuilder) {
-        var request = hp.MultipartRequest(method, Uri.parse(url));
-        if (bodyMap != null) {
-          final fields = bodyMap
-              .map((key, value) => MapEntry(key.toString(), value.toString()));
-          request.fields.addAll(fields);
-        }
-        request.headers.addAll(headers);
-
-        res = await request.send();
-      } else {
-        var request = hp.Request(method, Uri.parse(url));
-
-        if (bodyMap != null) {
-          request.body = json.encode(body);
-        }
-
-        request.headers.addAll(headers);
-
-        res = await request.send();
-      }
-      if (res.statusCode == 403 && (source?.hasCloudflare ?? false)) {
-        log("Http request: ${res.statusCode}, Cloudflare");
-        return await cloudflareBypass(
-            url: url, sourceId: source!.id.toString());
-      } else if (res.statusCode == 200) {
-        log("Http request: ${res.statusCode}");
-        return await res.stream.bytesToString();
-      } else {
-        log("Http request: ${res.statusCode}, reasonPhrase: ${res.reasonPhrase}");
-        return "error";
-      }
-    } catch (e) {
-      log("Http error: $e");
-      // botToast(e.toString());
-      return "error";
-    }
   }
 
   static Future<List<Video>> gogoCdnExtractor(String url) async {

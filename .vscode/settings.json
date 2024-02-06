@@ -5,5 +5,9 @@
     ],
     "rust-analyzer.linkedProjects": [
         ".\\native\\hub\\Cargo.toml"
-    ]
+    ],
+    "files.associations": {
+        "*.html.erb": "erb",
+        "cstring": "cpp"
+    }
 }
