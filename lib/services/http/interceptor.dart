@@ -68,8 +68,7 @@ class MInterceptor {
               .toList() ??
           [];
     } else {
-      cookies = (await _cookieManager.getCookies(
-              url: flutter_inappwebview.WebUri(url)))
+      cookies = (await _cookieManager.getCookies(url: Uri.parse(url)))
           .map((e) => "${e.name}=${e.value}")
           .toList();
     }

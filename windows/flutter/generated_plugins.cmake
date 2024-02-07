@@ -12,7 +12,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   screen_retriever
   share_plus
   url_launcher_windows
-  webf
   window_manager
   window_to_front
 )

@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,16 +30,15 @@ class MangaWebView extends ConsumerStatefulWidget {
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
   final GlobalKey webViewKey = GlobalKey();
-  late final MyInAppBrowser _macOSbrowser;
 
-  double progress = 0;
+  double _progress = 0;
   @override
   void initState() {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       _runWebViewDesktop();
     } else {
       setState(() {
-        isNotDesktop = true;
+        _isNotDesktop = true;
       });
     }
     super.initState();
@@ -49,7 +47,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   final _windowsWebview = FlutterWindowsWebview();
   Webview? _linuxWebview;
   void _runWebViewDesktop() async {
-    if (Platform.isLinux) {
+    if (Platform.isLinux || Platform.isMacOS) {
       _linuxWebview = await WebviewWindow.create(
         configuration: CreateConfiguration(
           userDataFolderWindows: await getWebViewPath(),
@@ -60,46 +58,32 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         ..onClose.whenComplete(() {
           Navigator.pop(context);
         });
-    } else if (Platform.isWindows &&
-        await FlutterWindowsWebview.isAvailable()) {
+    }
+    //credit: https://github.com/wgh136/PicaComic/blob/master/lib/network/nhentai_network/cloudflare.dart
+    else if (Platform.isWindows && await FlutterWindowsWebview.isAvailable()) {
       _windowsWebview.launchWebview(
           widget.url,
           WebviewOptions(messageReceiver: (s) {
-            if (s.substring(0, 2) == "UA") {
-              MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+            if (widget.hasCloudFlare) {
+              if (s.substring(0, 2) == "UA") {
+                MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+              }
             }
-          }, onNavigation: (url) {
-            if (Uri.parse(url).host != Uri.parse(widget.url).host) return false;
-
-            _windowsWebview.runScript(
-                "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
-
-            _windowsWebview.getCookies(widget.url).then((cookies) {
-              final cookie =
-                  cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
-              MInterceptor.setCookie(_url, "", cookie: cookie);
-            });
-
-            return false;
+          }, onTitleChange: (_) {
+            if (widget.hasCloudFlare) {
+              _windowsWebview.runScript(
+                  "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
+              _windowsWebview.getCookies(widget.url).then((cookies) {
+                final cookie =
+                    cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
+                MInterceptor.setCookie(_url, "", cookie: cookie);
+              });
+            }
           }));
-    } else if (Platform.isMacOS) {
-      await _macOSbrowser.openUrlRequest(
-        urlRequest: URLRequest(url: WebUri(widget.url)),
-        settings: InAppBrowserClassSettings(
-          browserSettings: InAppBrowserSettings(
-              toolbarTopBackgroundColor: Colors.blue,
-              presentationStyle: ModalPresentationStyle.POPOVER),
-          webViewSettings: InAppWebViewSettings(
-            isInspectable: kDebugMode,
-            useShouldOverrideUrlLoading: true,
-            useOnLoadResource: true,
-          ),
-        ),
-      );
     }
   }
 
-  bool isNotDesktop = false;
+  bool _isNotDesktop = false;
   InAppWebViewController? _webViewController;
   late String _url = widget.url;
   late String _title = widget.title;
@@ -108,7 +92,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
-    return !isNotDesktop
+    return !_isNotDesktop
         ? Scaffold(
             appBar: AppBar(
               title: Text(
@@ -119,11 +103,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                   onPressed: () {
-                    if (Platform.isMacOS) {
-                      if (_macOSbrowser.isOpened()) {
-                        _macOSbrowser.close();
-                      }
-                    } else if (Platform.isLinux) {
+                    if (Platform.isLinux || Platform.isMacOS) {
                       _linuxWebview!.close();
                     }
                     Navigator.pop(context);
@@ -201,7 +181,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             Share.share(_url);
                           } else if (value == 2) {
                             await InAppBrowser.openWithSystemBrowser(
-                                url: WebUri(_url));
+                                url: Uri.parse(_url));
                           } else if (value == 3) {
                             CookieManager.instance().deleteAllCookies();
                           }
@@ -209,8 +189,8 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                       ],
                     ),
                   ),
-                  progress < 1.0
-                      ? LinearProgressIndicator(value: progress)
+                  _progress < 1.0
+                      ? LinearProgressIndicator(value: _progress)
                       : Container(),
                   Expanded(
                     child: InAppWebView(
@@ -249,32 +229,40 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         return NavigationActionPolicy.ALLOW;
                       },
                       onLoadStop: (controller, url) async {
-                        setState(() {
-                          _url = url.toString();
-                        });
+                        if (mounted) {
+                          setState(() {
+                            _url = url.toString();
+                          });
+                        }
                       },
                       onProgressChanged: (controller, progress) async {
-                        setState(() {
-                          this.progress = progress / 100;
-                        });
+                        if (mounted) {
+                          setState(() {
+                            _progress = progress / 100;
+                          });
+                        }
                       },
                       onUpdateVisitedHistory:
                           (controller, url, isReload) async {
-                        final ua = await controller.evaluateJavascript(
-                                source: "navigator.userAgent") ??
-                            "";
-                        await MInterceptor.setCookie(url.toString(), ua);
+                        if (widget.hasCloudFlare) {
+                          final ua = await controller.evaluateJavascript(
+                                  source: "navigator.userAgent") ??
+                              "";
+                          await MInterceptor.setCookie(url.toString(), ua);
+                        }
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
                         final title = await controller.getTitle();
-                        setState(() {
-                          _url = url.toString();
-                          _title = title!;
-                          _canGoback = canGoback;
-                          _canGoForward = canGoForward;
-                        });
+                        if (mounted) {
+                          setState(() {
+                            _url = url.toString();
+                            _title = title!;
+                            _canGoback = canGoback;
+                            _canGoForward = canGoForward;
+                          });
+                        }
                       },
-                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
                     ),
                   ),
                 ],
@@ -290,62 +278,4 @@ Future<String> getWebViewPath() async {
     document.path,
     'desktop_webview_window',
   );
-}
-
-class MyInAppBrowser extends InAppBrowser {
-  MyInAppBrowser({required this.context});
-  late BuildContext context;
-  @override
-  Future onBrowserCreated() async {}
-
-  @override
-  void onUpdateVisitedHistory(WebUri? url, bool? isReload) async {
-    final ua = await webViewController?.evaluateJavascript(
-            source: "navigator.userAgent") ??
-        "";
-    await MInterceptor.setCookie(url.toString(), ua);
-  }
-
-  @override
-  Future onLoadStart(url) async {}
-
-  @override
-  Future onLoadStop(url) async {}
-
-  @override
-  void onProgressChanged(progress) {
-    if (progress == 100) {
-      pullToRefreshController?.endRefreshing();
-    }
-  }
-
-  @override
-  void onExit() {
-    Navigator.pop(context);
-  }
-
-  @override
-  Future<NavigationActionPolicy> shouldOverrideUrlLoading(
-      navigationAction) async {
-    var uri = navigationAction.request.url!;
-
-    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
-        .contains(uri.scheme)) {
-      if (await canLaunchUrl(uri)) {
-        // Launch the App
-        await launchUrl(
-          uri,
-        );
-        // and cancel the request
-        return NavigationActionPolicy.CANCEL;
-      }
-    }
-
-    return NavigationActionPolicy.ALLOW;
-  }
-
-  @override
-  void onMainWindowWillClose() {
-    close();
-  }
 }

@@ -52,6 +52,10 @@ class WebviewWindow {
 
   /// Check if WebView runtime is available on the current devices.
   static Future<bool> isWebviewAvailable() async {
+    if (Platform.isWindows) {
+      final ret = await _channel.invokeMethod<bool>('isWebviewAvailable');
+      return ret == true;
+    }
     return true;
   }
 

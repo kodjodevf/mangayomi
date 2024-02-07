@@ -82,7 +82,7 @@ class WebviewImpl extends Webview {
   @override
   void registerJavaScriptMessageHandler(
       String name, JavaScriptMessageHandler handler) {
-    if (Platform.isLinux) {
+    if (!Platform.isMacOS) {
       return;
     }
     assert(!_closed);
@@ -100,7 +100,7 @@ class WebviewImpl extends Webview {
 
   @override
   void unregisterJavaScriptMessageHandler(String name) {
-    if (Platform.isLinux) {
+    if (!Platform.isMacOS) {
       return;
     }
     if (_closed) {
@@ -114,7 +114,7 @@ class WebviewImpl extends Webview {
 
   @override
   void setPromptHandler(PromptHandler? handler) {
-    if (Platform.isLinux) {
+    if (!Platform.isMacOS) {
       return;
     }
     _promptHandler = handler;
@@ -133,7 +133,7 @@ class WebviewImpl extends Webview {
     /// -1 : system default
     /// 0 : dark
     /// 1 : light
-    if (Platform.isLinux) {
+    if (!Platform.isMacOS) {
       return;
     }
     channel.invokeMethod("setBrightness", {
@@ -144,7 +144,7 @@ class WebviewImpl extends Webview {
 
   @override
   void addScriptToExecuteOnDocumentCreated(String javaScript) {
-    if (Platform.isLinux) {
+    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       return;
     }
     assert(javaScript.trim().isNotEmpty);
@@ -156,7 +156,7 @@ class WebviewImpl extends Webview {
 
   @override
   Future<void> setApplicationNameForUserAgent(String applicationName) async {
-    if (Platform.isLinux) {
+    if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       return;
     }
     await channel.invokeMethod("setApplicationNameForUserAgent", {
@@ -219,8 +219,7 @@ class WebviewImpl extends Webview {
   }
 
   @override
-  void removeOnWebMessageReceivedCallback(
-      OnWebMessageReceivedCallback callback) {
+  void removeOnWebMessageReceivedCallback(OnWebMessageReceivedCallback callback) {
     _onWebMessageReceivedCallbacks.remove(callback);
   }
 
