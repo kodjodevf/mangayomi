@@ -45,6 +45,51 @@ public class DesktopWebviewWindowPlugin: NSObject, FlutterPlugin {
       result(viewId)
       viewId += 1
       break
+    case "getCookies":
+      guard let argument = call.arguments as? [String: Any?] else {
+        result(FlutterError(code: "0", message: "arg is not map", details: nil))
+        return
+      }
+      
+      guard let url = argument["url"] as? String else {
+        result(FlutterError(code: "0", message: "param url not found", details: nil))
+        return
+      }
+      var cookieList: [[String: Any?]] = []
+        if let urlHost = URL(string: url)?.host {
+            WKWebsiteDataStore.default().httpCookieStore.getAllCookies { (cookies) in
+                for cookie in cookies {
+                    if urlHost.hasSuffix(cookie.domain) || ".\(urlHost)".hasSuffix(cookie.domain) {
+                        var sameSite: String? = nil
+                        if #available(macOS 10.15, *) {
+                            if let sameSiteValue = cookie.sameSitePolicy?.rawValue {
+                                sameSite = sameSiteValue.prefix(1).capitalized + sameSiteValue.dropFirst()
+                            }
+                        }
+                        var expiresDateTimestamp: Int64 = -1
+                        if let expiresDate = cookie.expiresDate?.timeIntervalSince1970 {
+                            // convert to milliseconds
+                            expiresDateTimestamp = Int64(expiresDate * 1000)
+                        }
+                        cookieList.append([
+                            "name": cookie.name,
+                            "value": cookie.value,
+                            "expiresDate": expiresDateTimestamp != -1 ? expiresDateTimestamp : nil,
+                            "isSessionOnly": cookie.isSessionOnly,
+                            "domain": cookie.domain,
+                            "sameSite": sameSite,
+                            "isSecure": cookie.isSecure,
+                            "isHttpOnly": cookie.isHTTPOnly,
+                            "path": cookie.path,
+                        ])
+                    }
+                }
+                result(cookieList)
+            }
+            return
+        }
+        result(cookieList)
+      break
     case "launch":
       guard let argument = call.arguments as? [String: Any?] else {
         result(FlutterError(code: "0", message: "arg is not map", details: nil))

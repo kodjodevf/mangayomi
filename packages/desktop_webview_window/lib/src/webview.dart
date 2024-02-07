@@ -88,4 +88,6 @@ abstract class Webview {
 
   /// post a web message as JSON to the top level document in this WebView
   Future<void> postWebMessageAsJson(String webMessage);
+
+  Future<List<Map<String, dynamic>>> getCookies(String url);
 }

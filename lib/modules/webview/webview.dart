@@ -44,20 +44,46 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     super.initState();
   }
 
+  bool _cancel = false;
   final _windowsWebview = FlutterWindowsWebview();
-  Webview? _linuxWebview;
+  Webview? _desktopWebview;
   void _runWebViewDesktop() async {
     if (Platform.isLinux || Platform.isMacOS) {
-      _linuxWebview = await WebviewWindow.create(
+      _desktopWebview = await WebviewWindow.create(
         configuration: CreateConfiguration(
           userDataFolderWindows: await getWebViewPath(),
         ),
       );
-      _linuxWebview!
+
+      _desktopWebview!
         ..launch(widget.url)
-        ..onClose.whenComplete(() {
-          Navigator.pop(context);
+        ..onClose.whenComplete(() async {
+          if (Platform.isMacOS && widget.hasCloudFlare) {
+            final cookieList = await _desktopWebview!.getCookies(widget.url);
+            for (var c in cookieList) {
+              final cookie =
+                  c.entries.map((e) => "${e.key}=${e.value}").join(";");
+              await MInterceptor.setCookie(_url, "", cookie: cookie);
+            }
+            _cancel = true;
+          }
+          if (mounted) {
+            Navigator.pop(context);
+          }
         });
+      if (Platform.isMacOS && widget.hasCloudFlare) {
+        await Future.doWhile(() async {
+          await Future.delayed(const Duration(seconds: 1));
+          if (_cancel) return false;
+          final ua =
+              await _desktopWebview?.evaluateJavaScript("navigator.userAgent");
+          if (ua != null) {
+            MInterceptor.setCookie(_url, ua);
+            return false;
+          }
+          return true;
+        });
+      }
     }
     //credit: https://github.com/wgh136/PicaComic/blob/master/lib/network/nhentai_network/cloudflare.dart
     else if (Platform.isWindows && await FlutterWindowsWebview.isAvailable()) {
@@ -104,7 +130,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               leading: IconButton(
                   onPressed: () {
                     if (Platform.isLinux || Platform.isMacOS) {
-                      _linuxWebview!.close();
+                      _desktopWebview!.close();
                     }
                     Navigator.pop(context);
                   },

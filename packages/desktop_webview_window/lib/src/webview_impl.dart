@@ -219,7 +219,8 @@ class WebviewImpl extends Webview {
   }
 
   @override
-  void removeOnWebMessageReceivedCallback(OnWebMessageReceivedCallback callback) {
+  void removeOnWebMessageReceivedCallback(
+      OnWebMessageReceivedCallback callback) {
     _onWebMessageReceivedCallbacks.remove(callback);
   }
 
@@ -257,5 +258,28 @@ class WebviewImpl extends Webview {
       "viewId": viewId,
       "webMessage": webMessage,
     });
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getCookies(String url) async {
+    final cookieListMap =
+        await channel.invokeMethod<List>('getCookies', {'url': url}) ?? [];
+    List<Map<String, dynamic>> cookies = [];
+    for (var cookieMap in cookieListMap) {
+      cookies.add({
+        if (cookieMap["name"] != null) "name": cookieMap["name"],
+        if (cookieMap["value"] != null) "value": cookieMap["value"],
+        if (cookieMap["expiresDate"] != null)
+          "expiresDate": cookieMap["expiresDate"],
+        if (cookieMap["isSessionOnly"] != null)
+          "isSessionOnly": cookieMap["isSessionOnly"],
+        if (cookieMap["domain"] != null) "domain": cookieMap["domain"],
+        if (cookieMap["isSecure"] != null) "isSecure": cookieMap["isSecure"],
+        if (cookieMap["isHttpOnly"] != null)
+          "isHttpOnly": cookieMap["isHttpOnly"],
+        if (cookieMap["path"] != null) "path": cookieMap["path"]
+      });
+    }
+    return cookies;
   }
 }
