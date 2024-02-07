@@ -826,8 +826,8 @@ class _MangaChapterPageGalleryState
   }
 
   void _initCurrentIndex() async {
-    await Rinf.finalize();
-    await Rinf.initialize();
+    await finalizeRust();
+    await initializeRust();
     final readerMode = _readerController.getReaderMode();
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();
@@ -1209,10 +1209,11 @@ class _MangaChapterPageGalleryState
                       String url = chapter.url!.startsWith('/')
                           ? "${source.baseUrl}/${chapter.url!}"
                           : chapter.url!;
-                      Map<String, String> data = {
+                      Map<String, dynamic> data = {
                         'url': url,
                         'sourceId': source.id.toString(),
-                        'title': chapter.name!
+                        'title': chapter.name!,
+                        "hasCloudFlare": source.hasCloudflare ?? false
                       };
                       context.push("/mangawebview", extra: data);
                     },

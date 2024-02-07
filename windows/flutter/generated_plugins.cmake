@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  desktop_webview_window
+  flutter_windows_webview
   isar_flutter_libs
   media_kit_libs_windows_video
   media_kit_video

@@ -6,8 +6,7 @@ import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 
 Future<void> initInIsolate(RootIsolateToken token) async {
-  BackgroundIsolateBinaryMessenger.ensureInitialized(token);
-  await Rinf.initialize();
+  await initializeRust();
   HttpOverrides.global = MyHttpoverrides();
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   iniDateFormatting();

@@ -1444,10 +1444,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       ? "${source.baseUrl}${widget.manga!.link!}"
                       : widget.manga!.link!;
 
-                  Map<String, String> data = {
+                  Map<String, dynamic> data = {
                     'url': url,
                     'sourceId': source.id.toString(),
-                    'title': manga.name!
+                    'title': manga.name!,
+                    "hasCloudFlare": source.hasCloudflare ?? false,
                   };
                   context.push("/mangawebview", extra: data);
                 },

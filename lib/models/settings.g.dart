@@ -144,7 +144,7 @@ const SettingsSchema = CollectionSchema(
       id: 23,
       name: r'cookiesList',
       type: IsarType.objectList,
-      target: r'Cookie',
+      target: r'MCookie',
     ),
     r'cropBorders': PropertySchema(
       id: 24,
@@ -156,258 +156,263 @@ const SettingsSchema = CollectionSchema(
       name: r'dateFormat',
       type: IsarType.string,
     ),
-    r'defaultDoubleTapToSkipLength': PropertySchema(
+    r'defaultAppStoragePath': PropertySchema(
       id: 26,
+      name: r'defaultAppStoragePath',
+      type: IsarType.string,
+    ),
+    r'defaultDoubleTapToSkipLength': PropertySchema(
+      id: 27,
       name: r'defaultDoubleTapToSkipLength',
       type: IsarType.long,
     ),
     r'defaultPlayBackSpeed': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'defaultPlayBackSpeed',
       type: IsarType.double,
     ),
     r'defaultReaderMode': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'defaultReaderMode',
       type: IsarType.byte,
       enumMap: _SettingsdefaultReaderModeEnumValueMap,
     ),
     r'defaultSkipIntroLength': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'defaultSkipIntroLength',
       type: IsarType.long,
     ),
     r'displayType': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'displayType',
       type: IsarType.byte,
       enumMap: _SettingsdisplayTypeEnumValueMap,
     ),
     r'doubleTapAnimationSpeed': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'doubleTapAnimationSpeed',
       type: IsarType.long,
     ),
     r'downloadLocation': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'downloadLocation',
       type: IsarType.string,
     ),
     r'downloadOnlyOnWifi': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'downloadOnlyOnWifi',
       type: IsarType.bool,
     ),
     r'enableAniSkip': PropertySchema(
-      id: 34,
+      id: 35,
       name: r'enableAniSkip',
       type: IsarType.bool,
     ),
     r'enableAutoSkip': PropertySchema(
-      id: 35,
+      id: 36,
       name: r'enableAutoSkip',
       type: IsarType.bool,
     ),
     r'filterScanlatorList': PropertySchema(
-      id: 36,
+      id: 37,
       name: r'filterScanlatorList',
       type: IsarType.objectList,
       target: r'FilterScanlator',
     ),
     r'flexColorSchemeBlendLevel': PropertySchema(
-      id: 37,
+      id: 38,
       name: r'flexColorSchemeBlendLevel',
       type: IsarType.double,
     ),
     r'flexSchemeColorIndex': PropertySchema(
-      id: 38,
+      id: 39,
       name: r'flexSchemeColorIndex',
       type: IsarType.long,
     ),
     r'fullScreenReader': PropertySchema(
-      id: 39,
+      id: 40,
       name: r'fullScreenReader',
       type: IsarType.bool,
     ),
     r'incognitoMode': PropertySchema(
-      id: 40,
+      id: 41,
       name: r'incognitoMode',
       type: IsarType.bool,
     ),
     r'libraryDownloadedChapters': PropertySchema(
-      id: 41,
+      id: 42,
       name: r'libraryDownloadedChapters',
       type: IsarType.bool,
     ),
     r'libraryFilterAnimeBookMarkedType': PropertySchema(
-      id: 42,
+      id: 43,
       name: r'libraryFilterAnimeBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeDownloadType': PropertySchema(
-      id: 43,
+      id: 44,
       name: r'libraryFilterAnimeDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeStartedType': PropertySchema(
-      id: 44,
+      id: 45,
       name: r'libraryFilterAnimeStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeUnreadType': PropertySchema(
-      id: 45,
+      id: 46,
       name: r'libraryFilterAnimeUnreadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasBookMarkedType': PropertySchema(
-      id: 46,
+      id: 47,
       name: r'libraryFilterMangasBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasDownloadType': PropertySchema(
-      id: 47,
+      id: 48,
       name: r'libraryFilterMangasDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasStartedType': PropertySchema(
-      id: 48,
+      id: 49,
       name: r'libraryFilterMangasStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasUnreadType': PropertySchema(
-      id: 49,
+      id: 50,
       name: r'libraryFilterMangasUnreadType',
       type: IsarType.long,
     ),
     r'libraryLocalSource': PropertySchema(
-      id: 50,
+      id: 51,
       name: r'libraryLocalSource',
       type: IsarType.bool,
     ),
     r'libraryShowCategoryTabs': PropertySchema(
-      id: 51,
+      id: 52,
       name: r'libraryShowCategoryTabs',
       type: IsarType.bool,
     ),
     r'libraryShowContinueReadingButton': PropertySchema(
-      id: 52,
+      id: 53,
       name: r'libraryShowContinueReadingButton',
       type: IsarType.bool,
     ),
     r'libraryShowLanguage': PropertySchema(
-      id: 53,
+      id: 54,
       name: r'libraryShowLanguage',
       type: IsarType.bool,
     ),
     r'libraryShowNumbersOfItems': PropertySchema(
-      id: 54,
+      id: 55,
       name: r'libraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
     r'locale': PropertySchema(
-      id: 55,
+      id: 56,
       name: r'locale',
       type: IsarType.object,
       target: r'L10nLocale',
     ),
     r'markEpisodeAsSeenType': PropertySchema(
-      id: 56,
+      id: 57,
       name: r'markEpisodeAsSeenType',
       type: IsarType.long,
     ),
     r'onlyIncludePinnedSources': PropertySchema(
-      id: 57,
+      id: 58,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'pagePreloadAmount': PropertySchema(
-      id: 58,
+      id: 59,
       name: r'pagePreloadAmount',
       type: IsarType.long,
     ),
     r'personalPageModeList': PropertySchema(
-      id: 59,
+      id: 60,
       name: r'personalPageModeList',
       type: IsarType.objectList,
       target: r'PersonalPageMode',
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 60,
+      id: 61,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
       target: r'PersonalReaderMode',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 61,
+      id: 62,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 62,
+      id: 63,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 63,
+      id: 64,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'scaleType': PropertySchema(
-      id: 64,
+      id: 65,
       name: r'scaleType',
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
     r'showNSFW': PropertySchema(
-      id: 65,
+      id: 66,
       name: r'showNSFW',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 66,
+      id: 67,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 67,
+      id: 68,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 68,
+      id: 69,
       name: r'sortLibraryAnime',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 69,
+      id: 70,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'startDatebackup': PropertySchema(
-      id: 70,
+      id: 71,
       name: r'startDatebackup',
       type: IsarType.long,
     ),
     r'themeIsDark': PropertySchema(
-      id: 71,
+      id: 72,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 72,
+      id: 73,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 73,
+      id: 74,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 74,
+      id: 75,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -434,7 +439,7 @@ const SettingsSchema = CollectionSchema(
     r'ChapterFilterBookmarked': ChapterFilterBookmarkedSchema,
     r'ChapterPageurls': ChapterPageurlsSchema,
     r'ChapterPageIndex': ChapterPageIndexSchema,
-    r'Cookie': CookieSchema,
+    r'MCookie': MCookieSchema,
     r'PersonalReaderMode': PersonalReaderModeSchema,
     r'FilterScanlator': FilterScanlatorSchema,
     r'L10nLocale': L10nLocaleSchema,
@@ -560,16 +565,22 @@ int _settingsEstimateSize(
     if (list != null) {
       bytesCount += 3 + list.length * 3;
       {
-        final offsets = allOffsets[Cookie]!;
+        final offsets = allOffsets[MCookie]!;
         for (var i = 0; i < list.length; i++) {
           final value = list[i];
-          bytesCount += CookieSchema.estimateSize(value, offsets, allOffsets);
+          bytesCount += MCookieSchema.estimateSize(value, offsets, allOffsets);
         }
       }
     }
   }
   {
     final value = object.dateFormat;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.defaultAppStoragePath;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -728,98 +739,99 @@ void _settingsSerialize(
     object.chapterPageUrlsList,
   );
   writer.writeBool(offsets[22], object.checkForExtensionUpdates);
-  writer.writeObjectList<Cookie>(
+  writer.writeObjectList<MCookie>(
     offsets[23],
     allOffsets,
-    CookieSchema.serialize,
+    MCookieSchema.serialize,
     object.cookiesList,
   );
   writer.writeBool(offsets[24], object.cropBorders);
   writer.writeString(offsets[25], object.dateFormat);
-  writer.writeLong(offsets[26], object.defaultDoubleTapToSkipLength);
-  writer.writeDouble(offsets[27], object.defaultPlayBackSpeed);
-  writer.writeByte(offsets[28], object.defaultReaderMode.index);
-  writer.writeLong(offsets[29], object.defaultSkipIntroLength);
-  writer.writeByte(offsets[30], object.displayType.index);
-  writer.writeLong(offsets[31], object.doubleTapAnimationSpeed);
-  writer.writeString(offsets[32], object.downloadLocation);
-  writer.writeBool(offsets[33], object.downloadOnlyOnWifi);
-  writer.writeBool(offsets[34], object.enableAniSkip);
-  writer.writeBool(offsets[35], object.enableAutoSkip);
+  writer.writeString(offsets[26], object.defaultAppStoragePath);
+  writer.writeLong(offsets[27], object.defaultDoubleTapToSkipLength);
+  writer.writeDouble(offsets[28], object.defaultPlayBackSpeed);
+  writer.writeByte(offsets[29], object.defaultReaderMode.index);
+  writer.writeLong(offsets[30], object.defaultSkipIntroLength);
+  writer.writeByte(offsets[31], object.displayType.index);
+  writer.writeLong(offsets[32], object.doubleTapAnimationSpeed);
+  writer.writeString(offsets[33], object.downloadLocation);
+  writer.writeBool(offsets[34], object.downloadOnlyOnWifi);
+  writer.writeBool(offsets[35], object.enableAniSkip);
+  writer.writeBool(offsets[36], object.enableAutoSkip);
   writer.writeObjectList<FilterScanlator>(
-    offsets[36],
+    offsets[37],
     allOffsets,
     FilterScanlatorSchema.serialize,
     object.filterScanlatorList,
   );
-  writer.writeDouble(offsets[37], object.flexColorSchemeBlendLevel);
-  writer.writeLong(offsets[38], object.flexSchemeColorIndex);
-  writer.writeBool(offsets[39], object.fullScreenReader);
-  writer.writeBool(offsets[40], object.incognitoMode);
-  writer.writeBool(offsets[41], object.libraryDownloadedChapters);
-  writer.writeLong(offsets[42], object.libraryFilterAnimeBookMarkedType);
-  writer.writeLong(offsets[43], object.libraryFilterAnimeDownloadType);
-  writer.writeLong(offsets[44], object.libraryFilterAnimeStartedType);
-  writer.writeLong(offsets[45], object.libraryFilterAnimeUnreadType);
-  writer.writeLong(offsets[46], object.libraryFilterMangasBookMarkedType);
-  writer.writeLong(offsets[47], object.libraryFilterMangasDownloadType);
-  writer.writeLong(offsets[48], object.libraryFilterMangasStartedType);
-  writer.writeLong(offsets[49], object.libraryFilterMangasUnreadType);
-  writer.writeBool(offsets[50], object.libraryLocalSource);
-  writer.writeBool(offsets[51], object.libraryShowCategoryTabs);
-  writer.writeBool(offsets[52], object.libraryShowContinueReadingButton);
-  writer.writeBool(offsets[53], object.libraryShowLanguage);
-  writer.writeBool(offsets[54], object.libraryShowNumbersOfItems);
+  writer.writeDouble(offsets[38], object.flexColorSchemeBlendLevel);
+  writer.writeLong(offsets[39], object.flexSchemeColorIndex);
+  writer.writeBool(offsets[40], object.fullScreenReader);
+  writer.writeBool(offsets[41], object.incognitoMode);
+  writer.writeBool(offsets[42], object.libraryDownloadedChapters);
+  writer.writeLong(offsets[43], object.libraryFilterAnimeBookMarkedType);
+  writer.writeLong(offsets[44], object.libraryFilterAnimeDownloadType);
+  writer.writeLong(offsets[45], object.libraryFilterAnimeStartedType);
+  writer.writeLong(offsets[46], object.libraryFilterAnimeUnreadType);
+  writer.writeLong(offsets[47], object.libraryFilterMangasBookMarkedType);
+  writer.writeLong(offsets[48], object.libraryFilterMangasDownloadType);
+  writer.writeLong(offsets[49], object.libraryFilterMangasStartedType);
+  writer.writeLong(offsets[50], object.libraryFilterMangasUnreadType);
+  writer.writeBool(offsets[51], object.libraryLocalSource);
+  writer.writeBool(offsets[52], object.libraryShowCategoryTabs);
+  writer.writeBool(offsets[53], object.libraryShowContinueReadingButton);
+  writer.writeBool(offsets[54], object.libraryShowLanguage);
+  writer.writeBool(offsets[55], object.libraryShowNumbersOfItems);
   writer.writeObject<L10nLocale>(
-    offsets[55],
+    offsets[56],
     allOffsets,
     L10nLocaleSchema.serialize,
     object.locale,
   );
-  writer.writeLong(offsets[56], object.markEpisodeAsSeenType);
-  writer.writeBool(offsets[57], object.onlyIncludePinnedSources);
-  writer.writeLong(offsets[58], object.pagePreloadAmount);
+  writer.writeLong(offsets[57], object.markEpisodeAsSeenType);
+  writer.writeBool(offsets[58], object.onlyIncludePinnedSources);
+  writer.writeLong(offsets[59], object.pagePreloadAmount);
   writer.writeObjectList<PersonalPageMode>(
-    offsets[59],
+    offsets[60],
     allOffsets,
     PersonalPageModeSchema.serialize,
     object.personalPageModeList,
   );
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[60],
+    offsets[61],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
-  writer.writeBool(offsets[61], object.pureBlackDarkMode);
-  writer.writeLong(offsets[62], object.relativeTimesTamps);
-  writer.writeBool(offsets[63], object.saveAsCBZArchive);
-  writer.writeByte(offsets[64], object.scaleType.index);
-  writer.writeBool(offsets[65], object.showNSFW);
-  writer.writeBool(offsets[66], object.showPagesNumber);
+  writer.writeBool(offsets[62], object.pureBlackDarkMode);
+  writer.writeLong(offsets[63], object.relativeTimesTamps);
+  writer.writeBool(offsets[64], object.saveAsCBZArchive);
+  writer.writeByte(offsets[65], object.scaleType.index);
+  writer.writeBool(offsets[66], object.showNSFW);
+  writer.writeBool(offsets[67], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[67],
+    offsets[68],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[68],
+    offsets[69],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[69],
+    offsets[70],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
-  writer.writeLong(offsets[70], object.startDatebackup);
-  writer.writeBool(offsets[71], object.themeIsDark);
-  writer.writeBool(offsets[72], object.updateProgressAfterReading);
-  writer.writeBool(offsets[73], object.usePageTapZones);
-  writer.writeString(offsets[74], object.userAgent);
+  writer.writeLong(offsets[71], object.startDatebackup);
+  writer.writeBool(offsets[72], object.themeIsDark);
+  writer.writeBool(offsets[73], object.updateProgressAfterReading);
+  writer.writeBool(offsets[74], object.usePageTapZones);
+  writer.writeString(offsets[75], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -874,91 +886,92 @@ Settings _settingsDeserialize(
       ChapterPageurls(),
     ),
     checkForExtensionUpdates: reader.readBoolOrNull(offsets[22]),
-    cookiesList: reader.readObjectList<Cookie>(
+    cookiesList: reader.readObjectList<MCookie>(
       offsets[23],
-      CookieSchema.deserialize,
+      MCookieSchema.deserialize,
       allOffsets,
-      Cookie(),
+      MCookie(),
     ),
     cropBorders: reader.readBoolOrNull(offsets[24]),
     dateFormat: reader.readStringOrNull(offsets[25]),
-    defaultDoubleTapToSkipLength: reader.readLongOrNull(offsets[26]),
-    defaultPlayBackSpeed: reader.readDoubleOrNull(offsets[27]),
+    defaultAppStoragePath: reader.readStringOrNull(offsets[26]),
+    defaultDoubleTapToSkipLength: reader.readLongOrNull(offsets[27]),
+    defaultPlayBackSpeed: reader.readDoubleOrNull(offsets[28]),
     defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
-            reader.readByteOrNull(offsets[28])] ??
+            reader.readByteOrNull(offsets[29])] ??
         ReaderMode.vertical,
-    defaultSkipIntroLength: reader.readLongOrNull(offsets[29]),
+    defaultSkipIntroLength: reader.readLongOrNull(offsets[30]),
     displayType:
-        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[30])] ??
+        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[31])] ??
             DisplayType.compactGrid,
-    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[31]),
-    downloadLocation: reader.readStringOrNull(offsets[32]),
-    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[33]),
-    enableAniSkip: reader.readBoolOrNull(offsets[34]),
-    enableAutoSkip: reader.readBoolOrNull(offsets[35]),
-    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[37]),
-    flexSchemeColorIndex: reader.readLongOrNull(offsets[38]),
-    fullScreenReader: reader.readBoolOrNull(offsets[39]),
+    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[32]),
+    downloadLocation: reader.readStringOrNull(offsets[33]),
+    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[34]),
+    enableAniSkip: reader.readBoolOrNull(offsets[35]),
+    enableAutoSkip: reader.readBoolOrNull(offsets[36]),
+    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[38]),
+    flexSchemeColorIndex: reader.readLongOrNull(offsets[39]),
+    fullScreenReader: reader.readBoolOrNull(offsets[40]),
     id: id,
-    incognitoMode: reader.readBoolOrNull(offsets[40]),
-    libraryDownloadedChapters: reader.readBoolOrNull(offsets[41]),
-    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[42]),
-    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[43]),
-    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[44]),
-    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[45]),
-    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[46]),
-    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[47]),
-    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[48]),
-    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[49]),
-    libraryLocalSource: reader.readBoolOrNull(offsets[50]),
-    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[51]),
-    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[52]),
-    libraryShowLanguage: reader.readBoolOrNull(offsets[53]),
-    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[54]),
-    markEpisodeAsSeenType: reader.readLongOrNull(offsets[56]),
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[57]),
-    pagePreloadAmount: reader.readLongOrNull(offsets[58]),
+    incognitoMode: reader.readBoolOrNull(offsets[41]),
+    libraryDownloadedChapters: reader.readBoolOrNull(offsets[42]),
+    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[43]),
+    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[44]),
+    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[45]),
+    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[46]),
+    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[47]),
+    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[48]),
+    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[49]),
+    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[50]),
+    libraryLocalSource: reader.readBoolOrNull(offsets[51]),
+    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[52]),
+    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[53]),
+    libraryShowLanguage: reader.readBoolOrNull(offsets[54]),
+    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[55]),
+    markEpisodeAsSeenType: reader.readLongOrNull(offsets[57]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[58]),
+    pagePreloadAmount: reader.readLongOrNull(offsets[59]),
     personalPageModeList: reader.readObjectList<PersonalPageMode>(
-      offsets[59],
+      offsets[60],
       PersonalPageModeSchema.deserialize,
       allOffsets,
       PersonalPageMode(),
     ),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[60],
+      offsets[61],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[61]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[62]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[63]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[62]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[63]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[64]),
     scaleType:
-        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[64])] ??
+        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[65])] ??
             ScaleType.fitScreen,
-    showNSFW: reader.readBoolOrNull(offsets[65]),
-    showPagesNumber: reader.readBoolOrNull(offsets[66]),
+    showNSFW: reader.readBoolOrNull(offsets[66]),
+    showPagesNumber: reader.readBoolOrNull(offsets[67]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[67],
+      offsets[68],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[68],
-      SortLibraryMangaSchema.deserialize,
-      allOffsets,
-    ),
-    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
       offsets[69],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    startDatebackup: reader.readLongOrNull(offsets[70]),
-    themeIsDark: reader.readBoolOrNull(offsets[71]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[72]),
-    usePageTapZones: reader.readBoolOrNull(offsets[73]),
-    userAgent: reader.readStringOrNull(offsets[74]),
+    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[70],
+      SortLibraryMangaSchema.deserialize,
+      allOffsets,
+    ),
+    startDatebackup: reader.readLongOrNull(offsets[71]),
+    themeIsDark: reader.readBoolOrNull(offsets[72]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[73]),
+    usePageTapZones: reader.readBoolOrNull(offsets[74]),
+    userAgent: reader.readStringOrNull(offsets[75]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -974,13 +987,13 @@ Settings _settingsDeserialize(
     ChapterFilterUnread(),
   );
   object.filterScanlatorList = reader.readObjectList<FilterScanlator>(
-    offsets[36],
+    offsets[37],
     FilterScanlatorSchema.deserialize,
     allOffsets,
     FilterScanlator(),
   );
   object.locale = reader.readObjectOrNull<L10nLocale>(
-    offsets[55],
+    offsets[56],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
@@ -1075,58 +1088,58 @@ P _settingsDeserializeProp<P>(
     case 22:
       return (reader.readBoolOrNull(offset)) as P;
     case 23:
-      return (reader.readObjectList<Cookie>(
+      return (reader.readObjectList<MCookie>(
         offset,
-        CookieSchema.deserialize,
+        MCookieSchema.deserialize,
         allOffsets,
-        Cookie(),
+        MCookie(),
       )) as P;
     case 24:
       return (reader.readBoolOrNull(offset)) as P;
     case 25:
       return (reader.readStringOrNull(offset)) as P;
     case 26:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 27:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 28:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 29:
       return (_SettingsdefaultReaderModeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ReaderMode.vertical) as P;
-    case 29:
-      return (reader.readLongOrNull(offset)) as P;
     case 30:
+      return (reader.readLongOrNull(offset)) as P;
+    case 31:
       return (_SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           DisplayType.compactGrid) as P;
-    case 31:
-      return (reader.readLongOrNull(offset)) as P;
     case 32:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 33:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 34:
       return (reader.readBoolOrNull(offset)) as P;
     case 35:
       return (reader.readBoolOrNull(offset)) as P;
     case 36:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 37:
       return (reader.readObjectList<FilterScanlator>(
         offset,
         FilterScanlatorSchema.deserialize,
         allOffsets,
         FilterScanlator(),
       )) as P;
-    case 37:
-      return (reader.readDoubleOrNull(offset)) as P;
     case 38:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 39:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 40:
       return (reader.readBoolOrNull(offset)) as P;
     case 41:
       return (reader.readBoolOrNull(offset)) as P;
     case 42:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 43:
       return (reader.readLongOrNull(offset)) as P;
     case 44:
@@ -1142,7 +1155,7 @@ P _settingsDeserializeProp<P>(
     case 49:
       return (reader.readLongOrNull(offset)) as P;
     case 50:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 51:
       return (reader.readBoolOrNull(offset)) as P;
     case 52:
@@ -1152,56 +1165,52 @@ P _settingsDeserializeProp<P>(
     case 54:
       return (reader.readBoolOrNull(offset)) as P;
     case 55:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 56:
       return (reader.readObjectOrNull<L10nLocale>(
         offset,
         L10nLocaleSchema.deserialize,
         allOffsets,
       )) as P;
-    case 56:
-      return (reader.readLongOrNull(offset)) as P;
     case 57:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 58:
       return (reader.readLongOrNull(offset)) as P;
+    case 58:
+      return (reader.readBoolOrNull(offset)) as P;
     case 59:
+      return (reader.readLongOrNull(offset)) as P;
+    case 60:
       return (reader.readObjectList<PersonalPageMode>(
         offset,
         PersonalPageModeSchema.deserialize,
         allOffsets,
         PersonalPageMode(),
       )) as P;
-    case 60:
+    case 61:
       return (reader.readObjectList<PersonalReaderMode>(
         offset,
         PersonalReaderModeSchema.deserialize,
         allOffsets,
         PersonalReaderMode(),
       )) as P;
-    case 61:
-      return (reader.readBoolOrNull(offset)) as P;
     case 62:
-      return (reader.readLongOrNull(offset)) as P;
-    case 63:
       return (reader.readBoolOrNull(offset)) as P;
+    case 63:
+      return (reader.readLongOrNull(offset)) as P;
     case 64:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 65:
       return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ScaleType.fitScreen) as P;
-    case 65:
-      return (reader.readBoolOrNull(offset)) as P;
     case 66:
       return (reader.readBoolOrNull(offset)) as P;
     case 67:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 68:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
-      )) as P;
-    case 68:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
       )) as P;
     case 69:
       return (reader.readObjectOrNull<SortLibraryManga>(
@@ -1210,14 +1219,20 @@ P _settingsDeserializeProp<P>(
         allOffsets,
       )) as P;
     case 70:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 71:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 72:
       return (reader.readBoolOrNull(offset)) as P;
     case 73:
       return (reader.readBoolOrNull(offset)) as P;
     case 74:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 75:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3352,6 +3367,161 @@ extension SettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'dateFormat',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'defaultAppStoragePath',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'defaultAppStoragePath',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'defaultAppStoragePath',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'defaultAppStoragePath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'defaultAppStoragePath',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'defaultAppStoragePath',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      defaultAppStoragePathIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'defaultAppStoragePath',
         value: '',
       ));
     });
@@ -6298,7 +6468,7 @@ extension SettingsQueryObject
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition> cookiesListElement(
-      FilterQuery<Cookie> q) {
+      FilterQuery<MCookie> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'cookiesList');
     });
@@ -6649,6 +6819,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByDateFormatDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateFormat', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByDefaultAppStoragePath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByDefaultAppStoragePathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.desc);
     });
   }
 
@@ -7439,6 +7622,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByDefaultAppStoragePath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByDefaultAppStoragePathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'defaultAppStoragePath', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       thenByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -8130,6 +8326,14 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByDefaultAppStoragePath(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'defaultAppStoragePath',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
       distinctByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -8571,7 +8775,7 @@ extension SettingsQueryProperty
     });
   }
 
-  QueryBuilder<Settings, List<Cookie>?, QQueryOperations>
+  QueryBuilder<Settings, List<MCookie>?, QQueryOperations>
       cookiesListProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cookiesList');
@@ -8587,6 +8791,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, String?, QQueryOperations> dateFormatProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateFormat');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations>
+      defaultAppStoragePathProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'defaultAppStoragePath');
     });
   }
 
@@ -8917,6 +9128,388 @@ extension SettingsQueryProperty
 // **************************************************************************
 // IsarEmbeddedGenerator
 // **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const MCookieSchema = Schema(
+  name: r'MCookie',
+  id: -1854909335245943751,
+  properties: {
+    r'cookie': PropertySchema(
+      id: 0,
+      name: r'cookie',
+      type: IsarType.string,
+    ),
+    r'host': PropertySchema(
+      id: 1,
+      name: r'host',
+      type: IsarType.string,
+    )
+  },
+  estimateSize: _mCookieEstimateSize,
+  serialize: _mCookieSerialize,
+  deserialize: _mCookieDeserialize,
+  deserializeProp: _mCookieDeserializeProp,
+);
+
+int _mCookieEstimateSize(
+  MCookie object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  {
+    final value = object.cookie;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.host;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  return bytesCount;
+}
+
+void _mCookieSerialize(
+  MCookie object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeString(offsets[0], object.cookie);
+  writer.writeString(offsets[1], object.host);
+}
+
+MCookie _mCookieDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = MCookie(
+    cookie: reader.readStringOrNull(offsets[0]),
+    host: reader.readStringOrNull(offsets[1]),
+  );
+  return object;
+}
+
+P _mCookieDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
+      return (reader.readStringOrNull(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension MCookieQueryFilter
+    on QueryBuilder<MCookie, MCookie, QFilterCondition> {
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'cookie',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'cookie',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'cookie',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'cookie',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'cookie',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cookie',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> cookieIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'cookie',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'host',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'host',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'host',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'host',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'host',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'host',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<MCookie, MCookie, QAfterFilterCondition> hostIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'host',
+        value: '',
+      ));
+    });
+  }
+}
+
+extension MCookieQueryObject
+    on QueryBuilder<MCookie, MCookie, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
@@ -10666,386 +11259,6 @@ extension ChapterPageIndexQueryFilter
 
 extension ChapterPageIndexQueryObject
     on QueryBuilder<ChapterPageIndex, ChapterPageIndex, QFilterCondition> {}
-
-// coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
-
-const CookieSchema = Schema(
-  name: r'Cookie',
-  id: -4750069831156363626,
-  properties: {
-    r'cookie': PropertySchema(
-      id: 0,
-      name: r'cookie',
-      type: IsarType.string,
-    ),
-    r'idSource': PropertySchema(
-      id: 1,
-      name: r'idSource',
-      type: IsarType.string,
-    )
-  },
-  estimateSize: _cookieEstimateSize,
-  serialize: _cookieSerialize,
-  deserialize: _cookieDeserialize,
-  deserializeProp: _cookieDeserializeProp,
-);
-
-int _cookieEstimateSize(
-  Cookie object,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  var bytesCount = offsets.last;
-  {
-    final value = object.cookie;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  {
-    final value = object.idSource;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
-  return bytesCount;
-}
-
-void _cookieSerialize(
-  Cookie object,
-  IsarWriter writer,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  writer.writeString(offsets[0], object.cookie);
-  writer.writeString(offsets[1], object.idSource);
-}
-
-Cookie _cookieDeserialize(
-  Id id,
-  IsarReader reader,
-  List<int> offsets,
-  Map<Type, List<int>> allOffsets,
-) {
-  final object = Cookie(
-    cookie: reader.readStringOrNull(offsets[0]),
-    idSource: reader.readStringOrNull(offsets[1]),
-  );
-  return object;
-}
-
-P _cookieDeserializeProp<P>(
-  IsarReader reader,
-  int propertyId,
-  int offset,
-  Map<Type, List<int>> allOffsets,
-) {
-  switch (propertyId) {
-    case 0:
-      return (reader.readStringOrNull(offset)) as P;
-    case 1:
-      return (reader.readStringOrNull(offset)) as P;
-    default:
-      throw IsarError('Unknown property with id $propertyId');
-  }
-}
-
-extension CookieQueryFilter on QueryBuilder<Cookie, Cookie, QFilterCondition> {
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cookie',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cookie',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cookie',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cookie',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cookie',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cookie',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> cookieIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cookie',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'idSource',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'idSource',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceLessThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceBetween(
-    String? lower,
-    String? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'idSource',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'idSource',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'idSource',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idSource',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Cookie, Cookie, QAfterFilterCondition> idSourceIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'idSource',
-        value: '',
-      ));
-    });
-  }
-}
-
-extension CookieQueryObject on QueryBuilder<Cookie, Cookie, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types

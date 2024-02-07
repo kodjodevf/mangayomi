@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
@@ -22,9 +23,9 @@ Future<MPages?> getPopular(
 
     final runtime = runtimeEval(bytecode);
 
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main');
-    popularManga =
-        await (res as MProvider).getPopular(source.toMSource(), page);
+    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
+    popularManga = await (res as MProvider).getPopular(page);
   } catch (e) {
     throw Exception(e);
   }

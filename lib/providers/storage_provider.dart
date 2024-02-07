@@ -123,13 +123,24 @@ class StorageProvider {
       SettingsSchema,
       TrackPreferenceSchema,
       TrackSchema,
-      SourcePreferenceSchema
+      SourcePreferenceSchema,
+      SourcePreferenceStringValueSchema
     ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);
 
     if (isar.settings.filter().idEqualTo(227).isEmptySync()) {
       isar.writeTxnSync(
         () {
           isar.settings.putSync(Settings());
+        },
+      );
+    }
+    final settings = isar.settings.getSync(227);
+    final getDefaultAppStoragePath = settings?.defaultAppStoragePath;
+    if (getDefaultAppStoragePath == null) {
+      final path = (await getDefaultDirectory())!.path;
+      isar.writeTxnSync(
+        () {
+          isar.settings.putSync(settings!..defaultAppStoragePath = path);
         },
       );
     }

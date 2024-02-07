@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/compiler/compiler.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
@@ -22,9 +23,9 @@ Future<MPages?> getLatestUpdates(
 
     final runtime = runtimeEval(bytecode);
 
-    var res = await runtime.executeLib('package:mangayomi/main.dart', 'main');
-    latestUpdatesManga =
-        await (res as MProvider).getLatestUpdates(source.toMSource(), page);
+    var res = await runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
+    latestUpdatesManga = await (res as MProvider).getLatestUpdates(page);
   } catch (e) {
     throw Exception(e);
   }

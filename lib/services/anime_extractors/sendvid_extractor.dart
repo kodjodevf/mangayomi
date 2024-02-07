@@ -1,10 +1,11 @@
-import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class SendvidExtractor {
-  final http.Client client = http.Client();
+  final InterceptedClient client = MInterceptor.init();
   final Map<String, String> headers;
 
   SendvidExtractor(this.headers);

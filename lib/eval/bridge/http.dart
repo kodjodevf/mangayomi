@@ -3,27 +3,32 @@ import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:mangayomi/eval/bridge/m_source.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 
-/// dart_eval wrapper for [Client]
+/// dart_eval wrapper for [InterceptedClient]
 class $Client implements $Instance {
   $Client.wrap(this.$value);
 
   @override
-  final Client $value;
+  final InterceptedClient $value;
 
   late final $Instance _superclass = $Object($value);
 
-  /// Compile-time bridged type reference for [$Client]
+  /// Compile-time bridged type reference for [$InterceptedClient]
   static const $type = BridgeTypeRef(
       BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'Client'));
 
-  /// Compile-time bridged class declaration for [$Client]
+  /// Compile-time bridged class declaration for [$InterceptedClient]
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(
-            returns: BridgeTypeAnnotation($type), params: [], namedParams: []))
+        '': BridgeConstructorDef(
+            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
+          BridgeParameter(
+              'source', BridgeTypeAnnotation($MSource.$type), true),
+        ], namedParams: []))
       },
       methods: {
         'get': BridgeMethodDef(BridgeFunctionDef(
@@ -207,7 +212,9 @@ class $Client implements $Instance {
       wrap: true);
 
   static $Client $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $Client.wrap(Client());
+    return $Client.wrap(
+      MInterceptor.init(source: args[0]?.$value),
+    );
   }
 
   @override
@@ -240,10 +247,10 @@ class $Client implements $Instance {
     final url = args[0]!.$value as Uri;
     final headers = _toMapString(args[1]?.$value);
 
-    final request = (target!.$value as Client).get(url, headers: headers);
-    return $Future.wrap(request
-        .then((value) => $Response.wrap(value.message()))
-        .onErrorMessage());
+    final request =
+        (target!.$value as InterceptedClient).get(url, headers: headers);
+    return $Future
+        .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
   }
 
   static const $Function __post = $Function(_post);
@@ -254,11 +261,10 @@ class $Client implements $Instance {
     final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
-    final request = (target!.$value as Client)
+    final request = (target!.$value as InterceptedClient)
         .post(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request
-        .then((value) => $Response.wrap(value.message()))
-        .onErrorMessage());
+    return $Future
+        .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
   }
 
   static const $Function __put = $Function(_put);
@@ -269,11 +275,10 @@ class $Client implements $Instance {
     final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
-    final request = (target!.$value as Client)
+    final request = (target!.$value as InterceptedClient)
         .put(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request
-        .then((value) => $Response.wrap(value.message()))
-        .onErrorMessage());
+    return $Future
+        .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
   }
 
   static const $Function __delete = $Function(_delete);
@@ -284,11 +289,10 @@ class $Client implements $Instance {
     final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
-    final request = (target!.$value as Client)
+    final request = (target!.$value as InterceptedClient)
         .delete(url, headers: headers, body: body, encoding: encoding);
-    return $Future.wrap(request
-        .then((value) => $Response.wrap(value.message()))
-        .onErrorMessage());
+    return $Future
+        .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
   }
 
   static const $Function __patch = $Function(_patch);
@@ -299,7 +303,7 @@ class $Client implements $Instance {
     final body = _toBodyObject(args[2]?.$value);
     final encoding = args[3]?.$value as Encoding?;
 
-    final request = (target!.$value as Client)
+    final request = (target!.$value as InterceptedClient)
         .patch(url, headers: headers, body: body, encoding: encoding);
     return $Future
         .wrap(request.then((value) => $Response.wrap(value)).onErrorMessage());
@@ -311,7 +315,8 @@ class $Client implements $Instance {
     final url = args[0]!.$value as Uri;
     final headers = _toMapString(args[1]?.$value);
 
-    final request = (target!.$value as Client).read(url, headers: headers);
+    final request =
+        (target!.$value as InterceptedClient).read(url, headers: headers);
     return $Future
         .wrap(request.then((value) => $String(value)).onErrorMessage());
   }
@@ -325,7 +330,8 @@ class $Client implements $Instance {
         (key, value) =>
             MapEntry((key.$reified).toString(), (value.$reified).toString()));
 
-    final request = (target!.$value as Client).readBytes(url, headers: headers);
+    final request =
+        (target!.$value as InterceptedClient).readBytes(url, headers: headers);
     return $Future
         .wrap(request.then((value) => $List.wrap(value)).onErrorMessage());
   }
@@ -333,7 +339,7 @@ class $Client implements $Instance {
   static const $Function __close = $Function(_close);
 
   static $Value? _close(Runtime runtime, $Value? target, List<$Value?> args) {
-    (target!.$value as Client).close();
+    (target!.$value as InterceptedClient).close();
     return null;
   }
 
@@ -708,22 +714,6 @@ extension FutureResponseExtension<T> on Future<T> {
       botToast(error.toString());
       throw error.toString();
     });
-    return this;
-  }
-}
-
-extension ResponseExtension on Response {
-  Response message() {
-    final cloudflare = [403, 503].contains(statusCode) &&
-        ["cloudflare-nginx", "cloudflare"].contains(headers["server"]);
-    if (kDebugMode) {
-      print(
-          "${request?.method}: ${request?.url}, statusCode: $statusCode ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
-    }
-    if (cloudflare) {
-      botToast("$statusCode Failed to bypass Cloudflare");
-    }
-
     return this;
   }
 }

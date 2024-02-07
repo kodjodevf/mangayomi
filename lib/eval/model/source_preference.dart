@@ -194,3 +194,15 @@ class EditTextPreference {
         text: json['text']);
   }
 }
+
+@collection
+@Name("SourcePreferenceStringValue")
+class SourcePreferenceStringValue {
+  Id id;
+  int? sourceId;
+  String? key;
+  String? value;
+
+  SourcePreferenceStringValue(
+      {this.id = Isar.autoIncrement, this.sourceId, this.key, this.value});
+}
