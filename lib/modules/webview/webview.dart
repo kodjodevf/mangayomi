@@ -16,13 +16,11 @@ class MangaWebView extends ConsumerStatefulWidget {
   final String url;
   final String sourceId;
   final String title;
-  final bool hasCloudFlare;
   const MangaWebView(
       {super.key,
       required this.url,
       required this.sourceId,
-      required this.title,
-      required this.hasCloudFlare});
+      required this.title});
 
   @override
   ConsumerState<MangaWebView> createState() => _MangaWebViewState();
@@ -44,7 +42,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     super.initState();
   }
 
-  bool _cancel = false;
   final _windowsWebview = FlutterWindowsWebview();
   Webview? _desktopWebview;
   void _runWebViewDesktop() async {
@@ -57,54 +54,43 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
       _desktopWebview!
         ..launch(widget.url)
+        ..addOnWebMessageReceivedCallback((s) {
+          if (s.substring(0, 2) == "UA") {
+            MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+          }
+        })
+        ..addScriptToExecuteOnDocumentCreated(
+            "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)")
         ..onClose.whenComplete(() async {
-          if (Platform.isMacOS && widget.hasCloudFlare) {
+          if (Platform.isMacOS) {
             final cookieList = await _desktopWebview!.getCookies(widget.url);
             for (var c in cookieList) {
               final cookie =
                   c.entries.map((e) => "${e.key}=${e.value}").join(";");
               await MInterceptor.setCookie(_url, "", cookie: cookie);
             }
-            _cancel = true;
           }
           if (mounted) {
             Navigator.pop(context);
           }
         });
-      if (Platform.isMacOS && widget.hasCloudFlare) {
-        await Future.doWhile(() async {
-          await Future.delayed(const Duration(seconds: 1));
-          if (_cancel) return false;
-          final ua =
-              await _desktopWebview?.evaluateJavaScript("navigator.userAgent");
-          if (ua != null) {
-            MInterceptor.setCookie(_url, ua);
-            return false;
-          }
-          return true;
-        });
-      }
     }
     //credit: https://github.com/wgh136/PicaComic/blob/master/lib/network/nhentai_network/cloudflare.dart
     else if (Platform.isWindows && await FlutterWindowsWebview.isAvailable()) {
       _windowsWebview.launchWebview(
           widget.url,
           WebviewOptions(messageReceiver: (s) {
-            if (widget.hasCloudFlare) {
-              if (s.substring(0, 2) == "UA") {
-                MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
-              }
+            if (s.substring(0, 2) == "UA") {
+              MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
             }
           }, onTitleChange: (_) {
-            if (widget.hasCloudFlare) {
-              _windowsWebview.runScript(
-                  "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
-              _windowsWebview.getCookies(widget.url).then((cookies) {
-                final cookie =
-                    cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
-                MInterceptor.setCookie(_url, "", cookie: cookie);
-              });
-            }
+            _windowsWebview.runScript(
+                "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
+            _windowsWebview.getCookies(widget.url).then((cookies) {
+              final cookie =
+                  cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
+              MInterceptor.setCookie(_url, "", cookie: cookie);
+            });
           }));
     }
   }
@@ -270,12 +256,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                       },
                       onUpdateVisitedHistory:
                           (controller, url, isReload) async {
-                        if (widget.hasCloudFlare) {
-                          final ua = await controller.evaluateJavascript(
-                                  source: "navigator.userAgent") ??
-                              "";
-                          await MInterceptor.setCookie(url.toString(), ua);
-                        }
+                        final ua = await controller.evaluateJavascript(
+                                source: "navigator.userAgent") ??
+                            "";
+                        await MInterceptor.setCookie(url.toString(), ua);
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
                         final title = await controller.getTitle();

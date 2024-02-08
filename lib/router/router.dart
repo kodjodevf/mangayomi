@@ -365,7 +365,6 @@ class RouterNotifier extends ChangeNotifier {
               url: data["url"]!,
               sourceId: data["sourceId"]!,
               title: data['title']!,
-              hasCloudFlare: data["hasCloudFlare"]!,
             );
           },
           pageBuilder: (context, state) {
@@ -376,7 +375,6 @@ class RouterNotifier extends ChangeNotifier {
                 url: data["url"]!,
                 sourceId: data["sourceId"]!,
                 title: data['title']!,
-                hasCloudFlare: data["hasCloudFlare"]!,
               ),
             );
           },
