@@ -134,16 +134,7 @@ class StorageProvider {
         },
       );
     }
-    final settings = isar.settings.getSync(227);
-    final getDefaultAppStoragePath = settings?.defaultAppStoragePath;
-    if (getDefaultAppStoragePath == null) {
-      final path = (await getDefaultDirectory())!.path;
-      isar.writeTxnSync(
-        () {
-          isar.settings.putSync(settings!..defaultAppStoragePath = path);
-        },
-      );
-    }
+
     return isar;
   }
 }
