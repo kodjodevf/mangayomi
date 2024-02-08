@@ -67,7 +67,6 @@ dependencies:
   ffi: ^2.1.0
   ffigen: ^11.0.0
   http_interceptor: ^2.0.0-beta.7
-  cookie_jar: ^4.0.0
   http: ^1.2.0
   flutter_windows_webview:
     git:

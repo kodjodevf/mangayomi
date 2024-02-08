@@ -88,7 +88,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                 "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)");
             _windowsWebview.getCookies(widget.url).then((cookies) {
               final cookie =
-                  cookies.entries.map((e) => "${e.key}=${e.value}").join(";");
+                  cookies.entries.map((e) => "${e.key}=${e.value}").join("; ");
               MInterceptor.setCookie(_url, "", cookie: cookie);
             });
           }));
