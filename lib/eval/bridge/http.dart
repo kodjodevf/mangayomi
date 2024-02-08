@@ -26,8 +26,9 @@ class $Client implements $Instance {
       constructors: {
         '': BridgeConstructorDef(
             BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter(
-              'source', BridgeTypeAnnotation($MSource.$type), true),
+          BridgeParameter('source', BridgeTypeAnnotation($MSource.$type), true),
+          BridgeParameter('reqcopyWith',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
         ], namedParams: []))
       },
       methods: {
@@ -212,8 +213,12 @@ class $Client implements $Instance {
       wrap: true);
 
   static $Client $new(Runtime runtime, $Value? target, List<$Value?> args) {
+    final reqcopyWith = args[1]?.$value == null
+        ? null
+        : (jsonDecode(args[1]!.$value) as Map)
+            .map((key, value) => MapEntry(key.toString(), value));
     return $Client.wrap(
-      MInterceptor.init(source: args[0]?.$value),
+      MInterceptor.init(source: args[0]?.$value, reqcopyWith: reqcopyWith),
     );
   }
 

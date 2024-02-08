@@ -20,9 +20,10 @@ class MInterceptor {
 
   MInterceptor();
 
-  static InterceptedClient init({MSource? source}) {
+  static InterceptedClient init(
+      {MSource? source, Map<String, dynamic>? reqcopyWith}) {
     return InterceptedClient.build(interceptors: [
-      if (source?.hasCloudflare ?? false) ...[MCookieManager(_cookieJar)],
+      MCookieManager(_cookieJar, reqcopyWith),
       LoggerInterceptor()
     ]);
   }
@@ -90,9 +91,10 @@ class MInterceptor {
 }
 
 class MCookieManager extends InterceptorContract {
-  MCookieManager(this.cookieJar);
-
+  MCookieManager(this.cookieJar, this.reqcopyWith);
+  Map<String, dynamic>? reqcopyWith;
   final cookie_jar.CookieJar cookieJar;
+
   static String getCookies(List<Cookie> cookies) {
     cookies.sort((a, b) {
       if (a.path == null && b.path == null) {
@@ -125,6 +127,22 @@ class MCookieManager extends InterceptorContract {
     request.headers[HttpHeaders.cookieHeader] =
         newCookies.isNotEmpty ? newCookies : "";
     request.headers[HttpHeaders.userAgentHeader] = userAgent;
+    try {
+      if (reqcopyWith != null) {
+        if (reqcopyWith!["followRedirects"] != null) {
+          request.followRedirects = reqcopyWith!["followRedirects"];
+        }
+        if (reqcopyWith!["maxRedirects"] != null) {
+          request.maxRedirects = reqcopyWith!["maxRedirects"];
+        }
+        if (reqcopyWith!["contentLength"] != null) {
+          request.contentLength = reqcopyWith!["contentLength"];
+        }
+        if (reqcopyWith!["persistentConnection"] != null) {
+          request.persistentConnection = reqcopyWith!["persistentConnection"];
+        }
+      }
+    } catch (_) {}
     return request;
   }
 
