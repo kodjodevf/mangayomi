@@ -283,5 +283,9 @@
     "aniskip_button_timeout": "Тайм-аут кнопки",
     "fullscreen": "Полноэкранный режим",
     "update_library": "Обновить библиотеку",
-    "updating_library": "Обновление библиотеки"
+    "updating_library": "Обновление библиотеки",
+    "next_chapter": "Следующая глава",
+    "next_5_chapters": "Следующие 5 глав",
+    "next_10_chapters": "Следующие 10 глав",
+    "next_25_chapters": "Следующие 25 глав"
 }

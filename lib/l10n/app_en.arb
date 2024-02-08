@@ -285,5 +285,9 @@
   "skip_ending": "Skip ending",
   "fullscreen": "Fullscreen",
   "update_library": "Update library",
-  "updating_library": "Updating library"
+  "updating_library": "Updating library",
+  "next_chapter": "Next chapter",
+  "next_5_chapters": "Next 5 chapters",
+  "next_10_chapters": "Next 10 chapters",
+  "next_25_chapters": "Next 25 chapters"
 }

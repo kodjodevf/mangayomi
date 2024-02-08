@@ -361,15 +361,109 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ? Colors.transparent
                                 : Theme.of(context).scaffoldBackgroundColor,
                             actions: [
-                              if (!isLocalArchive)
-                                IconButton(
-                                    splashRadius: 20,
-                                    onPressed: () {
-                                      widget.checkForUpdate(true);
+                              if (!isLocalArchive) ...[
+                                PopupMenuButton(
+                                    icon: const Icon(Icons.download_outlined),
+                                    itemBuilder: (context) {
+                                      return [
+                                        PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text(
+                                                context.l10n.next_chapter)),
+                                        PopupMenuItem<int>(
+                                            value: 1,
+                                            child: Text(
+                                                context.l10n.next_5_chapters)),
+                                        PopupMenuItem<int>(
+                                            value: 2,
+                                            child: Text(
+                                                context.l10n.next_10_chapters)),
+                                        PopupMenuItem<int>(
+                                            value: 3,
+                                            child: Text(
+                                                context.l10n.next_25_chapters)),
+                                        PopupMenuItem<int>(
+                                            value: 4,
+                                            child: Text(context.l10n.unread)),
+                                      ];
                                     },
-                                    icon: const Icon(
-                                      Icons.refresh,
-                                    )),
+                                    onSelected: (value) {
+                                      final chapters = isar.chapters
+                                          .filter()
+                                          .idIsNotNull()
+                                          .mangaIdEqualTo(widget.manga!.id!)
+                                          .findAllSync();
+                                      if (value == 0 ||
+                                          value == 1 ||
+                                          value == 2 ||
+                                          value == 3) {
+                                        final lastChapterReadIndex =
+                                            chapters.lastIndexWhere((element) =>
+                                                element.isRead == true);
+                                        if (lastChapterReadIndex == -1 ||
+                                            chapters.length == 1) {
+                                          final chapter = chapters.first;
+                                          final entry = isar.downloads
+                                              .filter()
+                                              .idIsNotNull()
+                                              .chapterIdEqualTo(chapter.id)
+                                              .findFirstSync();
+                                          if (entry == null ||
+                                              !entry.isDownload!) {
+                                            ref.watch(downloadChapterProvider(
+                                                chapter: chapter));
+                                          }
+                                        } else {
+                                          final length = switch (value) {
+                                            0 => 1,
+                                            1 => 5,
+                                            2 => 10,
+                                            _ => 25,
+                                          };
+                                          for (var i = 1; i < length + 1; i++) {
+                                            if (chapters.length > 1 &&
+                                                chapters.elementAtOrNull(
+                                                        lastChapterReadIndex +
+                                                            i) !=
+                                                    null) {
+                                              final chapter = chapters[
+                                                  lastChapterReadIndex + i];
+                                              final entry = isar.downloads
+                                                  .filter()
+                                                  .idIsNotNull()
+                                                  .chapterIdEqualTo(chapter.id)
+                                                  .findFirstSync();
+                                              if (entry == null ||
+                                                  !entry.isDownload!) {
+                                                ref.watch(
+                                                    downloadChapterProvider(
+                                                        chapter: chapter));
+                                              }
+                                            }
+                                          }
+                                        }
+                                      } else if (value == 4) {
+                                        final unreadChapters = isar.chapters
+                                            .filter()
+                                            .idIsNotNull()
+                                            .mangaIdEqualTo(widget.manga!.id!)
+                                            .isReadEqualTo(false)
+                                            .findAllSync();
+                                        for (var chapter in unreadChapters) {
+                                          final entry = isar.downloads
+                                              .filter()
+                                              .idIsNotNull()
+                                              .chapterIdEqualTo(chapter.id)
+                                              .findFirstSync();
+                                          if (entry == null ||
+                                              !entry.isDownload!) {
+                                            ref.watch(downloadChapterProvider(
+                                                chapter: chapter));
+                                          }
+                                        }
+                                      }
+                                    }),
+                              ],
                               IconButton(
                                   splashRadius: 20,
                                   onPressed: () {
@@ -382,19 +476,21 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   )),
                               PopupMenuButton(itemBuilder: (context) {
                                 return [
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                        value: 3, child: Text(l10n.refresh)),
                                   if (widget.manga!.favorite!)
                                     PopupMenuItem<int>(
                                         value: 0,
                                         child: Text(l10n.edit_categories)),
-                                  // if (!isLocalArchive)
-                                  //   if (widget.manga!.favorite!)
-                                  //     PopupMenuItem<int>(
-                                  //         value: 1, child: Text(l10n.migrate)),
                                   if (!isLocalArchive)
                                     PopupMenuItem<int>(
                                         value: 2, child: Text(l10n.share)),
                                 ];
                               }, onSelected: (value) {
+                                if (value == 3) {
+                                  widget.checkForUpdate(true);
+                                }
                                 if (value == 0) {
                                   context.push("/categories", extra: (
                                     true,

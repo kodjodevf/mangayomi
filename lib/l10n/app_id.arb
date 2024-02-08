@@ -283,5 +283,9 @@
     "aniskip_button_timeout": "Timeout tombol",
     "fullscreen": "Layar Penuh",
     "update_library": "Perbarui perpustakaan",
-    "updating_library": "Memperbarui perpustakaan"
+    "updating_library": "Memperbarui perpustakaan",
+    "next_chapter": "Berikutnya bab",
+    "next_5_chapters": "5 bab berikutnya",
+    "next_10_chapters": "10 bab berikutnya",
+    "next_25_chapters": "25 bab berikutnya"
 }

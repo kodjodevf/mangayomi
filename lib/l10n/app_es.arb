@@ -283,5 +283,9 @@
     "aniskip_button_timeout": "Tiempo de espera del botón",
     "fullscreen": "Pantalla completa",
     "update_library": "Actualizar biblioteca",
-    "updating_library": "Actualizando biblioteca"
+    "updating_library": "Actualizando biblioteca",
+    "next_chapter": "Próximo capítulo",
+    "next_5_chapters": "Próximos 5 capítulos",
+    "next_10_chapters": "Próximos 10 capítulos",
+    "next_25_chapters": "Próximos 25 capítulos"
 }

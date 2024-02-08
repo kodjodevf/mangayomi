@@ -284,5 +284,9 @@
   "skip_opening": "Passer l'opening",
   "skip_ending": "Passer l'ending",
   "update_library": "Mettre à jour la bibliothèque",
-  "updating_library": "Mise à jour de la bibliothèque"
+  "updating_library": "Mise à jour de la bibliothèque",
+  "next_chapter": "Chapitre suivant",
+  "next_5_chapters": "5 chapitres suivants",
+  "next_10_chapters": "10 chapitres suivants",
+  "next_25_chapters": "25 chapitres suivants"
 }

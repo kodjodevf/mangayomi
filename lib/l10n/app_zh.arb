@@ -285,5 +285,9 @@
     "skip_ending": "跳过结尾",
     "fullscreen": "全屏",
     "update_library": "更新库",
-    "updating_library": "正在更新库"
+    "updating_library": "正在更新库",
+    "next_chapter": "下一章",
+    "next_5_chapters": "下5章",
+    "next_10_chapters": "下10章",
+    "next_25_chapters": "下25章"
 }
