@@ -2,18 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
 
 @riverpod
 class MyAnimeList extends _$MyAnimeList {
+  final http = MInterceptor.init();
   String baseOAuthUrl = 'https://myanimelist.net/v1/oauth2';
   String baseApiUrl = 'https://api.myanimelist.net/v2';
   String codeVerifier = "";
@@ -312,11 +314,11 @@ class MyAnimeList extends _$MyAnimeList {
       if (track.finishedReadingDate != null)
         'finish_date': _convertToIsoDate(track.finishedReadingDate)
     };
-    final request = http.Request(
+    final request = Request(
         'PUT', Uri.parse('$baseApiUrl/anime/${track.mediaId}/my_list_status'));
     request.bodyFields = formBody;
     request.headers.addAll({'Authorization': 'Bearer $accessToken'});
-    final response = await http.Client().send(request);
+    final response = await Client().send(request);
     final mJson = jsonDecode(await response.stream.bytesToString());
     return _parseAnimeItem(mJson, track);
   }
@@ -334,11 +336,11 @@ class MyAnimeList extends _$MyAnimeList {
       if (track.finishedReadingDate != null)
         'finish_date': _convertToIsoDate(track.finishedReadingDate)
     };
-    final request = http.Request(
+    final request = Request(
         'PUT', Uri.parse('$baseApiUrl/manga/${track.mediaId}/my_list_status'));
     request.bodyFields = formBody;
     request.headers.addAll({'Authorization': 'Bearer $accessToken'});
-    final response = await http.Client().send(request);
+    final response = await Client().send(request);
     final mJson = jsonDecode(await response.stream.bytesToString());
     return _parseMangaItem(mJson, track);
   }

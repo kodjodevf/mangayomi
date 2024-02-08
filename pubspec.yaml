@@ -66,8 +66,7 @@ dependencies:
   window_manager: ^0.3.8
   ffi: ^2.1.0
   ffigen: ^11.0.0
-  http_interceptor: ^2.0.0-beta.7
-  http: ^1.2.0
+  http_interceptor: ^2.0.0-beta.8
   flutter_windows_webview:
     git:
       url: https://github.com/wgh136/flutter_windows_webview

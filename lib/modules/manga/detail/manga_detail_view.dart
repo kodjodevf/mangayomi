@@ -24,6 +24,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -1534,10 +1535,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     elevation: 0),
                 onPressed: () {
                   final manga = widget.manga!;
+
                   final source =
                       getSource(widget.manga!.lang!, widget.manga!.source!)!;
+                  final baseUrl =
+                      ref.watch(sourceBaseUrlProvider(source: source));
                   String url = widget.manga!.link!.startsWith('/')
-                      ? "${source.baseUrl}${widget.manga!.link!}"
+                      ? "$baseUrl${widget.manga!.link!}"
                       : widget.manga!.link!;
 
                   Map<String, dynamic> data = {

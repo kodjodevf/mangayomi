@@ -8,6 +8,8 @@ abstract class MProvider {
 
   bool get supportsLatest => true;
 
+  String? get baseUrl;
+
   Future<MPages> getLatestUpdates(int page);
 
   Future<MPages> getPopular(int page);

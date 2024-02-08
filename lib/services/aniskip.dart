@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'aniskip.g.dart';
 
 // credits: https://github.com/aniyomiorg/aniyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/util/AniSkipApi.kt
 @riverpod
 class AniSkip extends _$AniSkip {
-  final _client = http.Client();
+  final http = MInterceptor.init();
   @override
   void build() {}
 
@@ -17,7 +17,7 @@ class AniSkip extends _$AniSkip {
 
       final url =
           "https://api.aniskip.com/v2/skip-times/$malId/$episodeNumber?types[]=ed&types[]=mixed-ed&types[]=mixed-op&types[]=op&types[]=recap&episodeLength=$episodeLength";
-      final response = await _client.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url));
       final res = AniSkipResponse.fromJson(json.decode(response.body));
 
       return (res.found ?? false) ? res.results : null;
@@ -35,7 +35,7 @@ class AniSkip extends _$AniSkip {
         Media(id:${id.$1}){idMal}
       }
     """;
-    final response = await _client.post(
+    final response = await http.post(
       Uri.parse("https://graphql.anilist.co"),
       body: json.encode({"query": query}),
       headers: {"Content-Type": "application/json"},

@@ -6,7 +6,7 @@ part of 'kitsu.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$kitsuHash() => r'425a6699eafe84e35320c9a66bce33b4ba332a52';
+String _$kitsuHash() => r'c8ceccec70441eefe0c4a94c901adaaa5009cff3';
 
 /// Copied from Dart SDK
 class _SystemHash {

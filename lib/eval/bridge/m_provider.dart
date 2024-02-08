@@ -36,6 +36,9 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         'supportsLatest': BridgeMethodDef(BridgeFunctionDef(
           returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
         )),
+        'baseUrl': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                nullable: true))),
       },
       methods: {
         'getLatestUpdates': BridgeMethodDef(BridgeFunctionDef(
@@ -935,6 +938,9 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
 
   @override
   bool get supportsLatest => $_get('supportsLatest');
+
+  @override
+  String? get baseUrl => $_get('baseUrl');
 
   @override
   Future<MManga> getDetail(String url) async =>

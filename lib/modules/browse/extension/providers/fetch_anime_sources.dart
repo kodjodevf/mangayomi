@@ -3,17 +3,18 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:http/http.dart' as http;
 part 'fetch_anime_sources.g.dart';
 
 @riverpod
 Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
     {int? id, required bool reFresh}) async {
+  final http = MInterceptor.init();
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     final info = await PackageInfo.fromPlatform();
-    final req = await http.get(Uri.parse(
+    final req = await MInterceptor.init().get(Uri.parse(
         "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json"));
     final res = jsonDecode(req.body) as List;
 

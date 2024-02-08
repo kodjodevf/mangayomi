@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/track.dart';
@@ -8,11 +8,13 @@ import 'dart:convert';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
 
 @riverpod
 class Kitsu extends _$Kitsu {
+  final http = MInterceptor.init();
   final String _clientId =
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
   final String _clientSecret =
@@ -41,7 +43,7 @@ class Kitsu extends _$Kitsu {
 
   Future<(bool, String)> login(String username, String password) async {
     try {
-      final request = http.MultipartRequest('POST', Uri.parse(_loginUrl));
+      final request = MultipartRequest('POST', Uri.parse(_loginUrl));
       request.fields.addAll({
         'username': username,
         'password': password,

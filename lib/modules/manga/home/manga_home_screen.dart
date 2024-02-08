@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -67,26 +68,25 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   Future<MPages?> _loadMore() async {
-    MPages? mangaResList;
-
+    MPages? mangaRes;
     if (_isLoading) {
       if (widget.source.isFullData!) {
         await Future.delayed(const Duration(milliseconds: 500));
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-          mangaResList = await ref.watch(getPopularProvider(
+          mangaRes = await ref.watch(getPopularProvider(
             source: widget.source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-          mangaResList = await ref.watch(getLatestUpdatesProvider(
+          mangaRes = await ref.watch(getLatestUpdatesProvider(
             source: widget.source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
             _isFiltering) {
-          mangaResList = await ref.watch(searchProvider(
+          mangaRes = await ref.watch(searchProvider(
                   source: widget.source,
                   query: _query,
                   page: _page + 1,
@@ -94,14 +94,17 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               .future);
         }
       }
-      if (mounted) {
-        setState(() {
-          _page = _page + 1;
-          _hasNextPage = mangaResList!.hasNextPage;
-        });
+      if (mangaRes!.list.isNotEmpty) {
+        if (mounted) {
+          setState(() {
+            _page = _page + 1;
+            _hasNextPage = mangaRes!.hasNextPage;
+          });
+        }
       }
     }
-    return mangaResList;
+
+    return mangaRes;
   }
 
   late final _textEditingController = TextEditingController(text: widget.query);
@@ -181,8 +184,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         Icon(Icons.search, color: Theme.of(context).hintColor)),
             IconButton(
               onPressed: () {
+                final baseUrl =
+                    ref.watch(sourceBaseUrlProvider(source: widget.source));
                 Map<String, dynamic> data = {
-                  'url': widget.source.baseUrl!,
+                  'url': baseUrl,
                   'sourceId': widget.source.id.toString(),
                   'title': '',
                   "hasCloudFlare": widget.source.hasCloudflare ?? false
@@ -475,8 +480,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       children: [
                         IconButton(
                           onPressed: () {
+                            final baseUrl = ref.watch(
+                                sourceBaseUrlProvider(source: widget.source));
                             Map<String, dynamic> data = {
-                              'url': widget.source.baseUrl!,
+                              'url': baseUrl,
                               'sourceId': widget.source.id.toString(),
                               'title': '',
                               "hasCloudFlare":

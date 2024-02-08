@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
-import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track.dart';
@@ -9,11 +8,13 @@ import 'dart:convert';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/services/http/interceptor.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anilist.g.dart';
 
 @riverpod
 class Anilist extends _$Anilist {
+  final http = MInterceptor.init();
   final String _clientId =
       (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
   static const String _baseApiUrl = "https://graphql.anilist.co/";
