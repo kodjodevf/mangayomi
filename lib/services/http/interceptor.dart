@@ -79,9 +79,12 @@ class MCookieManager extends InterceptorContract {
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
   }) async {
-    final userAgent = isar.settings.getSync(227)!.userAgent!;
-    request.headers.addAll(MInterceptor.getCookiesPref(request.url.toString()));
-    request.headers[HttpHeaders.userAgentHeader] = userAgent;
+    final cookie = MInterceptor.getCookiesPref(request.url.toString());
+    if (cookie.isNotEmpty) {
+      final userAgent = isar.settings.getSync(227)!.userAgent!;
+      request.headers.addAll(cookie);
+      request.headers[HttpHeaders.userAgentHeader] = userAgent;
+    }
     try {
       if (reqcopyWith != null) {
         if (reqcopyWith!["followRedirects"] != null) {
