@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
@@ -149,13 +150,14 @@ class _MobileControllerWidgetState
           setState(() {
             visible = false;
           });
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
         }
       });
     } else {
       setState(() {
         visible = false;
       });
-
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       _timer?.cancel();
     }
   }

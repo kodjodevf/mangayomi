@@ -230,9 +230,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 height: 300,
                                 fit: BoxFit.cover)
                             : cachedNetworkImage(
-                                headers: ref.watch(headersProvider(
-                                    source: widget.manga!.source!,
-                                    lang: widget.manga!.lang!)),
+                                headers: widget.manga!.isLocalArchive!
+                                    ? null
+                                    : ref.watch(headersProvider(
+                                        source: widget.manga!.source!,
+                                        lang: widget.manga!.lang!)),
                                 imageUrl: toImgUrl(
                                     widget.manga!.customCoverFromTracker ??
                                         widget.manga!.imageUrl!),
@@ -1419,8 +1421,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         : CachedNetworkImageProvider(
             toImgUrl(widget.manga!.customCoverFromTracker ??
                 widget.manga!.imageUrl!),
-            headers: ref.watch(headersProvider(
-                source: widget.manga!.source!, lang: widget.manga!.lang!)));
+            headers: widget.manga!.isLocalArchive!
+                ? null
+                : ref.watch(headersProvider(
+                    source: widget.manga!.source!, lang: widget.manga!.lang!)));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
       child: GestureDetector(
