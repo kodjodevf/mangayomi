@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/model/document.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -122,6 +123,19 @@ class MBridge {
   static const $Function unpackJs = $Function(_unpackJs);
 
   static $Value? _unpackJs(_, __, List<$Value?> args) {
+    String code = args[0]!.$reified;
+    try {
+      final jsPacker = JSPacker(code);
+      return $String(jsPacker.unpack() ?? "");
+    } catch (_) {
+      return $String("");
+    }
+  }
+
+  ///Unpack a JS code
+  static const $Function unpackJsAndCombine = $Function(_unpackJsAndCombine);
+
+  static $Value? _unpackJsAndCombine(_, __, List<$Value?> args) {
     String code = args[0]!.$reified;
     try {
       return $String(JsUnpacker.unpackAndCombine(code) ?? "");

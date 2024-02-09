@@ -655,6 +655,16 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
+        'unpackJsAndCombine': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              params: [
+                BridgeParameter(
+                    'code',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+              ]),
+        ),
         'evalJs': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(
@@ -880,7 +890,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         }),
 
       ///////////////////////////////////////////////////////////////////////
-
+      "unpackJsAndCombine" => MBridge.unpackJsAndCombine,
       "unpackJs" => MBridge.unpackJs,
       "regExp" => $Function((_, __, List<$Value?> args) {
           return $String(MBridge.regExp(args[0]!.$value, args[1]!.$value,
