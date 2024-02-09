@@ -734,14 +734,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  js_packer:
-    dependency: "direct main"
-    description:
-      name: js_packer
-      sha256: f45ffa90165a810d7134f0b96b54068e4aac9d80a8b181eafa3978ec6dbc66a3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
   json_annotation:
     dependency: transitive
     description:

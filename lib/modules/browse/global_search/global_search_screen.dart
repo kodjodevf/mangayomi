@@ -282,7 +282,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                       : getMangaDetail.imageUrl!),
                                   width: 110,
                                   height: 150,
-                                  fit: BoxFit.fill));
+                                  fit: BoxFit.cover));
                         },
                       ),
                       BottomTextWidget(

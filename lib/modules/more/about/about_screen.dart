@@ -64,7 +64,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 color: Theme.of(context).brightness == Brightness.light
                     ? Colors.black
                     : Colors.white,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 height: 100,
               ),
             ),

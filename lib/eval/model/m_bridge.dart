@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/model/document.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -27,6 +26,7 @@ import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
+import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
@@ -124,8 +124,7 @@ class MBridge {
   static $Value? _unpackJs(_, __, List<$Value?> args) {
     String code = args[0]!.$reified;
     try {
-      final jsPacker = JSPacker(code);
-      return $String(jsPacker.unpack() ?? "");
+      return $String(JsUnpacker.unpackAndCombine(code) ?? "");
     } catch (_) {
       return $String("");
     }

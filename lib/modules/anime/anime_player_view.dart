@@ -660,7 +660,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     List<BoxFit> fitList = [
       BoxFit.contain,
       BoxFit.cover,
-      BoxFit.fill,
+      BoxFit.cover,
       BoxFit.fitHeight,
       BoxFit.fitWidth,
       BoxFit.none

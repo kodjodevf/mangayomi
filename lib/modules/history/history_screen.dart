@@ -266,7 +266,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                               manga.imageUrl!),
                                       width: 60,
                                       height: 90,
-                                      fit: BoxFit.fill),
+                                      fit: BoxFit.cover),
                             ),
                           ),
                         ),

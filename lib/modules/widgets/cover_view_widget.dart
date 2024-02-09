@@ -47,7 +47,7 @@ class CoverViewWidget extends StatelessWidget {
                                 )
                           : Ink.image(
                               height: 200,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               image: image!,
                               child: Stack(
                                 children: children,

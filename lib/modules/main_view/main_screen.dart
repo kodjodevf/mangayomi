@@ -274,7 +274,7 @@ class MainScreen extends ConsumerWidget {
           child: Image.asset(
             "assets/app_icons/icon.png",
             color: Colors.black,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             height: 100,
           ),
         ),
@@ -286,7 +286,7 @@ class MainScreen extends ConsumerWidget {
           child: Image.asset(
             "assets/app_icons/icon.png",
             color: Colors.black,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             height: 100,
           ),
         ),

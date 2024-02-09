@@ -1,7 +1,7 @@
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:js_packer/js_packer.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
@@ -18,7 +18,7 @@ class FilemoonExtractor {
           .queryXPath('//script[contains(text(), "eval")]/text()')
           .attr;
 
-      final unpacked = JSPacker(jsEval!).unpack() ?? "";
+      final unpacked = JsUnpacker.unpackAndCombine(jsEval!) ?? "";
 
       final masterUrl = unpacked.isNotEmpty
           ? unpacked.substringAfter('{file:"').substringBefore('"}')

@@ -1439,7 +1439,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               borderRadius: const BorderRadius.all(Radius.circular(5)),
               image: DecorationImage(
                 image: imageProvider,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             ),
           ),
@@ -1698,6 +1698,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ..customCoverImage = null
                                     ..customCoverFromTracker = null);
                                 });
+                                Navigator.pop(context);
                               } else if (value == 1) {
                                 FilePickerResult? result =
                                     await FilePicker.platform.pickFiles(
