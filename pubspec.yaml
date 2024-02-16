@@ -1,10 +1,10 @@
 name: mangayomi
-description: Free and open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi.
+description: Free and open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi and Aniyomi.
 publish_to: 'none'
 version: 0.1.75+46
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
+  sdk: '>=3.3.0 <4.0.0'
 
 
 dependencies:
@@ -61,7 +61,7 @@ dependencies:
   crypto: ^3.0.3
   rinf: ^6.4.0
   protobuf: ^3.1.0
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.6
   window_manager: ^0.3.8
   ffi: ^2.1.0
   ffigen: ^11.0.0
