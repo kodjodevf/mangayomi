@@ -20,7 +20,7 @@ class StorageProvider {
   final RegExp _regExpChar = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   Future<bool> requestPermission() async {
     Permission permission = Permission.manageExternalStorage;
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid) {
       if (await permission.isGranted) {
         return true;
       } else {
@@ -103,6 +103,17 @@ class StorageProvider {
       await Directory(dbDir).create(recursive: true);
       return Directory(dbDir);
     }
+  }
+
+  Future<Directory?> getGalleryDirectory() async {
+    String gPath = (await getDirectory())!.path;
+    if (Platform.isAndroid) {
+      gPath = "/storage/emulated/0/Pictures/Mangayomi/";
+    } else {
+      gPath = path.join(gPath, 'Pictures');
+    }
+    await Directory(gPath).create(recursive: true);
+    return Directory(gPath);
   }
 
   Future<Isar> initDB(String? path, {bool? inspector = false}) async {

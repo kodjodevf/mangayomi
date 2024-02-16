@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/messages/crop_borders.pb.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'crop_borders_provider.g.dart';
 
@@ -16,18 +14,8 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
   Uint8List? imageBytes;
 
   if (cropBorder) {
-    if (datas.archiveImage != null) {
-      imageBytes = datas.archiveImage;
-    } else if (datas.isLocale!) {
-      imageBytes = File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg')
-          .readAsBytesSync();
-    } else {
-      File? cachedImage;
-      if (datas.url != null) {
-        cachedImage = await getCachedImageFile(datas.url!);
-      }
-      imageBytes = cachedImage?.readAsBytesSync();
-    }
+    imageBytes = await datas.getImageBytes;
+
     if (imageBytes == null) {
       return null;
     }

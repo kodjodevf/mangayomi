@@ -126,6 +126,10 @@ void doBackUp(DoBackUpRef ref,
   encoder.addFile(File(backupFilePath));
   encoder.close();
   Directory(backupFilePath).deleteSync(recursive: true);
+  final assets = [
+    'assets/app_icons/icon-black.png',
+    'assets/app_icons/icon-red.png'
+  ];
   if (context != null) {
     Navigator.pop(context);
     BotToast.showNotification(
@@ -133,8 +137,7 @@ void doBackUp(DoBackUpRef ref,
         animationReverseDuration: const Duration(milliseconds: 200),
         duration: const Duration(seconds: 5),
         backButtonBehavior: BackButtonBehavior.none,
-        leading: (cancel) =>
-            Image.asset('assets/app_icons/icon-red.png', height: 40),
+        leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
         title: (_) => const Text(
               "Backup created!",
               style: TextStyle(fontWeight: FontWeight.bold),

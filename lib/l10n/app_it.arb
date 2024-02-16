@@ -287,5 +287,11 @@
     "next_chapter": "Capitolo successivo",
     "next_5_chapters": "Prossimi 5 capitoli",
     "next_10_chapters": "Prossimi 10 capitoli",
-    "next_25_chapters": "Prossimi 25 capitoli"
+    "next_25_chapters": "Prossimi 25 capitoli",
+    "cover_saved": "Copertina salvata",
+    "set_as_cover": "Imposta come copertina",
+    "use_this_as_cover_art": "Usare questo come copertina?",
+    "save": "Salva",
+    "picture_saved": "Immagine salvata",
+    "cover_updated": "Copertina aggiornata"
 }

@@ -287,5 +287,11 @@
     "next_chapter": "Berikutnya bab",
     "next_5_chapters": "5 bab berikutnya",
     "next_10_chapters": "10 bab berikutnya",
-    "next_25_chapters": "25 bab berikutnya"
+    "next_25_chapters": "25 bab berikutnya",
+    "cover_saved": "Sampul disimpan",
+    "set_as_cover": "Atur sebagai sampul",
+    "use_this_as_cover_art": "Gunakan ini sebagai seni sampul?",
+    "save": "Simpan",
+    "picture_saved": "Gambar disimpan",
+    "cover_updated": "Penutup diperbarui"
 }

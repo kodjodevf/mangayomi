@@ -289,5 +289,11 @@
   "next_chapter": "Next chapter",
   "next_5_chapters": "Next 5 chapters",
   "next_10_chapters": "Next 10 chapters",
-  "next_25_chapters": "Next 25 chapters"
+  "next_25_chapters": "Next 25 chapters",
+  "cover_saved": "Cover saved",
+  "set_as_cover": "Set as cover",
+  "use_this_as_cover_art": "Use this as cover art?",
+  "save": "Save",
+  "picture_saved": "Picture saved",
+  "cover_updated": "Cover updated"
 }

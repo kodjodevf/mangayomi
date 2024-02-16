@@ -3,7 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart';
+import 'package:html/dom.dart' hide Text;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
@@ -631,13 +631,23 @@ void botToast(String title,
     double? fontSize,
     double alignX = 0,
     double alignY = 0.99}) {
-  BotToast.showSimpleNotification(
-      titleStyle: TextStyle(fontSize: fontSize),
-      onlyOne: true,
-      dismissDirections: [DismissDirection.horizontal, DismissDirection.down],
-      align: Alignment(alignX, alignY),
-      duration: Duration(seconds: second),
-      title: title);
+  final assets = [
+    'assets/app_icons/icon-black.png',
+    'assets/app_icons/icon-red.png'
+  ];
+  BotToast.showNotification(
+    onlyOne: true,
+    dismissDirections: [DismissDirection.horizontal, DismissDirection.down],
+    align: Alignment(alignX, alignY),
+    duration: Duration(seconds: second),
+    animationDuration: const Duration(milliseconds: 200),
+    animationReverseDuration: const Duration(milliseconds: 200),
+    leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
+    title: (_) => Text(
+      title,
+      style: TextStyle(fontSize: fontSize),
+    ),
+  );
 }
 
 (encrypt.Encrypter, encrypt.IV) _encrypt(String keyy, String ivv) {

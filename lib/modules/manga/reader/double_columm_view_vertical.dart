@@ -11,6 +11,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 class DoubleColummVerticalView extends StatelessWidget {
   final bool cropBorders;
   final List<UChapDataPreload?> datas;
+  final Function(UChapDataPreload datas) onLongPressData;
   final Function(double) scale;
   final BackgroundColor backgroundColor;
   final Function(bool) isFailedToLoadImage;
@@ -18,6 +19,7 @@ class DoubleColummVerticalView extends StatelessWidget {
       {super.key,
       required this.datas,
       required this.scale,
+      required this.onLongPressData,
       required this.backgroundColor,
       required this.isFailedToLoadImage,
       required this.cropBorders});
@@ -103,6 +105,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                     return null;
                   },
                   cropBorders: cropBorders,
+                  onLongPressData: (datas) => onLongPressData.call(datas),
                 ),
               ),
             // if (datas[1] != null) const SizedBox(width: 10),
@@ -174,6 +177,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                     return null;
                   },
                   cropBorders: cropBorders,
+                  onLongPressData: (datas) => onLongPressData.call(datas),
                 ),
               ),
           ],

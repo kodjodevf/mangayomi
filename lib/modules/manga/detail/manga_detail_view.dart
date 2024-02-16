@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -24,10 +25,12 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -1581,7 +1584,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  _openImage(ImageProvider imageProvider) {
+  void _openImage(ImageProvider imageProvider) {
     showDialog(
         context: context,
         builder: (context) {
@@ -1610,141 +1613,221 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Column(
-                        children: [
-                          StreamBuilder(
-                            stream: isar.trackPreferences
-                                .filter()
-                                .syncIdIsNotNull()
-                                .watch(fireImmediately: true),
-                            builder: (context, snapshot) {
-                              List<TrackPreference>? entries =
-                                  snapshot.hasData ? snapshot.data! : [];
-                              if (entries.isEmpty) {
-                                return Container();
-                              }
-                              return Column(
-                                children: entries
-                                    .map((e) => Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: MaterialButton(
-                                            padding: const EdgeInsets.all(0),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            onPressed: () async {
-                                              final trackSearch =
-                                                  await trackersSearchraggableMenu(
-                                                context,
-                                                isManga: widget.manga!.isManga!,
-                                                track: Track(
-                                                    status:
-                                                        TrackStatus.planToRead,
-                                                    syncId: e.syncId!,
-                                                    title: widget.manga!.name!),
-                                              ) as TrackSearch?;
-                                              if (trackSearch != null) {
-                                                isar.writeTxnSync(() {
-                                                  isar.mangas.putSync(widget
-                                                      .manga!
-                                                    ..customCoverFromTracker =
-                                                        trackSearch.coverUrl);
-                                                });
-                                                if (context.mounted) {
-                                                  Navigator.pop(context);
-                                                }
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: StreamBuilder(
+                          stream: isar.trackPreferences
+                              .filter()
+                              .syncIdIsNotNull()
+                              .watch(fireImmediately: true),
+                          builder: (context, snapshot) {
+                            List<TrackPreference>? entries =
+                                snapshot.hasData ? snapshot.data! : [];
+                            if (entries.isEmpty) {
+                              return Container();
+                            }
+                            return Column(
+                              children: entries
+                                  .map((e) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: MaterialButton(
+                                          padding: const EdgeInsets.all(0),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          onPressed: () async {
+                                            final trackSearch =
+                                                await trackersSearchraggableMenu(
+                                              context,
+                                              isManga: widget.manga!.isManga!,
+                                              track: Track(
+                                                  status:
+                                                      TrackStatus.planToRead,
+                                                  syncId: e.syncId!,
+                                                  title: widget.manga!.name!),
+                                            ) as TrackSearch?;
+                                            if (trackSearch != null) {
+                                              isar.writeTxnSync(() {
+                                                isar.mangas.putSync(
+                                                    widget.manga!
+                                                      ..customCoverImage = null
+                                                      ..customCoverFromTracker =
+                                                          trackSearch.coverUrl);
+                                              });
+                                              if (context.mounted) {
+                                                Navigator.pop(context);
+                                                botToast(
+                                                    context.l10n.cover_updated,
+                                                    second: 3);
                                               }
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color:
-                                                      trackInfos(e.syncId!).$3),
-                                              width: 45,
-                                              height: 50,
-                                              child: Image.asset(
-                                                trackInfos(e.syncId!).$1,
-                                                height: 30,
-                                              ),
+                                            }
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color:
+                                                    trackInfos(e.syncId!).$3),
+                                            width: 45,
+                                            height: 50,
+                                            child: Image.asset(
+                                              trackInfos(e.syncId!).$1,
+                                              height: 30,
                                             ),
                                           ),
-                                        ))
-                                    .toList(),
-                              );
-                            },
-                          ),
-
-                          PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                if (widget.manga!.customCoverImage != null ||
-                                    widget.manga!.customCoverFromTracker !=
-                                        null)
-                                  PopupMenuItem<int>(
-                                      value: 0,
-                                      child: Text(context.l10n.delete)),
-                                PopupMenuItem<int>(
-                                    value: 1, child: Text(context.l10n.edit)),
-                              ];
-                            },
-                            onSelected: (value) async {
-                              final manga = widget.manga!;
-                              if (value == 0) {
-                                isar.writeTxnSync(() {
-                                  isar.mangas.putSync(manga
-                                    ..customCoverImage = null
-                                    ..customCoverFromTracker = null);
-                                });
-                                Navigator.pop(context);
-                              } else if (value == 1) {
-                                FilePickerResult? result =
-                                    await FilePicker.platform.pickFiles(
-                                        type: FileType.custom,
-                                        allowedExtensions: [
-                                      'png',
-                                      'jpg',
-                                      'jpeg'
-                                    ]);
-                                if (result != null) {
-                                  if (result.files.first.size < 5000000) {
-                                    final customCoverImage =
-                                        File(result.files.first.path!)
-                                            .readAsBytesSync();
-                                    isar.writeTxnSync(() {
-                                      isar.mangas.putSync(manga
-                                        ..customCoverImage = customCoverImage);
-                                    });
-                                  }
-                                }
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              }
-                            },
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                  child: Icon(Icons.edit_outlined)),
+                                        ),
+                                      ))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: context.mediaWidth(1),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: context.isLight
+                                        ? Colors.white
+                                        : Colors.black),
+                                child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(Icons.close),
+                                    )),
+                              ),
                             ),
-                          ),
-                          // IconButton(
-                          //     onPressed: () async {
-                          //       Uint8List? bytes;
-                          //       if (isLocalArchive) {
-                          //         bytes =
-                          //             widget.manga!.customCoverImage as Uint8List?;
-                          //       }
-                          //       await Share.shareXFiles([
-                          //         XFile.fromData(bytes!,
-                          //             name: widget.manga!.name,
-                          //             mimeType: 'image/jpeg')
-                          //       ]);
-                          //     },
-                          //     icon: const CircleAvatar(child: Icon(Icons.share))),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: context.isLight
+                                        ? Colors.white
+                                        : Colors.black),
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                        onTap: () async {
+                                          final bytes = await imageProvider
+                                              .getBytes(context);
+                                          if (bytes != null) {
+                                            await Share.shareXFiles([
+                                              XFile.fromData(bytes,
+                                                  name: widget.manga!.name,
+                                                  mimeType: 'image/png')
+                                            ]);
+                                          }
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(Icons.share),
+                                        )),
+                                    GestureDetector(
+                                        onTap: () async {
+                                          final dir = await StorageProvider()
+                                              .getGalleryDirectory();
+                                          if (context.mounted) {
+                                            final bytes = await imageProvider
+                                                .getBytes(context);
+                                            if (bytes != null &&
+                                                context.mounted) {
+                                              final file = File(
+                                                  '${dir!.path}/${widget.manga!.name}.png');
+                                              file.writeAsBytesSync(bytes);
+                                              botToast(context.l10n.cover_saved,
+                                                  second: 3);
+                                            }
+                                          }
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(Icons.save_outlined),
+                                        )),
+                                    PopupMenuButton(
+                                      itemBuilder: (context) {
+                                        return [
+                                          if (widget.manga!.customCoverImage !=
+                                                  null ||
+                                              widget.manga!
+                                                      .customCoverFromTracker !=
+                                                  null)
+                                            PopupMenuItem<int>(
+                                                value: 0,
+                                                child:
+                                                    Text(context.l10n.delete)),
+                                          PopupMenuItem<int>(
+                                              value: 1,
+                                              child: Text(context.l10n.edit)),
+                                        ];
+                                      },
+                                      onSelected: (value) async {
+                                        final manga = widget.manga!;
+                                        if (value == 0) {
+                                          isar.writeTxnSync(() {
+                                            isar.mangas.putSync(manga
+                                              ..customCoverImage = null
+                                              ..customCoverFromTracker = null);
+                                          });
+                                          Navigator.pop(context);
+                                        } else if (value == 1) {
+                                          FilePickerResult? result =
+                                              await FilePicker.platform
+                                                  .pickFiles(
+                                                      type: FileType.custom,
+                                                      allowedExtensions: [
+                                                'png',
+                                                'jpg',
+                                                'jpeg'
+                                              ]);
+                                          if (result != null &&
+                                              context.mounted) {
+                                            if (result.files.first.size <
+                                                5000000) {
+                                              final customCoverImage =
+                                                  File(result.files.first.path!)
+                                                      .readAsBytesSync();
+                                              isar.writeTxnSync(() {
+                                                isar.mangas.putSync(manga
+                                                  ..customCoverImage =
+                                                      customCoverImage);
+                                              });
+                                              botToast(
+                                                  context.l10n.cover_updated,
+                                                  second: 3);
+                                            }
+                                          }
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
+                                        }
+                                      },
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.edit_outlined,
+                                            color: !context.isLight
+                                                ? Colors.white
+                                                : Colors.black,
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

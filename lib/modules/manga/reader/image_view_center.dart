@@ -12,6 +12,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 class ImageViewCenter extends ConsumerWidget {
   final UChapDataPreload datas;
   final bool cropBorders;
+  final Function(UChapDataPreload datas) onLongPressData;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state)? onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)?
@@ -20,6 +21,7 @@ class ImageViewCenter extends ConsumerWidget {
     super.key,
     required this.datas,
     required this.cropBorders,
+    required this.onLongPressData,
     required this.loadStateChanged,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -47,15 +49,18 @@ class ImageViewCenter extends ConsumerWidget {
                 source: datas.chapter!.manga.value!.source!,
                 lang: datas.chapter!.manga.value!.lang!)));
 
-    return ExtendedImage(
-        image: image as ImageProvider<Object>,
-        fit: getBoxFit(scaleType),
-        filterQuality: FilterQuality.medium,
-        enableMemoryCache: true,
-        mode: ExtendedImageMode.gesture,
-        handleLoadingProgress: true,
-        loadStateChanged: loadStateChanged,
-        initGestureConfigHandler: initGestureConfigHandler,
-        onDoubleTap: onDoubleTap);
+    return GestureDetector(
+      onLongPress: () => onLongPressData.call(datas),
+      child: ExtendedImage(
+          image: image as ImageProvider<Object>,
+          fit: getBoxFit(scaleType),
+          filterQuality: FilterQuality.medium,
+          enableMemoryCache: true,
+          mode: ExtendedImageMode.gesture,
+          handleLoadingProgress: true,
+          loadStateChanged: loadStateChanged,
+          initGestureConfigHandler: initGestureConfigHandler,
+          onDoubleTap: onDoubleTap),
+    );
   }
 }

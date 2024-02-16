@@ -288,5 +288,11 @@
   "next_chapter": "Chapitre suivant",
   "next_5_chapters": "5 chapitres suivants",
   "next_10_chapters": "10 chapitres suivants",
-  "next_25_chapters": "25 chapitres suivants"
+  "next_25_chapters": "25 chapitres suivants",
+  "cover_saved": "Couverture enregistrée",
+  "set_as_cover": "Définir comme couverture",
+  "use_this_as_cover_art": "Utiliser ceci comme illustration de couverture ?",
+  "save": "Enregistrer",
+  "picture_saved": "Image enregistrée",
+  "cover_updated": "Couverture mise à jour"
 }

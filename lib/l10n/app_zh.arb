@@ -289,5 +289,11 @@
     "next_chapter": "下一章",
     "next_5_chapters": "下5章",
     "next_10_chapters": "下10章",
-    "next_25_chapters": "下25章"
+    "next_25_chapters": "下25章",
+    "cover_saved": "封面已保存",
+    "set_as_cover": "设置为封面",
+    "use_this_as_cover_art": "使用此作为封面？",
+    "save": "保存",
+    "picture_saved": "图片已保存",
+    "cover_updated": "封面已更新"
 }

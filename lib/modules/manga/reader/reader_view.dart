@@ -9,9 +9,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
@@ -19,10 +21,12 @@ import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
@@ -34,6 +38,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 typedef DoubleClickAnimationListener = void Function();
@@ -241,6 +246,134 @@ class _MangaChapterPageGalleryState
     ref.read(fullScreenReaderStateProvider.notifier).set(!value!);
   }
 
+  void _onLongPressImageDialog(
+      UChapDataPreload datas, BuildContext context) async {
+    Widget button(String label, IconData icon, Function() onPressed) =>
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    shadowColor: Colors.transparent),
+                onPressed: onPressed,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(icon),
+                    ),
+                    Text(label)
+                  ],
+                )),
+          ),
+        );
+    final imageBytes = await datas.getImageBytes;
+    if (imageBytes != null && context.mounted) {
+      final name =
+          "${widget.chapter.manga.value!.name} ${widget.chapter.name} - ${datas.pageIndex}"
+              .replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_');
+      showModalBottomSheet(
+        context: context,
+        constraints: BoxConstraints(
+          maxWidth: context.mediaWidth(1),
+        ),
+        builder: (context) {
+          return SizedBox(
+            height: 120,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                  color: context.themeData.scaffoldBackgroundColor),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 7,
+                      width: 35,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: context.secondaryColor.withOpacity(0.4)),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      button(context.l10n.set_as_cover, Icons.image_outlined,
+                          () async {
+                        final res = await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                content:
+                                    Text(context.l10n.use_this_as_cover_art),
+                                actions: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(context.l10n.cancel)),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      TextButton(
+                                          onPressed: () {
+                                            final manga =
+                                                widget.chapter.manga.value!;
+                                            isar.writeTxnSync(() {
+                                              isar.mangas.putSync(manga
+                                                ..customCoverImage =
+                                                    imageBytes);
+                                            });
+                                            if (mounted) {
+                                              Navigator.pop(context, "ok");
+                                            }
+                                          },
+                                          child: Text(context.l10n.ok)),
+                                    ],
+                                  )
+                                ],
+                              );
+                            });
+                        if (res != null && res == "ok" && context.mounted) {
+                          Navigator.pop(context);
+                          botToast(context.l10n.cover_updated, second: 3);
+                        }
+                      }),
+                      button(context.l10n.share, Icons.share_outlined,
+                          () async {
+                        await Share.shareXFiles([
+                          XFile.fromData(imageBytes,
+                              name: name, mimeType: 'image/png')
+                        ]);
+                      }),
+                      button(context.l10n.save, Icons.save_outlined, () async {
+                        final dir =
+                            await StorageProvider().getGalleryDirectory();
+                        final file = File("${dir!.path}/$name.png");
+                        file.writeAsBytesSync(imageBytes);
+                        if (context.mounted) {
+                          botToast(context.l10n.picture_saved, second: 3);
+                        }
+                      }),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
@@ -404,6 +537,10 @@ class _MangaChapterPageGalleryState
                                                       backgroundColor,
                                                   isFailedToLoadImage: (val) {},
                                                   cropBorders: cropBorders,
+                                                  onLongPressData: (datas) {
+                                                    _onLongPressImageDialog(
+                                                        datas, context);
+                                                  },
                                                 )
                                               : ImageViewVertical(
                                                   datas:
@@ -412,6 +549,10 @@ class _MangaChapterPageGalleryState
                                                     // _failedToLoadImage.value = value;
                                                   },
                                                   cropBorders: cropBorders,
+                                                  onLongPressData: (datas) {
+                                                    _onLongPressImageDialog(
+                                                        datas, context);
+                                                  },
                                                 ),
                                         );
                                       },
@@ -462,6 +603,10 @@ class _MangaChapterPageGalleryState
                                           }
                                         },
                                         cropBorders: cropBorders,
+                                        onLongPressData: (datas) {
+                                          _onLongPressImageDialog(
+                                              datas, context);
+                                        },
                                       );
                                     },
                                     itemCount:
@@ -658,6 +803,10 @@ class _MangaChapterPageGalleryState
                                               .forward();
                                         },
                                         cropBorders: cropBorders,
+                                        onLongPressData: (datas) {
+                                          _onLongPressImageDialog(
+                                              datas, context);
+                                        },
                                       );
                                     },
                                     itemCount: _uChapDataPreload.length,
@@ -1666,15 +1815,17 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: usePageTapZones
-                    ? () {
-                        if (_isReverseHorizontal) {
-                          _onBtnTapped(_currentIndex! + 1, false);
-                        } else {
-                          _onBtnTapped(_currentIndex! - 1, true);
-                        }
-                      }
-                    : null,
+                onTap: () {
+                  if (usePageTapZones) {
+                    if (_isReverseHorizontal) {
+                      _onBtnTapped(_currentIndex! + 1, false);
+                    } else {
+                      _onBtnTapped(_currentIndex! - 1, true);
+                    }
+                  } else {
+                    _isViewFunction();
+                  }
+                },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -1711,15 +1862,17 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
-                onTap: usePageTapZones
-                    ? () {
-                        if (_isReverseHorizontal) {
-                          _onBtnTapped(_currentIndex! - 1, true);
-                        } else {
-                          _onBtnTapped(_currentIndex! + 1, false);
-                        }
-                      }
-                    : null,
+                onTap: () {
+                  if (usePageTapZones) {
+                    if (_isReverseHorizontal) {
+                      _onBtnTapped(_currentIndex! - 1, true);
+                    } else {
+                      _onBtnTapped(_currentIndex! + 1, false);
+                    }
+                  } else {
+                    _isViewFunction();
+                  }
+                },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
@@ -1749,7 +1902,7 @@ class _MangaChapterPageGalleryState
                       ? _isViewFunction()
                       : usePageTapZones
                           ? _onBtnTapped(_currentIndex! - 1, true)
-                          : null;
+                          : _isViewFunction();
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {
@@ -1773,7 +1926,7 @@ class _MangaChapterPageGalleryState
                       ? _isViewFunction()
                       : usePageTapZones
                           ? _onBtnTapped(_currentIndex! + 1, false)
-                          : null;
+                          : _isViewFunction();
                 },
                 onDoubleTapDown: _isVerticalContinous()
                     ? (TapDownDetails details) {

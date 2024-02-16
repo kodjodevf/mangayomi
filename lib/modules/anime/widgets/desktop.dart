@@ -29,7 +29,8 @@ class DesktopControllerWidget extends StatefulWidget {
       required this.tempDuration});
 
   @override
-  State<DesktopControllerWidget> createState() => _DesktopControllerWidgetState();
+  State<DesktopControllerWidget> createState() =>
+      _DesktopControllerWidgetState();
 }
 
 class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
@@ -797,13 +798,16 @@ class _CustomMaterialDesktopFullscreenButtonState
 
 Future<bool> setFullScreen({bool? value}) async {
   if (value != null) {
-    await windowManager.setTitleBarStyle(
-        value == false ? TitleBarStyle.normal : TitleBarStyle.hidden);
-    await windowManager.setFullScreen(value);
-    if (value == false) {
-      await windowManager.center();
+    final isFullScreen = await windowManager.isFullScreen();
+    if (value != isFullScreen) {
+      await windowManager.setTitleBarStyle(
+          value == false ? TitleBarStyle.normal : TitleBarStyle.hidden);
+      await windowManager.setFullScreen(value);
+      if (value == false) {
+        await windowManager.center();
+      }
+      await windowManager.show();
     }
-    await windowManager.show();
     return value;
   }
   final isFullScreen = await windowManager.isFullScreen();

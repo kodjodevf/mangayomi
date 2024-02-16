@@ -287,5 +287,11 @@
     "next_chapter": "Sonraki bölüm",
     "next_5_chapters": "Sonraki 5 bölüm",
     "next_10_chapters": "Sonraki 10 bölüm",
-    "next_25_chapters": "Sonraki 25 bölüm"
+    "next_25_chapters": "Sonraki 25 bölüm",
+    "cover_saved": "Kapak kaydedildi",
+    "set_as_cover": "Kapak olarak ayarla",
+    "use_this_as_cover_art": "Bu resmi kapak sanatı olarak kullan?",
+    "save": "Kaydet",
+    "picture_saved": "Resim kaydedildi",
+    "cover_updated": "Kapak güncellendi"
 }
