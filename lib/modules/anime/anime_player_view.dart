@@ -162,9 +162,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
 
-  final bool _isDesktop =
-      Platform.isWindows || Platform.isMacOS || Platform.isLinux;
-
   late final StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (position) async {
@@ -239,13 +236,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     });
   }
 
+  bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   @override
   void dispose() {
     _setCurrentPosition(true);
     _player.dispose();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
-    _setLandscapeMode(false);
+    if (isDesktop) {
+      setFullScreen(value: false);
+    } else {
+      _setLandscapeMode(false);
+    }
+
     super.dispose();
   }
 
@@ -792,7 +795,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 if (hasPrevEpisode)
                   IconButton(
                     onPressed: () async {
-                      if (_isDesktop) {
+                      if (isDesktop) {
                         final isFullScreen = await windowManager.isFullScreen();
                         if (isFullScreen) {
                           await setFullScreen(value: false);
@@ -815,7 +818,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
-                      if (_isDesktop) {
+                      if (isDesktop) {
                         final isFullScreen = await windowManager.isFullScreen();
                         if (isFullScreen) {
                           await setFullScreen(value: false);
@@ -961,7 +964,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
         builder: (context, fullScreen, _) {
           return Padding(
             padding: EdgeInsets.only(
-                top: !_isDesktop && !fullScreen
+                top: !isDesktop && !fullScreen
                     ? MediaQuery.of(context).padding.top
                     : 0),
             child: Row(
@@ -969,7 +972,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                 BackButton(
                   color: Colors.white,
                   onPressed: () async {
-                    if (_isDesktop) {
+                    if (isDesktop) {
                       if (fullScreen) {
                         setFullScreen(value: false);
                       } else {
@@ -1044,7 +1047,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
           ),
           fit: fit,
           key: _key,
-          controls: (state) => _isDesktop
+          controls: (state) => isDesktop
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
