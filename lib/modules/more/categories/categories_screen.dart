@@ -183,7 +183,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                                           index]
                                                                       .id!);
                                                             });
-                                                            if (mounted) {
+                                                            if (context.mounted) {
                                                               Navigator.pop(
                                                                   context);
                                                             }
@@ -273,7 +273,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                 name: controller.text,
                                               ));
                                             });
-                                            if (mounted) {
+                                            if (context.mounted) {
                                               Navigator.pop(context);
                                             }
                                           },
@@ -359,7 +359,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         category.name = controller.text;
                                         await isar.categorys.put(category);
                                       });
-                                      if (mounted) {
+                                      if (context.mounted) {
                                         Navigator.pop(context);
                                       }
                                     },

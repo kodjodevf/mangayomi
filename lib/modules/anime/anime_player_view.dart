@@ -797,7 +797,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                           await setFullScreen(value: false);
                         }
                       }
-                      if (mounted) {
+                      if (context.mounted) {
                         pushReplacementMangaReaderView(
                             context: context,
                             chapter: _streamController.getPrevEpisode());
@@ -820,7 +820,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
                           await setFullScreen(value: false);
                         }
                       }
-                      if (mounted) {
+                      if (context.mounted) {
                         pushReplacementMangaReaderView(
                           context: context,
                           chapter: _streamController.getNextEpisode(),

@@ -251,52 +251,53 @@ class _MangaChapterPageGalleryState
     }
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
-    return RawKeyboardListener(
+    return KeyboardListener(
       autofocus: true,
       focusNode: FocusNode(),
-      onKey: (event) {
+      onKeyEvent: (event) {
+        bool isLogicalKeyPressed(LogicalKeyboardKey key) =>
+            HardwareKeyboard.instance.isLogicalKeyPressed(key);
         bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
         bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
             _readerController
                 .getChaptersLength(_readerController.getChapterIndex().$2);
         final action = switch (event.logicalKey) {
           LogicalKeyboardKey.f11 =>
-            (!event.isKeyPressed(LogicalKeyboardKey.f11) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.f11))
                 ? _setFullScreen()
                 : null,
           LogicalKeyboardKey.escape =>
-            (!event.isKeyPressed(LogicalKeyboardKey.escape) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.escape))
                 ? _goBack(context)
                 : null,
           LogicalKeyboardKey.backspace =>
-            (!event.isKeyPressed(LogicalKeyboardKey.backspace) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.backspace))
                 ? _goBack(context)
                 : null,
           LogicalKeyboardKey.arrowUp =>
-            (!event.isKeyPressed(LogicalKeyboardKey.arrowUp) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.arrowUp))
                 ? _onBtnTapped(_currentIndex! - 1, true)
                 : null,
           LogicalKeyboardKey.arrowLeft =>
-            (!event.isKeyPressed(LogicalKeyboardKey.arrowLeft) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.arrowLeft))
                 ? _isReverseHorizontal
                     ? _onBtnTapped(_currentIndex! + 1, false)
                     : _onBtnTapped(_currentIndex! - 1, true)
                 : null,
           LogicalKeyboardKey.arrowRight =>
-            (!event.isKeyPressed(LogicalKeyboardKey.arrowRight) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.arrowRight))
                 ? _isReverseHorizontal
                     ? _onBtnTapped(_currentIndex! - 1, true)
                     : _onBtnTapped(_currentIndex! + 1, false)
                 : null,
           LogicalKeyboardKey.arrowDown =>
-            (!event.isKeyPressed(LogicalKeyboardKey.arrowDown) || event.repeat)
+            (!isLogicalKeyPressed(LogicalKeyboardKey.arrowDown))
                 ? _onBtnTapped(_currentIndex! + 1, true)
                 : null,
           LogicalKeyboardKey.keyN ||
           LogicalKeyboardKey.pageDown =>
-            ((!event.isKeyPressed(LogicalKeyboardKey.keyN) ||
-                        !event.isKeyPressed(LogicalKeyboardKey.pageDown)) ||
-                    event.repeat)
+            ((!isLogicalKeyPressed(LogicalKeyboardKey.keyN) ||
+                    !isLogicalKeyPressed(LogicalKeyboardKey.pageDown)))
                 ? switch (hasNextChapter) {
                     true => pushReplacementMangaReaderView(
                         context: context,
@@ -307,9 +308,8 @@ class _MangaChapterPageGalleryState
                 : null,
           LogicalKeyboardKey.keyP ||
           LogicalKeyboardKey.pageUp =>
-            ((!event.isKeyPressed(LogicalKeyboardKey.keyP) ||
-                        !event.isKeyPressed(LogicalKeyboardKey.pageUp)) ||
-                    event.repeat)
+            ((!isLogicalKeyPressed(LogicalKeyboardKey.keyP) ||
+                    !isLogicalKeyPressed(LogicalKeyboardKey.pageUp)))
                 ? switch (hasPrevChapter) {
                     true => pushReplacementMangaReaderView(
                         context: context,

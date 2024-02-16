@@ -73,7 +73,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                                 .notifier)
                                             .set(result);
                                       } else {}
-                                      if (!mounted) return;
+                                      if (!context.mounted) return;
                                       Navigator.pop(context);
                                     },
                                     title: Text(l10n.custom_location)),

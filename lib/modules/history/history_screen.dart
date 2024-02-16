@@ -358,7 +358,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                               .delete(
                                                                   element.id!);
                                                         });
-                                                        if (mounted) {
+                                                        if (context.mounted) {
                                                           Navigator.pop(
                                                               context);
                                                         }

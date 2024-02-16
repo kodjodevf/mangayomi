@@ -920,7 +920,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
-  _showDraggableMenu() {
+  void _showDraggableMenu() {
     late TabController tabBarController;
     tabBarController = TabController(length: 3, vsync: this);
     tabBarController.animateTo(0);
@@ -1652,7 +1652,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                     ..customCoverFromTracker =
                                                         trackSearch.coverUrl);
                                                 });
-                                                if (mounted) {
+                                                if (context.mounted) {
                                                   Navigator.pop(context);
                                                 }
                                               }
@@ -1719,7 +1719,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     });
                                   }
                                 }
-                                if (mounted) {
+                                if (context.mounted) {
                                   Navigator.pop(context);
                                 }
                               }
@@ -1755,7 +1755,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         });
   }
 
-  _editLocalArchiveInfos() {
+  void _editLocalArchiveInfos() {
     final l10n = l10nLocalizations(context)!;
     TextEditingController? name =
         TextEditingController(text: widget.manga!.name!);
@@ -1836,7 +1836,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         });
   }
 
-  _trackingDraggableMenu(List<TrackPreference>? entries) {
+  void _trackingDraggableMenu(List<TrackPreference>? entries) {
     DraggableMenu.open(
         context,
         DraggableMenu(
