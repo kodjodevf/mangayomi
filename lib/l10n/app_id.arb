@@ -293,5 +293,20 @@
     "use_this_as_cover_art": "Gunakan ini sebagai seni sampul?",
     "save": "Simpan",
     "picture_saved": "Gambar disimpan",
-    "cover_updated": "Penutup diperbarui"
+    "cover_updated": "Penutup diperbarui",
+    "blend_mode_default": "Standar",
+    "blend_mode_multiply": "Kalikan",
+    "blend_mode_screen": "Layar",
+    "blend_mode_overlay": "Tumpang tindih",
+    "blend_mode_colorDodge": "Menghindari warna",
+    "blend_mode_lighten": "Mencerahkan",
+    "blend_mode_colorBurn": "Bakar warna",
+    "blend_mode_darken": "Menggelapkan",
+    "blend_mode_difference": "Perbedaan",
+    "blend_mode_saturation": "Saturasi",
+    "blend_mode_softLight": "Cahaya lembut",
+    "blend_mode_plus": "Tambah",
+    "blend_mode_exclusion": "Pengecualian",
+    "custom_color_filter": "Filter warna kustom",
+    "color_filter_blend_mode": "Mode pencampuran filter warna"
 }

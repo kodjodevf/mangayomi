@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -51,16 +52,18 @@ class ImageViewCenter extends ConsumerWidget {
 
     return GestureDetector(
       onLongPress: () => onLongPressData.call(datas),
-      child: ExtendedImage(
-          image: image as ImageProvider<Object>,
-          fit: getBoxFit(scaleType),
-          filterQuality: FilterQuality.medium,
-          enableMemoryCache: true,
-          mode: ExtendedImageMode.gesture,
-          handleLoadingProgress: true,
-          loadStateChanged: loadStateChanged,
-          initGestureConfigHandler: initGestureConfigHandler,
-          onDoubleTap: onDoubleTap),
+      child: ColorFilterWidget(
+        child: ExtendedImage(
+            image: image as ImageProvider<Object>,
+            fit: getBoxFit(scaleType),
+            filterQuality: FilterQuality.medium,
+            enableMemoryCache: true,
+            mode: ExtendedImageMode.gesture,
+            handleLoadingProgress: true,
+            loadStateChanged: loadStateChanged,
+            initGestureConfigHandler: initGestureConfigHandler,
+            onDoubleTap: onDoubleTap),
+      ),
     );
   }
 }

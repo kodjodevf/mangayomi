@@ -293,5 +293,20 @@
     "use_this_as_cover_art": "Bu resmi kapak sanatı olarak kullan?",
     "save": "Kaydet",
     "picture_saved": "Resim kaydedildi",
-    "cover_updated": "Kapak güncellendi"
+    "cover_updated": "Kapak güncellendi",
+    "blend_mode_default": "Varsayılan",
+    "blend_mode_multiply": "Çarpma",
+    "blend_mode_screen": "Ekran",
+    "blend_mode_overlay": "Örtüşme",
+    "blend_mode_colorDodge": "RenkDodge",
+    "blend_mode_lighten": "Açık",
+    "blend_mode_colorBurn": "RenkYakma",
+    "blend_mode_darken": "Karart",
+    "blend_mode_difference": "Fark",
+    "blend_mode_saturation": "Doygunluk",
+    "blend_mode_softLight": "YumuşakIşık",
+    "blend_mode_plus": "Artı",
+    "blend_mode_exclusion": "Dışlama",
+    "custom_color_filter": "Özel renk filtresi",
+    "color_filter_blend_mode": "Renk filtresi karışım modu"
 }

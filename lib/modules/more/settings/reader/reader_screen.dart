@@ -391,6 +391,44 @@ Color? getBackgroundColor(BackgroundColor backgroundColor) {
   };
 }
 
+String getColorFilterBlendModeName(
+    ColorFilterBlendMode backgroundColor, BuildContext context) {
+  return switch (backgroundColor) {
+    ColorFilterBlendMode.none => context.l10n.blend_mode_default,
+    ColorFilterBlendMode.multiply => context.l10n.blend_mode_multiply,
+    ColorFilterBlendMode.screen => context.l10n.blend_mode_screen,
+    ColorFilterBlendMode.overlay => context.l10n.blend_mode_overlay,
+    ColorFilterBlendMode.colorDodge => context.l10n.blend_mode_colorDodge,
+    ColorFilterBlendMode.lighten => context.l10n.blend_mode_lighten,
+    ColorFilterBlendMode.colorBurn => context.l10n.blend_mode_colorBurn,
+    ColorFilterBlendMode.difference => context.l10n.blend_mode_difference,
+    ColorFilterBlendMode.saturation => context.l10n.blend_mode_saturation,
+    ColorFilterBlendMode.softLight => context.l10n.blend_mode_softLight,
+    ColorFilterBlendMode.plus => context.l10n.blend_mode_plus,
+    ColorFilterBlendMode.exclusion => context.l10n.blend_mode_exclusion,
+    _ => context.l10n.blend_mode_darken,
+  };
+}
+
+BlendMode? getColorFilterBlendMode(
+    ColorFilterBlendMode backgroundColor, BuildContext context) {
+  return switch (backgroundColor) {
+    ColorFilterBlendMode.none => null,
+    ColorFilterBlendMode.multiply => BlendMode.multiply,
+    ColorFilterBlendMode.screen => BlendMode.screen,
+    ColorFilterBlendMode.overlay => BlendMode.overlay,
+    ColorFilterBlendMode.colorDodge => BlendMode.colorDodge,
+    ColorFilterBlendMode.lighten => BlendMode.lighten,
+    ColorFilterBlendMode.colorBurn => BlendMode.colorBurn,
+    ColorFilterBlendMode.difference => BlendMode.difference,
+    ColorFilterBlendMode.saturation => BlendMode.saturation,
+    ColorFilterBlendMode.softLight => BlendMode.softLight,
+    ColorFilterBlendMode.plus => BlendMode.plus,
+    ColorFilterBlendMode.exclusion => BlendMode.exclusion,
+    _ => BlendMode.darken,
+  };
+}
+
 String getAnimationSpeedName(int type, BuildContext context) {
   return switch (type) {
     0 => context.l10n.no_animation,

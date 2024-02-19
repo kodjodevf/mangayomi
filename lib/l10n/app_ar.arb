@@ -293,5 +293,20 @@
     "use_this_as_cover_art": "هل تريد استخدام هذا كفن الغلاف؟",
     "save": "حفظ",
     "picture_saved": "الصورة المحفوظة",
-    "cover_updated": "تم تحديث الغلاف"
+    "cover_updated": "تم تحديث الغلاف",
+    "blend_mode_default": "الافتراضي",
+    "blend_mode_multiply": "ضرب",
+    "blend_mode_screen": "الشاشة",
+    "blend_mode_overlay": "تراكيب",
+    "blend_mode_colorDodge": "تفادي اللون",
+    "blend_mode_lighten": "تفتيح",
+    "blend_mode_colorBurn": "حرق اللون",
+    "blend_mode_darken": "تظليل",
+    "blend_mode_difference": "الفرق",
+    "blend_mode_saturation": "التشبع",
+    "blend_mode_softLight": "ضوء ناعم",
+    "blend_mode_plus": "زائد",
+    "blend_mode_exclusion": "استثناء",
+    "custom_color_filter": "مرشح اللون المخصص",
+    "color_filter_blend_mode": "وضع امتزاج مرشح اللون"
 }

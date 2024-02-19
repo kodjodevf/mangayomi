@@ -294,5 +294,20 @@
   "use_this_as_cover_art": "Utiliser ceci comme illustration de couverture ?",
   "save": "Enregistrer",
   "picture_saved": "Image enregistrée",
-  "cover_updated": "Couverture mise à jour"
+  "cover_updated": "Couverture mise à jour",
+  "blend_mode_default": "Par défaut",
+  "blend_mode_multiply": "Multiplier",
+  "blend_mode_screen": "Écran",
+  "blend_mode_overlay": "Incrustation",
+  "blend_mode_colorDodge": "Densité Couleur",
+  "blend_mode_lighten": "Éclaircir",
+  "blend_mode_colorBurn": "Incandescence",
+  "blend_mode_darken": "Assombrir",
+  "blend_mode_difference": "Différence",
+  "blend_mode_saturation": "Saturation",
+  "blend_mode_softLight": "Lumière Douce",
+  "blend_mode_plus": "Ajout",
+  "blend_mode_exclusion": "Exclusion",
+  "custom_color_filter": "Filtre de couleur personnalisé",
+  "color_filter_blend_mode": "Mode de fusion du filtre de couleur"
 }

@@ -165,6 +165,13 @@ class Settings {
 
   bool? fullScreenReader;
 
+  late CustomColorFilter? customColorFilter;
+
+  bool? enableCustomColorFilter;
+
+  @enumerated
+  late ColorFilterBlendMode colorFilterBlendMode;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -237,7 +244,10 @@ class Settings {
       this.aniSkipTimeoutLength,
       this.btServerAddress = "127.0.0.1",
       this.btServerPort,
-      this.fullScreenReader = true});
+      this.fullScreenReader = true,
+      this.enableCustomColorFilter = false,
+      this.customColorFilter,
+      this.colorFilterBlendMode = ColorFilterBlendMode.none});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -366,7 +376,10 @@ class Settings {
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
-    fullScreenReader = json['fullScreenReader'];
+    customColorFilter = json['customColorFilter'];
+    enableCustomColorFilter = json['enableCustomColorFilter'];
+    colorFilterBlendMode =
+        ColorFilterBlendMode.values[json['colorFilterBlendMode']];
   }
 
   Map<String, dynamic> toJson() => {
@@ -463,7 +476,10 @@ class Settings {
         'aniSkipTimeoutLength': aniSkipTimeoutLength,
         'btServerAddress': btServerAddress,
         'btServerPort': btServerPort,
-        'fullScreenReader': fullScreenReader
+        'fullScreenReader': fullScreenReader,
+        'customColorFilter': customColorFilter,
+        'enableCustomColorFilter': enableCustomColorFilter,
+        'colorFilterBlendMode': colorFilterBlendMode.index
       };
 }
 
@@ -679,4 +695,37 @@ class L10nLocale {
 
   Map<String, dynamic> toJson() =>
       {'countryCode': countryCode, 'languageCode': languageCode};
+}
+
+@embedded
+class CustomColorFilter {
+  int? a;
+  int? r;
+  int? g;
+  int? b;
+  CustomColorFilter({this.a, this.r, this.g, this.b});
+  CustomColorFilter.fromJson(Map<String, dynamic> json) {
+    a = json['a'];
+    r = json['r'];
+    g = json['g'];
+    b = json['b'];
+  }
+
+  Map<String, dynamic> toJson() => {'a': a, 'r': r, 'g': g, 'b': b};
+}
+
+enum ColorFilterBlendMode {
+  none,
+  multiply,
+  screen,
+  overlay,
+  colorDodge,
+  lighten,
+  colorBurn,
+  darken,
+  difference,
+  saturation,
+  softLight,
+  plus,
+  exclusion
 }

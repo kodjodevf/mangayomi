@@ -295,5 +295,20 @@
     "use_this_as_cover_art": "使用此作为封面？",
     "save": "保存",
     "picture_saved": "图片已保存",
-    "cover_updated": "封面已更新"
+    "cover_updated": "封面已更新",
+    "blend_mode_default": "默认",
+    "blend_mode_multiply": "正片叠底",
+    "blend_mode_screen": "滤色",
+    "blend_mode_overlay": "叠加",
+    "blend_mode_colorDodge": "颜色减淡",
+    "blend_mode_lighten": "变亮",
+    "blend_mode_colorBurn": "颜色加深",
+    "blend_mode_darken": "变暗",
+    "blend_mode_difference": "差异",
+    "blend_mode_saturation": "饱和度",
+    "blend_mode_softLight": "柔光",
+    "blend_mode_plus": "加",
+    "blend_mode_exclusion": "排除",
+    "custom_color_filter": "自定义颜色滤镜",
+    "color_filter_blend_mode": "颜色滤镜混合模式"
 }

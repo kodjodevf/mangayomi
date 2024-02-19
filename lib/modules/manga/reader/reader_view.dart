@@ -18,7 +18,9 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
+import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -598,7 +600,8 @@ class _MangaChapterPageGalleryState
                                         scale: (a) {},
                                         backgroundColor: backgroundColor,
                                         isFailedToLoadImage: (val) {
-                                          if (_failedToLoadImage.value != val) {
+                                          if (_failedToLoadImage.value != val &&
+                                              mounted) {
                                             _failedToLoadImage.value = val;
                                           }
                                         },
@@ -2215,9 +2218,104 @@ class _MangaChapterPageGalleryState
                               ),
                             );
                           }),
-                          const Center(
-                            child: Text(""),
-                          )
+                          Consumer(builder: (context, ref, chil) {
+                            final customColorFilter =
+                                ref.watch(customColorFilterStateProvider);
+                            final enableCustomColorFilter =
+                                ref.watch(enableCustomColorFilterStateProvider);
+                            int r = customColorFilter?.r ?? 0;
+                            int g = customColorFilter?.g ?? 0;
+                            int b = customColorFilter?.b ?? 0;
+                            int a = customColorFilter?.a ?? 0;
+                            final colorFilterBlendMode =
+                                ref.watch(colorFilterBlendModeStateProvider);
+                            return SingleChildScrollView(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ExpansionTile(
+                                      title: Text(
+                                        l10n.custom_color_filter,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      shape: const StarBorder(),
+                                      initiallyExpanded:
+                                          enableCustomColorFilter,
+                                      trailing: IgnorePointer(
+                                        child: Switch(
+                                          value: enableCustomColorFilter,
+                                          onChanged: (_) {},
+                                        ),
+                                      ),
+                                      onExpansionChanged: (val) {
+                                        ref
+                                            .read(
+                                                enableCustomColorFilterStateProvider
+                                                    .notifier)
+                                            .set(val);
+                                      },
+                                      children: [
+                                        customColorFilterListTile(
+                                            isDesktop, "r", r, (val) {
+                                          ref
+                                              .read(
+                                                  customColorFilterStateProvider
+                                                      .notifier)
+                                              .set(a, val.toInt(), g, b);
+                                        }, context),
+                                        customColorFilterListTile(
+                                            isDesktop, "g", g, (val) {
+                                          ref
+                                              .read(
+                                                  customColorFilterStateProvider
+                                                      .notifier)
+                                              .set(a, r, val.toInt(), b);
+                                        }, context),
+                                        customColorFilterListTile(
+                                            isDesktop, "b", b, (val) {
+                                          ref
+                                              .read(
+                                                  customColorFilterStateProvider
+                                                      .notifier)
+                                              .set(a, r, g, val.toInt());
+                                        }, context),
+                                        customColorFilterListTile(
+                                            isDesktop, "a", a, (val) {
+                                          ref
+                                              .read(
+                                                  customColorFilterStateProvider
+                                                      .notifier)
+                                              .set(val.toInt(), r, g, b);
+                                        }, context),
+                                        CustomPopupMenuButton<
+                                            ColorFilterBlendMode>(
+                                          label: l10n.color_filter_blend_mode,
+                                          title: getColorFilterBlendModeName(
+                                              colorFilterBlendMode, context),
+                                          onSelected: (value) {
+                                            ref
+                                                .read(
+                                                    colorFilterBlendModeStateProvider
+                                                        .notifier)
+                                                .set(value);
+                                          },
+                                          value: colorFilterBlendMode,
+                                          list: ColorFilterBlendMode.values,
+                                          itemText: (va) {
+                                            return getColorFilterBlendModeName(
+                                                va, context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),

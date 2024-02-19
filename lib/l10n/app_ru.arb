@@ -293,5 +293,20 @@
     "use_this_as_cover_art": "Использовать это как обложку?",
     "save": "Сохранить",
     "picture_saved": "Изображение сохранено",
-    "cover_updated": "Обложка обновлена"
+    "cover_updated": "Обложка обновлена",
+    "blend_mode_default": "По умолчанию",
+    "blend_mode_multiply": "Умножение",
+    "blend_mode_screen": "Экран",
+    "blend_mode_overlay": "Наложение",
+    "blend_mode_colorDodge": "Увеличение яркости",
+    "blend_mode_lighten": "Осветление",
+    "blend_mode_colorBurn": "Уменьшение яркости",
+    "blend_mode_darken": "Затемнение",
+    "blend_mode_difference": "Разность",
+    "blend_mode_saturation": "Насыщенность",
+    "blend_mode_softLight": "Мягкое свечение",
+    "blend_mode_plus": "Плюс",
+    "blend_mode_exclusion": "Исключение",
+    "custom_color_filter": "Пользовательский цветной фильтр",
+    "color_filter_blend_mode": "Режим смешивания цветового фильтра"
 }
