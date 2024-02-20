@@ -187,6 +187,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       _currentTotalDuration.value = duration;
     },
   );
+  late final StreamSubscription<bool> _completed =
+      _player.stream.completed.listen(
+    (val) async {
+      if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
+        if (isDesktop) {
+          final isFullScreen = await windowManager.isFullScreen();
+          if (isFullScreen) {
+            await setFullScreen(value: false);
+          }
+        }
+        if (mounted) {
+          pushReplacementMangaReaderView(
+            context: context,
+            chapter: _streamController.getNextEpisode(),
+          );
+        }
+      }
+    },
+  );
   Results? _openingResult;
   Results? _endingResult;
   bool _hasOpeningSkip = false;
@@ -199,6 +218,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _seekToCurrentPosition();
     _currentPositionSub;
     _currentTotalDurationSub;
+    _completed;
     _player.open(Media(_video.value!.videoTrack!.id,
         httpHeaders: _video.value!.headers));
     _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
@@ -243,6 +263,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     _player.dispose();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
+    _completed.cancel();
     if (isDesktop) {
       setFullScreen(value: false);
     } else {
