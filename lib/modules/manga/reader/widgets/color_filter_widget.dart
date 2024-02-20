@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
@@ -26,7 +28,7 @@ class ColorFilterWidget extends ConsumerWidget {
 }
 
 Widget customColorFilterListTile(bool isDesktop, String label, int value,
-    void Function(double)? onChanged, BuildContext context) {
+    void Function((double, bool))? onChanged, BuildContext context) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Row(
@@ -49,10 +51,13 @@ Widget customColorFilterListTile(bool isDesktop, String label, int value,
                   overlayShape:
                       const RoundSliderOverlayShape(overlayRadius: 5.0)),
               child: Slider(
-                  min: 0.0,
-                  max: 255,
-                  value: value.toDouble(),
-                  onChanged: onChanged)),
+                min: 0.0,
+                max: 255,
+                divisions: max(244, 1),
+                onChangeEnd: (value) => onChanged!.call((value, false)),
+                value: value.toDouble(),
+                onChanged: (value) => onChanged!.call((value, true)),
+              )),
         ),
       ],
     ),

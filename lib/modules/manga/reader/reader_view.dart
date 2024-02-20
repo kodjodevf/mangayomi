@@ -561,7 +561,7 @@ class _MangaChapterPageGalleryState
                                       separatorBuilder: (_, __) =>
                                           ref.watch(_currentReaderMode) ==
                                                   ReaderMode.webtoon
-                                              ? Container()
+                                              ? const SizedBox.shrink()
                                               : Divider(
                                                   color: getBackgroundColor(
                                                       backgroundColor),
@@ -746,7 +746,7 @@ class _MangaChapterPageGalleryState
                                                   ],
                                                 ));
                                           }
-                                          return Container();
+                                          return const SizedBox.shrink();
                                         },
                                         initGestureConfigHandler: (state) {
                                           return GestureConfig(
@@ -1066,16 +1066,18 @@ class _MangaChapterPageGalleryState
       ValueNotifier(_readerController.autoScrollValues().$2);
 
   void autoPagescroll() async {
-    for (int i = 0; i < 1; i++) {
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (!_autoScroll.value) {
-        return;
+    if (_isVerticalContinous()) {
+      for (int i = 0; i < 1; i++) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (!_autoScroll.value) {
+          return;
+        }
+        _pageOffsetController.animateScroll(
+            offset: _pageOffset.value,
+            duration: const Duration(milliseconds: 100));
       }
-      _pageOffsetController.animateScroll(
-          offset: _pageOffset.value,
-          duration: const Duration(milliseconds: 100));
+      autoPagescroll();
     }
-    autoPagescroll();
   }
 
   void _onBtnTapped(int index, bool isPrev, {bool isSlide = false}) {
@@ -1379,27 +1381,29 @@ class _MangaChapterPageGalleryState
   }
 
   Widget _autoScrollPlayPauseBtn() {
-    return Positioned(
-        bottom: 0,
-        right: 0,
-        child: !_isView
-            ? ValueListenableBuilder(
-                valueListenable: _autoScrollPage,
-                builder: (context, valueT, child) => valueT
-                    ? ValueListenableBuilder(
-                        valueListenable: _autoScroll,
-                        builder: (context, value, child) => IconButton(
-                            onPressed: () {
-                              autoPagescroll();
-                              _autoScroll.value = !value;
-                            },
-                            icon: Icon(value
-                                ? Icons.pause_circle
-                                : Icons.play_circle)),
-                      )
-                    : Container(),
-              )
-            : Container());
+    return _isVerticalContinous()
+        ? Positioned(
+            bottom: 0,
+            right: 0,
+            child: !_isView
+                ? ValueListenableBuilder(
+                    valueListenable: _autoScrollPage,
+                    builder: (context, valueT, child) => valueT
+                        ? ValueListenableBuilder(
+                            valueListenable: _autoScroll,
+                            builder: (context, value, child) => IconButton(
+                                onPressed: () {
+                                  autoPagescroll();
+                                  _autoScroll.value = !value;
+                                },
+                                icon: Icon(value
+                                    ? Icons.pause_circle
+                                    : Icons.play_circle)),
+                          )
+                        : const SizedBox.shrink(),
+                  )
+                : const SizedBox.shrink())
+        : const SizedBox.shrink();
   }
 
   Widget _bottomBar() {
@@ -1750,7 +1754,7 @@ class _MangaChapterPageGalleryState
     return Consumer(builder: (context, ref, child) {
       final currentIndex = ref.watch(currentIndexProvider(chapter));
       return _isView
-          ? Container()
+          ? const SizedBox.shrink()
           : ref.watch(_showPagesNumber)
               ? Align(
                   alignment: Alignment.bottomCenter,
@@ -1765,7 +1769,7 @@ class _MangaChapterPageGalleryState
                     ),
                     textAlign: TextAlign.center,
                   ))
-              : Container();
+              : const SizedBox.shrink();
     });
   }
 
@@ -1917,7 +1921,7 @@ class _MangaChapterPageGalleryState
             ),
 
             /// center region
-            Expanded(flex: 5, child: Container()),
+            const Expanded(flex: 5, child: SizedBox.shrink()),
 
             /// bottom region
             Expanded(
@@ -1959,7 +1963,8 @@ class _MangaChapterPageGalleryState
     await DraggableMenu.open(
         context,
         DraggableMenu(
-            ui: ClassicDraggableMenu(barItem: Container(), radius: 20),
+            ui: const ClassicDraggableMenu(
+                barItem: SizedBox.shrink(), radius: 20),
             minimizeThreshold: 0.6,
             levels: [
               DraggableMenuLevel.ratio(ratio: 1.5 / 3),
@@ -2049,54 +2054,61 @@ class _MangaChapterPageGalleryState
                                                   .notifier)
                                               .set(value);
                                         }),
-                                    ValueListenableBuilder(
-                                      valueListenable: _autoScrollPage,
-                                      builder: (context, valueT, child) {
-                                        return Column(
-                                          children: [
-                                            SwitchListTile(
-                                                secondary: Icon(valueT
-                                                    ? Icons.timer
-                                                    : Icons.timer_outlined),
-                                                value: valueT,
-                                                title: Text(
-                                                    context.l10n.auto_scroll,
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge!
-                                                            .color!
-                                                            .withOpacity(0.9),
-                                                        fontSize: 14)),
-                                                onChanged: (val) {
-                                                  _readerController
-                                                      .setAutoScroll(val,
-                                                          _pageOffset.value);
-                                                  _autoScrollPage.value = val;
-                                                  _autoScroll.value = val;
-                                                }),
-                                            if (valueT)
-                                              ValueListenableBuilder(
-                                                valueListenable: _pageOffset,
-                                                builder: (context, value,
-                                                        child) =>
-                                                    Slider(
-                                                        min: 2.0,
-                                                        max: 30.0,
-                                                        divisions: max(28, 3),
-                                                        value: value,
-                                                        onChanged: (val) {
-                                                          _pageOffset.value =
-                                                              val;
-                                                          _readerController
-                                                              .setAutoScroll(
-                                                                  valueT, val);
-                                                        }),
-                                              ),
-                                          ],
-                                        );
-                                      },
-                                    ),
+                                    if (readerMode ==
+                                            ReaderMode.verticalContinuous ||
+                                        readerMode == ReaderMode.webtoon)
+                                      ValueListenableBuilder(
+                                        valueListenable: _autoScrollPage,
+                                        builder: (context, valueT, child) {
+                                          return Column(
+                                            children: [
+                                              SwitchListTile(
+                                                  secondary: Icon(valueT
+                                                      ? Icons.timer
+                                                      : Icons.timer_outlined),
+                                                  value: valueT,
+                                                  title: Text(
+                                                      context.l10n.auto_scroll,
+                                                      style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyLarge!
+                                                              .color!
+                                                              .withOpacity(0.9),
+                                                          fontSize: 14)),
+                                                  onChanged: (val) {
+                                                    _readerController
+                                                        .setAutoScroll(val,
+                                                            _pageOffset.value);
+                                                    _autoScrollPage.value = val;
+                                                    _autoScroll.value = val;
+                                                  }),
+                                              if (valueT)
+                                                ValueListenableBuilder(
+                                                  valueListenable: _pageOffset,
+                                                  builder: (context, value,
+                                                          child) =>
+                                                      Slider(
+                                                          min: 2.0,
+                                                          max: 30.0,
+                                                          divisions: max(28, 3),
+                                                          value: value,
+                                                          onChanged: (val) {
+                                                            _pageOffset.value =
+                                                                val;
+                                                          },
+                                                          onChangeEnd: (val) {
+                                                            _readerController
+                                                                .setAutoScroll(
+                                                                    valueT,
+                                                                    val);
+                                                          }),
+                                                ),
+                                            ],
+                                          );
+                                        },
+                                      ),
                                   ],
                                 ),
                               ),
@@ -2264,7 +2276,8 @@ class _MangaChapterPageGalleryState
                                               .read(
                                                   customColorFilterStateProvider
                                                       .notifier)
-                                              .set(a, val.toInt(), g, b);
+                                              .set(a, val.$1.toInt(), g, b,
+                                                  val.$2);
                                         }, context),
                                         customColorFilterListTile(
                                             isDesktop, "g", g, (val) {
@@ -2272,7 +2285,8 @@ class _MangaChapterPageGalleryState
                                               .read(
                                                   customColorFilterStateProvider
                                                       .notifier)
-                                              .set(a, r, val.toInt(), b);
+                                              .set(a, r, val.$1.toInt(), b,
+                                                  val.$2);
                                         }, context),
                                         customColorFilterListTile(
                                             isDesktop, "b", b, (val) {
@@ -2280,7 +2294,8 @@ class _MangaChapterPageGalleryState
                                               .read(
                                                   customColorFilterStateProvider
                                                       .notifier)
-                                              .set(a, r, g, val.toInt());
+                                              .set(a, r, g, val.$1.toInt(),
+                                                  val.$2);
                                         }, context),
                                         customColorFilterListTile(
                                             isDesktop, "a", a, (val) {
@@ -2288,7 +2303,8 @@ class _MangaChapterPageGalleryState
                                               .read(
                                                   customColorFilterStateProvider
                                                       .notifier)
-                                              .set(val.toInt(), r, g, b);
+                                              .set(val.$1.toInt(), r, g, b,
+                                                  val.$2);
                                         }, context),
                                         CustomPopupMenuButton<
                                             ColorFilterBlendMode>(
