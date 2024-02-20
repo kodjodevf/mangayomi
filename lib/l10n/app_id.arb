@@ -308,5 +308,7 @@
     "blend_mode_plus": "Tambah",
     "blend_mode_exclusion": "Pengecualian",
     "custom_color_filter": "Filter warna kustom",
-    "color_filter_blend_mode": "Mode pencampuran filter warna"
+    "color_filter_blend_mode": "Mode pencampuran filter warna",
+    "enable_all": "Aktifkan semua",
+    "disable_all": "Nonaktifkan semua"
 }

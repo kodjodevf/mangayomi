@@ -308,5 +308,7 @@
     "blend_mode_plus": "Плюс",
     "blend_mode_exclusion": "Исключение",
     "custom_color_filter": "Пользовательский цветной фильтр",
-    "color_filter_blend_mode": "Режим смешивания цветового фильтра"
+    "color_filter_blend_mode": "Режим смешивания цветового фильтра",
+    "enable_all": "Включить все",
+    "disable_all": "Отключить все"
 }

@@ -310,5 +310,7 @@
     "blend_mode_plus": "加",
     "blend_mode_exclusion": "排除",
     "custom_color_filter": "自定义颜色滤镜",
-    "color_filter_blend_mode": "颜色滤镜混合模式"
+    "color_filter_blend_mode": "颜色滤镜混合模式",
+    "enable_all": "启用全部",
+    "disable_all": "禁用全部"
 }

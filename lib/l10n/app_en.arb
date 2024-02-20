@@ -310,5 +310,7 @@
   "blend_mode_plus": "Plus",
   "blend_mode_exclusion": "Exclusion",
   "custom_color_filter": "Custom color filter",
-  "color_filter_blend_mode": "Color filter blend mode"
+  "color_filter_blend_mode": "Color filter blend mode",
+  "enable_all": "Enable all",
+  "disable_all": "Disable all"
 }

@@ -308,5 +308,7 @@
     "blend_mode_plus": "زائد",
     "blend_mode_exclusion": "استثناء",
     "custom_color_filter": "مرشح اللون المخصص",
-    "color_filter_blend_mode": "وضع امتزاج مرشح اللون"
+    "color_filter_blend_mode": "وضع امتزاج مرشح اللون",
+    "enable_all": "تمكين الكل",
+    "disable_all": "تعطيل الكل"
 }

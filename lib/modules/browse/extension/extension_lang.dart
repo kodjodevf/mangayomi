@@ -5,6 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
+import 'package:mangayomi/utils/global_style.dart';
 
 class ExtensionsLang extends ConsumerWidget {
   final bool isManga;
@@ -16,6 +17,40 @@ class ExtensionsLang extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.extensions),
+        actions: [
+          PopupMenuButton(
+              popUpAnimationStyle: popupAnimationStyle,
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: Text(l10n.enable_all),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Text(l10n.disable_all),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                isar.writeTxnSync(() {
+                  bool enable = true;
+                  if (value == 0) {
+                  } else if (value == 1) {
+                    enable = false;
+                  }
+                  final sources = isar.sources
+                      .filter()
+                      .idIsNotNull()
+                      .and()
+                      .isMangaEqualTo(isManga)
+                      .findAllSync();
+                  for (var source in sources) {
+                    isar.sources.putSync(source..isActive = enable);
+                  }
+                });
+              }),
+        ],
       ),
       body: StreamBuilder(
           stream: isar.sources

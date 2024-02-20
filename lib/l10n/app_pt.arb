@@ -308,5 +308,7 @@
     "blend_mode_plus": "Mais",
     "blend_mode_exclusion": "Exclusão",
     "custom_color_filter": "Filtro de cor personalizado",
-    "color_filter_blend_mode": "Modo de mistura do filtro de cor"
+    "color_filter_blend_mode": "Modo de mistura do filtro de cor",
+    "enable_all": "Ativar tudo",
+    "disable_all": "Desativar tudo"
 }
