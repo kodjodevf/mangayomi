@@ -11,6 +11,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
@@ -112,6 +113,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
               final entries = snapshot.data!;
               return entries.first.isDownload!
                   ? PopupMenuButton(
+                      popUpAnimationStyle: popupAnimationStyle,
                       child: Icon(
                         size: 25,
                         Icons.check_circle,
@@ -136,6 +138,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                           height: 41,
                           width: 35,
                           child: PopupMenuButton(
+                            popUpAnimationStyle: popupAnimationStyle,
                             child: _downloadWidget(context, true),
                             onSelected: (value) {
                               if (value == 0) {
@@ -160,6 +163,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                               height: 41,
                               width: 35,
                               child: PopupMenuButton(
+                                popUpAnimationStyle: popupAnimationStyle,
                                 child: Stack(
                                   children: [
                                     Align(
@@ -243,6 +247,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                   height: 50,
                                   width: 50,
                                   child: PopupMenuButton(
+                                    popUpAnimationStyle: popupAnimationStyle,
                                     child: const Icon(
                                       Icons.error_outline_outlined,
                                       color: Colors.red,
@@ -268,6 +273,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                     height: 50,
                     width: 50,
                     child: PopupMenuButton(
+                      popUpAnimationStyle: popupAnimationStyle,
                       child: _downloadWidget(context, true),
                       onSelected: (value) {
                         if (value == 0) {

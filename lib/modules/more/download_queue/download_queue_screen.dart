@@ -7,6 +7,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/global_style.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
@@ -118,6 +119,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: PopupMenuButton(
+                          popUpAnimationStyle: popupAnimationStyle,
                           child: const Icon(Icons.more_vert),
                           onSelected: (value) async {
                             if (value.toString() == 'Cancel') {

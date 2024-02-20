@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_windows_webview/flutter_windows_webview.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
@@ -175,29 +176,33 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                 }
                               : null,
                         ),
-                        PopupMenuButton(itemBuilder: (context) {
-                          return [
-                            PopupMenuItem<int>(
-                                value: 0, child: Text(l10n!.refresh)),
-                            PopupMenuItem<int>(
-                                value: 1, child: Text(l10n.share)),
-                            PopupMenuItem<int>(
-                                value: 2, child: Text(l10n.open_in_browser)),
-                            PopupMenuItem<int>(
-                                value: 3, child: Text(l10n.clear_cookie)),
-                          ];
-                        }, onSelected: (value) async {
-                          if (value == 0) {
-                            _webViewController?.reload();
-                          } else if (value == 1) {
-                            Share.share(_url);
-                          } else if (value == 2) {
-                            await InAppBrowser.openWithSystemBrowser(
-                                url: Uri.parse(_url));
-                          } else if (value == 3) {
-                            CookieManager.instance().deleteAllCookies();
-                          }
-                        }),
+                        PopupMenuButton(
+                            popUpAnimationStyle: popupAnimationStyle,
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem<int>(
+                                    value: 0, child: Text(l10n!.refresh)),
+                                PopupMenuItem<int>(
+                                    value: 1, child: Text(l10n.share)),
+                                PopupMenuItem<int>(
+                                    value: 2,
+                                    child: Text(l10n.open_in_browser)),
+                                PopupMenuItem<int>(
+                                    value: 3, child: Text(l10n.clear_cookie)),
+                              ];
+                            },
+                            onSelected: (value) async {
+                              if (value == 0) {
+                                _webViewController?.reload();
+                              } else if (value == 1) {
+                                Share.share(_url);
+                              } else if (value == 2) {
+                                await InAppBrowser.openWithSystemBrowser(
+                                    url: Uri.parse(_url));
+                              } else if (value == 3) {
+                                CookieManager.instance().deleteAllCookies();
+                              }
+                            }),
                       ],
                     ),
                   ),

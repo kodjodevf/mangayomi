@@ -31,6 +31,7 @@ import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -369,6 +370,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             actions: [
                               if (!isLocalArchive) ...[
                                 PopupMenuButton(
+                                    popUpAnimationStyle: popupAnimationStyle,
                                     icon: const Icon(Icons.download_outlined),
                                     itemBuilder: (context) {
                                       return [
@@ -480,39 +482,44 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     color:
                                         isNotFiltering ? null : Colors.yellow,
                                   )),
-                              PopupMenuButton(itemBuilder: (context) {
-                                return [
-                                  if (!isLocalArchive)
-                                    PopupMenuItem<int>(
-                                        value: 3, child: Text(l10n.refresh)),
-                                  if (widget.manga!.favorite!)
-                                    PopupMenuItem<int>(
-                                        value: 0,
-                                        child: Text(l10n.edit_categories)),
-                                  if (!isLocalArchive)
-                                    PopupMenuItem<int>(
-                                        value: 2, child: Text(l10n.share)),
-                                ];
-                              }, onSelected: (value) {
-                                if (value == 3) {
-                                  widget.checkForUpdate(true);
-                                }
-                                if (value == 0) {
-                                  context.push("/categories", extra: (
-                                    true,
-                                    widget.manga!.isManga! ? 0 : 1
-                                  ));
-                                } else if (value == 1) {
-                                } else if (value == 2) {
-                                  final source = getSource(widget.manga!.lang!,
-                                      widget.manga!.source!);
-                                  String url = source!.apiUrl!.isEmpty
-                                      ? widget.manga!.link!
-                                      : "${source.baseUrl}${widget.manga!.link!}";
+                              PopupMenuButton(
+                                  popUpAnimationStyle: popupAnimationStyle,
+                                  itemBuilder: (context) {
+                                    return [
+                                      if (!isLocalArchive)
+                                        PopupMenuItem<int>(
+                                            value: 3,
+                                            child: Text(l10n.refresh)),
+                                      if (widget.manga!.favorite!)
+                                        PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text(l10n.edit_categories)),
+                                      if (!isLocalArchive)
+                                        PopupMenuItem<int>(
+                                            value: 2, child: Text(l10n.share)),
+                                    ];
+                                  },
+                                  onSelected: (value) {
+                                    if (value == 3) {
+                                      widget.checkForUpdate(true);
+                                    }
+                                    if (value == 0) {
+                                      context.push("/categories", extra: (
+                                        true,
+                                        widget.manga!.isManga! ? 0 : 1
+                                      ));
+                                    } else if (value == 1) {
+                                    } else if (value == 2) {
+                                      final source = getSource(
+                                          widget.manga!.lang!,
+                                          widget.manga!.source!);
+                                      String url = source!.apiUrl!.isEmpty
+                                          ? widget.manga!.link!
+                                          : "${source.baseUrl}${widget.manga!.link!}";
 
-                                  Share.share(url);
-                                }
-                              }),
+                                      Share.share(url);
+                                    }
+                                  }),
                             ],
                           );
                   },
@@ -1756,6 +1763,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           child: Icon(Icons.save_outlined),
                                         )),
                                     PopupMenuButton(
+                                      popUpAnimationStyle: popupAnimationStyle,
                                       itemBuilder: (context) {
                                         return [
                                           if (widget.manga!.customCoverImage !=

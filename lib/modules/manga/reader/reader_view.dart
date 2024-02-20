@@ -29,6 +29,7 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
@@ -1632,6 +1633,7 @@ class _MangaChapterPageGalleryState
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     PopupMenuButton(
+                      popUpAnimationStyle: popupAnimationStyle,
                       color: Colors.black,
                       child: const Icon(
                         Icons.app_settings_alt_outlined,
@@ -2382,6 +2384,7 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: PopupMenuButton(
+        popUpAnimationStyle: popupAnimationStyle,
         tooltip: "",
         offset: Offset.fromDirection(1),
         color: Colors.black,

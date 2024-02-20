@@ -32,6 +32,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/global_style.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   final bool isManga;
@@ -1808,37 +1809,41 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         Icons.filter_list_sharp,
                         color: isNotFiltering ? null : Colors.yellow,
                       )),
-                  PopupMenuButton(itemBuilder: (context) {
-                    return [
-                      PopupMenuItem<int>(
-                        value: 0,
-                        child: Text(context.l10n.update_library),
-                      ),
-                      PopupMenuItem<int>(
-                          value: 1, child: Text(l10n.open_random_entry)),
-                      PopupMenuItem<int>(value: 2, child: Text(l10n.import)),
-                    ];
-                  }, onSelected: (value) {
-                    if (value == 0) {
-                      manga.whenData((value) {
-                        _updateLibrary(value);
-                      });
-                    } else if (value == 1) {
-                      manga.whenData((value) {
-                        var randomManga = (value..shuffle()).first;
-                        pushToMangaReaderDetail(
-                            archiveId: randomManga.isLocalArchive ?? false
-                                ? randomManga.id
-                                : null,
-                            context: context,
-                            lang: randomManga.lang!,
-                            mangaM: randomManga,
-                            source: randomManga.source!);
-                      });
-                    } else {
-                      _importLocal(context, widget.isManga);
-                    }
-                  }),
+                  PopupMenuButton(
+                      popUpAnimationStyle: popupAnimationStyle,
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem<int>(
+                            value: 0,
+                            child: Text(context.l10n.update_library),
+                          ),
+                          PopupMenuItem<int>(
+                              value: 1, child: Text(l10n.open_random_entry)),
+                          PopupMenuItem<int>(
+                              value: 2, child: Text(l10n.import)),
+                        ];
+                      },
+                      onSelected: (value) {
+                        if (value == 0) {
+                          manga.whenData((value) {
+                            _updateLibrary(value);
+                          });
+                        } else if (value == 1) {
+                          manga.whenData((value) {
+                            var randomManga = (value..shuffle()).first;
+                            pushToMangaReaderDetail(
+                                archiveId: randomManga.isLocalArchive ?? false
+                                    ? randomManga.id
+                                    : null,
+                                context: context,
+                                lang: randomManga.lang!,
+                                mangaM: randomManga,
+                                source: randomManga.source!);
+                          });
+                        } else {
+                          _importLocal(context, widget.isManga);
+                        }
+                      }),
                 ],
               ));
   }
