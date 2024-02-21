@@ -22,13 +22,16 @@ class BlendLevelSlider extends ConsumerWidget {
           ),
         ),
         Slider(
-            min: 0.0,
-            max: 40.0,
-            divisions: max(39, 1),
-            value: blendLevel,
-            onChanged: (value) {
-              ref.read(blendLevelStateProvider.notifier).setBlendLevel(value);
-            }),
+          min: 0.0,
+          max: 40.0,
+          divisions: max(39, 1),
+          value: blendLevel,
+          onChanged: (value) =>
+              ref.read(blendLevelStateProvider.notifier).setBlendLevel(value),
+          onChangeEnd: (value) => ref
+              .read(blendLevelStateProvider.notifier)
+              .setBlendLevel(value, end: true),
+        ),
       ],
     );
   }

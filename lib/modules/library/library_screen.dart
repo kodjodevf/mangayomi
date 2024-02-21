@@ -2,7 +2,6 @@
 
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +17,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
+import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -1229,418 +1229,297 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 
   _showDraggableMenu(Settings settings) {
-    late TabController tabBarController;
-    tabBarController = TabController(length: 3, vsync: this);
     final l10n = l10nLocalizations(context)!;
-    DraggableMenu.open(
-        context,
-        DraggableMenu(
-            ui: SoftModernDraggableMenu(barItem: Container(), radius: 20),
-            minimizeThreshold: 0.6,
-            levels: [
-              DraggableMenuLevel.ratio(ratio: 1 / 3),
-              DraggableMenuLevel.ratio(ratio: 2 / 3),
-              DraggableMenuLevel.ratio(ratio: 0.9),
-            ],
-            minimizeBeforeFastDrag: true,
-            child: DefaultTabController(
-                length: 3,
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  body: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Theme.of(context).scaffoldBackgroundColor),
-                    child: Column(
-                      children: [
-                        TabBar(
-                          controller: tabBarController,
-                          tabs: [
-                            Tab(text: l10n.filter),
-                            Tab(text: l10n.sort),
-                            Tab(text: l10n.display),
-                          ],
-                        ),
-                        Flexible(
-                          child: TabBarView(
-                              controller: tabBarController,
-                              children: [
-                                Consumer(builder: (context, ref, chil) {
-                                  return Column(
-                                    children: [
-                                      ListTileChapterFilter(
-                                          label: l10n.downloaded,
-                                          type: ref.watch(
-                                              mangaFilterDownloadedStateProvider(
-                                                  isManga: widget.isManga,
-                                                  mangaList: _entries,
-                                                  settings: settings)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    mangaFilterDownloadedStateProvider(
-                                                            isManga:
-                                                                widget.isManga,
-                                                            mangaList: _entries,
-                                                            settings: settings)
-                                                        .notifier)
-                                                .update();
-                                          }),
-                                      ListTileChapterFilter(
-                                          label: l10n.unread,
-                                          type: ref.watch(
-                                              mangaFilterUnreadStateProvider(
-                                                  isManga: widget.isManga,
-                                                  mangaList: _entries,
-                                                  settings: settings)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    mangaFilterUnreadStateProvider(
-                                                            isManga:
-                                                                widget.isManga,
-                                                            mangaList: _entries,
-                                                            settings: settings)
-                                                        .notifier)
-                                                .update();
-                                          }),
-                                      ListTileChapterFilter(
-                                          label: l10n.started,
-                                          type: ref.watch(
-                                              mangaFilterStartedStateProvider(
-                                                  isManga: widget.isManga,
-                                                  mangaList: _entries,
-                                                  settings: settings)),
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    mangaFilterStartedStateProvider(
-                                                            isManga:
-                                                                widget.isManga,
-                                                            mangaList: _entries,
-                                                            settings: settings)
-                                                        .notifier)
-                                                .update();
-                                          }),
-                                      ListTileChapterFilter(
-                                          label: l10n.bookmarked,
-                                          type: ref.watch(
-                                              mangaFilterBookmarkedStateProvider(
-                                                  isManga: widget.isManga,
-                                                  mangaList: _entries,
-                                                  settings: settings)),
-                                          onTap: () {
-                                            setState(() {
-                                              ref
-                                                  .read(
-                                                      mangaFilterBookmarkedStateProvider(
-                                                              isManga: widget
-                                                                  .isManga,
-                                                              mangaList:
-                                                                  _entries,
-                                                              settings:
-                                                                  settings)
-                                                          .notifier)
-                                                  .update();
-                                            });
-                                          }),
-                                    ],
-                                  );
-                                }),
-                                Consumer(builder: (context, ref, chil) {
-                                  final reverse = ref
-                                      .read(sortLibraryMangaStateProvider(
-                                              isManga: widget.isManga,
-                                              settings: settings)
-                                          .notifier)
-                                      .isReverse();
-                                  final reverseChapter = ref.watch(
-                                      sortLibraryMangaStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  return Column(
-                                    children: [
-                                      for (var i = 0; i < 7; i++)
-                                        ListTileChapterSort(
-                                          label:
-                                              _getSortNameByIndex(i, context),
-                                          reverse: reverse,
-                                          onTap: () {
-                                            ref
-                                                .read(
-                                                    sortLibraryMangaStateProvider(
-                                                            isManga:
-                                                                widget.isManga,
-                                                            settings: settings)
-                                                        .notifier)
-                                                .set(i);
-                                          },
-                                          showLeading:
-                                              reverseChapter.index == i,
-                                        ),
-                                    ],
-                                  );
-                                }),
-                                Consumer(builder: (context, ref, chil) {
-                                  final display = ref.watch(
-                                      libraryDisplayTypeStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final displayV = ref.read(
-                                      libraryDisplayTypeStateProvider(
-                                              isManga: widget.isManga,
-                                              settings: settings)
-                                          .notifier);
-                                  final showCategoryTabs = ref.watch(
-                                      libraryShowCategoryTabsStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final continueReaderBtn = ref.watch(
-                                      libraryShowContinueReadingButtonStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final showNumbersOfItems = ref.watch(
-                                      libraryShowNumbersOfItemsStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final downloadedChapter = ref.watch(
-                                      libraryDownloadedChaptersStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final language = ref.watch(
-                                      libraryLanguageStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  final localSource = ref.watch(
-                                      libraryLocalSourceStateProvider(
-                                          isManga: widget.isManga,
-                                          settings: settings));
-                                  return SingleChildScrollView(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 10),
-                                          child: Row(
-                                            children: [
-                                              Text(l10n.display_mode),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 5, horizontal: 20),
-                                          child: Wrap(
-                                              children: DisplayType.values.map(
-                                                  (e) {
-                                            final selected = e ==
-                                                displayV
-                                                    .getLibraryDisplayTypeValue(
-                                                        display);
-                                            return Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 5),
-                                              child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                              horizontal: 15),
-                                                      surfaceTintColor:
-                                                          Colors.transparent,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
-                                                      side: selected
-                                                          ? null
-                                                          : BorderSide(
-                                                              color: context
-                                                                      .isLight
-                                                                  ? Colors.black
-                                                                  : Colors
-                                                                      .white,
-                                                              width: 0.8),
-                                                      shadowColor:
-                                                          Colors.transparent,
-                                                      elevation: 0,
-                                                      backgroundColor: selected
-                                                          ? context.primaryColor
-                                                              .withOpacity(0.2)
-                                                          : Colors.transparent),
-                                                  onPressed: () {
-                                                    displayV
-                                                        .setLibraryDisplayType(
-                                                            e);
-                                                  },
-                                                  child: Text(
-                                                    displayV
-                                                        .getLibraryDisplayTypeName(
-                                                            e.name, context),
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge!
-                                                            .color,
-                                                        fontSize: 14),
-                                                  )),
-                                            );
-                                          }
+    customDraggableTabBar(tabs: [
+      Tab(text: l10n.filter),
+      Tab(text: l10n.sort),
+      Tab(text: l10n.display),
+    ], children: [
+      Consumer(builder: (context, ref, chil) {
+        return Column(
+          children: [
+            ListTileChapterFilter(
+                label: l10n.downloaded,
+                type: ref.watch(mangaFilterDownloadedStateProvider(
+                    isManga: widget.isManga,
+                    mangaList: _entries,
+                    settings: settings)),
+                onTap: () {
+                  ref
+                      .read(mangaFilterDownloadedStateProvider(
+                              isManga: widget.isManga,
+                              mangaList: _entries,
+                              settings: settings)
+                          .notifier)
+                      .update();
+                }),
+            ListTileChapterFilter(
+                label: l10n.unread,
+                type: ref.watch(mangaFilterUnreadStateProvider(
+                    isManga: widget.isManga,
+                    mangaList: _entries,
+                    settings: settings)),
+                onTap: () {
+                  ref
+                      .read(mangaFilterUnreadStateProvider(
+                              isManga: widget.isManga,
+                              mangaList: _entries,
+                              settings: settings)
+                          .notifier)
+                      .update();
+                }),
+            ListTileChapterFilter(
+                label: l10n.started,
+                type: ref.watch(mangaFilterStartedStateProvider(
+                    isManga: widget.isManga,
+                    mangaList: _entries,
+                    settings: settings)),
+                onTap: () {
+                  ref
+                      .read(mangaFilterStartedStateProvider(
+                              isManga: widget.isManga,
+                              mangaList: _entries,
+                              settings: settings)
+                          .notifier)
+                      .update();
+                }),
+            ListTileChapterFilter(
+                label: l10n.bookmarked,
+                type: ref.watch(mangaFilterBookmarkedStateProvider(
+                    isManga: widget.isManga,
+                    mangaList: _entries,
+                    settings: settings)),
+                onTap: () {
+                  setState(() {
+                    ref
+                        .read(mangaFilterBookmarkedStateProvider(
+                                isManga: widget.isManga,
+                                mangaList: _entries,
+                                settings: settings)
+                            .notifier)
+                        .update();
+                  });
+                }),
+          ],
+        );
+      }),
+      Consumer(builder: (context, ref, chil) {
+        final reverse = ref
+            .read(sortLibraryMangaStateProvider(
+                    isManga: widget.isManga, settings: settings)
+                .notifier)
+            .isReverse();
+        final reverseChapter = ref.watch(sortLibraryMangaStateProvider(
+            isManga: widget.isManga, settings: settings));
+        return Column(
+          children: [
+            for (var i = 0; i < 7; i++)
+              ListTileChapterSort(
+                label: _getSortNameByIndex(i, context),
+                reverse: reverse,
+                onTap: () {
+                  ref
+                      .read(sortLibraryMangaStateProvider(
+                              isManga: widget.isManga, settings: settings)
+                          .notifier)
+                      .set(i);
+                },
+                showLeading: reverseChapter.index == i,
+              ),
+          ],
+        );
+      }),
+      Consumer(builder: (context, ref, chil) {
+        final display = ref.watch(libraryDisplayTypeStateProvider(
+            isManga: widget.isManga, settings: settings));
+        final displayV = ref.read(libraryDisplayTypeStateProvider(
+                isManga: widget.isManga, settings: settings)
+            .notifier);
+        final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider(
+            isManga: widget.isManga, settings: settings));
+        final continueReaderBtn = ref.watch(
+            libraryShowContinueReadingButtonStateProvider(
+                isManga: widget.isManga, settings: settings));
+        final showNumbersOfItems = ref.watch(
+            libraryShowNumbersOfItemsStateProvider(
+                isManga: widget.isManga, settings: settings));
+        final downloadedChapter = ref.watch(
+            libraryDownloadedChaptersStateProvider(
+                isManga: widget.isManga, settings: settings));
+        final language = ref.watch(libraryLanguageStateProvider(
+            isManga: widget.isManga, settings: settings));
+        final localSource = ref.watch(libraryLocalSourceStateProvider(
+            isManga: widget.isManga, settings: settings));
+        return SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 10),
+                child: Row(
+                  children: [
+                    Text(l10n.display_mode),
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                child: Wrap(
+                    children: DisplayType.values.map((e) {
+                  final selected =
+                      e == displayV.getLibraryDisplayTypeValue(display);
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 5),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            surfaceTintColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            side: selected
+                                ? null
+                                : BorderSide(
+                                    color: context.isLight
+                                        ? Colors.black
+                                        : Colors.white,
+                                    width: 0.8),
+                            shadowColor: Colors.transparent,
+                            elevation: 0,
+                            backgroundColor: selected
+                                ? context.primaryColor.withOpacity(0.2)
+                                : Colors.transparent),
+                        onPressed: () {
+                          displayV.setLibraryDisplayType(e);
+                        },
+                        child: Text(
+                          displayV.getLibraryDisplayTypeName(e.name, context),
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge!.color,
+                              fontSize: 14),
+                        )),
+                  );
+                }
 
-                                                  // RadioListTile<
-                                                  //     DisplayType>(
-                                                  //   dense: true,
-                                                  //   title: ,
-                                                  //   value: e,
-                                                  //   groupValue: displayV
-                                                  //       .getLibraryDisplayTypeValue(
-                                                  //           display),
-                                                  //   selected: true,
-                                                  //   onChanged: (value) {
-                                                  //     displayV
-                                                  //         .setLibraryDisplayType(
-                                                  //             value!);
-                                                  //   },
-                                                  // ),
-                                                  ).toList()),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 10),
-                                          child: Row(
-                                            children: [
-                                              Text(l10n.badges),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: Column(
-                                            children: [
-                                              ListTileChapterFilter(
-                                                  label:
-                                                      l10n.downloaded_chapters,
-                                                  type:
-                                                      downloadedChapter ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryDownloadedChaptersStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(
-                                                            !downloadedChapter);
-                                                  }),
-                                              ListTileChapterFilter(
-                                                  label: l10n.language,
-                                                  type: language ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryLanguageStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(!language);
-                                                  }),
-                                              ListTileChapterFilter(
-                                                  label: l10n.local_source,
-                                                  type: localSource ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryLocalSourceStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(!localSource);
-                                                  }),
-                                              ListTileChapterFilter(
-                                                  label: l10n
-                                                      .show_continue_reading_buttons,
-                                                  type:
-                                                      continueReaderBtn ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryShowContinueReadingButtonStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(
-                                                            !continueReaderBtn);
-                                                  }),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20, top: 10),
-                                          child: Row(
-                                            children: [Text(l10n.tabs)],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: Column(
-                                            children: [
-                                              ListTileChapterFilter(
-                                                  label:
-                                                      l10n.show_category_tabs,
-                                                  type:
-                                                      showCategoryTabs ? 1 : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryShowCategoryTabsStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(!showCategoryTabs);
-                                                  }),
-                                              ListTileChapterFilter(
-                                                  label: l10n
-                                                      .show_numbers_of_items,
-                                                  type: showNumbersOfItems
-                                                      ? 1
-                                                      : 0,
-                                                  onTap: () {
-                                                    ref
-                                                        .read(libraryShowNumbersOfItemsStateProvider(
-                                                                isManga: widget
-                                                                    .isManga,
-                                                                settings:
-                                                                    settings)
-                                                            .notifier)
-                                                        .set(
-                                                            !showNumbersOfItems);
-                                                  }),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
-                              ]),
-                        ),
-                      ],
-                    ),
-                  ),
-                ))));
+                        // RadioListTile<
+                        //     DisplayType>(
+                        //   dense: true,
+                        //   title: ,
+                        //   value: e,
+                        //   groupValue: displayV
+                        //       .getLibraryDisplayTypeValue(
+                        //           display),
+                        //   selected: true,
+                        //   onChanged: (value) {
+                        //     displayV
+                        //         .setLibraryDisplayType(
+                        //             value!);
+                        //   },
+                        // ),
+                        ).toList()),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 10),
+                child: Row(
+                  children: [
+                    Text(l10n.badges),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Column(
+                  children: [
+                    ListTileChapterFilter(
+                        label: l10n.downloaded_chapters,
+                        type: downloadedChapter ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(libraryDownloadedChaptersStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .set(!downloadedChapter);
+                        }),
+                    ListTileChapterFilter(
+                        label: l10n.language,
+                        type: language ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(libraryLanguageStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .set(!language);
+                        }),
+                    ListTileChapterFilter(
+                        label: l10n.local_source,
+                        type: localSource ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(libraryLocalSourceStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .set(!localSource);
+                        }),
+                    ListTileChapterFilter(
+                        label: l10n.show_continue_reading_buttons,
+                        type: continueReaderBtn ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(
+                                  libraryShowContinueReadingButtonStateProvider(
+                                          isManga: widget.isManga,
+                                          settings: settings)
+                                      .notifier)
+                              .set(!continueReaderBtn);
+                        }),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 10),
+                child: Row(
+                  children: [Text(l10n.tabs)],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5),
+                child: Column(
+                  children: [
+                    ListTileChapterFilter(
+                        label: l10n.show_category_tabs,
+                        type: showCategoryTabs ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(libraryShowCategoryTabsStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .set(!showCategoryTabs);
+                        }),
+                    ListTileChapterFilter(
+                        label: l10n.show_numbers_of_items,
+                        type: showNumbersOfItems ? 1 : 0,
+                        onTap: () {
+                          ref
+                              .read(libraryShowNumbersOfItemsStateProvider(
+                                      isManga: widget.isManga,
+                                      settings: settings)
+                                  .notifier)
+                              .set(!showNumbersOfItems);
+                        }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
+    ], context: context, vsync: this);
   }
 
   String _getSortNameByIndex(int index, BuildContext context) {

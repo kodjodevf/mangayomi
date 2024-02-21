@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +13,7 @@ import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
@@ -45,9 +45,8 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    final serversData = ref.watch(getVideoListProvider(
-      episode: widget.episode,
-    ));
+    final serversData =
+        ref.watch(getVideoListProvider(episode: widget.episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
@@ -128,7 +127,8 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
-class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
+class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
+    with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final Player _player = Player();
   late final VideoController _controller = VideoController(_player);
@@ -294,6 +294,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     }
   }
 
+  Widget textWidget(String text, bool selected) => Row(
+        children: [
+          Flexible(
+              child: Text(text,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 16,
+                      fontStyle: selected ? FontStyle.italic : null,
+                      color: selected ? context.primaryColor : null),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis)),
+        ],
+      );
+
   Widget _videoQualityWidget(BuildContext context) {
     List<VideoPrefs> videoQuality = _player.state.tracks.video
         .where((element) =>
@@ -311,184 +324,52 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
       }
     }
 
-    return Column(
-      children: videoQuality.map((quality) {
-        final selected =
-            _video.value!.videoTrack!.title == quality.videoTrack!.title ||
-                widget.isLocal;
-        return GestureDetector(
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(
-                  Icons.check,
-                  color: selected ? Colors.white : Colors.transparent,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  widget.isLocal
-                      ? _firstVid.quality
-                      : quality.videoTrack!.title!,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 16,
-                      color: selected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.6)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          onTap: () {
-            _video.value = quality; // change the video quality
-            if (quality.isLocal) {
-              if (widget.isLocal) {
-                _player.setVideoTrack(quality.videoTrack!);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: videoQuality.map((quality) {
+          final selected =
+              _video.value!.videoTrack!.title == quality.videoTrack!.title ||
+                  widget.isLocal;
+          return GestureDetector(
+            child: textWidget(
+                widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
+                selected),
+            onTap: () {
+              _video.value = quality; // change the video quality
+              if (quality.isLocal) {
+                if (widget.isLocal) {
+                  _player.setVideoTrack(quality.videoTrack!);
+                } else {
+                  _player.open(Media(quality.videoTrack!.id,
+                      httpHeaders: quality.headers));
+                }
               } else {
                 _player.open(Media(quality.videoTrack!.id,
                     httpHeaders: quality.headers));
               }
-            } else {
-              _player.open(
-                  Media(quality.videoTrack!.id, httpHeaders: quality.headers));
-            }
-            _seekToCurrentPosition(duration: _currentPosition.value);
-            Navigator.pop(context);
-          },
-        );
-      }).toList(),
+              _seekToCurrentPosition(duration: _currentPosition.value);
+              Navigator.pop(context);
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 
   void _videoSettingDraggableMenu(BuildContext context) async {
     final l10n = l10nLocalizations(context)!;
     _player.pause();
-    await DraggableMenu.open(
-        context,
-        DraggableMenu(
-          ui: ClassicDraggableMenu(
-              radius: 30,
-              barItem: Container(),
-              color: Colors.black.withOpacity(0.6)),
-          minimizeThreshold: 0.6,
-          levels: [
-            DraggableMenuLevel.ratio(ratio: 2 / 3),
-            DraggableMenuLevel.ratio(ratio: 0.9),
-          ],
-          minimizeBeforeFastDrag: true,
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8, left: 12, bottom: 5),
-                              child: Row(
-                                children: [
-                                  Text(l10n.video_quality,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20)),
-                                ],
-                              ),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5)),
-                            _videoQualityWidget(context)
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                        color: Colors.white,
-                        width: 0.2,
-                        height: context.mediaHeight(1)),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8, left: 12, bottom: 5),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    l10n.video_subtitle,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5)),
-                            _videoSubtitle(context)
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                        color: Colors.white,
-                        width: 0.2,
-                        height: context.mediaHeight(1)),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 8, left: 12, bottom: 5),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    l10n.video_audio,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5)),
-                            _videoAudios(context)
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                )),
-          ),
-        ));
+    await customDraggableTabBar(tabs: [
+      Tab(text: l10n.video_quality),
+      Tab(text: l10n.video_subtitle),
+      Tab(text: l10n.video_audio),
+    ], children: [
+      _videoQualityWidget(context),
+      _videoSubtitle(context),
+      _videoAudios(context)
+    ], context: context, vsync: this, fullWidth: true);
+
     _player.play();
   }
 
@@ -535,46 +416,29 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
     videoSubtitle.insert(
         0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
-    return Column(
-      children: videoSubtitle.toSet().toList().map((sub) {
-        final selected = subtitle != null && sub.subtitle == subtitle;
-        return GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-            try {
-              _player.setSubtitleTrack(sub.subtitle!);
-              if (!widget.isLocal) _subtitle.value = sub.subtitle;
-            } catch (_) {}
-          },
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(
-                  Icons.check,
-                  color: selected ? Colors.white : Colors.transparent,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  sub.title ??
-                      sub.subtitle?.title ??
-                      sub.subtitle?.language ??
-                      sub.subtitle?.channels ??
-                      "None",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 16,
-                      color: selected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.6)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: videoSubtitle.toSet().toList().map((sub) {
+          final selected = subtitle != null && sub.subtitle == subtitle;
+          return GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              try {
+                _player.setSubtitleTrack(sub.subtitle!);
+                if (!widget.isLocal) _subtitle.value = sub.subtitle;
+              } catch (_) {}
+            },
+            child: textWidget(
+                sub.title ??
+                    sub.subtitle?.title ??
+                    sub.subtitle?.language ??
+                    sub.subtitle?.channels ??
+                    "None",
+                selected),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -621,46 +485,29 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> {
     videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
     videoAudio.insert(
         0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
-    return Column(
-      children: videoAudio.toSet().toList().map((aud) {
-        final selected = audio != null && aud.audio == audio;
-        return GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-            try {
-              _player.setAudioTrack(aud.audio!);
-              if (!widget.isLocal) _audio.value = aud.audio;
-            } catch (_) {}
-          },
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(
-                  Icons.check,
-                  color: selected ? Colors.white : Colors.transparent,
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  aud.title ??
-                      aud.audio?.title ??
-                      aud.audio?.language ??
-                      aud.audio?.channels ??
-                      "None",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 16,
-                      color: selected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.6)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: videoAudio.toSet().toList().map((aud) {
+          final selected = audio != null && aud.audio == audio;
+          return GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+              try {
+                _player.setAudioTrack(aud.audio!);
+                if (!widget.isLocal) _audio.value = aud.audio;
+              } catch (_) {}
+            },
+            child: textWidget(
+                aud.title ??
+                    aud.audio?.title ??
+                    aud.audio?.language ??
+                    aud.audio?.channels ??
+                    "None",
+                selected),
+          );
+        }).toList(),
+      ),
     );
   }
 
