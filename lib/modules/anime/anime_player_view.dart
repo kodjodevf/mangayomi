@@ -141,16 +141,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
       headers: _firstVid.headers));
 
-  late final ValueNotifier<SubtitleTrack?> _subtitle = ValueNotifier(
-      SubtitleTrack.uri(_firstVid.subtitles?.first.file ?? "",
-          title: _firstVid.subtitles?.first.label,
-          language: _firstVid.subtitles?.first.label));
-
-  late final ValueNotifier<AudioTrack?> _audio = ValueNotifier(AudioTrack.uri(
-      _firstVid.audios?.first.file ?? "",
-      title: _firstVid.audios?.first.label,
-      language: _firstVid.audios?.first.label));
-
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   bool _initSubtitle = true;
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
@@ -173,7 +163,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       if ((_firstVid.subtitles ?? []).isNotEmpty) {
         if (_initSubtitle) {
           try {
-            _player.setSubtitleTrack(_subtitle.value ?? SubtitleTrack.no());
+            if (_firstVid.subtitles?.isNotEmpty ?? false) {
+              _player.setSubtitleTrack(SubtitleTrack.uri(
+                  _firstVid.subtitles?.first.file ?? "",
+                  title: _firstVid.subtitles?.first.label,
+                  language: _firstVid.subtitles?.first.label));
+            }
+          } catch (_) {}
+          try {
+            if (_firstVid.audios?.isNotEmpty ?? false) {
+              _player.setSubtitleTrack(SubtitleTrack.uri(
+                  _firstVid.audios?.first.file ?? "",
+                  title: _firstVid.audios?.first.label,
+                  language: _firstVid.audios?.first.label));
+            }
           } catch (_) {}
           _initSubtitle = false;
         }
@@ -378,7 +381,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         .toList()
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
         .toList();
-    SubtitleTrack? subtitle;
 
     List<String> subs = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
@@ -394,13 +396,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         }
       }
     }
-    if (widget.isLocal) {
-      subtitle = _player.state.track.subtitle;
-    } else {
-      try {
-        subtitle = _subtitle.value;
-      } catch (_) {}
-    }
+    final subtitle = _player.state.track.subtitle;
     videoSubtitle = videoSubtitle
         .map((e) {
           VideoPrefs vid = e;
@@ -416,26 +412,48 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
     videoSubtitle.insert(
         0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+    List<VideoPrefs> videoSubtitleLast = [];
+    for (var element in videoSubtitle) {
+      final contains = videoSubtitleLast.any((sub) {
+        return (sub.title ??
+                sub.subtitle?.title ??
+                sub.subtitle?.language ??
+                sub.subtitle?.channels ??
+                "None") ==
+            (element.title ??
+                element.subtitle?.title ??
+                element.subtitle?.language ??
+                element.subtitle?.channels ??
+                "None");
+      });
+      if (!contains) {
+        videoSubtitleLast.add(element);
+      }
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
-        children: videoSubtitle.toSet().toList().map((sub) {
-          final selected = subtitle != null && sub.subtitle == subtitle;
+        children: videoSubtitleLast.toSet().toList().map((sub) {
+          final title = sub.title ??
+              sub.subtitle?.title ??
+              sub.subtitle?.language ??
+              sub.subtitle?.channels ??
+              "None";
+
+          final selected = (title ==
+                  (subtitle.title ??
+                      subtitle.language ??
+                      subtitle.channels ??
+                      "None")) ||
+              (subtitle.id == "no" && title == "None");
           return GestureDetector(
             onTap: () {
               Navigator.pop(context);
               try {
                 _player.setSubtitleTrack(sub.subtitle!);
-                if (!widget.isLocal) _subtitle.value = sub.subtitle;
               } catch (_) {}
             },
-            child: textWidget(
-                sub.title ??
-                    sub.subtitle?.title ??
-                    sub.subtitle?.language ??
-                    sub.subtitle?.channels ??
-                    "None",
-                selected),
+            child: textWidget(title, selected),
           );
         }).toList(),
       ),
@@ -447,7 +465,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         .toList()
         .map((e) => VideoPrefs(isLocal: true, audio: e))
         .toList();
-    AudioTrack? audio;
 
     List<String> audios = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
@@ -463,13 +480,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         }
       }
     }
-    if (widget.isLocal) {
-      audio = _player.state.track.audio;
-    } else {
-      try {
-        audio = _audio.value;
-      } catch (_) {}
-    }
+    final audio = _player.state.track.audio;
     videoAudio = videoAudio
         .map((e) {
           VideoPrefs vid = e;
@@ -483,29 +494,26 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         .where((element) => element.title!.isNotEmpty)
         .toList();
     videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
-    videoAudio.insert(
-        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
         children: videoAudio.toSet().toList().map((aud) {
-          final selected = audio != null && aud.audio == audio;
+          final title = aud.title ??
+              aud.audio?.title ??
+              aud.audio?.language ??
+              aud.audio?.channels ??
+              "None";
+          final selected =
+              (aud.audio == audio) || (audio.id == "no" && title == "None");
           return GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-              try {
-                _player.setAudioTrack(aud.audio!);
-                if (!widget.isLocal) _audio.value = aud.audio;
-              } catch (_) {}
-            },
-            child: textWidget(
-                aud.title ??
-                    aud.audio?.title ??
-                    aud.audio?.language ??
-                    aud.audio?.channels ??
-                    "None",
-                selected),
-          );
+              onTap: () {
+                Navigator.pop(context);
+                try {
+                  _player.setAudioTrack(aud.audio!);
+                } catch (_) {}
+              },
+              child: textWidget(title, selected));
         }).toList(),
       ),
     );
