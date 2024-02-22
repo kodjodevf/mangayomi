@@ -167,6 +167,8 @@ class Settings {
 
   late CustomColorFilter? customColorFilter;
 
+  late PlayerSubtitleSettings? playerSubtitleSettings;
+
   bool? enableCustomColorFilter;
 
   @enumerated
@@ -247,7 +249,8 @@ class Settings {
       this.fullScreenReader = true,
       this.enableCustomColorFilter = false,
       this.customColorFilter,
-      this.colorFilterBlendMode = ColorFilterBlendMode.none});
+      this.colorFilterBlendMode = ColorFilterBlendMode.none,
+      this.playerSubtitleSettings});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -376,10 +379,16 @@ class Settings {
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
-    customColorFilter = json['customColorFilter'];
+
+    customColorFilter = json['customColorFilter'] != null
+        ? CustomColorFilter.fromJson(json['customColorFilter'])
+        : null;
     enableCustomColorFilter = json['enableCustomColorFilter'];
     colorFilterBlendMode =
         ColorFilterBlendMode.values[json['colorFilterBlendMode']];
+    playerSubtitleSettings = json['playerSubtitleSettings'] != null
+        ? PlayerSubtitleSettings.fromJson(json['customColorFilter'])
+        : null;
   }
 
   Map<String, dynamic> toJson() => {
@@ -477,9 +486,12 @@ class Settings {
         'btServerAddress': btServerAddress,
         'btServerPort': btServerPort,
         'fullScreenReader': fullScreenReader,
-        'customColorFilter': customColorFilter,
+        if (customColorFilter != null)
+          'customColorFilter': customColorFilter!.toJson(),
         'enableCustomColorFilter': enableCustomColorFilter,
-        'colorFilterBlendMode': colorFilterBlendMode.index
+        'colorFilterBlendMode': colorFilterBlendMode.index,
+        if (playerSubtitleSettings != null)
+          'playerSubtitleSettings': playerSubtitleSettings!.toJson(),
       };
 }
 
@@ -712,6 +724,76 @@ class CustomColorFilter {
   }
 
   Map<String, dynamic> toJson() => {'a': a, 'r': r, 'g': g, 'b': b};
+}
+
+@embedded
+class PlayerSubtitleSettings {
+  int? size;
+  bool? useBold;
+  bool? useItalic;
+  int? textColorA;
+  int? textColorR;
+  int? textColorG;
+  int? textColorB;
+  int? borderColorA;
+  int? borderColorR;
+  int? borderColorG;
+  int? borderColorB;
+  int? backgroundColorA;
+  int? backgroundColorR;
+  int? backgroundColorG;
+  int? backgroundColorB;
+  PlayerSubtitleSettings(
+      {this.size,
+      this.useBold,
+      this.useItalic,
+      this.textColorA,
+      this.textColorR,
+      this.textColorG,
+      this.textColorB,
+      this.borderColorA,
+      this.borderColorR,
+      this.borderColorG,
+      this.borderColorB,
+      this.backgroundColorA,
+      this.backgroundColorR,
+      this.backgroundColorG,
+      this.backgroundColorB});
+  PlayerSubtitleSettings.fromJson(Map<String, dynamic> json) {
+    size = json['size'];
+    useBold = json['useBold'];
+    useItalic = json['useItalic'];
+    textColorA = json['textColorA'];
+    textColorR = json['textColorR'];
+    textColorG = json['textColorG'];
+    textColorB = json['textColorB'];
+    borderColorA = json['borderColorA'];
+    borderColorR = json['borderColorR'];
+    borderColorG = json['borderColorG'];
+    borderColorB = json['borderColorB'];
+    backgroundColorA = json['backgroundColorA'];
+    backgroundColorR = json['backgroundColorR'];
+    backgroundColorG = json['backgroundColorG'];
+    backgroundColorB = json['backgroundColorB'];
+  }
+
+  Map<String, dynamic> toJson() => {
+        'size': size,
+        'useBold': useBold,
+        'useItalic': useItalic,
+        'textColorA': textColorA,
+        'textColorR': textColorR,
+        'textColorG': textColorG,
+        'textColorB': textColorB,
+        'borderColorA': borderColorA,
+        'borderColorR': borderColorR,
+        'borderColorG': borderColorG,
+        'borderColorB': borderColorB,
+        'backgroundColorA': backgroundColorA,
+        'backgroundColorR': backgroundColorR,
+        'backgroundColorG': backgroundColorG,
+        'backgroundColorB': backgroundColorB
+      };
 }
 
 enum ColorFilterBlendMode {

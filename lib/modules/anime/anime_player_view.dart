@@ -918,7 +918,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
                 fontFamily: "",
-                shadows: [Shadow(offset: Offset(0.2, 0.0), blurRadius: 7.0)],
+                shadows: [
+                  Shadow(
+                      // bottomLeft
+                      offset: Offset(-2.5, -2.5),
+                      color: Colors.black),
+                  Shadow(
+                      // bottomRight
+                      offset: Offset(2.5, -2.5),
+                      color: Colors.black),
+                  Shadow(
+                      // topRight
+                      offset: Offset(2.5, 2.5),
+                      color: Colors.black),
+                  Shadow(
+                      // topLeft
+                      offset: Offset(-2.5, 2.5),
+                      color: Colors.black),
+                  Shadow(offset: Offset(0.2, 0.0), blurRadius: 9.0)
+                ],
                 backgroundColor: Colors.transparent),
           ),
           fit: fit,

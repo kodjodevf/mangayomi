@@ -7,7 +7,7 @@ part of 'color_filter_provider.dart';
 // **************************************************************************
 
 String _$customColorFilterStateHash() =>
-    r'b66789f6af4135d6f446d9cdc88ba58e73fde870';
+    r'5138b52d1465b1e0109b9757375e8ce4fbeb21d9';
 
 /// See also [CustomColorFilterState].
 @ProviderFor(CustomColorFilterState)
