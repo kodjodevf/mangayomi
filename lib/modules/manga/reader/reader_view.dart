@@ -1764,9 +1764,12 @@ class _MangaChapterPageGalleryState
                     '${_currentIndexLabel(currentIndex)} / ${_readerController.getPageLength(_chapterUrlModel.pageUrls)}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15.0,
-                      shadows: <Shadow>[
-                        Shadow(offset: Offset(0.0, 0.0), blurRadius: 7.0)
+                      fontSize: 20.0,
+                      shadows: [
+                        Shadow(offset: Offset(-1, -1), blurRadius: 1),
+                        Shadow(offset: Offset(1, -1), blurRadius: 1),
+                        Shadow(offset: Offset(1, 1), blurRadius: 1),
+                        Shadow(offset: Offset(-1, 1), blurRadius: 1)
                       ],
                     ),
                     textAlign: TextAlign.center,
