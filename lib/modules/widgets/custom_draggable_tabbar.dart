@@ -97,7 +97,7 @@ Future<void> customDraggableTabBar(
     await DraggableMenu.open(
         context,
         DraggableMenu(
-            curve: Curves.fastLinearToSlowEaseIn,
+            curve: Curves.linearToEaseOut,
             controller: controller,
             levels: widgetsHeight
                 .map((e) => e["height"])

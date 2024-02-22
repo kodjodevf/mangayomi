@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
-import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
@@ -1046,14 +1045,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             },
           ),
         ),
-        Positioned(
-            child: IgnorePointer(
-          child: CustomSubtitleView(
-            controller: _controller,
-            configuration:
-                SubtitleViewConfiguration(style: subtileTextStyle(ref)),
-          ),
-        ))
       ],
     );
   }
@@ -1084,29 +1075,6 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
       ),
     ],
   );
-}
-
-TextStyle subtileTextStyle(WidgetRef ref) {
-  final set = ref.watch(subtitleSettingsStateProvider);
-  final borderColor = Color.fromARGB(set.borderColorA!, set.borderColorR!,
-      set.borderColorG!, set.borderColorB!);
-  return TextStyle(
-      fontSize: set.fontSize!.toDouble(),
-      fontWeight: set.useBold! ? FontWeight.bold : null,
-      fontStyle: set.useItalic! ? FontStyle.italic : null,
-      color: Color.fromARGB(
-          set.textColorA!, set.textColorR!, set.textColorG!, set.textColorB!),
-      fontFamily: "",
-      shadows: [
-        Shadow(
-            offset: const Offset(-2, -2), color: borderColor, blurRadius: 1.5),
-        Shadow(
-            offset: const Offset(2, -2), color: borderColor, blurRadius: 1.5),
-        Shadow(offset: const Offset(2, 2), color: borderColor, blurRadius: 1.5),
-        Shadow(offset: const Offset(-2, 2), color: borderColor, blurRadius: 1.5)
-      ],
-      backgroundColor: Color.fromARGB(set.backgroundColorA!,
-          set.backgroundColorR!, set.backgroundColorG!, set.backgroundColorB!));
 }
 
 class VideoPrefs {
