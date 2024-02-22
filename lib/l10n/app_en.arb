@@ -312,5 +312,11 @@
   "custom_color_filter": "Custom color filter",
   "color_filter_blend_mode": "Color filter blend mode",
   "enable_all": "Enable all",
-  "disable_all": "Disable all"
+  "disable_all": "Disable all",
+  "font": "Font",
+  "color": "Color",
+  "font_size": "Font size",
+  "text": "Text",
+  "border": "Border",
+  "background": "Background"
 }

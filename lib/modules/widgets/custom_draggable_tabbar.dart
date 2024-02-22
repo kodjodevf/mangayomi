@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,11 +38,12 @@ Future<void> customDraggableTabBar(
     required List<Widget> children,
     required BuildContext context,
     required TickerProvider vsync,
-    bool fullWidth = false}) async {
+    bool fullWidth = false,
+    Widget? moreWidget}) async {
   final controller = DraggableMenuController();
   late TabController tabBarController;
   tabBarController = TabController(length: tabs.length, vsync: vsync);
-  final maxHeight = context.mediaHeight(0.8).toInt();
+  final maxHeight = context.mediaHeight(0.8);
 
   int index = 0;
   List<Map<String, dynamic>> widgetsHeight = [];
@@ -61,7 +64,6 @@ Future<void> customDraggableTabBar(
     }
   });
 
-  double additionnalHeight = 0.1;
   await showDialog(
     context: context,
     builder: (context) {
@@ -71,10 +73,13 @@ Future<void> customDraggableTabBar(
             for (var i = 0; i < children.length; i++) ...[
               MeasureWidgetSize(
                   onCalculateSize: (size) {
+                    final additionnalHeight =
+                        ((List.generate(10000, (index) => index * 0.0001))
+                              ..shuffle())
+                            .first;
                     double newHeight = size!.height + 52.0 + additionnalHeight;
-                    additionnalHeight += 0.1;
                     if (!(newHeight <= maxHeight)) {
-                      newHeight = maxHeight - 80;
+                      newHeight = maxHeight + additionnalHeight;
                     }
                     widgetsHeight.add({"index": i, "height": newHeight});
                     if (widgetsHeight.length == children.length) {
@@ -88,6 +93,7 @@ Future<void> customDraggableTabBar(
       );
     },
   );
+  log(widgetsHeight.toString());
   widgetsHeight
       .sort((a, b) => (a["height"] as double).compareTo(b["height"] as double));
   if (context.mounted) {
@@ -127,16 +133,46 @@ Future<void> customDraggableTabBar(
                   child: DefaultTabController(
                     length: tabs.length,
                     child: Column(children: [
-                      TabBar(
-                          unselectedLabelStyle:
-                              const TextStyle(fontWeight: FontWeight.w500),
-                          labelStyle:
-                              const TextStyle(fontWeight: FontWeight.bold),
-                          dividerColor:
-                              context.isLight ? Colors.black : Colors.grey,
-                          dividerHeight: 0.7,
-                          controller: tabBarController,
-                          tabs: tabs),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Flexible(
+                            flex: 9,
+                            child: TabBar(
+                                unselectedLabelStyle: const TextStyle(
+                                    fontWeight: FontWeight.w500),
+                                labelStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                                dividerColor: context.isLight
+                                    ? Colors.black
+                                    : Colors.grey,
+                                dividerHeight: 0.4,
+                                controller: tabBarController,
+                                tabs: tabs),
+                          ),
+                          if (moreWidget != null)
+                            Flexible(
+                              flex: 1,
+                              child: Column(
+                                children: [
+                                  moreWidget,
+                                  const SizedBox(height: 2),
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Container(
+                                            color: context.isLight
+                                                ? Colors.black
+                                                : Colors.grey,
+                                            height: 0.4),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                        ],
+                      ),
                       Flexible(
                           child: TabBarView(
                               controller: tabBarController,

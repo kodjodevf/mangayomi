@@ -310,5 +310,11 @@
     "custom_color_filter": "Özel renk filtresi",
     "color_filter_blend_mode": "Renk filtresi karışım modu",
     "enable_all": "Tümünü Etkinleştir",
-    "disable_all": "Tümünü Devre Dışı Bırak"
+    "disable_all": "Tümünü Devre Dışı Bırak",
+    "font": "Yazı Tipi",
+    "color": "Renk",
+    "font_size": "Yazı Boyutu",
+    "text": "Metin",
+    "border": "Kenarlık",
+    "background": "Arka Plan"
 }

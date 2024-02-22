@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -20,7 +21,10 @@ checkForUpdate(CheckForUpdateRef ref,
     BotToast.showText(text: l10n.searching_for_updates);
   }
   final info = await PackageInfo.fromPlatform();
-  log(info.data.toString());
+  if (kDebugMode) {
+    log(info.data.toString());
+  }
+
   final updateAvailable = await _checkUpdate();
   if (compareVersions(info.version, updateAvailable.$1) < 0) {
     if (manualUpdate) {

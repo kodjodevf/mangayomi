@@ -167,12 +167,12 @@ class Settings {
 
   late CustomColorFilter? customColorFilter;
 
-  late PlayerSubtitleSettings? playerSubtitleSettings;
-
   bool? enableCustomColorFilter;
 
   @enumerated
   late ColorFilterBlendMode colorFilterBlendMode;
+
+  late PlayerSubtitleSettings? playerSubtitleSettings;
 
   Settings(
       {this.id = 227,
@@ -728,7 +728,7 @@ class CustomColorFilter {
 
 @embedded
 class PlayerSubtitleSettings {
-  int? size;
+  int? fontSize;
   bool? useBold;
   bool? useItalic;
   int? textColorA;
@@ -744,23 +744,23 @@ class PlayerSubtitleSettings {
   int? backgroundColorG;
   int? backgroundColorB;
   PlayerSubtitleSettings(
-      {this.size,
-      this.useBold,
-      this.useItalic,
-      this.textColorA,
-      this.textColorR,
-      this.textColorG,
-      this.textColorB,
-      this.borderColorA,
-      this.borderColorR,
-      this.borderColorG,
-      this.borderColorB,
-      this.backgroundColorA,
-      this.backgroundColorR,
-      this.backgroundColorG,
-      this.backgroundColorB});
+      {this.fontSize = 45,
+      this.useBold = true,
+      this.useItalic = false,
+      this.textColorA = 255,
+      this.textColorR = 255,
+      this.textColorG = 255,
+      this.textColorB = 255,
+      this.borderColorA = 255,
+      this.borderColorR = 0,
+      this.borderColorG = 0,
+      this.borderColorB = 0,
+      this.backgroundColorA = 0,
+      this.backgroundColorR = 0,
+      this.backgroundColorG = 0,
+      this.backgroundColorB = 0});
   PlayerSubtitleSettings.fromJson(Map<String, dynamic> json) {
-    size = json['size'];
+    fontSize = json['fontSize'];
     useBold = json['useBold'];
     useItalic = json['useItalic'];
     textColorA = json['textColorA'];
@@ -778,7 +778,7 @@ class PlayerSubtitleSettings {
   }
 
   Map<String, dynamic> toJson() => {
-        'size': size,
+        'fontSize': fontSize,
         'useBold': useBold,
         'useItalic': useItalic,
         'textColorA': textColorA,

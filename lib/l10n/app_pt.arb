@@ -310,5 +310,11 @@
     "custom_color_filter": "Filtro de cor personalizado",
     "color_filter_blend_mode": "Modo de mistura do filtro de cor",
     "enable_all": "Ativar tudo",
-    "disable_all": "Desativar tudo"
+    "disable_all": "Desativar tudo",
+    "font": "Tipo de letra",
+    "color": "Cor",
+    "font_size": "Tamanho da fonte",
+    "text": "Texto",
+    "border": "Borda",
+    "background": "Fundo"
 }

@@ -8,9 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
+import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
+import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -363,16 +366,36 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   void _videoSettingDraggableMenu(BuildContext context) async {
     final l10n = l10nLocalizations(context)!;
     _player.pause();
-    await customDraggableTabBar(tabs: [
-      Tab(text: l10n.video_quality),
-      Tab(text: l10n.video_subtitle),
-      Tab(text: l10n.video_audio),
-    ], children: [
-      _videoQualityWidget(context),
-      _videoSubtitle(context),
-      _videoAudios(context)
-    ], context: context, vsync: this, fullWidth: true);
-
+    await customDraggableTabBar(
+      tabs: [
+        Tab(text: l10n.video_quality),
+        Tab(text: l10n.video_subtitle),
+        Tab(text: l10n.video_audio),
+      ],
+      children: [
+        _videoQualityWidget(context),
+        _videoSubtitle(context),
+        _videoAudios(context)
+      ],
+      context: context,
+      vsync: this,
+      fullWidth: true,
+      moreWidget: IconButton(
+          onPressed: () async {
+            await customDraggableTabBar(tabs: [
+              const Tab(text: "Font"),
+              const Tab(text: "Color"),
+            ], children: [
+              const FontSettingWidget(),
+              const ColorSettingWidget()
+            ], context: context, vsync: this, fullWidth: true);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(Icons.settings_outlined)),
+    );
+    setState(() {});
     _player.play();
   }
 
@@ -912,33 +935,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     return Stack(
       children: [
         Video(
-          subtitleViewConfiguration: const SubtitleViewConfiguration(
-            style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontFamily: "",
-                shadows: [
-                  Shadow(
-                      // bottomLeft
-                      offset: Offset(-2.5, -2.5),
-                      color: Colors.black),
-                  Shadow(
-                      // bottomRight
-                      offset: Offset(2.5, -2.5),
-                      color: Colors.black),
-                  Shadow(
-                      // topRight
-                      offset: Offset(2.5, 2.5),
-                      color: Colors.black),
-                  Shadow(
-                      // topLeft
-                      offset: Offset(-2.5, 2.5),
-                      color: Colors.black),
-                  Shadow(offset: Offset(0.2, 0.0), blurRadius: 9.0)
-                ],
-                backgroundColor: Colors.transparent),
-          ),
+          subtitleViewConfiguration: SubtitleViewConfiguration(
+              visible: false, style: subtileTextStyle(ref)),
           fit: fit,
           key: _key,
           controls: (state) => isDesktop
@@ -1046,6 +1044,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             },
           ),
         ),
+        Positioned(
+            child: IgnorePointer(
+          child: CustomSubtitleView(
+            controller: _controller,
+            configuration:
+                SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+          ),
+        ))
       ],
     );
   }
@@ -1076,6 +1082,29 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
       ),
     ],
   );
+}
+
+TextStyle subtileTextStyle(WidgetRef ref) {
+  final set = ref.watch(subtitleSettingsStateProvider);
+  final borderColor = Color.fromARGB(set.borderColorA!, set.borderColorR!,
+      set.borderColorG!, set.borderColorB!);
+  return TextStyle(
+      fontSize: set.fontSize!.toDouble(),
+      fontWeight: set.useBold! ? FontWeight.bold : null,
+      fontStyle: set.useItalic! ? FontStyle.italic : null,
+      color: Color.fromARGB(
+          set.textColorA!, set.textColorR!, set.textColorG!, set.textColorB!),
+      fontFamily: "",
+      shadows: [
+        Shadow(
+            offset: const Offset(-2, -2), color: borderColor, blurRadius: 1.5),
+        Shadow(
+            offset: const Offset(2, -2), color: borderColor, blurRadius: 1.5),
+        Shadow(offset: const Offset(2, 2), color: borderColor, blurRadius: 1.5),
+        Shadow(offset: const Offset(-2, 2), color: borderColor, blurRadius: 1.5)
+      ],
+      backgroundColor: Color.fromARGB(set.backgroundColorA!,
+          set.backgroundColorR!, set.backgroundColorG!, set.backgroundColorB!));
 }
 
 class VideoPrefs {

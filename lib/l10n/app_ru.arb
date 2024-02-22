@@ -310,5 +310,11 @@
     "custom_color_filter": "Пользовательский цветной фильтр",
     "color_filter_blend_mode": "Режим смешивания цветового фильтра",
     "enable_all": "Включить все",
-    "disable_all": "Отключить все"
+    "disable_all": "Отключить все",
+    "font": "Шрифт",
+    "color": "Цвет",
+    "font_size": "Размер шрифта",
+    "text": "Текст",
+    "border": "Граница",
+    "background": "Фон"
 }

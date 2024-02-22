@@ -312,5 +312,11 @@
     "custom_color_filter": "自定义颜色滤镜",
     "color_filter_blend_mode": "颜色滤镜混合模式",
     "enable_all": "启用全部",
-    "disable_all": "禁用全部"
+    "disable_all": "禁用全部",
+    "font": "字体",
+    "color": "颜色",
+    "font_size": "字号",
+    "text": "文本",
+    "border": "边框",
+    "background": "背景"
 }

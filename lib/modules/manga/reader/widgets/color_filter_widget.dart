@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class ColorFilterWidget extends ConsumerWidget {
   final Widget child;
@@ -27,39 +28,72 @@ class ColorFilterWidget extends ConsumerWidget {
   }
 }
 
-Widget customColorFilterListTile(bool isDesktop, String label, int value,
-    void Function((double, bool))? onChanged, BuildContext context) {
+Widget customColorFilterListTile(String label, int value,
+    void Function((double, bool, String))? onChanged, BuildContext context) {
+  final color = switch (label) {
+    "a" => Color.fromARGB(value, 255, 255, 255),
+    "r" => Color.fromARGB(255, value, 0, 0),
+    "g" => Color.fromARGB(255, 0, value, 0),
+    _ => Color.fromARGB(255, 0, 0, value),
+  };
+
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     child: Row(
       children: [
-        SizedBox(
-          width: 50,
-          child: Column(
-            children: [
-              Text(label.toUpperCase(),
-                  style: const TextStyle(
-                      fontSize: 10, fontWeight: FontWeight.bold)),
-              Text("$value"),
-            ],
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: SizedBox(
+            width: 65,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(label.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold)),
+                Container(
+                  height: 25,
+                  width: 25,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: color,
+                      border: Border.all(
+                          width: 2, color: context.dynamicWhiteBlackColor)),
+                )
+              ],
+            ),
           ),
         ),
         Expanded(
           child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
-                  trackHeight: isDesktop ? null : 3,
+                  trackHeight: context.isDesktop ? null : 3,
                   overlayShape:
                       const RoundSliderOverlayShape(overlayRadius: 5.0)),
               child: Slider(
                 min: 0.0,
                 max: 255,
                 divisions: max(244, 1),
-                onChangeEnd: (value) => onChanged!.call((value, false)),
+                onChangeEnd: (value) => onChanged!.call((value, false, label)),
                 value: value.toDouble(),
-                onChanged: (value) => onChanged!.call((value, true)),
+                onChanged: (value) => onChanged!.call((value, true, label)),
               )),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(2),
+          child: Text("$value"),
         ),
       ],
     ),
   );
+}
+
+Widget rgbaFilterWidget(int a, int r, int g, int b,
+    void Function((double, bool, String))? onChanged, BuildContext context) {
+  return Column(children: [
+    customColorFilterListTile("r", r, onChanged, context),
+    customColorFilterListTile("g", g, onChanged, context),
+    customColorFilterListTile("b", b, onChanged, context),
+    customColorFilterListTile("a", a, onChanged, context),
+  ]);
 }

@@ -13362,9 +13362,9 @@ const PlayerSubtitleSettingsSchema = Schema(
       name: r'borderColorR',
       type: IsarType.long,
     ),
-    r'size': PropertySchema(
+    r'fontSize': PropertySchema(
       id: 8,
-      name: r'size',
+      name: r'fontSize',
       type: IsarType.long,
     ),
     r'textColorA': PropertySchema(
@@ -13427,7 +13427,7 @@ void _playerSubtitleSettingsSerialize(
   writer.writeLong(offsets[5], object.borderColorB);
   writer.writeLong(offsets[6], object.borderColorG);
   writer.writeLong(offsets[7], object.borderColorR);
-  writer.writeLong(offsets[8], object.size);
+  writer.writeLong(offsets[8], object.fontSize);
   writer.writeLong(offsets[9], object.textColorA);
   writer.writeLong(offsets[10], object.textColorB);
   writer.writeLong(offsets[11], object.textColorG);
@@ -13451,7 +13451,7 @@ PlayerSubtitleSettings _playerSubtitleSettingsDeserialize(
     borderColorB: reader.readLongOrNull(offsets[5]),
     borderColorG: reader.readLongOrNull(offsets[6]),
     borderColorR: reader.readLongOrNull(offsets[7]),
-    size: reader.readLongOrNull(offsets[8]),
+    fontSize: reader.readLongOrNull(offsets[8]),
     textColorA: reader.readLongOrNull(offsets[9]),
     textColorB: reader.readLongOrNull(offsets[10]),
     textColorG: reader.readLongOrNull(offsets[11]),
@@ -14099,63 +14099,63 @@ extension PlayerSubtitleSettingsQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeIsNull() {
+      QAfterFilterCondition> fontSizeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'size',
+        property: r'fontSize',
       ));
     });
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeIsNotNull() {
+      QAfterFilterCondition> fontSizeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'size',
+        property: r'fontSize',
       ));
     });
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeEqualTo(int? value) {
+      QAfterFilterCondition> fontSizeEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'size',
+        property: r'fontSize',
         value: value,
       ));
     });
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeGreaterThan(
+      QAfterFilterCondition> fontSizeGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'size',
+        property: r'fontSize',
         value: value,
       ));
     });
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeLessThan(
+      QAfterFilterCondition> fontSizeLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'size',
+        property: r'fontSize',
         value: value,
       ));
     });
   }
 
   QueryBuilder<PlayerSubtitleSettings, PlayerSubtitleSettings,
-      QAfterFilterCondition> sizeBetween(
+      QAfterFilterCondition> fontSizeBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -14163,7 +14163,7 @@ extension PlayerSubtitleSettingsQueryFilter on QueryBuilder<
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'size',
+        property: r'fontSize',
         lower: lower,
         includeLower: includeLower,
         upper: upper,

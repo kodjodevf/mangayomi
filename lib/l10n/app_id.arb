@@ -310,5 +310,11 @@
     "custom_color_filter": "Filter warna kustom",
     "color_filter_blend_mode": "Mode pencampuran filter warna",
     "enable_all": "Aktifkan semua",
-    "disable_all": "Nonaktifkan semua"
+    "disable_all": "Nonaktifkan semua",
+    "font": "Jenis Huruf",
+    "color": "Warna",
+    "font_size": "Ukuran Huruf",
+    "text": "Teks",
+    "border": "Batas",
+    "background": "Latar Belakang"
 }

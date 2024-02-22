@@ -310,5 +310,11 @@
     "custom_color_filter": "Benutzerdefinierter Farbfilter",
     "color_filter_blend_mode": "Farbfilter-Mischmodus",
     "enable_all": "Alle aktivieren",
-    "disable_all": "Alle deaktivieren"
+    "disable_all": "Alle deaktivieren",
+    "font": "Schriftart",
+    "color": "Farbe",
+    "font_size": "Schriftgröße",
+    "text": "Text",
+    "border": "Rand",
+    "background": "Hintergrund"
 }

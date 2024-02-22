@@ -311,5 +311,11 @@
   "custom_color_filter": "Filtre de couleur personnalisé",
   "color_filter_blend_mode": "Mode de fusion du filtre de couleur",
   "enable_all": "Activer tout",
-  "disable_all": "Désactiver tout"
+  "disable_all": "Désactiver tout",
+  "font": "Police",
+  "color": "Couleur",
+  "font_size": "Taille de police",
+  "text": "Texte",
+  "border": "Bordure",
+  "background": "Arrière-plan"
 }

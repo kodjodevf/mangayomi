@@ -310,5 +310,11 @@
     "custom_color_filter": "مرشح اللون المخصص",
     "color_filter_blend_mode": "وضع امتزاج مرشح اللون",
     "enable_all": "تمكين الكل",
-    "disable_all": "تعطيل الكل"
+    "disable_all": "تعطيل الكل",
+    "font": "الخط",
+    "color": "اللون",
+    "font_size": "حجم الخط",
+    "text": "النص",
+    "border": "الحدود",
+    "background": "الخلفية"
 }

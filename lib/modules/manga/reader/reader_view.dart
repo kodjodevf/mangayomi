@@ -2202,25 +2202,24 @@ class _MangaChapterPageGalleryState
                         .set(val);
                   },
                   children: [
-                    customColorFilterListTile(isDesktop, "r", r, (val) {
-                      ref
-                          .read(customColorFilterStateProvider.notifier)
-                          .set(a, val.$1.toInt(), g, b, val.$2);
-                    }, context),
-                    customColorFilterListTile(isDesktop, "g", g, (val) {
-                      ref
-                          .read(customColorFilterStateProvider.notifier)
-                          .set(a, r, val.$1.toInt(), b, val.$2);
-                    }, context),
-                    customColorFilterListTile(isDesktop, "b", b, (val) {
-                      ref
-                          .read(customColorFilterStateProvider.notifier)
-                          .set(a, r, g, val.$1.toInt(), val.$2);
-                    }, context),
-                    customColorFilterListTile(isDesktop, "a", a, (val) {
-                      ref
-                          .read(customColorFilterStateProvider.notifier)
-                          .set(val.$1.toInt(), r, g, b, val.$2);
+                    rgbaFilterWidget(a, r, g, b, (val) {
+                      if (val.$3 == "r") {
+                        ref
+                            .read(customColorFilterStateProvider.notifier)
+                            .set(a, val.$1.toInt(), g, b, val.$2);
+                      } else if (val.$3 == "g") {
+                        ref
+                            .read(customColorFilterStateProvider.notifier)
+                            .set(a, r, val.$1.toInt(), b, val.$2);
+                      } else if (val.$3 == "b") {
+                        ref
+                            .read(customColorFilterStateProvider.notifier)
+                            .set(a, r, g, val.$1.toInt(), val.$2);
+                      } else {
+                        ref
+                            .read(customColorFilterStateProvider.notifier)
+                            .set(val.$1.toInt(), r, g, b, val.$2);
+                      }
                     }, context),
                     CustomPopupMenuButton<ColorFilterBlendMode>(
                       label: l10n.color_filter_blend_mode,
