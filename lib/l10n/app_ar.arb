@@ -316,5 +316,6 @@
     "font_size": "حجم الخط",
     "text": "النص",
     "border": "الحدود",
-    "background": "الخلفية"
+    "background": "الخلفية",
+    "no_subtite_warning_message": "لا تؤثر لأنه لا توجد مسارات ترجمة في هذا الفيديو"
 }

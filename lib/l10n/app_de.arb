@@ -316,5 +316,6 @@
     "font_size": "Schriftgröße",
     "text": "Text",
     "border": "Rand",
-    "background": "Hintergrund"
+    "background": "Hintergrund",
+    "no_subtite_warning_message": "Hat keine Wirkung, da in diesem Video keine Untertitelspuren vorhanden sind"
 }

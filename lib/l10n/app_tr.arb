@@ -316,5 +316,6 @@
     "font_size": "Yazı Boyutu",
     "text": "Metin",
     "border": "Kenarlık",
-    "background": "Arka Plan"
+    "background": "Arka Plan",
+    "no_subtite_warning_message": "Bu videoda altyazı parçaları olmadığı için etkisi yok"
 }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,7 +91,6 @@ Future<void> customDraggableTabBar(
       );
     },
   );
-  log(widgetsHeight.toString());
   widgetsHeight
       .sort((a, b) => (a["height"] as double).compareTo(b["height"] as double));
   if (context.mounted) {

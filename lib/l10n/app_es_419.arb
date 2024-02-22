@@ -316,5 +316,6 @@
     "font_size": "Tamaño de fuente",
     "text": "Texto",
     "border": "Borde",
-    "background": "Fondo"
+    "background": "Fondo",
+    "no_subtite_warning_message": "No tiene efecto porque no hay pistas de subtítulos en este video"
 }

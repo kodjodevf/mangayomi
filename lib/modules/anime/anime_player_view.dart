@@ -365,6 +365,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   void _videoSettingDraggableMenu(BuildContext context) async {
     final l10n = l10nLocalizations(context)!;
+    bool hasSubtitleTrack = false;
     _player.pause();
     await customDraggableTabBar(
       tabs: [
@@ -374,7 +375,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       ],
       children: [
         _videoQualityWidget(context),
-        _videoSubtitle(context),
+        _videoSubtitle(context, (value) => hasSubtitleTrack = value),
         _videoAudios(context)
       ],
       context: context,
@@ -386,8 +387,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               const Tab(text: "Font"),
               const Tab(text: "Color"),
             ], children: [
-              const FontSettingWidget(),
-              const ColorSettingWidget()
+              FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+              ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
             ], context: context, vsync: this, fullWidth: true);
             if (context.mounted) {
               Navigator.pop(context);
@@ -399,7 +400,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _player.play();
   }
 
-  Widget _videoSubtitle(BuildContext context) {
+  Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
         .toList()
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
@@ -433,6 +434,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         .where((element) => element.title!.isNotEmpty)
         .toList();
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
+    hasSubtitleTrack.call(videoSubtitle.isNotEmpty);
     videoSubtitle.insert(
         0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
     List<VideoPrefs> videoSubtitleLast = [];

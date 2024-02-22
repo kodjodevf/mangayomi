@@ -119,11 +119,11 @@ TextStyle subtileTextStyle(WidgetRef ref) {
       fontFamily: "",
       shadows: [
         Shadow(
-            offset: const Offset(-3, -3), color: borderColor),
+            offset: const Offset(-1.5, -1.5), color: borderColor, blurRadius: 1.4),
         Shadow(
-            offset: const Offset(3, -3), color: borderColor),
-        Shadow(offset: const Offset(3, 3), color: borderColor),
-        Shadow(offset: const Offset(-3, 3), color: borderColor)
+            offset: const Offset(1.5, -1.5), color: borderColor, blurRadius: 1.4),
+        Shadow(offset: const Offset(1.5, 1.5), color: borderColor, blurRadius: 1.4),
+        Shadow(offset: const Offset(-1.5, 1.5), color: borderColor, blurRadius: 1.4)
       ],
       backgroundColor: Color.fromARGB(
           subSets.backgroundColorA!,

@@ -317,5 +317,6 @@
   "font_size": "Taille de police",
   "text": "Texte",
   "border": "Bordure",
-  "background": "Arrière-plan"
+  "background": "Arrière-plan",
+  "no_subtite_warning_message": "N'a aucun effet car il n'y a pas de pistes de sous-titres dans cette vidéo"
 }

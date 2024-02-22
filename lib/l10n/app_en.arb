@@ -318,5 +318,6 @@
   "font_size": "Font size",
   "text": "Text",
   "border": "Border",
-  "background": "Background"
+  "background": "Background",
+  "no_subtite_warning_message": "Has no effect because there aren't any subtitle tracks in this video"
 }

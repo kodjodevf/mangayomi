@@ -316,5 +316,6 @@
     "font_size": "Tamanho da fonte",
     "text": "Texto",
     "border": "Borda",
-    "background": "Fundo"
+    "background": "Fundo",
+    "no_subtite_warning_message": "Não tem efeito porque não há faixas de legenda neste vídeo"
 }

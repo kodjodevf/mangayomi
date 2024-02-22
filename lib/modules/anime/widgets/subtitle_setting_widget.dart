@@ -8,7 +8,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class FontSettingWidget extends ConsumerStatefulWidget {
-  const FontSettingWidget({super.key});
+  final bool hasSubtitleTrack;
+  const FontSettingWidget({super.key, required this.hasSubtitleTrack});
 
   @override
   ConsumerState<FontSettingWidget> createState() => _FontSettingWidgetState();
@@ -22,6 +23,22 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          if (!widget.hasSubtitleTrack)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(2),
+                    child: Icon(Icons.info_outline_rounded, size: 14),
+                  ),
+                  Flexible(
+                    child: Text(context.l10n.no_subtite_warning_message),
+                  )
+                ],
+              ),
+            ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -117,7 +134,8 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
 }
 
 class ColorSettingWidget extends ConsumerStatefulWidget {
-  const ColorSettingWidget({super.key});
+  final bool hasSubtitleTrack;
+  const ColorSettingWidget({super.key, required this.hasSubtitleTrack});
 
   @override
   ConsumerState<ColorSettingWidget> createState() => _ColorSettingWidgetState();
@@ -182,6 +200,22 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          if (!widget.hasSubtitleTrack)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(2),
+                    child: Icon(Icons.info_outline_rounded, size: 14),
+                  ),
+                  Flexible(
+                    child: Text(context.l10n.no_subtite_warning_message),
+                  )
+                ],
+              ),
+            ),
           Row(
             children: [
               Expanded(flex: 3, child: button(context.l10n.text, textColor)),
