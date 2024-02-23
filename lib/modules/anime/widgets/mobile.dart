@@ -308,6 +308,14 @@ class _MobileControllerWidgetState
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
+                Consumer(
+                  builder: (context, ref, _) => Positioned(
+                      child: CustomSubtitleView(
+                    controller: widget.videoController,
+                    configuration:
+                        SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+                  )),
+                ),
                 Positioned.fill(
                   child: Container(
                     color: backdropColor,
@@ -644,16 +652,6 @@ class _MobileControllerWidgetState
                 ],
               ),
             ),
-          Consumer(
-            builder: (context, ref, _) => Positioned(
-                child: IgnorePointer(
-              child: CustomSubtitleView(
-                controller: widget.videoController,
-                configuration:
-                    SubtitleViewConfiguration(style: subtileTextStyle(ref)),
-              ),
-            )),
-          )
         ],
       ),
     );

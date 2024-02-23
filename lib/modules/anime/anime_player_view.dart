@@ -918,6 +918,53 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 Row(children: [
                   btnToShowChapterListDialog(
                       context, context.l10n.episodes, widget.episode),
+                  // IconButton(
+                  //     onPressed: () {
+                  //       showDialog(
+                  //           context: context,
+                  //           builder: (context) {
+                  //             return AlertDialog(
+                  //               scrollable: true,
+                  //               title: Text("Player Settings"),
+                  //               content: SizedBox(
+                  //                 width: context.mediaWidth(0.8),
+                  //                 child: Column(
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     SwitchListTile(
+                  //                         value: false,
+                  //                         title: Text(
+                  //                           "Enable Volume and Brightness Gestures",
+                  //                           style: TextStyle(
+                  //                               color: Theme.of(context)
+                  //                                   .textTheme
+                  //                                   .bodyLarge!
+                  //                                   .color!
+                  //                                   .withOpacity(0.9),
+                  //                               fontSize: 14),
+                  //                         ),
+                  //                         onChanged: (value) {}),
+                  //                     SwitchListTile(
+                  //                         value: false,
+                  //                         title: Text(
+                  //                           "Enable Horizonal Seek Gestures",
+                  //                           style: TextStyle(
+                  //                               color: Theme.of(context)
+                  //                                   .textTheme
+                  //                                   .bodyLarge!
+                  //                                   .color!
+                  //                                   .withOpacity(0.9),
+                  //                               fontSize: 14),
+                  //                         ),
+                  //                         onChanged: (value) {}),
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           });
+                  //     },
+                  //     icon: Icon(Icons.adaptive.more))
                 ])
               ],
             ),

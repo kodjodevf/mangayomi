@@ -243,6 +243,14 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
               onExit: (_) => onExit(),
               child: Stack(
                 children: [
+                  Consumer(
+                    builder: (context, ref, _) => Positioned(
+                        child: CustomSubtitleView(
+                      controller: widget.videoController,
+                      configuration: SubtitleViewConfiguration(
+                          style: subtileTextStyle(ref)),
+                    )),
+                  ),
                   AnimatedOpacity(
                     curve: Curves.easeInOut,
                     opacity: visible ? 1.0 : 0.0,
@@ -419,16 +427,6 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                       ),
                     ),
                   ),
-                  Consumer(
-                    builder: (context, ref, _) => Positioned(
-                        child: IgnorePointer(
-                      child: CustomSubtitleView(
-                        controller: widget.videoController,
-                        configuration: SubtitleViewConfiguration(
-                            style: subtileTextStyle(ref)),
-                      ),
-                    )),
-                  )
                 ],
               ),
             ),
