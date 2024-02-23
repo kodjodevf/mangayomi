@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
-import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -25,6 +24,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
+import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
@@ -536,25 +536,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             child: _bodyContainer(
                                 chapterLength: chapters.length))),
                   Expanded(
-                    child: DraggableScrollbar(
-                        padding: const EdgeInsets.only(right: 7),
-                        heightScrollThumb: 48.0,
-                        backgroundColor: context.primaryColor,
-                        scrollThumbBuilder: (backgroundColor, thumbAnimation,
-                            labelAnimation, height,
-                            {labelConstraints, labelText}) {
-                          return FadeTransition(
-                            opacity: thumbAnimation,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: backgroundColor,
-                                  borderRadius: BorderRadius.circular(20)),
-                              height: height,
-                              width: 8.0,
-                            ),
-                          );
-                        },
-                        scrollbarTimeToFade: const Duration(seconds: 2),
+                    child: DraggableScrollbarWidget(
                         controller: _scrollController,
                         child: ListView.builder(
                             controller: _scrollController,

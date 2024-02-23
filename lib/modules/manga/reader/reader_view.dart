@@ -15,6 +15,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
@@ -1346,6 +1347,8 @@ class _MangaChapterPageGalleryState
               ),
             ),
             actions: [
+              btnToShowChapterListDialog(
+                  context, context.l10n.chapters, widget.chapter),
               IconButton(
                   onPressed: () {
                     _readerController.setChapterBookmarked();
