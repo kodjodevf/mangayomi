@@ -8,7 +8,8 @@ import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-Widget btnToShowChapterListDialog(BuildContext context, String title, Chapter chapter) {
+Widget btnToShowChapterListDialog(
+    BuildContext context, String title, Chapter chapter) {
   return IconButton(
       onPressed: () {
         showDialog(
@@ -59,6 +60,7 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
     return DraggableScrollbarWidget(
         controller: controller,
         child: ListView.builder(
+            shrinkWrap: true,
             padding: const EdgeInsets.symmetric(vertical: 2),
             controller: controller,
             itemCount: chapterList.length,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -23,6 +25,15 @@ class AppearanceScreen extends ConsumerWidget {
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     final isDarkTheme = ref.watch(themeModeStateProvider);
     final l10nLocale = ref.watch(l10nLocaleStateProvider);
+    final appFontFamily = ref.watch(appFontFamilyProvider);
+    final appFontFamilySub = appFontFamily == null
+        ? context.l10n.default0
+        : GoogleFonts.asMap()
+            .entries
+            .toList()
+            .firstWhere(
+                (element) => element.value().fontFamily! == appFontFamily)
+            .key;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n!.appearance),
@@ -134,6 +145,128 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.app_language),
                     subtitle: Text(
                       completeLanguageName(l10nLocale.toLanguageTag()),
+                      style: TextStyle(
+                          fontSize: 11, color: context.secondaryColor),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      String textValue = "";
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(context.l10n.font),
+                              content:
+                                  StatefulBuilder(builder: (context, setState) {
+                                return SizedBox(
+                                    width: context.mediaWidth(0.8),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextField(
+                                              onChanged: (v) {
+                                                setState(() {
+                                                  textValue = v;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                  isDense: true,
+                                                  filled: false,
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: context
+                                                            .secondaryColor),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: context
+                                                            .primaryColor),
+                                                  ),
+                                                  border:
+                                                      const OutlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide()),
+                                                  hintText: l10n.search)),
+                                        ),
+                                        Builder(builder: (context) {
+                                          List values = GoogleFonts.asMap()
+                                              .entries
+                                              .toList();
+                                          values = values
+                                              .where((values) => values.key
+                                                  .toLowerCase()
+                                                  .contains(
+                                                      textValue.toLowerCase()))
+                                              .toList();
+                                          return Flexible(
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: values.length,
+                                              itemBuilder: (context, index) {
+                                                final value = values[index];
+                                                return RadioListTile(
+                                                  dense: true,
+                                                  contentPadding:
+                                                      const EdgeInsets.all(0),
+                                                  value:
+                                                      value.value().fontFamily,
+                                                  groupValue: appFontFamily,
+                                                  onChanged: (value) {
+                                                    ref
+                                                        .read(
+                                                            appFontFamilyProvider
+                                                                .notifier)
+                                                        .set(value);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  title: Text(value.key),
+                                                );
+                                              },
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ));
+                              }),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () async {
+                                          ref
+                                              .read(appFontFamilyProvider
+                                                  .notifier)
+                                              .set(null);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          l10n.default0,
+                                          style: TextStyle(
+                                              color: context.primaryColor),
+                                        )),
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          l10n.cancel,
+                                          style: TextStyle(
+                                              color: context.primaryColor),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            );
+                          });
+                    },
+                    title: Text(context.l10n.font),
+                    subtitle: Text(
+                      appFontFamilySub,
                       style: TextStyle(
                           fontSize: 11, color: context.secondaryColor),
                     ),

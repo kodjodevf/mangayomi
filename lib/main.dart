@@ -5,10 +5,10 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
@@ -93,6 +93,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     // Define light and dark theme data.
     final isDarkTheme = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
+    final appFontFamily = ref.watch(appFontFamilyProvider);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     final locale = ref.watch(l10nLocaleStateProvider);
     ThemeData themeLight = FlexThemeData.light(
@@ -111,7 +112,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       useMaterial3ErrorColors: true,
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
-      fontFamily: GoogleFonts.aBeeZee().fontFamily,
+      fontFamily: appFontFamily,
     );
     ThemeData themeDark = FlexThemeData.dark(
       colors: ref.watch(flexSchemeColorStateProvider),
@@ -130,7 +131,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       useMaterial3ErrorColors: true,
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
       useMaterial3: true,
-      fontFamily: GoogleFonts.aBeeZee().fontFamily,
+      fontFamily: appFontFamily,
     );
     final router = ref.watch(routerProvider);
     // Return the main MaterialApp with router, themes, and localization settings.

@@ -303,13 +303,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Widget textWidget(String text, bool selected) => Row(
         children: [
           Flexible(
-              child: Text(text,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 16,
-                      fontStyle: selected ? FontStyle.italic : null,
-                      color: selected ? context.primaryColor : null),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis)),
+              child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).padding.top),
+            child: Text(text,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: 16,
+                    fontStyle: selected ? FontStyle.italic : null,
+                    color: selected ? context.primaryColor : null),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
+          )),
         ],
       );
 

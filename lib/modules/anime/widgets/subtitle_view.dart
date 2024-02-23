@@ -116,7 +116,6 @@ TextStyle subtileTextStyle(WidgetRef ref) {
       fontStyle: subSets.useItalic! ? FontStyle.italic : null,
       color: Color.fromARGB(subSets.textColorA!, subSets.textColorR!,
           subSets.textColorG!, subSets.textColorB!),
-      fontFamily: "",
       shadows: [
         Shadow(
             offset: const Offset(-1.5, -1.5), color: borderColor, blurRadius: 1.4),

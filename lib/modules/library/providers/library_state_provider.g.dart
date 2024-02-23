@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'6a18446eb49bc55d64fabfb0aa35ff1f2dd52d88';
+    r'9756e17b70fcb76aa6bac2a50e0927c2ad28717f';
 
 /// Copied from Dart SDK
 class _SystemHash {
