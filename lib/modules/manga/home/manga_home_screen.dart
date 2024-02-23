@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
@@ -255,7 +257,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     ),
                   ];
                 },
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 0) {
                     final baseUrl =
                         ref.watch(sourceBaseUrlProvider(source: widget.source));
@@ -264,7 +266,22 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       'sourceId': widget.source.id.toString(),
                       'title': ''
                     };
-                    context.push("/mangawebview", extra: data);
+                    if (Platform.isLinux) {
+                      final url = Uri.parse(baseUrl);
+                      if (!await launchUrl(
+                        url,
+                        mode: LaunchMode.inAppBrowserView,
+                      )) {
+                        if (!await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        )) {
+                          throw 'Could not launch $url';
+                        }
+                      }
+                    } else {
+                      context.push("/mangawebview", extra: data);
+                    }
                   } else {
                     context.push('/extension_detail', extra: widget.source);
                   }
@@ -570,7 +587,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     Column(
                       children: [
                         IconButton(
-                          onPressed: () {
+                          onPressed: () async {
                             final baseUrl = ref.watch(
                                 sourceBaseUrlProvider(source: widget.source));
                             Map<String, dynamic> data = {
@@ -580,7 +597,22 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               "hasCloudFlare":
                                   widget.source.hasCloudflare ?? false
                             };
-                            context.push("/mangawebview", extra: data);
+                            if (Platform.isLinux) {
+                              final url = Uri.parse(baseUrl);
+                              if (!await launchUrl(
+                                url,
+                                mode: LaunchMode.inAppBrowserView,
+                              )) {
+                                if (!await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                                  throw 'Could not launch $url';
+                                }
+                              }
+                            } else {
+                              context.push("/mangawebview", extra: data);
+                            }
                           },
                           icon: Icon(
                             Icons.public,

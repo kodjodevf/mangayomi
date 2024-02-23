@@ -46,6 +46,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/constant.dart';
 
@@ -1484,7 +1485,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0),
-                onPressed: () {
+                onPressed: () async {
                   final manga = widget.manga!;
 
                   final source =
@@ -1500,7 +1501,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     'sourceId': source.id.toString(),
                     'title': manga.name!
                   };
-                  context.push("/mangawebview", extra: data);
+                  if (Platform.isLinux) {
+                    final urll = Uri.parse(url);
+                    if (!await launchUrl(
+                      urll,
+                      mode: LaunchMode.inAppBrowserView,
+                    )) {
+                      if (!await launchUrl(
+                        urll,
+                        mode: LaunchMode.externalApplication,
+                      )) {
+                        throw 'Could not launch $url';
+                      }
+                    }
+                  } else {
+                    context.push("/mangawebview", extra: data);
+                  }
                 },
                 child: Column(
                   children: [
