@@ -286,93 +286,96 @@ class _MangaChapterPageGalleryState
           maxWidth: context.mediaWidth(1),
         ),
         builder: (context) {
-          return SizedBox(
-            height: 120,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20)),
-                  color: context.themeData.scaffoldBackgroundColor),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 7,
-                      width: 35,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: context.secondaryColor.withOpacity(0.4)),
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20)),
+                    color: context.themeData.scaffoldBackgroundColor),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 7,
+                        width: 35,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: context.secondaryColor.withOpacity(0.4)),
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      button(context.l10n.set_as_cover, Icons.image_outlined,
-                          () async {
-                        final res = await showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                content:
-                                    Text(context.l10n.use_this_as_cover_art),
-                                actions: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(context.l10n.cancel)),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      TextButton(
-                                          onPressed: () {
-                                            final manga =
-                                                widget.chapter.manga.value!;
-                                            isar.writeTxnSync(() {
-                                              isar.mangas.putSync(manga
-                                                ..customCoverImage =
-                                                    imageBytes);
-                                            });
-                                            if (mounted) {
-                                              Navigator.pop(context, "ok");
-                                            }
-                                          },
-                                          child: Text(context.l10n.ok)),
-                                    ],
-                                  )
-                                ],
-                              );
-                            });
-                        if (res != null && res == "ok" && context.mounted) {
-                          Navigator.pop(context);
-                          botToast(context.l10n.cover_updated, second: 3);
-                        }
-                      }),
-                      button(context.l10n.share, Icons.share_outlined,
-                          () async {
-                        await Share.shareXFiles([
-                          XFile.fromData(imageBytes,
-                              name: name, mimeType: 'image/png')
-                        ]);
-                      }),
-                      button(context.l10n.save, Icons.save_outlined, () async {
-                        final dir =
-                            await StorageProvider().getGalleryDirectory();
-                        final file = File("${dir!.path}/$name.png");
-                        file.writeAsBytesSync(imageBytes);
-                        if (context.mounted) {
-                          botToast(context.l10n.picture_saved, second: 3);
-                        }
-                      }),
-                    ],
-                  ),
-                ],
+                    Row(
+                      children: [
+                        button(context.l10n.set_as_cover, Icons.image_outlined,
+                            () async {
+                          final res = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  content:
+                                      Text(context.l10n.use_this_as_cover_art),
+                                  actions: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(context.l10n.cancel)),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        TextButton(
+                                            onPressed: () {
+                                              final manga =
+                                                  widget.chapter.manga.value!;
+                                              isar.writeTxnSync(() {
+                                                isar.mangas.putSync(manga
+                                                  ..customCoverImage =
+                                                      imageBytes);
+                                              });
+                                              if (mounted) {
+                                                Navigator.pop(context, "ok");
+                                              }
+                                            },
+                                            child: Text(context.l10n.ok)),
+                                      ],
+                                    )
+                                  ],
+                                );
+                              });
+                          if (res != null && res == "ok" && context.mounted) {
+                            Navigator.pop(context);
+                            botToast(context.l10n.cover_updated, second: 3);
+                          }
+                        }),
+                        button(context.l10n.share, Icons.share_outlined,
+                            () async {
+                          await Share.shareXFiles([
+                            XFile.fromData(imageBytes,
+                                name: name, mimeType: 'image/png')
+                          ]);
+                        }),
+                        button(context.l10n.save, Icons.save_outlined,
+                            () async {
+                          final dir =
+                              await StorageProvider().getGalleryDirectory();
+                          final file = File("${dir!.path}/$name.png");
+                          file.writeAsBytesSync(imageBytes);
+                          if (context.mounted) {
+                            botToast(context.l10n.picture_saved, second: 3);
+                          }
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           );
         },
       );
@@ -1371,8 +1374,7 @@ class _MangaChapterPageGalleryState
                       Map<String, dynamic> data = {
                         'url': url,
                         'sourceId': source.id.toString(),
-                        'title': chapter.name!,
-                        "hasCloudFlare": source.hasCloudflare ?? false
+                        'title': chapter.name!
                       };
                       if (Platform.isLinux) {
                         final urll = Uri.parse(url);

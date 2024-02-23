@@ -5,6 +5,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
@@ -55,7 +56,7 @@ void main(List<String> args) async {
   // Initialize the Isar database.
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
-
+  GoogleFonts.aBeeZee();
   // Start the app.
   runApp(const ProviderScope(child: MyApp()));
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -152,6 +153,7 @@ class AppearanceScreen extends ConsumerWidget {
                   ListTile(
                     onTap: () {
                       String textValue = "";
+                      final controller = ScrollController();
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -203,29 +205,34 @@ class AppearanceScreen extends ConsumerWidget {
                                                       textValue.toLowerCase()))
                                               .toList();
                                           return Flexible(
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: values.length,
-                                              itemBuilder: (context, index) {
-                                                final value = values[index];
-                                                return RadioListTile(
-                                                  dense: true,
-                                                  contentPadding:
-                                                      const EdgeInsets.all(0),
-                                                  value:
-                                                      value.value().fontFamily,
-                                                  groupValue: appFontFamily,
-                                                  onChanged: (value) {
-                                                    ref
-                                                        .read(
-                                                            appFontFamilyProvider
-                                                                .notifier)
-                                                        .set(value);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  title: Text(value.key),
-                                                );
-                                              },
+                                            child: DraggableScrollbarWidget(
+                                              controller: controller,
+                                              child: ListView.builder(
+                                                controller: controller,
+                                                shrinkWrap: true,
+                                                itemCount: values.length,
+                                                itemBuilder: (context, index) {
+                                                  final value = values[index];
+                                                  return RadioListTile(
+                                                    dense: true,
+                                                    contentPadding:
+                                                        const EdgeInsets.all(0),
+                                                    value: value
+                                                        .value()
+                                                        .fontFamily,
+                                                    groupValue: appFontFamily,
+                                                    onChanged: (value) {
+                                                      ref
+                                                          .read(
+                                                              appFontFamilyProvider
+                                                                  .notifier)
+                                                          .set(value);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    title: Text(value.key),
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           );
                                         }),
