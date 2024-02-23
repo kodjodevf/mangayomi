@@ -26,5 +26,3 @@ flutter:
     platforms:
       macos:
         pluginClass: DesktopWebviewWindowPlugin
-      linux:
-        pluginClass: DesktopWebviewWindowPlugin
