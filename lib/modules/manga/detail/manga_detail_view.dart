@@ -1498,8 +1498,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   Map<String, dynamic> data = {
                     'url': url,
                     'sourceId': source.id.toString(),
-                    'title': manga.name!,
-                    "hasCloudFlare": source.hasCloudflare ?? false,
+                    'title': manga.name!
                   };
                   context.push("/mangawebview", extra: data);
                 },

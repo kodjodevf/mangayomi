@@ -32,7 +32,7 @@ class BottomTextWidget extends StatelessWidget {
                     style: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.w600,
-                      color: textColor ?? context.primaryColor,
+                      color: textColor ?? context.textColor,
                     ),
                     maxLines: isTorrent! ? 8 : maxLines,
                     overflow: TextOverflow.ellipsis,

@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'8a7669eb2d0961135bc1a9469d8fbcc7dda0ca3c';
+    r'6a18446eb49bc55d64fabfb0aa35ff1f2dd52d88';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,11 +31,11 @@ class _SystemHash {
 }
 
 abstract class _$LibraryDisplayTypeState
-    extends BuildlessAutoDisposeNotifier<String> {
+    extends BuildlessAutoDisposeNotifier<DisplayType> {
   late final bool isManga;
   late final Settings settings;
 
-  String build({
+  DisplayType build({
     required bool isManga,
     required Settings settings,
   });
@@ -46,7 +46,7 @@ abstract class _$LibraryDisplayTypeState
 const libraryDisplayTypeStateProvider = LibraryDisplayTypeStateFamily();
 
 /// See also [LibraryDisplayTypeState].
-class LibraryDisplayTypeStateFamily extends Family<String> {
+class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
   /// See also [LibraryDisplayTypeState].
   const LibraryDisplayTypeStateFamily();
 
@@ -87,8 +87,8 @@ class LibraryDisplayTypeStateFamily extends Family<String> {
 }
 
 /// See also [LibraryDisplayTypeState].
-class LibraryDisplayTypeStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryDisplayTypeState, String> {
+class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
+    LibraryDisplayTypeState, DisplayType> {
   /// See also [LibraryDisplayTypeState].
   LibraryDisplayTypeStateProvider({
     required bool isManga,
@@ -125,7 +125,7 @@ class LibraryDisplayTypeStateProvider
   final Settings settings;
 
   @override
-  String runNotifierBuild(
+  DisplayType runNotifierBuild(
     covariant LibraryDisplayTypeState notifier,
   ) {
     return notifier.build(
@@ -154,7 +154,7 @@ class LibraryDisplayTypeStateProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, String>
+  AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, DisplayType>
       createElement() {
     return _LibraryDisplayTypeStateProviderElement(this);
   }
@@ -176,7 +176,8 @@ class LibraryDisplayTypeStateProvider
   }
 }
 
-mixin LibraryDisplayTypeStateRef on AutoDisposeNotifierProviderRef<String> {
+mixin LibraryDisplayTypeStateRef
+    on AutoDisposeNotifierProviderRef<DisplayType> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
 
@@ -185,8 +186,8 @@ mixin LibraryDisplayTypeStateRef on AutoDisposeNotifierProviderRef<String> {
 }
 
 class _LibraryDisplayTypeStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, String>
-    with LibraryDisplayTypeStateRef {
+    extends AutoDisposeNotifierProviderElement<LibraryDisplayTypeState,
+        DisplayType> with LibraryDisplayTypeStateRef {
   _LibraryDisplayTypeStateProviderElement(super.provider);
 
   @override

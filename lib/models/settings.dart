@@ -174,6 +174,9 @@ class Settings {
 
   late PlayerSubtitleSettings? playerSubtitleSettings;
 
+  @enumerated
+  late DisplayType mangaHomeDisplayType;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -250,7 +253,8 @@ class Settings {
       this.enableCustomColorFilter = false,
       this.customColorFilter,
       this.colorFilterBlendMode = ColorFilterBlendMode.none,
-      this.playerSubtitleSettings});
+      this.playerSubtitleSettings,
+      this.mangaHomeDisplayType = DisplayType.comfortableGrid});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -389,6 +393,7 @@ class Settings {
     playerSubtitleSettings = json['playerSubtitleSettings'] != null
         ? PlayerSubtitleSettings.fromJson(json['customColorFilter'])
         : null;
+    mangaHomeDisplayType = DisplayType.values[json['mangaHomeDisplayType']];
   }
 
   Map<String, dynamic> toJson() => {
@@ -492,6 +497,7 @@ class Settings {
         'colorFilterBlendMode': colorFilterBlendMode.index,
         if (playerSubtitleSettings != null)
           'playerSubtitleSettings': playerSubtitleSettings!.toJson(),
+        'mangaHomeDisplayType': mangaHomeDisplayType.index,
       };
 }
 

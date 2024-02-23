@@ -11,35 +11,25 @@ part 'library_state_provider.g.dart';
 @riverpod
 class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
   @override
-  String build({required bool isManga, required Settings settings}) {
-    return isManga ? settings.displayType.name : settings.animeDisplayType.name;
+  DisplayType build({required bool isManga, required Settings settings}) {
+    return isManga ? settings.displayType : settings.animeDisplayType;
   }
 
-  DisplayType getLibraryDisplayTypeValue(String value) {
-    return value == DisplayType.compactGrid.name
-        ? DisplayType.compactGrid
-        : value == DisplayType.list.name
-            ? DisplayType.list
-            : value == DisplayType.comfortableGrid.name
-                ? DisplayType.comfortableGrid
-                : DisplayType.coverOnlyGrid;
-  }
-
-  String getLibraryDisplayTypeName(String displayType, BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    return displayType == DisplayType.compactGrid.name
-        ? l10n.compact_grid
-        : displayType == DisplayType.list.name
-            ? l10n.list
-            : displayType == DisplayType.comfortableGrid.name
-                ? l10n.comfortable_grid
-                : l10n.cover_only_grid;
+  String getLibraryDisplayTypeName(
+      DisplayType displayType, BuildContext context) {
+    final l10n = context.l10n;
+    return switch (displayType) {
+      DisplayType.compactGrid => l10n.compact_grid,
+      DisplayType.comfortableGrid => l10n.comfortable_grid,
+      DisplayType.coverOnlyGrid => l10n.cover_only_grid,
+      _ => l10n.list,
+    };
   }
 
   void setLibraryDisplayType(DisplayType displayType) {
     Settings appSettings = Settings();
 
-    state = displayType.name;
+    state = displayType;
     if (isManga) {
       appSettings = settings..displayType = displayType;
     } else {

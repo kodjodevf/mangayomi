@@ -131,15 +131,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           final language = ref.watch(
                               libraryLanguageStateProvider(
                                   isManga: widget.isManga, settings: settings));
-                          final displayType = ref
-                              .read(libraryDisplayTypeStateProvider(
-                                      isManga: widget.isManga,
-                                      settings: settings)
-                                  .notifier)
-                              .getLibraryDisplayTypeValue(ref.watch(
-                                  libraryDisplayTypeStateProvider(
-                                      isManga: widget.isManga,
-                                      settings: settings)));
+                          final displayType = ref.watch(
+                              libraryDisplayTypeStateProvider(
+                                  isManga: widget.isManga, settings: settings));
                           final isNotFiltering = ref.watch(
                               mangasFilterResultStateProvider(
                                   isManga: widget.isManga,
@@ -386,14 +380,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 isManga: widget.isManga, settings: settings));
                         final language = ref.watch(libraryLanguageStateProvider(
                             isManga: widget.isManga, settings: settings));
-                        final displayType = ref
-                            .read(libraryDisplayTypeStateProvider(
-                                    isManga: widget.isManga, settings: settings)
-                                .notifier)
-                            .getLibraryDisplayTypeValue(ref.watch(
-                                libraryDisplayTypeStateProvider(
-                                    isManga: widget.isManga,
-                                    settings: settings)));
+                        final displayType = ref.watch(
+                            libraryDisplayTypeStateProvider(
+                                isManga: widget.isManga, settings: settings));
                         final isNotFiltering = ref.watch(
                             mangasFilterResultStateProvider(
                                 isManga: widget.isManga,
@@ -1368,8 +1357,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 child: Wrap(
                     children: DisplayType.values.map((e) {
-                  final selected =
-                      e == displayV.getLibraryDisplayTypeValue(display);
+                  final selected = e == display;
                   return Padding(
                     padding: const EdgeInsets.only(right: 5),
                     child: ElevatedButton(
@@ -1394,7 +1382,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           displayV.setLibraryDisplayType(e);
                         },
                         child: Text(
-                          displayV.getLibraryDisplayTypeName(e.name, context),
+                          displayV.getLibraryDisplayTypeName(e, context),
                           style: TextStyle(
                               color:
                                   Theme.of(context).textTheme.bodyLarge!.color,

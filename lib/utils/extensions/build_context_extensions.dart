@@ -23,7 +23,7 @@ extension BuildContextExtensions on BuildContext {
     return Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   }
 
-  bool get isMbile {
+  bool get isMobile {
     return Platform.isIOS || Platform.isAndroid;
   }
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
@@ -44,7 +45,7 @@ GoRouter router(RouterRef ref) {
   return GoRouter(
     observers: [BotToastNavigatorObserver()],
     initialLocation: '/MangaLibrary',
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
     refreshListenable: router,
     routes: router._routes,
   );
