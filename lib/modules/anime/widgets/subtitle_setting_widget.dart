@@ -144,7 +144,7 @@ class ColorSettingWidget extends ConsumerStatefulWidget {
 class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
   String selector = "text";
 
-  Widget button(String text, Color color) {
+  Widget button(String text, String value, Color color) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
@@ -154,7 +154,7 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
           shadowColor: Colors.transparent),
       onPressed: () {
         setState(() {
-          selector = text.toLowerCase();
+          selector = value;
         });
       },
       child: Column(
@@ -175,9 +175,7 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
           Text("#${color.hexCode}", style: TextStyle(color: context.textColor)),
           Icon(
             Icons.arrow_drop_down,
-            color: selector != text.toLowerCase()
-                ? Colors.transparent
-                : context.textColor,
+            color: selector != value ? Colors.transparent : context.textColor,
           )
         ],
       ),
@@ -218,12 +216,15 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
             ),
           Row(
             children: [
-              Expanded(flex: 3, child: button(context.l10n.text, textColor)),
               Expanded(
-                  flex: 3, child: button(context.l10n.border, borderColor)),
+                  flex: 3, child: button(context.l10n.text, "text", textColor)),
               Expanded(
                   flex: 3,
-                  child: button(context.l10n.background, backgroundColor)),
+                  child: button(context.l10n.border, "border", borderColor)),
+              Expanded(
+                  flex: 3,
+                  child: button(
+                      context.l10n.background, "backgroud", backgroundColor)),
             ],
           ),
           Padding(

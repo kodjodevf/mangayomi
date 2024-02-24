@@ -921,7 +921,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 ),
                 Row(children: [
                   btnToShowChapterListDialog(
-                      context, context.l10n.episodes, widget.episode),
+                    context,
+                    context.l10n.episodes,
+                    widget.episode,
+                    onChanged: (v) {
+                      if (v) {
+                        _player.play();
+                      } else {
+                        _player.pause();
+                      }
+                    },
+                  ),
                   // IconButton(
                   //     onPressed: () {
                   //       showDialog(

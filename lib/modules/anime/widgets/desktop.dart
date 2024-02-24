@@ -189,249 +189,254 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
         const SingleActivator(LogicalKeyboardKey.escape): () =>
             setFullScreen(value: false),
       },
-      child: Focus(
-        autofocus: true,
-        child: Listener(
-          onPointerSignal: modifyVolumeOnScroll
-              ? (e) {
-                  if (e is PointerScrollEvent) {
-                    if (e.delta.dy > 0) {
-                      final volume =
-                          widget.videoController.player.state.volume - 5.0;
-                      widget.videoController.player
-                          .setVolume(volume.clamp(0.0, 100.0));
-                    }
-                    if (e.delta.dy < 0) {
-                      final volume =
-                          widget.videoController.player.state.volume + 5.0;
-                      widget.videoController.player
-                          .setVolume(volume.clamp(0.0, 100.0));
-                    }
-                  }
-                }
-              : null,
-          child: GestureDetector(
-            onTapUp: !toggleFullscreenOnDoublePress
-                ? null
-                : (e) {
-                    final now = DateTime.now();
-                    final difference = now.difference(last);
-                    last = now;
-                    if (difference < const Duration(milliseconds: 400)) {
-                      setFullScreen();
-                    }
-                  },
-            onPanUpdate: modifyVolumeOnScroll
-                ? (e) {
-                    if (e.delta.dy > 0) {
-                      final volume =
-                          widget.videoController.player.state.volume - 5.0;
-                      widget.videoController.player
-                          .setVolume(volume.clamp(0.0, 100.0));
-                    }
-                    if (e.delta.dy < 0) {
-                      final volume =
-                          widget.videoController.player.state.volume + 5.0;
-                      widget.videoController.player
-                          .setVolume(volume.clamp(0.0, 100.0));
-                    }
-                  }
-                : null,
-            child: MouseRegion(
-              onHover: (_) => onHover(),
-              onEnter: (_) => onEnter(),
-              onExit: (_) => onExit(),
-              child: Stack(
-                children: [
-                  Consumer(
-                    builder: (context, ref, _) => Positioned(
-                        child: CustomSubtitleView(
-                      controller: widget.videoController,
-                      configuration: SubtitleViewConfiguration(
-                          style: subtileTextStyle(ref)),
-                    )),
-                  ),
-                  AnimatedOpacity(
-                    curve: Curves.easeInOut,
-                    opacity: visible ? 1.0 : 0.0,
-                    duration: controlsTransitionDuration,
-                    onEnd: () {
-                      if (!visible) {
-                        setState(() {
-                          mount = false;
-                        });
+      child: Stack(
+        children: [
+          Consumer(
+            builder: (context, ref, _) => Positioned(
+                child: CustomSubtitleView(
+              controller: widget.videoController,
+              configuration:
+                  SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+            )),
+          ),
+          Focus(
+            autofocus: true,
+            child: Listener(
+              onPointerSignal: modifyVolumeOnScroll
+                  ? (e) {
+                      if (e is PointerScrollEvent) {
+                        if (e.delta.dy > 0) {
+                          final volume =
+                              widget.videoController.player.state.volume - 5.0;
+                          widget.videoController.player
+                              .setVolume(volume.clamp(0.0, 100.0));
+                        }
+                        if (e.delta.dy < 0) {
+                          final volume =
+                              widget.videoController.player.state.volume + 5.0;
+                          widget.videoController.player
+                              .setVolume(volume.clamp(0.0, 100.0));
+                        }
                       }
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Top gradient.
+                    }
+                  : null,
+              child: GestureDetector(
+                onTapUp: !toggleFullscreenOnDoublePress
+                    ? null
+                    : (e) {
+                        final now = DateTime.now();
+                        final difference = now.difference(last);
+                        last = now;
+                        if (difference < const Duration(milliseconds: 400)) {
+                          setFullScreen();
+                        }
+                      },
+                onPanUpdate: modifyVolumeOnScroll
+                    ? (e) {
+                        if (e.delta.dy > 0) {
+                          final volume =
+                              widget.videoController.player.state.volume - 5.0;
+                          widget.videoController.player
+                              .setVolume(volume.clamp(0.0, 100.0));
+                        }
+                        if (e.delta.dy < 0) {
+                          final volume =
+                              widget.videoController.player.state.volume + 5.0;
+                          widget.videoController.player
+                              .setVolume(volume.clamp(0.0, 100.0));
+                        }
+                      }
+                    : null,
+                child: MouseRegion(
+                  onHover: (_) => onHover(),
+                  onEnter: (_) => onEnter(),
+                  onExit: (_) => onExit(),
+                  child: Stack(
+                    children: [
+                      AnimatedOpacity(
+                        curve: Curves.easeInOut,
+                        opacity: visible ? 1.0 : 0.0,
+                        duration: controlsTransitionDuration,
+                        onEnd: () {
+                          if (!visible) {
+                            setState(() {
+                              mount = false;
+                            });
+                          }
+                        },
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.bottomCenter,
+                          children: [
+                            // Top gradient.
 
-                        Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [
-                                0.0,
-                                0.2,
-                              ],
-                              colors: [
-                                Color(0x61000000),
-                                Color(0x00000000),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Bottom gradient.
-
-                        Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              stops: [
-                                0.5,
-                                1.0,
-                              ],
-                              colors: [
-                                Color(0x00000000),
-                                Color(0x61000000),
-                              ],
-                            ),
-                          ),
-                        ),
-                        if (mount)
-                          Padding(
-                            padding: (
-                                // Add padding in fullscreen!
-                                isFullscreen(context)
-                                    ? MediaQuery.of(context).padding
-                                    : EdgeInsets.zero),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                widget.topButtonBarWidget,
-                                // Only display [primaryButtonBar] if [buffering] is false.
-                                Expanded(
-                                  child: AnimatedOpacity(
-                                      curve: Curves.easeInOut,
-                                      opacity: buffering
-                                          ? 0.0
-                                          : !showSwipeDuration
-                                              ? 0.0
-                                              : 1.0,
-                                      duration: controlsTransitionDuration,
-                                      child: Center(
-                                          child: seekIndicatorTextWidget(
-                                              Duration(seconds: swipeDuration),
-                                              widget.videoController.player
-                                                  .state.position))),
-                                ),
-                                widget.seekToWidget,
-                                Transform.translate(
-                                  offset: Offset.zero,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: CustomSeekBar(
-                                      onSeekStart: (value) {
-                                        setState(() {
-                                          swipeDuration = value.inSeconds;
-                                          showSwipeDuration = true;
-                                          widget.tempDuration(widget
-                                                  .videoController
-                                                  .player
-                                                  .state
-                                                  .position +
-                                              value);
-                                        });
-                                        _timer?.cancel();
-                                      },
-                                      onSeekEnd: (value) {
-                                        _timer = Timer(
-                                          controlsHoverDuration,
-                                          () {
-                                            if (mounted) {
-                                              setState(() {
-                                                visible = false;
-                                              });
-                                            }
-                                          },
-                                        );
-                                        setState(() {
-                                          showSwipeDuration = false;
-                                        });
-                                        widget.tempDuration(null);
-                                      },
-                                      player: widget.videoController.player,
-                                    ),
-                                  ),
-                                ),
-                                widget.bottomButtonBarWidget
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  // Buffering Indicator.
-                  IgnorePointer(
-                    child: Padding(
-                      padding: (
-                          // Add padding in fullscreen!
-                          isFullscreen(context)
-                              ? MediaQuery.of(context).padding
-                              : EdgeInsets.zero),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: buttonBarHeight,
-                            margin: const EdgeInsets.all(0),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Center(
-                                child: TweenAnimationBuilder<double>(
-                                  tween: Tween<double>(
-                                    begin: 0.0,
-                                    end: buffering ? 1.0 : 0.0,
-                                  ),
-                                  duration: controlsTransitionDuration,
-                                  builder: (context, value, child) {
-                                    // Only mount the buffering indicator if the opacity is greater than 0.0.
-                                    // This has been done to prevent redundant resource usage in [CircularProgressIndicator].
-                                    if (value > 0.0) {
-                                      return Opacity(
-                                        opacity: value,
-                                        child: child!,
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                  child: const CircularProgressIndicator(
-                                    color: Color(0xFFFFFFFF),
-                                  ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: [
+                                    0.0,
+                                    0.2,
+                                  ],
+                                  colors: [
+                                    Color(0x61000000),
+                                    Color(0x00000000),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            height: buttonBarHeight,
-                            margin: bottomButtonBarMargin,
-                          ),
-                        ],
+                            // Bottom gradient.
+
+                            Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: [
+                                    0.5,
+                                    1.0,
+                                  ],
+                                  colors: [
+                                    Color(0x00000000),
+                                    Color(0x61000000),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (mount)
+                              Padding(
+                                padding: (
+                                    // Add padding in fullscreen!
+                                    isFullscreen(context)
+                                        ? MediaQuery.of(context).padding
+                                        : EdgeInsets.zero),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    widget.topButtonBarWidget,
+                                    // Only display [primaryButtonBar] if [buffering] is false.
+                                    Expanded(
+                                      child: AnimatedOpacity(
+                                          curve: Curves.easeInOut,
+                                          opacity: buffering
+                                              ? 0.0
+                                              : !showSwipeDuration
+                                                  ? 0.0
+                                                  : 1.0,
+                                          duration: controlsTransitionDuration,
+                                          child: Center(
+                                              child: seekIndicatorTextWidget(
+                                                  Duration(
+                                                      seconds: swipeDuration),
+                                                  widget.videoController.player
+                                                      .state.position))),
+                                    ),
+                                    widget.seekToWidget,
+                                    Transform.translate(
+                                      offset: Offset.zero,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        child: CustomSeekBar(
+                                          onSeekStart: (value) {
+                                            setState(() {
+                                              swipeDuration = value.inSeconds;
+                                              showSwipeDuration = true;
+                                              widget.tempDuration(widget
+                                                      .videoController
+                                                      .player
+                                                      .state
+                                                      .position +
+                                                  value);
+                                            });
+                                            _timer?.cancel();
+                                          },
+                                          onSeekEnd: (value) {
+                                            _timer = Timer(
+                                              controlsHoverDuration,
+                                              () {
+                                                if (mounted) {
+                                                  setState(() {
+                                                    visible = false;
+                                                  });
+                                                }
+                                              },
+                                            );
+                                            setState(() {
+                                              showSwipeDuration = false;
+                                            });
+                                            widget.tempDuration(null);
+                                          },
+                                          player: widget.videoController.player,
+                                        ),
+                                      ),
+                                    ),
+                                    widget.bottomButtonBarWidget
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
+                      // Buffering Indicator.
+                      IgnorePointer(
+                        child: Padding(
+                          padding: (
+                              // Add padding in fullscreen!
+                              isFullscreen(context)
+                                  ? MediaQuery.of(context).padding
+                                  : EdgeInsets.zero),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: buttonBarHeight,
+                                margin: const EdgeInsets.all(0),
+                              ),
+                              Expanded(
+                                child: Center(
+                                  child: Center(
+                                    child: TweenAnimationBuilder<double>(
+                                      tween: Tween<double>(
+                                        begin: 0.0,
+                                        end: buffering ? 1.0 : 0.0,
+                                      ),
+                                      duration: controlsTransitionDuration,
+                                      builder: (context, value, child) {
+                                        // Only mount the buffering indicator if the opacity is greater than 0.0.
+                                        // This has been done to prevent redundant resource usage in [CircularProgressIndicator].
+                                        if (value > 0.0) {
+                                          return Opacity(
+                                            opacity: value,
+                                            child: child!,
+                                          );
+                                        }
+                                        return const SizedBox.shrink();
+                                      },
+                                      child: const CircularProgressIndicator(
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: buttonBarHeight,
+                                margin: bottomButtonBarMargin,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

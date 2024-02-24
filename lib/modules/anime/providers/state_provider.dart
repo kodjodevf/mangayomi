@@ -8,7 +8,7 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
   @override
   PlayerSubtitleSettings build() {
     final subSets = isar.settings.getSync(227)!.playerSubtitleSettings;
-    if (subSets == null) {
+    if (subSets == null || subSets.backgroundColorA == null) {
       set(PlayerSubtitleSettings(), true);
       return PlayerSubtitleSettings();
     }

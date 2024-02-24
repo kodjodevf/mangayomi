@@ -166,7 +166,8 @@ class AppearanceScreen extends ConsumerWidget {
                                     child: Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 8),
                                           child: TextField(
                                               onChanged: (v) {
                                                 setState(() {
@@ -209,7 +210,6 @@ class AppearanceScreen extends ConsumerWidget {
                                               controller: controller,
                                               child: ListView.builder(
                                                 controller: controller,
-                                                shrinkWrap: true,
                                                 itemCount: values.length,
                                                 itemBuilder: (context, index) {
                                                   final value = values[index];

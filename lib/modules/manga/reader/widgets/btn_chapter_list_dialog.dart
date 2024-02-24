@@ -9,10 +9,12 @@ import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 Widget btnToShowChapterListDialog(
-    BuildContext context, String title, Chapter chapter) {
+    BuildContext context, String title, Chapter chapter,
+    {void Function(bool)? onChanged}) {
   return IconButton(
-      onPressed: () {
-        showDialog(
+      onPressed: () async {
+        onChanged?.call(false);
+        await showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
@@ -22,6 +24,7 @@ Widget btnToShowChapterListDialog(
                     child: ChapterListWidget(chapter: chapter)),
               );
             });
+        onChanged?.call(true);
       },
       icon: const Icon(Icons.format_list_numbered_outlined));
 }
@@ -60,7 +63,6 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
     return DraggableScrollbarWidget(
         controller: controller,
         child: ListView.builder(
-            shrinkWrap: true,
             padding: const EdgeInsets.symmetric(vertical: 2),
             controller: controller,
             itemCount: chapterList.length,
