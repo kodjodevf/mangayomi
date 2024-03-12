@@ -1,5 +1,5 @@
 import 'package:html/dom.dart';
-import 'package:mangayomi/eval/model/element.dart';
+import 'package:mangayomi/eval/dart/model/element.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 class MDocument {
@@ -54,5 +54,9 @@ class MDocument {
 
   MElement? selectFirst(String selector) {
     return MElement(_document?.selectFirst(selector));
+  }
+
+  String? attr(String attr) {
+    return _document?.attr(attr);
   }
 }

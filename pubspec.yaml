@@ -59,7 +59,7 @@ dependencies:
       ref: 0ab6b10ea660ead8e8e1694517aabe3582f25d5c
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
-  rinf: ^6.4.0
+  rinf: ^6.6.2
   protobuf: ^3.1.0
   cupertino_icons: ^1.0.6
   window_manager: ^0.3.8
@@ -71,11 +71,16 @@ dependencies:
     git:
       url: https://github.com/wgh136/flutter_windows_webview
       ref: master
+  flutter_qjs:
+    git: 
+     url: https://github.com/kodjodevf/flutter_qjs.git
+     ref: main
   
 
 dependency_overrides:
   analyzer: ">=5.2.0 <7.0.0"
   http: ^1.2.0
+  ffi: ^2.1.0
 
 dev_dependencies:
   flutter_test:

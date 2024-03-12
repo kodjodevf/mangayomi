@@ -37,6 +37,14 @@ extension DocumentExtension on Document? {
     }
     return [];
   }
+
+  String? attr(String attribute) {
+    try {
+      return this?.attributes[attribute];
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 extension ElementtExtension on Element {

@@ -117,23 +117,29 @@ const SourceSchema = CollectionSchema(
       name: r'sourceCode',
       type: IsarType.string,
     ),
-    r'sourceCodeUrl': PropertySchema(
+    r'sourceCodeLanguage': PropertySchema(
       id: 20,
+      name: r'sourceCodeLanguage',
+      type: IsarType.byte,
+      enumMap: _SourcesourceCodeLanguageEnumValueMap,
+    ),
+    r'sourceCodeUrl': PropertySchema(
+      id: 21,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -277,10 +283,11 @@ void _sourceSerialize(
   writer.writeBool(offsets[17], object.lastUsed);
   writer.writeString(offsets[18], object.name);
   writer.writeString(offsets[19], object.sourceCode);
-  writer.writeString(offsets[20], object.sourceCodeUrl);
-  writer.writeString(offsets[21], object.typeSource);
-  writer.writeString(offsets[22], object.version);
-  writer.writeString(offsets[23], object.versionLast);
+  writer.writeByte(offsets[20], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[21], object.sourceCodeUrl);
+  writer.writeString(offsets[22], object.typeSource);
+  writer.writeString(offsets[23], object.version);
+  writer.writeString(offsets[24], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -310,11 +317,14 @@ Source _sourceDeserialize(
     lastUsed: reader.readBoolOrNull(offsets[17]),
     name: reader.readStringOrNull(offsets[18]),
     sourceCode: reader.readStringOrNull(offsets[19]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[20]),
-    typeSource: reader.readStringOrNull(offsets[21]),
-    version: reader.readStringOrNull(offsets[22]),
-    versionLast: reader.readStringOrNull(offsets[23]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[21]),
+    typeSource: reader.readStringOrNull(offsets[22]),
+    version: reader.readStringOrNull(offsets[23]),
+    versionLast: reader.readStringOrNull(offsets[24]),
   );
+  object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
+          reader.readByteOrNull(offsets[20])] ??
+      SourceCodeLanguage.dart;
   return object;
 }
 
@@ -366,17 +376,30 @@ P _sourceDeserializeProp<P>(
     case 19:
       return (reader.readStringOrNull(offset)) as P;
     case 20:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_SourcesourceCodeLanguageValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          SourceCodeLanguage.dart) as P;
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
       return (reader.readStringOrNull(offset)) as P;
     case 23:
       return (reader.readStringOrNull(offset)) as P;
+    case 24:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _SourcesourceCodeLanguageEnumValueMap = {
+  'dart': 0,
+  'javascript': 1,
+};
+const _SourcesourceCodeLanguageValueEnumMap = {
+  0: SourceCodeLanguage.dart,
+  1: SourceCodeLanguage.javascript,
+};
 
 Id _sourceGetId(Source object) {
   return object.id ?? Isar.autoIncrement;
@@ -2366,6 +2389,61 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> sourceCodeLanguageEqualTo(
+      SourceCodeLanguage value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sourceCodeLanguage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition>
+      sourceCodeLanguageGreaterThan(
+    SourceCodeLanguage value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sourceCodeLanguage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition>
+      sourceCodeLanguageLessThan(
+    SourceCodeLanguage value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sourceCodeLanguage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> sourceCodeLanguageBetween(
+    SourceCodeLanguage lower,
+    SourceCodeLanguage upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sourceCodeLanguage',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> sourceCodeUrlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3197,6 +3275,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortBySourceCodeLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceCodeLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortBySourceCodeLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceCodeLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortBySourceCodeUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceCodeUrl', Sort.asc);
@@ -3499,6 +3589,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenBySourceCodeLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceCodeLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenBySourceCodeLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceCodeLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenBySourceCodeUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceCodeUrl', Sort.asc);
@@ -3682,6 +3784,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctBySourceCodeLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sourceCodeLanguage');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctBySourceCodeUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3836,6 +3944,13 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> sourceCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sourceCode');
+    });
+  }
+
+  QueryBuilder<Source, SourceCodeLanguage, QQueryOperations>
+      sourceCodeLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sourceCodeLanguage');
     });
   }
 

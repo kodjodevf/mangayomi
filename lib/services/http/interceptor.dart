@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/eval/dart/model/m_source.dart';
 import 'package:mangayomi/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;

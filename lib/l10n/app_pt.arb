@@ -317,5 +317,7 @@
     "text": "Texto",
     "border": "Borda",
     "background": "Fundo",
-    "no_subtite_warning_message": "Não tem efeito porque não há faixas de legendas neste vídeo"
+    "no_subtite_warning_message": "Não tem efeito porque não há faixas de legendas neste vídeo",
+    "grid_size": "Tamanho da grade",
+    "n_per_row": "{n} por linha"
 }

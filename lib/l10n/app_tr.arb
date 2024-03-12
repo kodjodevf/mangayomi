@@ -317,5 +317,7 @@
     "text": "Metin",
     "border": "Kenarlık",
     "background": "Arka Plan",
-    "no_subtite_warning_message": "Bu videoda altyazı parçaları olmadığı için etkisi yok"
+    "no_subtite_warning_message": "Bu videoda altyazı parçaları olmadığı için etkisi yok",
+    "grid_size": "Kılavuz Boyutu",
+    "n_per_row": "{n} satır başına"
 }

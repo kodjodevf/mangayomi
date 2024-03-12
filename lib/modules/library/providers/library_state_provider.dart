@@ -43,6 +43,35 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
 }
 
 @riverpod
+class LibraryGridSizeState extends _$LibraryGridSizeState {
+  @override
+  int? build({required bool isManga}) {
+    return isManga ? settings.mangaGridSize : settings.animeGridSize;
+  }
+
+  Settings get settings {
+    return isar.settings.getSync(227)!;
+  }
+
+  void set(int? value, {bool end = false}) {
+    Settings appSettings = Settings();
+
+    state = value;
+    if (end) {
+      if (isManga) {
+        appSettings = settings..mangaGridSize = value;
+      } else {
+        appSettings = settings..animeGridSize = value;
+      }
+
+      isar.writeTxnSync(() {
+        isar.settings.putSync(appSettings);
+      });
+    }
+  }
+}
+
+@riverpod
 class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
   @override
   int build(

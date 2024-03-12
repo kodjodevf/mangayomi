@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/eval/model/source_preference.dart';
+import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
@@ -21,10 +21,21 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = widget.source;
-  late List<SourcePreference> sourcePreference =
-      getSourcePreference(source: source)
-          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
-          .toList();
+  List<SourcePreference> sourcePreference = [];
+  @override
+  void initState() {
+    getSourcePreferenceAsync(source: source).then((value) {
+      if (mounted) {
+        setState(() {
+          sourcePreference = value
+              .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
+              .toList();
+        });
+      }
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/model/filter.dart';
+import 'package:mangayomi/eval/dart/model/filter.dart';
 
 class $FilterList implements FilterList, $Instance {
   $FilterList.wrap(this.$value) : _superclass = $Object($value);
@@ -71,6 +71,11 @@ class $FilterList implements FilterList, $Instance {
 
   @override
   set filters(List<dynamic> filters) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $SelectFilter implements SelectFilter, $Instance {
@@ -113,26 +118,26 @@ class $SelectFilter implements SelectFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $SelectFilter.wrap(SelectFilter(
-      args[0]!.$value,
-      args[1]!.$value,
-      args[2]!.$value,
-      (args[3]!.$value as List).map((e) {
-        if (e is $Value) {
-          final value = e.$reified;
-          if (value is Map) {
-            Map<String, dynamic> map = {};
-            map = value.map((key, value) => MapEntry(key.toString(), value));
-            if (map['type'] == 'SelectOption') {
-              final filter = map['filter'] as Map;
-              return SelectFilterOption.fromJson(
-                  filter.map((key, value) => MapEntry(key.toString(), value)));
+        args[0]!.$value,
+        args[1]!.$value,
+        args[2]!.$value,
+        (args[3]!.$value as List).map((e) {
+          if (e is $Value) {
+            final value = e.$reified;
+            if (value is Map) {
+              Map<String, dynamic> map = {};
+              map = value.map((key, value) => MapEntry(key.toString(), value));
+              if (map['type'] == 'SelectOption') {
+                final filter = map['filter'] as Map;
+                return SelectFilterOption.fromJson(filter
+                    .map((key, value) => MapEntry(key.toString(), value)));
+              }
             }
+            return value;
           }
-          return value;
-        }
-        return e;
-      }).toList(),
-    ));
+          return e;
+        }).toList(),
+        null));
   }
 
   @override
@@ -189,6 +194,12 @@ class $SelectFilter implements SelectFilter, $Instance {
   int get state => $value.state;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   List<dynamic> get values => $value.values;
 
   @override
@@ -202,6 +213,11 @@ class $SelectFilter implements SelectFilter, $Instance {
 
   @override
   set values(List<dynamic> values) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $SelectFilterOption implements SelectFilterOption, $Instance {
@@ -230,7 +246,7 @@ class $SelectFilterOption implements SelectFilterOption, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $SelectFilterOption
-        .wrap(SelectFilterOption(args[0]!.$value, args[1]!.$value));
+        .wrap(SelectFilterOption(args[0]!.$value, args[1]!.$value, null));
   }
 
   @override
@@ -277,10 +293,21 @@ class $SelectFilterOption implements SelectFilterOption, $Instance {
   String get name => $value.name;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set name(String name) {}
 
   @override
   set value(String value) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $SeparatorFilter implements SeparatorFilter, $Instance {
@@ -304,7 +331,8 @@ class $SeparatorFilter implements SeparatorFilter, $Instance {
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SeparatorFilter.wrap(SeparatorFilter(type: args[0]?.$value ?? ''));
+    return $SeparatorFilter
+        .wrap(SeparatorFilter(null, type: args[0]?.$value ?? ''));
   }
 
   @override
@@ -343,7 +371,18 @@ class $SeparatorFilter implements SeparatorFilter, $Instance {
   String? get type => $value.type ?? '';
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set type(String? type) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $HeaderFilter implements HeaderFilter, $Instance {
@@ -372,7 +411,7 @@ class $HeaderFilter implements HeaderFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $HeaderFilter
-        .wrap(HeaderFilter(args[0]!.$value, type: args[1]?.$value ?? ''));
+        .wrap(HeaderFilter(args[0]!.$value, null, type: args[1]?.$value ?? ''));
   }
 
   @override
@@ -423,6 +462,17 @@ class $HeaderFilter implements HeaderFilter, $Instance {
 
   @override
   String? get type => $value.type ?? '';
+
+  @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $TextFilter implements TextFilter, $Instance {
@@ -450,7 +500,7 @@ class $TextFilter implements TextFilter, $Instance {
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $TextFilter.wrap(TextFilter(args[0]!.$value, args[1]!.$value));
+    return $TextFilter.wrap(TextFilter(args[0]!.$value, args[1]!.$value, null));
   }
 
   @override
@@ -503,6 +553,12 @@ class $TextFilter implements TextFilter, $Instance {
   String get state => $value.state;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set type(String? type) {}
 
   @override
@@ -510,6 +566,11 @@ class $TextFilter implements TextFilter, $Instance {
 
   @override
   set state(String state) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $SortFilter implements SortFilter, $Instance {
@@ -550,13 +611,14 @@ class $SortFilter implements SortFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $SortFilter.wrap(SortFilter(
-      args[0]!.$value,
-      args[1]!.$value,
-      args[2]!.$value,
-      (args[3]!.$value as List)
-          .map((e) => SelectFilterOption(e.$reified.name, e.$reified.value))
-          .toList(),
-    ));
+        args[0]!.$value,
+        args[1]!.$value,
+        args[2]!.$value,
+        (args[3]!.$value as List)
+            .map((e) =>
+                SelectFilterOption(e.$reified.name, e.$reified.value, null))
+            .toList(),
+        null));
   }
 
   @override
@@ -616,6 +678,12 @@ class $SortFilter implements SortFilter, $Instance {
   List<dynamic> get values => $value.values;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set type(String? type) {}
 
   @override
@@ -626,6 +694,11 @@ class $SortFilter implements SortFilter, $Instance {
 
   @override
   set values(List<dynamic> values) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $SortState implements SortState, $Instance {
@@ -655,7 +728,7 @@ class $SortState implements SortState, $Instance {
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SortState.wrap(SortState(args[0]!.$value, args[1]!.$value));
+    return $SortState.wrap(SortState(args[0]!.$value, args[1]!.$value, null));
   }
 
   @override
@@ -702,10 +775,21 @@ class $SortState implements SortState, $Instance {
   bool get ascending => $value.ascending;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set ascending(bool ascending) {}
 
   @override
   set index(int index) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $TriStateFilter implements TriStateFilter, $Instance {
@@ -744,7 +828,7 @@ class $TriStateFilter implements TriStateFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $TriStateFilter.wrap(TriStateFilter(
-        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value,
+        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value, null,
         state: args[3]?.$value ?? 0));
   }
 
@@ -809,6 +893,12 @@ class $TriStateFilter implements TriStateFilter, $Instance {
   String get value => $value.value;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set state(int state) {}
 
   @override
@@ -816,6 +906,11 @@ class $TriStateFilter implements TriStateFilter, $Instance {
 
   @override
   set value(String value) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $GroupFilter implements GroupFilter, $Instance {
@@ -874,7 +969,8 @@ class $GroupFilter implements GroupFilter, $Instance {
             return value;
           }
           return e;
-        }).toList()));
+        }).toList(),
+        null));
   }
 
   @override
@@ -928,6 +1024,12 @@ class $GroupFilter implements GroupFilter, $Instance {
   List<dynamic> get state => $value.state;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set type(String? type) {}
 
   @override
@@ -935,6 +1037,11 @@ class $GroupFilter implements GroupFilter, $Instance {
 
   @override
   set state(List<dynamic> state) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }
 
 class $CheckBoxFilter implements CheckBoxFilter, $Instance {
@@ -973,7 +1080,7 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $CheckBoxFilter.wrap(CheckBoxFilter(
-        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value,
+        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value, null,
         state: args[3]?.$value ?? false));
   }
 
@@ -1038,6 +1145,12 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
   String get value => $value.value;
 
   @override
+  String? get typeName => $value.typeName;
+
+  @override
+  set typeName(String? typeName) {}
+
+  @override
   set type(String? type) {}
 
   @override
@@ -1045,4 +1158,9 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
 
   @override
   set value(String value) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }

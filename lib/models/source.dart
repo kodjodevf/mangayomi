@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/eval/dart/model/m_source.dart';
 part 'source.g.dart';
 
 @collection
@@ -53,6 +53,9 @@ class Source {
 
   String? additionalParams;
 
+  @enumerated
+  SourceCodeLanguage sourceCodeLanguage = SourceCodeLanguage.dart;
+
   Source(
       {this.id = 0,
       this.name = '',
@@ -104,6 +107,7 @@ class Source {
     version = json['version'];
     versionLast = json['versionLast'];
     additionalParams = json['additionalParams'] ?? "";
+    sourceCodeLanguage = SourceCodeLanguage.values[json['sourceCodeLanguage']];
   }
 
   Map<String, dynamic> toJson() => {
@@ -131,6 +135,7 @@ class Source {
         'version': version,
         'versionLast': versionLast,
         'additionalParams': additionalParams,
+        'sourceCodeLanguage': sourceCodeLanguage.index
       };
 
   bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";
@@ -149,3 +154,5 @@ class Source {
         additionalParams: additionalParams);
   }
 }
+
+enum SourceCodeLanguage { dart, javascript }

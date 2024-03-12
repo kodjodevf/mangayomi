@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/compiler/compiler.dart';
-import 'package:mangayomi/eval/runtime/runtime.dart';
+import 'package:mangayomi/eval/dart/compiler/compiler.dart';
+import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';

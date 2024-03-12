@@ -3,9 +3,9 @@ import 'package:dart_eval/dart_eval_bridge.dart';
 
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:html/dom.dart';
-import 'package:mangayomi/eval/bridge/element.dart';
-import 'package:mangayomi/eval/model/document.dart';
-import 'package:mangayomi/eval/model/element.dart';
+import 'package:mangayomi/eval/dart/bridge/element.dart';
+import 'package:mangayomi/eval/dart/model/document.dart';
+import 'package:mangayomi/eval/dart/model/element.dart';
 
 class $MDocument implements MDocument, $Instance {
   $MDocument.wrap(this.$value) : _superclass = $Object($value);
@@ -131,6 +131,17 @@ class $MDocument implements MDocument, $Instance {
                     false)
               ]),
         ),
+        'attr': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              params: [
+                BridgeParameter(
+                    'attr',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
+                        nullable: true),
+                    false)
+              ]),
+        ),
       },
       wrap: true);
 
@@ -182,6 +193,8 @@ class $MDocument implements MDocument, $Instance {
         return __xpath;
       case 'xpathFirst':
         return __xpathFirst;
+      case 'attr':
+        return __attr;
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -257,6 +270,13 @@ class $MDocument implements MDocument, $Instance {
     return res == null ? const $null() : $String(res);
   }
 
+  static const $Function __attr = $Function(_attr);
+  static $Value? _attr(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res = (target!.$value as MDocument).attr(args[0]?.$value ?? "");
+    return res == null ? const $null() : $String(res);
+  }
+
   @override
   List<MElement>? select(String selector) => $value.select(selector);
 
@@ -276,6 +296,9 @@ class $MDocument implements MDocument, $Instance {
   @override
   List<MElement>? getElementsByTagName(String localNames) =>
       $value.getElementsByTagName(localNames);
+
+  @override
+  String? attr(String attr) => $value.attr(attr);
 
   @override
   MElement? getElementById(String id) => $value.getElementById(id);

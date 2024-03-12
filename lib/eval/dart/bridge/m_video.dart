@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge/m_track.dart';
+import 'package:mangayomi/eval/dart/bridge/m_track.dart';
 import 'package:mangayomi/models/video.dart';
 
 class $MVideo implements Video, $Instance {
@@ -139,4 +139,9 @@ class $MVideo implements Video, $Instance {
 
   @override
   set audios(List? audios) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }

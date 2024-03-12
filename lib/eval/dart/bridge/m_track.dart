@@ -76,4 +76,9 @@ class $MTrack implements Track, $Instance {
 
   @override
   set label(String? label) {}
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
 }

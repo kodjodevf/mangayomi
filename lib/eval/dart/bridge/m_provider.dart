@@ -2,18 +2,18 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge/document.dart';
-import 'package:mangayomi/eval/bridge/filter.dart';
-import 'package:mangayomi/eval/bridge/m_manga.dart';
-import 'package:mangayomi/eval/bridge/m_pages.dart';
-import 'package:mangayomi/eval/bridge/m_status.dart';
-import 'package:mangayomi/eval/bridge/m_track.dart';
-import 'package:mangayomi/eval/bridge/m_video.dart';
-import 'package:mangayomi/eval/model/filter.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
-import 'package:mangayomi/eval/model/m_provider.dart';
+import 'package:mangayomi/eval/dart/bridge/document.dart';
+import 'package:mangayomi/eval/dart/bridge/filter.dart';
+import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
+import 'package:mangayomi/eval/dart/bridge/m_pages.dart';
+import 'package:mangayomi/eval/dart/bridge/m_status.dart';
+import 'package:mangayomi/eval/dart/bridge/m_track.dart';
+import 'package:mangayomi/eval/dart/bridge/m_video.dart';
+import 'package:mangayomi/eval/dart/model/filter.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/dart/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/services/boa_js.dart';
@@ -1025,8 +1025,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   _toValueList(List filters) {
     return (filters).map((e) {
       if (e is SelectFilter) {
-        return $SelectFilter.wrap(
-            SelectFilter(e.type, e.name, e.state, _toValueList(e.values)));
+        return $SelectFilter.wrap(SelectFilter(
+            e.type, e.name, e.state, _toValueList(e.values), e.typeName));
       } else if (e is TextFilter) {
         return $TextFilter.wrap(e);
       } else if (e is HeaderFilter) {
@@ -1038,8 +1038,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       } else if (e is SeparatorFilter) {
         return $SeparatorFilter.wrap(e);
       } else if (e is SortFilter) {
-        return $SortFilter
-            .wrap(SortFilter(e.type, e.name, e.state, _toValueList(e.values)));
+        return $SortFilter.wrap(SortFilter(
+            e.type, e.name, e.state, _toValueList(e.values), e.typeName));
       } else if (e is SortState) {
         return $SortState.wrap(e);
       } else if (e is CheckBoxFilter) {
@@ -1047,8 +1047,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       } else if (e is SelectFilterOption) {
         return $SelectFilterOption.wrap(e);
       } else if (e is GroupFilter) {
-        return $GroupFilter
-            .wrap(GroupFilter(e.type, e.name, _toValueList(e.state)));
+        return $GroupFilter.wrap(
+            GroupFilter(e.type, e.name, _toValueList(e.state), e.typeName));
       }
       return e;
     }).toList();

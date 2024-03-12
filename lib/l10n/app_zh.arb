@@ -319,5 +319,7 @@
     "text": "文本",
     "border": "边框",
     "background": "背景",
-    "no_subtite_warning_message": "由于此视频中没有字幕轨道，因此无效。"
+    "no_subtite_warning_message": "由于此视频中没有字幕轨道，因此无效。",
+    "grid_size": "网格大小",
+    "n_per_row": "{n} 每行"
 }

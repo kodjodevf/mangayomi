@@ -2,7 +2,7 @@ import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:html/dom.dart';
-import 'package:mangayomi/eval/model/element.dart';
+import 'package:mangayomi/eval/dart/model/element.dart';
 
 class $MElement implements MElement, $Instance {
   $MElement.wrap(this.$value) : _superclass = $Object($value);

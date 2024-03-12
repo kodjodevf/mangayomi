@@ -1,10 +1,10 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/bridge/m_chapter.dart';
-import 'package:mangayomi/eval/bridge/m_status.dart';
-import 'package:mangayomi/eval/model/m_chapter.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/dart/bridge/m_chapter.dart';
+import 'package:mangayomi/eval/dart/bridge/m_status.dart';
+import 'package:mangayomi/eval/dart/model/m_chapter.dart';
+import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
 
 class $MManga implements MManga, $Instance {

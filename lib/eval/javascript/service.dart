@@ -1,0 +1,141 @@
+import 'dart:convert';
+
+import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:mangayomi/eval/javascript/dom_selector.dart';
+import 'package:mangayomi/eval/javascript/extractors.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/javascript/preferences.dart';
+import 'package:mangayomi/eval/javascript/utils.dart';
+import 'package:mangayomi/eval/dart/model/filter.dart';
+import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/video.dart';
+
+class JsExtensionService {
+  late JavascriptRuntime runtime;
+  late Source? source;
+  JsExtensionService(this.source);
+
+  void _init() {
+    runtime = getJavascriptRuntime(xhr: false);
+    JsHttpClient(runtime).init();
+    JsDomSelector(runtime).init();
+    JsVideosExtractors(runtime).init();
+    JsUtils(runtime).init();
+    JsPreferences(runtime, source).init();
+
+    runtime.evaluate(r'''
+class MProvider {
+    async getPopular(page) {
+        throw new Error("getPopular not implemented");
+    }
+    async getLatestUpdates(page) {
+        throw new Error("getLatestUpdates not implemented");
+    }
+    async search(query, page, filters) {
+        throw new Error("search not implemented");
+    }
+    async getDetail(url) {
+        throw new Error("getDetail not implemented");
+    }
+    async getPageList() {
+        throw new Error("getPageList not implemented");
+    }
+    async getVideoList(url) {
+        throw new Error("getVideoList not implemented");
+    }
+    getFilterList() {
+        throw new Error("getFilterList not implemented");
+    }
+    getSourcePreferences() {
+        throw new Error("getSourcePreferences not implemented");
+    }
+}
+''');
+    runtime.evaluate('''${source!.sourceCode}
+var extention = new DefaultExtension();
+''');
+  }
+
+  Future<MPages> getPopular(int page) async {
+    _init();
+    final res = (await runtime.handlePromise(
+            await runtime.evaluateAsync('extention.getPopular($page)')))
+        .stringResult;
+
+    return MPages.fromJson(jsonDecode(res));
+  }
+
+  Future<MPages> getLatestUpdates(int page) async {
+    _init();
+    final res = (await runtime.handlePromise(
+            await runtime.evaluateAsync('extention.getLatestUpdates($page)')))
+        .stringResult;
+
+    return MPages.fromJson(jsonDecode(res));
+  }
+
+  Future<MPages> search(String query, int page, String filters) async {
+    _init();
+    final res = (await runtime.handlePromise(await runtime
+            .evaluateAsync('extention.search("$query",$page,$filters)')))
+        .stringResult;
+
+    return MPages.fromJson(jsonDecode(res));
+  }
+
+  Future<MManga> getDetail(String url) async {
+    _init();
+    final res = (await runtime.handlePromise(
+            await runtime.evaluateAsync('extention.getDetail("$url")')))
+        .stringResult;
+
+    return MManga.fromJson(jsonDecode(res));
+  }
+
+  Future<List<String>> getPageList(String url) async {
+    _init();
+    final res = (await runtime.handlePromise(
+            await runtime.evaluateAsync('extention.getPageList("$url")')))
+        .stringResult;
+
+    return jsonDecode(res);
+  }
+
+  Future<List<Video>> getVideoList(String url) async {
+    _init();
+    final res = (await runtime.handlePromise(
+            await runtime.evaluateAsync('extention.getVideoList("$url")')))
+        .stringResult;
+
+    return (jsonDecode(res) as List).map((e) => Video.fromJson(e)).toList();
+  }
+
+  Future<dynamic> getFilterList() async {
+    _init();
+    try {
+      final res = (await runtime.handlePromise(
+              await runtime.evaluateAsync('extention.getFilterList()')))
+          .stringResult;
+      return FilterList(fromJsonFilterValuestoList(jsonDecode(res))).filters;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<SourcePreference>> getSourcePreferences() async {
+    _init();
+    try {
+      final res = (await runtime.handlePromise(
+              await runtime.evaluateAsync('extention.getSourcePreferences()')))
+          .stringResult;
+      return (jsonDecode(res) as List)
+          .map((e) => SourcePreference.fromJson(e))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+}

@@ -317,5 +317,7 @@
     "text": "Text",
     "border": "Rand",
     "background": "Hintergrund",
-    "no_subtite_warning_message": "Hat keine Wirkung, da in diesem Video keine Untertitelspuren vorhanden sind"
+    "no_subtite_warning_message": "Hat keine Wirkung, da in diesem Video keine Untertitelspuren vorhanden sind",
+    "grid_size": "Rastergröße",
+    "n_per_row": "{n} pro Zeile"
 }

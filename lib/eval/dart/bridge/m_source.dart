@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/eval/dart/model/m_source.dart';
 
 class $MSource implements MSource, $Instance {
   $MSource.wrap(this.$value) : _superclass = $Object($value);

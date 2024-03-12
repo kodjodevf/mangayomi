@@ -6,27 +6,32 @@ class GridViewWidget extends StatelessWidget {
   final bool reverse;
   final double? childAspectRatio;
   final Widget? Function(BuildContext, int) itemBuilder;
+  final int? gridSize;
   const GridViewWidget(
       {super.key,
       this.controller,
       required this.itemCount,
       required this.itemBuilder,
       this.reverse = false,
-      this.childAspectRatio = 0.69});
+      this.childAspectRatio = 0.69,
+      this.gridSize});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: GridView.builder(
-          padding: const EdgeInsets.only(top: 13),
-          controller: controller,
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            childAspectRatio: childAspectRatio!,
-            maxCrossAxisExtent: 220,
-          ),
-          itemCount: itemCount,
-          itemBuilder: itemBuilder),
-    );
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: GridView.builder(
+            padding: const EdgeInsets.only(top: 13),
+            controller: controller,
+            gridDelegate: (gridSize == null || gridSize == 0)
+                ? SliverGridDelegateWithMaxCrossAxisExtent(
+                    childAspectRatio: childAspectRatio!,
+                    maxCrossAxisExtent: 220,
+                  )
+                : SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: gridSize!,
+                    childAspectRatio: childAspectRatio!),
+            itemCount: itemCount,
+            itemBuilder: itemBuilder));
   }
 }

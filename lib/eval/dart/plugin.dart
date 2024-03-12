@@ -1,18 +1,18 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:mangayomi/eval/bridge/document.dart';
-import 'package:mangayomi/eval/bridge/element.dart';
-import 'package:mangayomi/eval/bridge/http.dart';
-import 'package:mangayomi/eval/bridge/m_chapter.dart';
-import 'package:mangayomi/eval/bridge/filter.dart';
-import 'package:mangayomi/eval/bridge/m_pages.dart';
-import 'package:mangayomi/eval/bridge/m_status.dart';
-import 'package:mangayomi/eval/bridge/m_provider.dart';
-import 'package:mangayomi/eval/bridge/m_manga.dart';
-import 'package:mangayomi/eval/bridge/m_source.dart';
-import 'package:mangayomi/eval/bridge/m_track.dart';
-import 'package:mangayomi/eval/bridge/m_video.dart';
-import 'package:mangayomi/eval/bridge/source_preference.dart';
+import 'package:mangayomi/eval/dart/bridge/document.dart';
+import 'package:mangayomi/eval/dart/bridge/element.dart';
+import 'package:mangayomi/eval/dart/bridge/http.dart';
+import 'package:mangayomi/eval/dart/bridge/m_chapter.dart';
+import 'package:mangayomi/eval/dart/bridge/filter.dart';
+import 'package:mangayomi/eval/dart/bridge/m_pages.dart';
+import 'package:mangayomi/eval/dart/bridge/m_status.dart';
+import 'package:mangayomi/eval/dart/bridge/m_provider.dart';
+import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
+import 'package:mangayomi/eval/dart/bridge/m_source.dart';
+import 'package:mangayomi/eval/dart/bridge/m_track.dart';
+import 'package:mangayomi/eval/dart/bridge/m_video.dart';
+import 'package:mangayomi/eval/dart/bridge/source_preference.dart';
 
 class MEvalPlugin extends EvalPlugin {
   @override

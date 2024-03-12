@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/eval/model/m_manga.dart';
-import 'package:mangayomi/eval/model/m_pages.dart';
+import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/dart/model/m_pages.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
+import 'package:mangayomi/modules/library/widgets/library_gridview_widget.dart';
+import 'package:mangayomi/modules/library/widgets/measure_widget_sync.dart';
 import 'package:mangayomi/modules/manga/home/providers/state_provider.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/widgets/listview_widget.dart';
@@ -119,11 +122,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   AsyncValue<MPages?>? _getManga;
   int _length = 0;
   bool _isFiltering = false;
+  List<dynamic> filterList = [];
+  @override
+  void initState() {
+    getFilterList(source: widget.source).then((value) => setState(() {
+          filterList = value;
+        }));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final supportsLatest =
         ref.watch(supportsLatestProvider(source: widget.source));
-    final filterList = getFilterList(source: widget.source);
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(searchProvider(
@@ -328,8 +339,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           TextButton(
                                             onPressed: () {
                                               setState(() {
-                                                filters = getFilterList(
-                                                    source: widget.source);
+                                                filters = filterList;
                                               });
                                             },
                                             child: Text(l10n.reset),
@@ -521,23 +531,56 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                     manga: _mangaList[index],
                                     source: widget.source);
                               })
-                          : GridViewWidget(
-                              controller: _scrollController,
-                              itemCount: _length + 1,
-                              childAspectRatio:
-                                  isComfortableGrid ? 0.642 : 0.69,
-                              itemBuilder: (context, index) {
-                                if (index == _length) {
-                                  return buildProgressIndicator();
-                                }
-                                return MangaHomeImageCard(
-                                  isManga: widget.source.isManga ?? true,
-                                  manga: _mangaList[index],
-                                  source: widget.source,
-                                  isComfortableGrid: isComfortableGrid,
-                                );
-                              },
-                            )),
+                          : Consumer(builder: (context, ref, child) {
+                              final gridSize = ref.watch(
+                                  libraryGridSizeStateProvider(
+                                      isManga: widget.source.isManga!));
+                              final height = ref.watch(widget.source.isManga!
+                                  ? mangaCardheightStateProvider
+                                  : animeCardheightStateProvider);
+                              return GridViewWidget(
+                                gridSize: gridSize,
+                                controller: _scrollController,
+                                itemCount: _length + 1,
+                                childAspectRatio:
+                                    isComfortableGrid ? 0.642 : 0.69,
+                                itemBuilder: (context, index) {
+                                  if (index == _length) {
+                                    return buildProgressIndicator();
+                                  }
+                                  return SizedBox(
+                                    height: height +
+                                        (isComfortableGrid &&
+                                                (gridSize != null &&
+                                                    gridSize != 0)
+                                            ? 22
+                                            : 0),
+                                    child: MeasureWidgetSizeSync(
+                                      onCalculateSize: (size) {
+                                        if (size != null) {
+                                          final newHeight = size.width * 1.5;
+                                          if (height.ceil() !=
+                                              newHeight.ceil()) {
+                                            ref
+                                                .read((widget.source.isManga!
+                                                        ? mangaCardheightStateProvider
+                                                        : animeCardheightStateProvider)
+                                                    .notifier)
+                                                .state = size.width * 1.5;
+                                          }
+                                        }
+                                      },
+                                      child: MangaHomeImageCard(
+                                        isManga: widget.source.isManga ?? true,
+                                        manga: _mangaList[index],
+                                        source: widget.source,
+                                        isComfortableGrid: isComfortableGrid,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            })),
                 ],
               ),
             );

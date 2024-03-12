@@ -507,6 +507,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.17"
+  flutter_qjs:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "67ee92a7c5d105837d64a606f32205c49dcca121"
+      url: "https://github.com/kodjodevf/flutter_qjs.git"
+    source: git
+    version: "0.0.1"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -1163,10 +1172,10 @@ packages:
     dependency: "direct main"
     description:
       name: rinf
-      sha256: "0332613581c85fe9ba5fa5e1c6071f1953f64b3e30db723979ea2cd0db5ea083"
+      sha256: ebddee9235ac046c2200052325d85b7582ed6e255f3458124c8b3229c6c9add0
       url: "https://pub.dev"
     source: hosted
-    version: "6.6.0"
+    version: "6.6.2"
   riverpod:
     dependency: transitive
     description:

@@ -179,6 +179,10 @@ class Settings {
 
   String? appFontFamily;
 
+  int? mangaGridSize;
+
+  int? animeGridSize;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -257,7 +261,9 @@ class Settings {
       this.colorFilterBlendMode = ColorFilterBlendMode.none,
       this.playerSubtitleSettings,
       this.mangaHomeDisplayType = DisplayType.comfortableGrid,
-      this.appFontFamily});
+      this.appFontFamily,
+      this.mangaGridSize,
+      this.animeGridSize});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -398,6 +404,8 @@ class Settings {
         : null;
     mangaHomeDisplayType = DisplayType.values[json['mangaHomeDisplayType']];
     appFontFamily = json['appFontFamily'];
+    mangaGridSize = json['mangaGridSize'];
+    animeGridSize = json['animeGridSize'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -502,7 +510,9 @@ class Settings {
         if (playerSubtitleSettings != null)
           'playerSubtitleSettings': playerSubtitleSettings!.toJson(),
         'mangaHomeDisplayType': mangaHomeDisplayType.index,
-        'appFontFamily': appFontFamily
+        'appFontFamily': appFontFamily,
+        'mangaGridSize': mangaGridSize,
+        'animeGridSize': animeGridSize
       };
 }
 
