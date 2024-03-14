@@ -5,7 +5,7 @@ import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'fetch_manga_sources.g.dart';
@@ -13,7 +13,7 @@ part 'fetch_manga_sources.g.dart';
 @riverpod
 Future fetchMangaSourcesList(FetchMangaSourcesListRef ref,
     {int? id, required reFresh}) async {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     final info = await PackageInfo.fromPlatform();
     final req = await http.get(Uri.parse(

@@ -7,7 +7,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -45,7 +45,7 @@ class MTorrentServer {
   Future<String> getInfohash(String url) async {
     try {
       final torrentByte =
-          (await MInterceptor.init().get(Uri.parse(url))).bodyBytes;
+          (await MClient.init().get(Uri.parse(url))).bodyBytes;
       var request =
           MultipartRequest('POST', Uri.parse('$_baseUrl/torrent/add'));
 

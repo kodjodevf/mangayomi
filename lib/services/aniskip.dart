@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'aniskip.g.dart';
 
 // credits: https://github.com/aniyomiorg/aniyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/util/AniSkipApi.kt
 @riverpod
 class AniSkip extends _$AniSkip {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   @override
   void build() {}
 

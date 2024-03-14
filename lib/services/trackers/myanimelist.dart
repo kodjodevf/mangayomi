@@ -9,13 +9,13 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
 
 @riverpod
 class MyAnimeList extends _$MyAnimeList {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   String baseOAuthUrl = 'https://myanimelist.net/v1/oauth2';
   String baseApiUrl = 'https://api.myanimelist.net/v2';
   String codeVerifier = "";

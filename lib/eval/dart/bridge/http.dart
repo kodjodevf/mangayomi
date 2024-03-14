@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/bridge/m_source.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 
 /// dart_eval wrapper for [InterceptedClient]
 class $Client implements $Instance {
@@ -218,7 +218,7 @@ class $Client implements $Instance {
         : (jsonDecode(args[1]!.$value) as Map)
             .map((key, value) => MapEntry(key.toString(), value));
     return $Client.wrap(
-      MInterceptor.init(source: args[0]?.$value, reqcopyWith: reqcopyWith),
+      MClient.init(source: args[0]?.$value, reqcopyWith: reqcopyWith),
     );
   }
 

@@ -6,7 +6,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_windows_webview/flutter_windows_webview.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -57,7 +57,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         ..launch(widget.url)
         ..addOnWebMessageReceivedCallback((s) {
           if (s.substring(0, 2) == "UA") {
-            MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+            MClient.setCookie(_url, s.replaceFirst("UA", ""));
           }
         })
         ..addScriptToExecuteOnDocumentCreated(
@@ -68,7 +68,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             for (var c in cookieList) {
               final cookie =
                   c.entries.map((e) => "${e.key}=${e.value}").join(";");
-              await MInterceptor.setCookie(_url, "", cookie: cookie);
+              await MClient.setCookie(_url, "", cookie: cookie);
             }
           }
           if (mounted) {
@@ -82,7 +82,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           widget.url,
           WebviewOptions(messageReceiver: (s) {
             if (s.substring(0, 2) == "UA") {
-              MInterceptor.setCookie(_url, s.replaceFirst("UA", ""));
+              MClient.setCookie(_url, s.replaceFirst("UA", ""));
             }
           }, onTitleChange: (_) {
             _windowsWebview.runScript(
@@ -90,7 +90,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             _windowsWebview.getCookies(widget.url).then((cookies) {
               final cookie =
                   cookies.entries.map((e) => "${e.key}=${e.value}").join("; ");
-              MInterceptor.setCookie(_url, "", cookie: cookie);
+              MClient.setCookie(_url, "", cookie: cookie);
             });
           }));
     }
@@ -264,7 +264,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         final ua = await controller.evaluateJavascript(
                                 source: "navigator.userAgent") ??
                             "";
-                        await MInterceptor.setCookie(url.toString(), ua);
+                        await MClient.setCookie(url.toString(), ua);
                         final canGoback = await controller.canGoBack();
                         final canGoForward = await controller.canGoForward();
                         final title = await controller.getTitle();

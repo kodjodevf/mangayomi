@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 
 class JsHttpClient {
   late JavascriptRuntime runtime;
@@ -9,7 +9,7 @@ class JsHttpClient {
 
   init() {
     runtime.onMessage('http_get', (dynamic args) async {
-      return jsonEncode((await MInterceptor.init(
+      return jsonEncode((await MClient.init(
                   source: null,
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .get(Uri.parse(args[2]),
@@ -17,7 +17,7 @@ class JsHttpClient {
           .toJson());
     });
     runtime.onMessage('http_post', (dynamic args) async {
-      return jsonEncode((await MInterceptor.init(
+      return jsonEncode((await MClient.init(
                   source: null,
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .post(Uri.parse(args[2]),
@@ -25,7 +25,7 @@ class JsHttpClient {
           .toJson());
     });
     runtime.onMessage('http_put', (dynamic args) async {
-      return (await MInterceptor.init(
+      return (await MClient.init(
                   source: null,
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .put(Uri.parse(args[2]),
@@ -33,7 +33,7 @@ class JsHttpClient {
           .toJson();
     });
     runtime.onMessage('http_delete', (dynamic args) async {
-      return jsonEncode((await MInterceptor.init(
+      return jsonEncode((await MClient.init(
               source: null,
               reqcopyWith: (args[1] as Map?)?.map(
                   (key, value) => MapEntry(key.toString(), value))).delete(
@@ -44,7 +44,7 @@ class JsHttpClient {
           .toJson());
     });
     runtime.onMessage('http_patch', (dynamic args) async {
-      return jsonEncode((await MInterceptor.init(
+      return jsonEncode((await MClient.init(
                   source: null,
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .patch(Uri.parse(args[2]),

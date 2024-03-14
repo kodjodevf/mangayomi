@@ -8,13 +8,13 @@ import 'dart:convert';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
 
 @riverpod
 class Kitsu extends _$Kitsu {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   final String _clientId =
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
   final String _clientSecret =

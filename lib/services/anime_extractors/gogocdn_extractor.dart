@@ -4,11 +4,11 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:html/parser.dart' as parser;
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class GogoCdnExtractor {
-  final InterceptedClient client = MInterceptor.init();
+  final InterceptedClient client = MClient.init();
   final JsonCodec json = const JsonCodec();
 
   Future<List<Video>> videosFromUrl(String serverUrl) async {

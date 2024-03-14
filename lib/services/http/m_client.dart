@@ -13,11 +13,11 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:cronet_http/cronet_http.dart';
 import 'package:http/io_client.dart';
 
-class MInterceptor {
+class MClient {
   static final flutter_inappwebview.CookieManager _cookieManager =
       flutter_inappwebview.CookieManager.instance();
 
-  MInterceptor();
+  MClient();
   static Client httpClient() {
     if (Platform.isAndroid) {
       if (playStoreAvailability == GooglePlayServicesAvailability.unknown) {
@@ -104,7 +104,7 @@ class MCookieManager extends InterceptorContract {
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
   }) async {
-    final cookie = MInterceptor.getCookiesPref(request.url.toString());
+    final cookie = MClient.getCookiesPref(request.url.toString());
     if (cookie.isNotEmpty) {
       final userAgent = isar.settings.getSync(227)!.userAgent!;
       request.headers.addAll(cookie);
