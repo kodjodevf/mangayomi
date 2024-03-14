@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -84,8 +84,9 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                           height: 120,
                                           width: 80,
                                           fit: BoxFit.cover,
-                                          image: CachedNetworkImageProvider(
-                                              tracks![index].coverUrl!),
+                                          image:
+                                              CustomExtendedNetworkImageProvider(
+                                                  tracks![index].coverUrl!),
                                         ),
                                       ),
                                       const SizedBox(

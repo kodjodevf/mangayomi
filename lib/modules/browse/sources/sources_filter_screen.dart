@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -7,6 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class SourcesFilterScreen extends ConsumerWidget {
@@ -86,20 +86,18 @@ class SourcesFilterScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(5)),
                         child: element.iconUrl!.isEmpty
                             ? const Icon(Icons.source_outlined)
-                            : CachedNetworkImage(
+                            : cachedNetworkImage(
                                 imageUrl: element.iconUrl!,
                                 fit: BoxFit.contain,
                                 width: 37,
                                 height: 37,
-                                errorWidget: (context, url, error) {
-                                  return const SizedBox(
-                                    width: 37,
-                                    height: 37,
-                                    child: Center(
-                                      child: Icon(Icons.source_outlined),
-                                    ),
-                                  );
-                                },
+                                errorWidget: const SizedBox(
+                                  width: 37,
+                                  height: 37,
+                                  child: Center(
+                                    child: Icon(Icons.source_outlined),
+                                  ),
+                                ),
                               ),
                       ),
                       onChanged: (bool? value) {

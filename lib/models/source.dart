@@ -107,7 +107,8 @@ class Source {
     version = json['version'];
     versionLast = json['versionLast'];
     additionalParams = json['additionalParams'] ?? "";
-    sourceCodeLanguage = SourceCodeLanguage.values[json['sourceCodeLanguage']];
+    sourceCodeLanguage =
+        SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
   }
 
   Map<String, dynamic> toJson() => {

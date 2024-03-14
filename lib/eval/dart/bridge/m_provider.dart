@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/dart/bridge/document.dart';
 import 'package:mangayomi/eval/dart/bridge/filter.dart';
 import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
@@ -16,7 +17,6 @@ import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/eval/dart/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
-import 'package:mangayomi/services/boa_js.dart';
 
 class $MProvider extends MProvider with $Bridge<MProvider> {
   static $MProvider $construct(
@@ -748,8 +748,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   $Value? $bridgeGet(String identifier) {
     return switch (identifier) {
       'evalJs' => $Function((_, __, List<$Value?> args) {
-          return $Future
-              .wrap(evalJs(args[0]!.$reified).then((value) => $String(value)));
+          final runtime = getJavascriptRuntime();
+          return $Future.wrap(runtime
+              .evaluateAsync(args[0]!.$reified)
+              .then((value) => $String(value.stringResult)));
         }),
       'getUrlWithoutDomain' => $Function((_, __, List<$Value?> args) {
           final uri = Uri.parse(args[0]!.$value.replaceAll(' ', '%20'));

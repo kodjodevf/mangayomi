@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +9,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -52,7 +52,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                   ? MemoryImage(
                           snapshot.data!.first.customCoverImage as Uint8List)
                       as ImageProvider
-                  : CachedNetworkImageProvider(
+                  : CustomExtendedNetworkImageProvider(
                       toImgUrl(hasData
                           ? snapshot.data!.first.customCoverFromTracker ??
                               snapshot.data!.first.imageUrl ??
@@ -60,7 +60,8 @@ class MangaImageCardWidget extends ConsumerWidget {
                           : getMangaDetail!.imageUrl!),
                       headers: ref.watch(headersProvider(
                           source: source.name!, lang: source.lang!)),
-                    ),
+                      cache: true,
+                      cacheMaxAge: const Duration(days: 7)),
               onTap: () {
                 pushToMangaReaderDetail(
                     context: context,
@@ -125,7 +126,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
           final image = hasData && snapshot.data!.first.customCoverImage != null
               ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List)
                   as ImageProvider
-              : CachedNetworkImageProvider(
+              : CustomExtendedNetworkImageProvider(
                   toImgUrl(hasData
                       ? snapshot.data!.first.customCoverFromTracker ??
                           snapshot.data!.first.imageUrl ??

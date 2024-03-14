@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -9,6 +8,7 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -98,7 +98,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                     image: entry.customCoverImage != null
                                         ? MemoryImage(entry.customCoverImage
                                             as Uint8List) as ImageProvider
-                                        : CachedNetworkImageProvider(
+                                        : CustomExtendedNetworkImageProvider(
                                             toImgUrl(
                                                 entry.customCoverFromTracker ??
                                                     entry.imageUrl!),

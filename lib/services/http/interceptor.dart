@@ -1,4 +1,6 @@
+import 'package:cupertino_http/cupertino_http.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
@@ -8,16 +10,39 @@ import 'package:mangayomi/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:mangayomi/models/settings.dart';
+import 'package:cronet_http/cronet_http.dart';
+import 'package:http/io_client.dart';
 
 class MInterceptor {
   static final flutter_inappwebview.CookieManager _cookieManager =
       flutter_inappwebview.CookieManager.instance();
 
   MInterceptor();
+  static Client httpClient() {
+    if (Platform.isAndroid) {
+      if (playStoreAvailability == GooglePlayServicesAvailability.unknown) {
+        return IOClient(HttpClient());
+      }
+      final engine = CronetEngine.build(
+          enablePublicKeyPinningBypassForLocalTrustAnchors: true,
+          enableHttp2: true,
+          enableBrotli: true,
+          cacheMode: CacheMode.memory,
+          cacheMaxSize: 5 * 1024 * 1024);
+      return CronetClient.fromCronetEngine(engine);
+    }
+    if (Platform.isIOS || Platform.isMacOS) {
+      final config = URLSessionConfiguration.ephemeralSessionConfiguration()
+        ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
+      return CupertinoClient.fromSessionConfiguration(config);
+    }
+    return IOClient(HttpClient());
+  }
 
   static InterceptedClient init(
       {MSource? source, Map<String, dynamic>? reqcopyWith}) {
     return InterceptedClient.build(
+        client: httpClient(),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 
