@@ -7,38 +7,38 @@ import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 class JsDomSelector {
   late JavascriptRuntime runtime;
   JsDomSelector(this.runtime);
-
+  final Map<int, Element?> _elements = {};
+  int _elementKey = 0;
   init() {
-    runtime.onMessage('getDocElement', (dynamic args) async {
+    runtime.onMessage('get_doc_element', (dynamic args) {
       final input = args[0];
       final type = args[1];
       final doc = parse(input);
-      final res = switch (type) {
+      final element = switch (type) {
         'body' => doc.body,
         'documentElement' => doc.documentElement,
         'head' => doc.head,
         _ => doc.parent
       };
-      return res?.outerHtml ?? "";
+      _elementKey++;
+      _elements[_elementKey] = element;
+      return _elementKey;
     });
-    runtime.onMessage('getDocumentString', (dynamic args) async {
+    runtime.onMessage('get_doc_string', (dynamic args) {
       final input = args[0];
       final type = args[1];
       final doc = parse(input);
       final res = switch (type) { 'text' => doc.text, _ => doc.outerHtml };
       return res ?? "";
     });
-    runtime.onMessage('getElementString', (dynamic args) async {
-      final input = args[0];
-      final selector = args[1];
-      final type = args[2];
-      final element = parse(input).selectFirst(selector);
+    runtime.onMessage('get_element_string', (dynamic args) {
+      final type = args[0];
+      final key = args[1];
+      final element = _elements[key];
       final res = switch (type) {
         'text' => element?.text,
         'innerHtml' => element?.innerHtml,
         'outerHtml' => element?.outerHtml,
-        'previousElementSibling' => element?.previousElementSibling?.outerHtml,
-        'nextElementSibling' => element?.nextElementSibling?.outerHtml,
         'className' => element?.className,
         'localName' => element?.localName,
         'namespaceUri' => element?.namespaceUri,
@@ -49,37 +49,64 @@ class JsDomSelector {
       };
       return res ?? "";
     });
-    runtime.onMessage('selectFirst', (dynamic args) async {
+    runtime.onMessage('doc_select_first', (dynamic args) {
       final input = args[0];
       final selector = args[1];
-      final element = parse(input).selectFirst(selector);
-      return element?.outerHtml ?? "";
+      _elementKey++;
+      _elements[_elementKey] = parse(input).selectFirst(selector);
+      return _elementKey;
     });
-    runtime.onMessage('attr', (dynamic args) async {
-      final input = args[0];
-      final selector = args[1];
-      final attr = args[2];
-      return parse(input).selectFirst(selector)?.attr(attr) ?? "";
+    runtime.onMessage('ele_selectFirst', (dynamic args) {
+      final selector = args[0];
+      final key = args[1];
+      _elementKey++;
+      _elements[_elementKey] = _elements[key]?.selectFirst(selector);
+      return _elementKey;
     });
-    runtime.onMessage('docAttr', (dynamic args) async {
+    runtime.onMessage('ele_element_sibling', (dynamic args) {
+      final type = args[0];
+      final key = args[1];
+      final ele = _elements[key];
+      final element = switch (type) {
+        'nextElementSibling' => ele?.nextElementSibling,
+        _ => ele?.previousElementSibling
+      };
+      _elementKey++;
+      _elements[_elementKey] = element;
+      return _elementKey;
+    });
+    runtime.onMessage('ele_attr', (dynamic args) {
+      final attr = args[0];
+      final key = args[1];
+      return _elements[key]?.attr(attr) ?? "";
+    });
+    runtime.onMessage('doc_attr', (dynamic args) {
       final input = args[0];
       final attr = args[1];
       return parse(input).attr(attr) ?? "";
     });
-    runtime.onMessage('xpathFirst', (dynamic args) async {
+    runtime.onMessage('doc_xpath_first', (dynamic args) {
       final input = args[0];
-      final selector = args[1];
-      final xpath = args[2];
-      return parse(input).selectFirst(selector)?.xpathFirst(xpath) ?? "";
+      final xpath = args[1];
+      return parse(input).xpathFirst(xpath) ?? "";
+    });
+    runtime.onMessage('ele_xpathFirst', (dynamic args) {
+      final xpath = args[0];
+      final key = args[1];
+      return _elements[key]?.xpathFirst(xpath) ?? "";
     });
 
-    runtime.onMessage('xpath', (dynamic args) async {
+    runtime.onMessage('doc_xpath', (dynamic args) {
       final input = args[0];
-      final selector = args[1];
-      final xpath = args[2];
-      return jsonEncode(parse(input).selectFirst(selector)?.xpath(xpath));
+      final xpath = args[1];
+      return jsonEncode(parse(input).xpath(xpath));
     });
-    runtime.onMessage('docGetElementsListBy', (dynamic args) async {
+    runtime.onMessage('ele_xpath', (dynamic args) {
+      final xpath = args[0];
+      final key = args[1];
+      return jsonEncode(_elements[key]?.xpath(xpath));
+    });
+    runtime.onMessage('doc_get_elements_by', (dynamic args) {
       final input = args[0];
       final type = args[1];
       final name = args[2];
@@ -89,34 +116,62 @@ class JsDomSelector {
         'getElementsByTagName' => doc.getElementsByTagName(name),
         _ => doc.getElementsByClassName(name)
       };
-      return jsonEncode(elements.map((e) => e.outerHtml).toList());
+      List<int> elementKeys = [];
+      for (var element in elements) {
+        _elementKey++;
+        _elements[_elementKey] = element;
+        elementKeys.add(_elementKey);
+      }
+      return jsonEncode(elementKeys);
     });
-    runtime.onMessage('elemGetElementsListBy', (dynamic args) async {
-      final input = args[0];
-      final type = args[1];
-      final name = args[2];
-      final selector = args[3];
-      final doc = parse(input).selectFirst(selector);
+    runtime.onMessage('ele_get_elements_by', (dynamic args) {
+      final type = args[0];
+      final name = args[1];
+      final key = args[2];
+      final element = _elements[key];
       final elements = switch (type) {
-        'children' => doc?.children,
-        'getElementsByTagName' => doc?.getElementsByTagName(name),
-        _ => doc?.getElementsByClassName(name)
+        'children' => element?.children,
+        'getElementsByTagName' => element?.getElementsByTagName(name),
+        _ => element?.getElementsByClassName(name)
       };
-      return jsonEncode(elements?.map((e) => e.outerHtml).toList());
+      List<int> elementKeys = [];
+      for (var element in elements ?? []) {
+        _elementKey++;
+        _elements[_elementKey] = element;
+        elementKeys.add(_elementKey);
+      }
+      return jsonEncode(elementKeys);
     });
-    runtime.onMessage('getElementById', (dynamic args) async {
+    runtime.onMessage('doc_get_element_by_id', (dynamic args) {
       final input = args[0];
       final id = args[1];
-      return parse(input).getElementById(id)?.outerHtml ?? "";
+      _elementKey++;
+      _elements[_elementKey] = parse(input).getElementById(id);
+      return _elementKey;
     });
-    runtime.onMessage('select', (dynamic args) async {
+    runtime.onMessage('doc_select', (dynamic args) {
       final input = args[0];
       final selector = args[1];
-      final listElement = parse(input).select(selector);
-      final elements = jsonEncode(listElement?.map((e) {
-        return e.outerHtml;
-      }).toList());
-      return elements;
+      final elements = parse(input).select(selector);
+      List<int> elementKeys = [];
+      for (var element in elements ?? []) {
+        _elementKey++;
+        _elements[_elementKey] = element;
+        elementKeys.add(_elementKey);
+      }
+      return jsonEncode(elementKeys);
+    });
+    runtime.onMessage('ele_select', (dynamic args) {
+      final selector = args[0];
+      final key = args[1];
+      final elements = _elements[key]?.select(selector);
+      List<int> elementKeys = [];
+      for (var element in elements ?? []) {
+        _elementKey++;
+        _elements[_elementKey] = element;
+        elementKeys.add(_elementKey);
+      }
+      return jsonEncode(elementKeys);
     });
 
     runtime.evaluate('''
@@ -124,189 +179,208 @@ class Document {
     constructor(html) {
         this.html = html;
     }
-    async getDocElement(type) {
-        return JSON.parse(await sendMessage(
-            "getDocElement",
-            JSON.stringify([this.html, type]))
+    getElement(type) {
+        const key = sendMessage(
+            "get_doc_element",
+            JSON.stringify([this.html, type])
         );
+        return new Element(key);
     }
     get body() {
-        return this.getDocElement('body');
+        return this.getElement('body');
     }
     get documentElement() {
-        return this.getDocElement('documentElement');
+        return this.getElement('documentElement');
     }
     get head() {
-        return this.getDocElement('head');
+        return this.getElement('head');
     }
     get parent() {
-        return this.getDocElement('parent');
+        return this.getElement('parent');
     }
-    async getDocumentString(type) {
-        return JSON.parse(await sendMessage(
-            "getDocumentString",
+    getString(type) {
+        return JSON.parse(sendMessage(
+            "get_doc_string",
             JSON.stringify([this.html, type]))
         );
     }
     get text() {
-        return this.getDocumentString('text');
+        return this.getString('text');
     }
     get outerHtml() {
-        return this.getDocumentString('outerHtml');
+        return this.getString('outerHtml');
     }
-    async selectFirst(selector) {
-        const res = await sendMessage(
-            "selectFirst",
+    selectFirst(selector) {
+        const key = sendMessage(
+            "doc_select_first",
             JSON.stringify([this.html, selector])
         );
-        return new Element(res, selector);
+        return new Element(key);
     }
-    async select(selector) {
-        let htmlList = [];
+    select(selector) {
+        let elements = [];
         JSON.parse(
-            await sendMessage("select", JSON.stringify([this.html, selector]))
-        ).forEach((e) => {
-            htmlList.push(e);
+            sendMessage("doc_select", JSON.stringify([this.html, selector]))
+        ).forEach((key) => {
+            elements.push(new Element(key));
         });
-        return htmlList;
+        return elements;
     }
-    async xpathFirst(xpath) {
-        return await sendMessage(
-            "xpathFirst",
+    xpathFirst(xpath) {
+        return sendMessage(
+            "doc_xpath_first",
             JSON.stringify([this.html, xpath])
         );
     }
-    async xpath(xpath) {
-        return JSON.parse(await sendMessage(
-            "xpath",
+    xpath(xpath) {
+        return JSON.parse(sendMessage(
+            "doc_xpath",
             JSON.stringify([this.html, xpath]))
         );
     }
-    async docGetElementsListBy(type, name) {
+    getElementsListBy(type, name) {
         name = name || '';
-        return JSON.parse(await sendMessage(
-            "docGetElementsListBy",
+        let elements = [];
+        JSON.parse(sendMessage(
+            "doc_get_elements_by",
             JSON.stringify([this.html, type, name]))
-        );
+        ).forEach((key) => {
+            elements.push(new Element(key));
+        });
+        return elements;
     }
     get children() {
-        return this.docGetElementsListBy('children');
+        return this.getElementsListBy('children');
     }
-    async getElementsByTagName(name) {
-        return this.docGetElementsListBy('getElementsByTagName', name);
+    getElementsByTagName(name) {
+        return this.getElementsListBy('getElementsByTagName', name);
     }
-    async getElementsByClassName(name) {
-        return this.docGetElementsListBy('getElementsByClassName', name);
+    getElementsByClassName(name) {
+        return this.getElementsListBy('getElementsByClassName', name);
     }
-    async getElementById(id) {
-        return await sendMessage(
-            "getElementById",
-            JSON.stringify([(await this.parse()).outerHtml, id])
+    getElementById(id) {
+        const key = sendMessage(
+            "doc_get_element_by_id",
+            JSON.stringify([this.html, id])
         );
+        return new Element(key);
     }
-    async attr(attr) {
-        return await sendMessage(
-            "docAttr",
-            JSON.stringify([this.res.html, this.res.selector, attr])
+    attr(attr) {
+        return sendMessage(
+            "doc_attr",
+            JSON.stringify([this.html, attr])
         );
     }
 }
 
 class Element {
-    constructor(html, selector) {
-        this.html = html;
-        this.selector = selector;
+    constructor(key) {
+        this.key = key;
     }
-    async getElementString(type) {
-        return await sendMessage(
-            "getElementString",
-            JSON.stringify([this.html, this.selector, type])
+    getString(type) {
+        return sendMessage(
+            "get_element_string",
+            JSON.stringify([type, this.key])
         );
     }
     get text() {
-        return this.getElementString("text");
+        return this.getString("text");
     }
     get outerHtml() {
-        return this.getElementString("outerHtml");
+        return this.getString("outerHtml");
     }
     get innerHtml() {
-        return this.getElementString("innerHtml");
+        return this.getString("innerHtml");
     }
     get className() {
-        return this.getElementString("className");
+        return this.getString("className");
     }
     get localName() {
-        return this.getElementString("localName");
+        return this.getString("localName");
     }
     get namespaceUri() {
-        return this.getElementString("namespaceUri");
+        return this.getString("namespaceUri");
     }
     get getSrc() {
-        return this.getElementString("getSrc");
+        return this.getString("getSrc");
     }
     get getImg() {
-        return this.getElementString("getImg");
+        return this.getString("getImg");
     }
     get getHref() {
-        return this.getElementString("getHref");
+        return this.getString("getHref");
     }
     get getDataSrc() {
-        return this.getElementString("getDataSrc");
+        return this.getString("getDataSrc");
+    }
+    getElementSibling(type) {
+        const key = sendMessage(
+            "ele_element_sibling",
+            JSON.stringify([type, this.key])
+        );
+        return new Element(key);
     }
     get previousElementSibling() {
-        return this.getElementString("previousElementSibling");
+        return this.getElementSibling("previousElementSibling");
     }
     get nextElementSibling() {
-        return this.getElementString("nextElementSibling");
+        return this.getElementSibling("nextElementSibling");
     }
-    async elemGetElementsListBy(type, name) {
+    getElementsListBy(type, name) {
         name = name || '';
-        return JSON.parse(await sendMessage(
-            "elemGetElementsListBy",
-            JSON.stringify([this.html, type, name]))
-        );
+        let elements = [];
+        JSON.parse(sendMessage(
+            "ele_get_elements_by",
+            JSON.stringify([type, name, this.key]))
+        ).forEach((key) => {
+            elements.push(new Element(key));
+        });
+        return elements;
     }
     get children() {
-        return this.elemGetElementsListBy('children');
+        return this.getElementsListBy('children');
     }
-    async getElementsByTagName(name) {
-        return this.elemGetElementsListBy('getElementsByTagName', name);
+    getElementsByTagName(name) {
+        return this.getElementsListBy('getElementsByTagName', name);
     }
-    async getElementsByClassName(name) {
-        return this.elemGetElementsListBy('getElementsByClassName', name);
+    getElementsByClassName(name) {
+        return this.getElementsListBy('getElementsByClassName', name);
     }
-    async xpath(xpath) {
-        return JSON.parse(await sendMessage(
+    xpath(xpath) {
+        return JSON.parse(sendMessage(
             "xpath",
-            JSON.stringify([this.html, xpath]))
+            JSON.stringify([xpath, this.key]))
         );
     }
-    async attr(attr) {
-        return await sendMessage(
+    attr(attr) {
+        return sendMessage(
             "attr",
-            JSON.stringify([this.html, this.selector, attr])
+            JSON.stringify([attr, this.key])
         );
     }
-    async xpathFirst(xpath) {
-        return await sendMessage(
+    xpathFirst(xpath) {
+        return sendMessage(
             "xpathFirst",
-            JSON.stringify([this.html, xpath])
+            JSON.stringify([xpath, this.key])
         );
+    }
+    selectFirst(selector) {
+        const key = sendMessage(
+            "ele_selectFirst",
+            JSON.stringify([selector, this.key])
+        );
+        return new Element(key);
+    }
+    select(selector) {
+        let elements = [];
+        JSON.parse(
+            sendMessage("ele_select", JSON.stringify([selector, this.key]))
+        ).forEach((key) => {
+            elements.push(new Element(key));
+        });
+        return elements;
     }
 }
 ''');
   }
-}
-
-extension ElementExtexsion on Element? {
-  Map<String, dynamic> toJson() => {
-        'text': this?.text,
-        'className': this?.className,
-        'localName': this?.localName,
-        'namespaceUri': this?.namespaceUri,
-        'getSrc': this?.getSrc,
-        'getImg': this?.getImg,
-        'getHref': this?.getHref,
-        'getDataSrc': this?.getDataSrc,
-      };
 }
