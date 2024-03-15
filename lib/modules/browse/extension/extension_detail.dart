@@ -23,23 +23,10 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = widget.source;
-  List<SourcePreference> sourcePreference = [];
-  bool _isLoading = true;
-  @override
-  void initState() {
-    getSourcePreferenceAsync(source: source).then((value) {
-      if (mounted) {
-        setState(() {
-          sourcePreference = value
-              .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
-              .toList();
-          _isLoading = false;
-        });
-      }
-    });
-    print(source.id);
-    super.initState();
-  }
+  late List<SourcePreference> sourcePreference =
+      getSourcePreference(source: source)
+          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
+          .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -224,9 +211,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     )),
               ),
             ),
-            if (!_isLoading)
-              SourcePreferenceWidget(
-                  sourcePreference: sourcePreference, source: source)
+            SourcePreferenceWidget(
+                sourcePreference: sourcePreference, source: source)
           ],
         ),
       ),

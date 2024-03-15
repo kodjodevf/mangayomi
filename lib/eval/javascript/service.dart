@@ -63,8 +63,8 @@ var extention = new DefaultExtension();
 
   Future<MPages> getPopular(int page) async {
     _init();
-    final res = (await runtime.handlePromise(
-            await runtime.evaluateAsync('jsonStringify(() => extention.getPopular($page))')))
+    final res = (await runtime.handlePromise(await runtime
+            .evaluateAsync('jsonStringify(() => extention.getPopular($page))')))
         .stringResult;
 
     return MPages.fromJson(jsonDecode(res));
@@ -72,8 +72,8 @@ var extention = new DefaultExtension();
 
   Future<MPages> getLatestUpdates(int page) async {
     _init();
-    final res = (await runtime.handlePromise(
-            await runtime.evaluateAsync('jsonStringify(() => extention.getLatestUpdates($page))')))
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.getLatestUpdates($page))')))
         .stringResult;
 
     return MPages.fromJson(jsonDecode(res));
@@ -81,8 +81,8 @@ var extention = new DefaultExtension();
 
   Future<MPages> search(String query, int page, String filters) async {
     _init();
-    final res = (await runtime.handlePromise(await runtime
-            .evaluateAsync('jsonStringify(() => extention.search("$query",$page,$filters))')))
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.search("$query",$page,$filters))')))
         .stringResult;
 
     return MPages.fromJson(jsonDecode(res));
@@ -90,8 +90,8 @@ var extention = new DefaultExtension();
 
   Future<MManga> getDetail(String url) async {
     _init();
-    final res = (await runtime.handlePromise(
-            await runtime.evaluateAsync('jsonStringify(() => extention.getDetail("$url"))')))
+    final res = (await runtime.handlePromise(await runtime
+            .evaluateAsync('jsonStringify(() => extention.getDetail("$url"))')))
         .stringResult;
 
     return MManga.fromJson(jsonDecode(res));
@@ -99,8 +99,8 @@ var extention = new DefaultExtension();
 
   Future<List<String>> getPageList(String url) async {
     _init();
-    final res = (await runtime.handlePromise(
-            await runtime.evaluateAsync('jsonStringify(() => extention.getPageList("$url"))')))
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.getPageList("$url"))')))
         .stringResult;
 
     return jsonDecode(res);
@@ -108,18 +108,18 @@ var extention = new DefaultExtension();
 
   Future<List<Video>> getVideoList(String url) async {
     _init();
-    final res = (await runtime.handlePromise(
-            await runtime.evaluateAsync('jsonStringify(() => extention.getVideoList("$url"))')))
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.getVideoList("$url"))')))
         .stringResult;
 
     return (jsonDecode(res) as List).map((e) => Video.fromJson(e)).toList();
   }
 
-  Future<dynamic> getFilterList() async {
+  dynamic getFilterList() {
     _init();
     try {
-      final res = (await runtime.handlePromise(
-              await runtime.evaluateAsync('jsonStringify(() => extention.getFilterList())')))
+      final res = runtime
+          .evaluate('JSON.stringify(extention.getFilterList())')
           .stringResult;
       return FilterList(fromJsonFilterValuestoList(jsonDecode(res))).filters;
     } catch (_) {
@@ -127,11 +127,11 @@ var extention = new DefaultExtension();
     }
   }
 
-  Future<List<SourcePreference>> getSourcePreferences() async {
+  List<SourcePreference> getSourcePreferences() {
     _init();
     try {
-      final res = (await runtime.handlePromise(
-              await runtime.evaluateAsync('jsonStringify(() => extention.getSourcePreferences())')))
+      final res = runtime
+          .evaluate('JSON.stringify(extention.getSourcePreferences())')
           .stringResult;
       return (jsonDecode(res) as List)
           .map((e) => SourcePreference.fromJson(e))

@@ -122,19 +122,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   AsyncValue<MPages?>? _getManga;
   int _length = 0;
   bool _isFiltering = false;
-  List<dynamic> filterList = [];
-  @override
-  void initState() {
-    getFilterList(source: widget.source).then((value) => setState(() {
-          filterList = value;
-        }));
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     final supportsLatest =
         ref.watch(supportsLatestProvider(source: widget.source));
+    final filterList = getFilterList(source: widget.source);
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(searchProvider(
@@ -339,7 +332,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           TextButton(
                                             onPressed: () {
                                               setState(() {
-                                                filters = filterList;
+                                                filters = getFilterList(
+                                                    source: widget.source);
                                               });
                                             },
                                             child: Text(l10n.reset),

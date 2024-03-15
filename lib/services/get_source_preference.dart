@@ -10,27 +10,6 @@ import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 List<SourcePreference> getSourcePreference({required Source source}) {
   List<SourcePreference> sourcePreference = [];
 
-  try {
-    final bytecode = compilerEval(source.sourceCode!);
-
-    final runtime = runtimeEval(bytecode);
-
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
-        [$MSource.wrap(source.toMSource())]);
-    sourcePreference = (res as MProvider)
-        .getSourcePreferences()
-        .map((e) => (e is $Value ? e.$reified : e) as SourcePreference)
-        .toList();
-  } catch (_) {
-    return [];
-  }
-
-  return sourcePreference;
-}
-
-Future<List<SourcePreference>> getSourcePreferenceAsync(
-    {required Source source}) async {
-  List<SourcePreference> sourcePreference = [];
   if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
     try {
       final bytecode = compilerEval(source.sourceCode!);
@@ -47,7 +26,7 @@ Future<List<SourcePreference>> getSourcePreferenceAsync(
       return [];
     }
   } else {
-    sourcePreference = await JsExtensionService(source).getSourcePreferences();
+    sourcePreference = JsExtensionService(source).getSourcePreferences();
   }
 
   return sourcePreference;

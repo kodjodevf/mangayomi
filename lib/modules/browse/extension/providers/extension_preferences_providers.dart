@@ -85,37 +85,3 @@ void setSourcePreferenceStringValue(int sourceId, String key, String value) {
     }
   });
 }
-
-Future<dynamic> getPreferenceValueAsync(int sourceId, String key) async {
-  final sourcePreference = await getSourcePreferenceEntryAsync(key, sourceId);
-
-  if (sourcePreference.listPreference != null) {
-    final pref = sourcePreference.listPreference!;
-    return pref.entryValues![pref.valueIndex!];
-  } else if (sourcePreference.checkBoxPreference != null) {
-    return sourcePreference.checkBoxPreference!.value;
-  } else if (sourcePreference.switchPreferenceCompat != null) {
-    return sourcePreference.switchPreferenceCompat!.value;
-  } else if (sourcePreference.editTextPreference != null) {
-    return sourcePreference.editTextPreference!.value;
-  }
-  return sourcePreference.multiSelectListPreference!.values;
-}
-
-Future<SourcePreference> getSourcePreferenceEntryAsync(
-    String key, int sourceId) async {
-  SourcePreference? sourcePreference = isar.sourcePreferences
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
-  if (sourcePreference == null) {
-    final source = isar.sources.getSync(sourceId)!;
-    sourcePreference = (await getSourcePreferenceAsync(source: source))
-        .firstWhere((element) => element.key == key,
-            orElse: () => throw "Error when getting source preference");
-    setPreferenceSetting(sourcePreference, source);
-  }
-
-  return sourcePreference;
-}

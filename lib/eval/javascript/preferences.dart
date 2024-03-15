@@ -8,13 +8,13 @@ class JsPreferences {
   JsPreferences(this.runtime, this.source);
 
   init() {
-    runtime.onMessage('getPreferenceValue', (dynamic args) async {
-      return await getPreferenceValueAsync(source!.id!, args[0]);
+    runtime.onMessage('getPreferenceValue', (dynamic args)  {
+      return  getPreferenceValue(source!.id!, args[0]);
     });
-    runtime.onMessage('getPrefStringValue', (dynamic args) async {
+    runtime.onMessage('getPrefStringValue', (dynamic args)  {
       return getSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
-    runtime.onMessage('setPrefStringValue', (dynamic args) async {
+    runtime.onMessage('setPrefStringValue', (dynamic args)  {
       return setSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
 

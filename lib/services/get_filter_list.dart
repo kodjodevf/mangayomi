@@ -7,7 +7,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/sources/source_test.dart';
 
-Future<List<dynamic>> getFilterList({required Source source}) async {
+List<dynamic> getFilterList({required Source source}) {
   List<dynamic> filterList = [];
   if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
     try {
@@ -26,7 +26,7 @@ Future<List<dynamic>> getFilterList({required Source source}) async {
       return [];
     }
   } else {
-    filterList = (await JsExtensionService(source).getFilterList()).filters;
+    filterList = (JsExtensionService(source).getFilterList()).filters;
   }
 
   return filterList;
