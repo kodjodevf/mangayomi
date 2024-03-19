@@ -6,7 +6,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
-import 'package:mangayomi/modules/library/widgets/measure_widget_sync.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -20,9 +19,6 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-
-final animeCardheightStateProvider = StateProvider<double>((ref) => 300);
-final mangaCardheightStateProvider = StateProvider<double>((ref) => 300);
 
 class LibraryGridViewWidget extends StatefulWidget {
   final bool isCoverOnlyGrid;
@@ -56,9 +52,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
     return Consumer(builder: (context, ref, child) {
       final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
       final isManga = widget.isManga;
-      final height = ref.watch(isManga
-          ? mangaCardheightStateProvider
-          : animeCardheightStateProvider);
+     
       final gridSize =
           ref.watch(libraryGridSizeStateProvider(isManga: isManga));
       return GridViewWidget(
@@ -70,27 +64,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
 
           return Builder(builder: (context) {
             bool isLocalArchive = entry.isLocalArchive ?? false;
-            return SizedBox(
-              height: height +
-                  (widget.isComfortableGrid &&
-                          (gridSize != null && gridSize != 0)
-                      ? 22
-                      : 0),
-              child: MeasureWidgetSizeSync(
-                onCalculateSize: (size) {
-                  if (size != null) {
-                    final newHeight = size.width * 1.5;
-                    if (height.ceil() != newHeight.ceil()) {
-                      ref
-                          .read((isManga
-                                  ? mangaCardheightStateProvider
-                                  : animeCardheightStateProvider)
-                              .notifier)
-                          .state = size.width * 1.5;
-                    }
-                  }
-                },
-                child: Padding(
+            return Padding(
                   padding: const EdgeInsets.all(2),
                   child: CoverViewWidget(
                     isLongPressed: widget.mangaIdsList.contains(entry.id),
@@ -363,9 +337,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                 )))
                     ],
                   ),
-                ),
-              ),
-            );
+                );
           });
         },
       );

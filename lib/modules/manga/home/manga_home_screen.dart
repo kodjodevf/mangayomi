@@ -8,8 +8,6 @@ import 'package:mangayomi/eval/dart/model/m_pages.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
-import 'package:mangayomi/modules/library/widgets/library_gridview_widget.dart';
-import 'package:mangayomi/modules/library/widgets/measure_widget_sync.dart';
 import 'package:mangayomi/modules/manga/home/providers/state_provider.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/widgets/listview_widget.dart';
@@ -533,9 +531,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               final gridSize = ref.watch(
                                   libraryGridSizeStateProvider(
                                       isManga: source.isManga!));
-                              final height = ref.watch(source.isManga!
-                                  ? mangaCardheightStateProvider
-                                  : animeCardheightStateProvider);
+
                               return GridViewWidget(
                                 gridSize: gridSize,
                                 controller: _scrollController,
@@ -546,35 +542,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   if (index == _length) {
                                     return buildProgressIndicator();
                                   }
-                                  return SizedBox(
-                                    height: height +
-                                        (isComfortableGrid &&
-                                                (gridSize != null &&
-                                                    gridSize != 0)
-                                            ? 22
-                                            : 0),
-                                    child: MeasureWidgetSizeSync(
-                                      onCalculateSize: (size) {
-                                        if (size != null) {
-                                          final newHeight = size.width * 1.5;
-                                          if (height.ceil() !=
-                                              newHeight.ceil()) {
-                                            ref
-                                                .read((source.isManga!
-                                                        ? mangaCardheightStateProvider
-                                                        : animeCardheightStateProvider)
-                                                    .notifier)
-                                                .state = size.width * 1.5;
-                                          }
-                                        }
-                                      },
-                                      child: MangaHomeImageCard(
-                                        isManga: source.isManga ?? true,
-                                        manga: _mangaList[index],
-                                        source: source,
-                                        isComfortableGrid: isComfortableGrid,
-                                      ),
-                                    ),
+                                  return MangaHomeImageCard(
+                                    isManga: source.isManga ?? true,
+                                    manga: _mangaList[index],
+                                    source: source,
+                                    isComfortableGrid: isComfortableGrid,
                                   );
                                 },
                               );

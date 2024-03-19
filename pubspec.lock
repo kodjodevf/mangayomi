@@ -294,10 +294,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_eval
-      sha256: "2c591884656b550d9d532d2e5ee72341d3dd07df1e0fd379a837d501a41bc00c"
+      sha256: "4dd114e350fb24a9fdfef1e93c7f491f6eb1ed34633f102a7c0a34486126b602"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.4"
+    version: "0.7.9"
   dart_style:
     dependency: transitive
     description:
