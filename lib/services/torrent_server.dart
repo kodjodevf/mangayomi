@@ -14,7 +14,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'torrent_server.g.dart';
 
 class MTorrentServer {
-  final http = Client();
+  final http = MClient.init();
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
     try {
@@ -44,8 +44,7 @@ class MTorrentServer {
 
   Future<String> getInfohash(String url) async {
     try {
-      final torrentByte =
-          (await MClient.init().get(Uri.parse(url))).bodyBytes;
+      final torrentByte = (await http.get(Uri.parse(url))).bodyBytes;
       var request =
           MultipartRequest('POST', Uri.parse('$_baseUrl/torrent/add'));
 
