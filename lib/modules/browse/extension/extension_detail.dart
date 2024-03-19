@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
@@ -33,8 +34,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.extension_detail),
-      ),
+          title: Text(l10n.extension_detail),
+          leading: BackButton(onPressed: () => Navigator.pop(context, source))),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -126,6 +127,47 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     ],
                   ),
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: context.mediaWidth(1),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        elevation: 0,
+                        shadowColor: Colors.transparent),
+                    onPressed: () async {
+                      final res =
+                          await context.push('/codeEditor', extra: source.id);
+                      if (res != null && mounted) {
+                        setState(() {
+                          source = res as Source;
+                          sourcePreference = getSourcePreference(source: source)
+                              .map((e) =>
+                                  getSourcePreferenceEntry(e.key!, source.id!))
+                              .toList();
+                        });
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            "Edit code",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Icon(Icons.code)
+                      ],
+                    )),
               ),
             ),
             Padding(

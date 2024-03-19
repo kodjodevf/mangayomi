@@ -9,8 +9,9 @@ import 'package:mangayomi/sources/source_test.dart';
 
 List<dynamic> getFilterList({required Source source}) {
   List<dynamic> filterList = [];
-  if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-    try {
+
+  try {
+    if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
       final bytecode =
           compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
@@ -22,11 +23,11 @@ List<dynamic> getFilterList({required Source source}) {
           .getFilterList()
           .map((e) => e is $Value ? e.$reified : e)
           .toList();
-    } catch (_) {
-      return [];
+    } else {
+      filterList = (JsExtensionService(source).getFilterList()).filters;
     }
-  } else {
-    filterList = (JsExtensionService(source).getFilterList()).filters;
+  } catch (_) {
+    return [];
   }
 
   return filterList;

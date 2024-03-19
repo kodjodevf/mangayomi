@@ -199,10 +199,9 @@ class Document {
         return this.getElement('parent');
     }
     getString(type) {
-        return JSON.parse(sendMessage(
+        return sendMessage(
             "get_doc_string",
-            JSON.stringify([this.html, type]))
-        );
+            JSON.stringify([this.html, type]));
     }
     get text() {
         return this.getString('text');

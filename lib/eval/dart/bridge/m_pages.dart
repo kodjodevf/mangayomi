@@ -84,4 +84,10 @@ class $MPages implements MPages, $Instance {
 
   @override
   set list(List<MManga> list) {}
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'list': list.map((v) => v.toJson()).toList(),
+        'hasNextPage': hasNextPage,
+      };
 }

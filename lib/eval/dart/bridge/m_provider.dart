@@ -17,6 +17,7 @@ import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/eval/dart/model/m_provider.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/utils/log/log.dart';
 
 class $MProvider extends MProvider with $Bridge<MProvider> {
   static $MProvider $construct(
@@ -737,6 +738,18 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 ],
                 namedParams: []),
             isStatic: true),
+        'print': BridgeMethodDef(
+            BridgeFunctionDef(
+                returns:
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.voidType)),
+                params: [
+                  BridgeParameter(
+                      'object',
+                      BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.dynamic)),
+                      false),
+                ],
+                namedParams: []),
+            isStatic: true),
       },
       bridge: true);
 
@@ -747,6 +760,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   $Value? $bridgeGet(String identifier) {
     return switch (identifier) {
+      'print' => $Function((_, __, List<$Value?> args) {
+          Logger.add(LoggerLevel.warning, "${args[0]!.$reified}");
+          return null;
+        }),
       'evalJs' => $Function((_, __, List<$Value?> args) {
           final runtime = getJavascriptRuntime();
           return $Future.wrap(runtime

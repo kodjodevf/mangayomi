@@ -76,27 +76,28 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     ];
   }
 
+  late Source source = widget.source;
   Future<MPages?> _loadMore() async {
     MPages? mangaRes;
     if (_isLoading) {
-      if (widget.source.isFullData!) {
+      if (source.isFullData!) {
         await Future.delayed(const Duration(milliseconds: 500));
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
           mangaRes = await ref.watch(getPopularProvider(
-            source: widget.source,
+            source: source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
           mangaRes = await ref.watch(getLatestUpdatesProvider(
-            source: widget.source,
+            source: source,
             page: _page + 1,
           ).future);
         } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
             _isFiltering) {
           mangaRes = await ref.watch(searchProvider(
-                  source: widget.source,
+                  source: source,
                   query: _query,
                   page: _page + 1,
                   filterList: filters)
@@ -125,18 +126,16 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final supportsLatest =
-        ref.watch(supportsLatestProvider(source: widget.source));
-    final filterList = getFilterList(source: widget.source);
+    final supportsLatest = ref.watch(supportsLatestProvider(source: source));
+    final filterList = getFilterList(source: source);
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(searchProvider(
-          source: widget.source, query: _query, page: 1, filterList: filters));
+          source: source, query: _query, page: 1, filterList: filters));
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-      _getManga =
-          ref.watch(getLatestUpdatesProvider(source: widget.source, page: 1));
+      _getManga = ref.watch(getLatestUpdatesProvider(source: source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-      _getManga = ref.watch(getPopularProvider(source: widget.source, page: 1));
+      _getManga = ref.watch(getPopularProvider(source: source, page: 1));
     }
     final l10n = context.l10n;
     final displayType = ref.watch(mangaHomeDisplayTypeStateProvider);
@@ -148,7 +147,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     };
     return Scaffold(
         appBar: AppBar(
-          title: _isSearch ? null : Text('${widget.source.name}'),
+          title: _isSearch ? null : Text('${source.name}'),
           leading: !_isSearch ? null : Container(),
           actions: [
             _isSearch
@@ -264,10 +263,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 onSelected: (value) async {
                   if (value == 0) {
                     final baseUrl =
-                        ref.watch(sourceBaseUrlProvider(source: widget.source));
+                        ref.watch(sourceBaseUrlProvider(source: source));
                     Map<String, dynamic> data = {
                       'url': baseUrl,
-                      'sourceId': widget.source.id.toString(),
+                      'sourceId': source.id.toString(),
                       'title': ''
                     };
                     if (Platform.isLinux) {
@@ -287,7 +286,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       context.push("/mangawebview", extra: data);
                     }
                   } else {
-                    context.push('/extension_detail', extra: widget.source);
+                    final res =
+                        await context.push('/extension_detail', extra: source);
+                    if (res != null && mounted) {
+                      setState(() {
+                        source = res as Source;
+                      });
+                    }
                   }
                 }),
           ],
@@ -333,7 +338,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                             onPressed: () {
                                               setState(() {
                                                 filters = getFilterList(
-                                                    source: widget.source);
+                                                    source: source);
                                               });
                                             },
                                             child: Text(l10n.reset),
@@ -382,7 +387,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               }
 
                               _getManga = ref.refresh(searchProvider(
-                                  source: widget.source,
+                                  source: source,
                                   query: _query,
                                   page: 1,
                                   filterList: filters));
@@ -501,8 +506,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               }
             });
 
-            _length =
-                widget.source.isFullData! ? _fullDataLength : _mangaList.length;
+            _length = source.isFullData! ? _fullDataLength : _mangaList.length;
             _length =
                 (_mangaList.length < _length ? _mangaList.length : _length);
             final isComfortableGrid =
@@ -521,15 +525,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   return buildProgressIndicator();
                                 }
                                 return MangaHomeImageCardListTile(
-                                    isManga: widget.source.isManga ?? true,
+                                    isManga: source.isManga ?? true,
                                     manga: _mangaList[index],
-                                    source: widget.source);
+                                    source: source);
                               })
                           : Consumer(builder: (context, ref, child) {
                               final gridSize = ref.watch(
                                   libraryGridSizeStateProvider(
-                                      isManga: widget.source.isManga!));
-                              final height = ref.watch(widget.source.isManga!
+                                      isManga: source.isManga!));
+                              final height = ref.watch(source.isManga!
                                   ? mangaCardheightStateProvider
                                   : animeCardheightStateProvider);
                               return GridViewWidget(
@@ -556,7 +560,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           if (height.ceil() !=
                                               newHeight.ceil()) {
                                             ref
-                                                .read((widget.source.isManga!
+                                                .read((source.isManga!
                                                         ? mangaCardheightStateProvider
                                                         : animeCardheightStateProvider)
                                                     .notifier)
@@ -565,9 +569,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                         }
                                       },
                                       child: MangaHomeImageCard(
-                                        isManga: widget.source.isManga ?? true,
+                                        isManga: source.isManga ?? true,
                                         manga: _mangaList[index],
-                                        source: widget.source,
+                                        source: source,
                                         isComfortableGrid: isComfortableGrid,
                                       ),
                                     ),
@@ -596,7 +600,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                       (_isSearch && _query.isNotEmpty) ||
                                   _isFiltering) {
                                 ref.invalidate(searchProvider(
-                                    source: widget.source,
+                                    source: source,
                                     query: _query,
                                     page: 1,
                                     filterList: filters));
@@ -604,12 +608,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   !_isSearch &&
                                   _query.isEmpty) {
                                 ref.invalidate(getLatestUpdatesProvider(
-                                    source: widget.source, page: 1));
+                                    source: source, page: 1));
                               } else if (_selectedIndex == 0 &&
                                   !_isSearch &&
                                   _query.isEmpty) {
                                 ref.invalidate(getPopularProvider(
-                                  source: widget.source,
+                                  source: source,
                                   page: 1,
                                 ));
                               }
@@ -625,14 +629,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       children: [
                         IconButton(
                           onPressed: () async {
-                            final baseUrl = ref.watch(
-                                sourceBaseUrlProvider(source: widget.source));
+                            final baseUrl = ref
+                                .watch(sourceBaseUrlProvider(source: source));
                             Map<String, dynamic> data = {
                               'url': baseUrl,
-                              'sourceId': widget.source.id.toString(),
+                              'sourceId': source.id.toString(),
                               'title': '',
-                              "hasCloudFlare":
-                                  widget.source.hasCloudflare ?? false
+                              "hasCloudFlare": source.hasCloudflare ?? false
                             };
                             if (Platform.isLinux) {
                               final url = Uri.parse(baseUrl);

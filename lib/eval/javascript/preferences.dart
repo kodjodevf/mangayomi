@@ -19,26 +19,23 @@ class JsPreferences {
     });
 
     runtime.evaluate('''
-async function getPreferenceValue(key) {
-    const result = await sendMessage(
+function getPreferenceValue(key) {
+    return = sendMessage(
         "getPreferenceValue",
         JSON.stringify([key])
     );
-    return result;
 }
-async function getPrefStringValue(key,defaultValue) {
-    const result = await sendMessage(
+function getPrefStringValue(key,defaultValue) {
+    return sendMessage(
         "getPrefStringValue",
         JSON.stringify([key,defaultValue])
     );
-    return result;
 }
-async function setPrefStringValue(key,defaultValue) {
-    const result = await sendMessage(
+function setPrefStringValue(key,defaultValue) {
+    return sendMessage(
         "setPrefStringValue",
         JSON.stringify([key,defaultValue])
     );
-    return result;
 }
 ''');
   }

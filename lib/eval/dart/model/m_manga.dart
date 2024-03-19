@@ -1,5 +1,6 @@
 import 'package:mangayomi/eval/dart/model/m_chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class MManga {
   String? name;
@@ -47,4 +48,15 @@ class MManga {
                 .toList()
             : []);
   }
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'link': link,
+        'imageUrl': imageUrl,
+        'description': description,
+        'author': author,
+        'artist': artist,
+        'status': status.toString().substringAfter("."),
+        'genre': genre,
+        'chapters': chapters!.map((e) => e.toJson()).toList()
+      };
 }

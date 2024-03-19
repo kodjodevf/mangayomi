@@ -1,5 +1,4 @@
 import 'package:cupertino_http/cupertino_http.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
 import 'package:mangayomi/models/settings.dart';
 import 'package:cronet_http/cronet_http.dart';
 import 'package:http/io_client.dart';
+import 'package:mangayomi/utils/log/log.dart';
 
 class MClient {
   static final flutter_inappwebview.CookieManager _cookieManager =
@@ -20,7 +20,7 @@ class MClient {
   MClient();
   static Client httpClient() {
     if (Platform.isAndroid) {
-      if (playStoreAvailability == GooglePlayServicesAvailability.unknown) {
+      if (playStoreAvailability != GooglePlayServicesAvailability.success) {
         return IOClient(HttpClient());
       }
       final engine = CronetEngine.build(
@@ -142,11 +142,8 @@ class LoggerInterceptor extends InterceptorContract {
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
   }) async {
-    if (kDebugMode) {
-      print('----- Request -----');
-      print(request.toString());
-      print(request.headers.toString());
-    }
+    Logger.add(LoggerLevel.info,
+        '----- Request -----\n${request.toString()}\nheader: ${request.headers.toString()}');
     return request;
   }
 
@@ -156,11 +153,8 @@ class LoggerInterceptor extends InterceptorContract {
   }) async {
     final cloudflare = [403, 503].contains(response.statusCode) &&
         ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
-    if (kDebugMode) {
-      print('----- Response -----');
-      print(
-          "${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
-    }
+    Logger.add(LoggerLevel.info,
+        "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
     if (cloudflare) {
       botToast("${response.statusCode} Failed to bypass Cloudflare");
     }

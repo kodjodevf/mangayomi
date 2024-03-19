@@ -14,4 +14,10 @@ class MChapter {
         dateUpload: json['dateUpload'],
         scanlator: json['scanlator']);
   }
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'url': url,
+        'dateUpload': dateUpload,
+        'scanlator': scanlator
+      };
 }

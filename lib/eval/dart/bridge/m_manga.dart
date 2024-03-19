@@ -6,6 +6,7 @@ import 'package:mangayomi/eval/dart/bridge/m_status.dart';
 import 'package:mangayomi/eval/dart/model/m_chapter.dart';
 import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class $MManga implements MManga, $Instance {
   $MManga.wrap(this.$value) : _superclass = $Object($value);
@@ -190,4 +191,17 @@ class $MManga implements MManga, $Instance {
 
   @override
   set chapters(List<MChapter>? chapters) {}
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'link': link,
+        'imageUrl': imageUrl,
+        'description': description,
+        'author': author,
+        'artist': artist,
+        'status': status.toString().substringAfter("."),
+        'genre': genre,
+        'chapters': chapters?.map((e) => e.toJson()).toList()
+      };
 }

@@ -15,26 +15,14 @@ class $MChapter implements MChapter, $Instance {
             returns: BridgeTypeAnnotation($type),
             params: [],
             namedParams: [
-              BridgeParameter(
-                  'name',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef(CoreTypes.string)),
-                  false),
-              BridgeParameter(
-                  'url',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef(CoreTypes.string)),
-                  false),
-              BridgeParameter(
-                  'dateUpload',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef(CoreTypes.string)),
-                  false),
-              BridgeParameter(
-                  'scanlator',
-                  BridgeTypeAnnotation(
-                      BridgeTypeRef(CoreTypes.string)),
-                  true),
+              BridgeParameter('name',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('url',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('dateUpload',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('scanlator',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
             ]))
       },
       // Specify class fields
@@ -125,4 +113,12 @@ class $MChapter implements MChapter, $Instance {
 
   @override
   set scanlator(String? scanlator) {}
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'url': url,
+        'dateUpload': dateUpload,
+        'scanlator': scanlator
+      };
 }
