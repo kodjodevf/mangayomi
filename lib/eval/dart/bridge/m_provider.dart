@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
@@ -994,10 +993,14 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   Future<List<String>> getPageList(String url) async {
     final res = await $_invoke('getPageList', [$String(url)]);
+    List<dynamic> list = [];
     if (res is $List) {
-      return res.$reified.map((e) => e as String).toList();
+      list = res.$reified;
+    } else {
+      list = res;
     }
-    return res;
+
+    return list.map((e) => (e is $Value ? e.$reified : e) as String).toList();
   }
 
   @override
@@ -1021,10 +1024,14 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   Future<List<Video>> getVideoList(String url) async {
     final res = await $_invoke('getVideoList', [$String(url)]);
+    List<dynamic> list = [];
     if (res is $List) {
-      return res.$reified.map((e) => e as Video).toList();
+      list = res.$reified;
+    } else {
+      list = res;
     }
-    return res;
+
+    return list.map((e) => (e is $Value ? e.$reified : e) as Video).toList();
   }
 
   $MVideo _toMVideo(Video e) =>

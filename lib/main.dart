@@ -4,7 +4,6 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_api_availability/google_api_availability.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,8 +26,7 @@ import 'package:window_manager/window_manager.dart';
 // Global instance of the Isar database.
 late Isar isar;
 
-GooglePlayServicesAvailability playStoreAvailability =
-    GooglePlayServicesAvailability.unknown;
+bool hasGPServices = false;
 
 /// Overrides the default HTTP client to allow all certificates
 class MyHttpoverrides extends HttpOverrides {
@@ -64,11 +62,10 @@ void main(List<String> args) async {
   GoogleFonts.aBeeZee();
   if (Platform.isAndroid) {
     try {
-      playStoreAvailability = await GoogleApiAvailability.instance
-          .checkGooglePlayServicesAvailability();
-    } on PlatformException {
-      playStoreAvailability = GooglePlayServicesAvailability.unknown;
-    }
+      hasGPServices = (await GoogleApiAvailability.instance
+              .checkGooglePlayServicesAvailability()) ==
+          GooglePlayServicesAvailability.success;
+    } catch (_) {}
   }
   // Start the app.
   runApp(const ProviderScope(child: MyApp()));

@@ -436,45 +436,43 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             ),
                           ),
                         )
-                      : context.isTablet ||
-                              context.isMobile &&
-                                  displayType == DisplayType.list
-                          ? Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5))),
-                                  onPressed: () {
-                                    if (!_getManga!.isLoading) {
-                                      if (mounted) {
-                                        setState(() {
-                                          _isLoading = true;
-                                        });
-                                      }
-                                      _loadMore().then((value) {
-                                        if (mounted && value != null) {
-                                          setState(() {
-                                            _mangaList.addAll(value.list);
-                                            _isLoading = false;
-                                          });
-                                        }
+                      : Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5))),
+                              onPressed: () {
+                                if (!_getManga!.isLoading) {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                  }
+                                  _loadMore().then((value) {
+                                    if (mounted && value != null) {
+                                      setState(() {
+                                        _mangaList.addAll(value.list);
+                                        _isLoading = false;
                                       });
                                     }
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(l10n.load_more),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Icon(Icons.arrow_forward_outlined),
-                                    ],
-                                  )),
-                            )
-                          : Container();
+                                  });
+                                }
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    l10n.load_more,
+                                    style: const TextStyle(
+                                        overflow: TextOverflow.ellipsis),
+                                    maxLines: 2,
+                                  ),
+                                  const Icon(Icons.arrow_forward_outlined),
+                                ],
+                              )),
+                        );
             }
 
             if (data!.list.isEmpty) {

@@ -1,5 +1,4 @@
 import 'package:cupertino_http/cupertino_http.dart';
-import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
@@ -18,9 +17,9 @@ class MClient {
       flutter_inappwebview.CookieManager.instance();
 
   MClient();
-  static Client httpClient() {
+  static Client httpClient({bool hasGPServices = false}) {
     if (Platform.isAndroid) {
-      if (playStoreAvailability != GooglePlayServicesAvailability.success) {
+      if (!hasGPServices) {
         return IOClient(HttpClient());
       }
       final engine = CronetEngine.build(
@@ -29,7 +28,7 @@ class MClient {
           enableBrotli: true,
           cacheMode: CacheMode.memory,
           cacheMaxSize: 5 * 1024 * 1024);
-      return CronetClient.fromCronetEngine(engine);
+      return CronetClient.fromCronetEngine(engine, closeEngine: true);
     }
     if (Platform.isIOS || Platform.isMacOS) {
       final config = URLSessionConfiguration.ephemeralSessionConfiguration()
@@ -42,7 +41,7 @@ class MClient {
   static InterceptedClient init(
       {MSource? source, Map<String, dynamic>? reqcopyWith}) {
     return InterceptedClient.build(
-        client: httpClient(),
+        client: httpClient(hasGPServices: hasGPServices),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 

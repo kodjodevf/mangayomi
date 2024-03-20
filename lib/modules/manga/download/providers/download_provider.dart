@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:background_downloader/background_downloader.dart';
+import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_st
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -132,6 +133,17 @@ Future<List<String>> downloadChapter(
         if (!(await path3.exists())) {
           await path3.create();
         }
+
+        final cookie = MClient.getCookiesPref(pageUrls[index]);
+        final headers = isManga
+            ? ref.watch(
+                headersProvider(source: manga.source!, lang: manga.lang!))
+            : videoHeader;
+        if (cookie.isNotEmpty) {
+          final userAgent = isar.settings.getSync(227)!.userAgent!;
+          headers.addAll(cookie);
+          headers[HttpHeaders.userAgentHeader] = userAgent;
+        }
         if (isManga) {
           if ((await path.exists())) {
             if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
@@ -139,8 +151,7 @@ Future<List<String>> downloadChapter(
             } else {
               tasks.add(DownloadTask(
                   taskId: pageUrls[index],
-                  headers: ref.watch(headersProvider(
-                      source: manga.source!, lang: manga.lang!)),
+                  headers: headers,
                   url: pageUrls[index].trim().trimLeft().trimRight(),
                   filename: "${padIndex(index + 1)}.jpg",
                   baseDirectory: BaseDirectory.temporary,
@@ -157,8 +168,7 @@ Future<List<String>> downloadChapter(
             } else {
               tasks.add(DownloadTask(
                   taskId: pageUrls[index],
-                  headers: ref.watch(headersProvider(
-                      source: manga.source!, lang: manga.lang!)),
+                  headers: headers,
                   url: pageUrls[index].trim().trimLeft().trimRight(),
                   filename: "${padIndex(index + 1)}.jpg",
                   baseDirectory: BaseDirectory.temporary,
@@ -175,7 +185,7 @@ Future<List<String>> downloadChapter(
             } else {
               tasks.add(DownloadTask(
                   taskId: pageUrls[index],
-                  headers: videoHeader,
+                  headers: headers,
                   url: pageUrls[index].trim().trimLeft().trimRight(),
                   filename: "${chapter.name}.mp4",
                   baseDirectory: BaseDirectory.temporary,
@@ -191,7 +201,7 @@ Future<List<String>> downloadChapter(
             } else {
               tasks.add(DownloadTask(
                   taskId: pageUrls[index],
-                  headers: videoHeader,
+                  headers: headers,
                   url: pageUrls[index].trim().trimLeft().trimRight(),
                   filename: "${chapter.name}.mp4",
                   baseDirectory: BaseDirectory.temporary,
@@ -224,7 +234,7 @@ Future<List<String>> downloadChapter(
     } else {
       savePageUrls();
       if (isManga) {
-        await FileDownloader().downloadBatch(
+        await FileDownloader(hasGPServices: hasGPServices).downloadBatch(
           tasks,
           batchProgressCallback: (succeeded, failed) async {
             if (succeeded == tasks.length) {
@@ -279,7 +289,7 @@ Future<List<String>> downloadChapter(
           },
         );
       } else {
-        await FileDownloader().download(
+        await FileDownloader(hasGPServices: hasGPServices).download(
           tasks.first,
           onProgress: (progress) async {
             bool isEmpty = isar.downloads

@@ -65,15 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  background_downloader:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "2cc16eeb475788ec0443b64badc325c00d7dab90"
-      resolved-ref: "2cc16eeb475788ec0443b64badc325c00d7dab90"
-      url: "https://github.com/kodjodevf/background_downloader.git"
-    source: git
-    version: "7.12.3"
   boolean_selector:
     dependency: transitive
     description:
