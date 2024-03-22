@@ -417,6 +417,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         ),
         body: _getManga!.when(
           data: (data) {
+            if (_hasNextPage) {
+              if (!data!.hasNextPage) {
+                if (mounted) {
+                  setState(() {
+                    _hasNextPage = false;
+                  });
+                }
+              }
+            }
             if (_mangaList.isEmpty && data!.list.isNotEmpty) {
               _mangaList.addAll(data.list);
             }
@@ -424,7 +433,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               return const ProgressCenter();
             }
             Widget buildProgressIndicator() {
-              return !(data!.list.isNotEmpty && (_hasNextPage))
+              return !(data!.list.isNotEmpty &&
+                      (data.hasNextPage || _hasNextPage))
                   ? Container()
                   : _isLoading
                       ? const Center(
