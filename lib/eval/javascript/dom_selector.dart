@@ -353,7 +353,7 @@ class Element {
     }
     attr(attr) {
         return sendMessage(
-            "attr",
+            "ele_attr",
             JSON.stringify([attr, this.key])
         );
     }

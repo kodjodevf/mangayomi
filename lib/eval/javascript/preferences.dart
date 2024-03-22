@@ -8,34 +8,36 @@ class JsPreferences {
   JsPreferences(this.runtime, this.source);
 
   init() {
-    runtime.onMessage('getPreferenceValue', (dynamic args)  {
+    runtime.onMessage('get', (dynamic args)  {
       return  getPreferenceValue(source!.id!, args[0]);
     });
-    runtime.onMessage('getPrefStringValue', (dynamic args)  {
+    runtime.onMessage('getString', (dynamic args)  {
       return getSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
-    runtime.onMessage('setPrefStringValue', (dynamic args)  {
+    runtime.onMessage('setString', (dynamic args)  {
       return setSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
 
     runtime.evaluate('''
-function getPreferenceValue(key) {
-    return = sendMessage(
-        "getPreferenceValue",
-        JSON.stringify([key])
-    );
-}
-function getPrefStringValue(key,defaultValue) {
-    return sendMessage(
-        "getPrefStringValue",
-        JSON.stringify([key,defaultValue])
-    );
-}
-function setPrefStringValue(key,defaultValue) {
-    return sendMessage(
-        "setPrefStringValue",
-        JSON.stringify([key,defaultValue])
-    );
+class SharedPreferences {
+    get(key) {
+        return sendMessage(
+            "get",
+            JSON.stringify([key])
+        );
+    }
+    getString(key, defaultValue) {
+        return sendMessage(
+            "getString",
+            JSON.stringify([key, defaultValue])
+        );
+    }
+    setString(key, defaultValue) {
+        return sendMessage(
+            "setString",
+            JSON.stringify([key, defaultValue])
+        );
+    }
 }
 ''');
   }

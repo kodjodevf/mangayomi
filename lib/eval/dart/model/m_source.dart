@@ -30,4 +30,17 @@ class MSource {
       this.dateFormatLocale,
       this.apiUrl,
       this.additionalParams});
+
+  Map<String, dynamic> toJson() => {
+        'apiUrl': apiUrl,
+        'baseUrl': baseUrl,
+        'dateFormat': dateFormat,
+        'dateFormatLocale': dateFormatLocale,
+        'hasCloudflare': hasCloudflare,
+        'id': id,
+        'isFullData': isFullData,
+        'lang': lang,
+        'name': name,
+        'additionalParams': additionalParams
+      };
 }

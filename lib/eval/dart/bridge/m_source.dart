@@ -168,4 +168,18 @@ class $MSource implements MSource, $Instance {
 
   @override
   set additionalParams(String? additionalParams) {}
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'apiUrl': apiUrl,
+        'baseUrl': baseUrl,
+        'dateFormat': dateFormat,
+        'dateFormatLocale': dateFormatLocale,
+        'hasCloudflare': hasCloudflare,
+        'id': id,
+        'isFullData': isFullData,
+        'lang': lang,
+        'name': name,
+        'additionalParams': additionalParams
+      };
 }

@@ -25,8 +25,11 @@ class JsExtensionService {
     JsUtils(runtime).init();
     JsPreferences(runtime, source).init();
 
-    runtime.evaluate(r'''
+    runtime.evaluate('''
 class MProvider {
+    get source() {
+        return JSON.parse('${jsonEncode(source!.toMSource().toJson())}');
+    }
     async getPopular(page) {
         throw new Error("getPopular not implemented");
     }
@@ -93,7 +96,6 @@ var extention = new DefaultExtension();
     final res = (await runtime.handlePromise(await runtime
             .evaluateAsync('jsonStringify(() => extention.getDetail("$url"))')))
         .stringResult;
-
     return MManga.fromJson(jsonDecode(res));
   }
 
@@ -134,7 +136,7 @@ var extention = new DefaultExtension();
           .evaluate('JSON.stringify(extention.getSourcePreferences())')
           .stringResult;
       return (jsonDecode(res) as List)
-          .map((e) => SourcePreference.fromJson(e))
+          .map((e) => SourcePreference.fromJson(e)..sourceId = source!.id)
           .toList();
     } catch (_) {
       return [];

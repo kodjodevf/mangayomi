@@ -52,6 +52,7 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
                       ..isManga = source.isManga
                       ..isFullData = source.isFullData ?? false
                       ..appMinVerReq = source.appMinVerReq
+                      ..sourceCodeLanguage = source.sourceCodeLanguage
                       ..additionalParams = source.additionalParams ?? "");
                   });
                   // log("successfully installed or updated");
@@ -89,6 +90,7 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
                           ..isManga = source.isManga
                           ..isFullData = source.isFullData ?? false
                           ..appMinVerReq = source.appMinVerReq
+                          ..sourceCodeLanguage = source.sourceCodeLanguage
                           ..additionalParams = source.additionalParams ?? "");
                       });
                     } else {
@@ -116,7 +118,8 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
                   ..versionLast = source.version
                   ..isManga = source.isManga
                   ..isFullData = source.isFullData ?? false
-                  ..appMinVerReq = source.appMinVerReq);
+                  ..appMinVerReq = source.appMinVerReq
+                  ..sourceCodeLanguage = source.sourceCodeLanguage);
                 // log("new source");
               }
             }

@@ -40,7 +40,7 @@ class SourcePreference {
 
   factory SourcePreference.fromJson(Map<String, dynamic> json) {
     return SourcePreference(
-        id: json['id'],
+        id: json['id'] ?? Isar.autoIncrement,
         sourceId: json['sourceId'],
         key: json['key'],
         checkBoxPreference: json['checkBoxPreference'] != null

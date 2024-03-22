@@ -40,13 +40,25 @@ class MManga {
         description: json['description'],
         author: json['author'],
         artist: json['artist'],
-        status: json['status'],
-        genre: json['genre'] ?? [],
+        status: switch (json['status'] as int?) {
+          0 => Status.ongoing,
+          1 => Status.completed,
+          2 => Status.onHiatus,
+          3 => Status.canceled,
+          4 => Status.publishingFinished,
+          _ => Status.unknown,
+        },
+        genre:
+            (json['genre'] as List?)?.map((e) => e.toString()).toList() ?? [],
         chapters: json['chapters'] != null
             ? (json['chapters'] as List)
                 .map((e) => MChapter.fromJson(e))
                 .toList()
-            : []);
+            : json['episodes'] != null
+                ? (json['episodes'] as List)
+                    .map((e) => MChapter.fromJson(e))
+                    .toList()
+                : []);
   }
   Map<String, dynamic> toJson() => {
         'name': name,
