@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_anime_sources.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_anime_sources.dart';
+import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
@@ -90,42 +91,46 @@ class _ExtensionListTileWidgetState
             Text(completeLanguageName(widget.source.lang!.toLowerCase()),
                 style:
                     const TextStyle(fontWeight: FontWeight.w300, fontSize: 12)),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                const SizedBox(width: 4),
-                Text(widget.source.version!,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w300, fontSize: 10)),
-                if (widget.source.isNsfw!)
-                  Row(
-                    children: [
-                      const SizedBox(
-                        width: 2,
-                      ),
-                      SizedBox(
-                        height: 15,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.7),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Text(
-                                  "NSFW",
-                                  style: TextStyle(
-                                      fontSize: 6,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            )),
-                      ),
-                    ],
+            const SizedBox(width: 4),
+            Text(widget.source.version!,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w300, fontSize: 12)),
+            if (widget.source.isNsfw!)
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 2,
                   ),
-              ],
-            )
+                  SizedBox(
+                    height: 15,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(5)),
+                        child: const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(3),
+                            child: Text(
+                              "NSFW",
+                              style: TextStyle(
+                                  fontSize: 6,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        )),
+                  ),
+                ],
+              ),
+            if (widget.source.isObsolete ?? false)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text("OBSOLETE",
+                    style: TextStyle(
+                        color: context.primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12)),
+              )
           ],
         ),
         trailing: TextButton(

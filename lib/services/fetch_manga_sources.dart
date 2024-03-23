@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dart_eval/stdlib/core.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/compiler/compiler.dart';
 import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/main.dart';
@@ -129,6 +130,22 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref,
         }
       }
     });
+    checkIfSourceIsObsolete(sourceList);
+  }
+}
+
+void checkIfSourceIsObsolete(List<Source> sourceList) {
+  for (var source in isar.sources.filter().idIsNotNull().findAllSync()) {
+    if (sourceList.isNotEmpty && !(source.isLocal ?? false)) {
+      final ids =
+          sourceList.where((e) => e.id != null).map((e) => e.id).toList();
+      if (ids.isNotEmpty) {
+        if (!ids.contains(source.id)) {
+          isar.writeTxnSync(
+              () => isar.sources.putSync(source..isObsolete = true));
+        }
+      }
+    }
   }
 }
 

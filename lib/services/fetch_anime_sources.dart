@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -127,5 +127,6 @@ Future fetchAnimeSourcesList(FetchAnimeSourcesListRef ref,
         }
       }
     });
+    checkIfSourceIsObsolete(sourceList);
   }
 }

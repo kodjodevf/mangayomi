@@ -77,69 +77,79 @@ const SourceSchema = CollectionSchema(
       name: r'isFullData',
       type: IsarType.bool,
     ),
-    r'isManga': PropertySchema(
+    r'isLocal': PropertySchema(
       id: 12,
+      name: r'isLocal',
+      type: IsarType.bool,
+    ),
+    r'isManga': PropertySchema(
+      id: 13,
       name: r'isManga',
       type: IsarType.bool,
     ),
     r'isNsfw': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'isNsfw',
       type: IsarType.bool,
     ),
+    r'isObsolete': PropertySchema(
+      id: 15,
+      name: r'isObsolete',
+      type: IsarType.bool,
+    ),
     r'isPinned': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'isTorrent': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'isTorrent',
       type: IsarType.bool,
     ),
     r'lang': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'name',
       type: IsarType.string,
     ),
     r'sourceCode': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeLanguage': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'sourceCodeLanguage',
       type: IsarType.byte,
       enumMap: _SourcesourceCodeLanguageEnumValueMap,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -275,19 +285,21 @@ void _sourceSerialize(
   writer.writeBool(offsets[9], object.isActive);
   writer.writeBool(offsets[10], object.isAdded);
   writer.writeBool(offsets[11], object.isFullData);
-  writer.writeBool(offsets[12], object.isManga);
-  writer.writeBool(offsets[13], object.isNsfw);
-  writer.writeBool(offsets[14], object.isPinned);
-  writer.writeBool(offsets[15], object.isTorrent);
-  writer.writeString(offsets[16], object.lang);
-  writer.writeBool(offsets[17], object.lastUsed);
-  writer.writeString(offsets[18], object.name);
-  writer.writeString(offsets[19], object.sourceCode);
-  writer.writeByte(offsets[20], object.sourceCodeLanguage.index);
-  writer.writeString(offsets[21], object.sourceCodeUrl);
-  writer.writeString(offsets[22], object.typeSource);
-  writer.writeString(offsets[23], object.version);
-  writer.writeString(offsets[24], object.versionLast);
+  writer.writeBool(offsets[12], object.isLocal);
+  writer.writeBool(offsets[13], object.isManga);
+  writer.writeBool(offsets[14], object.isNsfw);
+  writer.writeBool(offsets[15], object.isObsolete);
+  writer.writeBool(offsets[16], object.isPinned);
+  writer.writeBool(offsets[17], object.isTorrent);
+  writer.writeString(offsets[18], object.lang);
+  writer.writeBool(offsets[19], object.lastUsed);
+  writer.writeString(offsets[20], object.name);
+  writer.writeString(offsets[21], object.sourceCode);
+  writer.writeByte(offsets[22], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[23], object.sourceCodeUrl);
+  writer.writeString(offsets[24], object.typeSource);
+  writer.writeString(offsets[25], object.version);
+  writer.writeString(offsets[26], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -310,20 +322,22 @@ Source _sourceDeserialize(
     isActive: reader.readBoolOrNull(offsets[9]),
     isAdded: reader.readBoolOrNull(offsets[10]),
     isFullData: reader.readBoolOrNull(offsets[11]),
-    isManga: reader.readBoolOrNull(offsets[12]),
-    isNsfw: reader.readBoolOrNull(offsets[13]),
-    isPinned: reader.readBoolOrNull(offsets[14]),
-    lang: reader.readStringOrNull(offsets[16]),
-    lastUsed: reader.readBoolOrNull(offsets[17]),
-    name: reader.readStringOrNull(offsets[18]),
-    sourceCode: reader.readStringOrNull(offsets[19]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[21]),
-    typeSource: reader.readStringOrNull(offsets[22]),
-    version: reader.readStringOrNull(offsets[23]),
-    versionLast: reader.readStringOrNull(offsets[24]),
+    isLocal: reader.readBoolOrNull(offsets[12]),
+    isManga: reader.readBoolOrNull(offsets[13]),
+    isNsfw: reader.readBoolOrNull(offsets[14]),
+    isObsolete: reader.readBoolOrNull(offsets[15]),
+    isPinned: reader.readBoolOrNull(offsets[16]),
+    lang: reader.readStringOrNull(offsets[18]),
+    lastUsed: reader.readBoolOrNull(offsets[19]),
+    name: reader.readStringOrNull(offsets[20]),
+    sourceCode: reader.readStringOrNull(offsets[21]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[23]),
+    typeSource: reader.readStringOrNull(offsets[24]),
+    version: reader.readStringOrNull(offsets[25]),
+    versionLast: reader.readStringOrNull(offsets[26]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
-          reader.readByteOrNull(offsets[20])] ??
+          reader.readByteOrNull(offsets[22])] ??
       SourceCodeLanguage.dart;
   return object;
 }
@@ -366,26 +380,30 @@ P _sourceDeserializeProp<P>(
     case 14:
       return (reader.readBoolOrNull(offset)) as P;
     case 15:
-      return (reader.readBool(offset)) as P;
-    case 16:
-      return (reader.readStringOrNull(offset)) as P;
-    case 17:
       return (reader.readBoolOrNull(offset)) as P;
+    case 16:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 17:
+      return (reader.readBool(offset)) as P;
     case 18:
       return (reader.readStringOrNull(offset)) as P;
     case 19:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 20:
-      return (_SourcesourceCodeLanguageValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          SourceCodeLanguage.dart) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_SourcesourceCodeLanguageValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          SourceCodeLanguage.dart) as P;
     case 23:
       return (reader.readStringOrNull(offset)) as P;
     case 24:
+      return (reader.readStringOrNull(offset)) as P;
+    case 25:
+      return (reader.readStringOrNull(offset)) as P;
+    case 26:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1839,6 +1857,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> isLocalIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isLocal',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isLocalIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isLocal',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isLocalEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isLocal',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> isMangaIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1886,6 +1930,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isNsfw',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isObsoleteIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isObsolete',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isObsoleteIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isObsolete',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> isObsoleteEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isObsolete',
         value: value,
       ));
     });
@@ -3179,6 +3249,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsLocal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsLocalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocal', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByIsManga() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isManga', Sort.asc);
@@ -3200,6 +3282,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
   QueryBuilder<Source, Source, QAfterSortBy> sortByIsNsfwDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNsfw', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsObsolete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isObsolete', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByIsObsoleteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isObsolete', Sort.desc);
     });
   }
 
@@ -3493,6 +3587,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsLocal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsLocalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocal', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByIsManga() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isManga', Sort.asc);
@@ -3514,6 +3620,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
   QueryBuilder<Source, Source, QAfterSortBy> thenByIsNsfwDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNsfw', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsObsolete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isObsolete', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByIsObsoleteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isObsolete', Sort.desc);
     });
   }
 
@@ -3733,6 +3851,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByIsLocal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isLocal');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByIsManga() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isManga');
@@ -3742,6 +3866,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
   QueryBuilder<Source, Source, QDistinct> distinctByIsNsfw() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isNsfw');
+    });
+  }
+
+  QueryBuilder<Source, Source, QDistinct> distinctByIsObsolete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isObsolete');
     });
   }
 
@@ -3899,6 +4029,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Source, bool?, QQueryOperations> isLocalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isLocal');
+    });
+  }
+
   QueryBuilder<Source, bool?, QQueryOperations> isMangaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isManga');
@@ -3908,6 +4044,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, bool?, QQueryOperations> isNsfwProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isNsfw');
+    });
+  }
+
+  QueryBuilder<Source, bool?, QQueryOperations> isObsoleteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isObsolete');
     });
   }
 

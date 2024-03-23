@@ -53,6 +53,10 @@ class Source {
 
   String? additionalParams;
 
+  bool? isLocal;
+
+  bool? isObsolete;
+
   @enumerated
   SourceCodeLanguage sourceCodeLanguage = SourceCodeLanguage.dart;
 
@@ -80,7 +84,9 @@ class Source {
       this.headers = '',
       this.isManga = true,
       this.appMinVerReq = "",
-      this.additionalParams = ""});
+      this.additionalParams = "",
+      this.isLocal = false,
+      this.isObsolete = false});
 
   Source.fromJson(Map<String, dynamic> json) {
     apiUrl = json['apiUrl'];
@@ -107,6 +113,8 @@ class Source {
     version = json['version'];
     versionLast = json['versionLast'];
     additionalParams = json['additionalParams'] ?? "";
+    isObsolete = json['isObsolete'];
+    isLocal = json['isLocal'];
     sourceCodeLanguage =
         SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
   }
@@ -136,7 +144,9 @@ class Source {
         'version': version,
         'versionLast': versionLast,
         'additionalParams': additionalParams,
-        'sourceCodeLanguage': sourceCodeLanguage.index
+        'sourceCodeLanguage': sourceCodeLanguage.index,
+        'isObsolete': isObsolete,
+        'isLocal': isLocal
       };
 
   bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";

@@ -6,7 +6,7 @@ part of 'aniskip.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$aniSkipHash() => r'bd921f6bbeebd61d17644a6efd4e5960330ba17b';
+String _$aniSkipHash() => r'04cf38b827f60d846b1d8fe87e994e9876d106ff';
 
 /// See also [AniSkip].
 @ProviderFor(AniSkip)
