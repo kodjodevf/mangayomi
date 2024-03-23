@@ -120,7 +120,7 @@ LocalArchive _extractArchive(String path) {
   for (final file in archive.files) {
     final filename = file.name;
     if (file.isFile) {
-      if (_isImageFile(filename)) {
+      if (_isImageFile(filename) && !filename.startsWith('.')) {
         if (filename.contains("cover")) {
           final data = file.content as Uint8List;
           localArchive.coverImage = data;
@@ -138,7 +138,8 @@ LocalArchive _extractArchive(String path) {
   return localArchive;
 }
 
-(String, LocalExtensionType, Uint8List, String) _extractArchiveOnly(String path) {
+(String, LocalExtensionType, Uint8List, String) _extractArchiveOnly(
+    String path) {
   final extensionType =
       setTypeExtension(path.split('/').last.split("\\").last.split(".").last);
   final name = path
