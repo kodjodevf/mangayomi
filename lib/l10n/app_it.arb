@@ -317,5 +317,7 @@
     "text": "Testo",
     "border": "Bordo",
     "background": "Sfondo",
-    "no_subtite_warning_message": "Non ha effetto perché non ci sono tracce sottotitoli in questo video"
+    "no_subtite_warning_message": "Non ha effetto perché non ci sono tracce sottotitoli in questo video",
+    "grid_size": "Dimensione griglia",
+    "n_per_row": "{n} per riga"
 }

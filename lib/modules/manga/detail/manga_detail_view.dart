@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -24,6 +23,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -1366,7 +1366,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final imageProvider = widget.manga!.customCoverImage != null
         ? MemoryImage(widget.manga!.customCoverImage as Uint8List)
             as ImageProvider
-        : CachedNetworkImageProvider(
+        : CustomExtendedNetworkImageProvider(
             toImgUrl(widget.manga!.customCoverFromTracker ??
                 widget.manga!.imageUrl!),
             headers: widget.manga!.isLocalArchive!

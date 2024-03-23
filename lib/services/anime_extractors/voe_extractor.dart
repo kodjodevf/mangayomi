@@ -1,11 +1,11 @@
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class VoeExtractor {
-  final InterceptedClient client = MInterceptor.init();
+  final InterceptedClient client = MClient.init();
 
   Future<List<Video>> videosFromUrl(String url, String? quality) async {
     try {

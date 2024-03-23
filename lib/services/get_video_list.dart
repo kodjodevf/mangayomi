@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:mangayomi/eval/bridge/m_source.dart';
-import 'package:mangayomi/eval/model/m_provider.dart';
-import 'package:mangayomi/eval/compiler/compiler.dart';
-import 'package:mangayomi/messages/generated.dart';
+import 'package:mangayomi/eval/dart/bridge/m_source.dart';
+import 'package:mangayomi/eval/dart/model/m_provider.dart';
+import 'package:mangayomi/eval/dart/compiler/compiler.dart';
+import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/eval/runtime/runtime.dart';
+import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
@@ -37,15 +38,18 @@ Future<(List<Video>, bool, String?)> getVideoList(
         await MTorrentServer().getTorrentPlaylist(episode.url!);
     return (videos, false, infohash);
   }
-  await finalizeRust();
-  await initializeRust();
-  final bytecode =
-      compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
+  List<Video> list = [];
+  if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
+    final bytecode =
+        compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
 
-  final runtime = runtimeEval(bytecode);
+    final runtime = runtimeEval(bytecode);
 
-  var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
-      [$MSource.wrap(source.toMSource())]);
-  final dd = (await (res as MProvider).getVideoList(episode.url!));
-  return (dd, false, null);
+    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]);
+    list = (await (res as MProvider).getVideoList(episode.url!));
+  } else {
+    list = await JsExtensionService(source).getVideoList(episode.url!);
+  }
+  return (list, false, null);
 }

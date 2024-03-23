@@ -1,4 +1,4 @@
-import 'package:background_downloader/background_downloader.dart';
+import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';

@@ -319,5 +319,7 @@
   "text": "Text",
   "border": "Border",
   "background": "Background",
-  "no_subtite_warning_message": "Has no effect because there aren't any subtitle tracks in this video"
+  "no_subtite_warning_message": "Has no effect because there aren't any subtitle tracks in this video",
+  "grid_size": "Grid size",
+  "n_per_row": "{n} per row"
 }

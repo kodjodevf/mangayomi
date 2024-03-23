@@ -1,13 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/eval/model/source_preference.dart';
+import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
+import 'package:mangayomi/sources/source_test.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 
@@ -31,8 +34,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.extension_detail),
-      ),
+          title: Text(l10n.extension_detail),
+          leading: BackButton(onPressed: () => Navigator.pop(context, source))),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -45,20 +48,19 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     borderRadius: BorderRadius.circular(10)),
                 child: widget.source.iconUrl!.isEmpty
                     ? const Icon(Icons.source_outlined, size: 140)
-                    : CachedNetworkImage(
+                    : cachedNetworkImage(
                         imageUrl: widget.source.iconUrl!,
                         fit: BoxFit.contain,
                         width: 140,
                         height: 140,
-                        errorWidget: (context, url, error) {
-                          return const SizedBox(
-                            width: 140,
-                            height: 140,
-                            child: Center(
-                              child: Icon(Icons.source_outlined, size: 140),
-                            ),
-                          );
-                        },
+                        errorWidget: const SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: Center(
+                            child: Icon(Icons.source_outlined, size: 140),
+                          ),
+                        ),
+                        headers: {},
                       ),
               ),
             ),
@@ -134,6 +136,47 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        elevation: 0,
+                        shadowColor: Colors.transparent),
+                    onPressed: () async {
+                      final res =
+                          await context.push('/codeEditor', extra: source.id);
+                      if (res != null && mounted) {
+                        setState(() {
+                          source = res as Source;
+                          sourcePreference = getSourcePreference(source: source)
+                              .map((e) =>
+                                  getSourcePreferenceEntry(e.key!, source.id!))
+                              .toList();
+                        });
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            "Edit code",
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Icon(Icons.code)
+                      ],
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: context.mediaWidth(1),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
                         side:
                             BorderSide(color: context.primaryColor, width: 0.3),
                         backgroundColor: Colors.transparent,
@@ -165,11 +208,34 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                     ),
                                     TextButton(
                                         onPressed: () {
-                                          isar.writeTxnSync(() =>
+                                          final sourcePrefsIds = isar
+                                              .sourcePreferences
+                                              .filter()
+                                              .sourceIdEqualTo(source.id!)
+                                              .findAllSync()
+                                              .map((e) => e.id!)
+                                              .toList();
+                                          final sourcePrefsStringIds = isar
+                                              .sourcePreferenceStringValues
+                                              .filter()
+                                              .sourceIdEqualTo(source.id!)
+                                              .findAllSync()
+                                              .map((e) => e.id)
+                                              .toList();
+                                          isar.writeTxnSync(() {
+                                            if (!useTestSourceCode) {
                                               isar.sources.putSync(widget.source
                                                 ..sourceCode = ""
                                                 ..isAdded = false
-                                                ..isPinned = false));
+                                                ..isPinned = false);
+                                            }
+                                            isar.sourcePreferences
+                                                .deleteAllSync(sourcePrefsIds);
+                                            isar.sourcePreferenceStringValues
+                                                .deleteAllSync(
+                                                    sourcePrefsStringIds);
+                                          });
+
                                           Navigator.pop(ctx);
                                           Navigator.pop(context);
                                         },

@@ -196,6 +196,151 @@ class _LibraryDisplayTypeStateProviderElement
   Settings get settings => (origin as LibraryDisplayTypeStateProvider).settings;
 }
 
+String _$libraryGridSizeStateHash() =>
+    r'a4e55ef92f9387c2588679c5e2f23ef689e5d593';
+
+abstract class _$LibraryGridSizeState
+    extends BuildlessAutoDisposeNotifier<int?> {
+  late final bool isManga;
+
+  int? build({
+    required bool isManga,
+  });
+}
+
+/// See also [LibraryGridSizeState].
+@ProviderFor(LibraryGridSizeState)
+const libraryGridSizeStateProvider = LibraryGridSizeStateFamily();
+
+/// See also [LibraryGridSizeState].
+class LibraryGridSizeStateFamily extends Family<int?> {
+  /// See also [LibraryGridSizeState].
+  const LibraryGridSizeStateFamily();
+
+  /// See also [LibraryGridSizeState].
+  LibraryGridSizeStateProvider call({
+    required bool isManga,
+  }) {
+    return LibraryGridSizeStateProvider(
+      isManga: isManga,
+    );
+  }
+
+  @override
+  LibraryGridSizeStateProvider getProviderOverride(
+    covariant LibraryGridSizeStateProvider provider,
+  ) {
+    return call(
+      isManga: provider.isManga,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'libraryGridSizeStateProvider';
+}
+
+/// See also [LibraryGridSizeState].
+class LibraryGridSizeStateProvider
+    extends AutoDisposeNotifierProviderImpl<LibraryGridSizeState, int?> {
+  /// See also [LibraryGridSizeState].
+  LibraryGridSizeStateProvider({
+    required bool isManga,
+  }) : this._internal(
+          () => LibraryGridSizeState()..isManga = isManga,
+          from: libraryGridSizeStateProvider,
+          name: r'libraryGridSizeStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$libraryGridSizeStateHash,
+          dependencies: LibraryGridSizeStateFamily._dependencies,
+          allTransitiveDependencies:
+              LibraryGridSizeStateFamily._allTransitiveDependencies,
+          isManga: isManga,
+        );
+
+  LibraryGridSizeStateProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.isManga,
+  }) : super.internal();
+
+  final bool isManga;
+
+  @override
+  int? runNotifierBuild(
+    covariant LibraryGridSizeState notifier,
+  ) {
+    return notifier.build(
+      isManga: isManga,
+    );
+  }
+
+  @override
+  Override overrideWith(LibraryGridSizeState Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: LibraryGridSizeStateProvider._internal(
+        () => create()..isManga = isManga,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        isManga: isManga,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<LibraryGridSizeState, int?>
+      createElement() {
+    return _LibraryGridSizeStateProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LibraryGridSizeStateProvider && other.isManga == isManga;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, isManga.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin LibraryGridSizeStateRef on AutoDisposeNotifierProviderRef<int?> {
+  /// The parameter `isManga` of this provider.
+  bool get isManga;
+}
+
+class _LibraryGridSizeStateProviderElement
+    extends AutoDisposeNotifierProviderElement<LibraryGridSizeState, int?>
+    with LibraryGridSizeStateRef {
+  _LibraryGridSizeStateProviderElement(super.provider);
+
+  @override
+  bool get isManga => (origin as LibraryGridSizeStateProvider).isManga;
+}
+
 String _$mangaFilterDownloadedStateHash() =>
     r'9c07e64580061bf2cbf892ef679274913aaa3b20';
 

@@ -1,12 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
+import 'dart:math';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -692,6 +694,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     language: language,
                     mangaIdsList: mangaIdsList,
                     localSource: localSource,
+                    isManga: widget.isManga,
                   ),
           );
         }
@@ -765,6 +768,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     language: language,
                     mangaIdsList: mangaIdsList,
                     localSource: localSource,
+                    isManga: widget.isManga,
                   ),
           );
         }
@@ -1345,7 +1349,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
                 child: Row(
                   children: [
                     Text(l10n.display_mode),
@@ -1408,8 +1412,63 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         // ),
                         ).toList()),
               ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final gridSize = ref.watch(libraryGridSizeStateProvider(
+                          isManga: widget.isManga)) ??
+                      0;
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 10),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              Text(context.l10n.grid_size),
+                              Text(gridSize == 0
+                                  ? context.l10n.default0
+                                  : context.l10n.n_per_row(gridSize.toString()))
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          flex: 7,
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: const RoundSliderOverlayShape(
+                                  overlayRadius: 5.0),
+                            ),
+                            child: Slider(
+                              min: 0.0,
+                              max: 7,
+                              divisions: max(7, 0),
+                              value: gridSize.toDouble(),
+                              onChanged: (value) {
+                                HapticFeedback.vibrate();
+                                ref
+                                    .read(libraryGridSizeStateProvider(
+                                            isManga: widget.isManga)
+                                        .notifier)
+                                    .set(value.toInt());
+                              },
+                              onChangeEnd: (value) {
+                                ref
+                                    .read(libraryGridSizeStateProvider(
+                                            isManga: widget.isManga)
+                                        .notifier)
+                                    .set(value.toInt(), end: true);
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
                 child: Row(
                   children: [
                     Text(l10n.badges),
@@ -1469,7 +1528,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
                 child: Row(
                   children: [Text(l10n.tabs)],
                 ),

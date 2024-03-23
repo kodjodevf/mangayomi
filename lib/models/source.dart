@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/eval/dart/model/m_source.dart';
 part 'source.g.dart';
 
 @collection
@@ -53,6 +53,13 @@ class Source {
 
   String? additionalParams;
 
+  bool? isLocal;
+
+  bool? isObsolete;
+
+  @enumerated
+  SourceCodeLanguage sourceCodeLanguage = SourceCodeLanguage.dart;
+
   Source(
       {this.id = 0,
       this.name = '',
@@ -77,7 +84,9 @@ class Source {
       this.headers = '',
       this.isManga = true,
       this.appMinVerReq = "",
-      this.additionalParams = ""});
+      this.additionalParams = "",
+      this.isLocal = false,
+      this.isObsolete = false});
 
   Source.fromJson(Map<String, dynamic> json) {
     apiUrl = json['apiUrl'];
@@ -104,6 +113,10 @@ class Source {
     version = json['version'];
     versionLast = json['versionLast'];
     additionalParams = json['additionalParams'] ?? "";
+    isObsolete = json['isObsolete'];
+    isLocal = json['isLocal'];
+    sourceCodeLanguage =
+        SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
   }
 
   Map<String, dynamic> toJson() => {
@@ -131,6 +144,9 @@ class Source {
         'version': version,
         'versionLast': versionLast,
         'additionalParams': additionalParams,
+        'sourceCodeLanguage': sourceCodeLanguage.index,
+        'isObsolete': isObsolete,
+        'isLocal': isLocal
       };
 
   bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";
@@ -149,3 +165,5 @@ class Source {
         additionalParams: additionalParams);
   }
 }
+
+enum SourceCodeLanguage { dart, javascript }

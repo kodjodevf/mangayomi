@@ -7,14 +7,14 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'torrent_server.g.dart';
 
 class MTorrentServer {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
     try {

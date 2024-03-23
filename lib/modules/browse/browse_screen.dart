@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -74,29 +74,41 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     },
                     controller: _textEditingController,
                   )
-                : _tabBarController.index != 4
-                    ? IconButton(
-                        splashRadius: 20,
-                        onPressed: () {
-                          if (_tabBarController.index != 1 &&
-                              _tabBarController.index != 0) {
-                            setState(() {
-                              _isSearch = true;
-                            });
-                          } else {
-                            context.push('/globalSearch',
-                                extra: _tabBarController.index == 0
-                                    ? true
-                                    : false);
-                          }
-                        },
-                        icon: Icon(
-                            _tabBarController.index == 0 ||
-                                    _tabBarController.index == 1
-                                ? Icons.travel_explore_rounded
-                                : Icons.search_rounded,
-                            color: Theme.of(context).hintColor))
-                    : Container(),
+                : Row(
+                    children: [
+                      if (_tabBarController.index == 2 ||
+                          _tabBarController.index == 3)
+                        IconButton(
+                            onPressed: () {
+                              context.push('/createExtension');
+                            },
+                            icon: Icon(Icons.add_outlined,
+                                color: Theme.of(context).hintColor)),
+                      _tabBarController.index != 4
+                          ? IconButton(
+                              splashRadius: 20,
+                              onPressed: () {
+                                if (_tabBarController.index != 1 &&
+                                    _tabBarController.index != 0) {
+                                  setState(() {
+                                    _isSearch = true;
+                                  });
+                                } else {
+                                  context.push('/globalSearch',
+                                      extra: _tabBarController.index == 0
+                                          ? true
+                                          : false);
+                                }
+                              },
+                              icon: Icon(
+                                  _tabBarController.index == 0 ||
+                                          _tabBarController.index == 1
+                                      ? Icons.travel_explore_rounded
+                                      : Icons.search_rounded,
+                                  color: Theme.of(context).hintColor))
+                          : Container(),
+                    ],
+                  ),
             IconButton(
                 splashRadius: 20,
                 onPressed: () {

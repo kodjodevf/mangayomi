@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/browse/extension/providers/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/http/interceptor.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -80,7 +80,7 @@ Future<void> _launchInBrowser(Uri url) async {
 }
 
 Future<(String, String, String)> _checkUpdate() async {
-  final http = MInterceptor.init();
+  final http = MClient.init();
   try {
     final res = await http.get(Uri.parse(
         "https://api.github.com/repos/kodjodevf/Mangayomi/releases?page=1&per_page=10"));

@@ -317,5 +317,7 @@
     "text": "Texto",
     "border": "Borde",
     "background": "Fondo",
-    "no_subtite_warning_message": "No tiene efecto porque no hay pistas de subtítulos en este video"
+    "no_subtite_warning_message": "No tiene efecto porque no hay pistas de subtítulos en este video",
+    "grid_size": "Tamaño de la cuadrícula",
+    "n_per_row": "{n} por fila"
 }

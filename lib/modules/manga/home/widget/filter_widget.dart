@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/eval/model/filter.dart';
+import 'package:mangayomi/eval/dart/model/filter.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class FilterWidget extends StatelessWidget {
@@ -171,6 +171,9 @@ class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {
   late final _controller = TextEditingController(text: widget.text);
   @override
   Widget build(BuildContext context) {
+    if (widget.text.isEmpty) {
+      _controller.clear();
+    }
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: TextField(

@@ -6,7 +6,9 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
+import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
+import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -500,6 +502,34 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: const PlayerScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/codeEditor",
+          name: "codeEditor",
+          builder: (context, state) {
+            final sourceId = state.extra as int?;
+            return CodeEditor(sourceId: sourceId);
+          },
+          pageBuilder: (context, state) {
+            final sourceId = state.extra as int?;
+            return transitionPage(
+              key: state.pageKey,
+              child: CodeEditor(sourceId: sourceId),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/createExtension",
+          name: "createExtension",
+          builder: (context, state) {
+            return const CreateExtension();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const CreateExtension(),
             );
           },
         ),

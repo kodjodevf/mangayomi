@@ -1,6 +1,5 @@
 use tokio_with_wasm::tokio;
 
-mod boa_js;
 mod imagecrop;
 mod messages;
 
@@ -11,6 +10,5 @@ rinf::write_interface!();
 async fn main() {
     // Repeat `crate::spawn` anywhere in your code
     // if more concurrent tasks are needed.
-    tokio::spawn(boa_js::eval_js());
     tokio::spawn(imagecrop::start_croping());
 }

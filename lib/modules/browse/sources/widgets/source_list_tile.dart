@@ -6,9 +6,9 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/sources/source_test.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class SourceListTile extends StatelessWidget {
   final bool isManga;
@@ -46,20 +46,18 @@ class SourceListTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(5)),
         child: source.iconUrl!.isEmpty
             ? const Icon(Icons.source_outlined)
-            : CachedNetworkImage(
+            : cachedNetworkImage(
                 imageUrl: source.iconUrl!,
                 fit: BoxFit.contain,
                 width: 37,
                 height: 37,
-                errorWidget: (context, url, error) {
-                  return const SizedBox(
-                    width: 37,
-                    height: 37,
-                    child: Center(
-                      child: Icon(Icons.source_outlined),
-                    ),
-                  );
-                },
+                errorWidget: const SizedBox(
+                  width: 37,
+                  height: 37,
+                  child: Center(
+                    child: Icon(Icons.source_outlined),
+                  ),
+                ),
               ),
       ),
       subtitle: Row(

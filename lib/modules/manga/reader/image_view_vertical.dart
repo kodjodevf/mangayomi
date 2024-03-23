@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -42,7 +43,7 @@ class ImageViewVertical extends ConsumerWidget {
             ? ExtendedMemoryImageProvider(archiveImage)
             : ExtendedFileImageProvider(
                 File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'))
-        : ExtendedNetworkImageProvider(datas.url!.trim().trimLeft().trimRight(),
+        : CustomExtendedNetworkImageProvider(datas.url!.trim().trimLeft().trimRight(),
             cache: true,
             cacheMaxAge: const Duration(days: 7),
             headers: ref.watch(headersProvider(

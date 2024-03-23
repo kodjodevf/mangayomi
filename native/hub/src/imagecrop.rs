@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.*/
 
 use crate::messages;
-use image::{DynamicImage, GenericImageView, ImageOutputFormat, ImageResult, Rgba};
+use image::{DynamicImage, GenericImageView, ImageResult, Rgba};
 use std::io::Cursor;
 
 pub struct Point {
@@ -145,7 +145,7 @@ pub async fn start_croping() {
         let image = dart_signal.blob.unwrap();
         let res = crop_image(image);
         let mut image_data: Vec<u8> = Vec::new();
-        res.write_to(&mut Cursor::new(&mut image_data), ImageOutputFormat::Png)
+        res.write_to(&mut Cursor::new(&mut image_data), image::ImageFormat::Png)
             .unwrap();
         CropBordersOutput {
             interaction_id: dart_signal.message.interaction_id,
