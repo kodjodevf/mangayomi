@@ -147,7 +147,7 @@ class ReaderController extends _$ReaderController {
   }
 
   bool getShowPageNumber() {
-    if (incognitoMode) {
+    if (!incognitoMode) {
       return getIsarSetting().showPagesNumber!;
     }
     return true;
