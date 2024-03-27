@@ -94,7 +94,7 @@ var extention = new DefaultExtension();
   Future<MManga> getDetail(String url) async {
     _init();
     final res = (await runtime.handlePromise(await runtime
-            .evaluateAsync('jsonStringify(() => extention.getDetail("$url"))')))
+            .evaluateAsync('jsonStringify(() => extention.getDetail(`$url`))')))
         .stringResult;
     return MManga.fromJson(jsonDecode(res));
   }
@@ -102,7 +102,7 @@ var extention = new DefaultExtension();
   Future<List<String>> getPageList(String url) async {
     _init();
     final res = (await runtime.handlePromise(await runtime.evaluateAsync(
-            'jsonStringify(() => extention.getPageList("$url"))')))
+            'jsonStringify(() => extention.getPageList(`$url`))')))
         .stringResult;
 
     return jsonDecode(res);
@@ -111,10 +111,16 @@ var extention = new DefaultExtension();
   Future<List<Video>> getVideoList(String url) async {
     _init();
     final res = (await runtime.handlePromise(await runtime.evaluateAsync(
-            'jsonStringify(() => extention.getVideoList("$url"))')))
+            'jsonStringify(() => extention.getVideoList(`$url`))')))
         .stringResult;
 
-    return (jsonDecode(res) as List).map((e) => Video.fromJson(e)).toList();
+    return (jsonDecode(res) as List)
+        .where((element) =>
+            element['url'] != null && element['originalUrl'] != null)
+        .map((e) => Video.fromJson(e))
+        .toList()
+        .toSet()
+        .toList();
   }
 
   dynamic getFilterList() {

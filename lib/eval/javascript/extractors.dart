@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/models/video.dart';
 
 class JsVideosExtractors {
@@ -25,16 +26,27 @@ class JsVideosExtractors {
       return (await MBridge.vidBomExtractor(args[0])).encodeToJson();
     });
     runtime.onMessage('streamlareExtractor', (dynamic args) async {
-      return (await MBridge.streamlareExtractor(args[0], args[1], args[2]))
+      return (await MBridge.streamlareExtractor(
+              args[0], args[1] ?? "", args[2] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('sendVidExtractor', (dynamic args) async {
-      return (await MBridge.sendVidExtractor(args[0], args[1], args[2] ?? ""))
+      return (await MBridge.sendVidExtractor(
+              args[0],
+              args[1] != null
+                  ? jsonEncode((args[1] as Map?).toMapStringString)
+                  : null,
+              args[2] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('yourUploadExtractor', (dynamic args) async {
       return (await MBridge.yourUploadExtractor(
-              args[0], args[1], args[2], args[3] ?? ""))
+              args[0],
+              args[1] != null
+                  ? jsonEncode((args[1] as Map?).toMapStringString)
+                  : null,
+              args[2],
+              args[3] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('gogoCdnExtractor', (dynamic args) async {
@@ -49,7 +61,12 @@ class JsVideosExtractors {
     });
     runtime.onMessage('mp4UploadExtractor', (dynamic args) async {
       return (await MBridge.mp4UploadExtractor(
-              args[0], args[1], args[2], args[3] ?? ""))
+              args[0],
+              args[1] != null
+                  ? jsonEncode((args[1] as Map?).toMapStringString)
+                  : null,
+              args[2] ?? "",
+              args[3] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('streamWishExtractor', (dynamic args) async {

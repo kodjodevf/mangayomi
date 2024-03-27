@@ -224,10 +224,16 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                               .toList();
                                           isar.writeTxnSync(() {
                                             if (!useTestSourceCode) {
-                                              isar.sources.putSync(widget.source
-                                                ..sourceCode = ""
-                                                ..isAdded = false
-                                                ..isPinned = false);
+                                              if (source.isObsolete ?? false) {
+                                                isar.sources.deleteSync(
+                                                    widget.source.id!);
+                                              } else {
+                                                isar.sources
+                                                    .putSync(widget.source
+                                                      ..sourceCode = ""
+                                                      ..isAdded = false
+                                                      ..isPinned = false);
+                                              }
                                             }
                                             isar.sourcePreferences
                                                 .deleteAllSync(sourcePrefsIds);

@@ -144,8 +144,8 @@ Future<void> fetchSourcesList(
         }
       }
     }
-    checkIfSourceIsObsolete(sourceList, isManga);
   });
+  checkIfSourceIsObsolete(sourceList, isManga);
 }
 
 void checkIfSourceIsObsolete(List<Source> sourceList, bool isManga) {

@@ -39,28 +39,42 @@ console.log = function (message) {
       }
     sendMessage("log", JSON.stringify([message.toString()]));
 };
-function substringAfter(text, pattern) {
-    const startIndex = text.indexOf(pattern);
-    if (startIndex === -1) return text.substring(0);
+String.prototype.substringAfter = function(pattern) {
+    const startIndex = this.indexOf(pattern);
+    if (startIndex === -1) return this.substring(0);
 
     const start = startIndex + pattern.length;
-    return text.substring(start);
+    return this.substring(start);
 }
-function substringBefore(text, pattern) {
-    const endIndex = text.indexOf(pattern);
-    if (endIndex === -1) return text.substring(0);
 
-    return text.substring(0, endIndex);
+String.prototype.substringAfterLast = function(pattern) {
+    return this.split(pattern).pop();
 }
-function substringBeforeLast(text, pattern) {
-    const endIndex = text.lastIndexOf(pattern);
-    if (endIndex === -1) return text.substring(0);
 
-    return text.substring(0, endIndex);
+String.prototype.substringBefore = function(pattern) {
+    const endIndex = this.indexOf(pattern);
+    if (endIndex === -1) return this.substring(0);
+
+    return this.substring(0, endIndex);
 }
-function substringAfterLast(text, pattern) {
-    return text.split(pattern).pop();
+
+String.prototype.substringBeforeLast = function(pattern) {
+    const endIndex = this.lastIndexOf(pattern);
+    if (endIndex === -1) return this.substring(0);
+    return this.substring(0, endIndex);
 }
+
+String.prototype.substringBetween = function(left, right) {
+    let startIndex = 0;
+    let index = this.indexOf(left, startIndex);
+    if (index === -1) return "";
+    let leftIndex = index + left.length;
+    let rightIndex = this.indexOf(right, leftIndex);
+    if (rightIndex === -1) return "";
+    startIndex = rightIndex + right.length;
+    return this.substring(leftIndex, rightIndex);
+}
+
 function cryptoHandler(text, iv, secretKeyString, encrypt) {
     return sendMessage(
         "cryptoHandler",

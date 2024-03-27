@@ -12,7 +12,7 @@ class Video {
       {this.headers, this.subtitles, this.audios});
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(json['url'], json['quality'], json['originalUrl'],
-        headers: (json['headers'] as Map?).toMapStringString,
+        headers: (json['headers'] as Map?)?.toMapStringString,
         subtitles: json['subtitles'] != null
             ? (json['subtitles'] as List).map((e) => Track.fromJson(e)).toList()
             : [],

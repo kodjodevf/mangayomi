@@ -174,6 +174,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   isNsfw: _isNsfw)
                                 ..sourceCodeLanguage = _sourceCodeLanguage;
                               source = source
+                                ..isLocal = true
                                 ..sourceCode = _sourceCodeLanguage ==
                                         SourceCodeLanguage.dart
                                     ? _dartTemplate
@@ -284,7 +285,7 @@ TestSource main(MSource source) {
 }''';
 
 String _jsSample(Source source) => '''
-const sources = [{
+const mangayomiSources = [{
     "name": "${source.name}",
     "lang": "${source.lang}",
     "baseUrl": "${source.baseUrl}",
@@ -297,7 +298,7 @@ const sources = [{
     "apiUrl": "",
     "dateFormat": "",
     "dateFormatLocale": "",
-    "pkgName": "en/madara"
+    "pkgName": ""
 }];
 
 class DefaultExtension extends MProvider {
