@@ -165,272 +165,280 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                         ),
                       ),
                     )),
-                Flexible(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: DropdownButton(
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          isExpanded: true,
-                          value: _serviceIndex,
-                          hint: Text(_getServices(context)[_serviceIndex].$1,
-                              style: const TextStyle(fontSize: 13)),
-                          items: _getServices(context)
-                              .map((e) => DropdownMenuItem(
-                                    value: e.$2,
-                                    child: Text(e.$1,
-                                        style: const TextStyle(fontSize: 13)),
-                                  ))
-                              .toList(),
-                          onChanged: (v) {
-                            setState(() {
-                              _serviceIndex = v!;
-                            });
-                          },
+                if (context.isTablet)
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButton(
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            isExpanded: true,
+                            value: _serviceIndex,
+                            hint: Text(_getServices(context)[_serviceIndex].$1,
+                                style: const TextStyle(fontSize: 13)),
+                            items: _getServices(context)
+                                .map((e) => DropdownMenuItem(
+                                      value: e.$2,
+                                      child: Text(e.$1,
+                                          style: const TextStyle(fontSize: 13)),
+                                    ))
+                                .toList(),
+                            onChanged: (v) {
+                              setState(() {
+                                _serviceIndex = v!;
+                              });
+                            },
+                          ),
                         ),
-                      ),
-                      if (_serviceIndex == 0 ||
-                          _serviceIndex == 1 ||
-                          _serviceIndex == 2)
-                        _textEditing("Page", context, "ex: 1", (v) {
-                          _page = int.tryParse(v) ?? 1;
-                        }),
-                      if (_serviceIndex == 2)
-                        _textEditing("Query", context, "ex: one piece", (v) {
-                          _query = v;
-                        }),
-                      if (_serviceIndex == 3 ||
-                          _serviceIndex == 4 ||
-                          _serviceIndex == 5)
-                        _textEditing("Url", context, "ex: url of the entry",
-                            (v) {
-                          _url = v;
-                        }),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            ElevatedButton(
-                                onPressed: () async {
-                                  setState(() {
-                                    result = null;
-                                    _isLoading = true;
-                                    _error = false;
-                                    _errorText = "";
-                                  });
-                                  if (source != null) {
-                                    try {
-                                      if (_serviceIndex == 0) {
-                                        final getManga = await ref.watch(
-                                            getPopularProvider(
-                                                    source: source!,
-                                                    page: _page)
-                                                .future);
-                                        result = getManga!.toJson();
-                                      } else if (_serviceIndex == 1) {
-                                        final getManga = await ref.watch(
-                                            getLatestUpdatesProvider(
-                                                    source: source!,
-                                                    page: _page)
-                                                .future);
-                                        result = getManga!.toJson();
-                                      } else if (_serviceIndex == 2) {
-                                        final getManga = await ref.watch(
-                                            searchProvider(
-                                                    source: source!,
-                                                    query: _query,
-                                                    page: _page,
-                                                    filterList: filterList)
-                                                .future);
-                                        result = getManga!.toJson();
-                                      } else if (_serviceIndex == 3) {
-                                        final getManga = await ref.watch(
-                                            getDetailProvider(
-                                                    source: source!, url: _url)
-                                                .future);
-                                        result = getManga.toJson();
-                                      } else if (_serviceIndex == 4) {
-                                        if (source!.sourceCodeLanguage ==
-                                            SourceCodeLanguage.dart) {
-                                          final bytecode =
-                                              compilerEval(source!.sourceCode!);
-
-                                          final runtime = runtimeEval(bytecode);
-
-                                          var res = await runtime.executeLib(
-                                              'package:mangayomi/main.dart',
-                                              'main', [
-                                            $MSource.wrap(source!.toMSource())
-                                          ]);
-                                          result = await (res as MProvider)
-                                              .getPageList(_url);
-                                        } else {
-                                          result =
-                                              await JsExtensionService(source)
-                                                  .getPageList(_url);
-                                        }
-                                        result = {"pages": result};
-                                      } else {
-                                        if (source!.sourceCodeLanguage ==
-                                            SourceCodeLanguage.dart) {
-                                          final bytecode =
-                                              compilerEval(source!.sourceCode!);
-
-                                          final runtime = runtimeEval(bytecode);
-
-                                          var res = runtime.executeLib(
-                                              'package:mangayomi/main.dart',
-                                              'main', [
-                                            $MSource.wrap(source!.toMSource())
-                                          ]);
-                                          result = (await (res as MProvider)
-                                                  .getVideoList(_url))
-                                              .map((e) => e.toJson())
-                                              .toList();
-                                        } else {
-                                          result =
-                                              (await JsExtensionService(source)
-                                                      .getVideoList(_url))
-                                                  .map((e) => e.toJson())
-                                                  .toList();
-                                        }
-                                      }
-                                      if (mounted) {
-                                        setState(() {
-                                          _isLoading = false;
-                                        });
-                                      }
-                                    } catch (e) {
-                                      if (mounted) {
-                                        setState(() {
-                                          _error = true;
-                                          _errorText = e.toString();
-                                          _isLoading = false;
-                                        });
-                                      }
-                                    }
-                                  }
-                                },
-                                child: const Text("Execute")),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      result = null;
-                                      _isLoading = false;
-                                      _error = false;
-                                      _errorText = "";
-                                      filters = [];
-                                    });
-                                  },
-                                  child: Text(context.l10n.reset)),
-                            ),
-                            if (_serviceIndex == 2 && filterList.isNotEmpty)
+                        if (_serviceIndex == 0 ||
+                            _serviceIndex == 1 ||
+                            _serviceIndex == 2)
+                          _textEditing("Page", context, "ex: 1", (v) {
+                            _page = int.tryParse(v) ?? 1;
+                          }),
+                        if (_serviceIndex == 2)
+                          _textEditing("Query", context, "ex: one piece", (v) {
+                            _query = v;
+                          }),
+                        if (_serviceIndex == 3 ||
+                            _serviceIndex == 4 ||
+                            _serviceIndex == 5)
+                          _textEditing("Url", context, "ex: url of the entry",
+                              (v) {
+                            _url = v;
+                          }),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
                               ElevatedButton(
                                   onPressed: () async {
+                                    setState(() {
+                                      result = null;
+                                      _isLoading = true;
+                                      _error = false;
+                                      _errorText = "";
+                                    });
                                     if (source != null) {
                                       try {
-                                        if (filters.isEmpty) {
-                                          filters = filterList;
-                                        }
-                                        final res = await filterDialog(context);
-                                        if (res == 'filter' && mounted) {
-                                          setState(() {
-                                            result = null;
-                                            _isLoading = true;
-                                            _error = false;
-                                            _errorText = "";
-                                          });
+                                        if (_serviceIndex == 0) {
+                                          final getManga = await ref.watch(
+                                              getPopularProvider(
+                                                      source: source!,
+                                                      page: _page)
+                                                  .future);
+                                          result = getManga!.toJson();
+                                        } else if (_serviceIndex == 1) {
+                                          final getManga = await ref.watch(
+                                              getLatestUpdatesProvider(
+                                                      source: source!,
+                                                      page: _page)
+                                                  .future);
+                                          result = getManga!.toJson();
+                                        } else if (_serviceIndex == 2) {
                                           final getManga = await ref.watch(
                                               searchProvider(
                                                       source: source!,
                                                       query: _query,
                                                       page: _page,
-                                                      filterList: filters)
+                                                      filterList: filterList)
                                                   .future);
                                           result = getManga!.toJson();
+                                        } else if (_serviceIndex == 3) {
+                                          final getManga = await ref.watch(
+                                              getDetailProvider(
+                                                      source: source!,
+                                                      url: _url)
+                                                  .future);
+                                          result = getManga.toJson();
+                                        } else if (_serviceIndex == 4) {
+                                          if (source!.sourceCodeLanguage ==
+                                              SourceCodeLanguage.dart) {
+                                            final bytecode = compilerEval(
+                                                source!.sourceCode!);
+
+                                            final runtime =
+                                                runtimeEval(bytecode);
+
+                                            var res = await runtime.executeLib(
+                                                'package:mangayomi/main.dart',
+                                                'main', [
+                                              $MSource.wrap(source!.toMSource())
+                                            ]);
+                                            result = await (res as MProvider)
+                                                .getPageList(_url);
+                                          } else {
+                                            result =
+                                                await JsExtensionService(source)
+                                                    .getPageList(_url);
+                                          }
+                                          result = {"pages": result};
+                                        } else {
+                                          if (source!.sourceCodeLanguage ==
+                                              SourceCodeLanguage.dart) {
+                                            final bytecode = compilerEval(
+                                                source!.sourceCode!);
+
+                                            final runtime =
+                                                runtimeEval(bytecode);
+
+                                            var res = runtime.executeLib(
+                                                'package:mangayomi/main.dart',
+                                                'main', [
+                                              $MSource.wrap(source!.toMSource())
+                                            ]);
+                                            result = (await (res as MProvider)
+                                                    .getVideoList(_url))
+                                                .map((e) => e.toJson())
+                                                .toList();
+                                          } else {
+                                            result = (await JsExtensionService(
+                                                        source)
+                                                    .getVideoList(_url))
+                                                .map((e) => e.toJson())
+                                                .toList();
+                                          }
+                                        }
+                                        if (mounted) {
                                           setState(() {
                                             _isLoading = false;
                                           });
                                         }
                                       } catch (e) {
-                                        setState(() {
-                                          _error = true;
-                                          _errorText = e.toString();
-                                          _isLoading = false;
-                                        });
+                                        if (mounted) {
+                                          setState(() {
+                                            _error = true;
+                                            _errorText = e.toString();
+                                            _isLoading = false;
+                                          });
+                                        }
                                       }
                                     }
                                   },
-                                  child: Text(context.l10n.filter)),
-                          ],
+                                  child: const Text("Execute")),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        result = null;
+                                        _isLoading = false;
+                                        _error = false;
+                                        _errorText = "";
+                                        filters = [];
+                                      });
+                                    },
+                                    child: Text(context.l10n.reset)),
+                              ),
+                              if (_serviceIndex == 2 && filterList.isNotEmpty)
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      if (source != null) {
+                                        try {
+                                          if (filters.isEmpty) {
+                                            filters = filterList;
+                                          }
+                                          final res =
+                                              await filterDialog(context);
+                                          if (res == 'filter' && mounted) {
+                                            setState(() {
+                                              result = null;
+                                              _isLoading = true;
+                                              _error = false;
+                                              _errorText = "";
+                                            });
+                                            final getManga = await ref.watch(
+                                                searchProvider(
+                                                        source: source!,
+                                                        query: _query,
+                                                        page: _page,
+                                                        filterList: filters)
+                                                    .future);
+                                            result = getManga!.toJson();
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                          }
+                                        } catch (e) {
+                                          setState(() {
+                                            _error = true;
+                                            _errorText = e.toString();
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      }
+                                    },
+                                    child: Text(context.l10n.filter)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                          child: _error
-                              ? SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(_errorText),
-                                    ],
-                                  ),
-                                )
-                              : _isLoading
-                                  ? const Center(
-                                      child: CircularProgressIndicator())
-                                  : result != null
-                                      ? JsonConfig(
-                                          data: JsonConfigData(
-                                            gap: 100,
-                                            style: const JsonStyleScheme(
-                                              quotation:
-                                                  JsonQuotation.same('"'),
-                                              openAtStart: false,
-                                              arrow: Icon(Icons.arrow_forward),
-                                              depth: 4,
+                        Expanded(
+                            child: _error
+                                ? SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(_errorText),
+                                      ],
+                                    ),
+                                  )
+                                : _isLoading
+                                    ? const Center(
+                                        child: CircularProgressIndicator())
+                                    : result != null
+                                        ? JsonConfig(
+                                            data: JsonConfigData(
+                                              gap: 100,
+                                              style: const JsonStyleScheme(
+                                                quotation:
+                                                    JsonQuotation.same('"'),
+                                                openAtStart: false,
+                                                arrow:
+                                                    Icon(Icons.arrow_forward),
+                                                depth: 4,
+                                              ),
+                                              color: const JsonColorScheme(),
                                             ),
-                                            color: const JsonColorScheme(),
-                                          ),
-                                          child: JsonView(json: result),
-                                        )
-                                      : const SizedBox.shrink())
-                    ],
+                                            child: JsonView(json: result),
+                                          )
+                                        : const SizedBox.shrink())
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 0.5),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.black,
-            ),
-            width: context.mediaWidth(1),
-            height: 200,
-            child: ValueListenableBuilder(
-              valueListenable: _logsNotifier,
-              builder: (context, logs, child) => ListView.separated(
-                separatorBuilder: (context, index) => const Divider(),
-                controller: _scrollController,
-                padding: const EdgeInsets.all(10),
-                itemCount: logs.length,
-                itemBuilder: (context, index) {
-                  final value = logs[index];
-                  return SelectableText(value.$2,
-                      style: TextStyle(
-                          color: value.$1 == LoggerLevel.warning
-                              ? Colors.yellow
-                              : Colors.blueAccent));
-                },
+          if (context.isTablet)
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 0.5),
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.black,
               ),
-            ),
-          )
+              width: context.mediaWidth(1),
+              height: 200,
+              child: ValueListenableBuilder(
+                valueListenable: _logsNotifier,
+                builder: (context, logs, child) => ListView.separated(
+                  separatorBuilder: (context, index) => const Divider(),
+                  controller: _scrollController,
+                  padding: const EdgeInsets.all(10),
+                  itemCount: logs.length,
+                  itemBuilder: (context, index) {
+                    final value = logs[index];
+                    return SelectableText(value.$2,
+                        style: TextStyle(
+                            color: value.$1 == LoggerLevel.warning
+                                ? Colors.yellow
+                                : Colors.blueAccent));
+                  },
+                ),
+              ),
+            )
         ],
       ),
     );
