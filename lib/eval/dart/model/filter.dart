@@ -25,7 +25,7 @@ class SelectFilter {
         'type': type,
         'name': name,
         'values': filterValuesListToJson(values),
-        'type_name': typeName
+        'type_name': "SelectFilter"
       };
 }
 
@@ -39,7 +39,7 @@ class SelectFilterOption {
     return SelectFilterOption(json['name'], json['value'], json['type_name']);
   }
   Map<String, dynamic> toJson() =>
-      {'value': value, 'name': name, 'type_name': typeName};
+      {'value': value, 'name': name, 'type_name': "SelectOption"};
 }
 
 class SeparatorFilter {
@@ -49,7 +49,8 @@ class SeparatorFilter {
   factory SeparatorFilter.fromJson(Map<String, dynamic> json) {
     return SeparatorFilter(type: json['type'], json['type_name']);
   }
-  Map<String, dynamic> toJson() => {'type': type, 'type_name': typeName};
+  Map<String, dynamic> toJson() =>
+      {'type': type, 'type_name': "SeparatorFilter"};
 }
 
 class HeaderFilter {
@@ -61,7 +62,7 @@ class HeaderFilter {
     return HeaderFilter(json['name'], json['type_name'], type: json['value']);
   }
   Map<String, dynamic> toJson() =>
-      {'type': type, 'name': name, 'type_name': typeName};
+      {'type': type, 'name': name, 'type_name': "HeaderFilter"};
 }
 
 class TextFilter {
@@ -76,7 +77,7 @@ class TextFilter {
         state: json['state'] ?? "");
   }
   Map<String, dynamic> toJson() =>
-      {'type': type, 'name': name, 'state': state, 'type_name': typeName};
+      {'type': type, 'name': name, 'state': state, 'type_name': "TextFilter"};
 }
 
 class SortFilter {
@@ -102,7 +103,7 @@ class SortFilter {
         'name': name,
         'state': state,
         'values': filterValuesListToJson(values),
-        'type_name': typeName
+        'type_name': "SortFilter"
       };
 }
 
@@ -116,7 +117,7 @@ class SortState {
     return SortState(json['index'], json['ascending'], json['type_name']);
   }
   Map<String, dynamic> toJson() =>
-      {'index': index, 'ascending': ascending, 'type_name': typeName};
+      {'index': index, 'ascending': ascending, 'type_name': "SortState"};
 }
 
 class TriStateFilter {
@@ -138,7 +139,7 @@ class TriStateFilter {
         'name': name,
         'value': value,
         'state': state,
-        'type_name': typeName
+        'type_name': "TriState"
       };
 }
 
@@ -157,7 +158,7 @@ class GroupFilter {
         'type': type,
         'name': name,
         'state': filterValuesListToJson(state),
-        'type_name': typeName
+        'type_name': "GroupFilter"
       };
 }
 
@@ -180,7 +181,7 @@ class CheckBoxFilter {
         'name': name,
         'value': value,
         'state': state,
-        'type_name': typeName
+        'type_name': "CheckBox"
       };
 }
 

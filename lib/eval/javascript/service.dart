@@ -129,7 +129,7 @@ var extention = new DefaultExtension();
       final res = runtime
           .evaluate('JSON.stringify(extention.getFilterList())')
           .stringResult;
-      return FilterList(fromJsonFilterValuestoList(jsonDecode(res))).filters;
+      return FilterList(fromJsonFilterValuestoList(jsonDecode(res)));
     } catch (_) {
       return [];
     }
