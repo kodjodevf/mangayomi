@@ -105,7 +105,7 @@ var extention = new DefaultExtension();
             'jsonStringify(() => extention.getPageList(`$url`))')))
         .stringResult;
 
-    return jsonDecode(res);
+    return (jsonDecode(res) as List).map((e) => e.toString()).toList();
   }
 
   Future<List<Video>> getVideoList(String url) async {
