@@ -24,6 +24,7 @@ class SelectFilter {
   Map<String, dynamic> toJson() => {
         'type': type,
         'name': name,
+        'state': state,
         'values': filterValuesListToJson(values),
         'type_name': "SelectFilter"
       };
@@ -101,7 +102,7 @@ class SortFilter {
   Map<String, dynamic> toJson() => {
         'type': type,
         'name': name,
-        'state': state,
+        'state': state.toJson(),
         'values': filterValuesListToJson(values),
         'type_name': "SortFilter"
       };
