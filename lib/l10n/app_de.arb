@@ -319,5 +319,7 @@
     "background": "Hintergrund",
     "no_subtite_warning_message": "Hat keine Wirkung, da in diesem Video keine Untertitelspuren vorhanden sind",
     "grid_size": "Rastergröße",
-    "n_per_row": "{n} pro Zeile"
+    "n_per_row": "{n} pro Zeile",
+    "horizontal_continious": "Horizontal kontinuierlich",
+    "edit_code": "Code bearbeiten"
 }

@@ -319,5 +319,7 @@
     "background": "Arka Plan",
     "no_subtite_warning_message": "Bu videoda altyazı parçaları olmadığı için etkisi yok",
     "grid_size": "Kılavuz Boyutu",
-    "n_per_row": "{n} satır başına"
+    "n_per_row": "{n} satır başına",
+    "horizontal_continious": "Yatay sürekli",
+    "edit_code": "Kodu düzenle"
 }

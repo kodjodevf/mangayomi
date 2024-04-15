@@ -319,5 +319,7 @@
     "background": "الخلفية",
     "no_subtite_warning_message": "لا تؤثر لأنه لا توجد مسارات ترجمة في هذا الفيديو",
     "grid_size": "حجم الشبكة",
-    "n_per_row": "{n} في الصف الواحد"
+    "n_per_row": "{n} في الصف الواحد",
+    "horizontal_continious": "مستمر أفقياً",
+    "edit_code": "تحرير الكود"
 }

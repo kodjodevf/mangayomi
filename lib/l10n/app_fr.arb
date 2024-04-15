@@ -320,5 +320,7 @@
   "background": "Arrière-plan",
   "no_subtite_warning_message": "N'a aucun effet car il n'y a pas de pistes de sous-titres dans cette vidéo",
   "grid_size": "Taille de la grille",
-  "n_per_row": "{n} par ligne"
+  "n_per_row": "{n} par ligne",
+  "horizontal_continious": "Horizontal continu",
+  "edit_code": "Modifier le code"
 }

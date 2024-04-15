@@ -321,5 +321,7 @@
     "background": "背景",
     "no_subtite_warning_message": "由于此视频中没有字幕轨道，因此无效。",
     "grid_size": "网格大小",
-    "n_per_row": "{n} 每行"
+    "n_per_row": "{n} 每行",
+    "horizontal_continious": "水平连续",
+    "edit_code": "编辑代码"
 }

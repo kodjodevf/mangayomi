@@ -319,5 +319,7 @@
     "background": "Fondo",
     "no_subtite_warning_message": "No tiene efecto porque no hay pistas de subtítulos en este vídeo",
     "grid_size": "Tamaño de la cuadrícula",
-    "n_per_row": "{n} por fila"
+    "n_per_row": "{n} por fila",
+    "horizontal_continious": "Horizontal continuo",
+    "edit_code": "Editar código"
 }

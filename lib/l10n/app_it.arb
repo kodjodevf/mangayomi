@@ -319,5 +319,7 @@
     "background": "Sfondo",
     "no_subtite_warning_message": "Non ha effetto perché non ci sono tracce sottotitoli in questo video",
     "grid_size": "Dimensione griglia",
-    "n_per_row": "{n} per riga"
+    "n_per_row": "{n} per riga",
+    "horizontal_continious": "Orizzontale continuo",
+    "edit_code": "Modifica codice"
 }

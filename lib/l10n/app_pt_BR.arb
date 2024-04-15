@@ -319,5 +319,7 @@
     "background": "Fundo",
     "no_subtite_warning_message": "Não tem efeito porque não há faixas de legenda neste vídeo",
     "grid_size": "Tamanho da grade",
-    "n_per_row": "{n} por linha"
+    "n_per_row": "{n} por linha",
+    "horizontal_continious": "Contínuo horizontal",
+    "edit_code": "Editar código"
 }

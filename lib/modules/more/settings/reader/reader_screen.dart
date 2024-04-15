@@ -368,7 +368,7 @@ String getReaderModeName(ReaderMode readerMode, BuildContext context) {
       context.l10n.reading_mode_vertical_continuous,
     ReaderMode.ltr => context.l10n.reading_mode_left_to_right,
     ReaderMode.rtl => context.l10n.reading_mode_right_to_left,
-     ReaderMode.horizontalContinuous => "Horizontal Continuous",
+    ReaderMode.horizontalContinuous => context.l10n.horizontal_continious,
     _ => context.l10n.reading_mode_webtoon
   };
 }

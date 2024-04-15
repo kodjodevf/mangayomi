@@ -319,5 +319,7 @@
     "background": "Фон",
     "no_subtite_warning_message": "Не имеет эффекта, потому что в этом видео нет субтитров",
     "grid_size": "Размер сетки",
-    "n_per_row": "{n} в ряд"
+    "n_per_row": "{n} в ряд",
+    "horizontal_continious": "Горизонтальное непрерывное",
+    "edit_code": "Редактировать код"
 }

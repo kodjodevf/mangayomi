@@ -321,5 +321,7 @@
   "background": "Background",
   "no_subtite_warning_message": "Has no effect because there aren't any subtitle tracks in this video",
   "grid_size": "Grid size",
-  "n_per_row": "{n} per row"
+  "n_per_row": "{n} per row",
+  "horizontal_continious": "Horizontal continuous",
+  "edit_code": "Edit code"
 }

@@ -154,18 +154,18 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         });
                       }
                     },
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
-                            "Edit code",
-                            style: TextStyle(
+                            l10n.edit_code,
+                            style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Icon(Icons.code)
+                        const Icon(Icons.code)
                       ],
                     )),
               ),

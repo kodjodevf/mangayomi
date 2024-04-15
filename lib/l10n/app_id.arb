@@ -319,5 +319,7 @@
     "background": "Latar Belakang",
     "no_subtite_warning_message": "Tidak berpengaruh karena tidak ada trek subtitle dalam video ini",
     "grid_size": "Ukuran Grid",
-    "n_per_row": "{n} per baris"
+    "n_per_row": "{n} per baris",
+    "horizontal_continious": "Lanjutan Horizontal",
+    "edit_code": "Kode Edit"
 }
