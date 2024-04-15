@@ -1418,6 +1418,7 @@ const _SettingsdefaultReaderModeEnumValueMap = {
   'rtl': 2,
   'verticalContinuous': 3,
   'webtoon': 4,
+  'horizontalContinuous': 5,
 };
 const _SettingsdefaultReaderModeValueEnumMap = {
   0: ReaderMode.vertical,
@@ -1425,6 +1426,7 @@ const _SettingsdefaultReaderModeValueEnumMap = {
   2: ReaderMode.rtl,
   3: ReaderMode.verticalContinuous,
   4: ReaderMode.webtoon,
+  5: ReaderMode.horizontalContinuous,
 };
 const _SettingsdisplayTypeEnumValueMap = {
   'compactGrid': 0,
@@ -12038,6 +12040,7 @@ const _PersonalReaderModereaderModeEnumValueMap = {
   'rtl': 2,
   'verticalContinuous': 3,
   'webtoon': 4,
+  'horizontalContinuous': 5,
 };
 const _PersonalReaderModereaderModeValueEnumMap = {
   0: ReaderMode.vertical,
@@ -12045,6 +12048,7 @@ const _PersonalReaderModereaderModeValueEnumMap = {
   2: ReaderMode.rtl,
   3: ReaderMode.verticalContinuous,
   4: ReaderMode.webtoon,
+  5: ReaderMode.horizontalContinuous,
 };
 
 extension PersonalReaderModeQueryFilter

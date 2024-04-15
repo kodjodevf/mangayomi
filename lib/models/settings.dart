@@ -696,7 +696,14 @@ class PersonalPageMode {
       {'mangaId': mangaId, 'pageMode': pageMode.index};
 }
 
-enum ReaderMode { vertical, ltr, rtl, verticalContinuous, webtoon }
+enum ReaderMode {
+  vertical,
+  ltr,
+  rtl,
+  verticalContinuous,
+  webtoon,
+  horizontalContinuous
+}
 
 enum PageMode { onePage, doublePage }
 

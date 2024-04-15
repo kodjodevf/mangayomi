@@ -478,7 +478,7 @@ class _MangaChapterPageGalleryState
               builder: (context, failedToLoadImage, child) {
                 return Stack(
                   children: [
-                    _isVerticalContinous()
+                    _isVerticalOrHorizontalContinous()
                         ? PhotoViewGallery.builder(
                             itemCount: 1,
                             builder: (_, __) =>
@@ -489,6 +489,11 @@ class _MangaChapterPageGalleryState
                                     basePosition: _scalePosition,
                                     onScaleEnd: _onScaleEnd,
                                     child: ScrollablePositionedList.separated(
+                                      scrollDirection: ref
+                                                  .watch(_currentReaderMode) ==
+                                              ReaderMode.horizontalContinuous
+                                          ? Axis.horizontal
+                                          : Axis.vertical,
                                       minCacheExtent: pagePreloadAmount *
                                           context.mediaHeight(1),
                                       initialScrollIndex:
@@ -560,6 +565,10 @@ class _MangaChapterPageGalleryState
                                                     _onLongPressImageDialog(
                                                         datas, context);
                                                   },
+                                                  isHorizontal: ref.watch(
+                                                          _currentReaderMode) ==
+                                                      ReaderMode
+                                                          .horizontalContinuous,
                                                 ),
                                         );
                                       },
@@ -567,10 +576,17 @@ class _MangaChapterPageGalleryState
                                           ref.watch(_currentReaderMode) ==
                                                   ReaderMode.webtoon
                                               ? const SizedBox.shrink()
-                                              : Divider(
-                                                  color: getBackgroundColor(
-                                                      backgroundColor),
-                                                  height: 6),
+                                              : ref.watch(_currentReaderMode) ==
+                                                      ReaderMode
+                                                          .horizontalContinuous
+                                                  ? VerticalDivider(
+                                                      color: getBackgroundColor(
+                                                          backgroundColor),
+                                                      width: 6)
+                                                  : Divider(
+                                                      color: getBackgroundColor(
+                                                          backgroundColor),
+                                                      height: 6),
                                     )),
                           )
                         : Material(
@@ -1005,7 +1021,7 @@ class _MangaChapterPageGalleryState
     ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(
           _uChapDataPreload[_currentIndex!].index!,
         );
-    if (!(_isVerticalContinous())) {
+    if (!(_isVerticalOrHorizontalContinous())) {
       for (var i = 1; i < pagePreloadAmount + 1; i++) {
         _precacheImages(_currentIndex! + i);
         _precacheImages(_currentIndex! - i);
@@ -1069,7 +1085,7 @@ class _MangaChapterPageGalleryState
       ValueNotifier(_readerController.autoScrollValues().$2);
 
   void autoPagescroll() async {
-    if (_isVerticalContinous()) {
+    if (_isVerticalOrHorizontalContinous()) {
       for (int i = 0; i < 1; i++) {
         await Future.delayed(const Duration(milliseconds: 100));
         if (!_autoScroll.value) {
@@ -1400,7 +1416,7 @@ class _MangaChapterPageGalleryState
   }
 
   Widget _autoScrollPlayPauseBtn() {
-    return _isVerticalContinous()
+    return _isVerticalOrHorizontalContinous()
         ? Positioned(
             bottom: 0,
             right: 0,
@@ -1856,12 +1872,12 @@ class _MangaChapterPageGalleryState
                     _isViewFunction();
                   }
                 },
-                onDoubleTapDown: _isVerticalContinous()
+                onDoubleTapDown: _isVerticalOrHorizontalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
-                onDoubleTap: _isVerticalContinous() ? () {} : null,
+                onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
 
@@ -1878,12 +1894,13 @@ class _MangaChapterPageGalleryState
                       onTap: () {
                         _isViewFunction();
                       },
-                      onDoubleTapDown: _isVerticalContinous()
+                      onDoubleTapDown: _isVerticalOrHorizontalContinous()
                           ? (TapDownDetails details) {
                               _toggleScale(details.globalPosition);
                             }
                           : null,
-                      onDoubleTap: _isVerticalContinous() ? () {} : null,
+                      onDoubleTap:
+                          _isVerticalOrHorizontalContinous() ? () {} : null,
                     ),
             ),
 
@@ -1903,12 +1920,12 @@ class _MangaChapterPageGalleryState
                     _isViewFunction();
                   }
                 },
-                onDoubleTapDown: _isVerticalContinous()
+                onDoubleTapDown: _isVerticalOrHorizontalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
-                onDoubleTap: _isVerticalContinous() ? () {} : null,
+                onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
           ],
@@ -1934,12 +1951,12 @@ class _MangaChapterPageGalleryState
                           ? _onBtnTapped(_currentIndex! - 1, true)
                           : _isViewFunction();
                 },
-                onDoubleTapDown: _isVerticalContinous()
+                onDoubleTapDown: _isVerticalOrHorizontalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
-                onDoubleTap: _isVerticalContinous() ? () {} : null,
+                onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
 
@@ -1958,12 +1975,12 @@ class _MangaChapterPageGalleryState
                           ? _onBtnTapped(_currentIndex! + 1, false)
                           : _isViewFunction();
                 },
-                onDoubleTapDown: _isVerticalContinous()
+                onDoubleTapDown: _isVerticalOrHorizontalContinous()
                     ? (TapDownDetails details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
-                onDoubleTap: _isVerticalContinous() ? () {} : null,
+                onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
           ],
@@ -1972,10 +1989,11 @@ class _MangaChapterPageGalleryState
     );
   }
 
-  bool _isVerticalContinous() {
+  bool _isVerticalOrHorizontalContinous() {
     final readerMode = ref.watch(_currentReaderMode);
     return readerMode == ReaderMode.verticalContinuous ||
-        readerMode == ReaderMode.webtoon;
+        readerMode == ReaderMode.webtoon ||
+        readerMode == ReaderMode.horizontalContinuous;
   }
 
   void _showModalSettings() async {
@@ -2040,7 +2058,8 @@ class _MangaChapterPageGalleryState
                           .set(value);
                     }),
                 if (readerMode == ReaderMode.verticalContinuous ||
-                    readerMode == ReaderMode.webtoon)
+                    readerMode == ReaderMode.webtoon ||
+                    readerMode == ReaderMode.horizontalContinuous)
                   ValueListenableBuilder(
                     valueListenable: _autoScrollPage,
                     builder: (context, valueT, child) {
