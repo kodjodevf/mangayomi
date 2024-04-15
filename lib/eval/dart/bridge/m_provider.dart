@@ -14,6 +14,7 @@ import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/m_pages.dart';
 import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/eval/dart/model/m_provider.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/utils/log/log.dart';
@@ -85,6 +86,15 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         'getVideoList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
               BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
+            ])),
+            params: [
+              BridgeParameter('url',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
+        'getHeaders': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map, [
+              BridgeTypeRef(CoreTypes.string),
+              BridgeTypeRef(CoreTypes.string)
             ])),
             params: [
               BridgeParameter('url',
@@ -1032,6 +1042,16 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
     }
 
     return list.map((e) => (e is $Value ? e.$reified : e) as Video).toList();
+  }
+
+  @override
+  Map<String, String> getHeaders(String url) {
+    final res = $_invoke('getHeaders', [$String(url)]);
+    Map<String, String> headers = {};
+    if (res is $Map) {
+      headers = res.$reified.toMapStringString!;
+    }
+    return headers;
   }
 
   $MVideo _toMVideo(Video e) =>

@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/dart/bridge/m_source.dart';
 import 'package:mangayomi/eval/dart/compiler/compiler.dart';
+import 'package:mangayomi/eval/dart/model/m_provider.dart';
 import 'package:mangayomi/eval/dart/runtime/runtime.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -48,10 +52,10 @@ Future<void> fetchSourcesList(
               if (id == source.id) {
                 final sourc = isar.sources.getSync(id)!;
                 final req = await http.get(Uri.parse(source.sourceCodeUrl!));
-                final headers = await getHeaders(req.body, source.baseUrl!);
+                final headers = getSourceHeaders(source..sourceCode = req.body);
                 isar.writeTxnSync(() {
                   isar.sources.putSync(sourc
-                    ..headers = headers ?? ""
+                    ..headers = jsonEncode(headers)
                     ..isAdded = true
                     ..sourceCode = req.body
                     ..sourceCodeUrl = source.sourceCodeUrl
@@ -85,10 +89,11 @@ Future<void> fetchSourcesList(
                   if (ref.watch(autoUpdateExtensionsStateProvider)) {
                     final req =
                         await http.get(Uri.parse(source.sourceCodeUrl!));
-                    final headers = await getHeaders(req.body, source.baseUrl!);
+                    final headers =
+                        getSourceHeaders(source..sourceCode = req.body);
                     isar.writeTxnSync(() {
                       isar.sources.putSync(sourc
-                        ..headers = headers ?? ""
+                        ..headers = jsonEncode(headers)
                         ..isAdded = true
                         ..sourceCode = req.body
                         ..sourceCodeUrl = source.sourceCodeUrl
@@ -197,22 +202,41 @@ int compareVersions(String version1, String version2) {
   return 0;
 }
 
-Future<String?> getHeaders(String codeSource, String baseUrl) async {
+Map<String, String> getHeaders(Source source) {
+  Map<String, String> headers = {};
   try {
-    final bytecode = compilerEval(codeSource);
+    final bytecode = compilerEval(source.sourceCode!);
     final runtime = runtimeEval(bytecode);
-    runtime.args = [$String(baseUrl)];
-    var res = await runtime.executeLib(
+    runtime.args = [$String(source.baseUrl!)];
+    var res = runtime.executeLib(
       'package:mangayomi/main.dart',
       'getHeader',
     );
-    Map<String, String> headers = {};
     if (res is $Map) {
-      headers = res.$reified
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+      headers = (res.$reified).toMapStringString!;
     }
-    return jsonEncode(headers);
+    return headers;
   } catch (_) {
-    return null;
+    try {
+      final bytecode = compilerEval(source.sourceCode!);
+      final runtime = runtimeEval(bytecode);
+
+      var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
+          [$MSource.wrap(source.toMSource())]);
+      headers = (res as MProvider).getHeaders(source.baseUrl!);
+    } catch (_) {
+      return {};
+    }
   }
+  return {};
+}
+
+Map<String, String> getSourceHeaders(Source source) {
+  Map<String, String> headers = {};
+  if (source.sourceCodeLanguage == SourceCodeLanguage.javascript) {
+    headers = JsExtensionService(source).getHeaders(source.baseUrl ?? "");
+  } else {
+    headers = getHeaders(source);
+  }
+  return headers;
 }

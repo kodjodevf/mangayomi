@@ -10,6 +10,8 @@ abstract class MProvider {
 
   String? get baseUrl;
 
+  Map<String, String> getHeaders(String url);
+
   Future<MPages> getLatestUpdates(int page);
 
   Future<MPages> getPopular(int page);

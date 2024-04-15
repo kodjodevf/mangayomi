@@ -236,6 +236,11 @@ class TestSource extends MProvider {
 
   @override
   bool get supportsLatest => true;
+
+  @override
+  Map<String, String> getHeaders(String url) {
+    // TODO: implement
+  }
   
   @override
   Future<MPages> getPopular(int page) async {
@@ -295,13 +300,15 @@ const mangayomiSources = [{
     "isManga": ${source.isManga},
     "isNsfw": ${source.isNsfw},
     "version": "${source.version}",
-    "apiUrl": "",
     "dateFormat": "",
     "dateFormatLocale": "",
-    "pkgName": ""
+    "pkgPath": ""
 }];
 
 class DefaultExtension extends MProvider {
+    getHeaders(url) {
+        throw new Error("getHeaders not implemented");
+    }
     async getPopular(page) {
         throw new Error("getPopular not implemented");
     }

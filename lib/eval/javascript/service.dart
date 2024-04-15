@@ -30,6 +30,9 @@ class MProvider {
     get source() {
         return JSON.parse('${jsonEncode(source!.toMSource().toJson())}');
     }
+    getHeaders(url) {
+        throw new Error("getHeaders not implemented");
+    }
     async getPopular(page) {
         throw new Error("getPopular not implemented");
     }
@@ -62,6 +65,19 @@ async function jsonStringify(fn) {
     runtime.evaluate('''${source!.sourceCode}
 var extention = new DefaultExtension();
 ''');
+  }
+
+  Map<String, String> getHeaders(String url) {
+    _init();
+    try {
+      final res = runtime
+          .evaluate('JSON.stringify(extention.getHeaders(`$url`))')
+          .stringResult;
+
+      return (jsonDecode(res) as Map).toMapStringString!;
+    } catch (_) {
+      return {};
+    }
   }
 
   Future<MPages> getPopular(int page) async {
