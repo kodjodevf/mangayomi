@@ -12,16 +12,16 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 
 class ImageViewCenter extends ConsumerWidget {
-  final UChapDataPreload datas;
+  final UChapDataPreload data;
   final bool cropBorders;
-  final Function(UChapDataPreload datas) onLongPressData;
+  final Function(UChapDataPreload data) onLongPressData;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state)? onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)?
       initGestureConfigHandler;
   const ImageViewCenter({
     super.key,
-    required this.datas,
+    required this.data,
     required this.cropBorders,
     required this.onLongPressData,
     required this.loadStateChanged,
@@ -31,10 +31,10 @@ class ImageViewCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cropImageExist = cropBorders && datas.cropImage != null;
+    final cropImageExist = cropBorders && data.cropImage != null;
 
-    return _imageView(cropImageExist ? true : datas.isLocale!,
-        cropImageExist ? datas.cropImage : datas.archiveImage, ref);
+    return _imageView(cropImageExist ? true : data.isLocale!,
+        cropImageExist ? data.cropImage : data.archiveImage, ref);
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage, WidgetRef ref) {
@@ -43,16 +43,17 @@ class ImageViewCenter extends ConsumerWidget {
         ? archiveImage != null
             ? ExtendedMemoryImageProvider(archiveImage)
             : ExtendedFileImageProvider(
-                File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'))
-        : CustomExtendedNetworkImageProvider(datas.url!.trim().trimLeft().trimRight(),
+                File('${data.directory!.path}${padIndex(data.index! + 1)}.jpg'))
+        : CustomExtendedNetworkImageProvider(
+            data.url!.trim().trimLeft().trimRight(),
             cache: true,
             cacheMaxAge: const Duration(days: 7),
             headers: ref.watch(headersProvider(
-                source: datas.chapter!.manga.value!.source!,
-                lang: datas.chapter!.manga.value!.lang!)));
+                source: data.chapter!.manga.value!.source!,
+                lang: data.chapter!.manga.value!.lang!)));
 
     return GestureDetector(
-      onLongPress: () => onLongPressData.call(datas),
+      onLongPress: () => onLongPressData.call(data),
       child: ColorFilterWidget(
         child: ExtendedImage(
             image: image as ImageProvider<Object>,

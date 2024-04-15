@@ -550,7 +550,7 @@ class _MangaChapterPageGalleryState
                                                   },
                                                 )
                                               : ImageViewVertical(
-                                                  datas:
+                                                  data:
                                                       _uChapDataPreload[index],
                                                   failedToLoadImage: (value) {
                                                     // _failedToLoadImage.value = value;
@@ -634,7 +634,7 @@ class _MangaChapterPageGalleryState
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return ImageViewCenter(
-                                        datas: _uChapDataPreload[index],
+                                        data: _uChapDataPreload[index],
                                         loadStateChanged:
                                             (ExtendedImageState state) {
                                           if (state.extendedImageLoadState ==
@@ -858,7 +858,7 @@ class _MangaChapterPageGalleryState
           } else {
             precacheImage(
                 ExtendedFileImageProvider(File(
-                    "${_uChapDataPreload[index].path!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
+                    "${_uChapDataPreload[index].directory!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
                 context);
           }
         }
@@ -1255,7 +1255,7 @@ class _MangaChapterPageGalleryState
         _cropBorderCheckList.add(i);
         ref
             .watch(cropBordersProvider(
-                    datas: _uChapDataPreload[i], cropBorder: true)
+                    data: _uChapDataPreload[i], cropBorder: true)
                 .future)
             .then((value) {
           _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
@@ -1272,7 +1272,7 @@ class _MangaChapterPageGalleryState
       _cropBorderCheckList.add(index);
       ref
           .watch(cropBordersProvider(
-                  datas: _uChapDataPreload[index], cropBorder: true)
+                  data: _uChapDataPreload[index], cropBorder: true)
               .future)
           .then((value) {
         _uChapDataPreload[index] = _uChapDataPreload[index]..cropImage = value;
@@ -1285,7 +1285,7 @@ class _MangaChapterPageGalleryState
           _uChapDataPreload[index].cropImage == null) {
         ref
             .watch(cropBordersProvider(
-                    datas: _uChapDataPreload[index], cropBorder: true)
+                    data: _uChapDataPreload[index], cropBorder: true)
                 .future)
             .then((value) {
           _uChapDataPreload[index] = _uChapDataPreload[index]
@@ -2275,7 +2275,7 @@ class _MangaChapterPageGalleryState
 
 class UChapDataPreload {
   Chapter? chapter;
-  Directory? path;
+  Directory? directory;
   String? url;
   bool? isLocale;
   Uint8List? archiveImage;
@@ -2283,7 +2283,7 @@ class UChapDataPreload {
   GetChapterPagesModel? chapterUrlModel;
   int? pageIndex;
   Uint8List? cropImage;
-  UChapDataPreload(this.chapter, this.path, this.url, this.isLocale,
+  UChapDataPreload(this.chapter, this.directory, this.url, this.isLocale,
       this.archiveImage, this.index, this.chapterUrlModel, this.pageIndex,
       {this.cropImage});
 }

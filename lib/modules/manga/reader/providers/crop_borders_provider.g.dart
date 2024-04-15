@@ -6,7 +6,7 @@ part of 'crop_borders_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cropBordersHash() => r'c08c1fdfcd66915e86c3c6571bde1783703f1142';
+String _$cropBordersHash() => r'dc0e5abe7adbe8c2980957c82e470a0cd1edc799';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,11 +40,11 @@ class CropBordersFamily extends Family<AsyncValue<Uint8List?>> {
 
   /// See also [cropBorders].
   CropBordersProvider call({
-    required UChapDataPreload datas,
+    required UChapDataPreload data,
     required bool cropBorder,
   }) {
     return CropBordersProvider(
-      datas: datas,
+      data: data,
       cropBorder: cropBorder,
     );
   }
@@ -54,7 +54,7 @@ class CropBordersFamily extends Family<AsyncValue<Uint8List?>> {
     covariant CropBordersProvider provider,
   ) {
     return call(
-      datas: provider.datas,
+      data: provider.data,
       cropBorder: provider.cropBorder,
     );
   }
@@ -78,12 +78,12 @@ class CropBordersFamily extends Family<AsyncValue<Uint8List?>> {
 class CropBordersProvider extends FutureProvider<Uint8List?> {
   /// See also [cropBorders].
   CropBordersProvider({
-    required UChapDataPreload datas,
+    required UChapDataPreload data,
     required bool cropBorder,
   }) : this._internal(
           (ref) => cropBorders(
             ref as CropBordersRef,
-            datas: datas,
+            data: data,
             cropBorder: cropBorder,
           ),
           from: cropBordersProvider,
@@ -95,7 +95,7 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
           dependencies: CropBordersFamily._dependencies,
           allTransitiveDependencies:
               CropBordersFamily._allTransitiveDependencies,
-          datas: datas,
+          data: data,
           cropBorder: cropBorder,
         );
 
@@ -106,11 +106,11 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.datas,
+    required this.data,
     required this.cropBorder,
   }) : super.internal();
 
-  final UChapDataPreload datas;
+  final UChapDataPreload data;
   final bool cropBorder;
 
   @override
@@ -126,7 +126,7 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        datas: datas,
+        data: data,
         cropBorder: cropBorder,
       ),
     );
@@ -140,14 +140,14 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
   @override
   bool operator ==(Object other) {
     return other is CropBordersProvider &&
-        other.datas == datas &&
+        other.data == data &&
         other.cropBorder == cropBorder;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, datas.hashCode);
+    hash = _SystemHash.combine(hash, data.hashCode);
     hash = _SystemHash.combine(hash, cropBorder.hashCode);
 
     return _SystemHash.finish(hash);
@@ -155,8 +155,8 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
 }
 
 mixin CropBordersRef on FutureProviderRef<Uint8List?> {
-  /// The parameter `datas` of this provider.
-  UChapDataPreload get datas;
+  /// The parameter `data` of this provider.
+  UChapDataPreload get data;
 
   /// The parameter `cropBorder` of this provider.
   bool get cropBorder;
@@ -167,7 +167,7 @@ class _CropBordersProviderElement extends FutureProviderElement<Uint8List?>
   _CropBordersProviderElement(super.provider);
 
   @override
-  UChapDataPreload get datas => (origin as CropBordersProvider).datas;
+  UChapDataPreload get data => (origin as CropBordersProvider).data;
   @override
   bool get cropBorder => (origin as CropBordersProvider).cropBorder;
 }

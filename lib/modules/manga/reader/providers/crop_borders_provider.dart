@@ -10,11 +10,11 @@ int nextId = 0;
 
 @Riverpod(keepAlive: true)
 Future<Uint8List?> cropBorders(CropBordersRef ref,
-    {required UChapDataPreload datas, required bool cropBorder}) async {
+    {required UChapDataPreload data, required bool cropBorder}) async {
   Uint8List? imageBytes;
 
   if (cropBorder) {
-    imageBytes = await datas.getImageBytes;
+    imageBytes = await data.getImageBytes;
 
     if (imageBytes == null) {
       return null;

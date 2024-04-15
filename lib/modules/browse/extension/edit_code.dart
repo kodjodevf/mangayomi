@@ -139,7 +139,10 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
     final filterList = source != null ? getFilterList(source: source!) : [];
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () => Navigator.pop(context, source)),
+        leading: BackButton(onPressed: () {
+          isar.writeTxnSync(() => isar.sources.putSync(source!));
+          Navigator.pop(context, source);
+        }),
       ),
       body: Column(
         children: [

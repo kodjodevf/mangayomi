@@ -39,8 +39,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     if (archiveImage != null) {
       imageBytes = archiveImage;
     } else if (isLocale!) {
-      imageBytes =
-          File('${path!.path}${padIndex(index! + 1)}.jpg').readAsBytesSync();
+      imageBytes = File('${directory!.path}${padIndex(index! + 1)}.jpg')
+          .readAsBytesSync();
     } else {
       File? cachedImage;
       if (url != null) {

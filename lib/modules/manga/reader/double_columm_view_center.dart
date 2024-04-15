@@ -130,7 +130,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                   if (widget.datas[0] != null)
                     Flexible(
                       child: ImageViewCenter(
-                        datas: widget.datas[0]!,
+                        data: widget.datas[0]!,
                         loadStateChanged: (state) {
                           if (state.extendedImageLoadState ==
                               LoadState.loading) {
@@ -209,7 +209,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                   if (widget.datas[1] != null)
                     Flexible(
                       child: ImageViewCenter(
-                        datas: widget.datas[1]!,
+                        data: widget.datas[1]!,
                         loadStateChanged: (state) {
                           if (state.extendedImageLoadState ==
                               LoadState.loading) {

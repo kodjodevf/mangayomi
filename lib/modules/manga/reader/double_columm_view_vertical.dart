@@ -40,7 +40,7 @@ class DoubleColummVerticalView extends StatelessWidget {
             if (datas[0] != null)
               Flexible(
                 child: ImageViewCenter(
-                  datas: datas[0]!,
+                  data: datas[0]!,
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.loading) {
                       final ImageChunkEvent? loadingProgress =
@@ -112,7 +112,7 @@ class DoubleColummVerticalView extends StatelessWidget {
             if (datas[1] != null)
               Flexible(
                 child: ImageViewCenter(
-                  datas: datas[1]!,
+                  data: datas[1]!,
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.loading) {
                       final ImageChunkEvent? loadingProgress =

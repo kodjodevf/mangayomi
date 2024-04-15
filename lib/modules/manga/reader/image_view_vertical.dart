@@ -15,25 +15,25 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
 class ImageViewVertical extends ConsumerWidget {
-  final UChapDataPreload datas;
-  final Function(UChapDataPreload datas) onLongPressData;
+  final UChapDataPreload data;
+  final Function(UChapDataPreload data) onLongPressData;
   final bool cropBorders;
 
   final Function(bool) failedToLoadImage;
 
   const ImageViewVertical(
       {super.key,
-      required this.datas,
+      required this.data,
       required this.onLongPressData,
       required this.cropBorders,
       required this.failedToLoadImage});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cropImageExist = cropBorders && datas.cropImage != null;
+    final cropImageExist = cropBorders && data.cropImage != null;
 
-    return _imageView(cropImageExist ? true : datas.isLocale!,
-        cropImageExist ? datas.cropImage : datas.archiveImage, context, ref);
+    return _imageView(cropImageExist ? true : data.isLocale!,
+        cropImageExist ? data.cropImage : data.archiveImage, context, ref);
   }
 
   Widget _imageView(bool isLocale, Uint8List? archiveImage,
@@ -42,22 +42,23 @@ class ImageViewVertical extends ConsumerWidget {
         ? archiveImage != null
             ? ExtendedMemoryImageProvider(archiveImage)
             : ExtendedFileImageProvider(
-                File('${datas.path!.path}${padIndex(datas.index! + 1)}.jpg'))
-        : CustomExtendedNetworkImageProvider(datas.url!.trim().trimLeft().trimRight(),
+                File('${data.directory!.path}${padIndex(data.index! + 1)}.jpg'))
+        : CustomExtendedNetworkImageProvider(
+            data.url!.trim().trimLeft().trimRight(),
             cache: true,
             cacheMaxAge: const Duration(days: 7),
             headers: ref.watch(headersProvider(
-                source: datas.chapter!.manga.value!.source!,
-                lang: datas.chapter!.manga.value!.lang!)));
+                source: data.chapter!.manga.value!.source!,
+                lang: data.chapter!.manga.value!.lang!)));
     final scaleType = ref.watch(scaleTypeStateProvider);
     final l10n = l10nLocalizations(context)!;
     return GestureDetector(
-      onLongPress: () => onLongPressData.call(datas),
+      onLongPress: () => onLongPressData.call(data),
       child: ColorFilterWidget(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (datas.index == 0)
+            if (data.index == 0)
               SizedBox(
                 height: MediaQuery.of(context).padding.top,
               ),
@@ -112,7 +113,8 @@ class ImageViewVertical extends ConsumerWidget {
                                   child: Container(
                                     decoration: BoxDecoration(
                                         color: context.primaryColor,
-                                        borderRadius: BorderRadius.circular(30)),
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 16),
