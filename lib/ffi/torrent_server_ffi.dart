@@ -6,11 +6,6 @@ import 'package:ffi/ffi.dart';
 
 import 'generated_bindings.dart';
 
-/// A very short-lived native function.
-///
-/// For very short-lived functions, it is fine to call them on the main isolate.
-/// They will block the Dart execution while running the native function, so
-/// only do this for native functions which are guaranteed to be short-lived.
 Future<int> start(String mcfg) async {
   var completer = Completer<int>();
   var res = _bindings.Start(mcfg.toNativeUtf8().cast());
@@ -37,5 +32,4 @@ final DynamicLibrary _dylib = () {
   throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
 }();
 
-/// The bindings to the native functions in [_dylib].
 final TorrentLibrary _bindings = TorrentLibrary(_dylib);
