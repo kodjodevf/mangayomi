@@ -23,40 +23,25 @@ import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/messages/generated.dart';
 import 'package:window_manager/window_manager.dart';
 
-// Global instance of the Isar database.
 late Isar isar;
 
 bool hasGPServices = false;
 
-/// Overrides the default HTTP client to allow all certificates
-class MyHttpoverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
-
-/// Entry point of the application.
 void main(List<String> args) async {
   await initializeRust();
-  // Override the default HTTP client.
-  HttpOverrides.global = MyHttpoverrides();
-  // If running on desktop platforms and web view title bar widget is active, exit.
+
   if (Platform.isMacOS) {
     if (runWebViewTitleBarWidget(args)) {
       return;
     }
   }
-  // Ensure widget and media kits are initialized.
+
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }
 
-  // Initialize the Isar database.
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();
@@ -67,11 +52,10 @@ void main(List<String> args) async {
           GooglePlayServicesAvailability.success;
     } catch (_) {}
   }
-  // Start the app.
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
-/// Initialize date formatting based on available locales.
 iniDateFormatting() {
   initializeDateFormatting();
   final supportedLocales = DateFormat.allLocalesWithSymbols();
@@ -80,8 +64,6 @@ iniDateFormatting() {
   }
 }
 
-/// The main app widget. This is a `ConsumerStatefulWidget` which allows it to consume
-/// providers from the `flutter_riverpod` package.
 class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
@@ -92,16 +74,12 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
-    // Initialize date formatting upon app start.
     iniDateFormatting();
     super.initState();
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // Retrieve theme settings, localization settings, and router from providers.
-    // Define light and dark theme data.
     final isDarkTheme = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
     final appFontFamily = ref.watch(appFontFamilyProvider);
@@ -145,7 +123,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       fontFamily: appFontFamily,
     );
     final router = ref.watch(routerProvider);
-    // Return the main MaterialApp with router, themes, and localization settings.
+
     return MaterialApp.router(
       darkTheme: themeDark,
       themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
