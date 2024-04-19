@@ -104,7 +104,7 @@ class ChapterListTileWidget extends ConsumerWidget {
                     ),
                   ],
                 ),
-            if (chapter.scanlator!.isNotEmpty)
+            if (chapter.scanlator?.isNotEmpty ?? false)
               Row(
                 children: [
                   const Text(' • '),

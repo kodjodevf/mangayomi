@@ -285,7 +285,7 @@ class ChapterFilterResultState extends _$ChapterFilterResultState {
 @riverpod
 class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   @override
- void build({required Manga manga}) {}
+  void build({required Manga manga}) {}
 
   set() {
     final chapters = ref.watch(chaptersListStateProvider);
@@ -304,7 +304,7 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
 @riverpod
 class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   @override
- void build({required Manga manga}) {}
+  void build({required Manga manga}) {}
 
   set() {
     final chapters = ref.watch(chaptersListStateProvider);
@@ -323,7 +323,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
 @riverpod
 class ChapterSetDownloadState extends _$ChapterSetDownloadState {
   @override
- void build({required Manga manga}) {}
+  void build({required Manga manga}) {}
 
   set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
@@ -371,7 +371,8 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
   List<String> _getScanlators() {
     List<String> scanlators = [];
     for (var a in manga.chapters.toList()) {
-      if (a.scanlator!.isNotEmpty && !scanlators.contains(a.scanlator)) {
+      if ((a.scanlator?.isNotEmpty ?? false) &&
+          !scanlators.contains(a.scanlator)) {
         scanlators.add(a.scanlator!);
       }
     }
