@@ -239,7 +239,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   l10n.set_categories,
                 ),
                 content: SizedBox(
-                  width: context.mediaWidth(0.8),
+                  width: context.width(0.8),
                   child: StreamBuilder(
                       stream: isar.categorys
                           .filter()

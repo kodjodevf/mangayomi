@@ -299,7 +299,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             child: Column(
               children: [
                 SizedBox(
-                  width: context.mediaWidth(1),
+                  width: context.width(1),
                   height: 45,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -409,7 +409,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 Container(
                   color: context.primaryColor,
                   height: 0.3,
-                  width: context.mediaWidth(1),
+                  width: context.width(1),
                 )
               ],
             ),

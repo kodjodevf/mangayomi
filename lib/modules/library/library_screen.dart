@@ -482,7 +482,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       topRight: Radius.circular(20))),
               duration: const Duration(milliseconds: 100),
               height: isLongPressed ? 70 : 0,
-              width: context.mediaWidth(1),
+              width: context.width(1),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -952,7 +952,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           l10n.set_categories,
                         ),
                         content: SizedBox(
-                          width: context.mediaWidth(0.8),
+                          width: context.width(0.8),
                           child: Builder(builder: (context) {
                             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                               final entries = snapshot.data!;
@@ -1088,7 +1088,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   ),
                   content: SizedBox(
                       height: 100,
-                      width: context.mediaWidth(0.8),
+                      width: context.width(0.8),
                       child: Column(
                         children: [
                           ListTileChapterFilter(
@@ -1840,8 +1840,8 @@ _importLocal(BuildContext context, bool isManga) {
                       ),
                       if (isLoading)
                         Container(
-                          width: context.mediaWidth(1),
-                          height: context.mediaHeight(1),
+                          width: context.width(1),
+                          height: context.height(1),
                           color: Colors.transparent,
                           child: UnconstrainedBox(
                             child: Container(

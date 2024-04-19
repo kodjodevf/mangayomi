@@ -20,7 +20,7 @@ Widget btnToShowChapterListDialog(
               return AlertDialog(
                 title: Text(title),
                 content: SizedBox(
-                    width: context.mediaWidth(0.8),
+                    width: context.width(0.8),
                     child: ChapterListWidget(chapter: chapter)),
               );
             });

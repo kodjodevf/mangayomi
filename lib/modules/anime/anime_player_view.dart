@@ -898,7 +898,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   child: ListTile(
                     dense: true,
                     title: SizedBox(
-                      width: context.mediaWidth(0.8),
+                      width: context.width(0.8),
                       child: Text(
                         widget.episode.manga.value!.name!,
                         style: const TextStyle(
@@ -907,7 +907,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       ),
                     ),
                     subtitle: SizedBox(
-                      width: context.mediaWidth(0.8),
+                      width: context.width(0.8),
                       child: Text(
                         widget.episode.name!,
                         style: TextStyle(
@@ -941,7 +941,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   //               scrollable: true,
                   //               title: Text("Player Settings"),
                   //               content: SizedBox(
-                  //                 width: context.mediaWidth(0.8),
+                  //                 width: context.width(0.8),
                   //                 child: Column(
                   //                   crossAxisAlignment:
                   //                       CrossAxisAlignment.start,
@@ -991,8 +991,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (mounted) {
       _key.currentState?.update(
           fit: fit,
-          width: context.mediaWidth(1),
-          height: context.mediaHeight(1));
+          width: context.width(1),
+          height: context.height(1));
     }
   }
 
@@ -1033,8 +1033,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   streamController: _streamController,
                 ),
           controller: _controller,
-          width: context.mediaWidth(1),
-          height: context.mediaHeight(1),
+          width: context.width(1),
+          height: context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
         Positioned(

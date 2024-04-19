@@ -232,7 +232,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         widget.manga!.customCoverImage != null
                             ? Image.memory(
                                 widget.manga!.customCoverImage as Uint8List,
-                                width: context.mediaWidth(1),
+                                width: context.width(1),
                                 height: 300,
                                 fit: BoxFit.cover)
                             : cachedNetworkImage(
@@ -244,7 +244,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 imageUrl: toImgUrl(
                                     widget.manga!.customCoverFromTracker ??
                                         widget.manga!.imageUrl!),
-                                width: context.mediaWidth(1),
+                                width: context.width(1),
                                 height: 300,
                                 fit: BoxFit.cover),
                         Stack(
@@ -252,7 +252,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             Column(
                               children: [
                                 Container(
-                                  width: context.mediaWidth(1),
+                                  width: context.width(1),
                                   height: AppBar().preferredSize.height,
                                   color: context.isTablet
                                       ? Theme.of(context)
@@ -262,7 +262,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .withOpacity(0.9),
                                 ),
                                 Container(
-                                  width: context.mediaWidth(1),
+                                  width: context.width(1),
                                   height: 465,
                                   color: context.isTablet
                                       ? Theme.of(context)
@@ -276,7 +276,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             Positioned(
                               bottom: 0,
                               child: Container(
-                                  width: context.mediaWidth(1),
+                                  width: context.width(1),
                                   height: 100,
                                   color: Theme.of(context)
                                       .scaffoldBackgroundColor),
@@ -531,8 +531,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 children: [
                   if (context.isTablet)
                     SizedBox(
-                        width: context.mediaWidth(0.5),
-                        height: context.mediaHeight(1),
+                        width: context.width(0.5),
+                        height: context.height(1),
                         child: SingleChildScrollView(
                             child: _bodyContainer(
                                 chapterLength: chapters.length))),
@@ -560,7 +560,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               children: [
                                                 Container(
                                                   height: chapters.isEmpty
-                                                      ? context.mediaHeight(1)
+                                                      ? context.height(1)
                                                       : null,
                                                   color: Theme.of(context)
                                                       .scaffoldBackgroundColor,
@@ -656,7 +656,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         topRight: Radius.circular(20))),
                 duration: const Duration(milliseconds: 100),
                 height: isLongPressed ? 70 : 0,
-                width: context.mediaWidth(1),
+                width: context.width(1),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -980,7 +980,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         l10n.filter_scanlator_groups,
                                       ),
                                       content: SizedBox(
-                                          width: context.mediaWidth(0.8),
+                                          width: context.width(0.8),
                                           child: ListView.builder(
                                             shrinkWrap: true,
                                             itemCount: scanlators.$1.length,
@@ -1182,7 +1182,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             Stack(
               children: [
                 SizedBox(
-                  width: context.mediaWidth(1),
+                  width: context.width(1),
                   child: Row(
                     children: [
                       _coverCard(),
@@ -1353,8 +1353,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             if (chapterLength == 0)
               Container(
-                  width: context.mediaWidth(1),
-                  height: context.mediaHeight(1),
+                  width: context.width(1),
+                  height: context.height(1),
                   color: Theme.of(context).scaffoldBackgroundColor)
           ],
         ),
@@ -1645,7 +1645,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         ),
                       ),
                       SizedBox(
-                        width: context.mediaWidth(1),
+                        width: context.width(1),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

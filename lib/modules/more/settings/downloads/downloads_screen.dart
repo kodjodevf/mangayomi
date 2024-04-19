@@ -37,7 +37,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                       return AlertDialog(
                         title: Text(l10n.download_location),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView(
                               shrinkWrap: true,
                               children: [

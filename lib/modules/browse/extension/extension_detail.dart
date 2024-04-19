@@ -132,7 +132,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: context.mediaWidth(1),
+                width: context.width(1),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
@@ -173,7 +173,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: context.mediaWidth(1),
+                width: context.width(1),
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),

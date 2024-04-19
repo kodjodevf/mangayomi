@@ -55,7 +55,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: SizedBox(
-                height: context.mediaHeight(0.8),
+                height: context.height(0.8),
                 child: Column(
                   children: [
                     Flexible(
@@ -97,7 +97,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
-                                            width: context.mediaWidth(0.6),
+                                            width: context.width(0.6),
                                             child: Text(
                                               tracks![index].title!,
                                               style: const TextStyle(

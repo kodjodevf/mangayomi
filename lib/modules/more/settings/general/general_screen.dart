@@ -29,7 +29,7 @@ class GeneralScreen extends ConsumerWidget {
                           l10n.app_language,
                         ),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount:

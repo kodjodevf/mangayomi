@@ -36,7 +36,7 @@ class ReaderScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.default_reading_mode),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: ReaderMode.values.length,
@@ -97,7 +97,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.double_tap_animation_speed,
                         ),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: 3,
@@ -157,7 +157,7 @@ class ReaderScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.background_color),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: BackgroundColor.values.length,
@@ -220,7 +220,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.page_preload_amount,
                         ),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: numbers.length,
@@ -278,7 +278,7 @@ class ReaderScreen extends ConsumerWidget {
                           context.l10n.scale_type,
                         ),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: getScaleTypeNames(context).length,

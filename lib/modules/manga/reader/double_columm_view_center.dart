@@ -143,7 +143,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                                     : 0;
                             return Container(
                               color: getBackgroundColor(widget.backgroundColor),
-                              height: context.mediaHeight(0.8),
+                              height: context.height(0.8),
                               child: CircularProgressIndicatorAnimateRotate(
                                   progress: progress),
                             );
@@ -159,7 +159,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                             return Container(
                                 color:
                                     getBackgroundColor(widget.backgroundColor),
-                                height: context.mediaHeight(0.8),
+                                height: context.height(0.8),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -222,7 +222,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                                     : 0;
                             return Container(
                               color: getBackgroundColor(widget.backgroundColor),
-                              height: context.mediaHeight(0.8),
+                              height: context.height(0.8),
                               child: CircularProgressIndicatorAnimateRotate(
                                   progress: progress),
                             );
@@ -238,7 +238,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                             return Container(
                                 color:
                                     getBackgroundColor(widget.backgroundColor),
-                                height: context.mediaHeight(0.8),
+                                height: context.height(0.8),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

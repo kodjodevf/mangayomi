@@ -93,7 +93,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                         builder: (context) => AlertDialog(
                           title: Text(pref.title!),
                           content: SizedBox(
-                              width: context.mediaWidth(0.8),
+                              width: context.width(0.8),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: pref.entries!.length,
@@ -155,7 +155,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                 return AlertDialog(
                                   title: Text(pref.title!),
                                   content: SizedBox(
-                                      width: context.mediaWidth(0.8),
+                                      width: context.width(0.8),
                                       child: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: pref.entries!.length,

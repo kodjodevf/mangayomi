@@ -43,7 +43,7 @@ class BackupAndRestore extends ConsumerWidget {
                           return AlertDialog(
                             title: Text(l10n.create_backup_dialog_title),
                             content: SizedBox(
-                                width: context.mediaWidth(0.8),
+                                width: context.width(0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: list.length,
@@ -123,7 +123,7 @@ class BackupAndRestore extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(l10n.restore_backup),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView(
                               shrinkWrap: true,
                               children: [
@@ -209,7 +209,7 @@ class BackupAndRestore extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(l10n.backup_frequency),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: list.length,
@@ -291,7 +291,7 @@ class BackupAndRestore extends ConsumerWidget {
                               l10n.backup_options_subtitle,
                             ),
                             content: SizedBox(
-                                width: context.mediaWidth(0.8),
+                                width: context.width(0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: list.length,

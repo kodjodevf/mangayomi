@@ -99,7 +99,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 l10n.app_language,
                               ),
                               content: SizedBox(
-                                  width: context.mediaWidth(0.8),
+                                  width: context.width(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: AppLocalizations
@@ -162,7 +162,7 @@ class AppearanceScreen extends ConsumerWidget {
                               content:
                                   StatefulBuilder(builder: (context, setState) {
                                 return SizedBox(
-                                    width: context.mediaWidth(0.8),
+                                    width: context.width(0.8),
                                     child: Column(
                                       children: [
                                         Padding(
@@ -305,7 +305,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 l10n.relative_timestamp,
                               ),
                               content: SizedBox(
-                                  width: context.mediaWidth(0.8),
+                                  width: context.width(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount:
@@ -369,7 +369,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 l10n.date_format,
                               ),
                               content: SizedBox(
-                                  width: context.mediaWidth(0.8),
+                                  width: context.width(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: dateFormatsList.length,

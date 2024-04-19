@@ -55,7 +55,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                       right: 0,
                       left: 0,
                       child: Container(
-                        width: context.mediaWidth(1),
+                        width: context.width(1),
                         height: 30,
                         decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
@@ -78,7 +78,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
               ),
               if (expanded)
                 SizedBox(
-                  width: context.mediaWidth(1),
+                  width: context.width(1),
                   height: 20,
                   child: const Icon(Icons.keyboard_arrow_up_sharp),
                 )

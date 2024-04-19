@@ -282,7 +282,7 @@ class _MangaChapterPageGalleryState
       showModalBottomSheet(
         context: context,
         constraints: BoxConstraints(
-          maxWidth: context.mediaWidth(1),
+          maxWidth: context.width(1),
         ),
         builder: (context) {
           return ListView(
@@ -495,7 +495,7 @@ class _MangaChapterPageGalleryState
                                           ? Axis.horizontal
                                           : Axis.vertical,
                                       minCacheExtent: pagePreloadAmount *
-                                          context.mediaHeight(1),
+                                          context.height(1),
                                       initialScrollIndex:
                                           _readerController.getPageIndex(),
                                       itemCount:
@@ -669,7 +669,7 @@ class _MangaChapterPageGalleryState
                                             return Container(
                                               color: getBackgroundColor(
                                                   backgroundColor),
-                                              height: context.mediaHeight(0.8),
+                                              height: context.height(0.8),
                                               child:
                                                   CircularProgressIndicatorAnimateRotate(
                                                       progress: progress),
@@ -715,7 +715,7 @@ class _MangaChapterPageGalleryState
                                                 color: getBackgroundColor(
                                                     backgroundColor),
                                                 height:
-                                                    context.mediaHeight(0.8),
+                                                    context.height(0.8),
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -1326,7 +1326,7 @@ class _MangaChapterPageGalleryState
     return Positioned(
       top: 0,
       child: AnimatedContainer(
-        width: context.mediaWidth(1),
+        width: context.width(1),
         height: height,
         curve: Curves.ease,
         duration: const Duration(milliseconds: 200),
@@ -1344,7 +1344,7 @@ class _MangaChapterPageGalleryState
             title: ListTile(
               dense: true,
               title: SizedBox(
-                width: context.mediaWidth(0.8),
+                width: context.width(0.8),
                 child: Text(
                   '${_readerController.getMangaName()} ',
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -1352,7 +1352,7 @@ class _MangaChapterPageGalleryState
                 ),
               ),
               subtitle: SizedBox(
-                width: context.mediaWidth(0.8),
+                width: context.width(0.8),
                 child: Text(
                   _readerController.getChapterTitle(),
                   style: const TextStyle(
@@ -1452,7 +1452,7 @@ class _MangaChapterPageGalleryState
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 300),
-        width: context.mediaWidth(1),
+        width: context.width(1),
         height: (_isView ? 130 : 0),
         child: Column(
           children: [
@@ -1886,8 +1886,8 @@ class _MangaChapterPageGalleryState
               flex: 2,
               child: failedToLoadImage
                   ? SizedBox(
-                      width: context.mediaWidth(1),
-                      height: context.mediaHeight(0.7),
+                      width: context.width(1),
+                      height: context.height(0.7),
                     )
                   : GestureDetector(
                       behavior: HitTestBehavior.translucent,

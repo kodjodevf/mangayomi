@@ -55,7 +55,7 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
                               borderRadius: BorderRadius.circular(10)),
                           child: trackerPref.syncId == -1
                               ? SizedBox(
-                                  width: context.mediaWidth(1),
+                                  width: context.width(1),
                                   child: const Icon(Icons.local_library_rounded,
                                       size: 60))
                               : Image.asset(

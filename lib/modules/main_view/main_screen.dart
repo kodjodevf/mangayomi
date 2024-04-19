@@ -189,7 +189,7 @@ class MainScreen extends ConsumerWidget {
                     ? null
                     : AnimatedContainer(
                         duration: const Duration(milliseconds: 0),
-                        width: context.mediaWidth(1),
+                        width: context.width(1),
                         height: switch (isLongPressed) {
                           true => 0,
                           _ => switch (location) {

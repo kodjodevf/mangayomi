@@ -73,8 +73,8 @@ class ImageViewVertical extends ConsumerWidget {
                 : 0;
             return Container(
               color: Colors.black,
-              height: context.mediaHeight(0.8),
-              width: isHorizontal ? context.mediaWidth(0.8) : null,
+              height: context.height(0.8),
+              width: isHorizontal ? context.width(0.8) : null,
               child: CircularProgressIndicatorAnimateRotate(progress: progress),
             );
           }
@@ -82,8 +82,8 @@ class ImageViewVertical extends ConsumerWidget {
             failedToLoadImage(true);
             return Container(
                 color: Colors.black,
-                height: context.mediaHeight(0.8),
-                width: isHorizontal ? context.mediaWidth(0.8) : null,
+                height: context.height(0.8),
+                width: isHorizontal ? context.width(0.8) : null,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -38,7 +38,7 @@ class PlayerScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.markEpisodeAsSeenSetting),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -163,7 +163,7 @@ class PlayerScreen extends ConsumerWidget {
                         title:
                             Text(context.l10n.default_skip_forward_skip_length),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -221,7 +221,7 @@ class PlayerScreen extends ConsumerWidget {
                       return AlertDialog(
                         title: Text(context.l10n.default_playback_speed_length),
                         content: SizedBox(
-                            width: context.mediaWidth(0.8),
+                            width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
@@ -314,7 +314,7 @@ class PlayerScreen extends ConsumerWidget {
                             title: Text(
                                 context.l10n.default_playback_speed_length),
                             content: SizedBox(
-                                width: context.mediaWidth(0.8),
+                                width: context.width(0.8),
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: values.length,

@@ -189,7 +189,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: SizedBox(
-                    width: context.mediaWidth(1),
+                    width: context.width(1),
                     height: 50,
                     child: ElevatedButton(
                         onPressed: isLoading

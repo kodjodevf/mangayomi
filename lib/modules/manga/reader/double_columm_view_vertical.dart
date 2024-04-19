@@ -52,7 +52,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                               : 0;
                       return Container(
                         color: getBackgroundColor(backgroundColor),
-                        height: context.mediaHeight(0.8),
+                        height: context.height(0.8),
                         child: CircularProgressIndicatorAnimateRotate(
                             progress: progress),
                       );
@@ -65,7 +65,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                       isFailedToLoadImage(true);
                       return Container(
                           color: getBackgroundColor(backgroundColor),
-                          height: context.mediaHeight(0.8),
+                          height: context.height(0.8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -124,7 +124,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                               : 0;
                       return Container(
                         color: getBackgroundColor(backgroundColor),
-                        height: context.mediaHeight(0.8),
+                        height: context.height(0.8),
                         child: CircularProgressIndicatorAnimateRotate(
                             progress: progress),
                       );
@@ -137,7 +137,7 @@ class DoubleColummVerticalView extends StatelessWidget {
                       isFailedToLoadImage(true);
                       return Container(
                           color: getBackgroundColor(backgroundColor),
-                          height: context.mediaHeight(0.8),
+                          height: context.height(0.8),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

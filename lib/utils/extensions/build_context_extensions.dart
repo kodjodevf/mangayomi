@@ -39,11 +39,11 @@ extension BuildContextExtensions on BuildContext {
     return Theme.of(this);
   }
 
-  double mediaHeight(double data) {
+  double height(double data) {
     return MediaQuery.of(this).size.height * data;
   }
 
-  double mediaWidth(double data) {
+  double width(double data) {
     return MediaQuery.of(this).size.width * data;
   }
 

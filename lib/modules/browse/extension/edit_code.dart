@@ -422,7 +422,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.black,
               ),
-              width: context.mediaWidth(1),
+              width: context.width(1),
               height: 200,
               child: ValueListenableBuilder(
                 valueListenable: _logsNotifier,

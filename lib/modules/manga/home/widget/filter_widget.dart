@@ -105,7 +105,7 @@ class FilterWidget extends StatelessWidget {
           );
         } else if (filterState is SelectFilter) {
           widget = SizedBox(
-            width: context.mediaWidth(1),
+            width: context.width(1),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -41,7 +41,7 @@ Future<void> customDraggableTabBar(
   final controller = DraggableMenuController();
   late TabController tabBarController;
   tabBarController = TabController(length: tabs.length, vsync: vsync);
-  final maxHeight = context.mediaHeight(0.8);
+  final maxHeight = context.height(0.8);
 
   int index = 0;
   List<Map<String, dynamic>> widgetsHeight = [];
@@ -121,7 +121,7 @@ Future<void> customDraggableTabBar(
               return Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Container(
-                  width: context.mediaWidth(1) - width,
+                  width: context.width(1) - width,
                   decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
