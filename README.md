@@ -11,7 +11,7 @@
 
 </p>
 
-Mangayomi is free an open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi and Aniyomi made with Flutter. It allows users to read manga and watch anime from a variety of sources.
+Mangayomi is a free and open source manga reader and anime streaming cross-platform app inspired by Tachiyomi and Aniyomi made with Flutter. It allows users to read manga and watch anime from a variety of sources.
 
 ## Features
 
@@ -21,7 +21,7 @@ Features include:
 * Watching anime from a variety of sources
 * Local reading of downloaded content
 * A configurable reader with multiple viewers, reading directions and other settings..
-* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support
+* Tracker support for anime and manga via [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/)
 * Categories to organize your library
 * Light and dark themes
 * Create backups locally to read offline or to your desired cloud service
