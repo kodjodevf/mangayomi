@@ -89,8 +89,9 @@ class MyAnimeList extends _$MyAnimeList {
         await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
-    List<int> mangaIds =
-        (res['data'] as List).map((e) => e['node']["id"] as int).toList();
+    List<int> mangaIds = res['data'] == null
+        ? []
+        : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
     List<TrackSearch> trackSearchResult = [];
     for (var mangaId in mangaIds) {
       final trackSearch = isManga!

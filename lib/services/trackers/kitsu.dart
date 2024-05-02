@@ -453,7 +453,7 @@ class Kitsu extends _$Kitsu {
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mAKOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
       ref.read(tracksProvider(syncId: syncId).notifier).logout();
-      botToast("Anilist Token expired");
+      botToast("Kitsu Token expired");
       throw Exception("Token expired");
     }
     return mAKOAuth.accessToken!;
