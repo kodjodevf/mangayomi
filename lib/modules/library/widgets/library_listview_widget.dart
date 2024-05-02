@@ -71,6 +71,17 @@ class LibraryListViewWidget extends StatelessWidget {
                   ref.read(mangasListStateProvider.notifier).update(entry);
                 }
               },
+              onSecondaryTap: () {
+                if (!isLongPressed) {
+                  ref.read(mangasListStateProvider.notifier).update(entry);
+
+                  ref
+                      .read(isLongPressedMangaStateProvider.notifier)
+                      .update(!isLongPressed);
+                } else {
+                  ref.read(mangasListStateProvider.notifier).update(entry);
+                }
+              },
               child: Container(
                 color: mangaIdsList.contains(entry.id)
                     ? context.primaryColor.withOpacity(0.4)

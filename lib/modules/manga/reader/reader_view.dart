@@ -494,8 +494,8 @@ class _MangaChapterPageGalleryState
                                               ReaderMode.horizontalContinuous
                                           ? Axis.horizontal
                                           : Axis.vertical,
-                                      minCacheExtent: pagePreloadAmount *
-                                          context.height(1),
+                                      minCacheExtent:
+                                          pagePreloadAmount * context.height(1),
                                       initialScrollIndex:
                                           _readerController.getPageIndex(),
                                       itemCount:
@@ -651,8 +651,7 @@ class _MangaChapterPageGalleryState
                                         (BuildContext context, int index) {
                                       return ImageViewCenter(
                                         data: _uChapDataPreload[index],
-                                        loadStateChanged:
-                                            (ExtendedImageState state) {
+                                        loadStateChanged: (state) {
                                           if (state.extendedImageLoadState ==
                                               LoadState.loading) {
                                             final ImageChunkEvent?
@@ -714,8 +713,7 @@ class _MangaChapterPageGalleryState
                                             return Container(
                                                 color: getBackgroundColor(
                                                     backgroundColor),
-                                                height:
-                                                    context.height(0.8),
+                                                height: context.height(0.8),
                                                 child: Column(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
@@ -1877,7 +1875,14 @@ class _MangaChapterPageGalleryState
                         _toggleScale(details.globalPosition);
                       }
                     : null,
+                onSecondaryTapDown: _isVerticalOrHorizontalContinous()
+                    ? (TapDownDetails details) {
+                        _toggleScale(details.globalPosition);
+                      }
+                    : null,
                 onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
+                onSecondaryTap:
+                    _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
 
@@ -1899,7 +1904,14 @@ class _MangaChapterPageGalleryState
                               _toggleScale(details.globalPosition);
                             }
                           : null,
+                      onSecondaryTapDown: _isVerticalOrHorizontalContinous()
+                          ? (TapDownDetails details) {
+                              _toggleScale(details.globalPosition);
+                            }
+                          : null,
                       onDoubleTap:
+                          _isVerticalOrHorizontalContinous() ? () {} : null,
+                      onSecondaryTap:
                           _isVerticalOrHorizontalContinous() ? () {} : null,
                     ),
             ),
@@ -1925,7 +1937,14 @@ class _MangaChapterPageGalleryState
                         _toggleScale(details.globalPosition);
                       }
                     : null,
+                onSecondaryTapDown: _isVerticalOrHorizontalContinous()
+                    ? (TapDownDetails details) {
+                        _toggleScale(details.globalPosition);
+                      }
+                    : null,
                 onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
+                onSecondaryTap:
+                    _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
           ],
@@ -1956,7 +1975,14 @@ class _MangaChapterPageGalleryState
                         _toggleScale(details.globalPosition);
                       }
                     : null,
+                onSecondaryTapDown: _isVerticalOrHorizontalContinous()
+                    ? (TapDownDetails details) {
+                        _toggleScale(details.globalPosition);
+                      }
+                    : null,
                 onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
+                onSecondaryTap:
+                    _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
 
@@ -1980,7 +2006,14 @@ class _MangaChapterPageGalleryState
                         _toggleScale(details.globalPosition);
                       }
                     : null,
+                onSecondaryTapDown: _isVerticalOrHorizontalContinous()
+                    ? (TapDownDetails details) {
+                        _toggleScale(details.globalPosition);
+                      }
+                    : null,
                 onDoubleTap: _isVerticalOrHorizontalContinous() ? () {} : null,
+                onSecondaryTap:
+                    _isVerticalOrHorizontalContinous() ? () {} : null,
               ),
             ),
           ],

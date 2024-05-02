@@ -52,7 +52,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
     return Consumer(builder: (context, ref, child) {
       final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
       final isManga = widget.isManga;
-     
+
       final gridSize =
           ref.watch(libraryGridSizeStateProvider(isManga: isManga));
       return GridViewWidget(
@@ -65,279 +65,273 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
           return Builder(builder: (context) {
             bool isLocalArchive = entry.isLocalArchive ?? false;
             return Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: CoverViewWidget(
-                    isLongPressed: widget.mangaIdsList.contains(entry.id),
-                    bottomTextWidget: BottomTextWidget(
-                      maxLines: 1,
-                      text: entry.name!,
-                      isComfortableGrid: widget.isComfortableGrid,
-                    ),
-                    isComfortableGrid: widget.isComfortableGrid,
-                    image: entry.customCoverImage != null
-                        ? MemoryImage(entry.customCoverImage as Uint8List)
-                            as ImageProvider
-                        : CustomExtendedNetworkImageProvider(
-                            toImgUrl(entry.customCoverFromTracker ??
-                                entry.imageUrl!),
-                            headers: entry.isLocalArchive!
-                                ? null
-                                : ref.watch(headersProvider(
-                                    source: entry.source!, lang: entry.lang!)),
-                          ),
-                    onTap: () {
-                      if (isLongPressed) {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-                      } else {
-                        pushToMangaReaderDetail(
-                            archiveId: isLocalArchive ? entry.id : null,
-                            context: context,
-                            lang: entry.lang!,
-                            mangaM: entry,
-                            source: entry.source!);
-                      }
-                    },
-                    onLongPress: () {
-                      if (!isLongPressed) {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
+              padding: const EdgeInsets.all(2),
+              child: CoverViewWidget(
+                isLongPressed: widget.mangaIdsList.contains(entry.id),
+                bottomTextWidget: BottomTextWidget(
+                  maxLines: 1,
+                  text: entry.name!,
+                  isComfortableGrid: widget.isComfortableGrid,
+                ),
+                isComfortableGrid: widget.isComfortableGrid,
+                image: entry.customCoverImage != null
+                    ? MemoryImage(entry.customCoverImage as Uint8List)
+                        as ImageProvider
+                    : CustomExtendedNetworkImageProvider(
+                        toImgUrl(
+                            entry.customCoverFromTracker ?? entry.imageUrl!),
+                        headers: entry.isLocalArchive!
+                            ? null
+                            : ref.watch(headersProvider(
+                                source: entry.source!, lang: entry.lang!)),
+                      ),
+                onTap: () {
+                  if (isLongPressed) {
+                    ref.read(mangasListStateProvider.notifier).update(entry);
+                  } else {
+                    pushToMangaReaderDetail(
+                        archiveId: isLocalArchive ? entry.id : null,
+                        context: context,
+                        lang: entry.lang!,
+                        mangaM: entry,
+                        source: entry.source!);
+                  }
+                },
+                onLongPress: () {
+                  if (!isLongPressed) {
+                    ref.read(mangasListStateProvider.notifier).update(entry);
 
-                        ref
-                            .read(isLongPressedMangaStateProvider.notifier)
-                            .update(!isLongPressed);
-                      } else {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-                      }
-                    },
+                    ref
+                        .read(isLongPressedMangaStateProvider.notifier)
+                        .update(!isLongPressed);
+                  } else {
+                    ref.read(mangasListStateProvider.notifier).update(entry);
+                  }
+                },
+                onSecondaryTap: () {
+                  if (!isLongPressed) {
+                    ref.read(mangasListStateProvider.notifier).update(entry);
+
+                    ref
+                        .read(isLongPressedMangaStateProvider.notifier)
+                        .update(!isLongPressed);
+                  } else {
+                    ref.read(mangasListStateProvider.notifier).update(entry);
+                  }
+                },
+                children: [
+                  Stack(
                     children: [
-                      Stack(
-                        children: [
-                          Positioned(
-                              top: 0,
-                              left: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(5),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(3),
-                                    color: context.primaryColor,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      if (widget.localSource && isLocalArchive)
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topLeft: Radius.circular(3),
-                                                    bottomLeft:
-                                                        Radius.circular(3)),
-                                            color: Theme.of(context).hintColor,
-                                          ),
-                                          child: const Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 3, right: 3),
-                                            child: Text(
-                                              "Local",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                      if (widget.downloadedChapter)
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5),
-                                          child: Consumer(
-                                            builder: (context, ref, child) {
-                                              List nbrDown = [];
-                                              isar.txnSync(() {
-                                                for (var i = 0;
-                                                    i < entry.chapters.length;
-                                                    i++) {
-                                                  final entries = isar.downloads
-                                                      .filter()
-                                                      .idIsNotNull()
-                                                      .chapterIdEqualTo(entry
-                                                          .chapters
-                                                          .toList()[i]
-                                                          .id)
-                                                      .findAllSync();
-
-                                                  if (entries.isNotEmpty &&
-                                                      entries
-                                                          .first.isDownload!) {
-                                                    nbrDown.add(entries.first);
-                                                  }
-                                                }
-                                              });
-
-                                              if (nbrDown.isNotEmpty) {
-                                                return Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        const BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    3),
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    3)),
-                                                    color: Theme.of(context)
-                                                        .hintColor,
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 3, right: 3),
-                                                    child: Text(
-                                                      nbrDown.length.toString(),
-                                                      style: const TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                );
-                                              } else {
-                                                return Container();
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 3),
-                                        child: Text(
-                                          entry.chapters.length.toString(),
-                                          style: const TextStyle(
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )),
-                          if (widget.language && entry.lang!.isNotEmpty)
-                            Positioned(
-                                top: 0,
-                                right: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Container(
-                                    color: context.themeData.cardColor,
-                                    child: Container(
+                      Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3),
+                                color: context.primaryColor,
+                              ),
+                              child: Row(
+                                children: [
+                                  if (widget.localSource && isLocalArchive)
+                                    Container(
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(3),
                                             bottomLeft: Radius.circular(3)),
                                         color: Theme.of(context).hintColor,
                                       ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 3, right: 3),
+                                      child: const Padding(
+                                        padding:
+                                            EdgeInsets.only(left: 3, right: 3),
                                         child: Text(
-                                          entry.lang!.toUpperCase(),
-                                          style: const TextStyle(
-                                              color: Colors.white),
+                                          "Local",
+                                          style: TextStyle(color: Colors.white),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )),
-                        ],
-                      ),
-                      if (!widget.isComfortableGrid && !widget.isCoverOnlyGrid)
-                        BottomTextWidget(text: entry.name!),
-                      if (widget.continueReaderBtn)
-                        Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Padding(
-                                padding: const EdgeInsets.all(9),
-                                child: Consumer(
-                                  builder: (context, ref, child) {
-                                    final history = ref.watch(
-                                        getAllHistoryStreamProvider(
-                                            isManga: entry.isManga!));
-                                    return history.when(
-                                      data: (data) {
-                                        final incognitoMode = ref
-                                            .watch(incognitoModeStateProvider);
-                                        final entries = data
-                                            .where((element) =>
-                                                element.mangaId == entry.id)
-                                            .toList();
-                                        if (entries.isNotEmpty &&
-                                            !incognitoMode) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              pushMangaReaderView(
-                                                context: context,
-                                                chapter: entries
-                                                    .first.chapter.value!,
-                                              );
-                                            },
-                                            child: Container(
+                                  if (widget.downloadedChapter)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 5),
+                                      child: Consumer(
+                                        builder: (context, ref, child) {
+                                          List nbrDown = [];
+                                          isar.txnSync(() {
+                                            for (var i = 0;
+                                                i < entry.chapters.length;
+                                                i++) {
+                                              final entries = isar.downloads
+                                                  .filter()
+                                                  .idIsNotNull()
+                                                  .chapterIdEqualTo(entry
+                                                      .chapters
+                                                      .toList()[i]
+                                                      .id)
+                                                  .findAllSync();
+
+                                              if (entries.isNotEmpty &&
+                                                  entries.first.isDownload!) {
+                                                nbrDown.add(entries.first);
+                                              }
+                                            }
+                                          });
+
+                                          if (nbrDown.isNotEmpty) {
+                                            return Container(
                                               decoration: BoxDecoration(
                                                 borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: context.primaryColor
-                                                    .withOpacity(0.9),
+                                                    const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(3),
+                                                        bottomLeft:
+                                                            Radius.circular(3)),
+                                                color:
+                                                    Theme.of(context).hintColor,
                                               ),
-                                              child: const Padding(
-                                                  padding: EdgeInsets.all(7),
-                                                  child: Icon(
-                                                    Icons.play_arrow,
-                                                    size: 19,
-                                                    color: Colors.white,
-                                                  )),
-                                            ),
-                                          );
-                                        }
-                                        return GestureDetector(
-                                          onTap: () {
-                                            pushMangaReaderView(
-                                                context: context,
-                                                chapter: entry.chapters
-                                                    .toList()
-                                                    .reversed
-                                                    .toList()
-                                                    .last);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: context.primaryColor
-                                                  .withOpacity(0.9),
-                                            ),
-                                            child: const Padding(
-                                                padding: EdgeInsets.all(7),
-                                                child: Icon(
-                                                  Icons.play_arrow,
-                                                  size: 19,
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                        );
-                                      },
-                                      error: (Object error,
-                                          StackTrace stackTrace) {
-                                        return ErrorText(error);
-                                      },
-                                      loading: () {
-                                        return const ProgressCenter();
-                                      },
-                                    );
-                                  },
-                                )))
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 3, right: 3),
+                                                child: Text(
+                                                  nbrDown.length.toString(),
+                                                  style: const TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 3),
+                                    child: Text(
+                                      entry.chapters.length.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )),
+                      if (widget.language && entry.lang!.isNotEmpty)
+                        Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Container(
+                                color: context.themeData.cardColor,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(3),
+                                        bottomLeft: Radius.circular(3)),
+                                    color: Theme.of(context).hintColor,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 3, right: 3),
+                                    child: Text(
+                                      entry.lang!.toUpperCase(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )),
                     ],
                   ),
-                );
+                  if (!widget.isComfortableGrid && !widget.isCoverOnlyGrid)
+                    BottomTextWidget(text: entry.name!),
+                  if (widget.continueReaderBtn)
+                    Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Padding(
+                            padding: const EdgeInsets.all(9),
+                            child: Consumer(
+                              builder: (context, ref, child) {
+                                final history = ref.watch(
+                                    getAllHistoryStreamProvider(
+                                        isManga: entry.isManga!));
+                                return history.when(
+                                  data: (data) {
+                                    final incognitoMode =
+                                        ref.watch(incognitoModeStateProvider);
+                                    final entries = data
+                                        .where((element) =>
+                                            element.mangaId == entry.id)
+                                        .toList();
+                                    if (entries.isNotEmpty && !incognitoMode) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          pushMangaReaderView(
+                                            context: context,
+                                            chapter:
+                                                entries.first.chapter.value!,
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: context.primaryColor
+                                                .withOpacity(0.9),
+                                          ),
+                                          child: const Padding(
+                                              padding: EdgeInsets.all(7),
+                                              child: Icon(
+                                                Icons.play_arrow,
+                                                size: 19,
+                                                color: Colors.white,
+                                              )),
+                                        ),
+                                      );
+                                    }
+                                    return GestureDetector(
+                                      onTap: () {
+                                        pushMangaReaderView(
+                                            context: context,
+                                            chapter: entry.chapters
+                                                .toList()
+                                                .reversed
+                                                .toList()
+                                                .last);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: context.primaryColor
+                                              .withOpacity(0.9),
+                                        ),
+                                        child: const Padding(
+                                            padding: EdgeInsets.all(7),
+                                            child: Icon(
+                                              Icons.play_arrow,
+                                              size: 19,
+                                              color: Colors.white,
+                                            )),
+                                      ),
+                                    );
+                                  },
+                                  error: (Object error, StackTrace stackTrace) {
+                                    return ErrorText(error);
+                                  },
+                                  loading: () {
+                                    return const ProgressCenter();
+                                  },
+                                );
+                              },
+                            )))
+                ],
+              ),
+            );
           });
         },
       );
