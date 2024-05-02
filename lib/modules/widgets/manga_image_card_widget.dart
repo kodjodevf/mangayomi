@@ -79,6 +79,15 @@ class MangaImageCardWidget extends ConsumerWidget {
                     isManga: isManga,
                     addToFavourite: true);
               },
+              onSecondaryTap: () {
+                pushToMangaReaderDetail(
+                    context: context,
+                    getManga: getMangaDetail!,
+                    lang: source.lang!,
+                    source: source.name!,
+                    isManga: isManga,
+                    addToFavourite: true);
+              },
               children: [
                 Container(
                     color: hasData && snapshot.data!.first.favorite!
@@ -146,82 +155,89 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                 );
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(0),
-                  surfaceTintColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  elevation: 0,
-                  shadowColor: Colors.transparent),
-              onPressed: () {
-                pushToMangaReaderDetail(
-                    context: context,
-                    getManga: getMangaDetail!,
-                    lang: source.lang!,
-                    source: source.name!,
-                    isManga: isManga);
-              },
-              onLongPress: () {
-                pushToMangaReaderDetail(
-                    context: context,
-                    getManga: getMangaDetail!,
-                    lang: source.lang!,
-                    source: source.name!,
-                    isManga: isManga,
-                    addToFavourite: true);
-              },
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Stack(
-                      children: [
-                        Material(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.transparent,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Image(
-                              height: 55,
-                              width: 40,
-                              fit: BoxFit.cover,
-                              image: image),
-                        ),
-                        Container(
-                          height: 55,
-                          width: 40,
-                          color: hasData && snapshot.data!.first.favorite!
-                              ? Colors.black.withOpacity(0.5)
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      getMangaDetail!.name!,
-                      maxLines: 2,
-                      style: TextStyle(
-                          overflow: TextOverflow.ellipsis,
-                          color: context.textColor),
-                    ),
-                  ),
-                  if (hasData && snapshot.data!.first.favorite!)
+            child: Material(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.transparent,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: InkWell(
+                onTap: () {
+                  pushToMangaReaderDetail(
+                      context: context,
+                      getManga: getMangaDetail!,
+                      lang: source.lang!,
+                      source: source.name!,
+                      isManga: isManga);
+                },
+                onLongPress: () {
+                  pushToMangaReaderDetail(
+                      context: context,
+                      getManga: getMangaDetail!,
+                      lang: source.lang!,
+                      source: source.name!,
+                      isManga: isManga,
+                      addToFavourite: true);
+                },
+                onSecondaryTap: () {
+                  pushToMangaReaderDetail(
+                      context: context,
+                      getManga: getMangaDetail!,
+                      lang: source.lang!,
+                      source: source.name!,
+                      isManga: isManga,
+                      addToFavourite: true);
+                },
+                child: Row(
+                  children: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: context.primaryColor,
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(Icons.collections_bookmark_outlined,
-                              size: 16, color: context.dynamicWhiteBlackColor),
-                        ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Stack(
+                        children: [
+                          Material(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.transparent,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            child: Image(
+                                height: 55,
+                                width: 40,
+                                fit: BoxFit.cover,
+                                image: image),
+                          ),
+                          Container(
+                            height: 55,
+                            width: 40,
+                            color: hasData && snapshot.data!.first.favorite!
+                                ? Colors.black.withOpacity(0.5)
+                                : null,
+                          ),
+                        ],
                       ),
                     ),
-                ],
+                    Expanded(
+                      child: Text(
+                        getMangaDetail!.name!,
+                        maxLines: 2,
+                        style: TextStyle(
+                            overflow: TextOverflow.ellipsis,
+                            color: context.textColor),
+                      ),
+                    ),
+                    if (hasData && snapshot.data!.first.favorite!)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: context.primaryColor,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(Icons.collections_bookmark_outlined,
+                                size: 16,
+                                color: context.dynamicWhiteBlackColor),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           );

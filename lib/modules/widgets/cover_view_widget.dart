@@ -9,6 +9,7 @@ class CoverViewWidget extends StatelessWidget {
   final Widget? bottomTextWidget;
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
+  final VoidCallback? onSecondaryTap;
   const CoverViewWidget(
       {super.key,
       required this.children,
@@ -17,7 +18,8 @@ class CoverViewWidget extends StatelessWidget {
       required this.onTap,
       this.image,
       this.onLongPress,
-      this.isLongPressed});
+      this.isLongPressed,
+      this.onSecondaryTap});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class CoverViewWidget extends StatelessWidget {
                 child: InkWell(
                     onTap: onTap,
                     onLongPress: onLongPress,
+                    onSecondaryTap: onSecondaryTap,
                     child: Container(
                       color: isLongPressed != null && isLongPressed!
                           ? context.primaryColor.withOpacity(0.4)
