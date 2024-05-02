@@ -70,6 +70,15 @@ class MangaImageCardWidget extends ConsumerWidget {
                     source: source.name!,
                     isManga: isManga);
               },
+              onLongPress: () {
+                pushToMangaReaderDetail(
+                    context: context,
+                    getManga: getMangaDetail!,
+                    lang: source.lang!,
+                    source: source.name!,
+                    isManga: isManga,
+                    addToFavourite: true);
+              },
               children: [
                 Container(
                     color: hasData && snapshot.data!.first.favorite!
@@ -154,6 +163,15 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                     source: source.name!,
                     isManga: isManga);
               },
+              onLongPress: () {
+                pushToMangaReaderDetail(
+                    context: context,
+                    getManga: getMangaDetail!,
+                    lang: source.lang!,
+                    source: source.name!,
+                    isManga: isManga,
+                    addToFavourite: true);
+              },
               child: Row(
                 children: [
                   Padding(
@@ -219,7 +237,8 @@ void pushToMangaReaderDetail(
     int? archiveId,
     Manga? mangaM,
     bool? isManga,
-    bool useMaterialRoute = false}) {
+    bool useMaterialRoute = false,
+    bool addToFavourite = false}) {
   int? mangaId;
   if (archiveId == null) {
     final manga = mangaM ??
@@ -296,15 +315,21 @@ void pushToMangaReaderDetail(
       },
     );
   }
-
-  if (useMaterialRoute) {
-    Navigator.push(
-        context,
-        createRoute(
-            page: MangaReaderDetail(
-          mangaId: mangaId,
-        )));
+  if (!addToFavourite) {
+    if (useMaterialRoute) {
+      Navigator.push(
+          context,
+          createRoute(
+              page: MangaReaderDetail(
+            mangaId: mangaId,
+          )));
+    } else {
+      context.push('/manga-reader/detail', extra: mangaId);
+    }
   } else {
-    context.push('/manga-reader/detail', extra: mangaId);
+    final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
+    isar.writeTxnSync(() {
+      isar.mangas.putSync(getManga..favorite = !getManga.favorite!);
+    });
   }
 }
