@@ -51,5 +51,11 @@ Future<(List<Video>, bool, String?)> getVideoList(
   } else {
     list = await JsExtensionService(source).getVideoList(episode.url!);
   }
-  return (list, false, null);
+  List<Video> videos = [];
+  for (var video in list) {
+    if (!videos.any((element) => element.quality == video.quality)) {
+      videos.add(video);
+    }
+  }
+  return (videos, false, null);
 }

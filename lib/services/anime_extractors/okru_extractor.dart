@@ -2,56 +2,57 @@ import 'package:html/parser.dart' show parse;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class OkruExtractor {
   final InterceptedClient client = MClient.init();
 
-  String fixQuality(String quality) {
-    final qualities = {
-      'ultra': '2160p',
-      'quad': '1440p',
-      'full': '1080p',
-      'hd': '720p',
-      'sd': '480p',
-      'low': '360p',
-      'lowest': '240p',
-      'mobile': '144p',
-    };
-    return qualities[quality.toLowerCase()] ?? quality;
-  }
-
   Future<List<Video>> videosFromUrl(String url,
-      {String prefix = '', bool fixQualities = true}) async {
-    try {
-      final response = await client.get(Uri.parse(url));
-      final document = parse(response.body);
-      final videosString = document
-              .querySelector('div[data-options]')
-              ?.attributes['data-options']!
-              .substringAfter("\\\"videos\\\":[{\\\"name\\\":\\\"")
-              .substringBefore(']') ??
-          '';
+      {String prefix = "", bool fixQualities = true}) async {
+    final response = await client.get(Uri.parse(url));
+    final document = parse(response.body);
+    final videoString =
+        document.selectFirst('div[data-options]')?.attr("data-options");
 
-      List<Video> videoList = [];
-      List<String> values =
-          videosString.split("{\\\"name\\\":\\\"").reversed.toList();
-      for (var value in values) {
-        final videoUrl = value
-            .substringAfter("url\\\":\\\"")
-            .substringBefore("\\\"")
-            .replaceAll(r'\\\u0026', '&');
-        final quality = value.substringBefore("\\\"");
-        final fixedQuality = fixQualities ? fixQuality(quality) : quality;
-        final videoQuality =
-            '${prefix.isNotEmpty ? '$prefix ' : ''}Okru - $fixedQuality';
-        if (videoUrl.startsWith('https://')) {
-          videoList.add(Video(videoUrl, videoQuality, videoUrl));
-        }
-      }
-      return videoList;
-    } catch (_) {
+    if (videoString == null) {
       return [];
     }
+
+    if (videoString.contains('ondemandHls')) {
+      final playlistUrl = Uri.parse(videoString
+          .substringAfter("ondemandHls\\\":\\\"")
+          .substringBefore("\\\"")
+          .replaceAll("\\\\u0026", "&"));
+      final masterPlaylistResponse = await client.get(playlistUrl);
+      final masterPlaylist = masterPlaylistResponse.body;
+
+      const separator = "#EXT-X-STREAM-INF";
+      return masterPlaylist
+          .substringAfter(separator)
+          .split(separator)
+          .map((it) {
+        final resolution =
+            "${it.substringAfter("RESOLUTION=").substringBefore("\n").substringAfter("x").substringBefore(",")}p";
+        final videoUrl = "${Uri(
+          scheme: playlistUrl.scheme,
+          host: playlistUrl.host,
+          pathSegments: playlistUrl.pathSegments
+              .sublist(0, playlistUrl.pathSegments.length - 1),
+        ).toString()}/${it.substringAfter("\n").substringBefore("\n")}";
+        return Video(videoUrl,
+            "${prefix.isNotEmpty ? prefix : ""}Okru:$resolution", videoUrl);
+      }).toList();
+    }
+
+    return [];
+  }
+
+  String resolveUrl(Uri uri, String url) {
+    return "${Uri(
+      scheme: uri.scheme,
+      host: uri.host,
+      pathSegments: uri.pathSegments.sublist(0, uri.pathSegments.length - 1),
+    ).toString()}/$url";
   }
 }
