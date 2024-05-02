@@ -77,7 +77,7 @@ class StorageProvider {
     Chapter chapter,
   ) async {
     final manga = chapter.manga.value!;
-    String scanlator = chapter.scanlator!.isNotEmpty
+    String scanlator = chapter.scanlator?.isNotEmpty ?? false
         ? "${chapter.scanlator!.replaceAll(_regExpChar, '_')}_"
         : "";
     final isManga = chapter.manga.value!.isManga!;

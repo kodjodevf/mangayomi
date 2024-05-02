@@ -386,6 +386,8 @@ class _MangaChapterPageGalleryState
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
+    final bool isHorizontalContinuaous =
+        ref.watch(_currentReaderMode) == ReaderMode.horizontalContinuous;
     if (cropBorders) {
       _processCropBorders();
     }
@@ -489,9 +491,7 @@ class _MangaChapterPageGalleryState
                                     basePosition: _scalePosition,
                                     onScaleEnd: _onScaleEnd,
                                     child: ScrollablePositionedList.separated(
-                                      scrollDirection: ref
-                                                  .watch(_currentReaderMode) ==
-                                              ReaderMode.horizontalContinuous
+                                      scrollDirection: isHorizontalContinuaous
                                           ? Axis.horizontal
                                           : Axis.vertical,
                                       minCacheExtent:
@@ -499,7 +499,8 @@ class _MangaChapterPageGalleryState
                                       initialScrollIndex:
                                           _readerController.getPageIndex(),
                                       itemCount:
-                                          _pageMode == PageMode.doublePage
+                                          (_pageMode == PageMode.doublePage &&
+                                                  !isHorizontalContinuaous)
                                               ? (_uChapDataPreload.length / 2)
                                                       .ceil() +
                                                   1
@@ -522,8 +523,9 @@ class _MangaChapterPageGalleryState
                                                 details.globalPosition);
                                           },
                                           onDoubleTap: () {},
-                                          child: _pageMode ==
-                                                  PageMode.doublePage
+                                          child: (_pageMode ==
+                                                      PageMode.doublePage &&
+                                                  !isHorizontalContinuaous)
                                               ? DoubleColummVerticalView(
                                                   datas: index == 0
                                                       ? [
@@ -592,7 +594,8 @@ class _MangaChapterPageGalleryState
                         : Material(
                             color: getBackgroundColor(backgroundColor),
                             shadowColor: getBackgroundColor(backgroundColor),
-                            child: _pageMode == PageMode.doublePage
+                            child: (_pageMode == PageMode.doublePage &&
+                                    !isHorizontalContinuaous)
                                 ? ExtendedImageGesturePageView.builder(
                                     controller: _extendedController,
                                     scrollDirection: _scrollDirection,
@@ -900,7 +903,8 @@ class _MangaChapterPageGalleryState
   void _readProgressListener() {
     _currentIndex = _itemPositionsListener.itemPositions.value.first.index;
 
-    int pagesLength = _pageMode == PageMode.doublePage
+    int pagesLength = (_pageMode == PageMode.doublePage &&
+            !(ref.watch(_currentReaderMode) == ReaderMode.horizontalContinuous))
         ? (_uChapDataPreload.length / 2).ceil() + 1
         : _uChapDataPreload.length;
 
@@ -1214,7 +1218,8 @@ class _MangaChapterPageGalleryState
     _failedToLoadImage.value = false;
     _readerController.setReaderMode(value);
 
-    int index = _pageMode == PageMode.doublePage
+    int index = (_pageMode == PageMode.doublePage &&
+            !(ref.watch(_currentReaderMode) == ReaderMode.horizontalContinuous))
         ? (_currentIndex! / 2).ceil()
         : _currentIndex!;
     ref.read(_currentReaderMode.notifier).state = value;
@@ -1571,7 +1576,11 @@ class _MangaChapterPageGalleryState
                                                 1,
                                         value: min(
                                             (currentIndex).toDouble(),
-                                            _pageMode == PageMode.doublePage
+                                            (_pageMode == PageMode.doublePage &&
+                                                    !(ref.watch(
+                                                            _currentReaderMode) ==
+                                                        ReaderMode
+                                                            .horizontalContinuous))
                                                 ? ((_readerController.getPageLength(
                                                                 _chapterUrlModel
                                                                     .pageUrls)) /
@@ -1585,7 +1594,12 @@ class _MangaChapterPageGalleryState
                                                     .toDouble())),
                                         label: _currentIndexLabel(currentIndex),
                                         min: 0,
-                                        max: _pageMode == PageMode.doublePage
+                                        max: (_pageMode ==
+                                                    PageMode.doublePage &&
+                                                !(ref.watch(
+                                                        _currentReaderMode) ==
+                                                    ReaderMode
+                                                        .horizontalContinuous))
                                             ? (((_readerController.getPageLength(
                                                                 _chapterUrlModel
                                                                     .pageUrls)) /
@@ -1735,29 +1749,31 @@ class _MangaChapterPageGalleryState
                     }),
                     IconButton(
                       onPressed: () async {
-                        PageMode newPageMode;
+                        if (!(readerMode == ReaderMode.horizontalContinuous)) {
+                          PageMode newPageMode;
 
-                        _onBtnTapped(
-                          _pageMode == PageMode.onePage
-                              ? (_geCurrentIndex(
-                                          _uChapDataPreload[_currentIndex!]
-                                              .index!) /
-                                      2)
-                                  .ceil()
-                              : _geCurrentIndex(
-                                  _uChapDataPreload[_currentIndex!].index!),
-                          true,
-                          isSlide: true,
-                        );
-                        newPageMode = _pageMode == PageMode.onePage
-                            ? PageMode.doublePage
-                            : PageMode.onePage;
+                          _onBtnTapped(
+                            _pageMode == PageMode.onePage
+                                ? (_geCurrentIndex(
+                                            _uChapDataPreload[_currentIndex!]
+                                                .index!) /
+                                        2)
+                                    .ceil()
+                                : _geCurrentIndex(
+                                    _uChapDataPreload[_currentIndex!].index!),
+                            true,
+                            isSlide: true,
+                          );
+                          newPageMode = _pageMode == PageMode.onePage
+                              ? PageMode.doublePage
+                              : PageMode.onePage;
 
-                        _readerController.setPageMode(newPageMode);
-                        if (mounted) {
-                          setState(() {
-                            _pageMode = newPageMode;
-                          });
+                          _readerController.setPageMode(newPageMode);
+                          if (mounted) {
+                            setState(() {
+                              _pageMode = newPageMode;
+                            });
+                          }
                         }
                       },
                       icon: Icon(
