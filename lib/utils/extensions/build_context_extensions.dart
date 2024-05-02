@@ -19,6 +19,10 @@ extension BuildContextExtensions on BuildContext {
     return isLight ? Colors.black : Colors.white;
   }
 
+  Color get dynamicBlackWhiteColor {
+    return isLight ? Colors.white : Colors.black;
+  }
+
   bool get isDesktop {
     return Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   }

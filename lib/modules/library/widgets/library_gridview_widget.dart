@@ -134,7 +134,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                               ),
                               child: Row(
                                 children: [
-                                  if (widget.localSource && isLocalArchive)
+                                  if (widget.localSource || isLocalArchive)
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.only(
@@ -151,12 +151,12 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                         ),
                                       ),
                                     ),
-                                  if (widget.downloadedChapter)
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 5),
-                                      child: Consumer(
-                                        builder: (context, ref, child) {
-                                          List nbrDown = [];
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 5),
+                                    child: Consumer(
+                                      builder: (context, ref, child) {
+                                        List nbrDown = [];
+                                        if (widget.downloadedChapter) {
                                           isar.txnSync(() {
                                             for (var i = 0;
                                                 i < entry.chapters.length;
@@ -172,45 +172,54 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
 
                                               if (entries.isNotEmpty &&
                                                   entries.first.isDownload!) {
-                                                nbrDown.add(entries.first);
+                                                nbrDown.add(1);
                                               }
                                             }
                                           });
+                                        }
 
-                                          if (nbrDown.isNotEmpty) {
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(3),
-                                                        bottomLeft:
-                                                            Radius.circular(3)),
-                                                color:
-                                                    Theme.of(context).hintColor,
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 3, right: 3),
-                                                child: Text(
-                                                  nbrDown.length.toString(),
-                                                  style: const TextStyle(
-                                                      color: Colors.white),
+                                        return Row(
+                                          children: [
+                                            if (nbrDown.isNotEmpty &&
+                                                widget.downloadedChapter)
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  3),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  3)),
+                                                  color: Theme.of(context)
+                                                      .secondaryHeaderColor,
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 3, right: 3),
+                                                  child: Text(
+                                                    nbrDown.length.toString(),
+                                                  ),
                                                 ),
                                               ),
-                                            );
-                                          } else {
-                                            return Container();
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 3),
-                                    child: Text(
-                                      entry.chapters.length.toString(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 3),
+                                              child: Text(
+                                                entry.chapters
+                                                    .where((element) =>
+                                                        !element.isRead!)
+                                                    .length
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: context
+                                                        .dynamicBlackWhiteColor),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
