@@ -22,7 +22,7 @@ class JsHttpClient {
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .post(Uri.parse(args[2]),
                   headers: (args[3] as Map?)?.toMapStringString,
-                  body: jsonEncode((args[4] as Map?)?.toMapStringDynamic)))
+                  body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.onMessage('http_put', (dynamic args) async {
@@ -38,10 +38,10 @@ class JsHttpClient {
               source: null,
               reqcopyWith: (args[1] as Map?)?.map(
                   (key, value) => MapEntry(key.toString(), value))).delete(
-              Uri.parse(args[0]),
-              headers: (args[1] as Map?)?.map(
+              Uri.parse(args[2]),
+              headers: (args[3] as Map?)?.map(
                   (key, value) => MapEntry(key.toString(), value.toString())),
-              body: jsonEncode((args[2] as Map?)?.toMapStringDynamic)))
+              body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.onMessage('http_patch', (dynamic args) async {
@@ -49,7 +49,8 @@ class JsHttpClient {
                   source: null,
                   reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
               .patch(Uri.parse(args[2]),
-                  headers: (args[3] as Map?)?.toMapStringString, body: args[4]))
+                  headers: (args[3] as Map?)?.toMapStringString,
+                  body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.evaluate('''
