@@ -12,7 +12,6 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 class DoubleColummView extends StatefulWidget {
-  final bool cropBorders;
   final List<UChapDataPreload?> datas;
   final Function(UChapDataPreload datas) onLongPressData;
   final Function(double) scale;
@@ -24,8 +23,7 @@ class DoubleColummView extends StatefulWidget {
       required this.scale,
       required this.onLongPressData,
       required this.backgroundColor,
-      required this.isFailedToLoadImage,
-      required this.cropBorders});
+      required this.isFailedToLoadImage});
 
   @override
   State<DoubleColummView> createState() => _DoubleColummViewState();
@@ -200,7 +198,6 @@ class _DoubleColummViewState extends State<DoubleColummView>
                           }
                           return null;
                         },
-                        cropBorders: widget.cropBorders,
                         onLongPressData: (datas) =>
                             widget.onLongPressData.call(datas),
                       ),
@@ -279,7 +276,6 @@ class _DoubleColummViewState extends State<DoubleColummView>
                           }
                           return null;
                         },
-                        cropBorders: widget.cropBorders,
                         onLongPressData: (datas) =>
                             widget.onLongPressData.call(datas),
                       ),

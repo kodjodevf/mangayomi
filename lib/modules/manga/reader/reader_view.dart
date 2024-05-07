@@ -550,7 +550,6 @@ class _MangaChapterPageGalleryState
                                                   backgroundColor:
                                                       backgroundColor,
                                                   isFailedToLoadImage: (val) {},
-                                                  cropBorders: cropBorders,
                                                   onLongPressData: (datas) {
                                                     _onLongPressImageDialog(
                                                         datas, context);
@@ -562,7 +561,6 @@ class _MangaChapterPageGalleryState
                                                   failedToLoadImage: (value) {
                                                     // _failedToLoadImage.value = value;
                                                   },
-                                                  cropBorders: cropBorders,
                                                   onLongPressData: (datas) {
                                                     _onLongPressImageDialog(
                                                         datas, context);
@@ -629,7 +627,6 @@ class _MangaChapterPageGalleryState
                                             _failedToLoadImage.value = val;
                                           }
                                         },
-                                        cropBorders: cropBorders,
                                         onLongPressData: (datas) {
                                           _onLongPressImageDialog(
                                               datas, context);
@@ -827,7 +824,6 @@ class _MangaChapterPageGalleryState
                                           _doubleClickAnimationController
                                               .forward();
                                         },
-                                        cropBorders: cropBorders,
                                         onLongPressData: (datas) {
                                           _onLongPressImageDialog(
                                               datas, context);
@@ -878,12 +874,6 @@ class _MangaChapterPageGalleryState
                     "${_uChapDataPreload[index].directory!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
                 context);
           }
-        }
-        if (_uChapDataPreload[index].cropImage != null) {
-          precacheImage(
-              ExtendedMemoryImageProvider(
-                  (_uChapDataPreload[index].cropImage)!),
-              context);
         }
       }
     } catch (_) {}
@@ -1110,7 +1100,8 @@ class _MangaChapterPageGalleryState
         ref.watch(animatePageTransitionsStateProvider);
     if (isPrev) {
       if (readerMode == ReaderMode.verticalContinuous ||
-          readerMode == ReaderMode.webtoon) {
+          readerMode == ReaderMode.webtoon ||
+          readerMode == ReaderMode.horizontalContinuous) {
         if (index != -1) {
           if (isSlide) {
             _itemScrollController.jumpTo(
@@ -1144,7 +1135,8 @@ class _MangaChapterPageGalleryState
       }
     } else {
       if (readerMode == ReaderMode.verticalContinuous ||
-          readerMode == ReaderMode.webtoon) {
+          readerMode == ReaderMode.webtoon ||
+          readerMode == ReaderMode.horizontalContinuous) {
         if (isSlide) {
           _itemScrollController.jumpTo(
             index: index,
@@ -1282,6 +1274,25 @@ class _MangaChapterPageGalleryState
             setState(() {});
           }
         });
+      } else {
+        if (!mounted) return;
+        final ok = await ref.watch(
+            cropBordersProvider(data: _uChapDataPreload[i], cropBorder: true)
+                .future);
+        if (ok == null) {
+          ref.invalidate(cropBordersProvider(
+              data: _uChapDataPreload[i], cropBorder: true));
+          ref
+              .watch(cropBordersProvider(
+                      data: _uChapDataPreload[i], cropBorder: true)
+                  .future)
+              .then((value) {
+            _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
+            if (mounted) {
+              setState(() {});
+            }
+          });
+        }
       }
     }
   }
@@ -1300,8 +1311,13 @@ class _MangaChapterPageGalleryState
         setState(() {});
       }
     } else {
-      if (!_uChapDataPreload[index].isLocale! &&
-          _uChapDataPreload[index].cropImage == null) {
+      if (!mounted) return;
+      final ok = await ref.watch(
+          cropBordersProvider(data: _uChapDataPreload[index], cropBorder: true)
+              .future);
+      if (ok == null) {
+        ref.invalidate(cropBordersProvider(
+            data: _uChapDataPreload[index], cropBorder: true));
         ref
             .watch(cropBordersProvider(
                     data: _uChapDataPreload[index], cropBorder: true)
@@ -1309,10 +1325,10 @@ class _MangaChapterPageGalleryState
             .then((value) {
           _uChapDataPreload[index] = _uChapDataPreload[index]
             ..cropImage = value;
+          if (mounted) {
+            setState(() {});
+          }
         });
-        if (mounted) {
-          setState(() {});
-        }
       }
     }
   }
