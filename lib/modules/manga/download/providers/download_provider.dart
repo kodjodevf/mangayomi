@@ -234,7 +234,7 @@ Future<List<String>> downloadChapter(
     } else {
       savePageUrls();
       if (isManga) {
-        await FileDownloader(hasGPServices: hasGPServices).downloadBatch(
+        await FileDownloader(isAnime: false).downloadBatch(
           tasks,
           batchProgressCallback: (succeeded, failed) async {
             if (succeeded == tasks.length) {
@@ -289,7 +289,7 @@ Future<List<String>> downloadChapter(
           },
         );
       } else {
-        await FileDownloader(hasGPServices: hasGPServices).download(
+        await FileDownloader(isAnime: true).download(
           tasks.first,
           onProgress: (progress) async {
             bool isEmpty = isar.downloads

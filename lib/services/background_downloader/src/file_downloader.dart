@@ -15,8 +15,6 @@ import 'desktop/desktop_downloader.dart';
 
 /// Provides access to all functions of the plugin in a single place.
 interface class FileDownloader {
-  static FileDownloader? _singleton;
-
   /// If no group is specified the default group name will be used
   static const defaultGroup = 'default';
 
@@ -37,21 +35,14 @@ interface class FileDownloader {
   BaseDownloader get downloaderForTesting => _downloader;
 
   factory FileDownloader(
-      {PersistentStorage? persistentStorage, bool hasGPServices = false}) {
-    assert(
-        _singleton == null || persistentStorage == null,
-        'You can only supply a persistentStorage on the very first call to '
-        'FileDownloader()');
-    _singleton ??= FileDownloader._internal(
-        persistentStorage ?? LocalStorePersistentStorage(), hasGPServices);
-    return _singleton!;
+      {PersistentStorage? persistentStorage, bool isAnime = false}) {
+    return FileDownloader._internal(
+        persistentStorage ?? LocalStorePersistentStorage(), isAnime);
   }
 
-  FileDownloader._internal(
-      PersistentStorage persistentStorage, bool hasGPServices) {
+  FileDownloader._internal(PersistentStorage persistentStorage, bool isAnime) {
     database = Database(persistentStorage);
-    _downloader =
-        BaseDownloader.instance(persistentStorage, database, hasGPServices);
+    _downloader = BaseDownloader.instance(persistentStorage, database, isAnime);
   }
 
   /// True when initialization is complete and downloader ready for use
