@@ -145,7 +145,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       headers: _firstVid.headers));
 
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  bool _initSubtitle = true;
+  bool _initSubtitleAndAudio = true;
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
       ValueNotifier(_streamController.geTCurrentPosition());
@@ -164,24 +164,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _currentPosition.value = position;
 
       if ((_firstVid.subtitles ?? []).isNotEmpty) {
-        if (_initSubtitle) {
+        if (_initSubtitleAndAudio) {
           try {
             if (_firstVid.subtitles?.isNotEmpty ?? false) {
-              _player.setSubtitleTrack(SubtitleTrack.uri(
-                  _firstVid.subtitles?.first.file ?? "",
-                  title: _firstVid.subtitles?.first.label,
-                  language: _firstVid.subtitles?.first.label));
+              final file = _firstVid.subtitles?.first.file ?? "";
+              final label = _firstVid.subtitles?.first.label;
+              _player.setSubtitleTrack(file.startsWith("http")
+                  ? SubtitleTrack.uri(file, title: label, language: label)
+                  : SubtitleTrack.data(file, title: label, language: label));
             }
           } catch (_) {}
           try {
             if (_firstVid.audios?.isNotEmpty ?? false) {
-              _player.setSubtitleTrack(SubtitleTrack.uri(
+              _player.setAudioTrack(AudioTrack.uri(
                   _firstVid.audios?.first.file ?? "",
                   title: _firstVid.audios?.first.label,
                   language: _firstVid.audios?.first.label));
             }
           } catch (_) {}
-          _initSubtitle = false;
+          _initSubtitleAndAudio = false;
         }
       }
     },
@@ -415,10 +416,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       for (var video in widget.videos) {
         for (var sub in video.subtitles ?? []) {
           if (!subs.contains(sub.file)) {
+            final file = sub.file!;
+            final label = sub.label;
             videoSubtitle.add(VideoPrefs(
                 isLocal: false,
-                subtitle: SubtitleTrack.uri(sub.file!,
-                    title: sub.label, language: sub.label)));
+                subtitle: file.startsWith("http")
+                    ? SubtitleTrack.uri(file, title: label, language: label)
+                    : SubtitleTrack.data(file, title: label, language: label)));
             subs.add(sub.file!);
           }
         }
@@ -990,9 +994,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
       _key.currentState?.update(
-          fit: fit,
-          width: context.width(1),
-          height: context.height(1));
+          fit: fit, width: context.width(1), height: context.height(1));
     }
   }
 

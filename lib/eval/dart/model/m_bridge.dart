@@ -575,14 +575,18 @@ class MBridge {
 
   static String cryptoHandler(
       String text, String iv, String secretKeyString, bool encrypt) {
-    if (encrypt) {
-      final encryptt = _encrypt(secretKeyString, iv);
-      final en = encryptt.$1.encrypt(text, iv: encryptt.$2);
-      return en.base64;
-    } else {
-      final encryptt = _encrypt(secretKeyString, iv);
-      final en = encryptt.$1.decrypt64(text, iv: encryptt.$2);
-      return en;
+    try {
+      if (encrypt) {
+        final encryptt = _encrypt(secretKeyString, iv);
+        final en = encryptt.$1.encrypt(text, iv: encryptt.$2);
+        return en.base64;
+      } else {
+        final encryptt = _encrypt(secretKeyString, iv);
+        final en = encryptt.$1.decrypt64(text, iv: encryptt.$2);
+        return en;
+      }
+    } catch (_) {
+      return text;
     }
   }
 }
