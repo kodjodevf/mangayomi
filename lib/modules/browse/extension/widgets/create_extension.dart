@@ -205,7 +205,7 @@ Widget _textEditing(String label, BuildContext context, String hintText,
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 5),
     child: TextFormField(
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.text,
       onChanged: onChanged,
       decoration: InputDecoration(
           hintText: hintText,
