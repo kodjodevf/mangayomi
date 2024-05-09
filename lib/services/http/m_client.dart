@@ -50,7 +50,9 @@ class MClient {
     if (cookiesList.isEmpty) return {};
     final cookies = cookiesList
         .firstWhere(
-          (element) => element.host == Uri.parse(url).host,
+          (element) =>
+              element.host == Uri.parse(url).host ||
+              Uri.parse(url).host.contains(element.host!),
           orElse: () => MCookie(cookie: ""),
         )
         .cookie!;
