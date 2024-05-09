@@ -80,7 +80,7 @@ class MClient {
       final settings = isar.settings.getSync(227);
       List<MCookie>? cookieList = [];
       for (var cookie in settings!.cookiesList ?? []) {
-        if (cookie.host != host) {
+        if (cookie.host != host || (!host.contains(cookie.host))) {
           cookieList.add(cookie);
         }
       }
@@ -108,8 +108,12 @@ class MCookieManager extends InterceptorContract {
     final cookie = MClient.getCookiesPref(request.url.toString());
     if (cookie.isNotEmpty) {
       final userAgent = isar.settings.getSync(227)!.userAgent!;
-      request.headers.addAll(cookie);
-      request.headers[HttpHeaders.userAgentHeader] = userAgent;
+      if (request.headers[HttpHeaders.cookieHeader] == null) {
+        request.headers.addAll(cookie);
+      }
+      if (request.headers[HttpHeaders.userAgentHeader] == null) {
+        request.headers[HttpHeaders.userAgentHeader] = userAgent;
+      }
     }
     try {
       if (reqcopyWith != null) {
