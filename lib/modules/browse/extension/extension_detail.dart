@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
@@ -9,6 +10,7 @@ import 'package:mangayomi/modules/browse/extension/providers/extension_preferenc
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -167,6 +169,32 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         ),
                         const Icon(Icons.code)
                       ],
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: context.width(1),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        elevation: 0,
+                        shadowColor: Colors.transparent),
+                    onPressed: () async {
+                      MClient.deleteAllCookies(source.baseUrl ?? "");
+                      botToast("Cookies deleted!");
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Delete all cookies",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     )),
               ),
             ),

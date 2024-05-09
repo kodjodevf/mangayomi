@@ -95,6 +95,19 @@ class MClient {
       isar.writeTxnSync(() => isar.settings.putSync(settings!..userAgent = ua));
     }
   }
+
+  static void deleteAllCookies(String url) {
+    final cookiesList = isar.settings.getSync(227)!.cookiesList ?? [];
+    List<MCookie>? cookieList = [];
+    for (var cookie in cookiesList) {
+      if (!(cookie.host == Uri.parse(url).host ||
+          Uri.parse(url).host.contains(cookie.host!))) {
+        cookieList.add(cookie);
+      }
+    }
+    isar.writeTxnSync(() => isar.settings
+        .putSync(isar.settings.getSync(227)!..cookiesList = cookieList));
+  }
 }
 
 class MCookieManager extends InterceptorContract {

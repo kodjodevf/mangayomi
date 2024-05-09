@@ -201,6 +201,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                     url: Uri.parse(_url));
                               } else if (value == 3) {
                                 CookieManager.instance().deleteAllCookies();
+                                MClient.deleteAllCookies(_url);
                               }
                             }),
                       ],
