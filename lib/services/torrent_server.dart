@@ -88,7 +88,7 @@ class MTorrentServer {
     final videoList = <Video>[];
     const separator = "#EXTINF:";
     for (var e in masterPlaylist.substringAfter(separator).split(separator)) {
-      final fileName = e.substringAfter("0,").substringBefore("\n");
+      final fileName = e.substringAfter("-1,").substringBefore("\n");
       if (fileName.isMediaVideo()) {
         var videoUrl = e.substringAfter("\n").substringBefore("\n");
         videoList.add(Video(videoUrl, fileName, videoUrl));
