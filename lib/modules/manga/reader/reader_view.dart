@@ -913,24 +913,18 @@ class _MangaChapterPageGalleryState
             chapter = _uChapDataPreload[_currentIndex!].chapter!;
             _chapterUrlModel =
                 _uChapDataPreload[_currentIndex!].chapterUrlModel!;
+            _isBookmarked = _readerController.getChapterBookmarked();
           });
         }
       }
       if (_itemPositionsListener.itemPositions.value.last.index ==
           pagesLength - 1) {
-        _isBookmarked = _readerController.getChapterBookmarked();
         try {
-          bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-
-          final chapter =
-              hasNextChapter ? _readerController.getNextChapter() : null;
-          if (chapter != null) {
-            ref
-                .watch(getChapterPagesProvider(
-                  chapter: chapter,
-                ).future)
-                .then((value) => _preloadNextChapter(value, chapter));
-          }
+          ref
+              .watch(getChapterPagesProvider(
+                chapter: _readerController.getNextChapter(),
+              ).future)
+              .then((value) => _preloadNextChapter(value, chapter));
         } catch (_) {}
       }
 
@@ -1047,6 +1041,7 @@ class _MangaChapterPageGalleryState
               .notifier);
           chapter = _uChapDataPreload[_currentIndex!].chapter!;
           _chapterUrlModel = _uChapDataPreload[index].chapterUrlModel!;
+          _isBookmarked = _readerController.getChapterBookmarked();
         });
       }
     }
@@ -1057,18 +1052,12 @@ class _MangaChapterPageGalleryState
         .setCurrentIndex(_uChapDataPreload[index].index!);
 
     if (_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) {
-      _isBookmarked = _readerController.getChapterBookmarked();
       try {
-        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-        final chapter =
-            hasNextChapter ? _readerController.getNextChapter() : null;
-        if (chapter != null) {
-          ref
-              .watch(getChapterPagesProvider(chapter: chapter).future)
-              .then((value) {
-            _preloadNextChapter(value, chapter);
-          });
-        }
+        ref
+            .watch(getChapterPagesProvider(
+              chapter: _readerController.getNextChapter(),
+            ).future)
+            .then((value) => _preloadNextChapter(value, chapter));
       } catch (_) {}
     }
   }
@@ -1274,25 +1263,6 @@ class _MangaChapterPageGalleryState
             setState(() {});
           }
         });
-      } else {
-        if (!mounted) return;
-        final ok = await ref.watch(
-            cropBordersProvider(data: _uChapDataPreload[i], cropBorder: true)
-                .future);
-        if (ok == null) {
-          ref.invalidate(cropBordersProvider(
-              data: _uChapDataPreload[i], cropBorder: true));
-          ref
-              .watch(cropBordersProvider(
-                      data: _uChapDataPreload[i], cropBorder: true)
-                  .future)
-              .then((value) {
-            _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
-            if (mounted) {
-              setState(() {});
-            }
-          });
-        }
       }
     }
   }
@@ -1309,26 +1279,6 @@ class _MangaChapterPageGalleryState
       });
       if (mounted) {
         setState(() {});
-      }
-    } else {
-      if (!mounted) return;
-      final ok = await ref.watch(
-          cropBordersProvider(data: _uChapDataPreload[index], cropBorder: true)
-              .future);
-      if (ok == null) {
-        ref.invalidate(cropBordersProvider(
-            data: _uChapDataPreload[index], cropBorder: true));
-        ref
-            .watch(cropBordersProvider(
-                    data: _uChapDataPreload[index], cropBorder: true)
-                .future)
-            .then((value) {
-          _uChapDataPreload[index] = _uChapDataPreload[index]
-            ..cropImage = value;
-          if (mounted) {
-            setState(() {});
-          }
-        });
       }
     }
   }

@@ -160,7 +160,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                             setState(() {
                               source?.sourceCode = a;
                             });
-                            if (source != null) {
+                            if (source != null && mounted) {
                               isar.writeTxnSync(
                                   () => isar.sources.putSync(source!));
                             }
