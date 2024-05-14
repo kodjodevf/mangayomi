@@ -39,6 +39,18 @@ console.log = function (message) {
       }
     sendMessage("log", JSON.stringify([message.toString()]));
 };
+console.warn = function (message) {
+    if (typeof message === "object") {
+         message = JSON.stringify(message);
+      }
+    sendMessage("log", JSON.stringify([message.toString()]));
+};
+console.error = function (message) {
+    if (typeof message === "object") {
+         message = JSON.stringify(message);
+      }
+    sendMessage("log", JSON.stringify([message.toString()]));
+};
 String.prototype.substringAfter = function(pattern) {
     const startIndex = this.indexOf(pattern);
     if (startIndex === -1) return this.substring(0);

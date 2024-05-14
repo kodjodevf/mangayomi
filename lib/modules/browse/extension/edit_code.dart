@@ -435,7 +435,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                     final value = logs[index];
                     return SelectableText(value.$2,
                         style: TextStyle(
-                            color: value.$1 == LoggerLevel.warning
+                            color: value.$1 == LoggerLevel.info
                                 ? Colors.yellow
                                 : Colors.blueAccent));
                   },
