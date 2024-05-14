@@ -325,7 +325,7 @@ Widget iconButton(IconData icon, void Function()? onPressed,
         child: IconButton(
             iconSize: size * 0.9,
             style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(backgroundColor)),
+                backgroundColor: WidgetStatePropertyAll(backgroundColor)),
             padding: const EdgeInsets.all(1),
             onPressed: onPressed,
             icon: Icon(icon, color: iconColors)),

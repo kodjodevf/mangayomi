@@ -441,13 +441,13 @@ packages:
     source: hosted
     version: "7.3.1"
   flex_seed_scheme:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: flex_seed_scheme
-      sha256: "29c12aba221eb8a368a119685371381f8035011d18de5ba277ad11d7dfb8657f"
+      sha256: "116dc56093aa4e64d2f03135957b5ef61b1134a4a4990c66f76bc635903d0d8c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "2.0.0-dev.1"
   flutter:
     dependency: "direct main"
     description: flutter

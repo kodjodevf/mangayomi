@@ -54,7 +54,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               width: 4,
                             ),
                             unselectedBorder: BorderSide.none,
-                            backgroundColor: scheme.background,
+                            backgroundColor: scheme.surface,
                             width: width,
                             height: height,
                             padding: EdgeInsets.zero,

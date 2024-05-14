@@ -107,7 +107,7 @@ class SourceListTile extends StatelessWidget {
                 // if (supportsLatest) {
                 return TextButton(
                     style: const ButtonStyle(
-                        padding: MaterialStatePropertyAll(EdgeInsets.all(10))),
+                        padding: WidgetStatePropertyAll(EdgeInsets.all(10))),
                     onPressed: () =>
                         context.push('/mangaHome', extra: (source, true)),
                     child: Text(context.l10n.latest));
