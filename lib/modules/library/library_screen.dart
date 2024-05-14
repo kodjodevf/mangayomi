@@ -518,6 +518,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         mangaIds: mangaIds)
                                     .notifier)
                                 .set();
+                            ref.invalidate(
+                                getAllMangaWithoutCategoriesStreamProvider(
+                                    isManga: widget.isManga));
+                            ref.invalidate(getAllMangaStreamProvider(
+                                categoryId: null, isManga: widget.isManga));
                           },
                           child: Icon(
                             Icons.done_all_sharp,
@@ -540,6 +545,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         mangaIds: mangaIds)
                                     .notifier)
                                 .set();
+                            ref.invalidate(
+                                getAllMangaWithoutCategoriesStreamProvider(
+                                    isManga: widget.isManga));
+                            ref.invalidate(getAllMangaStreamProvider(
+                                categoryId: null, isManga: widget.isManga));
                           },
                           child: Icon(
                             Icons.remove_done_sharp,
@@ -925,7 +935,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     return mangas;
   }
 
-  _openCategory() {
+  void _openCategory() {
     List<int> categoryIds = [];
     showDialog(
         context: context,
@@ -1067,7 +1077,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         });
   }
 
-  _deleteManga() {
+  void _deleteManga() {
     List<int> fromLibList = [];
     List<int> downloadedChapsList = [];
     showDialog(
@@ -1221,7 +1231,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         });
   }
 
-  _showDraggableMenu(Settings settings) {
+  void _showDraggableMenu(Settings settings) {
     final l10n = l10nLocalizations(context)!;
     customDraggableTabBar(tabs: [
       Tab(text: l10n.filter),

@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -48,16 +49,20 @@ class LibraryListViewWidget extends StatelessWidget {
             color: Colors.transparent,
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: InkWell(
-              onTap: () {
+              onTap: () async {
                 if (isLongPressed) {
                   ref.read(mangasListStateProvider.notifier).update(entry);
                 } else {
-                  pushToMangaReaderDetail(
+                  await pushToMangaReaderDetail(
                       archiveId: isLocalArchive ? entry.id : null,
                       context: context,
                       lang: entry.lang!,
                       mangaM: entry,
                       source: entry.source!);
+                  ref.invalidate(getAllMangaWithoutCategoriesStreamProvider(
+                      isManga: entry.isManga));
+                  ref.invalidate(getAllMangaStreamProvider(
+                      categoryId: null, isManga: entry.isManga));
                 }
               },
               onLongPress: () {

@@ -485,9 +485,9 @@ class LibraryLocalSourceState extends _$LibraryLocalSourceState {
   void set(bool value) {
     Settings appSettings = Settings();
     if (isManga) {
-      appSettings = settings..libraryShowLanguage = value;
+      appSettings = settings..libraryLocalSource = value;
     } else {
-      appSettings = settings..animeLibraryShowLanguage = value;
+      appSettings = settings..animeLibraryLocalSource = value;
     }
     state = value;
     isar.writeTxnSync(() {

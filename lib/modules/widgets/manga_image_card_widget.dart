@@ -245,7 +245,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
   }
 }
 
-void pushToMangaReaderDetail(
+Future<void> pushToMangaReaderDetail(
     {MManga? getManga,
     required String lang,
     required BuildContext context,
@@ -254,7 +254,7 @@ void pushToMangaReaderDetail(
     Manga? mangaM,
     bool? isManga,
     bool useMaterialRoute = false,
-    bool addToFavourite = false}) {
+    bool addToFavourite = false}) async {
   int? mangaId;
   if (archiveId == null) {
     final manga = mangaM ??
@@ -333,14 +333,14 @@ void pushToMangaReaderDetail(
   }
   if (!addToFavourite) {
     if (useMaterialRoute) {
-      Navigator.push(
+      await Navigator.push(
           context,
           createRoute(
               page: MangaReaderDetail(
             mangaId: mangaId,
           )));
     } else {
-      context.push('/manga-reader/detail', extra: mangaId);
+      await context.push('/manga-reader/detail', extra: mangaId);
     }
   } else {
     final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;

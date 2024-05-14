@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -85,16 +86,20 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                             : ref.watch(headersProvider(
                                 source: entry.source!, lang: entry.lang!)),
                       ),
-                onTap: () {
+                onTap: () async {
                   if (isLongPressed) {
                     ref.read(mangasListStateProvider.notifier).update(entry);
                   } else {
-                    pushToMangaReaderDetail(
+                    await pushToMangaReaderDetail(
                         archiveId: isLocalArchive ? entry.id : null,
                         context: context,
                         lang: entry.lang!,
                         mangaM: entry,
                         source: entry.source!);
+                    ref.invalidate(getAllMangaWithoutCategoriesStreamProvider(
+                        isManga: widget.isManga));
+                    ref.invalidate(getAllMangaStreamProvider(
+                        categoryId: null, isManga: widget.isManga));
                   }
                 },
                 onLongPress: () {
@@ -134,7 +139,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                               ),
                               child: Row(
                                 children: [
-                                  if (widget.localSource || isLocalArchive)
+                                  if (widget.localSource && isLocalArchive)
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.only(
@@ -142,12 +147,14 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                             bottomLeft: Radius.circular(3)),
                                         color: Theme.of(context).hintColor,
                                       ),
-                                      child: const Padding(
-                                        padding:
-                                            EdgeInsets.only(left: 3, right: 3),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 3, right: 3),
                                         child: Text(
                                           "Local",
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(
+                                              color: context
+                                                  .dynamicBlackWhiteColor),
                                         ),
                                       ),
                                     ),
@@ -205,7 +212,8 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                 ),
                                               ),
                                             Padding(
-                                              padding: const EdgeInsets.only(left: 3),
+                                              padding: const EdgeInsets.only(
+                                                  left: 3),
                                               child: Text(
                                                 entry.chapters
                                                     .where((element) =>

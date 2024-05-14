@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
@@ -268,29 +269,9 @@ class MainScreen extends ConsumerWidget {
         );
       });
     }, error: (error, _) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Image.asset(
-            "assets/app_icons/icon.png",
-            color: Colors.black,
-            fit: BoxFit.cover,
-            height: 100,
-          ),
-        ),
-      );
+      return const LoadingIcon();
     }, loading: () {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Image.asset(
-            "assets/app_icons/icon.png",
-            color: Colors.black,
-            fit: BoxFit.cover,
-            height: 100,
-          ),
-        ),
-      );
+      return const LoadingIcon();
     });
   }
 }
