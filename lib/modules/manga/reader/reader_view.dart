@@ -1426,41 +1426,41 @@ class _MangaChapterPageGalleryState
         child: Column(
           children: [
             Flexible(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 23,
-                      backgroundColor: _backgroundColor(context),
-                      child: IconButton(
-                          onPressed: hasPrevChapter
-                              ? () {
-                                  pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter:
-                                          _readerController.getPrevChapter());
-                                }
-                              : null,
-                          icon: Transform.scale(
-                            scaleX: 1,
-                            child: Icon(Icons.skip_previous_rounded,
-                                color: hasPrevChapter
-                                    ? Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color!
-                                        .withOpacity(0.4)),
-                          )),
+              child: Transform.scale(
+                scaleX: !_isReverseHorizontal ? 1 : -1,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                            onPressed: hasPrevChapter
+                                ? () {
+                                    pushReplacementMangaReaderView(
+                                        context: context,
+                                        chapter:
+                                            _readerController.getPrevChapter());
+                                  }
+                                : null,
+                            icon: Transform.scale(
+                              scaleX: 1,
+                              child: Icon(Icons.skip_previous_rounded,
+                                  color: hasPrevChapter
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color!
+                                          .withOpacity(0.4)),
+                            )),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: Transform.scale(
-                      scaleX: !_isReverseHorizontal ? 1 : -1,
+                    Flexible(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
@@ -1602,39 +1602,39 @@ class _MangaChapterPageGalleryState
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 23,
-                      backgroundColor: _backgroundColor(context),
-                      child: IconButton(
-                        onPressed: hasNextChapter
-                            ? () {
-                                pushReplacementMangaReaderView(
-                                  context: context,
-                                  chapter: _readerController.getNextChapter(),
-                                );
-                              }
-                            : null,
-                        icon: Transform.scale(
-                          scaleX: 1,
-                          child: Icon(
-                            Icons.skip_next_rounded,
-                            color: hasNextChapter
-                                ? Theme.of(context).textTheme.bodyLarge!.color
-                                : Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .color!
-                                    .withOpacity(0.4),
-                            // size: 17,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                          onPressed: hasNextChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: _readerController.getNextChapter(),
+                                  );
+                                }
+                              : null,
+                          icon: Transform.scale(
+                            scaleX: 1,
+                            child: Icon(
+                              Icons.skip_next_rounded,
+                              color: hasNextChapter
+                                  ? Theme.of(context).textTheme.bodyLarge!.color
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color!
+                                      .withOpacity(0.4),
+                              // size: 17,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             Flexible(
