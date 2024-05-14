@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'dart:isolate';
-
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,6 @@ import 'package:logging/logging.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-
 import '../base_downloader.dart';
 import '../chunk.dart';
 import '../exceptions.dart';
@@ -34,7 +32,7 @@ const okResponses = [200, 201, 202, 203, 204, 205, 206];
 final class DesktopDownloader extends BaseDownloader {
   static final _log = Logger('DesktopDownloader');
   static const unlimited = 1 << 20;
-  var maxConcurrent = 20;
+  var maxConcurrent = 10;
   var maxConcurrentByHost = unlimited;
   var maxConcurrentByGroup = unlimited;
   static final DesktopDownloader _singleton = DesktopDownloader._internal();
@@ -565,12 +563,12 @@ final class DesktopDownloader extends BaseDownloader {
   ///
   /// This is a convenience method, bundling the [requestTimeout],
   /// [proxy] and [bypassTLSCertificateValidation]
-  static Future<void> setHttpClient(Duration? requestTimeout,
-      Map<String, dynamic> proxy, bool bypassTLSCertificateValidation) async {
+  static void setHttpClient(Duration? requestTimeout,
+      Map<String, dynamic> proxy, bool bypassTLSCertificateValidation) {
     _requestTimeout = requestTimeout;
     _proxy = proxy;
     _bypassTLSCertificateValidation = bypassTLSCertificateValidation;
-    await _recreateClient();
+    _recreateClient();
   }
 
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads

@@ -197,7 +197,7 @@ sealed class TaskUpdate {
 /// [responseHeaders], [responseStatusCode], [mimeType] and [charSet].
 /// Note: header names in [responseHeaders] are converted to lowercase
 class TaskStatusUpdate extends TaskUpdate {
-  final TaskStatus status;
+  final TaskStatus status; // note: serialized as 'taskStatus'
   final TaskException? exception;
   final String? responseBody;
   final int? responseStatusCode;
@@ -220,8 +220,10 @@ class TaskStatusUpdate extends TaskUpdate {
             ? TaskException.fromJson(json['exception'])
             : null,
         responseBody = json['responseBody'],
-        responseHeaders = json['responseHeaders'],
-        responseStatusCode = json['responseStatusCode'],
+        responseHeaders = json['responseHeaders'] != null
+            ? Map.from(json['responseHeaders'])
+            : null,
+        responseStatusCode = (json['responseStatusCode'] as num?)?.toInt(),
         mimeType = json['mimeType'],
         charSet = json['charSet'],
         super.fromJson();

@@ -9,7 +9,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'dart:math';
 
-import 'utils/io.dart';
+import 'utils/html.dart' if (dart.library.io) 'utils/io.dart';
 
 part 'collection_ref.dart';
 part 'collection_ref_impl.dart';

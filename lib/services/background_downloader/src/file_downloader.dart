@@ -1,20 +1,17 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
+import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:logging/logging.dart';
-import 'package:mangayomi/services/background_downloader/background_downloader.dart';
-
 import 'base_downloader.dart';
 import 'localstore/localstore.dart';
 import 'desktop/desktop_downloader.dart';
 
 /// Provides access to all functions of the plugin in a single place.
 interface class FileDownloader {
+  static FileDownloader? _singleton;
+
   /// If no group is specified the default group name will be used
   static const defaultGroup = 'default';
 
@@ -36,8 +33,13 @@ interface class FileDownloader {
 
   factory FileDownloader(
       {PersistentStorage? persistentStorage, bool isAnime = false}) {
-    return FileDownloader._internal(
+    assert(
+        _singleton == null || persistentStorage == null,
+        'You can only supply a persistentStorage on the very first call to '
+        'FileDownloader()');
+    _singleton ??= FileDownloader._internal(
         persistentStorage ?? LocalStorePersistentStorage(), isAnime);
+    return _singleton!;
   }
 
   FileDownloader._internal(PersistentStorage persistentStorage, bool isAnime) {
@@ -268,6 +270,32 @@ interface class FileDownloader {
       _downloader.enqueueAndAwait(task,
           onStatus: onStatus,
           onProgress: onProgress,
+          onElapsedTime: onElapsedTime,
+          elapsedTimeInterval: elapsedTimeInterval);
+
+  /// Transmit data in the [DataTask] and receive the response
+  ///
+  /// Different from [enqueue], this method returns a [Future] that completes
+  /// when the [DataTask] has completed, or an error has occurred.
+  /// While it uses the same mechanism as [enqueue],
+  /// and will execute the task also when
+  /// the app moves to the background, it is meant for data tasks that are
+  /// awaited while the app is in the foreground.
+  ///
+  /// [onStatus] is an optional callback for status updates
+  ///
+  /// An optional callback [onElapsedTime] will be called at regular intervals
+  /// (defined by [elapsedTimeInterval], which defaults to 5 seconds) with a
+  /// single argument that is the elapsed time since the call to [transmit].
+  /// This can be used to trigger UI warnings (e.g. 'this is taking rather long')
+  /// For performance reasons the [elapsedTimeInterval] should not be set to
+  /// a value less than one second.
+  Future<TaskStatusUpdate> transmit(DataTask task,
+          {void Function(TaskStatus)? onStatus,
+          void Function(Duration)? onElapsedTime,
+          Duration? elapsedTimeInterval}) =>
+      _downloader.enqueueAndAwait(task,
+          onStatus: onStatus,
           onElapsedTime: onElapsedTime,
           elapsedTimeInterval: elapsedTimeInterval);
 
@@ -864,13 +892,7 @@ Future<http.Response> _doRequest(
     (Request, Duration?, Map<String, dynamic>, bool) params) async {
   final (request, requestTimeout, proxy, bypassTLSCertificateValidation) =
       params;
-  Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((LogRecord rec) {
-    if (kDebugMode) {
-      print('${rec.loggerName}>${rec.level.name}: ${rec.time}: ${rec.message}');
-    }
-  });
-  final log = Logger('FileDownloader.request');
+
   DesktopDownloader.setHttpClient(
       requestTimeout, proxy, bypassTLSCertificateValidation);
   final client = DesktopDownloader.httpClient;
@@ -895,7 +917,6 @@ Future<http.Response> _doRequest(
         return response;
       }
     } catch (e) {
-      log.warning(e);
       response = http.Response('', 499, reasonPhrase: e.toString());
     }
     // error, retry if allowed

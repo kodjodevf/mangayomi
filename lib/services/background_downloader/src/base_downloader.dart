@@ -3,19 +3,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader.dart';
 import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_anime.dart';
-
 import 'database.dart';
 import 'exceptions.dart';
 import 'models.dart';
 import 'persistent_storage.dart';
 import 'queue/task_queue.dart';
 import 'task.dart';
-import 'desktop/desktop_downloader.dart';
 
 /// Common download functionality
 ///
@@ -94,7 +92,8 @@ abstract base class BaseDownloader {
   final canResumeTask = <Task, Completer<bool>>{};
 
   /// Flag indicating we have retrieved missed data
-  var _retrievedLocallyStoredData = false;
+  @visibleForTesting
+  var retrievedLocallyStoredData = false;
 
   /// Connected TaskQueues that will receive a signal upon task completion
   final taskQueues = <TaskQueue>[];
@@ -171,7 +170,7 @@ abstract base class BaseDownloader {
   /// Retrieve data that was stored locally because it could not be
   /// delivered to the downloader
   Future<void> retrieveLocallyStoredData() async {
-    if (!_retrievedLocallyStoredData) {
+    if (!retrievedLocallyStoredData) {
       final resumeDataMap = await popUndeliveredData(Undelivered.resumeData);
       for (var jsonString in resumeDataMap.values) {
         final resumeData = ResumeData.fromJsonString(jsonString);
@@ -188,7 +187,7 @@ abstract base class BaseDownloader {
       for (var jsonString in progressUpdateMap.values) {
         processProgressUpdate(TaskProgressUpdate.fromJsonString(jsonString));
       }
-      _retrievedLocallyStoredData = true;
+      retrievedLocallyStoredData = true;
     }
   }
 
@@ -196,7 +195,7 @@ abstract base class BaseDownloader {
   ///
   /// Matches on task, then on group, then on default
   TaskNotificationConfig? notificationConfigForTask(Task task) {
-    if (task.group == chunkGroup) {
+    if (task.group == chunkGroup || task is DataTask) {
       return null;
     }
     return notificationConfigs

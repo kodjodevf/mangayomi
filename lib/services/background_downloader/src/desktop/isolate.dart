@@ -7,12 +7,15 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:async/async.dart';
+import 'package:mangayomi/services/background_downloader/src/exceptions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
-import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 
+import '../models.dart';
+import '../task.dart';
+import 'data_isolate.dart';
 import 'desktop_downloader.dart';
 import 'download_isolate.dart';
 import 'parallel_download_isolate.dart';
@@ -62,7 +65,7 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
     bool isResume,
     Duration? requestTimeout,
     Map<String, dynamic> proxy,
-    bool bypassTLSCertificateValidation,
+    bool bypassTLSCertificateValidation
   ) = await messagesToIsolate.next;
   DesktopDownloader.setHttpClient(
       requestTimeout, proxy, bypassTLSCertificateValidation);
@@ -95,7 +98,8 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
           sendPort),
       DownloadTask() => doDownloadTask(task, filePath, resumeData, isResume,
           requestTimeout ?? const Duration(seconds: 60), sendPort),
-      UploadTask() => doUploadTask(task, filePath, sendPort)
+      UploadTask() => doUploadTask(task, filePath, sendPort),
+      DataTask() => doDataTask(task, sendPort)
     };
   }
   receivePort.close();
