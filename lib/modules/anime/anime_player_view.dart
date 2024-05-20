@@ -347,7 +347,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
                 selected),
             onTap: () {
-              _video.value = quality; // change the video quality
+              _video.value = quality;
               if (quality.isLocal) {
                 if (widget.isLocal) {
                   _player.setVideoTrack(quality.videoTrack!);
@@ -389,8 +389,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       moreWidget: IconButton(
           onPressed: () async {
             await customDraggableTabBar(tabs: [
-              const Tab(text: "Font"),
-              const Tab(text: "Color"),
+              Tab(text: l10n.font),
+              Tab(text: l10n.color),
             ], children: [
               FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
               ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
