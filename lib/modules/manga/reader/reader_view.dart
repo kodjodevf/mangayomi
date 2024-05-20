@@ -473,374 +473,385 @@ class _MangaChapterPageGalleryState
 
           return true;
         },
-        child: SafeArea(
-          top: !fullScreenReader,
-          child: ValueListenableBuilder(
-              valueListenable: _failedToLoadImage,
-              builder: (context, failedToLoadImage, child) {
-                return Stack(
-                  children: [
-                    _isVerticalOrHorizontalContinous()
-                        ? PhotoViewGallery.builder(
-                            itemCount: 1,
-                            builder: (_, __) =>
-                                PhotoViewGalleryPageOptions.customChild(
-                                    controller: _photoViewController,
-                                    scaleStateController:
-                                        _photoViewScaleStateController,
-                                    basePosition: _scalePosition,
-                                    onScaleEnd: _onScaleEnd,
-                                    child: ScrollablePositionedList.separated(
-                                      scrollDirection: isHorizontalContinuaous
-                                          ? Axis.horizontal
-                                          : Axis.vertical,
-                                      minCacheExtent:
-                                          pagePreloadAmount * context.height(1),
-                                      initialScrollIndex:
-                                          _readerController.getPageIndex(),
-                                      itemCount:
-                                          (_pageMode == PageMode.doublePage &&
-                                                  !isHorizontalContinuaous)
-                                              ? (_uChapDataPreload.length / 2)
-                                                      .ceil() +
-                                                  1
-                                              : _uChapDataPreload.length,
+        child: Material(
+          child: SafeArea(
+            top: !fullScreenReader,
+            child: ValueListenableBuilder(
+                valueListenable: _failedToLoadImage,
+                builder: (context, failedToLoadImage, child) {
+                  return Stack(
+                    children: [
+                      _isVerticalOrHorizontalContinous()
+                          ? PhotoViewGallery.builder(
+                              itemCount: 1,
+                              builder: (_, __) =>
+                                  PhotoViewGalleryPageOptions.customChild(
+                                      controller: _photoViewController,
+                                      scaleStateController:
+                                          _photoViewScaleStateController,
+                                      basePosition: _scalePosition,
+                                      onScaleEnd: _onScaleEnd,
+                                      child: ScrollablePositionedList.separated(
+                                        scrollDirection: isHorizontalContinuaous
+                                            ? Axis.horizontal
+                                            : Axis.vertical,
+                                        minCacheExtent: pagePreloadAmount *
+                                            context.height(1),
+                                        initialScrollIndex:
+                                            _readerController.getPageIndex(),
+                                        itemCount:
+                                            (_pageMode == PageMode.doublePage &&
+                                                    !isHorizontalContinuaous)
+                                                ? (_uChapDataPreload.length / 2)
+                                                        .ceil() +
+                                                    1
+                                                : _uChapDataPreload.length,
+                                        physics: const ClampingScrollPhysics(),
+                                        itemScrollController:
+                                            _itemScrollController,
+                                        scrollOffsetController:
+                                            _pageOffsetController,
+                                        itemPositionsListener:
+                                            _itemPositionsListener,
+                                        itemBuilder: (context, index) {
+                                          int index1 = index * 2 - 1;
+                                          int index2 = index1 + 1;
+                                          return GestureDetector(
+                                            behavior:
+                                                HitTestBehavior.translucent,
+                                            onDoubleTapDown: (details) {
+                                              _toggleScale(
+                                                  details.globalPosition);
+                                            },
+                                            onDoubleTap: () {},
+                                            child: (_pageMode ==
+                                                        PageMode.doublePage &&
+                                                    !isHorizontalContinuaous)
+                                                ? DoubleColummVerticalView(
+                                                    datas: index == 0
+                                                        ? [
+                                                            _uChapDataPreload[
+                                                                0],
+                                                            null
+                                                          ]
+                                                        : [
+                                                            index1 <
+                                                                    _uChapDataPreload
+                                                                        .length
+                                                                ? _uChapDataPreload[
+                                                                    index1]
+                                                                : null,
+                                                            index2 <
+                                                                    _uChapDataPreload
+                                                                        .length
+                                                                ? _uChapDataPreload[
+                                                                    index2]
+                                                                : null,
+                                                          ],
+                                                    scale: (a) {},
+                                                    backgroundColor:
+                                                        backgroundColor,
+                                                    isFailedToLoadImage:
+                                                        (val) {},
+                                                    onLongPressData: (datas) {
+                                                      _onLongPressImageDialog(
+                                                          datas, context);
+                                                    },
+                                                  )
+                                                : ImageViewVertical(
+                                                    data: _uChapDataPreload[
+                                                        index],
+                                                    failedToLoadImage: (value) {
+                                                      // _failedToLoadImage.value = value;
+                                                    },
+                                                    onLongPressData: (datas) {
+                                                      _onLongPressImageDialog(
+                                                          datas, context);
+                                                    },
+                                                    isHorizontal: ref.watch(
+                                                            _currentReaderMode) ==
+                                                        ReaderMode
+                                                            .horizontalContinuous,
+                                                  ),
+                                          );
+                                        },
+                                        separatorBuilder: (_, __) => ref.watch(
+                                                    _currentReaderMode) ==
+                                                ReaderMode.webtoon
+                                            ? const SizedBox.shrink()
+                                            : ref.watch(_currentReaderMode) ==
+                                                    ReaderMode
+                                                        .horizontalContinuous
+                                                ? VerticalDivider(
+                                                    color: getBackgroundColor(
+                                                        backgroundColor),
+                                                    width: 6)
+                                                : Divider(
+                                                    color: getBackgroundColor(
+                                                        backgroundColor),
+                                                    height: 6),
+                                      )),
+                            )
+                          : Material(
+                              color: getBackgroundColor(backgroundColor),
+                              shadowColor: getBackgroundColor(backgroundColor),
+                              child: (_pageMode == PageMode.doublePage &&
+                                      !isHorizontalContinuaous)
+                                  ? ExtendedImageGesturePageView.builder(
+                                      controller: _extendedController,
+                                      scrollDirection: _scrollDirection,
+                                      reverse: _isReverseHorizontal,
                                       physics: const ClampingScrollPhysics(),
-                                      itemScrollController:
-                                          _itemScrollController,
-                                      scrollOffsetController:
-                                          _pageOffsetController,
-                                      itemPositionsListener:
-                                          _itemPositionsListener,
+                                      canScrollPage: (_) {
+                                        return _horizontalScaleValue == 1.0;
+                                      },
                                       itemBuilder: (context, index) {
                                         int index1 = index * 2 - 1;
                                         int index2 = index1 + 1;
-                                        return GestureDetector(
-                                          behavior: HitTestBehavior.translucent,
-                                          onDoubleTapDown:
-                                              (TapDownDetails details) {
-                                            _toggleScale(
-                                                details.globalPosition);
+                                        final pageList = (index == 0
+                                            ? [_uChapDataPreload[0], null]
+                                            : [
+                                                index1 <
+                                                        _uChapDataPreload.length
+                                                    ? _uChapDataPreload[index1]
+                                                    : null,
+                                                index2 <
+                                                        _uChapDataPreload.length
+                                                    ? _uChapDataPreload[index2]
+                                                    : null,
+                                              ]);
+                                        return DoubleColummView(
+                                          datas: _isReverseHorizontal
+                                              ? pageList.reversed.toList()
+                                              : pageList,
+                                          backgroundColor: backgroundColor,
+                                          isFailedToLoadImage: (val) {
+                                            if (_failedToLoadImage.value !=
+                                                    val &&
+                                                mounted) {
+                                              _failedToLoadImage.value = val;
+                                            }
                                           },
-                                          onDoubleTap: () {},
-                                          child: (_pageMode ==
-                                                      PageMode.doublePage &&
-                                                  !isHorizontalContinuaous)
-                                              ? DoubleColummVerticalView(
-                                                  datas: index == 0
-                                                      ? [
-                                                          _uChapDataPreload[0],
-                                                          null
-                                                        ]
-                                                      : [
-                                                          index1 <
-                                                                  _uChapDataPreload
-                                                                      .length
-                                                              ? _uChapDataPreload[
-                                                                  index1]
-                                                              : null,
-                                                          index2 <
-                                                                  _uChapDataPreload
-                                                                      .length
-                                                              ? _uChapDataPreload[
-                                                                  index2]
-                                                              : null,
-                                                        ],
-                                                  scale: (a) {},
-                                                  backgroundColor:
-                                                      backgroundColor,
-                                                  isFailedToLoadImage: (val) {},
-                                                  onLongPressData: (datas) {
-                                                    _onLongPressImageDialog(
-                                                        datas, context);
-                                                  },
-                                                )
-                                              : ImageViewVertical(
-                                                  data:
-                                                      _uChapDataPreload[index],
-                                                  failedToLoadImage: (value) {
-                                                    // _failedToLoadImage.value = value;
-                                                  },
-                                                  onLongPressData: (datas) {
-                                                    _onLongPressImageDialog(
-                                                        datas, context);
-                                                  },
-                                                  isHorizontal: ref.watch(
-                                                          _currentReaderMode) ==
-                                                      ReaderMode
-                                                          .horizontalContinuous,
-                                                ),
+                                          onLongPressData: (datas) {
+                                            _onLongPressImageDialog(
+                                                datas, context);
+                                          },
                                         );
                                       },
-                                      separatorBuilder: (_, __) =>
-                                          ref.watch(_currentReaderMode) ==
-                                                  ReaderMode.webtoon
-                                              ? const SizedBox.shrink()
-                                              : ref.watch(_currentReaderMode) ==
-                                                      ReaderMode
-                                                          .horizontalContinuous
-                                                  ? VerticalDivider(
-                                                      color: getBackgroundColor(
-                                                          backgroundColor),
-                                                      width: 6)
-                                                  : Divider(
-                                                      color: getBackgroundColor(
-                                                          backgroundColor),
-                                                      height: 6),
-                                    )),
-                          )
-                        : Material(
-                            color: getBackgroundColor(backgroundColor),
-                            shadowColor: getBackgroundColor(backgroundColor),
-                            child: (_pageMode == PageMode.doublePage &&
-                                    !isHorizontalContinuaous)
-                                ? ExtendedImageGesturePageView.builder(
-                                    controller: _extendedController,
-                                    scrollDirection: _scrollDirection,
-                                    reverse: _isReverseHorizontal,
-                                    physics: const ClampingScrollPhysics(),
-                                    canScrollPage: (_) {
-                                      return _horizontalScaleValue == 1.0;
-                                    },
-                                    itemBuilder: (context, index) {
-                                      int index1 = index * 2 - 1;
-                                      int index2 = index1 + 1;
-                                      final pageList = (index == 0
-                                          ? [_uChapDataPreload[0], null]
-                                          : [
-                                              index1 < _uChapDataPreload.length
-                                                  ? _uChapDataPreload[index1]
-                                                  : null,
-                                              index2 < _uChapDataPreload.length
-                                                  ? _uChapDataPreload[index2]
-                                                  : null,
-                                            ]);
-                                      return DoubleColummView(
-                                        datas: _isReverseHorizontal
-                                            ? pageList.reversed.toList()
-                                            : pageList,
-                                        scale: (a) {},
-                                        backgroundColor: backgroundColor,
-                                        isFailedToLoadImage: (val) {
-                                          if (_failedToLoadImage.value != val &&
-                                              mounted) {
-                                            _failedToLoadImage.value = val;
-                                          }
-                                        },
-                                        onLongPressData: (datas) {
-                                          _onLongPressImageDialog(
-                                              datas, context);
-                                        },
-                                      );
-                                    },
-                                    itemCount:
-                                        (_uChapDataPreload.length / 2).ceil() +
-                                            1,
-                                    onPageChanged: _onPageChanged)
-                                : ExtendedImageGesturePageView.builder(
-                                    controller: _extendedController,
-                                    scrollDirection: _scrollDirection,
-                                    reverse: _isReverseHorizontal,
-                                    physics: const ClampingScrollPhysics(),
-                                    canScrollPage: (gestureDetails) {
-                                      return gestureDetails != null
-                                          ? !(gestureDetails.totalScale! > 1.0)
-                                          : true;
-                                    },
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return ImageViewCenter(
-                                        data: _uChapDataPreload[index],
-                                        loadStateChanged: (state) {
-                                          if (state.extendedImageLoadState ==
-                                              LoadState.loading) {
-                                            final ImageChunkEvent?
-                                                loadingProgress =
-                                                state.loadingProgress;
-                                            final double progress = loadingProgress
-                                                        ?.expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress!
-                                                        .cumulativeBytesLoaded /
-                                                    loadingProgress
-                                                        .expectedTotalBytes!
-                                                : 0;
-                                            return Container(
-                                              color: getBackgroundColor(
-                                                  backgroundColor),
-                                              height: context.height(0.8),
-                                              child:
-                                                  CircularProgressIndicatorAnimateRotate(
-                                                      progress: progress),
-                                            );
-                                          }
-                                          if (state.extendedImageLoadState ==
-                                              LoadState.completed) {
-                                            if (_failedToLoadImage.value ==
-                                                true) {
-                                              _failedToLoadImage.value = false;
-                                            }
-                                            return StreamBuilder(
-                                              builder: (context, data) {
-                                                return ExtendedImageGesture(
-                                                  state,
-                                                  canScaleImage: (_) =>
-                                                      _imageDetailY == 0,
-                                                  imageBuilder: (image) {
-                                                    return Stack(
-                                                      children: [
-                                                        Positioned.fill(
-                                                          top: _imageDetailY,
-                                                          bottom:
-                                                              -_imageDetailY,
-                                                          child: image,
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              initialData: _imageDetailY,
-                                              stream: _rebuildDetail.stream,
-                                            );
-                                          }
-                                          if (state.extendedImageLoadState ==
-                                              LoadState.failed) {
-                                            if (_failedToLoadImage.value ==
-                                                false) {
-                                              _failedToLoadImage.value = true;
-                                            }
-                                            return Container(
+                                      itemCount: (_uChapDataPreload.length / 2)
+                                              .ceil() +
+                                          1,
+                                      onPageChanged: _onPageChanged)
+                                  : ExtendedImageGesturePageView.builder(
+                                      controller: _extendedController,
+                                      scrollDirection: _scrollDirection,
+                                      reverse: _isReverseHorizontal,
+                                      physics: const ClampingScrollPhysics(),
+                                      canScrollPage: (gestureDetails) {
+                                        return gestureDetails != null
+                                            ? !(gestureDetails.totalScale! >
+                                                1.0)
+                                            : true;
+                                      },
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return ImageViewCenter(
+                                          data: _uChapDataPreload[index],
+                                          loadStateChanged: (state) {
+                                            if (state.extendedImageLoadState ==
+                                                LoadState.loading) {
+                                              final ImageChunkEvent?
+                                                  loadingProgress =
+                                                  state.loadingProgress;
+                                              final double progress = loadingProgress
+                                                          ?.expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress!
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : 0;
+                                              return Container(
                                                 color: getBackgroundColor(
                                                     backgroundColor),
                                                 height: context.height(0.8),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      l10n.image_loading_error,
-                                                      style: TextStyle(
-                                                          color: Colors.white
-                                                              .withOpacity(
-                                                                  0.7)),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: GestureDetector(
-                                                          onLongPress: () {
-                                                            state.reLoadImage();
-                                                            _failedToLoadImage
-                                                                .value = false;
-                                                          },
-                                                          onTap: () {
-                                                            state.reLoadImage();
-                                                            _failedToLoadImage
-                                                                .value = false;
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                                color: context
-                                                                    .primaryColor,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            30)),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          8,
-                                                                      horizontal:
-                                                                          16),
-                                                              child: Text(
-                                                                l10n.retry,
+                                                child:
+                                                    CircularProgressIndicatorAnimateRotate(
+                                                        progress: progress),
+                                              );
+                                            }
+                                            if (state.extendedImageLoadState ==
+                                                LoadState.completed) {
+                                              if (_failedToLoadImage.value ==
+                                                  true) {
+                                                _failedToLoadImage.value =
+                                                    false;
+                                              }
+                                              return StreamBuilder(
+                                                builder: (context, data) {
+                                                  return ExtendedImageGesture(
+                                                    state,
+                                                    canScaleImage: (_) =>
+                                                        _imageDetailY == 0,
+                                                    imageBuilder: (image) {
+                                                      return Stack(
+                                                        children: [
+                                                          Positioned.fill(
+                                                            top: _imageDetailY,
+                                                            bottom:
+                                                                -_imageDetailY,
+                                                            child: image,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                initialData: _imageDetailY,
+                                                stream: _rebuildDetail.stream,
+                                              );
+                                            }
+                                            if (state.extendedImageLoadState ==
+                                                LoadState.failed) {
+                                              if (_failedToLoadImage.value ==
+                                                  false) {
+                                                _failedToLoadImage.value = true;
+                                              }
+                                              return Container(
+                                                  color: getBackgroundColor(
+                                                      backgroundColor),
+                                                  height: context.height(0.8),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        l10n.image_loading_error,
+                                                        style: TextStyle(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                    0.7)),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                            onLongPress: () {
+                                                              state
+                                                                  .reLoadImage();
+                                                              _failedToLoadImage
+                                                                      .value =
+                                                                  false;
+                                                            },
+                                                            onTap: () {
+                                                              state
+                                                                  .reLoadImage();
+                                                              _failedToLoadImage
+                                                                      .value =
+                                                                  false;
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  color: context
+                                                                      .primaryColor,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              30)),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical: 8,
+                                                                    horizontal:
+                                                                        16),
+                                                                child: Text(
+                                                                  l10n.retry,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ));
-                                          }
-                                          return const SizedBox.shrink();
-                                        },
-                                        initGestureConfigHandler: (state) {
-                                          return GestureConfig(
-                                            inertialSpeed: 200,
-                                            inPageView: true,
-                                            maxScale: 8,
-                                            animationMaxScale: 8,
-                                            cacheGesture: true,
-                                            hitTestBehavior:
-                                                HitTestBehavior.translucent,
-                                          );
-                                        },
-                                        onDoubleTap: (state) {
-                                          final Offset? pointerDownPosition =
-                                              state.pointerDownPosition;
-                                          final double? begin =
-                                              state.gestureDetails!.totalScale;
-                                          double end;
+                                                            )),
+                                                      ),
+                                                    ],
+                                                  ));
+                                            }
+                                            return const SizedBox.shrink();
+                                          },
+                                          initGestureConfigHandler: (state) {
+                                            return GestureConfig(
+                                              inertialSpeed: 200,
+                                              inPageView: true,
+                                              maxScale: 8,
+                                              animationMaxScale: 8,
+                                              cacheGesture: true,
+                                              hitTestBehavior:
+                                                  HitTestBehavior.translucent,
+                                            );
+                                          },
+                                          onDoubleTap: (state) {
+                                            final Offset? pointerDownPosition =
+                                                state.pointerDownPosition;
+                                            final double? begin = state
+                                                .gestureDetails!.totalScale;
+                                            double end;
 
-                                          //remove old
-                                          _doubleClickAnimation?.removeListener(
-                                              _doubleClickAnimationListener);
+                                            //remove old
+                                            _doubleClickAnimation?.removeListener(
+                                                _doubleClickAnimationListener);
 
-                                          //stop pre
-                                          _doubleClickAnimationController
-                                              .stop();
+                                            //stop pre
+                                            _doubleClickAnimationController
+                                                .stop();
 
-                                          //reset to use
-                                          _doubleClickAnimationController
-                                              .reset();
+                                            //reset to use
+                                            _doubleClickAnimationController
+                                                .reset();
 
-                                          if (begin == doubleTapScales[0]) {
-                                            end = doubleTapScales[1];
-                                          } else {
-                                            end = doubleTapScales[0];
-                                          }
+                                            if (begin == doubleTapScales[0]) {
+                                              end = doubleTapScales[1];
+                                            } else {
+                                              end = doubleTapScales[0];
+                                            }
 
-                                          _doubleClickAnimationListener = () {
-                                            state.handleDoubleTap(
-                                                scale: _doubleClickAnimation!
-                                                    .value,
-                                                doubleTapPosition:
-                                                    pointerDownPosition);
-                                          };
+                                            _doubleClickAnimationListener = () {
+                                              state.handleDoubleTap(
+                                                  scale: _doubleClickAnimation!
+                                                      .value,
+                                                  doubleTapPosition:
+                                                      pointerDownPosition);
+                                            };
 
-                                          _doubleClickAnimation = Tween(
-                                                  begin: begin, end: end)
-                                              .animate(CurvedAnimation(
-                                                  curve: Curves.ease,
-                                                  parent:
-                                                      _doubleClickAnimationController));
+                                            _doubleClickAnimation = Tween(
+                                                    begin: begin, end: end)
+                                                .animate(CurvedAnimation(
+                                                    curve: Curves.ease,
+                                                    parent:
+                                                        _doubleClickAnimationController));
 
-                                          _doubleClickAnimation!.addListener(
-                                              _doubleClickAnimationListener);
+                                            _doubleClickAnimation!.addListener(
+                                                _doubleClickAnimationListener);
 
-                                          _doubleClickAnimationController
-                                              .forward();
-                                        },
-                                        onLongPressData: (datas) {
-                                          _onLongPressImageDialog(
-                                              datas, context);
-                                        },
-                                      );
-                                    },
-                                    itemCount: _uChapDataPreload.length,
-                                    onPageChanged: _onPageChanged)),
-                    _gestureRightLeft(failedToLoadImage, usePageTapZones),
-                    _gestureTopBottom(failedToLoadImage, usePageTapZones),
-                    _appBar(),
-                    _bottomBar(),
-                    _showPage(),
-                    _autoScrollPlayPauseBtn()
-                  ],
-                );
-              }),
+                                            _doubleClickAnimationController
+                                                .forward();
+                                          },
+                                          onLongPressData: (datas) {
+                                            _onLongPressImageDialog(
+                                                datas, context);
+                                          },
+                                        );
+                                      },
+                                      itemCount: _uChapDataPreload.length,
+                                      onPageChanged: _onPageChanged)),
+                      _gestureRightLeft(failedToLoadImage, usePageTapZones),
+                      _gestureTopBottom(failedToLoadImage, usePageTapZones),
+                      _appBar(),
+                      _bottomBar(),
+                      _showPage(),
+                      _autoScrollPlayPauseBtn()
+                    ],
+                  );
+                }),
+          ),
         ),
       ),
     );
@@ -1853,12 +1864,12 @@ class _MangaChapterPageGalleryState
                   }
                 },
                 onDoubleTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
                 onSecondaryTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
@@ -1882,12 +1893,12 @@ class _MangaChapterPageGalleryState
                         _isViewFunction();
                       },
                       onDoubleTapDown: _isVerticalOrHorizontalContinous()
-                          ? (TapDownDetails details) {
+                          ? (details) {
                               _toggleScale(details.globalPosition);
                             }
                           : null,
                       onSecondaryTapDown: _isVerticalOrHorizontalContinous()
-                          ? (TapDownDetails details) {
+                          ? (details) {
                               _toggleScale(details.globalPosition);
                             }
                           : null,
@@ -1915,12 +1926,12 @@ class _MangaChapterPageGalleryState
                   }
                 },
                 onDoubleTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
                 onSecondaryTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
@@ -1953,12 +1964,12 @@ class _MangaChapterPageGalleryState
                           : _isViewFunction();
                 },
                 onDoubleTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
                 onSecondaryTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
@@ -1984,12 +1995,12 @@ class _MangaChapterPageGalleryState
                           : _isViewFunction();
                 },
                 onDoubleTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,
                 onSecondaryTapDown: _isVerticalOrHorizontalContinous()
-                    ? (TapDownDetails details) {
+                    ? (details) {
                         _toggleScale(details.globalPosition);
                       }
                     : null,

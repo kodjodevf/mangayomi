@@ -2,7 +2,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:grouped_list/grouped_list.dart';
+import 'package:grouped_list/sliver_grouped_list.dart';
+
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -198,198 +199,209 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
             .toList();
 
         if (entries.isNotEmpty) {
-          return GroupedListView<History, String>(
-            elements: entries,
-            groupBy: (element) => dateFormat(element.date!,
-                context: context,
-                ref: ref,
-                forHistoryValue: true,
-                useRelativeTimesTamps: false),
-            groupSeparatorBuilder: (String groupByValue) => Padding(
-              padding: const EdgeInsets.only(bottom: 8, left: 12),
-              child: Row(
-                children: [
-                  Text(dateFormat(
-                    null,
+          return CustomScrollView(
+            slivers: [
+              SliverGroupedListView<History, String>(
+                elements: entries,
+                groupBy: (element) => dateFormat(element.date!,
                     context: context,
-                    stringDate: groupByValue,
                     ref: ref,
-                  )),
-                ],
-              ),
-            ),
-            itemBuilder: (context, History element) {
-              final manga = element.chapter.value!.manga.value!;
-              final chapter = element.chapter.value!;
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(0),
-                    backgroundColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0)),
-                    elevation: 0,
-                    shadowColor: Colors.transparent),
-                onPressed: () {
-                  pushMangaReaderView(context: context, chapter: chapter);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: SizedBox(
-                    height: 105,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 60,
-                          height: 90,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(7)),
+                    forHistoryValue: true,
+                    useRelativeTimesTamps: false),
+                groupSeparatorBuilder: (String groupByValue) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8, left: 12),
+                  child: Row(
+                    children: [
+                      Text(dateFormat(
+                        null,
+                        context: context,
+                        stringDate: groupByValue,
+                        ref: ref,
+                      )),
+                    ],
+                  ),
+                ),
+                itemBuilder: (context, History element) {
+                  final manga = element.chapter.value!.manga.value!;
+                  final chapter = element.chapter.value!;
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(0),
+                        backgroundColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                        elevation: 0,
+                        shadowColor: Colors.transparent),
+                    onPressed: () {
+                      pushMangaReaderView(context: context, chapter: chapter);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: SizedBox(
+                        height: 105,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 90,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(0),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7)),
+                                ),
+                                onPressed: () {
+                                  context.push('/manga-reader/detail',
+                                      extra: manga.id);
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(7),
+                                  child: manga.customCoverImage != null
+                                      ? Image.memory(
+                                          manga.customCoverImage as Uint8List)
+                                      : cachedNetworkImage(
+                                          headers: ref.watch(headersProvider(
+                                              source: manga.source!,
+                                              lang: manga.lang!)),
+                                          imageUrl: toImgUrl(
+                                              manga.customCoverFromTracker ??
+                                                  manga.imageUrl!),
+                                          width: 60,
+                                          height: 90,
+                                          fit: BoxFit.cover),
+                                ),
+                              ),
                             ),
-                            onPressed: () {
-                              context.push('/manga-reader/detail',
-                                  extra: manga.id);
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(7),
-                              child: manga.customCoverImage != null
-                                  ? Image.memory(
-                                      manga.customCoverImage as Uint8List)
-                                  : cachedNetworkImage(
-                                      headers: ref.watch(headersProvider(
-                                          source: manga.source!,
-                                          lang: manga.lang!)),
-                                      imageUrl: toImgUrl(
-                                          manga.customCoverFromTracker ??
-                                              manga.imageUrl!),
-                                      width: 60,
-                                      height: 90,
-                                      fit: BoxFit.cover),
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  color: Colors.transparent,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          manga.name!,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color,
-                                              fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                        Wrap(
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              WrapCrossAlignment.end,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              chapter.name!,
+                                              manga.name!,
                                               style: TextStyle(
-                                                fontSize: 11,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge!
-                                                    .color,
-                                              ),
-                                            ),
-                                            Text(
-                                              " - ${dateFormatHour(element.date!, context)}",
-                                              style: TextStyle(
-                                                  fontSize: 11,
+                                                  fontSize: 14,
                                                   color: Theme.of(context)
                                                       .textTheme
                                                       .bodyLarge!
                                                       .color,
-                                                  fontWeight: FontWeight.w400),
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.end,
+                                              children: [
+                                                Text(
+                                                  chapter.name!,
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .color,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  " - ${dateFormatHour(element.date!, context)}",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge!
+                                                          .color,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: Text(
-                                              l10n.remove,
-                                            ),
-                                            content:
-                                                Text(l10n.remove_history_msg),
-                                            actions: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text(l10n.cancel)),
-                                                  const SizedBox(
-                                                    width: 15,
-                                                  ),
-                                                  TextButton(
-                                                      onPressed: () async {
-                                                        await isar
-                                                            .writeTxn(() async {
-                                                          await isar.historys
-                                                              .delete(
-                                                                  element.id!);
-                                                        });
-                                                        if (context.mounted) {
-                                                          Navigator.pop(
-                                                              context);
-                                                        }
-                                                      },
-                                                      child: Text(l10n.remove)),
+                                  IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                  l10n.remove,
+                                                ),
+                                                content: Text(
+                                                    l10n.remove_history_msg),
+                                                actions: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text(
+                                                              l10n.cancel)),
+                                                      const SizedBox(
+                                                        width: 15,
+                                                      ),
+                                                      TextButton(
+                                                          onPressed: () async {
+                                                            await isar.writeTxn(
+                                                                () async {
+                                                              await isar
+                                                                  .historys
+                                                                  .delete(
+                                                                      element
+                                                                          .id!);
+                                                            });
+                                                            if (context
+                                                                .mounted) {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                              l10n.remove)),
+                                                    ],
+                                                  )
                                                 ],
-                                              )
-                                            ],
-                                          );
-                                        });
-                                  },
-                                  icon: Icon(
-                                    Icons.delete_outline,
-                                    size: 25,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge!
-                                        .color,
-                                  )),
-                            ],
-                          ),
-                        )
-                      ],
+                                              );
+                                            });
+                                      },
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        size: 25,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .color,
+                                      )),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            },
-            itemComparator: (item1, item2) =>
-                item1.date!.compareTo(item2.date!),
-            order: GroupedListOrder.DESC,
+                  );
+                },
+                itemComparator: (item1, item2) =>
+                    item1.date!.compareTo(item2.date!),
+                order: GroupedListOrder.DESC,
+              ),
+            ],
           );
         }
         return Center(

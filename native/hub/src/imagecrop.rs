@@ -142,14 +142,15 @@ pub async fn start_croping() {
 
     let mut receiver = CropBordersInput::get_dart_signal_receiver();
     while let Some(dart_signal) = receiver.recv().await {
-        let image = dart_signal.blob.unwrap();
+        let image = dart_signal.message.image;
         let res = crop_image(image);
         let mut image_data: Vec<u8> = Vec::new();
         res.write_to(&mut Cursor::new(&mut image_data), image::ImageFormat::Png)
             .unwrap();
         CropBordersOutput {
             interaction_id: dart_signal.message.interaction_id,
+            image: image_data,
         }
-        .send_signal_to_dart(Some(image_data));
+        .send_signal_to_dart();
     }
 }

@@ -24,12 +24,12 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
     nextId++;
     final completer = Completer<Uint8List>();
     CropBordersInput(
-      interactionId: currentId,
-    ).sendSignalToRust(imageBytes);
+      image: imageBytes,
+    ).sendSignalToRust();
     final stream = CropBordersOutput.rustSignalStream;
     final subscription = stream.listen((rustSignal) {
       if (rustSignal.message.interactionId == currentId) {
-        completer.complete(rustSignal.blob!);
+        completer.complete(rustSignal.message.image as Uint8List);
       }
     });
     final image = await completer.future;

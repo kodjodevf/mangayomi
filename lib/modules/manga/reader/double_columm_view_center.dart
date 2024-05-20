@@ -14,13 +14,11 @@ import 'package:photo_view/photo_view_gallery.dart';
 class DoubleColummView extends StatefulWidget {
   final List<UChapDataPreload?> datas;
   final Function(UChapDataPreload datas) onLongPressData;
-  final Function(double) scale;
   final BackgroundColor backgroundColor;
   final Function(bool) isFailedToLoadImage;
   const DoubleColummView(
       {super.key,
       required this.datas,
-      required this.scale,
       required this.onLongPressData,
       required this.backgroundColor,
       required this.isFailedToLoadImage});
@@ -70,7 +68,6 @@ class _DoubleColummViewState extends State<DoubleColummView>
         CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
     _animation.addListener(() {
       _photoViewController.scale = _animation.value;
-      widget.scale(_animation.value);
     });
 
     super.initState();

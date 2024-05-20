@@ -2,7 +2,7 @@ syntax = "proto3";
 package crop_borders;
 
 // [RINF:DART-SIGNAL]
-message CropBordersInput { int32 interaction_id = 1; }
+message CropBordersInput { int32 interaction_id = 1; bytes image = 2; }
 
 // [RINF:RUST-SIGNAL]
-message CropBordersOutput { int32 interaction_id = 1; }
+message CropBordersOutput { int32 interaction_id = 1; bytes image = 2; }
