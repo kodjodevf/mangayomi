@@ -10,14 +10,20 @@ import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
-class SourcesScreen extends ConsumerWidget {
+class SourcesScreen extends ConsumerStatefulWidget {
   final Function(int) tabIndex;
   final bool isManga;
   const SourcesScreen(
       {required this.tabIndex, required this.isManga, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SourcesScreen> createState() => _SourcesScreenState();
+}
+
+class _SourcesScreenState extends ConsumerState<SourcesScreen> {
+  final controller = ScrollController();
+  @override
+  Widget build(BuildContext context) {
     final showNSFW = ref.watch(showNSFWStateProvider);
     final l10n = l10nLocalizations(context)!;
     return Padding(
@@ -30,7 +36,7 @@ class SourcesScreen extends ConsumerWidget {
                 .and()
                 .isActiveEqualTo(true)
                 .and()
-                .isMangaEqualTo(isManga)
+                .isMangaEqualTo(widget.isManga)
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -50,7 +56,8 @@ class SourcesScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton.icon(
-                          onPressed: () => tabIndex(isManga ? 2 : 3),
+                          onPressed: () =>
+                              widget.tabIndex(widget.isManga ? 2 : 3),
                           icon: const Icon(Icons.extension_rounded),
                           label: Text(context.l10n.show_extensions)),
                     )
@@ -63,97 +70,104 @@ class SourcesScreen extends ConsumerWidget {
                   sources.where((element) => element.isPinned!).toList();
               final allEntriesWithoutIspinned =
                   sources.where((element) => !element.isPinned!).toList();
-              return CustomScrollView(
-                slivers: [
-                  if (useTestSourceCode)
-                    SliverList.builder(
-                        itemCount: testSourceModelList.length,
-                        itemBuilder: (context, index) => SourceListTile(
-                            source: testSourceModelList[index],
-                            isManga: isManga)),
-                  SliverGroupedListView<Source, String>(
-                    elements: lastUsedEntries,
-                    groupBy: (element) => "",
-                    groupSeparatorBuilder: (String groupByValue) => Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: Row(
-                        children: [
-                          Text(
-                            l10n.last_used,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                        ],
+              return Scrollbar(
+              interactive: true,
+                controller: controller,
+                thickness: 12,
+                radius: const Radius.circular(10),
+                child: CustomScrollView(
+                  controller: controller,
+                  slivers: [
+                    if (useTestSourceCode)
+                      SliverList.builder(
+                          itemCount: testSourceModelList.length,
+                          itemBuilder: (context, index) => SourceListTile(
+                              source: testSourceModelList[index],
+                              isManga: widget.isManga)),
+                    SliverGroupedListView<Source, String>(
+                      elements: lastUsedEntries,
+                      groupBy: (element) => "",
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              l10n.last_used,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
+                      itemBuilder: (context, Source element) {
+                        return SourceListTile(
+                          source: element,
+                          isManga: widget.isManga,
+                        );
+                      },
+                      groupComparator: (group1, group2) =>
+                          group1.compareTo(group2),
+                      itemComparator: (item1, item2) =>
+                          item1.name!.compareTo(item2.name!),
+                      order: GroupedListOrder.ASC,
                     ),
-                    itemBuilder: (context, Source element) {
-                      return SourceListTile(
-                        source: element,
-                        isManga: isManga,
-                      );
-                    },
-                    groupComparator: (group1, group2) =>
-                        group1.compareTo(group2),
-                    itemComparator: (item1, item2) =>
-                        item1.name!.compareTo(item2.name!),
-                    order: GroupedListOrder.ASC,
-                  ),
-                  SliverGroupedListView<Source, String>(
-                    elements: isPinnedEntries,
-                    groupBy: (element) => "",
-                    groupSeparatorBuilder: (String groupByValue) => Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: Row(
-                        children: [
-                          Text(
-                            l10n.pinned,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                        ],
+                    SliverGroupedListView<Source, String>(
+                      elements: isPinnedEntries,
+                      groupBy: (element) => "",
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              l10n.pinned,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
+                      itemBuilder: (context, Source element) {
+                        return SourceListTile(
+                          source: element,
+                          isManga: widget.isManga,
+                        );
+                      },
+                      groupComparator: (group1, group2) =>
+                          group1.compareTo(group2),
+                      itemComparator: (item1, item2) =>
+                          item1.name!.compareTo(item2.name!),
+                      order: GroupedListOrder.ASC,
                     ),
-                    itemBuilder: (context, Source element) {
-                      return SourceListTile(
-                        source: element,
-                        isManga: isManga,
-                      );
-                    },
-                    groupComparator: (group1, group2) =>
-                        group1.compareTo(group2),
-                    itemComparator: (item1, item2) =>
-                        item1.name!.compareTo(item2.name!),
-                    order: GroupedListOrder.ASC,
-                  ),
-                  SliverGroupedListView<Source, String>(
-                    elements: allEntriesWithoutIspinned,
-                    groupBy: (element) =>
-                        completeLanguageName(element.lang!.toLowerCase()),
-                    groupSeparatorBuilder: (String groupByValue) => Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: Row(
-                        children: [
-                          Text(
-                            groupByValue,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                        ],
+                    SliverGroupedListView<Source, String>(
+                      elements: allEntriesWithoutIspinned,
+                      groupBy: (element) =>
+                          completeLanguageName(element.lang!.toLowerCase()),
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              groupByValue,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                          ],
+                        ),
                       ),
+                      itemBuilder: (context, Source element) {
+                        return SourceListTile(
+                          source: element,
+                          isManga: widget.isManga,
+                        );
+                      },
+                      groupComparator: (group1, group2) =>
+                          group1.compareTo(group2),
+                      itemComparator: (item1, item2) =>
+                          item1.name!.compareTo(item2.name!),
+                      order: GroupedListOrder.ASC,
                     ),
-                    itemBuilder: (context, Source element) {
-                      return SourceListTile(
-                        source: element,
-                        isManga: isManga,
-                      );
-                    },
-                    groupComparator: (group1, group2) =>
-                        group1.compareTo(group2),
-                    itemComparator: (item1, item2) =>
-                        item1.name!.compareTo(item2.name!),
-                    order: GroupedListOrder.ASC,
-                  ),
-                ],
+                  ],
+                ),
               );
             }));
   }

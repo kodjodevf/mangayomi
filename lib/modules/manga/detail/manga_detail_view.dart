@@ -24,7 +24,6 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
-import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
@@ -46,6 +45,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/constant.dart';
@@ -537,104 +537,127 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             child: _bodyContainer(
                                 chapterLength: chapters.length))),
                   Expanded(
-                    child: DraggableScrollbarWidget(
+                    child: Scrollbar(
+              interactive: true,
+                        thickness: 12,
+                        radius: const Radius.circular(10),
                         controller: _scrollController,
-                        child: ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.only(top: 0, bottom: 60),
-                            itemCount: chapters.length + 1,
-                            itemBuilder: (context, index) {
-                              final l10n = l10nLocalizations(context)!;
-                              int finalIndex = index - 1;
-                              if (index == 0) {
-                                return context.isTablet
-                                    ? Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment: isLocalArchive
-                                                  ? MainAxisAlignment
-                                                      .spaceBetween
-                                                  : MainAxisAlignment.start,
+                        child: CustomScrollView(
+                          controller: _scrollController,
+                          slivers: [
+                            SliverPadding(
+                              padding:
+                                  const EdgeInsets.only(top: 0, bottom: 60),
+                              sliver: SuperSliverList.builder(
+                                  itemCount: chapters.length + 1,
+                                  itemBuilder: (context, index) {
+                                    final l10n = l10nLocalizations(context)!;
+                                    int finalIndex = index - 1;
+                                    if (index == 0) {
+                                      return context.isTablet
+                                          ? Column(
                                               children: [
-                                                Container(
-                                                  height: chapters.isEmpty
-                                                      ? context.height(1)
-                                                      : null,
-                                                  color: Theme.of(context)
-                                                      .scaffoldBackgroundColor,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8),
-                                                    child: Text(
-                                                      widget.manga!.isManga!
-                                                          ? l10n.n_chapters(
-                                                              chapters.length)
-                                                          : l10n.n_episodes(
-                                                              chapters.length),
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        isLocalArchive
+                                                            ? MainAxisAlignment
+                                                                .spaceBetween
+                                                            : MainAxisAlignment
+                                                                .start,
+                                                    children: [
+                                                      Container(
+                                                        height: chapters.isEmpty
+                                                            ? context.height(1)
+                                                            : null,
+                                                        color: Theme.of(context)
+                                                            .scaffoldBackgroundColor,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      8),
+                                                          child: Text(
+                                                            widget.manga!
+                                                                    .isManga!
+                                                                ? l10n.n_chapters(
+                                                                    chapters
+                                                                        .length)
+                                                                : l10n.n_episodes(
+                                                                    chapters
+                                                                        .length),
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      if (isLocalArchive)
+                                                        ElevatedButton.icon(
+                                                          style: ElevatedButton.styleFrom(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5),
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5))),
+                                                          icon: Icon(Icons.add,
+                                                              color: context
+                                                                  .secondaryColor),
+                                                          label: Text(
+                                                            widget.manga!.isManga!
+                                                                ? l10n
+                                                                    .add_chapters
+                                                                : l10n
+                                                                    .add_episodes,
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: context
+                                                                    .secondaryColor),
+                                                          ),
+                                                          onPressed: () async {
+                                                            await ref.watch(importArchivesFromFileProvider(
+                                                                    isManga: widget
+                                                                        .manga!
+                                                                        .isManga!,
+                                                                    widget
+                                                                        .manga,
+                                                                    init: false)
+                                                                .future);
+                                                          },
+                                                        )
+                                                    ],
                                                   ),
                                                 ),
-                                                if (isLocalArchive)
-                                                  ElevatedButton.icon(
-                                                    style: ElevatedButton.styleFrom(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(5),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        5))),
-                                                    icon: Icon(Icons.add,
-                                                        color: context
-                                                            .secondaryColor),
-                                                    label: Text(
-                                                      widget.manga!.isManga!
-                                                          ? l10n.add_chapters
-                                                          : l10n.add_episodes,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: context
-                                                              .secondaryColor),
-                                                    ),
-                                                    onPressed: () async {
-                                                      await ref.watch(
-                                                          importArchivesFromFileProvider(
-                                                                  isManga: widget
-                                                                      .manga!
-                                                                      .isManga!,
-                                                                  widget.manga,
-                                                                  init: false)
-                                                              .future);
-                                                    },
-                                                  )
                                               ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : _bodyContainer(
-                                        chapterLength: chapters.length);
-                              }
-                              int reverseIndex = chapters.length -
-                                  chapters.reversed.toList().indexOf(
-                                      chapters.reversed.toList()[finalIndex]) -
-                                  1;
-                              final indexx =
-                                  reverse ? reverseIndex : finalIndex;
-                              return ChapterListTileWidget(
-                                chapter: chapters[indexx],
-                                chapterList: chapterList,
-                                sourceExist: widget.sourceExist,
-                              );
-                            })),
+                                            )
+                                          : _bodyContainer(
+                                              chapterLength: chapters.length);
+                                    }
+                                    int reverseIndex = chapters.length -
+                                        chapters.reversed.toList().indexOf(
+                                            chapters.reversed
+                                                .toList()[finalIndex]) -
+                                        1;
+                                    final indexx =
+                                        reverse ? reverseIndex : finalIndex;
+                                    return ChapterListTileWidget(
+                                      chapter: chapters[indexx],
+                                      chapterList: chapterList,
+                                      sourceExist: widget.sourceExist,
+                                    );
+                                  }),
+                            ),
+                          ],
+                        )),
                   ),
                 ],
               ),

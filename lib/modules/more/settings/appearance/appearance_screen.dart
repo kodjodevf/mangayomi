@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -14,6 +13,7 @@ import 'package:mangayomi/modules/more/settings/appearance/widgets/dark_mode_but
 import 'package:mangayomi/modules/more/settings/appearance/widgets/theme_selector.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
@@ -206,32 +206,49 @@ class AppearanceScreen extends ConsumerWidget {
                                                       textValue.toLowerCase()))
                                               .toList();
                                           return Flexible(
-                                            child: DraggableScrollbarWidget(
+                                            child: Scrollbar(
+              interactive: true,
+                                              thickness: 12,
+                                              radius: const Radius.circular(10),
                                               controller: controller,
-                                              child: ListView.builder(
+                                              child: CustomScrollView(
                                                 controller: controller,
-                                                itemCount: values.length,
-                                                itemBuilder: (context, index) {
-                                                  final value = values[index];
-                                                  return RadioListTile(
-                                                    dense: true,
-                                                    contentPadding:
+                                                slivers: [
+                                                  SliverPadding(
+                                                    padding:
                                                         const EdgeInsets.all(0),
-                                                    value: value
-                                                        .value()
-                                                        .fontFamily,
-                                                    groupValue: appFontFamily,
-                                                    onChanged: (value) {
-                                                      ref
-                                                          .read(
-                                                              appFontFamilyProvider
-                                                                  .notifier)
-                                                          .set(value);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    title: Text(value.key),
-                                                  );
-                                                },
+                                                    sliver:
+                                                        SuperSliverList.builder(
+                                                      itemCount: values.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        final value =
+                                                            values[index];
+                                                        return RadioListTile(
+                                                          dense: true,
+                                                          contentPadding:
+                                                              const EdgeInsets
+                                                                  .all(0),
+                                                          value: value
+                                                              .value()
+                                                              .fontFamily,
+                                                          groupValue:
+                                                              appFontFamily,
+                                                          onChanged: (value) {
+                                                            ref
+                                                                .read(appFontFamilyProvider
+                                                                    .notifier)
+                                                                .set(value);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          title:
+                                                              Text(value.key),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           );

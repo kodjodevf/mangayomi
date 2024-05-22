@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -155,6 +156,7 @@ class _MangaChapterPageGalleryState
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: SystemUiOverlay.values);
     }
+    finalizeRust();
     super.dispose();
   }
 
@@ -1000,6 +1002,7 @@ class _MangaChapterPageGalleryState
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
+    await initializeRust();
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     if (fullScreenReader) {
       if (isDesktop) {

@@ -213,10 +213,10 @@ packages:
     dependency: "direct main"
     description:
       name: cronet_http
-      sha256: "9b9f00ae48971bc8a8cbdd4528bd35511adce00fb79d1ebf9f9907667056640f"
+      sha256: "013c515e2caf1381fcdc577b0c1a3625021b0df32880c20c06757fc616d375bb"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.1"
   cross_file:
     dependency: transitive
     description:
@@ -320,14 +320,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.4.1"
-  draggable_scrollbar:
-    dependency: "direct main"
-    description:
-      name: draggable_scrollbar
-      sha256: a906e27fc1ee056e2942d66989dd0cb5b70a361e7d44af566cfa1b584054eac3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
   encrypt:
     dependency: "direct main"
     description:
@@ -778,10 +770,10 @@ packages:
     dependency: transitive
     description:
       name: jni
-      sha256: "499558e919997adfc45809a66caf0b95b91393e23289dd2826b152f8f04e6611"
+      sha256: "6f8e04339f96cb32879acb181c60b2c1e2310ff86f3c62bcd1afcfb4b28b665d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.3"
+    version: "0.9.2"
   js:
     dependency: transitive
     description:
@@ -1452,6 +1444,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  super_sliver_list:
+    dependency: "direct main"
+    description:
+      name: super_sliver_list
+      sha256: b1e1e64d08ce40e459b9bb5d9f8e361617c26b8c9f3bb967760b0f436b6e3f56
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.1"
   synchronized:
     dependency: transitive
     description:

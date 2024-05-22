@@ -4,9 +4,9 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
-import 'package:mangayomi/modules/widgets/draggable_scroll_bar.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 Widget btnToShowChapterListDialog(
     BuildContext context, String title, Chapter chapter,
@@ -60,18 +60,28 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return DraggableScrollbarWidget(
+    return Scrollbar(
+              interactive: true,
+        thickness: 12,
+        radius: const Radius.circular(10),
         controller: controller,
-        child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            controller: controller,
-            itemCount: chapterList.length,
-            itemBuilder: (context, index) {
-              final chapter = chapterList[index];
-              final currentChap = chapter == chapterList[currentChapIndex];
-              return ChapterListTile(
-                  chapter: chapter, currentChap: currentChap);
-            }));
+        child: CustomScrollView(
+          controller: controller,
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              sliver: SuperSliverList.builder(
+                  itemCount: chapterList.length,
+                  itemBuilder: (context, index) {
+                    final chapter = chapterList[index];
+                    final currentChap =
+                        chapter == chapterList[currentChapIndex];
+                    return ChapterListTile(
+                        chapter: chapter, currentChap: currentChap);
+                  }),
+            ),
+          ],
+        ));
   }
 }
 
