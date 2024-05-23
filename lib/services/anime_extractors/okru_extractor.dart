@@ -47,12 +47,4 @@ class OkruExtractor {
 
     return [];
   }
-
-  String resolveUrl(Uri uri, String url) {
-    return "${Uri(
-      scheme: uri.scheme,
-      host: uri.host,
-      pathSegments: uri.pathSegments.sublist(0, uri.pathSegments.length - 1),
-    ).toString()}/$url";
-  }
 }

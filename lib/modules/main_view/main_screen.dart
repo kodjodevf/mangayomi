@@ -15,6 +15,7 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';

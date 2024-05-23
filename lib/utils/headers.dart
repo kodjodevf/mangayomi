@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:mangayomi/eval/javascript/http.dart';
-import 'package:mangayomi/services/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

@@ -1,5 +1,5 @@
-import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'fetch_anime_sources.g.dart';
 
