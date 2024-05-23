@@ -1,17 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:mangayomi/eval/dart/bridge/m_source.dart';
-import 'package:mangayomi/eval/dart/model/m_provider.dart';
-import 'package:mangayomi/eval/dart/compiler/compiler.dart';
+import 'package:mangayomi/eval/dart/service.dart';
 import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_video_list.g.dart';
 
@@ -40,14 +36,7 @@ Future<(List<Video>, bool, String?)> getVideoList(
   }
   List<Video> list = [];
   if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-    final bytecode =
-        compilerEval(useTestSourceCode ? testSourceCode : source.sourceCode!);
-
-    final runtime = runtimeEval(bytecode);
-
-    var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
-        [$MSource.wrap(source.toMSource())]);
-    list = (await (res as MProvider).getVideoList(episode.url!));
+    list = await DartExtensionService(source).getVideoList(episode.url!);
   } else {
     list = await JsExtensionService(source).getVideoList(episode.url!);
   }

@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/bridge/m_source.dart';
-import 'package:mangayomi/eval/dart/compiler/compiler.dart';
-import 'package:mangayomi/eval/dart/model/m_provider.dart';
-import 'package:mangayomi/eval/dart/runtime/runtime.dart';
-import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/dart/service.dart';
 import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
@@ -202,41 +197,12 @@ int compareVersions(String version1, String version2) {
   return 0;
 }
 
-Map<String, String> getHeaders(Source source) {
-  Map<String, String> headers = {};
-  try {
-    final bytecode = compilerEval(source.sourceCode!);
-    final runtime = runtimeEval(bytecode);
-    runtime.args = [$String(source.baseUrl!)];
-    var res = runtime.executeLib(
-      'package:mangayomi/main.dart',
-      'getHeader',
-    );
-    if (res is $Map) {
-      headers = (res.$reified).toMapStringString!;
-    }
-    return headers;
-  } catch (_) {
-    try {
-      final bytecode = compilerEval(source.sourceCode!);
-      final runtime = runtimeEval(bytecode);
-
-      var res = runtime.executeLib('package:mangayomi/main.dart', 'main',
-          [$MSource.wrap(source.toMSource())]);
-      headers = (res as MProvider).getHeaders(source.baseUrl!);
-    } catch (_) {
-      return {};
-    }
-  }
-  return {};
-}
-
 Map<String, String> getSourceHeaders(Source source) {
   Map<String, String> headers = {};
   if (source.sourceCodeLanguage == SourceCodeLanguage.javascript) {
     headers = JsExtensionService(source).getHeaders(source.baseUrl ?? "");
   } else {
-    headers = getHeaders(source);
+    headers = DartExtensionService(source).getHeaders();
   }
   return headers;
 }

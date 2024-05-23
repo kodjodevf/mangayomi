@@ -5,10 +5,7 @@ import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:highlight/languages/javascript.dart';
-import 'package:mangayomi/eval/dart/bridge/m_source.dart';
-import 'package:mangayomi/eval/dart/compiler/compiler.dart';
-import 'package:mangayomi/eval/dart/model/m_provider.dart';
-import 'package:mangayomi/eval/dart/runtime/runtime.dart';
+import 'package:mangayomi/eval/dart/service.dart';
 import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
@@ -48,8 +45,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
         ("getLatestUpdates", 1),
         ("search", 2),
         ("getDetail", 3),
-        ("getPageList", 4),
-        ("getVideoList", 5)
+        if (source!.isManga!) ("getPageList", 4),
+        if (!source!.isManga!) ("getVideoList", 5)
       ];
 
   int _serviceIndex = 0;
@@ -260,18 +257,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                         } else if (_serviceIndex == 4) {
                                           if (source!.sourceCodeLanguage ==
                                               SourceCodeLanguage.dart) {
-                                            final bytecode = compilerEval(
-                                                source!.sourceCode!);
-
-                                            final runtime =
-                                                runtimeEval(bytecode);
-
-                                            var res = await runtime.executeLib(
-                                                'package:mangayomi/main.dart',
-                                                'main', [
-                                              $MSource.wrap(source!.toMSource())
-                                            ]);
-                                            result = await (res as MProvider)
+                                            result = await DartExtensionService(
+                                                    source)
                                                 .getPageList(_url);
                                           } else {
                                             result =
@@ -282,21 +269,12 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                         } else {
                                           if (source!.sourceCodeLanguage ==
                                               SourceCodeLanguage.dart) {
-                                            final bytecode = compilerEval(
-                                                source!.sourceCode!);
-
-                                            final runtime =
-                                                runtimeEval(bytecode);
-
-                                            var res = runtime.executeLib(
-                                                'package:mangayomi/main.dart',
-                                                'main', [
-                                              $MSource.wrap(source!.toMSource())
-                                            ]);
-                                            result = (await (res as MProvider)
-                                                    .getVideoList(_url))
-                                                .map((e) => e.toJson())
-                                                .toList();
+                                            result =
+                                                (await DartExtensionService(
+                                                            source)
+                                                        .getVideoList(_url))
+                                                    .map((e) => e.toJson())
+                                                    .toList();
                                           } else {
                                             result = (await JsExtensionService(
                                                         source)

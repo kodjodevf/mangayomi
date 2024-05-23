@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:mangayomi/eval/dart/bridge/m_source.dart';
-import 'package:mangayomi/eval/dart/compiler/compiler.dart';
+import 'package:mangayomi/eval/dart/service.dart';
 import 'package:mangayomi/eval/javascript/service.dart';
-import 'package:mangayomi/eval/dart/model/m_provider.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -12,11 +9,9 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/eval/dart/runtime/runtime.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
 
@@ -64,16 +59,8 @@ Future<GetChapterPagesModel> getChapterPages(
       pageUrls = isarPageUrls.first.urls!;
     } else {
       if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-        final bytecode = compilerEval(
-            useTestSourceCode ? testSourceCode : source.sourceCode!);
-
-        final runtime = runtimeEval(bytecode);
-
-        var res = await runtime.executeLib('package:mangayomi/main.dart',
-            'main', [$MSource.wrap(source.toMSource())]);
-        pageUrls = (await (res as MProvider).getPageList(chapter.url!));
+        pageUrls = await DartExtensionService(source).getPageList(chapter.url!);
       } else {
-        
         pageUrls = await JsExtensionService(source).getPageList(chapter.url!);
       }
     }
