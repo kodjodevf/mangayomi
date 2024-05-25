@@ -238,9 +238,7 @@ class TestSource extends MProvider {
   bool get supportsLatest => true;
 
   @override
-  Map<String, String> getHeaders(String url) {
-    // TODO: implement
-  }
+  Map<String, dynamic> get headers => {};
   
   @override
   Future<MPages> getPopular(int page) async {

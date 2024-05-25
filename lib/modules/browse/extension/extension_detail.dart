@@ -11,7 +11,6 @@ import 'package:mangayomi/modules/browse/extension/widgets/source_preference_wid
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 import 'package:mangayomi/services/http/m_client.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -251,17 +250,14 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                               .map((e) => e.id)
                                               .toList();
                                           isar.writeTxnSync(() {
-                                            if (!useTestSourceCode) {
-                                              if (source.isObsolete ?? false) {
-                                                isar.sources.deleteSync(
-                                                    widget.source.id!);
-                                              } else {
-                                                isar.sources
-                                                    .putSync(widget.source
-                                                      ..sourceCode = ""
-                                                      ..isAdded = false
-                                                      ..isPinned = false);
-                                              }
+                                            if (source.isObsolete ?? false) {
+                                              isar.sources.deleteSync(
+                                                  widget.source.id!);
+                                            } else {
+                                              isar.sources.putSync(widget.source
+                                                ..sourceCode = ""
+                                                ..isAdded = false
+                                                ..isPinned = false);
                                             }
                                             isar.sourcePreferences
                                                 .deleteAllSync(sourcePrefsIds);

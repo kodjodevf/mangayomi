@@ -8,7 +8,6 @@ import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -77,14 +76,6 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               child: CustomScrollView(
                 controller: controller,
                 slivers: [
-                  if (useTestSourceCode)
-                    SliverList.builder(
-                        itemCount: testSourceModelList.length,
-                        itemBuilder: (context, index) =>
-                            ExtensionListTileWidget(
-                              source: testSourceModelList[index],
-                              isTestSource: true,
-                            )),
                   SliverGroupedListView<Source, String>(
                     elements: updateEntries,
                     groupBy: (element) => "",

@@ -5,7 +5,6 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -20,9 +19,6 @@ class SourceListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        if (useTestSourceCode) {
-          isar.writeTxnSync(() => isar.sources.putSync(source));
-        }
         final sources = isar.sources
             .filter()
             .idIsNotNull()

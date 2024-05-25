@@ -8,7 +8,6 @@ import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_pro
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:mangayomi/sources/source_test.dart';
 
 class MangaReaderDetail extends ConsumerStatefulWidget {
   final int mangaId;
@@ -59,9 +58,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                 .isAddedEqualTo(true)
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
-              final sourceExist = useTestSourceCode
-                  ? true
-                  : snapshot.hasData && snapshot.data!.isNotEmpty;
+              final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(
                 onRefresh: () async {
                   if (sourceExist) {
@@ -96,11 +93,13 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     if (_isLoading)
                       const Positioned(
                           top: 0,
-                          bottom: 0,
                           left: 0,
                           right: 0,
-                          child: Center(
-                            child: CircularProgressIndicator(),
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 40),
+                            child: Center(
+                              child: RefreshProgressIndicator(),
+                            ),
                           )),
                   ],
                 ),

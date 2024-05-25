@@ -11,15 +11,13 @@ import 'package:mangayomi/eval/dart/model/m_pages.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/sources/source_test.dart';
 
 class DartExtensionService {
   late Source? source;
   DartExtensionService(this.source);
 
   MProvider _executeLib() {
-    final bytecode =
-        compilerEval(useTestSourceCode ? testSourceCode : source!.sourceCode!);
+    final bytecode = compilerEval(source!.sourceCode!);
 
     final runtime = runtimeEval(bytecode);
 

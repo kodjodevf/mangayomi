@@ -6,7 +6,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/sources/source_test.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
@@ -45,7 +44,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
               List<Source> sources = snapshot.data!
                   .where((element) => showNSFW ? true : element.isNsfw == false)
                   .toList();
-              if (sources.isEmpty && !useTestSourceCode) {
+              if (sources.isEmpty) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -71,19 +70,13 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
               final allEntriesWithoutIspinned =
                   sources.where((element) => !element.isPinned!).toList();
               return Scrollbar(
-              interactive: true,
+                interactive: true,
                 controller: controller,
                 thickness: 12,
                 radius: const Radius.circular(10),
                 child: CustomScrollView(
                   controller: controller,
                   slivers: [
-                    if (useTestSourceCode)
-                      SliverList.builder(
-                          itemCount: testSourceModelList.length,
-                          itemBuilder: (context, index) => SourceListTile(
-                              source: testSourceModelList[index],
-                              isManga: widget.isManga)),
                     SliverGroupedListView<Source, String>(
                       elements: lastUsedEntries,
                       groupBy: (element) => "",
