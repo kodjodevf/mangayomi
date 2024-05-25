@@ -84,7 +84,7 @@ please refer to Rinf's [documentation](https://rinf-docs.cunarist.com).
 
 Contributions are welcome!
 
-To get started with extension development, see [CONTRIBUTING.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING.md) for create sources in Dart or [CONTRIBUTING-JS.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING-JS.md) for create sources in JavaScript.
+To get started with extension development, see [CONTRIBUTING-DART.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING-DART.md) for create sources in Dart or [CONTRIBUTING-JS.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING-JS.md) for create sources in JavaScript.
 
 
 
