@@ -40,6 +40,13 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         'baseUrl': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
                 nullable: true))),
+        'headers': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.map, [
+                  BridgeTypeRef(CoreTypes.string),
+                  BridgeTypeRef(CoreTypes.string)
+                ]),
+                nullable: true))),
       },
       methods: {
         'getLatestUpdates': BridgeMethodDef(BridgeFunctionDef(
@@ -86,15 +93,6 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
         'getVideoList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
               BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
-            ])),
-            params: [
-              BridgeParameter('url',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-            ])),
-        'getHeaders': BridgeMethodDef(BridgeFunctionDef(
-            returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map, [
-              BridgeTypeRef(CoreTypes.string),
-              BridgeTypeRef(CoreTypes.string)
             ])),
             params: [
               BridgeParameter('url',
@@ -1045,13 +1043,12 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  Map<String, String> getHeaders(String url) {
-    final res = $_invoke('getHeaders', [$String(url)]);
-    Map<String, String> headers = {};
-    if (res is $Map) {
-      headers = res.$reified.toMapStringString!;
+  Map<String, String> get headers {
+    try {
+      return ($_get('headers') as Map).toMapStringString!;
+    } catch (e) {
+      return {};
     }
-    return headers;
   }
 
   $MVideo _toMVideo(Video e) =>

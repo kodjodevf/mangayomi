@@ -39,16 +39,19 @@ class DartExtensionService {
       );
       if (res is $Map) {
         headers = (res.$reified).toMapStringString!;
+      } else if (res is Map) {
+        headers = res.toMapStringString!;
+      } else {
+        throw "";
       }
-      return headers;
     } catch (_) {
       try {
-        headers = _executeLib().getHeaders(source!.baseUrl!);
+        headers = _executeLib().headers;
       } catch (_) {
         return {};
       }
     }
-    return {};
+    return headers;
   }
 
   String get sourceBaseUrl {

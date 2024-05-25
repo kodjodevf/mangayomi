@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/dart/model/document.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
@@ -271,19 +272,26 @@ class MBridge {
         val.add(element);
       }
     }
-
+    bool error = false;
     List<dynamic> valD = [];
     for (var date in val) {
       if (date.toString().isNotEmpty) {
-        valD.add(parseChapterDate(
-          date,
-          dateFormat,
-          dateFormatLocale,
-          (val) {
-            dateFormat = val.$1;
-            dateFormatLocale = val.$2;
-          },
-        ));
+        String dateStr = "";
+        if (error) {
+          dateStr = DateTime.now().millisecondsSinceEpoch.toString();
+        } else {
+          dateStr = parseChapterDate(
+            date,
+            dateFormat,
+            dateFormatLocale,
+            (val) {
+              dateFormat = val.$1;
+              dateFormatLocale = val.$2;
+              error = val.$3;
+            },
+          );
+        }
+        valD.add(dateStr);
       }
     }
     return valD;
@@ -330,8 +338,7 @@ class MBridge {
       String url, String? headers, String prefix, String suffix) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map)
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
     return await Mp4uploadExtractor()
         .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
@@ -364,7 +371,7 @@ class MBridge {
 
   //Parse a chapter date to millisecondsSinceEpoch
   static String parseChapterDate(String date, String dateFormat,
-      String dateFormatLocale, Function((String, String)) newLocale) {
+      String dateFormatLocale, Function((String, String, bool)) newLocale) {
     int parseRelativeDate(String date) {
       final number = int.tryParse(RegExp(r"(\d+)").firstMatch(date)!.group(0)!);
       if (number == null) return 0;
@@ -456,7 +463,7 @@ class MBridge {
 
       for (var locale in supportedLocales) {
         for (var dateFormat in _dateFormats) {
-          newLocale((dateFormat, locale));
+          newLocale((dateFormat, locale, false));
           try {
             initializeDateFormatting(locale);
             if (WordSet(["yesterday", "يوم واحد"]).startsWith(date)) {
@@ -496,8 +503,8 @@ class MBridge {
           } catch (_) {}
         }
       }
-      // botToast(e.toString());
-      throw Exception(e);
+      newLocale((dateFormat, dateFormatLocale, true));
+      return DateTime.now().millisecondsSinceEpoch.toString();
     }
   }
 
@@ -513,8 +520,7 @@ class MBridge {
       String url, String? headers, String prefix) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map)
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
 
     return await SendvidExtractor(newHeaders)
@@ -533,8 +539,7 @@ class MBridge {
       String url, String? headers, String? name, String prefix) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map)
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
     return await YourUploadExtractor().videosFromUrl(url, newHeaders,
         prefix: prefix, name: name ?? "YourUpload");
@@ -566,8 +571,7 @@ class MBridge {
       String? headers, List<Track>? subtitles, List<Track>? audios) {
     Map<String, String> newHeaders = {};
     if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map)
-          .map((key, value) => MapEntry(key.toString(), value.toString()));
+      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
     return Video(url, quality, originalUrl,
         headers: newHeaders, subtitles: subtitles ?? [], audios: audios ?? []);

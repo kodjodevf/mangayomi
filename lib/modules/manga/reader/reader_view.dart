@@ -686,8 +686,11 @@ class _MangaChapterPageGalleryState
                                                 LoadState.completed) {
                                               if (_failedToLoadImage.value ==
                                                   true) {
-                                                _failedToLoadImage.value =
-                                                    false;
+                                                Future.delayed(const Duration(
+                                                        milliseconds: 10))
+                                                    .then((value) =>
+                                                        _failedToLoadImage
+                                                            .value = false);
                                               }
                                               return StreamBuilder(
                                                 builder: (context, data) {
@@ -717,7 +720,11 @@ class _MangaChapterPageGalleryState
                                                 LoadState.failed) {
                                               if (_failedToLoadImage.value ==
                                                   false) {
-                                                _failedToLoadImage.value = true;
+                                                Future.delayed(const Duration(
+                                                        milliseconds: 10))
+                                                    .then((value) =>
+                                                        _failedToLoadImage
+                                                            .value = true);
                                               }
                                               return Container(
                                                   color: getBackgroundColor(
