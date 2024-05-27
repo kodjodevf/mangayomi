@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/messages/generated.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -19,7 +18,6 @@ import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.d
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
-import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -156,7 +154,6 @@ class _MangaChapterPageGalleryState
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
           overlays: SystemUiOverlay.values);
     }
-    finalizeRust();
     super.dispose();
   }
 
@@ -241,8 +238,6 @@ class _MangaChapterPageGalleryState
 
   Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
-
-  final List<int> _cropBorderCheckList = [];
 
   void _setFullScreen({bool? value}) async {
     if (isDesktop) {
@@ -387,12 +382,8 @@ class _MangaChapterPageGalleryState
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    final cropBorders = ref.watch(cropBordersStateProvider);
     final bool isHorizontalContinuaous =
         ref.watch(_currentReaderMode) == ReaderMode.horizontalContinuous;
-    if (cropBorders) {
-      _processCropBorders();
-    }
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
     return KeyboardListener(
@@ -1009,7 +1000,6 @@ class _MangaChapterPageGalleryState
     _uChapDataPreload.addAll(_chapterUrlModel.uChapDataPreload);
     _readerController.setMangaHistoryUpdate();
     await Future.delayed(const Duration(milliseconds: 1));
-    await initializeRust();
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     if (fullScreenReader) {
       if (isDesktop) {
@@ -1042,11 +1032,6 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
-    final cropBorders = ref.watch(cropBordersStateProvider);
-    if (cropBorders) {
-      _processCropBordersByIndex(index);
-    }
-
     for (var i = 1; i < pagePreloadAmount + 1; i++) {
       _precacheImages(index + i);
       _precacheImages(index - i);
@@ -1268,40 +1253,6 @@ class _MangaChapterPageGalleryState
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     Navigator.pop(context);
-  }
-
-  void _processCropBorders() async {
-    for (var i = 0; i < _uChapDataPreload.length; i++) {
-      if (!_cropBorderCheckList.contains(i)) {
-        _cropBorderCheckList.add(i);
-        ref
-            .watch(cropBordersProvider(
-                    data: _uChapDataPreload[i], cropBorder: true)
-                .future)
-            .then((value) {
-          _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
-          if (mounted) {
-            setState(() {});
-          }
-        });
-      }
-    }
-  }
-
-  void _processCropBordersByIndex(int index) async {
-    if (!_cropBorderCheckList.contains(index)) {
-      _cropBorderCheckList.add(index);
-      ref
-          .watch(cropBordersProvider(
-                  data: _uChapDataPreload[index], cropBorder: true)
-              .future)
-          .then((value) {
-        _uChapDataPreload[index] = _uChapDataPreload[index]..cropImage = value;
-      });
-      if (mounted) {
-        setState(() {});
-      }
-    }
   }
 
   Widget _appBar() {
@@ -1701,39 +1652,39 @@ class _MangaChapterPageGalleryState
                               )),
                       ],
                     ),
-                    Consumer(builder: (context, ref, child) {
-                      final cropBorders = ref.watch(cropBordersStateProvider);
-                      return IconButton(
-                        onPressed: () {
-                          ref
-                              .read(cropBordersStateProvider.notifier)
-                              .set(!cropBorders);
-                        },
-                        icon: Stack(
-                          children: [
-                            const Icon(
-                              Icons.crop_rounded,
-                            ),
-                            if (!cropBorders)
-                              Positioned(
-                                right: 8,
-                                child: Transform.scale(
-                                  scaleX: 2.5,
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '\\',
-                                        style: TextStyle(fontSize: 17),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    }),
+                    // Consumer(builder: (context, ref, child) {
+                    //   final cropBorders = ref.watch(cropBordersStateProvider);
+                    //   return IconButton(
+                    //     onPressed: () {
+                    //       ref
+                    //           .read(cropBordersStateProvider.notifier)
+                    //           .set(!cropBorders);
+                    //     },
+                    //     icon: Stack(
+                    //       children: [
+                    //         const Icon(
+                    //           Icons.crop_rounded,
+                    //         ),
+                    //         if (!cropBorders)
+                    //           Positioned(
+                    //             right: 8,
+                    //             child: Transform.scale(
+                    //               scaleX: 2.5,
+                    //               child: const Row(
+                    //                 mainAxisAlignment: MainAxisAlignment.center,
+                    //                 children: [
+                    //                   Text(
+                    //                     '\\',
+                    //                     style: TextStyle(fontSize: 17),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   );
+                    // }),
                     IconButton(
                       onPressed: () async {
                         if (!(readerMode == ReaderMode.horizontalContinuous)) {
@@ -2043,8 +1994,6 @@ class _MangaChapterPageGalleryState
       Consumer(builder: (context, ref, chil) {
         final readerMode = ref.watch(_currentReaderMode);
         final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
-        final cropBorders = ref.watch(cropBordersStateProvider);
-
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -2063,21 +2012,21 @@ class _MangaChapterPageGalleryState
                     return getReaderModeName(mode, context);
                   },
                 ),
-                SwitchListTile(
-                    value: cropBorders,
-                    title: Text(
-                      l10n.crop_borders,
-                      style: TextStyle(
-                          color: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .color!
-                              .withOpacity(0.9),
-                          fontSize: 14),
-                    ),
-                    onChanged: (value) {
-                      ref.read(cropBordersStateProvider.notifier).set(value);
-                    }),
+                // SwitchListTile(
+                //     value: cropBorders,
+                //     title: Text(
+                //       l10n.crop_borders,
+                //       style: TextStyle(
+                //           color: Theme.of(context)
+                //               .textTheme
+                //               .bodyLarge!
+                //               .color!
+                //               .withOpacity(0.9),
+                //           fontSize: 14),
+                //     ),
+                //     onChanged: (value) {
+                //       ref.read(cropBordersStateProvider.notifier).set(value);
+                //     }),
                 SwitchListTile(
                     value: usePageTapZones,
                     title: Text(l10n.use_page_tap_zones,

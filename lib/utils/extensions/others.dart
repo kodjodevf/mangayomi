@@ -6,7 +6,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -59,21 +58,18 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     final data = this;
     final isLocale = data.isLocale!;
     final archiveImage = data.archiveImage;
-    final cropBorders = ref.watch(cropBordersStateProvider);
-    return cropBorders && data.cropImage != null
-        ? ExtendedMemoryImageProvider(data.cropImage!)
-        : (isLocale
-            ? archiveImage != null
-                ? ExtendedMemoryImageProvider(archiveImage)
-                : ExtendedFileImageProvider(File(
-                    '${data.directory!.path}${padIndex(data.index! + 1)}.jpg'))
-            : CustomExtendedNetworkImageProvider(
-                data.url!.trim().trimLeft().trimRight(),
-                cache: true,
-                cacheMaxAge: const Duration(days: 7),
-                headers: ref.watch(headersProvider(
-                    source: data.chapter!.manga.value!.source!,
-                    lang: data.chapter!.manga.value!
-                        .lang!)))) as ImageProvider<Object>;
+    return (isLocale
+        ? archiveImage != null
+            ? ExtendedMemoryImageProvider(archiveImage)
+            : ExtendedFileImageProvider(
+                File('${data.directory!.path}${padIndex(data.index! + 1)}.jpg'))
+        : CustomExtendedNetworkImageProvider(
+            data.url!.trim().trimLeft().trimRight(),
+            cache: true,
+            cacheMaxAge: const Duration(days: 7),
+            headers: ref.watch(headersProvider(
+                source: data.chapter!.manga.value!.source!,
+                lang: data
+                    .chapter!.manga.value!.lang!)))) as ImageProvider<Object>;
   }
 }

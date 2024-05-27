@@ -1223,14 +1223,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.0"
-  rinf:
-    dependency: "direct main"
-    description:
-      name: rinf
-      sha256: "2b4cb68c83634c3e7012c67443dab3f03d232ea326362ab1ca89585192468ffb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.9.2"
   riverpod:
     dependency: transitive
     description:

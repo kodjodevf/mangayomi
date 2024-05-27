@@ -538,7 +538,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 chapterLength: chapters.length))),
                   Expanded(
                     child: Scrollbar(
-              interactive: true,
+                        interactive: true,
                         thickness: 12,
                         radius: const Radius.circular(10),
                         controller: _scrollController,

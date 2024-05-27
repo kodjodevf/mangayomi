@@ -13,7 +13,6 @@ class ReaderScreen extends ConsumerWidget {
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
     final animatePageTransitions =
         ref.watch(animatePageTransitionsStateProvider);
-    final cropBorders = ref.watch(cropBordersStateProvider);
     final doubleTapAnimationSpeed =
         ref.watch(doubleTapAnimationSpeedStateProvider);
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
@@ -342,12 +341,12 @@ class ReaderScreen extends ConsumerWidget {
                       .read(animatePageTransitionsStateProvider.notifier)
                       .set(value);
                 }),
-            SwitchListTile(
-                value: cropBorders,
-                title: Text(context.l10n.crop_borders),
-                onChanged: (value) {
-                  ref.read(cropBordersStateProvider.notifier).set(value);
-                }),
+            // SwitchListTile(
+            //     value: cropBorders,
+            //     title: Text(context.l10n.crop_borders),
+            //     onChanged: (value) {
+            //       ref.read(cropBordersStateProvider.notifier).set(value);
+            //     }),
             SwitchListTile(
                 value: usePageTapZones,
                 title: Text(context.l10n.use_page_tap_zones),

@@ -54,7 +54,7 @@ class SourceListTile extends StatelessWidget {
                     child: Icon(Icons.source_outlined),
                   ),
                 ),
-              ),
+                useCustomNetworkImage: false),
       ),
       subtitle: Row(
         children: [

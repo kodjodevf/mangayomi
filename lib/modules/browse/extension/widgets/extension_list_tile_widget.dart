@@ -82,8 +82,7 @@ class _ExtensionListTileWidgetState
                       child: Icon(Icons.source_outlined),
                     ),
                   ),
-                  headers: {},
-                ),
+                  useCustomNetworkImage: false),
         ),
         title: Text(widget.source.name!),
         subtitle: Row(

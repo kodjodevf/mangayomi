@@ -9,9 +9,12 @@ Widget cachedNetworkImage(
     required double? height,
     required BoxFit? fit,
     AlignmentGeometry? alignment,
+    bool useCustomNetworkImage = true,
     Widget errorWidget = const Icon(Icons.error, size: 50)}) {
   return ExtendedImage(
-    image: CustomExtendedNetworkImageProvider(imageUrl, headers: headers),
+    image: useCustomNetworkImage
+        ? CustomExtendedNetworkImageProvider(imageUrl, headers: headers)
+        : ExtendedNetworkImageProvider(imageUrl, headers: headers),
     width: width,
     height: height,
     fit: fit,

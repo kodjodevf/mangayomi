@@ -61,7 +61,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
               final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(
                 onRefresh: () async {
-                  if (sourceExist) {
+                  if (sourceExist && !_isLoading) {
                     await ref.read(updateMangaDetailProvider(
                             mangaId: manga.id, isInit: false)
                         .future);
