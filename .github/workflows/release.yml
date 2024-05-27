@@ -21,24 +21,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
+        uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
-
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-      
-      - name: Setup Java toolchain (Only Android target)
-        uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "11"
-
-      - name: Install the CLI tool
-        run: cargo install rinf
-        
-      - name: Generate message files
-        run: rinf message
 
       - name: Setup Android keystore
         run: |
@@ -47,12 +32,11 @@ jobs:
 
       - name: flutter pub get
         run: |
-          git config --global core.longpaths true
           flutter pub get
 
       - name: build android apks
         run: |
-          flutter build apk --release --split-per-abi
+          flutter build apk --release --split-per-abi --dart-define=cronetHttpNoPlay=true
           cd build/app/outputs/flutter-apk
           mv app-arm64-v8a-release.apk Mangayomi-${{ github.ref_name }}-android-arm64-v8a.apk
           mv app-armeabi-v7a-release.apk Mangayomi-${{ github.ref_name }}-android-armeabi-v7a.apk
@@ -80,22 +64,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
+        uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
-      
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install rinf
-        
-      - name: Generate message files
-        run: rinf message
 
       - name: flutter pub get
         run: |
-          git config --global core.longpaths true
           flutter pub get
 
       - name: build ios
@@ -130,22 +104,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
+        uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install rinf
-        
-      - name: Generate message files
-        run: rinf message
-
       - name: flutter pub get
         run: |
-          git config --global core.longpaths true
           flutter pub get
 
       - name: build macos
@@ -179,22 +143,12 @@ jobs:
   #       uses: actions/checkout@v3
 
   #     - name: setup flutter
-  #       uses: subosito/flutter-action@v2.10.0
+  #       uses: subosito/flutter-action@v2.12.0
   #       with:
   #         channel: 'stable'
 
-  #     - name: Setup Rust toolchain
-  #       uses: dtolnay/rust-toolchain@stable
-
-  #     - name: Install the CLI tool
-  #       run: cargo install rinf
-        
-  #     - name: Generate message files
-  #       run: rinf message
-
   #     - name: flutter pub get
   #       run: |
-  #         git config --global core.longpaths true
   #         flutter pub get
 
   #     - name: build windows
@@ -234,18 +188,9 @@ jobs:
           sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
+        uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
-
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install rinf
-        
-      - name: Generate message files
-        run: rinf message
 
       - name: flutter pub get
         run: flutter pub get
@@ -285,19 +230,10 @@ jobs:
           sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2.10.0
+        uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
           
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install rinf
-        
-      - name: Generate message files
-        run: rinf message
-
       - name: flutter pub get
         run: flutter pub get
 
