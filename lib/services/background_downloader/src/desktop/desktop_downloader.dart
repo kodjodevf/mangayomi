@@ -7,7 +7,6 @@ import 'dart:isolate';
 import 'package:async/async.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
-import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http/io_client.dart';
 import 'package:logging/logging.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -573,16 +572,7 @@ final class DesktopDownloader extends BaseDownloader {
 
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads
   static _recreateClient() async {
-    bool hasGPServices = false;
-    if (Platform.isAndroid) {
-      hasGPServices = (await GoogleApiAvailability.instance
-              .checkGooglePlayServicesAvailability()) ==
-          GooglePlayServicesAvailability.success;
-    }
-
-    if (Platform.isWindows ||
-        Platform.isLinux ||
-        (Platform.isAndroid && !hasGPServices)) {
+    if (Platform.isWindows || Platform.isLinux) {
       final client = HttpClient();
       client.connectionTimeout = requestTimeout;
       client.findProxy = proxy.isNotEmpty
@@ -592,7 +582,7 @@ final class DesktopDownloader extends BaseDownloader {
           (X509Certificate cert, String host, int port) => true;
       httpClient = IOClient(client);
     } else {
-      httpClient = MClient.httpClient(hasGPServices: hasGPServices);
+      httpClient = MClient.httpClient();
     }
   }
 

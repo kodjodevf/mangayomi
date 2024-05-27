@@ -13,15 +13,9 @@ import 'package:http/io_client.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
 class MClient {
-  static final flutter_inappwebview.CookieManager _cookieManager =
-      flutter_inappwebview.CookieManager.instance();
-
   MClient();
-  static Client httpClient({bool hasGPServices = false}) {
+  static Client httpClient() {
     if (Platform.isAndroid) {
-      if (!hasGPServices) {
-        return IOClient(HttpClient());
-      }
       final engine = CronetEngine.build(
           enablePublicKeyPinningBypassForLocalTrustAnchors: true,
           enableHttp2: true,
@@ -41,7 +35,7 @@ class MClient {
   static InterceptedClient init(
       {MSource? source, Map<String, dynamic>? reqcopyWith}) {
     return InterceptedClient.build(
-        client: httpClient(hasGPServices: hasGPServices),
+        client: httpClient(),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 
@@ -69,7 +63,8 @@ class MClient {
               .toList() ??
           [];
     } else {
-      cookies = (await _cookieManager.getCookies(url: Uri.parse(url)))
+      cookies = (await flutter_inappwebview.CookieManager.instance()
+              .getCookies(url: Uri.parse(url)))
           .map((e) => "${e.name}=${e.value}")
           .toList();
     }

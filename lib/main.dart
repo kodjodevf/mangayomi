@@ -5,7 +5,6 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_api_availability/google_api_availability.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -24,8 +23,6 @@ import 'package:window_manager/window_manager.dart';
 
 late Isar isar;
 
-bool hasGPServices = false;
-
 void main(List<String> args) async {
   if (Platform.isMacOS) {
     if (runWebViewTitleBarWidget(args)) {
@@ -42,13 +39,6 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();
-  if (Platform.isAndroid) {
-    try {
-      hasGPServices = (await GoogleApiAvailability.instance
-              .checkGooglePlayServicesAvailability()) ==
-          GooglePlayServicesAvailability.success;
-    } catch (_) {}
-  }
 
   runApp(const ProviderScope(child: MyApp()));
 }

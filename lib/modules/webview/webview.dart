@@ -124,167 +124,169 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                   icon: const Icon(Icons.close)),
             ),
           )
-        : SafeArea(
-            child: WillPopScope(
-              onWillPop: () async {
-                _webViewController?.goBack();
-                return false;
-              },
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: AppBar().preferredSize.height,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            dense: true,
-                            subtitle: Text(
-                              _url,
-                              style: const TextStyle(
-                                  fontSize: 10,
-                                  overflow: TextOverflow.ellipsis),
+        : Material(
+          child: SafeArea(
+              child: WillPopScope(
+                onWillPop: () async {
+                  _webViewController?.goBack();
+                  return false;
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: AppBar().preferredSize.height,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              dense: true,
+                              subtitle: Text(
+                                _url,
+                                style: const TextStyle(
+                                    fontSize: 10,
+                                    overflow: TextOverflow.ellipsis),
+                              ),
+                              title: Text(
+                                _title,
+                                style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              leading: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(Icons.close)),
                             ),
-                            title: Text(
-                              _title,
-                              style: const TextStyle(
-                                  overflow: TextOverflow.ellipsis,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            leading: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.close)),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.arrow_back,
-                              color: _canGoback ? null : Colors.grey),
-                          onPressed: _canGoback
-                              ? () {
-                                  _webViewController?.goBack();
+                          IconButton(
+                            icon: Icon(Icons.arrow_back,
+                                color: _canGoback ? null : Colors.grey),
+                            onPressed: _canGoback
+                                ? () {
+                                    _webViewController?.goBack();
+                                  }
+                                : null,
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.arrow_forward,
+                                color: _canGoForward ? null : Colors.grey),
+                            onPressed: _canGoForward
+                                ? () {
+                                    _webViewController?.goForward();
+                                  }
+                                : null,
+                          ),
+                          PopupMenuButton(
+                              popUpAnimationStyle: popupAnimationStyle,
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem<int>(
+                                      value: 0, child: Text(l10n!.refresh)),
+                                  PopupMenuItem<int>(
+                                      value: 1, child: Text(l10n.share)),
+                                  PopupMenuItem<int>(
+                                      value: 2,
+                                      child: Text(l10n.open_in_browser)),
+                                  PopupMenuItem<int>(
+                                      value: 3, child: Text(l10n.clear_cookie)),
+                                ];
+                              },
+                              onSelected: (value) async {
+                                if (value == 0) {
+                                  _webViewController?.reload();
+                                } else if (value == 1) {
+                                  Share.share(_url);
+                                } else if (value == 2) {
+                                  await InAppBrowser.openWithSystemBrowser(
+                                      url: Uri.parse(_url));
+                                } else if (value == 3) {
+                                  CookieManager.instance().deleteAllCookies();
+                                  MClient.deleteAllCookies(_url);
                                 }
-                              : null,
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.arrow_forward,
-                              color: _canGoForward ? null : Colors.grey),
-                          onPressed: _canGoForward
-                              ? () {
-                                  _webViewController?.goForward();
-                                }
-                              : null,
-                        ),
-                        PopupMenuButton(
-                            popUpAnimationStyle: popupAnimationStyle,
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem<int>(
-                                    value: 0, child: Text(l10n!.refresh)),
-                                PopupMenuItem<int>(
-                                    value: 1, child: Text(l10n.share)),
-                                PopupMenuItem<int>(
-                                    value: 2,
-                                    child: Text(l10n.open_in_browser)),
-                                PopupMenuItem<int>(
-                                    value: 3, child: Text(l10n.clear_cookie)),
-                              ];
-                            },
-                            onSelected: (value) async {
-                              if (value == 0) {
-                                _webViewController?.reload();
-                              } else if (value == 1) {
-                                Share.share(_url);
-                              } else if (value == 2) {
-                                await InAppBrowser.openWithSystemBrowser(
-                                    url: Uri.parse(_url));
-                              } else if (value == 3) {
-                                CookieManager.instance().deleteAllCookies();
-                                MClient.deleteAllCookies(_url);
-                              }
-                            }),
-                      ],
+                              }),
+                        ],
+                      ),
                     ),
-                  ),
-                  _progress < 1.0
-                      ? LinearProgressIndicator(value: _progress)
-                      : Container(),
-                  Expanded(
-                    child: InAppWebView(
-                      key: webViewKey,
-                      onWebViewCreated: (controller) async {
-                        _webViewController = controller;
-                      },
-                      onLoadStart: (controller, url) async {
-                        setState(() {
-                          _url = url.toString();
-                        });
-                      },
-                      shouldOverrideUrlLoading:
-                          (controller, navigationAction) async {
-                        var uri = navigationAction.request.url!;
-
-                        if (![
-                          "http",
-                          "https",
-                          "file",
-                          "chrome",
-                          "data",
-                          "javascript",
-                          "about"
-                        ].contains(uri.scheme)) {
-                          if (await canLaunchUrl(uri)) {
-                            // Launch the App
-                            await launchUrl(
-                              uri,
-                            );
-                            // and cancel the request
-                            return NavigationActionPolicy.CANCEL;
+                    _progress < 1.0
+                        ? LinearProgressIndicator(value: _progress)
+                        : Container(),
+                    Expanded(
+                      child: InAppWebView(
+                        key: webViewKey,
+                        onWebViewCreated: (controller) async {
+                          _webViewController = controller;
+                        },
+                        onLoadStart: (controller, url) async {
+                          setState(() {
+                            _url = url.toString();
+                          });
+                        },
+                        shouldOverrideUrlLoading:
+                            (controller, navigationAction) async {
+                          var uri = navigationAction.request.url!;
+          
+                          if (![
+                            "http",
+                            "https",
+                            "file",
+                            "chrome",
+                            "data",
+                            "javascript",
+                            "about"
+                          ].contains(uri.scheme)) {
+                            if (await canLaunchUrl(uri)) {
+                              // Launch the App
+                              await launchUrl(
+                                uri,
+                              );
+                              // and cancel the request
+                              return NavigationActionPolicy.CANCEL;
+                            }
                           }
-                        }
-
-                        return NavigationActionPolicy.ALLOW;
-                      },
-                      onLoadStop: (controller, url) async {
-                        if (mounted) {
-                          setState(() {
-                            _url = url.toString();
-                          });
-                        }
-                      },
-                      onProgressChanged: (controller, progress) async {
-                        if (mounted) {
-                          setState(() {
-                            _progress = progress / 100;
-                          });
-                        }
-                      },
-                      onUpdateVisitedHistory:
-                          (controller, url, isReload) async {
-                        final ua = await controller.evaluateJavascript(
-                                source: "navigator.userAgent") ??
-                            "";
-                        await MClient.setCookie(url.toString(), ua);
-                        final canGoback = await controller.canGoBack();
-                        final canGoForward = await controller.canGoForward();
-                        final title = await controller.getTitle();
-                        if (mounted) {
-                          setState(() {
-                            _url = url.toString();
-                            _title = title!;
-                            _canGoback = canGoback;
-                            _canGoForward = canGoForward;
-                          });
-                        }
-                      },
-                      initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+          
+                          return NavigationActionPolicy.ALLOW;
+                        },
+                        onLoadStop: (controller, url) async {
+                          if (mounted) {
+                            setState(() {
+                              _url = url.toString();
+                            });
+                          }
+                        },
+                        onProgressChanged: (controller, progress) async {
+                          if (mounted) {
+                            setState(() {
+                              _progress = progress / 100;
+                            });
+                          }
+                        },
+                        onUpdateVisitedHistory:
+                            (controller, url, isReload) async {
+                          final ua = await controller.evaluateJavascript(
+                                  source: "navigator.userAgent") ??
+                              "";
+                          await MClient.setCookie(url.toString(), ua);
+                          final canGoback = await controller.canGoBack();
+                          final canGoForward = await controller.canGoForward();
+                          final title = await controller.getTitle();
+                          if (mounted) {
+                            setState(() {
+                              _url = url.toString();
+                              _title = title!;
+                              _canGoback = canGoback;
+                              _canGoForward = canGoForward;
+                            });
+                          }
+                        },
+                        initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          );
+        );
   }
 }
 
