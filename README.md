@@ -41,45 +41,6 @@ Features include:
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
 
-
-## Using Rust Inside Flutter
-
-To run and build this app, you need to have
-[Flutter SDK](https://docs.flutter.dev/get-started/install)
-and [Rust toolchain](https://www.rust-lang.org/tools/install)
-installed on your system.
-You can check that your system is ready with the commands below.
-Note that all the Flutter subcomponents should be installed.
-
-```bash
-rustc --version
-flutter doctor
-```
-
-You also need to have the CLI tool for Rinf ready.
-
-```bash
-cargo install rinf
-```
-
-Messages sent between Dart and Rust are implemented using Protobuf.
-If you have newly cloned the project repository
-or made changes to the `.proto` files in the `./messages` directory,
-run the following command:
-
-```bash
-rinf message
-```
-
-Now you can run and build this app just like any other Flutter projects.
-
-```bash
-flutter run
-```
-
-For detailed instructions on writing Rust and Flutter together,
-please refer to Rinf's [documentation](https://rinf-docs.cunarist.com).
-
 # Contributing
 
 Contributions are welcome!
