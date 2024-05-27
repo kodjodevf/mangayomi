@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 part 'check_for_update.g.dart';
 
 @riverpod
-checkForUpdate(CheckForUpdateRef ref,
+Future<void> checkForUpdate(CheckForUpdateRef ref,
     {BuildContext? context, bool? manualUpdate}) async {
   manualUpdate = manualUpdate ?? false;
   final l10n = l10nLocalizations(context!)!;

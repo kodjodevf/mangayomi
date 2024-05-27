@@ -42,12 +42,5 @@ String regCustomMatcher(
 }
 
 String padIndex(int index) {
-  String idx = index.toString();
-
-  if (idx.length == 1) {
-    return '00$idx';
-  } else if (idx.length == 2) {
-    return '0$idx';
-  }
-  return idx;
+  return index.toString().padLeft(3, "0");
 }
