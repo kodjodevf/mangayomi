@@ -48,20 +48,20 @@ class DoubleTapAnimationSpeedState extends _$DoubleTapAnimationSpeedState {
   }
 }
 
-// @riverpod
-// class CropBordersState extends _$CropBordersState {
-//   @override
-//   bool build() {
-//     return isar.settings.getSync(227)!.cropBorders ?? false;
-//   }
+@riverpod
+class CropBordersState extends _$CropBordersState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.cropBorders ?? false;
+  }
 
-//   void set(bool value) {
-//     final settings = isar.settings.getSync(227);
-//     state = value;
-//     isar.writeTxnSync(
-//         () => isar.settings.putSync(settings!..cropBorders = value));
-//   }
-// }
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..cropBorders = value));
+  }
+}
 
 @riverpod
 class ScaleTypeState extends _$ScaleTypeState {

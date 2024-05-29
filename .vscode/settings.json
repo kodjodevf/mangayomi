@@ -4,7 +4,7 @@
         "main"
     ],
     "rust-analyzer.linkedProjects": [
-        ".\\native\\hub\\Cargo.toml"
+        ".\\rust\\Cargo.toml"
     ],
     "files.associations": {
         "*.html.erb": "erb",

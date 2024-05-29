@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -31,6 +32,7 @@ void main(List<String> args) async {
   }
 
   WidgetsFlutterBinding.ensureInitialized();
+  await RustLib.init();
   MediaKit.ensureInitialized();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
@@ -43,7 +45,7 @@ void main(List<String> args) async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-iniDateFormatting() {
+void iniDateFormatting() {
   initializeDateFormatting();
   final supportedLocales = DateFormat.allLocalesWithSymbols();
   for (var locale in supportedLocales) {

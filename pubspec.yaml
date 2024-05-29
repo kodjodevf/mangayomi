@@ -79,6 +79,9 @@ dependencies:
   highlight: ^0.7.0
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
+  flutter_rust_bridge: ^2.0.0-dev.36
+  rust_lib_mangayomi:
+    path: rust_builder
 
 dependency_overrides:
   http: ^1.2.1
@@ -107,7 +110,7 @@ flutter_launcher_icons:
   ios: true
   remove_alpha_ios: true
   image_path: "assets/app_icons/icon-red.png"
-  min_sdk_android: 24
+  min_sdk_android: 21
   windows:
     generate: true
     image_path: "assets/app_icons/icon-red.png"

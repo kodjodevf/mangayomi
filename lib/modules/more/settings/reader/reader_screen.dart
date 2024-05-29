@@ -20,6 +20,7 @@ class ReaderScreen extends ConsumerWidget {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    final cropBorders = ref.watch(cropBordersStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.reader),
@@ -341,12 +342,12 @@ class ReaderScreen extends ConsumerWidget {
                       .read(animatePageTransitionsStateProvider.notifier)
                       .set(value);
                 }),
-            // SwitchListTile(
-            //     value: cropBorders,
-            //     title: Text(context.l10n.crop_borders),
-            //     onChanged: (value) {
-            //       ref.read(cropBordersStateProvider.notifier).set(value);
-            //     }),
+            SwitchListTile(
+                value: cropBorders,
+                title: Text(context.l10n.crop_borders),
+                onChanged: (value) {
+                  ref.read(cropBordersStateProvider.notifier).set(value);
+                }),
             SwitchListTile(
                 value: usePageTapZones,
                 title: Text(context.l10n.use_page_tap_zones),

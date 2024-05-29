@@ -14,6 +14,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
@@ -211,6 +212,7 @@ class _MangaChapterPageGalleryState
   final PhotoViewController _photoViewController = PhotoViewController();
   final PhotoViewScaleStateController _photoViewScaleStateController =
       PhotoViewScaleStateController();
+  final List<int> _cropBorderCheckList = [];
 
   void _onScaleEnd(BuildContext context, ScaleEndDetails details,
       PhotoViewControllerValue controllerValue) {
@@ -382,8 +384,12 @@ class _MangaChapterPageGalleryState
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    final cropBorders = ref.watch(cropBordersStateProvider);
     final bool isHorizontalContinuaous =
         ref.watch(_currentReaderMode) == ReaderMode.horizontalContinuous;
+    if (cropBorders) {
+      _processCropBorders();
+    }
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final l10n = l10nLocalizations(context)!;
     return KeyboardListener(
@@ -1032,6 +1038,10 @@ class _MangaChapterPageGalleryState
   }
 
   void _onPageChanged(int index) {
+    final cropBorders = ref.watch(cropBordersStateProvider);
+    if (cropBorders) {
+      _processCropBordersByIndex(index);
+    }
     for (var i = 1; i < pagePreloadAmount + 1; i++) {
       _precacheImages(index + i);
       _precacheImages(index - i);
@@ -1245,6 +1255,40 @@ class _MangaChapterPageGalleryState
             index: index,
             duration: const Duration(milliseconds: 1),
             curve: Curves.ease);
+      }
+    }
+  }
+
+  void _processCropBordersByIndex(int index) async {
+    if (!_cropBorderCheckList.contains(index)) {
+      _cropBorderCheckList.add(index);
+      ref
+          .watch(cropBordersProvider(
+                  data: _uChapDataPreload[index], cropBorder: true)
+              .future)
+          .then((value) {
+        _uChapDataPreload[index] = _uChapDataPreload[index]..cropImage = value;
+      });
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  void _processCropBorders() async {
+    for (var i = 0; i < _uChapDataPreload.length; i++) {
+      if (!_cropBorderCheckList.contains(i)) {
+        _cropBorderCheckList.add(i);
+        ref
+            .watch(cropBordersProvider(
+                    data: _uChapDataPreload[i], cropBorder: true)
+                .future)
+            .then((value) {
+          _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
+          if (mounted) {
+            setState(() {});
+          }
+        });
       }
     }
   }
@@ -1652,39 +1696,39 @@ class _MangaChapterPageGalleryState
                               )),
                       ],
                     ),
-                    // Consumer(builder: (context, ref, child) {
-                    //   final cropBorders = ref.watch(cropBordersStateProvider);
-                    //   return IconButton(
-                    //     onPressed: () {
-                    //       ref
-                    //           .read(cropBordersStateProvider.notifier)
-                    //           .set(!cropBorders);
-                    //     },
-                    //     icon: Stack(
-                    //       children: [
-                    //         const Icon(
-                    //           Icons.crop_rounded,
-                    //         ),
-                    //         if (!cropBorders)
-                    //           Positioned(
-                    //             right: 8,
-                    //             child: Transform.scale(
-                    //               scaleX: 2.5,
-                    //               child: const Row(
-                    //                 mainAxisAlignment: MainAxisAlignment.center,
-                    //                 children: [
-                    //                   Text(
-                    //                     '\\',
-                    //                     style: TextStyle(fontSize: 17),
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ),
-                    //       ],
-                    //     ),
-                    //   );
-                    // }),
+                    Consumer(builder: (context, ref, child) {
+                      final cropBorders = ref.watch(cropBordersStateProvider);
+                      return IconButton(
+                        onPressed: () {
+                          ref
+                              .read(cropBordersStateProvider.notifier)
+                              .set(!cropBorders);
+                        },
+                        icon: Stack(
+                          children: [
+                            const Icon(
+                              Icons.crop_rounded,
+                            ),
+                            if (!cropBorders)
+                              Positioned(
+                                right: 8,
+                                child: Transform.scale(
+                                  scaleX: 2.5,
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '\\',
+                                        style: TextStyle(fontSize: 17),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }),
                     IconButton(
                       onPressed: () async {
                         if (!(readerMode == ReaderMode.horizontalContinuous)) {
