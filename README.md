@@ -47,6 +47,38 @@ Contributions are welcome!
 
 To get started with extension development, see [CONTRIBUTING-DART.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING-DART.md) for create sources in Dart or [CONTRIBUTING-JS.md](https://github.com/kodjodevf/mangayomi-extensions/blob/main/CONTRIBUTING-JS.md) for create sources in JavaScript.
 
+## Using flutter_rust_bridge
+
+To run and build this app, you need to have
+[Flutter SDK](https://docs.flutter.dev/get-started/install)
+and [Rust toolchain](https://www.rust-lang.org/tools/install)
+installed on your system.
+You can check that your system is ready with the commands below.
+Note that all the Flutter subcomponents should be installed.
+
+```bash
+rustc --version
+flutter doctor
+```
+
+You also need to have the CLI tool for Rinf ready.
+
+```bash
+cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+```
+
+run the following command:
+
+```bash
+flutter_rust_bridge_codegen generate
+```
+
+Now you can run and build this app just like any other Flutter projects.
+
+```bash
+flutter run
+```
+
 
 
 ## License
