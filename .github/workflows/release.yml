@@ -25,14 +25,28 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Setup Java toolchain (Only Android target)
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
+
       - name: Setup Android keystore
         run: |
           echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
           echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > android/key.properties
 
       - name: flutter pub get
-        run: |
-          flutter pub get
+        run: flutter pub get
 
       - name: build android apks
         run: |
@@ -67,10 +81,18 @@ jobs:
         uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
+      
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
-        run: |
-          flutter pub get
+        run: flutter pub get
 
       - name: build ios
         run: |
@@ -108,9 +130,17 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
+
       - name: flutter pub get
-        run: |
-          flutter pub get
+        run: flutter pub get
 
       - name: build macos
         run: |
@@ -147,9 +177,17 @@ jobs:
   #       with:
   #         channel: 'stable'
 
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
+
+  #     - name: Install the CLI tool
+  #       run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+  #     - name: flutter_rust_bridge_codegen
+  #       run: flutter_rust_bridge_codegen generate
+
   #     - name: flutter pub get
-  #       run: |
-  #         flutter pub get
+  #       run: flutter pub get
 
   #     - name: build windows
   #       run: |
@@ -191,6 +229,15 @@ jobs:
         uses: subosito/flutter-action@v2.12.0
         with:
           channel: 'stable'
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
@@ -234,6 +281,15 @@ jobs:
         with:
           channel: 'stable'
           
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
+
       - name: flutter pub get
         run: flutter pub get
 
