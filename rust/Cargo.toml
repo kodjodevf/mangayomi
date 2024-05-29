@@ -8,8 +8,4 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.0.0-dev.36"
-allo-isolate = "0.1.24"
-wasm-bindgen = "0.2.90"
-prost = "0.12.3"
-tokio_with_wasm = "0.4.3"
 image = "0.25.0"
