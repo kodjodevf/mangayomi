@@ -279,12 +279,10 @@ Future<List<String>> downloadChapter(
           },
           taskProgressCallback: (taskProgress) async {
             if (taskProgress.progress == 1.0) {
-              await File(
-                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                  .copy("${path!.path}/${taskProgress.task.filename}");
-              await File(
-                      "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}")
-                  .delete();
+              final file = File(
+                  "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}");
+              await file.copy("${path!.path}/${taskProgress.task.filename}");
+              await file.delete();
             }
           },
         );
@@ -324,12 +322,10 @@ Future<List<String>> downloadChapter(
           },
           onStatus: (status) async {
             if (status == TaskStatus.complete) {
-              await File(
-                      "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}")
-                  .copy("${path!.path}/${tasks.first.filename}");
-              await File(
-                      "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}")
-                  .delete();
+              final file = File(
+                  "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}");
+              await file.copy("${path!.path}/${tasks.first.filename}");
+              await file.delete();
             }
           },
         );

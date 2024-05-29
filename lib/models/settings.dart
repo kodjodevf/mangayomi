@@ -183,6 +183,9 @@ class Settings {
 
   int? animeGridSize;
 
+  @enumerated
+  late SectionType disableSectionType;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -263,11 +266,13 @@ class Settings {
       this.mangaHomeDisplayType = DisplayType.comfortableGrid,
       this.appFontFamily,
       this.mangaGridSize,
-      this.animeGridSize});
+      this.animeGridSize,
+      this.disableSectionType = SectionType.all});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
-    animeDisplayType = DisplayType.values[json['animeDisplayType']];
+    animeDisplayType = DisplayType
+        .values[json['animeDisplayType'] ?? DisplayType.compactGrid.index];
     animeLibraryDownloadedChapters = json['animeLibraryDownloadedChapters'];
     animeLibraryLocalSource = json['animeLibraryLocalSource'];
     animeLibraryShowCategoryTabs = json['animeLibraryShowCategoryTabs'];
@@ -276,7 +281,8 @@ class Settings {
     animeLibraryShowLanguage = json['animeLibraryShowLanguage'];
     animeLibraryShowNumbersOfItems = json['animeLibraryShowNumbersOfItems'];
     autoExtensionsUpdates = json['autoExtensionsUpdates'];
-    backgroundColor = BackgroundColor.values[json['backgroundColor']];
+    backgroundColor = BackgroundColor
+        .values[json['backgroundColor'] ?? BackgroundColor.black.index];
     if (json['chapterFilterBookmarkedList'] != null) {
       chapterFilterBookmarkedList =
           (json['chapterFilterBookmarkedList'] as List)
@@ -312,7 +318,8 @@ class Settings {
     }
     cropBorders = json['cropBorders'];
     dateFormat = json['dateFormat'];
-    defaultReaderMode = ReaderMode.values[json['defaultReaderMode']];
+    defaultReaderMode = ReaderMode
+        .values[json['defaultReaderMode'] ?? ReaderMode.vertical.index];
     displayType = DisplayType.values[json['displayType']];
     doubleTapAnimationSpeed = json['doubleTapAnimationSpeed'];
     downloadLocation = json['downloadLocation'];
@@ -358,7 +365,8 @@ class Settings {
     pureBlackDarkMode = json['pureBlackDarkMode'];
     relativeTimesTamps = json['relativeTimesTamps'];
     saveAsCBZArchive = json['saveAsCBZArchive'];
-    scaleType = ScaleType.values[json['scaleType']];
+    scaleType =
+        ScaleType.values[json['scaleType'] ?? ScaleType.fitScreen.index];
     showNSFW = json['showNSFW'];
     showPagesNumber = json['showPagesNumber'];
     if (json['sortChapterList'] != null) {
@@ -392,20 +400,22 @@ class Settings {
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
-
     customColorFilter = json['customColorFilter'] != null
         ? CustomColorFilter.fromJson(json['customColorFilter'])
         : null;
     enableCustomColorFilter = json['enableCustomColorFilter'];
-    colorFilterBlendMode =
-        ColorFilterBlendMode.values[json['colorFilterBlendMode']];
+    colorFilterBlendMode = ColorFilterBlendMode
+        .values[json['colorFilterBlendMode'] ?? ColorFilterBlendMode.none];
     playerSubtitleSettings = json['playerSubtitleSettings'] != null
         ? PlayerSubtitleSettings.fromJson(json['customColorFilter'])
         : null;
-    mangaHomeDisplayType = DisplayType.values[json['mangaHomeDisplayType']];
+    mangaHomeDisplayType = DisplayType.values[
+        json['mangaHomeDisplayType'] ?? DisplayType.comfortableGrid.index];
     appFontFamily = json['appFontFamily'];
     mangaGridSize = json['mangaGridSize'];
     animeGridSize = json['animeGridSize'];
+    disableSectionType =
+        SectionType.values[json['disableSectionType'] ?? SectionType.all];
   }
 
   Map<String, dynamic> toJson() => {
@@ -512,9 +522,12 @@ class Settings {
         'mangaHomeDisplayType': mangaHomeDisplayType.index,
         'appFontFamily': appFontFamily,
         'mangaGridSize': mangaGridSize,
-        'animeGridSize': animeGridSize
+        'animeGridSize': animeGridSize,
+        'disableSectionType': disableSectionType.index
       };
 }
+
+enum SectionType { all, anime, manga }
 
 enum DisplayType {
   compactGrid,

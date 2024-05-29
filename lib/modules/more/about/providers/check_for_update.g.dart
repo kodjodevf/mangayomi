@@ -6,7 +6,7 @@ part of 'check_for_update.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkForUpdateHash() => r'866b89bb48a4f37e240d2c272215b8646790d1b0';
+String _$checkForUpdateHash() => r'f460e78c666e58d2a33037b160f5b0fd460cbb5d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const checkForUpdateProvider = CheckForUpdateFamily();
 
 /// See also [checkForUpdate].
-class CheckForUpdateFamily extends Family<Object?> {
+class CheckForUpdateFamily extends Family<AsyncValue<void>> {
   /// See also [checkForUpdate].
   const CheckForUpdateFamily();
 
@@ -75,7 +75,7 @@ class CheckForUpdateFamily extends Family<Object?> {
 }
 
 /// See also [checkForUpdate].
-class CheckForUpdateProvider extends AutoDisposeProvider<Object?> {
+class CheckForUpdateProvider extends AutoDisposeFutureProvider<void> {
   /// See also [checkForUpdate].
   CheckForUpdateProvider({
     BuildContext? context,
@@ -115,7 +115,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<Object?> {
 
   @override
   Override overrideWith(
-    Object? Function(CheckForUpdateRef provider) create,
+    FutureOr<void> Function(CheckForUpdateRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -133,7 +133,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<Object?> {
   }
 
   @override
-  AutoDisposeProviderElement<Object?> createElement() {
+  AutoDisposeFutureProviderElement<void> createElement() {
     return _CheckForUpdateProviderElement(this);
   }
 
@@ -154,7 +154,7 @@ class CheckForUpdateProvider extends AutoDisposeProvider<Object?> {
   }
 }
 
-mixin CheckForUpdateRef on AutoDisposeProviderRef<Object?> {
+mixin CheckForUpdateRef on AutoDisposeFutureProviderRef<void> {
   /// The parameter `context` of this provider.
   BuildContext? get context;
 
@@ -162,8 +162,8 @@ mixin CheckForUpdateRef on AutoDisposeProviderRef<Object?> {
   bool? get manualUpdate;
 }
 
-class _CheckForUpdateProviderElement extends AutoDisposeProviderElement<Object?>
-    with CheckForUpdateRef {
+class _CheckForUpdateProviderElement
+    extends AutoDisposeFutureProviderElement<void> with CheckForUpdateRef {
   _CheckForUpdateProviderElement(super.provider);
 
   @override

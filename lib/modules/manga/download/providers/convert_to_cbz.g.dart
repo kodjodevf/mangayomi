@@ -6,7 +6,7 @@ part of 'convert_to_cbz.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$convertToCBZHash() => r'b421d288e9cd1fca3079ccb5d5702ee2ad4cdfe3';
+String _$convertToCBZHash() => r'a0aed321ca44ee59f46f04ecf6f37e496dc55c87';
 
 /// Copied from Dart SDK
 class _SystemHash {

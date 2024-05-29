@@ -69,7 +69,7 @@ class _ExtensionListTileWidgetState
               color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
               borderRadius: BorderRadius.circular(5)),
           child: widget.source.iconUrl!.isEmpty
-              ? const Icon(Icons.source_outlined)
+              ? const Icon(Icons.extension_rounded)
               : cachedNetworkImage(
                   imageUrl: widget.source.iconUrl!,
                   fit: BoxFit.contain,
@@ -79,7 +79,7 @@ class _ExtensionListTileWidgetState
                     width: 37,
                     height: 37,
                     child: Center(
-                      child: Icon(Icons.source_outlined),
+                      child: Icon(Icons.extension_rounded),
                     ),
                   ),
                   useCustomNetworkImage: false),

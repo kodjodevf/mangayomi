@@ -73,12 +73,16 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
         await _storageProvider.getMangaChapterDirectory(widget.chapter);
 
     try {
-      if (File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync()) {
-        File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
-      }
-      if (File("${mangaDir.path}${widget.chapter.name}.mp4").existsSync()) {
-        File("${mangaDir.path}${widget.chapter.name}.mp4").deleteSync();
-      }
+      try {
+        if (File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync()) {
+          File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
+        }
+      } catch (_) {}
+      try {
+        if (File("${mangaDir!.path}${widget.chapter.name}.mp4").existsSync()) {
+          File("${mangaDir.path}${widget.chapter.name}.mp4").deleteSync();
+        }
+      } catch (_) {}
       path!.deleteSync(recursive: true);
     } catch (_) {}
     isar.writeTxnSync(() {

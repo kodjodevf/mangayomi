@@ -7,21 +7,12 @@ part 'convert_to_cbz.g.dart';
 @riverpod
 Future<List<String>> convertToCBZ(ConvertToCBZRef ref, String chapterDir,
     String mangaDir, String chapterName, List<String> pageList) async {
-  Map<String, dynamic> data = {
-    "chapterDir": chapterDir,
-    "mangaDir": mangaDir,
-    "chapterName": chapterName,
-    "pageList": pageList
-  };
-  return compute(_convertToCBZ, data);
+  return compute(_convertToCBZ, (chapterDir, mangaDir, chapterName, pageList));
 }
 
-List<String> _convertToCBZ(Map<String, dynamic> data) {
+List<String> _convertToCBZ((String, String, String, List<String>) datas) {
   List<String> imagesPaths = [];
-  String chapterDir = data["chapterDir"]!;
-  String mangaDir = data["mangaDir"]!;
-  String chapterName = data["chapterName"]!;
-  List<String> pageList = data["pageList"]!;
+  final (chapterDir, mangaDir, chapterName, pageList) = datas;
 
   if (Directory(chapterDir).existsSync()) {
     List<FileSystemEntity> entities = Directory(chapterDir).listSync();
