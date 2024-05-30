@@ -547,7 +547,6 @@ class _MangaChapterPageGalleryState
                                                                     index2]
                                                                 : null,
                                                           ],
-                                                    scale: (a) {},
                                                     backgroundColor:
                                                         backgroundColor,
                                                     isFailedToLoadImage:
@@ -1034,7 +1033,7 @@ class _MangaChapterPageGalleryState
         readerMode != ReaderMode.webtoon) {
       _autoScroll.value = false;
     }
-    autoPagescroll();
+    _autoPagescroll();
   }
 
   void _onPageChanged(int index) {
@@ -1081,7 +1080,7 @@ class _MangaChapterPageGalleryState
   late final _pageOffset =
       ValueNotifier(_readerController.autoScrollValues().$2);
 
-  void autoPagescroll() async {
+  void _autoPagescroll() async {
     if (_isVerticalOrHorizontalContinous()) {
       for (int i = 0; i < 1; i++) {
         await Future.delayed(const Duration(milliseconds: 100));
@@ -1092,7 +1091,7 @@ class _MangaChapterPageGalleryState
             offset: _pageOffset.value,
             duration: const Duration(milliseconds: 100));
       }
-      autoPagescroll();
+      _autoPagescroll();
     }
   }
 
@@ -1207,7 +1206,7 @@ class _MangaChapterPageGalleryState
       _autoScroll.value = false;
     } else {
       if (_autoScrollPage.value) {
-        autoPagescroll();
+        _autoPagescroll();
         _autoScroll.value = true;
       }
     }
@@ -1413,7 +1412,7 @@ class _MangaChapterPageGalleryState
                             valueListenable: _autoScroll,
                             builder: (context, value, child) => IconButton(
                                 onPressed: () {
-                                  autoPagescroll();
+                                  _autoPagescroll();
                                   _autoScroll.value = !value;
                                 },
                                 icon: Icon(value
@@ -2038,6 +2037,7 @@ class _MangaChapterPageGalleryState
       Consumer(builder: (context, ref, chil) {
         final readerMode = ref.watch(_currentReaderMode);
         final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
+        final cropBorders = ref.watch(cropBordersStateProvider);
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -2056,21 +2056,21 @@ class _MangaChapterPageGalleryState
                     return getReaderModeName(mode, context);
                   },
                 ),
-                // SwitchListTile(
-                //     value: cropBorders,
-                //     title: Text(
-                //       l10n.crop_borders,
-                //       style: TextStyle(
-                //           color: Theme.of(context)
-                //               .textTheme
-                //               .bodyLarge!
-                //               .color!
-                //               .withOpacity(0.9),
-                //           fontSize: 14),
-                //     ),
-                //     onChanged: (value) {
-                //       ref.read(cropBordersStateProvider.notifier).set(value);
-                //     }),
+                SwitchListTile(
+                    value: cropBorders,
+                    title: Text(
+                      l10n.crop_borders,
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .color!
+                              .withOpacity(0.9),
+                          fontSize: 14),
+                    ),
+                    onChanged: (value) {
+                      ref.read(cropBordersStateProvider.notifier).set(value);
+                    }),
                 SwitchListTile(
                     value: usePageTapZones,
                     title: Text(l10n.use_page_tap_zones,
@@ -2252,61 +2252,59 @@ class _MangaChapterPageGalleryState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ExpansionTile(
-                  title: Text(
-                    l10n.custom_color_filter,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                  shape: const StarBorder(),
-                  initiallyExpanded: enableCustomColorFilter,
-                  trailing: IgnorePointer(
-                    child: Switch(
-                      value: enableCustomColorFilter,
-                      onChanged: (_) {},
+                SwitchListTile(
+                    value: enableCustomColorFilter,
+                    title: Text(
+                      l10n.custom_color_filter,
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .color!
+                              .withOpacity(0.9),
+                          fontSize: 14),
                     ),
+                    onChanged: (value) {
+                      ref
+                          .read(enableCustomColorFilterStateProvider.notifier)
+                          .set(value);
+                    }),
+                if (enableCustomColorFilter) ...[
+                  rgbaFilterWidget(a, r, g, b, (val) {
+                    if (val.$3 == "r") {
+                      ref
+                          .read(customColorFilterStateProvider.notifier)
+                          .set(a, val.$1.toInt(), g, b, val.$2);
+                    } else if (val.$3 == "g") {
+                      ref
+                          .read(customColorFilterStateProvider.notifier)
+                          .set(a, r, val.$1.toInt(), b, val.$2);
+                    } else if (val.$3 == "b") {
+                      ref
+                          .read(customColorFilterStateProvider.notifier)
+                          .set(a, r, g, val.$1.toInt(), val.$2);
+                    } else {
+                      ref
+                          .read(customColorFilterStateProvider.notifier)
+                          .set(val.$1.toInt(), r, g, b, val.$2);
+                    }
+                  }, context),
+                  CustomPopupMenuButton<ColorFilterBlendMode>(
+                    label: l10n.color_filter_blend_mode,
+                    title: getColorFilterBlendModeName(
+                        colorFilterBlendMode, context),
+                    onSelected: (value) {
+                      ref
+                          .read(colorFilterBlendModeStateProvider.notifier)
+                          .set(value);
+                    },
+                    value: colorFilterBlendMode,
+                    list: ColorFilterBlendMode.values,
+                    itemText: (va) {
+                      return getColorFilterBlendModeName(va, context);
+                    },
                   ),
-                  onExpansionChanged: (val) {
-                    ref
-                        .read(enableCustomColorFilterStateProvider.notifier)
-                        .set(val);
-                  },
-                  children: [
-                    rgbaFilterWidget(a, r, g, b, (val) {
-                      if (val.$3 == "r") {
-                        ref
-                            .read(customColorFilterStateProvider.notifier)
-                            .set(a, val.$1.toInt(), g, b, val.$2);
-                      } else if (val.$3 == "g") {
-                        ref
-                            .read(customColorFilterStateProvider.notifier)
-                            .set(a, r, val.$1.toInt(), b, val.$2);
-                      } else if (val.$3 == "b") {
-                        ref
-                            .read(customColorFilterStateProvider.notifier)
-                            .set(a, r, g, val.$1.toInt(), val.$2);
-                      } else {
-                        ref
-                            .read(customColorFilterStateProvider.notifier)
-                            .set(val.$1.toInt(), r, g, b, val.$2);
-                      }
-                    }, context),
-                    CustomPopupMenuButton<ColorFilterBlendMode>(
-                      label: l10n.color_filter_blend_mode,
-                      title: getColorFilterBlendModeName(
-                          colorFilterBlendMode, context),
-                      onSelected: (value) {
-                        ref
-                            .read(colorFilterBlendModeStateProvider.notifier)
-                            .set(value);
-                      },
-                      value: colorFilterBlendMode,
-                      list: ColorFilterBlendMode.values,
-                      itemText: (va) {
-                        return getColorFilterBlendModeName(va, context);
-                      },
-                    ),
-                  ],
-                ),
+                ]
               ],
             ),
           ),
@@ -2315,7 +2313,7 @@ class _MangaChapterPageGalleryState
     ], context: context, vsync: this, fullWidth: true);
 
     if (_autoScrollPage.value) {
-      autoPagescroll();
+      _autoPagescroll();
       _autoScroll.value = true;
     }
   }

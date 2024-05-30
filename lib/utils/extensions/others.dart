@@ -50,6 +50,10 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       if (url != null) {
         cachedImage = await getCachedImageFile(url!);
       }
+      if (cachedImage == null) {
+        await Future.delayed(const Duration(seconds: 3));
+        cachedImage = await getCachedImageFile(url!);
+      }
       imageBytes = cachedImage?.readAsBytesSync();
     }
     return imageBytes;
