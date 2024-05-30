@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "67.0.0"
   analyzer:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: analyzer
       sha256: "37577842a27e4338429a1cbc32679d508836510b056f1eedf0c8d20e39c1383d"
@@ -528,10 +528,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_rust_bridge
-      sha256: efb018e387c5e844095e35e9d6c6bd1610c49f25de109f4988b7c45aeca60a9a
+      sha256: d8a8419099180408b224235e2e2aa386b67ebfd59cc65610d618bb06fb640954
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0-dev.36"
+    version: "2.0.0-dev.37"
   flutter_test:
     dependency: "direct dev"
     description: flutter
