@@ -1182,22 +1182,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           );
 
                                           try {
-                                            try {
-                                              if (File(
-                                                      "${mangaDir!.path}${chapter.name}.cbz")
-                                                  .existsSync()) {
-                                                File("${mangaDir.path}${chapter.name}.cbz")
-                                                    .deleteSync();
-                                              }
-                                            } catch (_) {}
-                                            try {
-                                              if (File(
-                                                      "${mangaDir!.path}${chapter.name}.mp4")
-                                                  .existsSync()) {
-                                                File("${mangaDir.path}${chapter.name}.mp4")
-                                                    .deleteSync();
-                                              }
-                                            } catch (_) {}
+                                            if (await File(
+                                                    "${mangaDir!.path}${chapter.name}.cbz")
+                                                .exists()) {
+                                              File("${mangaDir.path}${chapter.name}.cbz")
+                                                  .deleteSync();
+                                            }
                                             path!.deleteSync(recursive: true);
                                           } catch (_) {}
                                           isar.writeTxnSync(() {
