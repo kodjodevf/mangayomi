@@ -61,7 +61,7 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-              interactive: true,
+        interactive: true,
         thickness: 12,
         radius: const Radius.circular(10),
         controller: controller,
@@ -111,8 +111,10 @@ class _ChapterListTileState extends State<ChapterListTile> {
         selectedColor:
             chapter.isRead! ? Colors.white.withOpacity(0.3) : Colors.white,
         onTap: () async {
-          Navigator.pop(context);
-          pushReplacementMangaReaderView(context: context, chapter: chapter);
+          if (!widget.currentChap) {
+            Navigator.pop(context);
+            pushReplacementMangaReaderView(context: context, chapter: chapter);
+          }
         },
         title: Text(
           chapter.name!,

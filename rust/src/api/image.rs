@@ -1,3 +1,4 @@
+use flutter_rust_bridge::frb;
 use image::{DynamicImage, GenericImageView, Pixel};
 use std::io::Cursor;
 
@@ -56,12 +57,11 @@ fn crop_image(image: Vec<u8>) -> DynamicImage {
         return decoded_image;
     }
 
-    let cropped_image = decoded_image.crop(left, top, right - left + 1, bottom - top + 1);
-
-    return cropped_image;
+    return decoded_image.crop(left, top, right - left + 1, bottom - top + 1);
 }
 
-pub async fn start_cropping(image: Vec<u8>) -> Vec<u8> {
+#[frb(sync)]
+pub fn process_crop_image(image: Vec<u8>) -> Vec<u8> {
     let res = crop_image(image);
     let mut image_data: Vec<u8> = Vec::new();
     res.write_to(&mut Cursor::new(&mut image_data), image::ImageFormat::Png)

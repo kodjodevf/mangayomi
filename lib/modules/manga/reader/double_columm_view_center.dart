@@ -2,7 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
@@ -124,7 +124,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                 children: [
                   if (widget.datas[0] != null)
                     Flexible(
-                      child: ImageViewCenter(
+                      child: ImageViewPaged(
                         data: widget.datas[0]!,
                         loadStateChanged: (state) {
                           if (state.extendedImageLoadState ==
@@ -202,7 +202,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
                   // if (widget.datas[1] != null) const SizedBox(width: 10),
                   if (widget.datas[1] != null)
                     Flexible(
-                      child: ImageViewCenter(
+                      child: ImageViewPaged(
                         data: widget.datas[1]!,
                         loadStateChanged: (state) {
                           if (state.extendedImageLoadState ==

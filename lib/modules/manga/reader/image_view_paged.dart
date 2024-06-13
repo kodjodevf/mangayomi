@@ -7,14 +7,14 @@ import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart'
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 
-class ImageViewCenter extends ConsumerWidget {
+class ImageViewPaged extends ConsumerWidget {
   final UChapDataPreload data;
   final Function(UChapDataPreload data) onLongPressData;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state)? onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)?
       initGestureConfigHandler;
-  const ImageViewCenter({
+  const ImageViewPaged({
     super.key,
     required this.data,
     required this.onLongPressData,
@@ -25,10 +25,6 @@ class ImageViewCenter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return _imageView(ref);
-  }
-
-  Widget _imageView(WidgetRef ref) {
     final scaleType = ref.watch(scaleTypeStateProvider);
     final image = data.getImageProvider(ref);
     return GestureDetector(

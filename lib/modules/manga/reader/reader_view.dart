@@ -31,7 +31,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/modules/manga/reader/image_view_center.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
@@ -653,7 +653,7 @@ class _MangaChapterPageGalleryState
                                       },
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return ImageViewCenter(
+                                        return ImageViewPaged(
                                           data: _uChapDataPreload[index],
                                           loadStateChanged: (state) {
                                             if (state.extendedImageLoadState ==

@@ -79,7 +79,7 @@ dependencies:
   highlight: ^0.7.0
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
-  flutter_rust_bridge: ^2.0.0-dev.37
+  flutter_rust_bridge: ^2.0.0-dev.39
   rust_lib_mangayomi:
     path: rust_builder
 
@@ -88,6 +88,7 @@ dependency_overrides:
   ffi: ^2.1.2
   flex_seed_scheme: ^2.0.0
   analyzer: ">=5.2.0 <7.0.0"
+  html: ^0.15.4
 
 dev_dependencies:
   flutter_test:

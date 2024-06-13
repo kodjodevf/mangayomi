@@ -26,18 +26,11 @@ class ImageViewVertical extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return _imageView(context, ref);
-  }
-
-  Widget _imageView(BuildContext context, WidgetRef ref) {
-    final image = data.getImageProvider(ref);
-    final scaleType = ref.watch(scaleTypeStateProvider);
-    final l10n = l10nLocalizations(context)!;
     final imageWidget = ExtendedImage(
-        image: image,
+        image: data.getImageProvider(ref),
         filterQuality: FilterQuality.medium,
         handleLoadingProgress: true,
-        fit: getBoxFit(scaleType),
+        fit: getBoxFit(ref.watch(scaleTypeStateProvider)),
         enableMemoryCache: true,
         enableLoadState: true,
         loadStateChanged: (state) {
@@ -66,7 +59,7 @@ class ImageViewVertical extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(l10n.image_loading_error,
+                    Text(context.l10n.image_loading_error,
                         style: TextStyle(color: Colors.white.withOpacity(0.7))),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -87,7 +80,7 @@ class ImageViewVertical extends ConsumerWidget {
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 16),
                               child: Text(
-                                l10n.retry,
+                                context.l10n.retry,
                               ),
                             ),
                           )),
