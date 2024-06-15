@@ -59,4 +59,8 @@ class MDocument {
   String? attr(String attr) {
     return _document?.attr(attr);
   }
+
+  bool hasAttr(String attr) {
+    return _document?.hasAtr(attr) ?? false;
+  }
 }

@@ -69,4 +69,8 @@ class MElement {
   String? attr(String attribute) {
     return _element?.attr(attribute);
   }
+
+  bool hasAttr(String attr) {
+    return _element?.hasAtr(attr) ?? false;
+  }
 }

@@ -141,6 +141,16 @@ class $MDocument implements MDocument, $Instance {
                     false)
               ]),
         ),
+        'hasAttr': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+              params: [
+                BridgeParameter(
+                    'attr',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
       },
       wrap: true);
 
@@ -194,6 +204,8 @@ class $MDocument implements MDocument, $Instance {
         return __xpathFirst;
       case 'attr':
         return __attr;
+      case 'hasAttr':
+        return __hasAttr;
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -276,6 +288,13 @@ class $MDocument implements MDocument, $Instance {
     return res == null ? const $null() : $String(res);
   }
 
+  static const $Function __hasAttr = $Function(_hasAttr);
+  static $Value? _hasAttr(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res = (target!.$value as MDocument).attr(args[0]?.$value ?? "");
+    return res == null ? const $null() : $String(res);
+  }
+
   @override
   List<MElement>? select(String selector) => $value.select(selector);
 
@@ -298,6 +317,9 @@ class $MDocument implements MDocument, $Instance {
 
   @override
   String? attr(String attr) => $value.attr(attr);
+
+  @override
+  bool hasAttr(String attr) => $value.hasAttr(attr);
 
   @override
   MElement? getElementById(String id) => $value.getElementById(id);

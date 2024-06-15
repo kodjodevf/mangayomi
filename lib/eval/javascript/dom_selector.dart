@@ -85,6 +85,16 @@ class JsDomSelector {
       final attr = args[1];
       return parse(input).attr(attr) ?? "";
     });
+    runtime.onMessage('ele_has_attr', (dynamic args) {
+      final attr = args[0];
+      final key = args[1];
+      return _elements[key]?.hasAtr(attr) ?? false;
+    });
+    runtime.onMessage('doc_has_attr', (dynamic args) {
+      final input = args[0];
+      final attr = args[1];
+      return parse(input).hasAtr(attr);
+    });
     runtime.onMessage('doc_xpath_first', (dynamic args) {
       final input = args[0];
       final xpath = args[1];
@@ -270,6 +280,12 @@ class Document {
             JSON.stringify([this.html, attr])
         );
     }
+    hasAttr(attr) {
+        return sendMessage(
+            "doc_has_attr",
+            JSON.stringify([this.html, attr])
+        );
+    }
 }
 
 class Element {
@@ -378,6 +394,12 @@ class Element {
             elements.push(new Element(key));
         });
         return elements;
+    }
+    hasAttr(attr) {
+        return sendMessage(
+            "ele_has_attr",
+            JSON.stringify([this.html, attr])
+        );
     }
 }
 ''');

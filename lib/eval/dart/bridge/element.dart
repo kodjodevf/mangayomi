@@ -162,6 +162,16 @@ class $MElement implements MElement, $Instance {
                     false)
               ]),
         ),
+        'hasAttr': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+              params: [
+                BridgeParameter(
+                    'attr',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false)
+              ]),
+        ),
       },
       wrap: true);
 
@@ -245,6 +255,8 @@ class $MElement implements MElement, $Instance {
         return __xpath;
       case 'xpathFirst':
         return __xpathFirst;
+      case 'hasAttr':
+        return __hasAttr;
       default:
         return _superclass.$getProperty(runtime, identifier);
     }
@@ -322,6 +334,13 @@ class $MElement implements MElement, $Instance {
     return res == null ? const $null() : $String(res);
   }
 
+  static const $Function __hasAttr = $Function(_hasAttr);
+  static $Value? _hasAttr(
+      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final res = (target!.$value as MElement).attr(args[0]?.$value ?? "");
+    return res == null ? const $null() : $String(res);
+  }
+
   @override
   List<String>? xpath(String xpath) => $value.xpath(xpath);
 
@@ -347,6 +366,9 @@ class $MElement implements MElement, $Instance {
   @override
   List<MElement>? getElementsByTagName(String localNames) =>
       $value.getElementsByTagName(localNames);
+
+  @override
+  bool hasAttr(String attr) => $value.hasAttr(attr);
 
   @override
   String? get className => $value.className;

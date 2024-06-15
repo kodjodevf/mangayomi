@@ -82,6 +82,7 @@ dependencies:
   flutter_rust_bridge: ^2.0.0-dev.39
   rust_lib_mangayomi:
     path: rust_builder
+  pseudom: ^1.0.1
 
 dependency_overrides:
   http: ^1.2.1
