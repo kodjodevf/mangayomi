@@ -45,8 +45,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
         ("getLatestUpdates", 1),
         ("search", 2),
         ("getDetail", 3),
-        if (source!.isManga!) ("getPageList", 4),
-        if (!source!.isManga!) ("getVideoList", 5)
+        ("getPageList", 4),
+        ("getVideoList", 5)
       ];
 
   int _serviceIndex = 0;
