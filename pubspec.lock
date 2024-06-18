@@ -536,10 +536,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_rust_bridge
-      sha256: ee0d9798156ba523ca24bfb690efd15614f823685df270447c480dd5923d9a0b
+      sha256: "4ab629fec14aa4a6a3b503d15ec81cf0cd2cf4d409eb2bbdd32491fea69d9f61"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0-dev.39"
+    version: "2.0.0-dev.40"
   flutter_test:
     dependency: "direct dev"
     description: flutter
