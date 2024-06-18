@@ -37,8 +37,6 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
         
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: Setup Android keystore
         run: |
@@ -88,8 +86,6 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
         
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
@@ -136,8 +132,6 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
         
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
@@ -236,8 +230,6 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
         
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
@@ -287,8 +279,6 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
         
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
