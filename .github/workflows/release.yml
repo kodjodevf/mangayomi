@@ -293,7 +293,10 @@ jobs:
           mv appimagetool-x86_64.AppImage appimagetool
 
           flutter build linux --release
-          
+
+          patchelf --replace-needed libmpv.so.1 libmpv.so build/linux/x64/release/bundle/lib/libmedia_kit_video_plugin.so
+          patchelf --replace-needed libmpv.so.1 libmpv.so build/linux/x64/release/bundle/lib/libmedia_kit_native_event_loop.so
+                    
           mv build/linux/x64/release/bundle/{mangayomi,AppRun}
           cp linux/appimage/* build/linux/x64/release/bundle/
           ./appimagetool build/linux/x64/release/bundle/
