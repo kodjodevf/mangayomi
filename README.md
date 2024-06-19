@@ -16,7 +16,7 @@ Mangayomi is free an open source manga reader and anime streaming cross-platefor
 ## Features
 
 Features include:
-* [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions), utilizing the capabilities of the [dart_eval](https://pub.dev/packages/dart_eval) package & [flutter_qjs package A small Javascript engine supports ES2020](https://github.com/kodjodevf/flutter_qjs)
+* [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions), utilizing the capabilities of the [dart_eval](https://pub.dev/packages/dart_eval) package & [flutter_qjs](https://github.com/kodjodevf/flutter_qjs)
 * Online reading from a variety of sources
 * Watching anime from a variety of sources
 * Local reading of downloaded content
