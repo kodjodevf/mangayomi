@@ -130,13 +130,13 @@ extension ElementtExtension on Element {
   }
 
   String? xpathFirst(String xpath) {
-    var htmlXPath = HtmlXPath.html(outerHtml);
+    var htmlXPath = HtmlXPath.node(this);
     var query = htmlXPath.query(xpath);
     return query.attr;
   }
 
   List<String> xpath(String xpath) {
-    var htmlXPath = HtmlXPath.html(outerHtml);
+    var htmlXPath = HtmlXPath.node(this);
     var query = htmlXPath.query(xpath);
     if (query.nodes.length > 1) {
       return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();

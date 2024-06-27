@@ -11,21 +11,21 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.1.2
-  flutter_riverpod: ^2.4.10
-  riverpod_annotation: ^2.3.3
+  go_router: ^14.2.0
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
   html: ^0.15.4
-  font_awesome_flutter: ^10.6.0
+  font_awesome_flutter: ^10.7.0
   expandable_text: ^2.3.0
   flex_color_scheme: ^7.3.1
-  extended_image: ^8.2.0
+  extended_image: ^8.2.1
   photo_view: ^0.15.0
   grouped_list: ^5.1.2
   intl: ^0.19.0
-  google_fonts: ^6.1.0
-  url_launcher: ^6.2.4
+  google_fonts: ^6.2.1
+  url_launcher: ^6.3.0
   package_info_plus: ^8.0.0
-  permission_handler: ^11.2.0
+  permission_handler: ^11.3.1
   flutter_inappwebview: ^5.8.0
   draggable_menu: ^4.4.1
   isar: 3.1.0+1
@@ -34,14 +34,14 @@ dependencies:
   xpath_selector_html_parser: ^3.0.1
   desktop_webview_window:
     path: ./packages/desktop_webview_window
-  archive: ^3.4.10
-  file_picker: ^8.0.3
-  path_provider: ^2.1.2
+  archive: ^3.6.1
+  file_picker: ^8.0.5
+  path_provider: ^2.1.3
   scrollable_positioned_list: ^0.3.8
   dart_eval: ^0.7.9
-  json_path: ^0.7.0
+  json_path: ^0.7.2
   bot_toast: ^4.1.3
-  flutter_web_auth_2: ^3.1.1
+  flutter_web_auth_2: ^3.1.2
   numberpicker: ^2.1.2
   encrypt: ^5.0.3
   media_kit: ^1.1.10+1
@@ -52,10 +52,9 @@ dependencies:
       ref: 0ab6b10ea660ead8e8e1694517aabe3582f25d5c
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.3
-  protobuf: ^3.1.0
   cupertino_icons: ^1.0.6
-  window_manager: ^0.3.8
-  ffi: ^2.1.1
+  window_manager: ^0.3.9
+  ffi: ^2.1.2
   ffigen: ^12.0.0
   http_interceptor: ^2.0.0-beta.8
   js_packer: ^0.0.5
@@ -75,7 +74,7 @@ dependencies:
   highlight: ^0.7.0
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
-  flutter_rust_bridge: ^2.0.0-dev.40
+  flutter_rust_bridge: ^2.0.0
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1

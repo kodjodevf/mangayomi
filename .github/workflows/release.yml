@@ -35,7 +35,7 @@ jobs:
           java-version: "11"
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        run: cargo install 'flutter_rust_bridge_codegen'
         
 
       - name: Setup Android keystore
@@ -84,7 +84,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        run: cargo install 'flutter_rust_bridge_codegen'
         
 
       - name: flutter pub get
@@ -130,7 +130,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        run: cargo install 'flutter_rust_bridge_codegen'
         
 
       - name: flutter pub get
@@ -175,7 +175,7 @@ jobs:
   #       uses: dtolnay/rust-toolchain@stable
 
   #     - name: Install the CLI tool
-  #       run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+  #       run: cargo install 'flutter_rust_bridge_codegen'
         
   #     - name: flutter_rust_bridge_codegen
   #       run: flutter_rust_bridge_codegen generate
@@ -228,7 +228,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        run: cargo install 'flutter_rust_bridge_codegen'
         
 
       - name: flutter pub get
@@ -277,7 +277,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+        run: cargo install 'flutter_rust_bridge_codegen'
         
 
       - name: flutter pub get

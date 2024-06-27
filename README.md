@@ -64,7 +64,7 @@ flutter doctor
 You also need to have the CLI tool for flutter_rust_bridge ready.
 
 ```bash
-cargo install 'flutter_rust_bridge_codegen@^2.0.0-dev.0'
+cargo install 'flutter_rust_bridge_codegen'
 ```
 
 run the following command:

@@ -25,15 +25,14 @@ import 'package:window_manager/window_manager.dart';
 late Isar isar;
 
 void main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isMacOS) {
     if (runWebViewTitleBarWidget(args)) {
       return;
     }
   }
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await RustLib.init();
   MediaKit.ensureInitialized();
+  await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }
