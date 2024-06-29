@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
+import 'package:mangayomi/utils/extensions/duration.dart';
+import 'package:video_player/video_player.dart';
 
 class CustomSeekBar extends StatefulWidget {
-  final Player player;
+  final VideoPlayerController controller;
   final Duration? delta;
   final Function(Duration)? onSeekStart;
   final Function(Duration)? onSeekEnd;
@@ -14,7 +14,7 @@ class CustomSeekBar extends StatefulWidget {
       {super.key,
       this.onSeekStart,
       this.onSeekEnd,
-      required this.player,
+      required this.controller,
       this.delta});
 
   @override
@@ -23,43 +23,45 @@ class CustomSeekBar extends StatefulWidget {
 
 class CustomSeekBarState extends State<CustomSeekBar> {
   Duration? tempPosition;
-  late Player player = widget.player;
+  late VideoPlayerController controller = widget.controller;
   Duration position = Duration.zero;
-  late Duration duration = player.state.duration;
+  late Duration duration = controller.value.duration;
   Duration buffer = Duration.zero;
 
   @override
   void initState() {
-    player.stream.position.listen((event) {
-      if (mounted) {
-        setState(() {
-          position = event;
-        });
-      }
-    });
-    player.stream.duration.listen((event) {
-      if (mounted) {
-        setState(() {
-          duration = event;
-        });
-      }
-    });
-    player.stream.buffer.listen((event) {
-      if (mounted) {
-        setState(() {
-          buffer = event;
-        });
-      }
-    });
-    position = player.state.position;
-    duration = player.state.duration;
-    buffer = player.state.buffer;
     super.initState();
+    controller.addListener(() {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void deactivate() {
+    controller.removeListener(() {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
+    super.deactivate();
   }
 
   final isDesktop = Platform.isMacOS || Platform.isWindows || Platform.isLinux;
   @override
   Widget build(BuildContext context) {
+    duration = controller.value.duration;
+    position = controller.value.position;
+
+    for (final DurationRange range in controller.value.buffered) {
+      final end = range.end;
+      if (end > buffer) {
+        buffer = end;
+      }
+    }
     return SizedBox(
       height: 20,
       child: Row(
@@ -103,7 +105,8 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                 onChangeEnd: (value) async {
                   widget.onSeekEnd?.call(Duration(
                       milliseconds: value.toInt() - position.inMilliseconds));
-                  widget.player.seek(Duration(milliseconds: value.toInt()));
+                  widget.controller
+                      .seekTo(Duration(milliseconds: value.toInt()));
                 },
               ),
             ),

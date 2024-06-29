@@ -20,7 +20,6 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
 
 late Isar isar;
@@ -32,13 +31,10 @@ void main(List<String> args) async {
       return;
     }
   }
-  if (Platform.isWindows) {
-    registerWith(options: {
-      'platforms': ['windows']
-    });
-  } else {
-    MediaKit.ensureInitialized();
-  }
+
+  registerWith(options: {
+    'platforms': ['windows', 'linux', 'ios', 'macos', 'android']
+  });
 
   await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
