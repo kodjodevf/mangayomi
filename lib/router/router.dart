@@ -6,7 +6,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
-import 'package:mangayomi/modules/anime/fvp/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
@@ -205,17 +204,17 @@ class RouterNotifier extends ChangeNotifier {
           name: "animePlayerView",
           builder: (context, state) {
             final episode = state.extra as Chapter;
-            return Platform.isWindows
-                ? AnimePlayerViewFvp(episode: episode)
-                : AnimePlayerView(episode: episode);
+            return AnimePlayerView(
+              episode: episode,
+            );
           },
           pageBuilder: (context, state) {
             final episode = state.extra as Chapter;
             return transitionPage(
               key: state.pageKey,
-              child: Platform.isWindows
-                  ? AnimePlayerViewFvp(episode: episode)
-                  : AnimePlayerView(episode: episode),
+              child: AnimePlayerView(
+                episode: episode,
+              ),
             );
           },
         ),

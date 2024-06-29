@@ -5,7 +5,6 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fvp/fvp.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -32,14 +31,7 @@ void main(List<String> args) async {
       return;
     }
   }
-  if (Platform.isWindows) {
-    registerWith(options: {
-      'platforms': ['windows']
-    });
-  } else {
-    MediaKit.ensureInitialized();
-  }
-
+  MediaKit.ensureInitialized();
   await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
