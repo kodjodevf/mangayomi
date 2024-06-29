@@ -1,0 +1,44 @@
+name: media_kit
+description: A cross-platform video player & audio player for Flutter & Dart. Performant, stable, feature-proof & modular.
+homepage: https://github.com/media-kit/media-kit
+repository: https://github.com/media-kit/media-kit
+version: 1.1.10+1
+
+topics:
+  - video
+  - video-player
+  - audio
+  - audio-player
+  - cross-platform
+
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+
+dependencies:
+  meta: ^1.8.0
+  path: ^1.8.0
+  image: ^4.0.17
+  uri_parser: ^2.0.2
+  collection: ^1.17.0
+  synchronized: ^3.1.0
+  uuid: ">=2.0.0 <5.0.0"
+  http: ">=0.13.0 <2.0.0"
+  safe_local_storage: ^1.0.2
+  universal_platform: ^1.0.0+1
+  js: ^0.6.7
+
+dev_dependencies:
+  test: ^1.24.1
+  lints: ^2.1.1
+
+ffigen:
+  name: MPV
+  output: bin/generated/libmpv/bindings.dart
+  headers:
+    entry-points:
+      - headers/client.h
+  dart-bool: true
+
+flutter:
+  assets:
+    - assets/web/
