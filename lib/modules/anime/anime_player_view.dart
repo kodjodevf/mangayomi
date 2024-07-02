@@ -4,16 +4,15 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
+import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
-import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -23,20 +22,20 @@ import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
+import 'package:mangayomi/utils/extensions/duration.dart';
+import 'package:mangayomi/utils/extensions/video_player.dart';
+import 'package:video_player/video_player.dart';
 import 'package:window_manager/window_manager.dart';
 
-class AnimePlayerView extends riv.ConsumerStatefulWidget {
+class AnimePlayerView extends ConsumerStatefulWidget {
   final Chapter episode;
   const AnimePlayerView({super.key, required this.episode});
 
   @override
-  riv.ConsumerState<AnimePlayerView> createState() => _AnimePlayerViewState();
+  ConsumerState<AnimePlayerView> createState() => _AnimePlayerViewState();
 }
 
-class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
+class _AnimePlayerViewState extends ConsumerState<AnimePlayerView> {
   String? _infoHash;
   @override
   void dispose() {
@@ -116,7 +115,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   }
 }
 
-class AnimeStreamPage extends riv.ConsumerStatefulWidget {
+class AnimeStreamPage extends ConsumerStatefulWidget {
   final List<vid.Video> videos;
   final Chapter episode;
   final bool isLocal;
@@ -127,156 +126,118 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
       required this.episode});
 
   @override
-  riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
+  ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
-class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
+class _AnimeStreamPageState extends ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
-  late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
-  late final Player _player = Player();
-  late final VideoController _controller = VideoController(_player);
+  late Video _selectedVideo = widget.videos.first;
+  late final List<Track> _subtitles = _selectedVideo.subtitles ?? [];
+  late final List<Track> _audios = _selectedVideo.audios ?? [];
+  late Track? _selectedSubtitle =
+      _subtitles.isNotEmpty ? _subtitles.first : null;
+  late Track? _selectedAudio = _audios.isNotEmpty ? _audios.first : null;
+  late VideoPlayerController _controller =
+      _selectedVideo.loadVideo(_selectedSubtitle);
+
   late final _streamController =
       ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
-  late final _firstVid = widget.videos.first;
-
-  late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(VideoPrefs(
-      videoTrack: VideoTrack(
-          _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
-      headers: _firstVid.headers));
 
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  bool _initSubtitleAndAudio = true;
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
       ValueNotifier(_streamController.geTCurrentPosition());
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
-  final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
-  final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
-
-  late final StreamSubscription<Duration> _currentPositionSub =
-      _player.stream.position.listen(
-    (position) async {
-      _isCompleted.value =
-          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
-              10;
-      _currentPosition.value = position;
-
-      if ((_firstVid.subtitles ?? []).isNotEmpty) {
-        if (_initSubtitleAndAudio) {
-          try {
-            if (_firstVid.subtitles?.isNotEmpty ?? false) {
-              final file = _firstVid.subtitles?.first.file ?? "";
-              final label = _firstVid.subtitles?.first.label;
-              _player.setSubtitleTrack(file.startsWith("http")
-                  ? SubtitleTrack.uri(file, title: label, language: label)
-                  : SubtitleTrack.data(file, title: label, language: label));
-            }
-          } catch (_) {}
-          try {
-            if (_firstVid.audios?.isNotEmpty ?? false) {
-              _player.setAudioTrack(AudioTrack.uri(
-                  _firstVid.audios?.first.file ?? "",
-                  title: _firstVid.audios?.first.label,
-                  language: _firstVid.audios?.first.label));
-            }
-          } catch (_) {}
-          _initSubtitleAndAudio = false;
-        }
-      }
-    },
-  );
-
-  late final StreamSubscription<Duration> _currentTotalDurationSub =
-      _player.stream.duration.listen(
-    (duration) {
-      _currentTotalDuration.value = duration;
-    },
-  );
-  late final StreamSubscription<bool> _completed =
-      _player.stream.completed.listen(
-    (val) async {
-      if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
-        if (isDesktop) {
-          final isFullScreen = await windowManager.isFullScreen();
-          if (isFullScreen) {
-            await setFullScreen(value: false);
-          }
-        }
-        if (mounted) {
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _streamController.getNextEpisode(),
-          );
-        }
-      }
-    },
-  );
   Results? _openingResult;
   Results? _endingResult;
   bool _hasOpeningSkip = false;
   bool _hasEndingSkip = false;
   final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
   final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
+
   @override
   void initState() {
     _setCurrentPosition(true);
-    _seekToCurrentPosition();
-    _currentPositionSub;
-    _currentTotalDurationSub;
-    _completed;
-    _player.open(Media(_video.value!.videoTrack!.id,
-        httpHeaders: _video.value!.headers));
-    _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-    _initAniSkip();
+    _listener();
+    _controller.initialize().then((_) => setState(() {}));
     super.initState();
   }
 
-  void _seekToCurrentPosition({Duration? duration}) async {
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(milliseconds: 300));
-      await _player.stream.buffer.first;
-      _player.seek(duration ?? _streamController.geTCurrentPosition());
-      return false;
+  bool _aniSkipINotInit = true;
+  bool _isInitiated = false;
+  void _listener({Duration? duration}) {
+    _controller.addListener(() async {
+      setState(() {});
+      if (_controller.value.isPlaying && !_isInitiated) {
+        _initAniSkip();
+        _seekToCurrentPosition(duration: duration);
+        _isInitiated = true;
+      }
+      final isCompleted = _controller.value.duration.inSeconds -
+              _currentPosition.value.inSeconds <=
+          10;
+      if (isCompleted) {
+        if (_streamController.getEpisodeIndex().$1 != 0) {
+          if (isDesktop) {
+            final isFullScreen = await windowManager.isFullScreen();
+            if (isFullScreen) {
+              await setFullScreen(value: false);
+            }
+          }
+          if (mounted) {
+            pushReplacementMangaReaderView(
+              context: context,
+              chapter: _streamController.getNextEpisode(),
+            );
+          }
+        }
+      }
+      _currentPosition.value = _controller.value.position;
     });
   }
 
+  Future<void> _seekToCurrentPosition({Duration? duration}) async {
+    await _controller.play();
+    await _controller
+        .seekTo(duration ?? _streamController.geTCurrentPosition());
+  }
+
   void _initAniSkip() async {
-    await _player.stream.buffer.first;
-    _streamController.getAniSkipResults((result) {
-      final openingRes =
-          result.where((element) => element.skipType == "op").toList();
-      _hasOpeningSkip = openingRes.isNotEmpty;
-      if (_hasOpeningSkip) {
-        _openingResult = openingRes.first;
-      }
-      final endingRes =
-          result.where((element) => element.skipType == "ed").toList();
-      _hasEndingSkip = endingRes.isNotEmpty;
-      if (_hasEndingSkip) {
-        _endingResult = endingRes.first;
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    });
+    if (_aniSkipINotInit) {
+      _streamController.getAniSkipResults((result) {
+        final openingRes =
+            result.where((element) => element.skipType == "op").toList();
+        _hasOpeningSkip = openingRes.isNotEmpty;
+        if (_hasOpeningSkip) {
+          _openingResult = openingRes.first;
+        }
+        final endingRes =
+            result.where((element) => element.skipType == "ed").toList();
+        _hasEndingSkip = endingRes.isNotEmpty;
+        if (_hasEndingSkip) {
+          _endingResult = endingRes.first;
+        }
+        if (mounted) {
+          setState(() {
+            _aniSkipINotInit = false;
+          });
+        }
+      });
+    }
   }
 
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   @override
   void dispose() {
     _setCurrentPosition(true);
-    _player.dispose();
-    _currentPositionSub.cancel();
-    _currentTotalDurationSub.cancel();
-    _completed.cancel();
     if (isDesktop) {
       setFullScreen(value: false);
     } else {
       _setLandscapeMode(false);
     }
-
+    _controller.dispose();
     super.dispose();
   }
 
@@ -318,242 +279,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         ],
       );
 
-  Widget _videoQualityWidget(BuildContext context) {
-    List<VideoPrefs> videoQuality = _player.state.tracks.video
-        .where((element) =>
-            element.w != null && element.h != null && widget.isLocal)
-        .toList()
-        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
-        .toList();
-
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        videoQuality.add(VideoPrefs(
-            videoTrack: VideoTrack(video.url, video.quality, video.quality),
-            headers: video.headers,
-            isLocal: false));
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-      child: Column(
-        children: videoQuality.map((quality) {
-          final selected =
-              _video.value!.videoTrack!.title == quality.videoTrack!.title ||
-                  widget.isLocal;
-          return GestureDetector(
-            child: textWidget(
-                widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
-                selected),
-            onTap: () {
-              _video.value = quality;
-              if (quality.isLocal) {
-                if (widget.isLocal) {
-                  _player.setVideoTrack(quality.videoTrack!);
-                } else {
-                  _player.open(Media(quality.videoTrack!.id,
-                      httpHeaders: quality.headers));
-                }
-              } else {
-                _player.open(Media(quality.videoTrack!.id,
-                    httpHeaders: quality.headers));
-              }
-              _seekToCurrentPosition(duration: _currentPosition.value);
-              Navigator.pop(context);
-            },
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  void _videoSettingDraggableMenu(BuildContext context) async {
-    final l10n = l10nLocalizations(context)!;
-    bool hasSubtitleTrack = false;
-    _player.pause();
-    await customDraggableTabBar(
-      tabs: [
-        Tab(text: l10n.video_quality),
-        Tab(text: l10n.video_subtitle),
-        Tab(text: l10n.video_audio),
-      ],
-      children: [
-        _videoQualityWidget(context),
-        _videoSubtitle(context, (value) => hasSubtitleTrack = value),
-        _videoAudios(context)
-      ],
-      context: context,
-      vsync: this,
-      fullWidth: true,
-      moreWidget: IconButton(
-          onPressed: () async {
-            await customDraggableTabBar(tabs: [
-              Tab(text: l10n.font),
-              Tab(text: l10n.color),
-            ], children: [
-              FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-              ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
-            ], context: context, vsync: this, fullWidth: true);
-            if (context.mounted) {
-              Navigator.pop(context);
-            }
-          },
-          icon: const Icon(Icons.settings_outlined)),
-    );
-    setState(() {});
-    _player.play();
-  }
-
-  Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
-    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
-        .toList();
-
-    List<String> subs = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        for (var sub in video.subtitles ?? []) {
-          if (!subs.contains(sub.file)) {
-            final file = sub.file!;
-            final label = sub.label;
-            videoSubtitle.add(VideoPrefs(
-                isLocal: false,
-                subtitle: file.startsWith("http")
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label)));
-            subs.add(sub.file!);
-          }
-        }
-      }
-    }
-    final subtitle = _player.state.track.subtitle;
-    videoSubtitle = videoSubtitle
-        .map((e) {
-          VideoPrefs vid = e;
-          vid.title = vid.subtitle?.title ??
-              vid.subtitle?.language ??
-              vid.subtitle?.channels ??
-              "";
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
-    hasSubtitleTrack.call(videoSubtitle.isNotEmpty);
-    videoSubtitle.insert(
-        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
-    List<VideoPrefs> videoSubtitleLast = [];
-    for (var element in videoSubtitle) {
-      final contains = videoSubtitleLast.any((sub) {
-        return (sub.title ??
-                sub.subtitle?.title ??
-                sub.subtitle?.language ??
-                sub.subtitle?.channels ??
-                "None") ==
-            (element.title ??
-                element.subtitle?.title ??
-                element.subtitle?.language ??
-                element.subtitle?.channels ??
-                "None");
-      });
-      if (!contains) {
-        videoSubtitleLast.add(element);
-      }
-    }
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-      child: Column(
-        children: videoSubtitleLast.toSet().toList().map((sub) {
-          final title = sub.title ??
-              sub.subtitle?.title ??
-              sub.subtitle?.language ??
-              sub.subtitle?.channels ??
-              "None";
-
-          final selected = (title ==
-                  (subtitle.title ??
-                      subtitle.language ??
-                      subtitle.channels ??
-                      "None")) ||
-              (subtitle.id == "no" && title == "None");
-          return GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-              try {
-                _player.setSubtitleTrack(sub.subtitle!);
-              } catch (_) {}
-            },
-            child: textWidget(title, selected),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _videoAudios(BuildContext context) {
-    List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, audio: e))
-        .toList();
-
-    List<String> audios = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        for (var audio in video.audios ?? []) {
-          if (!audios.contains(audio.file)) {
-            videoAudio.add(VideoPrefs(
-                isLocal: false,
-                audio: AudioTrack.uri(audio.file!,
-                    title: audio.label, language: audio.label)));
-            audios.add(audio.file!);
-          }
-        }
-      }
-    }
-    final audio = _player.state.track.audio;
-    videoAudio = videoAudio
-        .map((e) {
-          VideoPrefs vid = e;
-          vid.title = vid.audio?.title ??
-              vid.audio?.language ??
-              vid.audio?.channels ??
-              "";
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
-    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-      child: Column(
-        children: videoAudio.toSet().toList().map((aud) {
-          final title = aud.title ??
-              aud.audio?.title ??
-              aud.audio?.language ??
-              aud.audio?.channels ??
-              "None";
-          final selected =
-              (aud.audio == audio) || (audio.id == "no" && title == "None");
-          return GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-                try {
-                  _player.setAudioTrack(aud.audio!);
-                } catch (_) {}
-              },
-              child: textWidget(title, selected));
-        }).toList(),
-      ),
-    );
-  }
-
   Future<void> _setPlaybackSpeed(double speed) async {
-    await _player.setRate(speed);
+    await _controller.setPlaybackSpeed(speed);
     _playbackSpeed.value = speed;
   }
 
@@ -578,7 +305,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       BoxFit.scaleDown,
       BoxFit.none
     ];
-    _showFitLabel.value = true;
     BoxFit? fit;
     if (fitList.indexOf(_fit.value) < fitList.length - 1) {
       fit = fitList[fitList.indexOf(_fit.value) + 1];
@@ -586,7 +312,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       fit = fitList[0];
     }
     _fit.value = fit;
-    _key.currentState?.update(fit: fit);
     BotToast.showText(
         onlyOne: true,
         align: const Alignment(0, 0.90),
@@ -606,7 +331,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               _tempPosition.value = Duration(
                   seconds: defaultSkipIntroLength +
                       _currentPosition.value.inSeconds);
-              await _player.seek(Duration(
+              await _controller.seekTo(Duration(
                   seconds: _currentPosition.value.inSeconds +
                       defaultSkipIntroLength));
               _tempPosition.value = null;
@@ -750,7 +475,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       _tempPosition.value = Duration(
                           seconds:
                               skipDuration - _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
+                      await _controller.seekTo(Duration(
                           seconds:
                               _currentPosition.value.inSeconds - skipDuration));
                       _tempPosition.value = null;
@@ -787,7 +512,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       _tempPosition.value = Duration(
                           seconds:
                               skipDuration + _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
+                      await _controller.seekTo(Duration(
                           seconds:
                               _currentPosition.value.inSeconds + skipDuration));
                       _tempPosition.value = null;
@@ -858,12 +583,156 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 ),
                 CustomMaterialDesktopFullscreenButton(
                   controller: _controller,
+                  isFullscreen: (v) {},
                 )
               ],
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _videoQualityWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: widget.videos.map((quality) {
+          final selected = (quality == _selectedVideo) || widget.isLocal;
+          return GestureDetector(
+            child: textWidget(
+                widget.isLocal ? _selectedVideo.quality : quality.quality,
+                selected),
+            onTap: () async {
+              if (widget.isLocal) {
+              } else {
+                _controller = quality.loadVideo(null);
+              }
+              setState(() {
+                _isInitiated = false;
+              });
+              _selectedVideo = quality;
+              await _controller.initialize();
+              _controller.setSubtitleUrl(_selectedSubtitle!.file!);
+              _listener(duration: _currentPosition.value);
+              if (context.mounted) {
+                setState(() {});
+                Navigator.pop(context);
+              }
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  void _videoSettingDraggableMenu(BuildContext context) async {
+    final l10n = l10nLocalizations(context)!;
+    bool hasSubtitleTrack = false;
+    _controller.pause();
+    await customDraggableTabBar(
+      tabs: [
+        Tab(text: l10n.video_quality),
+        Tab(text: l10n.video_subtitle),
+        Tab(text: l10n.video_audio),
+      ],
+      children: [
+        _videoQualityWidget(context),
+        _videoSubtitle(context, (value) => hasSubtitleTrack = value),
+        _videoAudios(context)
+      ],
+      context: context,
+      vsync: this,
+      fullWidth: true,
+      moreWidget: IconButton(
+          onPressed: () async {
+            await customDraggableTabBar(tabs: [
+              Tab(text: l10n.font),
+              Tab(text: l10n.color),
+            ], children: [
+              FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+              ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
+            ], context: context, vsync: this, fullWidth: true);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
+          icon: const Icon(Icons.settings_outlined)),
+    );
+    setState(() {});
+    _controller.play();
+  }
+
+  Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: _controller.subtitles(_selectedVideo.subtitles).map((value) {
+          final (isLocal, sub) = value;
+          final title = sub.label ?? "#1";
+
+          final selected = sub.label == (_selectedSubtitle?.label ?? "#1");
+          return GestureDetector(
+            onTap: () async {
+              try {
+                if (isLocal) {
+                  _controller.setSubtitle(int.parse(sub.file!));
+                  setState(() {
+                    _selectedSubtitle = sub;
+                  });
+                  Navigator.pop(context);
+                } else {
+                  await _controller.setClosedCaptionFile(sub.loadCaption());
+                  if (context.mounted) {
+                    setState(() {
+                      _selectedSubtitle = sub;
+                    });
+                    Navigator.pop(context);
+                  }
+                }
+              } catch (_) {}
+            },
+            child: textWidget(title, selected),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _videoAudios(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      child: Column(
+        children: _controller.audios(_selectedVideo.audios).map((value) {
+          final (isLocal, aud) = value;
+          final title = aud.label ?? "#1";
+
+          final selected = aud.label == (_selectedAudio?.label ?? "#1");
+          return GestureDetector(
+            onTap: () async {
+              try {
+                if (isLocal) {
+                  _controller.setAudio(int.parse(aud.file!));
+                  setState(() {
+                    _selectedAudio = aud;
+                  });
+                  Navigator.pop(context);
+                } else {
+                  _controller.setAudioUrl(aud.file!);
+                  _listener();
+                  if (context.mounted) {
+                    setState(() {
+                      _selectedAudio = aud;
+                    });
+                    Navigator.pop(context);
+                  }
+                }
+              } catch (_) {}
+            },
+            child: textWidget(title, selected),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -930,9 +799,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     widget.episode,
                     onChanged: (v) {
                       if (v) {
-                        _player.play();
+                        _controller.play();
                       } else {
-                        _player.pause();
+                        _controller.pause();
                       }
                     },
                   ),
@@ -943,7 +812,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   //           builder: (context) {
                   //             return AlertDialog(
                   //               scrollable: true,
-                  //               title: Text("Player Settings"),
+                  //               title: const Text("Player Settings"),
                   //               content: SizedBox(
                   //                 width: context.width(0.8),
                   //                 child: Column(
@@ -990,55 +859,49 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         });
   }
 
-  void _resize(BoxFit fit) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (mounted) {
-      _key.currentState?.update(
-          fit: fit, width: context.width(1), height: context.height(1));
-    }
-  }
-
   Widget _videoPlayer(BuildContext context) {
-    final fit = _fit.value;
-    _resize(fit);
     return Stack(
       children: [
-        Video(
-          subtitleViewConfiguration: SubtitleViewConfiguration(
-              visible: false, style: subtileTextStyle(ref)),
-          fit: fit,
-          key: _key,
-          controls: (state) => isDesktop
-              ? DesktopControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _desktopBottomButtonBar(context),
-                  streamController: _streamController,
-                  seekToWidget: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      children: [
-                        _seekToWidget(),
-                      ],
-                    ),
-                  ),
-                  tempDuration: (value) {
-                    _tempPosition.value = value;
-                  },
-                )
-              : MobileControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _mobileBottomButtonBar(context),
-                  streamController: _streamController,
-                ),
-          controller: _controller,
-          width: context.width(1),
-          height: context.height(1),
-          resumeUponEnteringForegroundMode: true,
+        Positioned.fill(
+          child: ValueListenableBuilder(
+              valueListenable: _fit,
+              builder: (context, fit, snapshot) {
+                return FittedBox(
+                  clipBehavior: Clip.hardEdge,
+                  fit: fit,
+                  child: SizedBox(
+                      width: _controller.value.size.width,
+                      height: _controller.value.size.height,
+                      child: VideoPlayer(_controller)),
+                );
+              }),
         ),
+        isDesktop
+            ? DesktopControllerWidget(
+                videoController: _controller,
+                topButtonBarWidget: _topButtonBar(context),
+                bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                streamController: _streamController,
+                seekToWidget: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Row(
+                    children: [
+                      _seekToWidget(),
+                    ],
+                  ),
+                ),
+                tempDuration: (value) {
+                  _tempPosition.value = value;
+                },
+                isFullScreen: false,
+              )
+            : MobileControllerWidget(
+                videoController: _controller,
+                topButtonBarWidget: _topButtonBar(context),
+                isFullScreen: false,
+                bottomButtonBarWidget: _mobileBottomButtonBar(context),
+                streamController: _streamController,
+              ),
         Positioned(
           right: 0,
           bottom: 80,
@@ -1090,7 +953,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                                   autoSkip: enableAutoSkip,
                                   timeoutLength: aniSkipTimeoutLength,
                                   skipTypeText: context.l10n.skip_opening,
-                                  player: _player,
+                                  controller: _controller,
                                   aniSkipResult: _openingResult,
                                 ))
                             : showAniSkipENDINGButton
@@ -1101,7 +964,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                                       autoSkip: enableAutoSkip,
                                       timeoutLength: aniSkipTimeoutLength,
                                       skipTypeText: context.l10n.skip_ending,
-                                      player: _player,
+                                      controller: _controller,
                                       aniSkipResult: _endingResult,
                                     ))
                                 : const SizedBox.shrink();
@@ -1120,6 +983,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: _videoPlayer(context),
     );
   }
@@ -1143,20 +1007,4 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
       ),
     ],
   );
-}
-
-class VideoPrefs {
-  String? title;
-  VideoTrack? videoTrack;
-  SubtitleTrack? subtitle;
-  AudioTrack? audio;
-  bool isLocal;
-  final Map<String, String>? headers;
-  VideoPrefs(
-      {this.videoTrack,
-      this.isLocal = true,
-      this.headers,
-      this.subtitle,
-      this.audio,
-      this.title});
 }

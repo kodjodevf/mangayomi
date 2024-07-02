@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/services/aniskip.dart';
-import 'package:media_kit/media_kit.dart';
+import 'package:video_player/video_player.dart';
 
 class AniSkipCountDownButton extends ConsumerStatefulWidget {
   final bool active;
@@ -9,12 +9,12 @@ class AniSkipCountDownButton extends ConsumerStatefulWidget {
   final int timeoutLength;
   final String skipTypeText;
   final Results? aniSkipResult;
-  final Player player;
+  final VideoPlayerController controller;
   const AniSkipCountDownButton(
       {super.key,
       required this.skipTypeText,
       required this.aniSkipResult,
-      required this.player,
+      required this.controller,
       required this.active,
       required this.autoSkip,
       required this.timeoutLength});
@@ -54,7 +54,7 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
       _isCompleted = true;
     });
     _controller.reset();
-    widget.player.seek(
+    widget.controller.seekTo(
         Duration(seconds: widget.aniSkipResult!.interval!.endTime!.ceil()));
   }
 

@@ -5,6 +5,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fvp/fvp.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +20,6 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
 
 late Isar isar;
@@ -31,7 +31,12 @@ void main(List<String> args) async {
       return;
     }
   }
-  MediaKit.ensureInitialized();
+
+  registerWith(options: {
+    'platforms': ['windows', 'linux', 'ios', 'macos', 'android'],
+    'video.decoders': ['FFmpeg']
+  });
+
   await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
