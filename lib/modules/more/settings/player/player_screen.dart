@@ -13,15 +13,13 @@ class PlayerScreen extends ConsumerWidget {
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
     final defaultSkipIntroLength =
         ref.watch(defaultSkipIntroLengthStateProvider);
-
     final defaultDoubleTapToSkipLength =
         ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     final defaultPlayBackSpeed = ref.watch(defaultPlayBackSpeedStateProvider);
-
     final enableAniSkip = ref.watch(enableAniSkipStateProvider);
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
-
+    final useLibass = ref.watch(useLibassStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.player),
@@ -285,9 +283,17 @@ class PlayerScreen extends ConsumerWidget {
                   style:
                       TextStyle(fontSize: 11, color: context.secondaryColor)),
             ),
+            SwitchListTile(
+                value: useLibass,
+                title: Text(context.l10n.use_libass),
+                subtitle: Text(context.l10n.use_libass_info,
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor)),
+                onChanged: (value) {
+                  ref.read(useLibassStateProvider.notifier).set(value);
+                }),
             ExpansionTile(
               title: Text(context.l10n.enable_aniskip),
-              shape: const StarBorder(),
               initiallyExpanded: enableAniSkip,
               trailing: IgnorePointer(
                 child: Switch(

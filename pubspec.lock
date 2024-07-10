@@ -316,9 +316,11 @@ packages:
   desktop_webview_window:
     dependency: "direct main"
     description:
-      path: "packages/desktop_webview_window"
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "861cb573a6decb815741ed76e845fe05a3662c95"
+      url: "https://github.com/kodjodevf/desktop_webview_window.git"
+    source: git
     version: "0.2.3"
   directed_graph:
     dependency: transitive

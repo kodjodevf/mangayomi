@@ -323,5 +323,8 @@
   "grid_size": "Grid size",
   "n_per_row": "{n} per row",
   "horizontal_continious": "Horizontal continuous",
-  "edit_code": "Edit code"
+  "edit_code": "Edit code",
+  "use_libass": "Enable libass",
+  "use_libass_info": "Use libass based subtitle rendering for native backend.",
+  "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles."
 }

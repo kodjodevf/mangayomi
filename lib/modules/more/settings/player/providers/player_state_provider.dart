@@ -108,3 +108,18 @@ class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
         () => isar.settings.putSync(settings!..aniSkipTimeoutLength = value));
   }
 }
+
+@riverpod
+class UseLibassState extends _$UseLibassState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.useLibass ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..useLibass = value));
+  }
+}

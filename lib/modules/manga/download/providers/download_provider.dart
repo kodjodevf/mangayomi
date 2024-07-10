@@ -18,6 +18,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
+FileDownloader _mangaFileDownloader = FileDownloader(isAnime: false);
+FileDownloader _animeFileDownloader = FileDownloader(isAnime: true);
 @riverpod
 Future<List<String>> downloadChapter(
   DownloadChapterRef ref, {
@@ -232,9 +234,8 @@ Future<List<String>> downloadChapter(
         isar.downloads.putSync(download..chapter.value = chapter);
       });
     } else {
-      savePageUrls();
       if (isManga) {
-        await FileDownloader(isAnime: false).downloadBatch(
+        await _mangaFileDownloader.downloadBatch(
           tasks,
           batchProgressCallback: (succeeded, failed) async {
             if (succeeded == tasks.length) {
@@ -287,7 +288,7 @@ Future<List<String>> downloadChapter(
           },
         );
       } else {
-        await FileDownloader(isAnime: true).download(
+        await _animeFileDownloader.download(
           tasks.first,
           onProgress: (progress) async {
             bool isEmpty = isar.downloads

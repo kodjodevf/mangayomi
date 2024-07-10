@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:window_manager/window_manager.dart';
@@ -192,12 +193,14 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
       child: Stack(
         children: [
           Consumer(
-            builder: (context, ref, _) => Positioned(
-                child: CustomSubtitleView(
-              controller: widget.videoController,
-              configuration:
-                  SubtitleViewConfiguration(style: subtileTextStyle(ref)),
-            )),
+            builder: (context, ref, _) => ref.read(useLibassStateProvider)
+                ? const SizedBox.shrink()
+                : Positioned(
+                    child: CustomSubtitleView(
+                    controller: widget.videoController,
+                    configuration:
+                        SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+                  )),
           ),
           Focus(
             autofocus: true,
@@ -815,26 +818,15 @@ Future<bool> setFullScreen({bool? value}) async {
   if (value != null) {
     final isFullScreen = await windowManager.isFullScreen();
     if (value != isFullScreen) {
-      await windowManager.setTitleBarStyle(
-          value == false ? TitleBarStyle.normal : TitleBarStyle.hidden);
       await windowManager.setFullScreen(value);
-      if (value == false) {
-        await windowManager.center();
-      }
-      await windowManager.show();
     }
     return value;
   }
   final isFullScreen = await windowManager.isFullScreen();
   if (!isFullScreen) {
-    await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
     await windowManager.setFullScreen(true);
-    await windowManager.show();
   } else {
-    await windowManager.setTitleBarStyle(TitleBarStyle.normal);
     await windowManager.setFullScreen(false);
-    await windowManager.center();
-    await windowManager.show();
   }
   return isFullScreen;
 }

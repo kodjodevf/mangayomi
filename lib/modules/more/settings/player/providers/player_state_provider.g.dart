@@ -125,5 +125,21 @@ final aniSkipTimeoutLengthStateProvider =
 );
 
 typedef _$AniSkipTimeoutLengthState = AutoDisposeNotifier<int>;
+String _$useLibassStateHash() => r'09c661f72c8777f360f48f2203d767b9caf6e4e7';
+
+/// See also [UseLibassState].
+@ProviderFor(UseLibassState)
+final useLibassStateProvider =
+    AutoDisposeNotifierProvider<UseLibassState, bool>.internal(
+  UseLibassState.new,
+  name: r'useLibassStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$useLibassStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$UseLibassState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

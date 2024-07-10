@@ -289,12 +289,14 @@ class _MobileControllerWidgetState
     return Stack(
       children: [
         Consumer(
-          builder: (context, ref, _) => Positioned(
-              child: CustomSubtitleView(
-            controller: widget.videoController,
-            configuration:
-                SubtitleViewConfiguration(style: subtileTextStyle(ref)),
-          )),
+          builder: (context, ref, _) => ref.read(useLibassStateProvider)
+              ? const SizedBox.shrink()
+              : Positioned(
+                  child: CustomSubtitleView(
+                  controller: widget.videoController,
+                  configuration:
+                      SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+                )),
         ),
         Focus(
           autofocus: true,

@@ -186,6 +186,8 @@ class Settings {
   @enumerated
   late SectionType disableSectionType;
 
+  bool? useLibass;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -267,7 +269,8 @@ class Settings {
       this.appFontFamily,
       this.mangaGridSize,
       this.animeGridSize,
-      this.disableSectionType = SectionType.all});
+      this.disableSectionType = SectionType.all,
+      this.useLibass = true});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -416,6 +419,7 @@ class Settings {
     animeGridSize = json['animeGridSize'];
     disableSectionType =
         SectionType.values[json['disableSectionType'] ?? SectionType.all];
+    useLibass = json['useLibass'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -523,7 +527,8 @@ class Settings {
         'appFontFamily': appFontFamily,
         'mangaGridSize': mangaGridSize,
         'animeGridSize': animeGridSize,
-        'disableSectionType': disableSectionType.index
+        'disableSectionType': disableSectionType.index,
+        'useLibass': useLibass
       };
 }
 

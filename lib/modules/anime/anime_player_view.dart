@@ -26,7 +26,10 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
@@ -40,7 +43,9 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   String? _infoHash;
   @override
   void dispose() {
-    MTorrentServer().removeTorrent(_infoHash);
+    if (_infoHash != null) {
+      MTorrentServer().removeTorrent(_infoHash);
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -53,8 +58,9 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
-        _infoHash = data.$3;
-        if (data.$1.isEmpty &&
+        final (videos, isLocal, infoHash) = data;
+        _infoHash = infoHash;
+        if (videos.isEmpty &&
             !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -67,15 +73,15 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               ),
             ),
             body: const Center(
-              child: Text("Error"),
+              child: Text("Video list is empty"),
             ),
           );
         }
 
         return AnimeStreamPage(
           episode: widget.episode,
-          videos: data.$1,
-          isLocal: data.$2,
+          videos: videos,
+          isLocal: isLocal,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -133,19 +139,18 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
-  late final Player _player = Player();
+  late final useLibass = ref.read(useLibassStateProvider);
+  late final Player _player =
+      Player(configuration: PlayerConfiguration(libass: useLibass));
   late final VideoController _controller = VideoController(_player);
   late final _streamController =
       ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
   late final _firstVid = widget.videos.first;
-
   late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(VideoPrefs(
       videoTrack: VideoTrack(
           _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
       headers: _firstVid.headers));
-
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  bool _initSubtitleAndAudio = true;
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
       ValueNotifier(_streamController.geTCurrentPosition());
@@ -154,6 +159,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
+  final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
+  final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
+  Results? _openingResult;
+  Results? _endingResult;
+  bool _hasOpeningSkip = false;
+  bool _hasEndingSkip = false;
+  bool _initSubtitleAndAudio = true;
 
   late final StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
@@ -163,27 +175,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               10;
       _currentPosition.value = position;
 
-      if ((_firstVid.subtitles ?? []).isNotEmpty) {
+      if (_firstVid.subtitles?.isNotEmpty ?? false) {
         if (_initSubtitleAndAudio) {
           try {
-            if (_firstVid.subtitles?.isNotEmpty ?? false) {
-              final file = _firstVid.subtitles?.first.file ?? "";
-              final label = _firstVid.subtitles?.first.label;
-              _player.setSubtitleTrack(file.startsWith("http")
-                  ? SubtitleTrack.uri(file, title: label, language: label)
-                  : SubtitleTrack.data(file, title: label, language: label));
-            }
+            final file = _firstVid.subtitles!.first.file ?? "";
+            final label = _firstVid.subtitles!.first.label;
+            _player.setSubtitleTrack(file.startsWith("http")
+                ? SubtitleTrack.uri(file, title: label, language: label)
+                : SubtitleTrack.data(file, title: label, language: label));
           } catch (_) {}
-          try {
-            if (_firstVid.audios?.isNotEmpty ?? false) {
-              _player.setAudioTrack(AudioTrack.uri(
-                  _firstVid.audios?.first.file ?? "",
-                  title: _firstVid.audios?.first.label,
-                  language: _firstVid.audios?.first.label));
-            }
-          } catch (_) {}
-          _initSubtitleAndAudio = false;
         }
+        try {
+          if (_firstVid.audios?.isNotEmpty ?? false) {
+            _player.setAudioTrack(AudioTrack.uri(
+                _firstVid.audios!.first.file ?? "",
+                title: _firstVid.audios!.first.label,
+                language: _firstVid.audios!.first.label));
+          }
+        } catch (_) {}
+        _initSubtitleAndAudio = false;
       }
     },
   );
@@ -194,6 +204,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _currentTotalDuration.value = duration;
     },
   );
+
   late final StreamSubscription<bool> _completed =
       _player.stream.completed.listen(
     (val) async {
@@ -213,33 +224,48 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       }
     },
   );
-  Results? _openingResult;
-  Results? _endingResult;
-  bool _hasOpeningSkip = false;
-  bool _hasEndingSkip = false;
-  final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
-  final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
+
   @override
   void initState() {
-    _setCurrentPosition(true);
-    _seekToCurrentPosition();
+    _seekToOrCurrentPosition();
     _currentPositionSub;
     _currentTotalDurationSub;
     _completed;
-    _player.open(Media(_video.value!.videoTrack!.id,
-        httpHeaders: _video.value!.headers));
-    _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-    _initAniSkip();
+    _loadAndroidFont().then(
+      (_) {
+        _player.open(Media(_video.value!.videoTrack!.id,
+            httpHeaders: _video.value!.headers));
+        _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
+        _initAniSkip();
+      },
+    );
     super.initState();
   }
 
-  void _seekToCurrentPosition({Duration? duration}) async {
-    await Future.doWhile(() async {
+  Future<void> _loadAndroidFont() async {
+    if (Platform.isAndroid && useLibass) {
+      try {
+        final subDir = await getApplicationDocumentsDirectory();
+        final fontPath = path.join(subDir.path, 'subfont.ttf');
+        final data = await rootBundle.load('assets/fonts/subfont.ttf');
+        final bytes =
+            data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
+        final fontFile = await File(fontPath).create(recursive: true);
+        await fontFile.writeAsBytes(bytes);
+        await (_player.platform as NativePlayer)
+            .setProperty('sub-fonts-dir', subDir.path);
+        await (_player.platform as NativePlayer)
+            .setProperty('sub-font', 'Droid Sans Fallback');
+      } catch (_) {}
+    }
+  }
+
+  void _seekToOrCurrentPosition({Duration? duration}) async {
+    if (duration == null) {
       await Future.delayed(const Duration(milliseconds: 300));
-      await _player.stream.buffer.first;
-      _player.seek(duration ?? _streamController.geTCurrentPosition());
-      return false;
-    });
+    }
+    await _player.stream.buffer.first;
+    _player.seek(duration ?? _streamController.geTCurrentPosition());
   }
 
   void _initAniSkip() async {
@@ -276,7 +302,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     } else {
       _setLandscapeMode(false);
     }
-
     super.dispose();
   }
 
@@ -346,7 +371,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             child: textWidget(
                 widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
                 selected),
-            onTap: () {
+            onTap: () async {
               _video.value = quality;
               if (quality.isLocal) {
                 if (widget.isLocal) {
@@ -359,7 +384,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 _player.open(Media(quality.videoTrack!.id,
                     httpHeaders: quality.headers));
               }
-              _seekToCurrentPosition(duration: _currentPosition.value);
+              _seekToOrCurrentPosition(duration: _currentPosition.value);
               Navigator.pop(context);
             },
           );
@@ -388,15 +413,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       fullWidth: true,
       moreWidget: IconButton(
           onPressed: () async {
-            await customDraggableTabBar(tabs: [
-              Tab(text: l10n.font),
-              Tab(text: l10n.color),
-            ], children: [
-              FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-              ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
-            ], context: context, vsync: this, fullWidth: true);
-            if (context.mounted) {
-              Navigator.pop(context);
+            if (useLibass) {
+              BotToast.showText(
+                  contentColor: Colors.white,
+                  textStyle: const TextStyle(color: Colors.black, fontSize: 20),
+                  onlyOne: true,
+                  align: const Alignment(0, 0.90),
+                  duration: const Duration(seconds: 2),
+                  text: context.l10n.libass_not_disable_message);
+            } else {
+              await customDraggableTabBar(tabs: [
+                Tab(text: l10n.font),
+                Tab(text: l10n.color),
+              ], children: [
+                FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+                ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
+              ], context: context, vsync: this, fullWidth: true);
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             }
           },
           icon: const Icon(Icons.settings_outlined)),
