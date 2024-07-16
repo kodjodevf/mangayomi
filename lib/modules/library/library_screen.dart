@@ -16,6 +16,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
@@ -1767,6 +1768,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               value: 1, child: Text(l10n.open_random_entry)),
                           PopupMenuItem<int>(
                               value: 2, child: Text(l10n.import)),
+                          if (!widget.isManga)
+                            PopupMenuItem<int>(
+                                value: 3, child: Text(l10n.torrent_stream)),
                         ];
                       },
                       onSelected: (value) {
@@ -1786,8 +1790,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 mangaM: randomManga,
                                 source: randomManga.source!);
                           });
-                        } else {
+                        }
+                        if (value == 2) {
                           _importLocal(context, widget.isManga);
+                        } else {
+                          if (!widget.isManga) {
+                            addTorrent(context);
+                          }
                         }
                       }),
                 ],
@@ -1795,7 +1804,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 }
 
-_importLocal(BuildContext context, bool isManga) {
+void _importLocal(BuildContext context, bool isManga) {
   final l10n = l10nLocalizations(context)!;
   bool isLoading = false;
   showDialog(
@@ -1875,6 +1884,176 @@ _importLocal(BuildContext context, bool isManga) {
                                 child: const Center(child: ProgressCenter())),
                           ),
                         )
+                    ],
+                  ),
+                );
+              });
+            },
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(l10n.cancel)),
+                const SizedBox(
+                  width: 15,
+                ),
+              ],
+            )
+          ],
+        );
+      });
+}
+
+void addTorrent(BuildContext context, {Manga? manga}) {
+  final l10n = l10nLocalizations(context)!;
+  String torrentUrl = "";
+  bool isLoading = false;
+  showDialog(
+      context: context,
+      barrierDismissible: !isLoading,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            l10n.add_torrent,
+          ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Consumer(builder: (context, ref, _) {
+                return SizedBox(
+                  height: 150,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              onChanged: (value) {
+                                setState(() {
+                                  torrentUrl = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  hintText: l10n.enter_torrent_hint_text,
+                                  labelText: l10n.torrent_url,
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor: Colors.transparent,
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: context.secondaryColor)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: context.secondaryColor)),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: context.secondaryColor))),
+                            ),
+                          ),
+                          TextButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      try {
+                                        await ref.watch(
+                                            addTorrentFromUrlOrFromFileProvider(
+                                                    manga,
+                                                    init: true,
+                                                    url: torrentUrl)
+                                                .future);
+                                      } catch (_) {}
+
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                              child: Text(l10n.add))
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(l10n.or),
+                      ),
+                      Stack(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(3),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10))),
+                                    onPressed: isLoading
+                                        ? null
+                                        : () async {
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            try {
+                                              await ref.watch(
+                                                  addTorrentFromUrlOrFromFileProvider(
+                                                          manga,
+                                                          init: true)
+                                                      .future);
+                                            } catch (_) {}
+
+                                            setState(() {
+                                              isLoading = false;
+                                            });
+                                            Navigator.pop(context);
+                                          },
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        const Icon(Icons.archive_outlined),
+                                        Text("import .torrent file",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall!
+                                                    .color,
+                                                fontSize: 10))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (isLoading)
+                            Positioned.fill(
+                              child: Container(
+                                width: 300,
+                                height: 150,
+                                color: Colors.transparent,
+                                child: UnconstrainedBox(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
+                                      ),
+                                      height: 50,
+                                      width: 50,
+                                      child: const Center(
+                                          child: ProgressCenter())),
+                                ),
+                              ),
+                            )
+                        ],
+                      ),
                     ],
                   ),
                 );

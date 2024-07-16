@@ -18,24 +18,24 @@ Future<(List<Video>, bool, String?)> getVideoList(
 }) async {
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
-  final isLocalArchive = episode.manga.value!.isLocalArchive!;
+  final isLocalArchive = episode.manga.value!.isLocalArchive! &&
+      episode.manga.value!.source != "torrent";
   final mp4animePath = "${mangaDirectory!.path}${episode.name}.mp4";
 
   if (await File(mp4animePath).exists() || isLocalArchive) {
     final path = isLocalArchive ? episode.archivePath : mp4animePath;
     return ([Video(path!, episode.name!, path, subtitles: [])], true, null);
   }
-
   final source =
-      getSource(episode.manga.value!.lang!, episode.manga.value!.source!)!;
+      getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
 
-  if (source.isTorrent) {
-    final (videos, infohash) =
-        await MTorrentServer().getTorrentPlaylist(episode.url!);
+  if (source?.isTorrent ?? false || episode.manga.value!.source == "torrent") {
+    final (videos, infohash) = await MTorrentServer()
+        .getTorrentPlaylist(episode.url, episode.archivePath);
     return (videos, false, infohash);
   }
   List<Video> list = [];
-  if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
+  if (source?.sourceCodeLanguage == SourceCodeLanguage.dart) {
     list = await DartExtensionService(source).getVideoList(episode.url!);
   } else {
     list = await JsExtensionService(source).getVideoList(episode.url!);

@@ -326,5 +326,10 @@
   "edit_code": "Edit code",
   "use_libass": "Enable libass",
   "use_libass_info": "Use libass based subtitle rendering for native backend.",
-  "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles."
+  "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles.",
+  "torrent_stream": "Torrent Stream",
+  "add_torrent": "Add torrent",
+  "enter_torrent_hint_text": "Enter magnet or torrent file url",
+  "torrent_url": "Torrent url",
+  "or": "OR"
 }

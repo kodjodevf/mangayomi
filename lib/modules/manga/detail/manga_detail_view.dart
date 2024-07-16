@@ -15,6 +15,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
+import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
@@ -624,14 +625,24 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                     .secondaryColor),
                                                           ),
                                                           onPressed: () async {
-                                                            await ref.watch(importArchivesFromFileProvider(
-                                                                    isManga: widget
-                                                                        .manga!
-                                                                        .isManga!,
-                                                                    widget
-                                                                        .manga,
-                                                                    init: false)
-                                                                .future);
+                                                            final manga =
+                                                                widget.manga;
+                                                            if ((manga!.isLocalArchive ??
+                                                                    false) &&
+                                                                manga.source ==
+                                                                    "torrent") {
+                                                              addTorrent(
+                                                                  context,
+                                                                  manga: manga);
+                                                            } else {
+                                                              await ref.watch(importArchivesFromFileProvider(
+                                                                      isManga: manga
+                                                                          .isManga!,
+                                                                      manga,
+                                                                      init:
+                                                                          false)
+                                                                  .future);
+                                                            }
                                                           },
                                                         )
                                                     ],
