@@ -627,10 +627,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                           onPressed: () async {
                                                             final manga =
                                                                 widget.manga;
-                                                            if ((manga!.isLocalArchive ??
-                                                                    false) &&
-                                                                manga.source ==
-                                                                    "torrent") {
+                                                            if (manga!.source ==
+                                                                "torrent") {
                                                               addTorrent(
                                                                   context,
                                                                   manga: manga);
@@ -1363,18 +1361,25 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   icon: Icon(Icons.add,
                                       color: context.secondaryColor),
                                   label: Text(
-                                    l10n.add_chapters,
+                                    widget.manga!.isManga!
+                                        ? l10n.add_chapters
+                                        : l10n.add_episodes,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: context.secondaryColor),
                                   ),
                                   onPressed: () async {
-                                    await ref.watch(
-                                        importArchivesFromFileProvider(
-                                                isManga: widget.manga!.isManga!,
-                                                widget.manga,
-                                                init: false)
-                                            .future);
+                                    final manga = widget.manga;
+                                    if (manga!.source == "torrent") {
+                                      addTorrent(context, manga: manga);
+                                    } else {
+                                      await ref.watch(
+                                          importArchivesFromFileProvider(
+                                                  isManga: manga.isManga!,
+                                                  manga,
+                                                  init: false)
+                                              .future);
+                                    }
                                   },
                                 )
                             ],
