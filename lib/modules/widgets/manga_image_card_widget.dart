@@ -57,7 +57,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                           ? snapshot.data!.first.customCoverFromTracker ??
                               snapshot.data!.first.imageUrl ??
                               ""
-                          : getMangaDetail!.imageUrl!),
+                          : getMangaDetail!.imageUrl ?? ""),
                       headers: ref.watch(headersProvider(
                           source: source.name!, lang: source.lang!)),
                       cache: true,
@@ -149,7 +149,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                       ? snapshot.data!.first.customCoverFromTracker ??
                           snapshot.data!.first.imageUrl ??
                           ""
-                      : getMangaDetail!.imageUrl!),
+                      : getMangaDetail!.imageUrl ?? ""),
                   headers: ref.watch(headersProvider(
                       source: source.name!, lang: source.lang!)),
                 );

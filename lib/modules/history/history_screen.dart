@@ -282,7 +282,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                               lang: manga.lang!)),
                                           imageUrl: toImgUrl(
                                               manga.customCoverFromTracker ??
-                                                  manga.imageUrl!),
+                                                  manga.imageUrl ??
+                                                  ""),
                                           width: 60,
                                           height: 90,
                                           fit: BoxFit.cover),

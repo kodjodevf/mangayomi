@@ -279,7 +279,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                               .customCoverFromTracker ??
                                           snapshot.data!.first.imageUrl ??
                                           ""
-                                      : getMangaDetail.imageUrl!),
+                                      : getMangaDetail.imageUrl ?? ""),
                                   width: 110,
                                   height: 150,
                                   fit: BoxFit.cover));

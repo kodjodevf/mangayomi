@@ -244,7 +244,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         lang: widget.manga!.lang!)),
                                 imageUrl: toImgUrl(
                                     widget.manga!.customCoverFromTracker ??
-                                        widget.manga!.imageUrl!),
+                                        widget.manga!.imageUrl ??
+                                        ""),
                                 width: context.width(1),
                                 height: 300,
                                 fit: BoxFit.cover),
@@ -1407,7 +1408,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             as ImageProvider
         : CustomExtendedNetworkImageProvider(
             toImgUrl(widget.manga!.customCoverFromTracker ??
-                widget.manga!.imageUrl!),
+                widget.manga!.imageUrl ??
+                ""),
             headers: widget.manga!.isLocalArchive!
                 ? null
                 : ref.watch(headersProvider(

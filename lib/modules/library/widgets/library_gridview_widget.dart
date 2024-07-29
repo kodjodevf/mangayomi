@@ -79,8 +79,9 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                     ? MemoryImage(entry.customCoverImage as Uint8List)
                         as ImageProvider
                     : CustomExtendedNetworkImageProvider(
-                        toImgUrl(
-                            entry.customCoverFromTracker ?? entry.imageUrl!),
+                        toImgUrl(entry.customCoverFromTracker ??
+                            entry.imageUrl ??
+                            ""),
                         headers: entry.isLocalArchive!
                             ? null
                             : ref.watch(headersProvider(
