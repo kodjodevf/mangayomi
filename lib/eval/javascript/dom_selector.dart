@@ -9,7 +9,7 @@ class JsDomSelector {
   JsDomSelector(this.runtime);
   final Map<int, Element?> _elements = {};
   int _elementKey = 0;
-  init() {
+  void init() {
     runtime.onMessage('get_doc_element', (dynamic args) {
       final input = args[0];
       final type = args[1];

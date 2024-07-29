@@ -7,14 +7,14 @@ class JsPreferences {
   late Source? source;
   JsPreferences(this.runtime, this.source);
 
-  init() {
-    runtime.onMessage('get', (dynamic args)  {
-      return  getPreferenceValue(source!.id!, args[0]);
+  void init() {
+    runtime.onMessage('get', (dynamic args) {
+      return getPreferenceValue(source!.id!, args[0]);
     });
-    runtime.onMessage('getString', (dynamic args)  {
+    runtime.onMessage('getString', (dynamic args) {
       return getSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
-    runtime.onMessage('setString', (dynamic args)  {
+    runtime.onMessage('setString', (dynamic args) {
       return setSourcePreferenceStringValue(source!.id!, args[0], args[1]);
     });
 

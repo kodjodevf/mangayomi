@@ -7,50 +7,39 @@ class JsHttpClient {
   late JavascriptRuntime runtime;
   JsHttpClient(this.runtime);
 
-  init() {
+  void init() {
+    InterceptedClient client(dynamic reqcopyWith) {
+      return MClient.init(
+          reqcopyWith: (reqcopyWith as Map?)?.toMapStringDynamic);
+    }
+
     runtime.onMessage('http_get', (dynamic args) async {
-      return jsonEncode((await MClient.init(
-                  source: null,
-                  reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
-              .get(Uri.parse(args[2]),
-                  headers: (args[3] as Map?)?.toMapStringString))
+      return jsonEncode((await client(args[1]).get(Uri.parse(args[2]),
+              headers: (args[3] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.onMessage('http_post', (dynamic args) async {
-      return jsonEncode((await MClient.init(
-                  source: null,
-                  reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
-              .post(Uri.parse(args[2]),
-                  headers: (args[3] as Map?)?.toMapStringString,
-                  body: (args[4] as Map?)?.toMapStringString))
+      return jsonEncode((await client(args[1]).post(Uri.parse(args[2]),
+              headers: (args[3] as Map?)?.toMapStringString,
+              body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.onMessage('http_put', (dynamic args) async {
-      return (await MClient.init(
-                  source: null,
-                  reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
-              .put(Uri.parse(args[2]),
-                  headers: (args[3] as Map?)?.toMapStringString, body: args[4]))
+      return (await client(args[1]).put(Uri.parse(args[2]),
+              headers: (args[3] as Map?)?.toMapStringString, body: args[4]))
           .toJson();
     });
     runtime.onMessage('http_delete', (dynamic args) async {
-      return jsonEncode((await MClient.init(
-              source: null,
-              reqcopyWith: (args[1] as Map?)?.map(
-                  (key, value) => MapEntry(key.toString(), value))).delete(
-              Uri.parse(args[2]),
+      return jsonEncode((await client(args[1]).delete(Uri.parse(args[2]),
               headers: (args[3] as Map?)?.map(
                   (key, value) => MapEntry(key.toString(), value.toString())),
               body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.onMessage('http_patch', (dynamic args) async {
-      return jsonEncode((await MClient.init(
-                  source: null,
-                  reqcopyWith: (args[1] as Map?)?.toMapStringDynamic)
-              .patch(Uri.parse(args[2]),
-                  headers: (args[3] as Map?)?.toMapStringString,
-                  body: (args[4] as Map?)?.toMapStringString))
+      return jsonEncode((await client(args[1]).patch(Uri.parse(args[2]),
+              headers: (args[3] as Map?)?.toMapStringString,
+              body: (args[4] as Map?)?.toMapStringString))
           .toJson());
     });
     runtime.evaluate('''

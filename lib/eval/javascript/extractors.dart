@@ -8,7 +8,7 @@ class JsVideosExtractors {
   late JavascriptRuntime runtime;
   JsVideosExtractors(this.runtime);
 
-  init() {
+  void init() {
     runtime.onMessage('sibnetExtractor', (dynamic args) async {
       return (await MBridge.sibnetExtractor(args[0], args[1] ?? ""))
           .encodeToJson();

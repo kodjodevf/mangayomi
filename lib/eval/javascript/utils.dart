@@ -8,7 +8,7 @@ class JsUtils {
   late JavascriptRuntime runtime;
   JsUtils(this.runtime);
 
-  init() {
+  void init() {
     runtime.onMessage('log', (dynamic args) {
       Logger.add(LoggerLevel.warning, "${args[0]}");
       return null;
