@@ -512,10 +512,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: c6b0b4c05c458e1c01ad9bcc14041dd7b1f6783d487be4386f793f47a8a4d03e
+      sha256: "9d98bd47ef9d34e803d438f17fd32b116d31009f534a6fa5ce3a1167f189a6de"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.20"
+    version: "2.0.21"
   flutter_qjs:
     dependency: "direct main"
     description:
@@ -628,10 +628,10 @@ packages:
     dependency: transitive
     description:
       name: graphs
-      sha256: aedc5a15e78fc65a6e23bcd927f24c64dd995062bcd1ca6eda65a3cff92a4d19
+      sha256: "741bbf84165310a68ff28fe9e727332eef1407342fca52759cb21ad8177bb8d0"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.2"
   grouped_list:
     dependency: "direct main"
     description:
@@ -956,27 +956,27 @@ packages:
     dependency: "direct overridden"
     description:
       path: "libs/windows/media_kit_libs_windows_video"
-      ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      resolved-ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      url: "https://github.com/media-kit/media-kit.git"
     source: git
     version: "1.0.9"
   media_kit_native_event_loop:
     dependency: "direct overridden"
     description:
       path: media_kit_native_event_loop
-      ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      resolved-ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      url: "https://github.com/media-kit/media-kit.git"
     source: git
     version: "1.0.8"
   media_kit_video:
     dependency: "direct main"
     description:
       path: media_kit_video
-      ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      resolved-ref: "398abfa23f9da201cd0af7b23a950f6a14c06ae3"
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      url: "https://github.com/media-kit/media-kit.git"
     source: git
     version: "1.2.4"
   meta:
@@ -1055,10 +1055,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: "30c5aa827a6ae95ce2853cdc5fe3971daaac00f6f081c419c013f7f57bff2f5e"
+      sha256: e84c8a53fe1510ef4582f118c7b4bdf15b03002b51d7c2b66983c65843d61193
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.7"
+    version: "2.2.8"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -1119,10 +1119,10 @@ packages:
     dependency: transitive
     description:
       name: permission_handler_html
-      sha256: "54bf176b90f6eddd4ece307e2c06cf977fb3973719c35a93b85cc7093eb6070d"
+      sha256: "6cac773d389e045a8d4f85418d07ad58ef9e42a56e063629ce14c4c26344de24"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.2"
   permission_handler_platform_interface:
     dependency: transitive
     description:
@@ -1547,10 +1547,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: ceb2625f0c24ade6ef6778d1de0b2e44f2db71fded235eb52295247feba8c5cf
+      sha256: c24484594a8dea685610569ab0f2547de9c7a1907500a9bc5e37e4c9a3cbfb23
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.3"
+    version: "6.3.6"
   url_launcher_ios:
     dependency: transitive
     description:
@@ -1595,10 +1595,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_windows
-      sha256: ecf9725510600aa2bb6d7ddabe16357691b6d2805f66216a97d1b881e21beff7
+      sha256: "49c10f879746271804767cb45551ec5592cdab00ee105c06dddde1a98f73b185"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.1"
+    version: "3.1.2"
   uuid:
     dependency: transitive
     description:
@@ -1635,10 +1635,10 @@ packages:
     dependency: transitive
     description:
       name: wakelock_plus
-      sha256: "14758533319a462ffb5aa3b7ddb198e59b29ac3b02da14173a1715d65d4e6e68"
+      sha256: "4fa83a128b4127619e385f686b4f080a5d2de46cff8e8c94eccac5fcf76550e5"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.5"
+    version: "1.2.7"
   wakelock_plus_platform_interface:
     dependency: transitive
     description:

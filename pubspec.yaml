@@ -85,19 +85,19 @@ dependency_overrides:
   html: ^0.15.4
   media_kit_native_event_loop:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/media-kit/media-kit.git
       path: media_kit_native_event_loop
-      ref: 398abfa23f9da201cd0af7b23a950f6a14c06ae3
+      ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
   media_kit_libs_windows_video:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/media-kit/media-kit.git
       path: libs/windows/media_kit_libs_windows_video
-      ref: 398abfa23f9da201cd0af7b23a950f6a14c06ae3
+      ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
   media_kit_video:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/media-kit/media-kit.git
       path: media_kit_video
-      ref: 398abfa23f9da201cd0af7b23a950f6a14c06ae3
+      ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
 
 dev_dependencies:
   flutter_test:
