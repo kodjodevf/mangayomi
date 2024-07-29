@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -15,7 +17,6 @@ import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
@@ -41,8 +42,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     return Scaffold(
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
-          final history = ref.watch(
-              getAllHistoryStreamProvider(isManga: widget.manga.isManga!));
           final chaptersList = ref.watch(chaptersListttStateProvider);
           final isExtended = ref.watch(isExtendedStateProvider);
           return ref.watch(isLongPressedStateProvider) == true
@@ -52,53 +51,75 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           .where((element) => !element.isRead!)
                           .toList()
                           .isNotEmpty
-                  ? history.when(
-                      data: (data) {
-                        final incognitoMode =
-                            ref.watch(incognitoModeStateProvider);
-                        final entries = data
-                            .where(
-                                (element) => element.mangaId == widget.manga.id)
-                            .toList()
-                            .reversed
-                            .toList();
-                        final isFr =
-                            ref.watch(l10nLocaleStateProvider).languageCode ==
-                                "fr";
-                        if (entries.isNotEmpty && !incognitoMode) {
+                  ? StreamBuilder(
+                      stream: isar.historys
+                          .filter()
+                          .idIsNotNull()
+                          .and()
+                          .chapter((q) => q.manga(
+                              (q) => q.isMangaEqualTo(widget.manga.isManga!)))
+                          .watch(fireImmediately: true),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                          final incognitoMode =
+                              ref.watch(incognitoModeStateProvider);
+                          final entries = snapshot.data!
+                              .where((element) =>
+                                  element.mangaId == widget.manga.id)
+                              .toList()
+                              .reversed
+                              .toList();
+                          final isFr =
+                              ref.watch(l10nLocaleStateProvider).languageCode ==
+                                  "fr";
+                          if (entries.isNotEmpty && !incognitoMode) {
+                            final chap = entries.first.chapter.value!;
+                            return CustomFloatingActionBtn(
+                              isExtended: !isExtended,
+                              label: l10n.resume,
+                              onPressed: () {
+                                if (!chap.isRead!) {
+                                  pushMangaReaderView(
+                                      context: context, chapter: chap);
+                                } else {
+                                  final filteredChaps = chap.manga.value!
+                                      .getFilteredChapterList();
+                                  bool exist = false;
+                                  for (var filteredChap
+                                      in filteredChaps.reversed) {
+                                    if (filteredChap.toJson().toString() ==
+                                        chap.toJson().toString()) {
+                                      exist = true;
+                                    }
+                                    if (exist && !filteredChap.isRead!) {
+                                      pushMangaReaderView(
+                                          context: context,
+                                          chapter: filteredChap);
+                                      break;
+                                    }
+                                  }
+                                }
+                              },
+                              textWidth: 70,
+                              width: 110,
+                            );
+                          }
                           return CustomFloatingActionBtn(
                             isExtended: !isExtended,
-                            label: l10n.resume,
+                            label: l10n.read,
                             onPressed: () {
                               pushMangaReaderView(
-                                context: context,
-                                chapter: entries.first.chapter.value!,
-                              );
+                                  context: context,
+                                  chapter: widget.manga.chapters
+                                      .toList()
+                                      .reversed
+                                      .toList()
+                                      .last);
                             },
-                            textWidth: 70,
-                            width: 110,
+                            textWidth: isFr ? 80 : 40,
+                            width: isFr ? 130 : 90,
                           );
                         }
-                        return CustomFloatingActionBtn(
-                          isExtended: !isExtended,
-                          label: l10n.read,
-                          onPressed: () {
-                            pushMangaReaderView(
-                                context: context,
-                                chapter: widget.manga.chapters
-                                    .toList()
-                                    .reversed
-                                    .toList()
-                                    .last);
-                          },
-                          textWidth: isFr ? 80 : 40,
-                          width: isFr ? 130 : 90,
-                        );
-                      },
-                      error: (Object error, StackTrace stackTrace) {
-                        return ErrorText(error);
-                      },
-                      loading: () {
                         return const ProgressCenter();
                       },
                     )

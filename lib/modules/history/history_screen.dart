@@ -11,6 +11,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -125,8 +126,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
-                                        // _tabBarController.index != 1
-
                                         for (var history in histories) {
                                           isar.historys.deleteSync(history.id!);
                                         }
@@ -233,7 +232,24 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                         elevation: 0,
                         shadowColor: Colors.transparent),
                     onPressed: () {
-                      pushMangaReaderView(context: context, chapter: chapter);
+                      if (!chapter.isRead!) {
+                        pushMangaReaderView(context: context, chapter: chapter);
+                      } else {
+                        final filteredChaps =
+                            chapter.manga.value!.getFilteredChapterList();
+                        bool exist = false;
+                        for (var filteredChap in filteredChaps.reversed) {
+                          if (filteredChap.toJson().toString() ==
+                              chapter.toJson().toString()) {
+                            exist = true;
+                          }
+                          if (exist && !filteredChap.isRead!) {
+                            pushMangaReaderView(
+                                context: context, chapter: filteredChap);
+                            break;
+                          }
+                        }
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
