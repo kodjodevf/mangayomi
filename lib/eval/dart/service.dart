@@ -93,7 +93,7 @@ class DartExtensionService {
   Future<List<PageUrl>> getPageList(String url) async {
     return (await _executeLib().getPageList(url))
         .map((e) => e is String
-            ? PageUrl(e.toString())
+            ? PageUrl(e.toString().trim())
             : PageUrl.fromJson((e as Map).toMapStringDynamic!))
         .toList();
   }

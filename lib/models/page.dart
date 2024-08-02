@@ -7,7 +7,7 @@ class PageUrl {
   PageUrl(this.url, {this.headers});
   factory PageUrl.fromJson(Map<String, dynamic> json) {
     return PageUrl(
-      json['url'],
+      json['url'].toString().trim(),
       headers: (json['headers'] as Map?)?.toMapStringString,
     );
   }

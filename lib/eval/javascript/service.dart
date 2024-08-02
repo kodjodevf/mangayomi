@@ -123,7 +123,7 @@ var extention = new DefaultExtension();
         .stringResult;
     return (jsonDecode(res) as List)
         .map((e) => e is String
-            ? PageUrl(e.toString())
+            ? PageUrl(e.toString().trim())
             : PageUrl.fromJson((e as Map).toMapStringDynamic!))
         .toList();
   }
