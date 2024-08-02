@@ -24,7 +24,7 @@ dependencies:
   intl: ^0.19.0
   google_fonts: ^6.2.1
   url_launcher: ^6.3.0
-  package_info_plus: ^8.0.0
+  package_info_plus: ^5.0.1
   permission_handler: ^11.3.1
   flutter_inappwebview: ^5.8.0
   draggable_menu: ^4.4.1
@@ -98,6 +98,8 @@ dependency_overrides:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit_video
       ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
+  wakelock_plus: ^1.2.0
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:
