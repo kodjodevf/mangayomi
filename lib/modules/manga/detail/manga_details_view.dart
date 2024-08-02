@@ -7,9 +7,7 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -18,6 +16,7 @@ import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
@@ -78,27 +77,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               isExtended: !isExtended,
                               label: l10n.resume,
                               onPressed: () {
-                                if (!chap.isRead!) {
-                                  pushMangaReaderView(
-                                      context: context, chapter: chap);
-                                } else {
-                                  final filteredChaps = chap.manga.value!
-                                      .getFilteredChapterList();
-                                  bool exist = false;
-                                  for (var filteredChap
-                                      in filteredChaps.reversed) {
-                                    if (filteredChap.toJson().toString() ==
-                                        chap.toJson().toString()) {
-                                      exist = true;
-                                    }
-                                    if (exist && !filteredChap.isRead!) {
-                                      pushMangaReaderView(
-                                          context: context,
-                                          chapter: filteredChap);
-                                      break;
-                                    }
-                                  }
-                                }
+                                chap.pushToReaderView(context);
                               },
                               textWidth: 70,
                               width: 110,
@@ -108,13 +87,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             isExtended: !isExtended,
                             label: l10n.read,
                             onPressed: () {
-                              pushMangaReaderView(
-                                  context: context,
-                                  chapter: widget.manga.chapters
-                                      .toList()
-                                      .reversed
-                                      .toList()
-                                      .last);
+                              widget.manga.chapters
+                                  .toList()
+                                  .reversed
+                                  .toList()
+                                  .last
+                                  .pushToReaderView(context);
                             },
                             textWidth: isFr ? 80 : 40,
                             width: isFr ? 130 : 90,

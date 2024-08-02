@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/src/rust/api/image.dart';
+import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'crop_borders_provider.g.dart';
@@ -18,7 +20,12 @@ Future<Uint8List?> cropBorders(CropBordersRef ref,
       return null;
     }
 
-    return processCropImage(image: imageBytes);
+    return await Isolate.run(() async {
+      await RustLib.init();
+      final imageRes = processCropImage(image: imageBytes!);
+      RustLib.dispose();
+      return imageRes;
+    });
   }
   return null;
 }

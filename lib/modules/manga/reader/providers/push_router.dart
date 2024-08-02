@@ -5,10 +5,10 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/source.dart';
 
-pushMangaReaderView({
+Future<void> pushMangaReaderView({
   required BuildContext context,
   required Chapter chapter,
-}) {
+}) async {
   final sourceExist = isar.sources
       .filter()
       .langContains(chapter.manga.value!.lang!, caseSensitive: false)
@@ -24,17 +24,15 @@ pushMangaReaderView({
       .isNotEmpty;
   if (sourceExist || chapter.manga.value!.isLocalArchive!) {
     if (chapter.manga.value!.isManga!) {
-      context.push('/mangareaderview', extra: chapter);
+      await context.push('/mangareaderview', extra: chapter);
     } else {
-      context.push('/animePlayerView', extra: chapter);
+      await context.push('/animePlayerView', extra: chapter);
     }
   }
 }
 
-pushReplacementMangaReaderView({
-  required BuildContext context,
-  required Chapter chapter,
-}) {
+void pushReplacementMangaReaderView(
+    {required BuildContext context, required Chapter chapter}) {
   if (chapter.manga.value!.isManga!) {
     context.pushReplacement('/mangareaderview', extra: chapter);
   } else {

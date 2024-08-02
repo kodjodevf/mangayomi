@@ -10,12 +10,11 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
@@ -232,24 +231,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                         elevation: 0,
                         shadowColor: Colors.transparent),
                     onPressed: () {
-                      if (!chapter.isRead!) {
-                        pushMangaReaderView(context: context, chapter: chapter);
-                      } else {
-                        final filteredChaps =
-                            chapter.manga.value!.getFilteredChapterList();
-                        bool exist = false;
-                        for (var filteredChap in filteredChaps.reversed) {
-                          if (filteredChap.toJson().toString() ==
-                              chapter.toJson().toString()) {
-                            exist = true;
-                          }
-                          if (exist && !filteredChap.isRead!) {
-                            pushMangaReaderView(
-                                context: context, chapter: filteredChap);
-                            break;
-                          }
-                        }
-                      }
+                      chapter.pushToReaderView(context);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
