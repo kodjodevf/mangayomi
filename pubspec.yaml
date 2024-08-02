@@ -24,7 +24,7 @@ dependencies:
   intl: ^0.19.0
   google_fonts: ^6.2.1
   url_launcher: ^6.3.0
-  package_info_plus: ^5.0.1
+  package_info_plus: ^8.0.0
   permission_handler: ^11.3.1
   flutter_inappwebview: ^5.8.0
   draggable_menu: ^4.4.1
@@ -81,7 +81,7 @@ dependency_overrides:
   http: ^1.2.1
   ffi: ^2.1.2
   flex_seed_scheme: ^2.0.0
-  meta: ^1.15.0
+  analyzer: ">=5.2.0 <7.0.0"
   html: ^0.15.4
   media_kit_native_event_loop:
     git:
@@ -98,13 +98,11 @@ dependency_overrides:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit_video
       ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
-  wakelock_plus: ^1.2.0
-  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.11
+  build_runner: ^2.4.6
   riverpod_generator: ^2.4.2
   flutter_launcher_icons: ^0.13.1
   isar_generator: ^3.1.0+1
