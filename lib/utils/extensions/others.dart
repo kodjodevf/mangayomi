@@ -47,12 +47,12 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
           .readAsBytesSync();
     } else {
       File? cachedImage;
-      if (url != null) {
-        cachedImage = await getCachedImageFile(url!);
+      if (pageUrl != null) {
+        cachedImage = await getCachedImageFile(pageUrl!.url);
       }
       if (cachedImage == null) {
         await Future.delayed(const Duration(seconds: 3));
-        cachedImage = await getCachedImageFile(url!);
+        cachedImage = await getCachedImageFile(pageUrl!.url);
       }
       imageBytes = cachedImage?.readAsBytesSync();
     }
@@ -72,12 +72,14 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                 : ExtendedFileImageProvider(File(
                     '${data.directory!.path}${padIndex(data.index! + 1)}.jpg'))
             : CustomExtendedNetworkImageProvider(
-                data.url!.trim().trimLeft().trimRight(),
+                data.pageUrl!.url.trim().trimLeft().trimRight(),
                 cache: true,
                 cacheMaxAge: const Duration(days: 7),
-                headers: ref.watch(headersProvider(
-                    source: data.chapter!.manga.value!.source!,
-                    lang: data.chapter!.manga.value!
-                        .lang!)))) as ImageProvider<Object>;
+                headers: {
+                    ...data.pageUrl!.headers ?? {},
+                    ...ref.watch(headersProvider(
+                        source: data.chapter!.manga.value!.source!,
+                        lang: data.chapter!.manga.value!.lang!))
+                  })) as ImageProvider<Object>;
   }
 }

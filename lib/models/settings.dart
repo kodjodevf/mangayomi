@@ -638,14 +638,17 @@ class ChapterFilterBookmarked {
 class ChapterPageurls {
   int? chapterId;
   List<String>? urls;
+  List<String>? headers;
 
   ChapterPageurls({this.chapterId, this.urls});
   ChapterPageurls.fromJson(Map<String, dynamic> json) {
     chapterId = json['chapterId'];
-    urls = json['urls']?.cast<String>();
+    urls = json['headers']?.cast<String>();
+    urls = json['headers']?.cast<String>();
   }
 
-  Map<String, dynamic> toJson() => {'chapterId': chapterId, 'urls': urls};
+  Map<String, dynamic> toJson() =>
+      {'chapterId': chapterId, 'urls': urls, 'headers': headers};
 }
 
 @embedded

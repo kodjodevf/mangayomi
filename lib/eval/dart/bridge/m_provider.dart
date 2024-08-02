@@ -84,7 +84,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
             ])),
         'getPageList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
-              BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])
+              BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])
             ])),
             params: [
               BridgeParameter('url',
@@ -999,7 +999,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       ]);
 
   @override
-  Future<List<String>> getPageList(String url) async {
+  Future<List<dynamic>> getPageList(String url) async {
     final res = await $_invoke('getPageList', [$String(url)]);
     List<dynamic> list = [];
     if (res is $List) {
@@ -1008,7 +1008,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       list = res;
     }
 
-    return list.map((e) => (e is $Value ? e.$reified : e) as String).toList();
+    return list.map((e) => (e is $Value ? e.$reified : e)).toList();
   }
 
   @override

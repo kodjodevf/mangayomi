@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'55ee5ac033e4616be7fbf040a7396a2f9d36599d';
+String _$downloadChapterHash() => r'a2ba0ce07800518f35f47fa2272049357141a854';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const downloadChapterProvider = DownloadChapterFamily();
 
 /// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
+class DownloadChapterFamily extends Family<AsyncValue<List<PageUrl>>> {
   /// See also [downloadChapter].
   const DownloadChapterFamily();
 
@@ -75,7 +75,7 @@ class DownloadChapterFamily extends Family<AsyncValue<List<String>>> {
 }
 
 /// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
+class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
   /// See also [downloadChapter].
   DownloadChapterProvider({
     required Chapter chapter,
@@ -115,7 +115,7 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
 
   @override
   Override overrideWith(
-    FutureOr<List<String>> Function(DownloadChapterRef provider) create,
+    FutureOr<List<PageUrl>> Function(DownloadChapterRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -133,7 +133,7 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<String>> createElement() {
+  AutoDisposeFutureProviderElement<List<PageUrl>> createElement() {
     return _DownloadChapterProviderElement(this);
   }
 
@@ -154,7 +154,7 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<String>> {
   }
 }
 
-mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<String>> {
+mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<PageUrl>> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
 
@@ -163,7 +163,7 @@ mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<String>> {
 }
 
 class _DownloadChapterProviderElement
-    extends AutoDisposeFutureProviderElement<List<String>>
+    extends AutoDisposeFutureProviderElement<List<PageUrl>>
     with DownloadChapterRef {
   _DownloadChapterProviderElement(super.provider);
 

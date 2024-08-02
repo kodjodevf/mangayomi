@@ -257,13 +257,18 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                         } else if (_serviceIndex == 4) {
                                           if (source!.sourceCodeLanguage ==
                                               SourceCodeLanguage.dart) {
-                                            result = await DartExtensionService(
-                                                    source)
-                                                .getPageList(_url);
-                                          } else {
                                             result =
-                                                await JsExtensionService(source)
-                                                    .getPageList(_url);
+                                                (await DartExtensionService(
+                                                            source)
+                                                        .getPageList(_url))
+                                                    .map((e) => e.toJson())
+                                                    .toList();
+                                          } else {
+                                            result = (await JsExtensionService(
+                                                        source)
+                                                    .getPageList(_url))
+                                                .map((e) => e.toJson())
+                                                .toList();
                                           }
                                           result = {"pages": result};
                                         } else {

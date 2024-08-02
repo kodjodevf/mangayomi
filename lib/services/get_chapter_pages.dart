@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:mangayomi/eval/dart/service.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
@@ -17,7 +20,7 @@ part 'get_chapter_pages.g.dart';
 
 class GetChapterPagesModel {
   Directory? path;
-  List<String> pageUrls = [];
+  List<PageUrl> pageUrls = [];
   List<bool> isLocaleList = [];
   List<Uint8List?> archiveImages = [];
   List<UChapDataPreload> uChapDataPreload;
@@ -36,7 +39,7 @@ Future<GetChapterPagesModel> getChapterPages(
 }) async {
   List<UChapDataPreload> uChapDataPreloadp = [];
   Directory? path;
-  List<String> pageUrls = [];
+  List<PageUrl> pageUrls = [];
   List<bool> isLocaleList = [];
   final settings = isar.settings.getSync(227);
   List<ChapterPageurls>? chapterPageUrlsList =
@@ -56,7 +59,14 @@ Future<GetChapterPagesModel> getChapterPages(
     if (isarPageUrls.isNotEmpty &&
         isarPageUrls.first.urls != null &&
         isarPageUrls.first.urls!.isNotEmpty) {
-      pageUrls = isarPageUrls.first.urls!;
+      for (var i = 0; i < isarPageUrls.first.urls!.length; i++) {
+        Map<String, String>? headers;
+        if (isarPageUrls.first.headers?.isNotEmpty ?? false) {
+          headers = (jsonDecode(isarPageUrls.first.headers![i]) as Map?)
+              ?.toMapStringString;
+        }
+        pageUrls.add(PageUrl(isarPageUrls.first.urls![i], headers: headers));
+      }
     } else {
       if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
         pageUrls = await DartExtensionService(source).getPageList(chapter.url!);
@@ -90,7 +100,7 @@ Future<GetChapterPagesModel> getChapterPages(
     }
     if (isLocalArchive) {
       for (var i = 0; i < archiveImages.length; i++) {
-        pageUrls.add("");
+        pageUrls.add(PageUrl(""));
       }
     }
     if (!incognitoMode) {
@@ -100,9 +110,15 @@ Future<GetChapterPagesModel> getChapterPages(
           chapterPageUrls.add(chapterPageUrl);
         }
       }
+      final chapterPageHeaders = pageUrls
+          .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+          .toList();
       chapterPageUrls.add(ChapterPageurls()
         ..chapterId = chapter.id
-        ..urls = pageUrls);
+        ..urls = pageUrls.map((e) => e.url).toList()
+        ..headers = chapterPageHeaders.first != null
+            ? chapterPageHeaders.map((e) => e.toString()).toList()
+            : null);
       isar.writeTxnSync(() => isar.settings
           .putSync(settings..chapterPageUrlsList = chapterPageUrls));
     }

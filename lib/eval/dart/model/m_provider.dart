@@ -20,7 +20,7 @@ abstract class MProvider {
 
   Future<MManga> getDetail(String url);
 
-  Future<List<String>> getPageList(String url);
+  Future<List<dynamic>> getPageList(String url);
 
   Future<List<Video>> getVideoList(String url);
 

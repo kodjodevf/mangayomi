@@ -9,6 +9,7 @@ import 'package:mangayomi/eval/dart/model/filter.dart';
 import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/eval/dart/model/m_pages.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 
@@ -115,13 +116,16 @@ var extention = new DefaultExtension();
     return MManga.fromJson(jsonDecode(res));
   }
 
-  Future<List<String>> getPageList(String url) async {
+  Future<List<PageUrl>> getPageList(String url) async {
     _init();
     final res = (await runtime.handlePromise(await runtime.evaluateAsync(
             'jsonStringify(() => extention.getPageList(`$url`))')))
         .stringResult;
-
-    return (jsonDecode(res) as List).map((e) => e.toString()).toList();
+    return (jsonDecode(res) as List)
+        .map((e) => e is String
+            ? PageUrl(e.toString())
+            : PageUrl.fromJson((e as Map).toMapStringDynamic!))
+        .toList();
   }
 
   Future<List<Video>> getVideoList(String url) async {

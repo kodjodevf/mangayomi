@@ -6,7 +6,7 @@ part of 'crop_borders_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cropBordersHash() => r'857ae4319c11ee55cbaa2ae15b57bda240329c0d';
+String _$cropBordersHash() => r'b275a01ce80a3322b70a6c1e87abe1df0d35dc64';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -21,12 +23,12 @@ part 'download_provider.g.dart';
 FileDownloader _mangaFileDownloader = FileDownloader(isAnime: false);
 FileDownloader _animeFileDownloader = FileDownloader(isAnime: true);
 @riverpod
-Future<List<String>> downloadChapter(
+Future<List<PageUrl>> downloadChapter(
   DownloadChapterRef ref, {
   required Chapter chapter,
   bool? useWifi,
 }) async {
-  List<String> pageUrls = [];
+  List<PageUrl> pageUrls = [];
   List<DownloadTask> tasks = [];
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
@@ -56,9 +58,15 @@ Future<List<String>> downloadChapter(
         chapterPageUrls.add(chapterPageUrl);
       }
     }
+    final chapterPageHeaders = pageUrls
+        .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+        .toList();
     chapterPageUrls.add(ChapterPageurls()
       ..chapterId = chapter.id
-      ..urls = pageUrls);
+      ..urls = pageUrls.map((e) => e.url).toList()
+      ..headers = chapterPageHeaders.first != null
+          ? chapterPageHeaders.map((e) => e.toString()).toList()
+          : null);
     isar.writeTxnSync(() =>
         isar.settings.putSync(settings..chapterPageUrlsList = chapterPageUrls));
   }
@@ -84,7 +92,7 @@ Future<List<String>> downloadChapter(
           .where((element) => element.originalUrl.isMediaVideo())
           .toList();
       if (videosUrls.isNotEmpty) {
-        pageUrls = [videosUrls.first.url];
+        pageUrls = [PageUrl(videosUrls.first.url)];
         videoHeader.addAll(videosUrls.first.headers ?? {});
         isOk = true;
       }
@@ -135,8 +143,8 @@ Future<List<String>> downloadChapter(
         if (!(await path3.exists())) {
           await path3.create();
         }
-
-        final cookie = MClient.getCookiesPref(pageUrls[index]);
+        final page = pageUrls[index];
+        final cookie = MClient.getCookiesPref(page.url);
         final headers = isManga
             ? ref.watch(
                 headersProvider(source: manga.source!, lang: manga.lang!))
@@ -151,10 +159,12 @@ Future<List<String>> downloadChapter(
             if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
                 .exists()) {
             } else {
+              Map<String, String> pageHeaders = headers;
+              pageHeaders.addAll(page.headers ?? {});
               tasks.add(DownloadTask(
-                  taskId: pageUrls[index],
-                  headers: headers,
-                  url: pageUrls[index].trim().trimLeft().trimRight(),
+                  taskId: page.url,
+                  headers: pageHeaders,
+                  url: page.url.trim().trimLeft().trimRight(),
                   filename: "${padIndex(index + 1)}.jpg",
                   baseDirectory: BaseDirectory.temporary,
                   directory: 'Mangayomi/$finalPath',
@@ -168,10 +178,12 @@ Future<List<String>> downloadChapter(
             if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
                 .exists()) {
             } else {
+              Map<String, String> pageHeaders = headers;
+              pageHeaders.addAll(page.headers ?? {});
               tasks.add(DownloadTask(
-                  taskId: pageUrls[index],
-                  headers: headers,
-                  url: pageUrls[index].trim().trimLeft().trimRight(),
+                  taskId: page.url,
+                  headers: pageHeaders,
+                  url: page.url.trim().trimLeft().trimRight(),
                   filename: "${padIndex(index + 1)}.jpg",
                   baseDirectory: BaseDirectory.temporary,
                   directory: 'Mangayomi/$finalPath',
@@ -185,10 +197,12 @@ Future<List<String>> downloadChapter(
           if ((await path.exists())) {
             if (await File("${path.path}${chapter.name}.mp4").exists()) {
             } else {
+              Map<String, String> pageHeaders = headers;
+              pageHeaders.addAll(page.headers ?? {});
               tasks.add(DownloadTask(
-                  taskId: pageUrls[index],
-                  headers: headers,
-                  url: pageUrls[index].trim().trimLeft().trimRight(),
+                  taskId: page.url,
+                  headers: pageHeaders,
+                  url: page.url.trim().trimLeft().trimRight(),
                   filename: "${chapter.name}.mp4",
                   baseDirectory: BaseDirectory.temporary,
                   directory: 'Mangayomi/$finalPath',
@@ -201,10 +215,12 @@ Future<List<String>> downloadChapter(
             await path.create();
             if (await File("${path.path}${chapter.name}.mp4").exists()) {
             } else {
+              Map<String, String> pageHeaders = headers;
+              pageHeaders.addAll(page.headers ?? {});
               tasks.add(DownloadTask(
-                  taskId: pageUrls[index],
-                  headers: headers,
-                  url: pageUrls[index].trim().trimLeft().trimRight(),
+                  taskId: page.url,
+                  headers: pageHeaders,
+                  url: page.url.trim().trimLeft().trimRight(),
                   filename: "${chapter.name}.mp4",
                   baseDirectory: BaseDirectory.temporary,
                   directory: 'Mangayomi/$finalPath',
@@ -225,7 +241,7 @@ Future<List<String>> downloadChapter(
           failed: 0,
           total: 0,
           isDownload: true,
-          taskIds: pageUrls,
+          taskIds: pageUrls.map((e) => e.url).toList(),
           isStartDownload: false,
           chapterId: chapter.id,
           mangaId: manga.id);
@@ -243,7 +259,10 @@ Future<List<String>> downloadChapter(
                 savePageUrls();
                 if (ref.watch(saveAsCBZArchiveStateProvider)) {
                   await ref.watch(convertToCBZProvider(
-                          path!.path, mangaDir.path, chapter.name!, pageUrls)
+                          path!.path,
+                          mangaDir.path,
+                          chapter.name!,
+                          pageUrls.map((e) => e.url).toList())
                       .future);
                 }
               }
@@ -258,7 +277,7 @@ Future<List<String>> downloadChapter(
                   failed: failed,
                   total: tasks.length,
                   isDownload: (succeeded == tasks.length),
-                  taskIds: pageUrls,
+                  taskIds: pageUrls.map((e) => e.url).toList(),
                   isStartDownload: true,
                   chapterId: chapter.id,
                   mangaId: manga.id);
@@ -301,7 +320,7 @@ Future<List<String>> downloadChapter(
                   failed: 0,
                   total: 100,
                   isDownload: (progress == 1.0),
-                  taskIds: pageUrls,
+                  taskIds: pageUrls.map((e) => e.url).toList(),
                   isStartDownload: true,
                   chapterId: chapter.id,
                   mangaId: manga.id);

@@ -12,6 +12,7 @@ import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
@@ -868,12 +869,15 @@ class _MangaChapterPageGalleryState
         if (!_uChapDataPreload[index].isLocale!) {
           precacheImage(
               ExtendedNetworkImageProvider(
-                _uChapDataPreload[index].url!,
+                _uChapDataPreload[index].pageUrl!.url,
                 cache: true,
                 cacheMaxAge: const Duration(days: 7),
-                headers: ref.watch(headersProvider(
-                    source: chapter.manga.value!.source!,
-                    lang: chapter.manga.value!.lang!)),
+                headers: {
+                  ..._uChapDataPreload[index].pageUrl!.headers ?? {},
+                  ...ref.watch(headersProvider(
+                      source: chapter.manga.value!.source!,
+                      lang: chapter.manga.value!.lang!))
+                },
               ),
               context);
         } else {
@@ -2329,14 +2333,14 @@ class _MangaChapterPageGalleryState
 class UChapDataPreload {
   Chapter? chapter;
   Directory? directory;
-  String? url;
+  PageUrl? pageUrl;
   bool? isLocale;
   Uint8List? archiveImage;
   int? index;
   GetChapterPagesModel? chapterUrlModel;
   int? pageIndex;
   Uint8List? cropImage;
-  UChapDataPreload(this.chapter, this.directory, this.url, this.isLocale,
+  UChapDataPreload(this.chapter, this.directory, this.pageUrl, this.isLocale,
       this.archiveImage, this.index, this.chapterUrlModel, this.pageIndex,
       {this.cropImage});
 }
