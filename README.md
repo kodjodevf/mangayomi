@@ -7,6 +7,9 @@
 <p align="center">
 
  [![latest release](https://img.shields.io/github/release/kodjodevf/mangayomi.svg?maxAge=3600&label=download)](https://github.com/kodjodevf/mangayomi/releases)
+ [![downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/total)](https://github.com/kodjodevf/mangayomi/releases)
+ [![downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/latest/total)](https://github.com/kodjodevf/mangayomi/releases)
+![star](https://img.shields.io/github/stars/kodjodevf/mangayomi)
  [![Discord](https://img.shields.io/discord/1157628512077893666.svg?label=discord&labelColor=7289da&color=2c2f33&style=flat)](https://discord.com/invite/EjfBuYahsP) 
 
 </p>
