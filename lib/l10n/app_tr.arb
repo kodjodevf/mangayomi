@@ -321,5 +321,16 @@
     "grid_size": "Kılavuz Boyutu",
     "n_per_row": "{n} satır başına",
     "horizontal_continious": "Yatay sürekli",
-    "edit_code": "Kodu düzenle"
+    "edit_code": "Kodu düzenle",
+    "use_libass": "libass'ı etkinleştir",
+    "use_libass_info": "Yerel arka uç için libass tabanlı altyazı rendere etmeyi kullanın.",
+    "libass_not_disable_message": "Altyazıları özelleştirmek için oyuncu ayarlarında `libass kullan` seçeneğini devre dışı bırakın.",
+    "torrent_stream": "Torrent Akışı",
+    "add_torrent": "Torrent ekle",
+    "enter_torrent_hint_text": "Manyetik veya torrent dosyası URL'sini girin",
+    "torrent_url": "Torrent URL'si",
+    "or": "VEYA",
+    "advanced": "Gelişmiş",
+    "use_native_http_client": "Yerel http istemcisini kullan",
+    "use_native_http_client_info": "otomatik olarak VPN'ler gibi platform özelliklerini destekler, HTTP/3 gibi daha fazla HTTP özelliğini ve özel yönlendirme işlemlerini destekler"
 }

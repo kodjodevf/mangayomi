@@ -321,5 +321,16 @@
     "grid_size": "Tamanho da grade",
     "n_per_row": "{n} por linha",
     "horizontal_continious": "Contínuo horizontal",
-    "edit_code": "Editar código"
+    "edit_code": "Editar código",
+    "use_libass": "Ativar libass",
+    "use_libass_info": "Use a renderização de legendas baseada em libass para o backend nativo.",
+    "libass_not_disable_message": "Desative `usar libass` nas configurações do player para poder personalizar as legendas.",
+    "torrent_stream": "Transmissão de Torrent",
+    "add_torrent": "Adicionar torrent",
+    "enter_torrent_hint_text": "Digite o URL do magnet ou do arquivo torrent",
+    "torrent_url": "URL do torrent",
+    "or": "OU",
+    "advanced": "Avançado",
+    "use_native_http_client": "Usar cliente HTTP nativo",
+    "use_native_http_client_info": "ele suporta automaticamente recursos da plataforma como VPNs, suporta mais recursos HTTP, como HTTP/3 e manuseio personalizado de redirecionamento"
 }

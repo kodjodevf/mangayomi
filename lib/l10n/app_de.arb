@@ -321,5 +321,16 @@
     "grid_size": "Rastergröße",
     "n_per_row": "{n} pro Zeile",
     "horizontal_continious": "Horizontal kontinuierlich",
-    "edit_code": "Code bearbeiten"
+    "edit_code": "Code bearbeiten",
+    "use_libass": "Libass aktivieren",
+    "use_libass_info": "Libass-basierte Untertitel-Wiedergabe für natives Backend verwenden.",
+    "libass_not_disable_message": "Deaktivieren Sie 'use libass' in den Playereinstellungen, um die Untertitel anpassen zu können.",
+    "torrent_stream": "Torrent-Stream",
+    "add_torrent": "Torrent hinzufügen",
+    "enter_torrent_hint_text": "Magnet- oder Torrent-Datei-URL eingeben",
+    "torrent_url": "Torrent-URL",
+    "or": "ODER",
+    "advanced": "Erweitert",
+    "use_native_http_client": "Nativen HTTP-Client verwenden",
+    "use_native_http_client_info": "Unterstützt automatisch Plattformfunktionen wie VPNs, unterstützt mehr HTTP-Funktionen wie HTTP/3 und benutzerdefinierte Umleitungshandhabung."
 }

@@ -321,5 +321,16 @@
     "grid_size": "Dimensione griglia",
     "n_per_row": "{n} per riga",
     "horizontal_continious": "Orizzontale continuo",
-    "edit_code": "Modifica codice"
+    "edit_code": "Modifica codice",
+    "use_libass": "Abilita libass",
+    "use_libass_info": "Usa il rendering dei sottotitoli basato su libass per il backend nativo.",
+    "libass_not_disable_message": "Disabilita `use libass` nelle impostazioni del lettore per poter personalizzare i sottotitoli.",
+    "torrent_stream": "Streaming Torrent",
+    "add_torrent": "Aggiungi torrent",
+    "enter_torrent_hint_text": "Inserisci magnet o URL del file torrent",
+    "torrent_url": "URL torrent",
+    "or": "O",
+    "advanced": "Avanzate",
+    "use_native_http_client": "Usa il client HTTP nativo",
+    "use_native_http_client_info": "Supporta automaticamente le funzionalità della piattaforma come le VPN, supporta più funzionalità HTTP come HTTP/3 e la gestione dei reindirizzamenti personalizzati."
 }

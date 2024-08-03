@@ -323,5 +323,16 @@
   "grid_size": "ขนาดตาราง",
   "n_per_row": "{n} ต่อแถว",
   "horizontal_continious": "แนวนอนต่อเนื่อง",
-  "edit_code": "แก้ไขโค้ด"
+  "edit_code": "แก้ไขโค้ด",
+  "use_libass": "เปิดใช้งาน libass",
+  "use_libass_info": "ใช้การเรนเดอร์คำบรรยายที่ใช้ libass สำหรับแบ็คเอนด์พื้นเมือง",
+  "libass_not_disable_message": "ปิดการใช้งาน `ใช้ libass` ในการตั้งค่าเพลเยอร์เพื่อให้สามารถปรับแต่งคำบรรยายได้",
+  "torrent_stream": "สตรีมทอเรนต์",
+  "add_torrent": "เพิ่มทอเรนต์",
+  "enter_torrent_hint_text": "ป้อนลิงก์แม่เหล็กหรือ URL ไฟล์ทอเรนต์",
+  "torrent_url": "URL ทอเรนต์",
+  "or": "หรือ",
+  "advanced": "ขั้นสูง",
+  "use_native_http_client": "ใช้ไคลเอนต์ HTTP พื้นเมือง",
+  "use_native_http_client_info": "รองรับฟีเจอร์ของแพลตฟอร์มโดยอัตโนมัติ เช่น VPNs รองรับฟีเจอร์ HTTP มากขึ้น เช่น HTTP/3 และการจัดการการเปลี่ยนเส้นทางที่กำหนดเอง"
 }

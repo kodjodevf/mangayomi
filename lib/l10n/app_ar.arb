@@ -321,5 +321,16 @@
     "grid_size": "حجم الشبكة",
     "n_per_row": "{n} في الصف الواحد",
     "horizontal_continious": "مستمر أفقياً",
-    "edit_code": "تحرير الكود"
+    "edit_code": "تحرير الكود",
+    "use_libass": "تفعيل libass",
+    "use_libass_info": "استخدام عرض الترجمة المستندة إلى libass للواجهة الخلفية الأصلية.",
+    "libass_not_disable_message": "عطل `استخدام libass` في إعدادات المشغل لتتمكن من تخصيص الترجمة.",
+    "torrent_stream": "بث التورنت",
+    "add_torrent": "إضافة تورنت",
+    "enter_torrent_hint_text": "أدخل رابط ملف التورنت أو المغناطيس",
+    "torrent_url": "رابط التورنت",
+    "or": "أو",
+    "advanced": "متقدم",
+    "use_native_http_client": "استخدام عميل HTTP الأصلي",
+    "use_native_http_client_info": "يدعم تلقائيًا ميزات المنصة مثل الشبكات الافتراضية الخاصة (VPNs)، ويدعم ميزات HTTP أكثر مثل HTTP/3 ومعالجة إعادة التوجيه المخصصة"
 }

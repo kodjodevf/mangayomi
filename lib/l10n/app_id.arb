@@ -321,5 +321,16 @@
     "grid_size": "Ukuran Grid",
     "n_per_row": "{n} per baris",
     "horizontal_continious": "Lanjutan Horizontal",
-    "edit_code": "Kode Edit"
+    "edit_code": "Kode Edit",
+    "use_libass": "Aktifkan libass",
+    "use_libass_info": "Gunakan rendering subtitle berbasis libass untuk backend asli.",
+    "libass_not_disable_message": "Nonaktifkan `gunakan libass` di pengaturan pemutar untuk dapat menyesuaikan subtitle.",
+    "torrent_stream": "Aliran Torrent",
+    "add_torrent": "Tambahkan torrent",
+    "enter_torrent_hint_text": "Masukkan magnet atau URL file torrent",
+    "torrent_url": "URL torrent",
+    "or": "ATAU",
+    "advanced": "Lanjutan",
+    "use_native_http_client": "Gunakan klien http asli",
+    "use_native_http_client_info": "secara otomatis mendukung fitur platform seperti VPN, mendukung lebih banyak fitur HTTP seperti HTTP/3 dan penanganan pengalihan khusus"
 }

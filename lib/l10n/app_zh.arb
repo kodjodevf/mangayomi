@@ -323,5 +323,16 @@
     "grid_size": "网格大小",
     "n_per_row": "{n} 每行",
     "horizontal_continious": "水平连续",
-    "edit_code": "编辑代码"
+    "edit_code": "编辑代码",
+    "use_libass": "启用 libass",
+    "use_libass_info": "使用基于 libass 的字幕渲染作为本地后端。",
+    "libass_not_disable_message": "在播放器设置中禁用 `use libass` 以便自定义字幕。",
+    "torrent_stream": "种子流",
+    "add_torrent": "添加种子",
+    "enter_torrent_hint_text": "输入磁力链接或种子文件 URL",
+    "torrent_url": "种子 URL",
+    "or": "或",
+    "advanced": "高级",
+    "use_native_http_client": "使用本地 HTTP 客户端",
+    "use_native_http_client_info": "它自动支持平台特性，如 VPN，支持更多 HTTP 特性，如 HTTP/3 和自定义重定向处理"
 }
