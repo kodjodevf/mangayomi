@@ -98,6 +98,7 @@ dependency_overrides:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit_video
       ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
+  meta: ^1.15.0
 
 dev_dependencies:
   flutter_test:

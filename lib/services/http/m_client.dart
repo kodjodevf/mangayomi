@@ -15,20 +15,24 @@ import 'package:mangayomi/utils/log/log.dart';
 class MClient {
   MClient();
   static Client httpClient() {
-    if (Platform.isAndroid) {
-      final engine = CronetEngine.build(
-          enablePublicKeyPinningBypassForLocalTrustAnchors: true,
-          enableHttp2: true,
-          enableBrotli: true,
-          cacheMode: CacheMode.memory,
-          cacheMaxSize: 5 * 1024 * 1024);
-      return CronetClient.fromCronetEngine(engine, closeEngine: true);
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        (isar.settings.getSync(227)?.useNativeHttpClient ?? false)) {
+      if (Platform.isAndroid) {
+        final engine = CronetEngine.build(
+            enablePublicKeyPinningBypassForLocalTrustAnchors: true,
+            enableHttp2: true,
+            enableBrotli: true,
+            cacheMode: CacheMode.memory,
+            cacheMaxSize: 5 * 1024 * 1024);
+        return CronetClient.fromCronetEngine(engine, closeEngine: true);
+      }
+      if (Platform.isIOS || Platform.isMacOS) {
+        final config = URLSessionConfiguration.ephemeralSessionConfiguration()
+          ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
+        return CupertinoClient.fromSessionConfiguration(config);
+      }
     }
-    if (Platform.isIOS || Platform.isMacOS) {
-      final config = URLSessionConfiguration.ephemeralSessionConfiguration()
-        ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
-      return CupertinoClient.fromSessionConfiguration(config);
-    }
+
     return IOClient(HttpClient());
   }
 

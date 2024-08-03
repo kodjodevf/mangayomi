@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
+import 'package:mangayomi/modules/more/settings/advanced/advanced.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/player/player_screen.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
@@ -530,6 +531,19 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: const CreateExtension(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/advancedScreen",
+          name: "advancedScreen",
+          builder: (context, state) {
+            return const AdvancedScreen();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const AdvancedScreen(),
             );
           },
         ),

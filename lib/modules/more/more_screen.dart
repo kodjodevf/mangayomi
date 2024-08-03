@@ -63,7 +63,6 @@ class MoreScreen extends StatelessWidget {
               title: l10n.backup_and_restore,
             ),
             const Divider(),
-
             ListTileWidget(
               onTap: () {
                 context.push('/settings');

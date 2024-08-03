@@ -456,13 +456,18 @@ const SettingsSchema = CollectionSchema(
       name: r'useLibass',
       type: IsarType.bool,
     ),
-    r'usePageTapZones': PropertySchema(
+    r'useNativeHttpClient': PropertySchema(
       id: 83,
+      name: r'useNativeHttpClient',
+      type: IsarType.bool,
+    ),
+    r'usePageTapZones': PropertySchema(
+      id: 84,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 84,
+      id: 85,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -917,8 +922,9 @@ void _settingsSerialize(
   writer.writeBool(offsets[80], object.themeIsDark);
   writer.writeBool(offsets[81], object.updateProgressAfterReading);
   writer.writeBool(offsets[82], object.useLibass);
-  writer.writeBool(offsets[83], object.usePageTapZones);
-  writer.writeString(offsets[84], object.userAgent);
+  writer.writeBool(offsets[83], object.useNativeHttpClient);
+  writer.writeBool(offsets[84], object.usePageTapZones);
+  writer.writeString(offsets[85], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -1080,8 +1086,9 @@ Settings _settingsDeserialize(
     themeIsDark: reader.readBoolOrNull(offsets[80]),
     updateProgressAfterReading: reader.readBoolOrNull(offsets[81]),
     useLibass: reader.readBoolOrNull(offsets[82]),
-    usePageTapZones: reader.readBoolOrNull(offsets[83]),
-    userAgent: reader.readStringOrNull(offsets[84]),
+    useNativeHttpClient: reader.readBoolOrNull(offsets[83]),
+    usePageTapZones: reader.readBoolOrNull(offsets[84]),
+    userAgent: reader.readStringOrNull(offsets[85]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1375,6 +1382,8 @@ P _settingsDeserializeProp<P>(
     case 83:
       return (reader.readBoolOrNull(offset)) as P;
     case 84:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 85:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -6841,6 +6850,34 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      useNativeHttpClientIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'useNativeHttpClient',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      useNativeHttpClientIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'useNativeHttpClient',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      useNativeHttpClientEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'useNativeHttpClient',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       usePageTapZonesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -8055,6 +8092,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseNativeHttpClient() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useNativeHttpClient', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByUseNativeHttpClientDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useNativeHttpClient', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUsePageTapZones() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'usePageTapZones', Sort.asc);
@@ -8955,6 +9005,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseNativeHttpClient() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useNativeHttpClient', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByUseNativeHttpClientDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useNativeHttpClient', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUsePageTapZones() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'usePageTapZones', Sort.asc);
@@ -9420,6 +9483,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUseNativeHttpClient() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useNativeHttpClient');
     });
   }
 
@@ -9996,6 +10065,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> useLibassProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      useNativeHttpClientProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useNativeHttpClient');
     });
   }
 

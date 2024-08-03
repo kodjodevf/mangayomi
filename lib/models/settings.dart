@@ -188,6 +188,8 @@ class Settings {
 
   bool? useLibass;
 
+  bool? useNativeHttpClient;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -270,7 +272,8 @@ class Settings {
       this.mangaGridSize,
       this.animeGridSize,
       this.disableSectionType = SectionType.all,
-      this.useLibass = true});
+      this.useLibass = true,
+      this.useNativeHttpClient = false});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -420,6 +423,7 @@ class Settings {
     disableSectionType =
         SectionType.values[json['disableSectionType'] ?? SectionType.all];
     useLibass = json['useLibass'];
+    useNativeHttpClient = json['useNativeHttpClient'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -528,7 +532,8 @@ class Settings {
         'mangaGridSize': mangaGridSize,
         'animeGridSize': animeGridSize,
         'disableSectionType': disableSectionType.index,
-        'useLibass': useLibass
+        'useLibass': useLibass,
+        'useNativeHttpClient': useNativeHttpClient
       };
 }
 

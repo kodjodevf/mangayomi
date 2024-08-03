@@ -331,5 +331,8 @@
   "add_torrent": "Add torrent",
   "enter_torrent_hint_text": "Enter magnet or torrent file url",
   "torrent_url": "Torrent url",
-  "or": "OR"
+  "or": "OR",
+  "advanced": "Advanced",
+  "use_native_http_client": "Use native http client",
+  "use_native_http_client_info": "it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling"
 }
