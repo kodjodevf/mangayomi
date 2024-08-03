@@ -14,10 +14,8 @@ Map<String, String> headers(HeadersRef ref,
   Map<String, String> headers = {};
   if (mSource.headers?.isNotEmpty ?? false) {
     headers = (jsonDecode(mSource.headers!) as Map).toMapStringString!;
-  } else {
-    headers = getSourceHeaders(mSource);
   }
-
+  headers.addAll(getSourceHeaders(mSource));
   final cookies = MClient.getCookiesPref(mSource.baseUrl!);
   headers.addAll(cookies);
 
