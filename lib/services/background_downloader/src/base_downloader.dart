@@ -6,8 +6,8 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_anime.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart';
 import 'database.dart';
 import 'exceptions.dart';
 import 'models.dart';
@@ -100,9 +100,11 @@ abstract base class BaseDownloader {
 
   BaseDownloader();
 
-  factory BaseDownloader.instance(
-      PersistentStorage persistentStorage, Database database, bool isAnime) {
-    final instance = isAnime ? DesktopDownloaderAnime() : DesktopDownloader();
+  factory BaseDownloader.instance(PersistentStorage persistentStorage,
+      Database database, bool useNativeHttpClient) {
+    final instance = !useNativeHttpClient
+        ? DesktopDownloaderHttpClient()
+        : DesktopDownloaderNativeHttpClient();
     instance._storage = persistentStorage;
     instance.database = database;
     unawaited(instance.initialize());

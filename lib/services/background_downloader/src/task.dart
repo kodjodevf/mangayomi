@@ -8,11 +8,9 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-
 import 'file_downloader.dart';
 import 'models.dart';
 import 'utils.dart';
@@ -669,39 +667,6 @@ final class DownloadTask extends Task {
   ///
   /// The suggested filename is obtained by making a HEAD request to the url
   /// represented by the [DownloadTask], including urlQueryParameters and headers
-  Future<DownloadTask> withSuggestedFilename(
-      {unique = false,
-      Future<DownloadTask> Function(
-              DownloadTask task, Map<String, String> headers, bool unique)
-          taskWithFilenameBuilder = taskWithSuggestedFilename}) async {
-    try {
-      final response = await DesktopDownloader.httpClient
-          .head(Uri.parse(url), headers: headers);
-      if ([200, 201, 202, 203, 204, 205, 206].contains(response.statusCode)) {
-        return taskWithFilenameBuilder(this, response.headers, unique);
-      }
-    } catch (e) {
-      _log.finer('Error connecting to server');
-    }
-    return taskWithFilenameBuilder(this, {}, unique);
-  }
-
-  /// Return the expected file size for this task, or -1 if unknown
-  ///
-  /// The expected file size is obtained by making a HEAD request to the url
-  /// represented by the [DownloadTask], including urlQueryParameters and headers
-  Future<int> expectedFileSize() async {
-    try {
-      final response = await DesktopDownloader.httpClient
-          .head(Uri.parse(url), headers: headers);
-      if ([200, 201, 202, 203, 204, 205, 206].contains(response.statusCode)) {
-        return getContentLength(response.headers, this);
-      }
-    } catch (e) {
-      // no content length available
-    }
-    return -1;
-  }
 
   /// Constant used with `filename` field to indicate server suggestion requested
   static const suggestedFilename = '?';

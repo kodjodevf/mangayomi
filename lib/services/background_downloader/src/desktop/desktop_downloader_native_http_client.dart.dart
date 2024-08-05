@@ -28,26 +28,27 @@ const okResponses = [200, 201, 202, 203, 204, 205, 206];
 /// On desktop (MacOS, Linux, Windows) the download and upload are implemented
 /// in Dart, as there is no native platform equivalent of URLSession or
 /// WorkManager as there is on iOS and Android
-final class DesktopDownloaderAnime extends BaseDownloader {
-  static final _log = Logger('DesktopDownloaderAnime');
+final class DesktopDownloaderNativeHttpClient extends BaseDownloader {
+  static final _log = Logger('DesktopDownloaderNativeHttpClient');
   static const unlimited = 1 << 20;
   var maxConcurrent = 10;
   var maxConcurrentByHost = unlimited;
   var maxConcurrentByGroup = unlimited;
-  static final DesktopDownloaderAnime _singleton = DesktopDownloaderAnime._internal();
+  static final DesktopDownloaderNativeHttpClient _singleton =
+      DesktopDownloaderNativeHttpClient._internal();
   final _queue = PriorityQueue<Task>();
   final _running = Queue<Task>(); // subset that is running
   final _resume = <Task>{};
   final _isolateSendPorts =
       <Task, SendPort?>{}; // isolate SendPort for running task
-  static var httpClient = MClient.httpClient();
+  static var httpClient = MClient.nativeHttpClient();
   static Duration? _requestTimeout;
   static var _proxy = <String, dynamic>{}; // 'address' and 'port'
   static var _bypassTLSCertificateValidation = false;
 
-  factory DesktopDownloaderAnime() => _singleton;
+  factory DesktopDownloaderNativeHttpClient() => _singleton;
 
-  DesktopDownloaderAnime._internal();
+  DesktopDownloaderNativeHttpClient._internal();
 
   @override
   Future<bool> enqueue(Task task) async {
@@ -140,7 +141,7 @@ final class DesktopDownloaderAnime extends BaseDownloader {
       return;
     }
     log.finer('${isResume ? "Resuming" : "Starting"} taskId ${task.taskId}');
-    await Isolate.spawn(doTask, (rootIsolateToken, receivePort.sendPort),
+    await Isolate.spawn(doTask, (rootIsolateToken, receivePort.sendPort, true),
         onError: errorPort.sendPort);
     final messagesFromIsolate = StreamQueue<dynamic>(receivePort);
     final sendPort = await messagesFromIsolate.next as SendPort;
@@ -572,14 +573,18 @@ final class DesktopDownloaderAnime extends BaseDownloader {
 
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads
   static _recreateClient() async {
-    final client = HttpClient();
-    client.connectionTimeout = requestTimeout;
-    client.findProxy = proxy.isNotEmpty
-        ? (_) => 'PROXY ${_proxy['address']}:${_proxy['port']}'
-        : null;
-    client.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-    httpClient = IOClient(client);
+    if (Platform.isWindows || Platform.isLinux) {
+      final client = HttpClient();
+      client.connectionTimeout = requestTimeout;
+      client.findProxy = proxy.isNotEmpty
+          ? (_) => 'PROXY ${_proxy['address']}:${_proxy['port']}'
+          : null;
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      httpClient = IOClient(client);
+    } else {
+      httpClient = MClient.nativeHttpClient();
+    }
   }
 
   @override

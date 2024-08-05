@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:mangayomi/models/page.dart';
+import 'package:mangayomi/modules/more/settings/advanced/providers/native_http_client.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -20,8 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
-FileDownloader _mangaFileDownloader = FileDownloader(isAnime: false);
-FileDownloader _animeFileDownloader = FileDownloader(isAnime: true);
 @riverpod
 Future<List<PageUrl>> downloadChapter(
   DownloadChapterRef ref, {
@@ -251,7 +250,10 @@ Future<List<PageUrl>> downloadChapter(
       });
     } else {
       if (isManga) {
-        await _mangaFileDownloader.downloadBatch(
+        await FileDownloader(
+                useNativeHttpClient:
+                    ref.watch(useNativeHttpClientStateProvider))
+            .downloadBatch(
           tasks,
           batchProgressCallback: (succeeded, failed) async {
             if (succeeded == tasks.length) {
@@ -307,7 +309,7 @@ Future<List<PageUrl>> downloadChapter(
           },
         );
       } else {
-        await _animeFileDownloader.download(
+        await FileDownloader(useNativeHttpClient: false).download(
           tasks.first,
           onProgress: (progress) async {
             bool isEmpty = isar.downloads

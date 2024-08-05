@@ -11,7 +11,9 @@ import 'package:path/path.dart' as p;
 
 import '../models.dart';
 import '../task.dart';
-import 'desktop_downloader.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart'
+    as desktop_downloader_native;
 import 'isolate.dart';
 
 const boundary = '-----background_downloader-akjhfw281onqciyhnIk';
@@ -21,11 +23,11 @@ const lineFeed = '\r\n';
 ///
 /// Sends updates via the [sendPort] and can be commanded to cancel via
 /// the [messagesToIsolate] queue
-Future<void> doUploadTask(
-    UploadTask task, String filePath, SendPort sendPort) async {
+Future<void> doUploadTask(UploadTask task, String filePath, SendPort sendPort,
+    bool useNativeHttpClient) async {
   final resultStatus = task.post == 'binary'
-      ? await binaryUpload(task, filePath, sendPort)
-      : await multipartUpload(task, filePath, sendPort);
+      ? await binaryUpload(task, filePath, sendPort, useNativeHttpClient)
+      : await multipartUpload(task, filePath, sendPort, useNativeHttpClient);
   processStatusUpdateInIsolate(task, resultStatus, sendPort);
 }
 
@@ -33,8 +35,8 @@ Future<void> doUploadTask(
 ///
 /// Sends updates via the [sendPort] and can be commanded to cancel via
 /// the [messagesToIsolate] queue
-Future<TaskStatus> binaryUpload(
-    UploadTask task, String filePath, SendPort sendPort) async {
+Future<TaskStatus> binaryUpload(UploadTask task, String filePath,
+    SendPort sendPort, bool useNativeHttpClient) async {
   final inFile = File(filePath);
   if (!inFile.existsSync()) {
     logError(task, 'file to upload does not exist: $filePath');
@@ -45,7 +47,9 @@ Future<TaskStatus> binaryUpload(
   final fileSize = inFile.lengthSync();
   var resultStatus = TaskStatus.failed;
   try {
-    final client = DesktopDownloader.httpClient;
+    final client = useNativeHttpClient
+        ? desktop_downloader_native.DesktopDownloaderNativeHttpClient.httpClient
+        : DesktopDownloaderHttpClient.httpClient;
     final request =
         http.StreamedRequest(task.httpRequestMethod, Uri.parse(task.url));
     request.headers.addAll(task.headers);
@@ -96,8 +100,8 @@ Future<TaskStatus> binaryUpload(
 ///
 /// Sends updates via the [sendPort] and can be commanded to cancel via
 /// the [messagesToIsolate] queue
-Future<TaskStatus> multipartUpload(
-    UploadTask task, String filePath, SendPort sendPort) async {
+Future<TaskStatus> multipartUpload(UploadTask task, String filePath,
+    SendPort sendPort, bool useNativeHttpClient) async {
   // field portion of the multipart, all in one string
   // multiple values should be encoded as '"value1", "value2", ...'
   final multiValueRegEx = RegExp(r'^(?:"[^"]+"\s*,\s*)+"[^"]+"$');
@@ -152,7 +156,9 @@ Future<TaskStatus> multipartUpload(
   var resultStatus = TaskStatus.failed;
   try {
     // setup the connection
-    final client = DesktopDownloader.httpClient;
+    final client = useNativeHttpClient
+        ? desktop_downloader_native.DesktopDownloaderNativeHttpClient.httpClient
+        : DesktopDownloaderHttpClient.httpClient;
     final request =
         http.StreamedRequest(task.httpRequestMethod, Uri.parse(task.url));
     request.contentLength = contentLength;

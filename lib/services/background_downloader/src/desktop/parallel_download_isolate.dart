@@ -7,13 +7,14 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
+import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart'
+    as desktop_downloader_native;
 import '../chunk.dart';
 import '../exceptions.dart';
 import '../models.dart';
 import '../task.dart';
 import '../utils.dart';
-import 'desktop_downloader.dart';
 import 'download_isolate.dart';
 import 'isolate.dart';
 
@@ -64,11 +65,15 @@ Future<void> doParallelDownloadTask(
     ResumeData? resumeData,
     bool isResume,
     Duration requestTimeout,
-    SendPort sendPort) async {
+    SendPort sendPort,
+    bool useNativeHttpClient) async {
   parentTask = task;
   if (!isResume) {
     // start the download by creating [Chunk]s and enqueuing chunk tasks
-    final response = await DesktopDownloader.httpClient
+    final response = await (useNativeHttpClient
+            ? desktop_downloader_native
+                .DesktopDownloaderNativeHttpClient.httpClient
+            : DesktopDownloaderHttpClient.httpClient)
         .head(Uri.parse(task.url), headers: task.headers);
     responseHeaders = response.headers;
     responseStatusCode = response.statusCode;

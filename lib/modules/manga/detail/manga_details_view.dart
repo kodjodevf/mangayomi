@@ -15,7 +15,6 @@ import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
@@ -59,6 +58,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               (q) => q.isMangaEqualTo(widget.manga.isManga!)))
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
+                        final isFr =
+                            ref.watch(l10nLocaleStateProvider).languageCode ==
+                                "fr";
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           final incognitoMode =
                               ref.watch(incognitoModeStateProvider);
@@ -68,9 +70,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               .toList()
                               .reversed
                               .toList();
-                          final isFr =
-                              ref.watch(l10nLocaleStateProvider).languageCode ==
-                                  "fr";
+
                           if (entries.isNotEmpty && !incognitoMode) {
                             final chap = entries.first.chapter.value!;
                             return CustomFloatingActionBtn(
@@ -98,7 +98,20 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             width: isFr ? 130 : 90,
                           );
                         }
-                        return const ProgressCenter();
+                        return CustomFloatingActionBtn(
+                          isExtended: !isExtended,
+                          label: l10n.read,
+                          onPressed: () {
+                            widget.manga.chapters
+                                .toList()
+                                .reversed
+                                .toList()
+                                .last
+                                .pushToReaderView(context);
+                          },
+                          textWidth: isFr ? 80 : 40,
+                          width: isFr ? 130 : 90,
+                        );
                       },
                     )
                   : Container();
