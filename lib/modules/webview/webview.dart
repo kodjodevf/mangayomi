@@ -1,4 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:async';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
@@ -50,9 +51,19 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
       _desktopWebview = await WebviewWindow.create(
         configuration: CreateConfiguration(
           userDataFolderWindows: await getWebViewPath(),
+          titleBarTopPadding: Platform.isMacOS ? 20 : 0,
         ),
       );
-
+      final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+        try {
+          final cookieList = await _desktopWebview!.getCookies(widget.url);
+          for (var c in cookieList) {
+            final cookie =
+                c.entries.map((e) => "${e.key}=${e.value}").join(";");
+            await MClient.setCookie(_url, "", cookie: cookie);
+          }
+        } catch (_) {}
+      });
       _desktopWebview!
         ..launch(widget.url)
         ..addOnWebMessageReceivedCallback((s) {
@@ -63,14 +74,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         ..addScriptToExecuteOnDocumentCreated(
             "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)")
         ..onClose.whenComplete(() async {
-          if (Platform.isMacOS) {
-            final cookieList = await _desktopWebview!.getCookies(widget.url);
-            for (var c in cookieList) {
-              final cookie =
-                  c.entries.map((e) => "${e.key}=${e.value}").join(";");
-              await MClient.setCookie(_url, "", cookie: cookie);
-            }
-          }
+          timer.cancel();
           if (mounted) {
             Navigator.pop(context);
           }
@@ -125,7 +129,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             ),
           )
         : Material(
-          child: SafeArea(
+            child: SafeArea(
               child: WillPopScope(
                 onWillPop: () async {
                   _webViewController?.goBack();
@@ -225,7 +229,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         shouldOverrideUrlLoading:
                             (controller, navigationAction) async {
                           var uri = navigationAction.request.url!;
-          
+
                           if (![
                             "http",
                             "https",
@@ -244,7 +248,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               return NavigationActionPolicy.CANCEL;
                             }
                           }
-          
+
                           return NavigationActionPolicy.ALLOW;
                         },
                         onLoadStop: (controller, url) async {
@@ -279,14 +283,15 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             });
                           }
                         },
-                        initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+                        initialUrlRequest:
+                            URLRequest(url: Uri.parse(widget.url)),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-        );
+          );
   }
 }
 

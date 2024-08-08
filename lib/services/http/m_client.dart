@@ -63,7 +63,7 @@ class MClient {
 
   static Future<void> setCookie(String url, String ua, {String? cookie}) async {
     List<String> cookies = [];
-    if (Platform.isWindows || Platform.isLinux) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       cookies = cookie
               ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
               .where((cookie) => cookie.isNotEmpty)
