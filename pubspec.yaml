@@ -75,7 +75,7 @@ dependencies:
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
-  rhttp: ^0.5.4
+  rhttp: ^0.6.0
 
 dependency_overrides:
   http: ^1.2.1
