@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
+
 class MTorrentServer {
   final http = MClient.init();
   Future<bool> removeTorrent(String? inforHash) async {
@@ -49,7 +50,7 @@ class MTorrentServer {
 
       request.files.add(MultipartFile.fromBytes('file', torrentByte,
           filename: 'file.torrent'));
-      StreamedResponse response = await request.send();
+      final response = await http.send(request);
       return await response.stream.bytesToString();
     } catch (e) {
       rethrow;

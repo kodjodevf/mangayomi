@@ -15,7 +15,7 @@ part 'myanimelist.g.dart';
 
 @riverpod
 class MyAnimeList extends _$MyAnimeList {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   String baseOAuthUrl = 'https://myanimelist.net/v1/oauth2';
   String baseApiUrl = 'https://api.myanimelist.net/v2';
   String codeVerifier = "";

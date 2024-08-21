@@ -14,7 +14,7 @@ part 'kitsu.g.dart';
 
 @riverpod
 class Kitsu extends _$Kitsu {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _clientId =
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
   final String _clientSecret =

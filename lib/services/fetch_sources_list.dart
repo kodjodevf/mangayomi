@@ -15,7 +15,7 @@ Future<void> fetchSourcesList(
     required String sourcesIndexUrl,
     required AutoDisposeRef ref,
     required bool isManga}) async {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(sourcesIndexUrl));
 
   final sourceList =

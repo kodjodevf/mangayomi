@@ -14,7 +14,7 @@ part 'anilist.g.dart';
 
 @riverpod
 class Anilist extends _$Anilist {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _clientId =
       (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
   static const String _baseApiUrl = "https://graphql.anilist.co/";

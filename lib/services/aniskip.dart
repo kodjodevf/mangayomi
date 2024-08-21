@@ -6,7 +6,7 @@ part 'aniskip.g.dart';
 // credits: https://github.com/aniyomiorg/aniyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/util/AniSkipApi.kt
 @riverpod
 class AniSkip extends _$AniSkip {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   @override
   void build() {}
 

@@ -80,7 +80,7 @@ Future<void> _launchInBrowser(Uri url) async {
 }
 
 Future<(String, String, String)> _checkUpdate() async {
-  final http = MClient.init();
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   try {
     final res = await http.get(Uri.parse(
         "https://api.github.com/repos/kodjodevf/Mangayomi/releases?page=1&per_page=10"));
