@@ -49,7 +49,7 @@ jobs:
 
       - name: build android apks
         run: |
-          flutter build apk --release --split-per-abi --dart-define=cronetHttpNoPlay=true
+          flutter build apk --release --split-per-abi
           cd build/app/outputs/flutter-apk
           mv app-arm64-v8a-release.apk Mangayomi-${{ github.ref_name }}-android-arm64-v8a.apk
           mv app-armeabi-v7a-release.apk Mangayomi-${{ github.ref_name }}-android-armeabi-v7a.apk
