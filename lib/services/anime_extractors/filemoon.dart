@@ -7,7 +7,8 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class FilemoonExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
   Future<List<Video>> videosFromUrl(
       String url, String prefix, String suffix) async {

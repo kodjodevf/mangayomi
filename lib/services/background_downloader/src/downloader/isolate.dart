@@ -7,8 +7,7 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:async/async.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart';
+import 'package:mangayomi/services/background_downloader/src/downloader/downloader_http_client.dart';
 import 'package:mangayomi/services/background_downloader/src/exceptions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -51,8 +50,8 @@ final log = Logger('FileDownloader');
 ///
 /// The first message sent back is a [ReceivePort] that is the command port
 /// for the isolate. The first command must be the arguments: task and filePath.
-Future<void> doTask((RootIsolateToken, SendPort, bool) isolateArguments) async {
-  final (rootIsolateToken, sendPort, useNativeHttpClient) = isolateArguments;
+Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
+  final (rootIsolateToken, sendPort) = isolateArguments;
   BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
   final receivePort = ReceivePort();
   // send the receive port back to the main Isolate
@@ -68,11 +67,8 @@ Future<void> doTask((RootIsolateToken, SendPort, bool) isolateArguments) async {
     Map<String, dynamic> proxy,
     bool bypassTLSCertificateValidation
   ) = await messagesToIsolate.next;
-  useNativeHttpClient
-      ? DesktopDownloaderNativeHttpClient.setHttpClient(
-          requestTimeout, proxy, bypassTLSCertificateValidation)
-      : DesktopDownloaderHttpClient.setHttpClient(
-          requestTimeout, proxy, bypassTLSCertificateValidation);
+  DownloaderHttpClient.setHttpClient(
+      requestTimeout, proxy, bypassTLSCertificateValidation);
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     if (kDebugMode) {
@@ -99,18 +95,11 @@ Future<void> doTask((RootIsolateToken, SendPort, bool) isolateArguments) async {
           resumeData,
           isResume,
           requestTimeout ?? const Duration(seconds: 60),
-          sendPort,
-          useNativeHttpClient),
-      DownloadTask() => doDownloadTask(
-          task,
-          filePath,
-          resumeData,
-          isResume,
-          requestTimeout ?? const Duration(seconds: 60),
-          sendPort,
-          useNativeHttpClient),
-      UploadTask() => doUploadTask(task, filePath, sendPort,useNativeHttpClient),
-      DataTask() => doDataTask(task, sendPort, useNativeHttpClient)
+          sendPort),
+      DownloadTask() => doDownloadTask(task, filePath, resumeData, isResume,
+          requestTimeout ?? const Duration(seconds: 60), sendPort),
+      UploadTask() => doUploadTask(task, filePath, sendPort),
+      DataTask() => doDataTask(task, sendPort)
     };
   }
   receivePort.close();

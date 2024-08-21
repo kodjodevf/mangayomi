@@ -1,13 +1,14 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "githubPullRequests.ignoredPullRequestBranches": [
-        "main"
-    ],
-    "rust-analyzer.linkedProjects": [
-        ".\\rust\\Cargo.toml"
-    ],
-    "files.associations": {
-        "*.html.erb": "erb",
-        "cstring": "cpp"
-    }
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "githubPullRequests.ignoredPullRequestBranches": [
+    "main"
+  ],
+  "rust-analyzer.linkedProjects": [
+    ".\\rust\\Cargo.toml"
+  ],
+  "files.associations": {
+    "*.html.erb": "erb",
+    "cstring": "cpp"
+  },
+  "dart.flutterSdkPath": ".fvm/versions/3.22.3"
 }

@@ -20,7 +20,10 @@ Future<(List<Video>, bool, String?)> getVideoList(
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
   final isLocalArchive = episode.manga.value!.isLocalArchive! &&
       episode.manga.value!.source != "torrent";
-  final mp4animePath = "${mangaDirectory!.path}${episode.name}.mp4";
+  final forbiddenCharacters =
+      RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)');
+  final mp4animePath =
+      "${mangaDirectory!.path}${episode.name!.replaceAll(forbiddenCharacters, ' ')}.mp4";
 
   if (await File(mp4animePath).exists() || isLocalArchive) {
     final path = isLocalArchive ? episode.archivePath : mp4animePath;

@@ -5,7 +5,8 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class MytvExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
   Future<List<Video>> videosFromUrl(String url) async {
     try {

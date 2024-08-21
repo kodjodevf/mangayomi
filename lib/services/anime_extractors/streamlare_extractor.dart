@@ -5,7 +5,8 @@ import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class StreamlareExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
   Future<List<Video>> videosFromUrl(String url,
       {String prefix = "", String suffix = ""}) async {

@@ -5,7 +5,8 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class YourUploadExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
   Future<List<Video>> videosFromUrl(String url, Map<String, String> headers,
       {String name = "YourUpload", String prefix = ""}) async {

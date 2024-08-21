@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:mangayomi/models/page.dart';
-import 'package:mangayomi/modules/more/settings/advanced/providers/native_http_client.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -38,14 +37,16 @@ Future<List<PageUrl>> downloadChapter(
   bool isOk = false;
   final manga = chapter.manga.value!;
   final path1 = await storageProvider.getDirectory();
-  final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
+  final forbiddenCharacters =
+      RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)');
   String scanlator = chapter.scanlator!.isNotEmpty
-      ? "${chapter.scanlator!.replaceAll(regExp, '_')}_"
+      ? "${chapter.scanlator!.replaceAll(forbiddenCharacters, '_')}_"
       : "";
+  final chapterName = chapter.name!.replaceAll(forbiddenCharacters, ' ');
 
   final isManga = chapter.manga.value!.isManga!;
   final finalPath =
-      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(regExp, '_')}${isManga ? "/$scanlator${chapter.name!.replaceAll(regExp, '_')}" : ""}";
+      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(forbiddenCharacters, '_')}${isManga ? "/$scanlator${chapter.name!.replaceAll(forbiddenCharacters, '_')}" : ""}";
   path = Directory("${path1!.path}$finalPath/");
   Map<String, String> videoHeader = {};
 
@@ -110,8 +111,7 @@ Future<List<PageUrl>> downloadChapter(
     bool cbzFileExist =
         await File("${mangaDir!.path}${chapter.name}.cbz").exists() &&
             ref.watch(saveAsCBZArchiveStateProvider);
-    bool mp4FileExist =
-        await File("${mangaDir.path}${chapter.name}.mp4").exists();
+    bool mp4FileExist = await File("${mangaDir.path}$chapterName.mp4").exists();
     if (!cbzFileExist && isManga || !mp4FileExist && !isManga) {
       for (var index = 0; index < pageUrls.length; index++) {
         final path2 = Directory("${path1.path}downloads/");
@@ -119,8 +119,8 @@ Future<List<PageUrl>> downloadChapter(
             Directory("${path1.path}downloads/${isManga ? "Manga" : "Anime"}/");
         final path4 = Directory(
             "${path5.path}${manga.source} (${manga.lang!.toUpperCase()})/");
-        final path3 =
-            Directory("${path4.path}${manga.name!.replaceAll(regExp, '_')}/");
+        final path3 = Directory(
+            "${path4.path}${manga.name!.replaceAll(forbiddenCharacters, '_')}/");
 
         if (!(await path1.exists())) {
           await path1.create();
@@ -153,80 +153,89 @@ Future<List<PageUrl>> downloadChapter(
           headers.addAll(cookie);
           headers[HttpHeaders.userAgentHeader] = userAgent;
         }
+        Map<String, String> pageHeaders = headers;
+        pageHeaders.addAll(page.headers ?? {});
+
         if (isManga) {
-          if ((await path.exists())) {
-            if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
-                .exists()) {
-            } else {
-              Map<String, String> pageHeaders = headers;
-              pageHeaders.addAll(page.headers ?? {});
-              tasks.add(DownloadTask(
-                  taskId: page.url,
-                  headers: pageHeaders,
-                  url: page.url.trim().trimLeft().trimRight(),
-                  filename: "${padIndex(index + 1)}.jpg",
-                  baseDirectory: BaseDirectory.temporary,
-                  directory: 'Mangayomi/$finalPath',
-                  updates: Updates.statusAndProgress,
-                  retries: 3,
-                  allowPause: true,
-                  requiresWiFi: onlyOnWifi));
-            }
+          final file = File(
+              "${tempDir.path}/Mangayomi/$finalPath/${padIndex(index + 1)}.jpg");
+          if (file.existsSync()) {
+            await file.copy("${path.path}${padIndex(index + 1)}.jpg");
+            await file.delete();
           } else {
-            await path.create();
-            if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
-                .exists()) {
+            if ((await path.exists())) {
+              if (await File("${path.path}${padIndex(index + 1)}.jpg")
+                  .exists()) {
+              } else {
+                tasks.add(DownloadTask(
+                    taskId: page.url,
+                    headers: pageHeaders,
+                    url: page.url.trim().trimLeft().trimRight(),
+                    filename: "${padIndex(index + 1)}.jpg",
+                    baseDirectory: BaseDirectory.temporary,
+                    directory: 'Mangayomi/$finalPath',
+                    updates: Updates.statusAndProgress,
+                    retries: 3,
+                    allowPause: true,
+                    requiresWiFi: onlyOnWifi));
+              }
             } else {
-              Map<String, String> pageHeaders = headers;
-              pageHeaders.addAll(page.headers ?? {});
-              tasks.add(DownloadTask(
-                  taskId: page.url,
-                  headers: pageHeaders,
-                  url: page.url.trim().trimLeft().trimRight(),
-                  filename: "${padIndex(index + 1)}.jpg",
-                  baseDirectory: BaseDirectory.temporary,
-                  directory: 'Mangayomi/$finalPath',
-                  updates: Updates.statusAndProgress,
-                  allowPause: true,
-                  retries: 3,
-                  requiresWiFi: onlyOnWifi));
+              await path.create();
+              if (await File("${path.path}" "${padIndex(index + 1)}.jpg")
+                  .exists()) {
+              } else {
+                tasks.add(DownloadTask(
+                    taskId: page.url,
+                    headers: pageHeaders,
+                    url: page.url.trim().trimLeft().trimRight(),
+                    filename: "${padIndex(index + 1)}.jpg",
+                    baseDirectory: BaseDirectory.temporary,
+                    directory: 'Mangayomi/$finalPath',
+                    updates: Updates.statusAndProgress,
+                    allowPause: true,
+                    retries: 3,
+                    requiresWiFi: onlyOnWifi));
+              }
             }
           }
         } else {
-          if ((await path.exists())) {
-            if (await File("${path.path}${chapter.name}.mp4").exists()) {
-            } else {
-              Map<String, String> pageHeaders = headers;
-              pageHeaders.addAll(page.headers ?? {});
-              tasks.add(DownloadTask(
-                  taskId: page.url,
-                  headers: pageHeaders,
-                  url: page.url.trim().trimLeft().trimRight(),
-                  filename: "${chapter.name}.mp4",
-                  baseDirectory: BaseDirectory.temporary,
-                  directory: 'Mangayomi/$finalPath',
-                  updates: Updates.statusAndProgress,
-                  allowPause: true,
-                  retries: 3,
-                  requiresWiFi: onlyOnWifi));
-            }
+          final file =
+              File("${tempDir.path}/Mangayomi/$finalPath/$chapterName.mp4");
+          if (file.existsSync()) {
+            await file.copy("${path.path}$chapterName.mp4");
+            await file.delete();
           } else {
-            await path.create();
-            if (await File("${path.path}${chapter.name}.mp4").exists()) {
+            if ((await path.exists())) {
+              if (await File("${path.path}$chapterName.mp4").exists()) {
+              } else {
+                tasks.add(DownloadTask(
+                    taskId: page.url,
+                    headers: pageHeaders,
+                    url: page.url.trim().trimLeft().trimRight(),
+                    filename: "$chapterName.mp4",
+                    baseDirectory: BaseDirectory.temporary,
+                    directory: 'Mangayomi/$finalPath',
+                    updates: Updates.statusAndProgress,
+                    allowPause: true,
+                    retries: 3,
+                    requiresWiFi: onlyOnWifi));
+              }
             } else {
-              Map<String, String> pageHeaders = headers;
-              pageHeaders.addAll(page.headers ?? {});
-              tasks.add(DownloadTask(
-                  taskId: page.url,
-                  headers: pageHeaders,
-                  url: page.url.trim().trimLeft().trimRight(),
-                  filename: "${chapter.name}.mp4",
-                  baseDirectory: BaseDirectory.temporary,
-                  directory: 'Mangayomi/$finalPath',
-                  updates: Updates.statusAndProgress,
-                  allowPause: true,
-                  retries: 3,
-                  requiresWiFi: onlyOnWifi));
+              await path.create();
+              if (await File("${path.path}$chapterName.mp4").exists()) {
+              } else {
+                tasks.add(DownloadTask(
+                    taskId: page.url,
+                    headers: pageHeaders,
+                    url: page.url.trim().trimLeft().trimRight(),
+                    filename: "$chapterName.mp4",
+                    baseDirectory: BaseDirectory.temporary,
+                    directory: 'Mangayomi/$finalPath',
+                    updates: Updates.statusAndProgress,
+                    allowPause: true,
+                    retries: 3,
+                    requiresWiFi: onlyOnWifi));
+              }
             }
           }
         }
@@ -249,24 +258,16 @@ Future<List<PageUrl>> downloadChapter(
         isar.downloads.putSync(download..chapter.value = chapter);
       });
     } else {
-      if (isManga) {
-        await FileDownloader(
-                useNativeHttpClient:
-                    ref.watch(useNativeHttpClientStateProvider))
-            .downloadBatch(
-          tasks,
-          batchProgressCallback: (succeeded, failed) async {
+      await FileDownloader().downloadBatch(
+        tasks,
+        batchProgressCallback: (succeeded, failed) async {
+          if (isManga) {
             if (succeeded == tasks.length) {
-              if (isManga) {
-                savePageUrls();
-                if (ref.watch(saveAsCBZArchiveStateProvider)) {
-                  await ref.watch(convertToCBZProvider(
-                          path!.path,
-                          mangaDir.path,
-                          chapter.name!,
-                          pageUrls.map((e) => e.url).toList())
-                      .future);
-                }
+              savePageUrls();
+              if (ref.watch(saveAsCBZArchiveStateProvider)) {
+                await ref.watch(convertToCBZProvider(path!.path, mangaDir.path,
+                        chapter.name!, pageUrls.map((e) => e.url).toList())
+                    .future);
               }
             }
             bool isEmpty = isar.downloads
@@ -298,20 +299,11 @@ Future<List<PageUrl>> downloadChapter(
                   ..isDownload = (succeeded == tasks.length));
               });
             }
-          },
-          taskProgressCallback: (taskProgress) async {
-            if (taskProgress.progress == 1.0) {
-              final file = File(
-                  "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}");
-              await file.copy("${path!.path}/${taskProgress.task.filename}");
-              await file.delete();
-            }
-          },
-        );
-      } else {
-        await FileDownloader(useNativeHttpClient: false).download(
-          tasks.first,
-          onProgress: (progress) async {
+          }
+        },
+        taskProgressCallback: (taskProgress) async {
+          final progress = taskProgress.progress;
+          if (!isManga) {
             bool isEmpty = isar.downloads
                 .filter()
                 .chapterIdEqualTo(chapter.id!)
@@ -341,17 +333,15 @@ Future<List<PageUrl>> downloadChapter(
                   ..isDownload = (progress == 1.0));
               });
             }
-          },
-          onStatus: (status) async {
-            if (status == TaskStatus.complete) {
-              final file = File(
-                  "${tempDir.path}/${tasks.first.directory}/${tasks.first.filename}");
-              await file.copy("${path!.path}/${tasks.first.filename}");
-              await file.delete();
-            }
-          },
-        );
-      }
+          }
+          if (progress == 1.0) {
+            final file = File(
+                "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}");
+            await file.copy("${path!.path}${taskProgress.task.filename}");
+            await file.delete();
+          }
+        },
+      );
     }
   }
   return pageUrls;

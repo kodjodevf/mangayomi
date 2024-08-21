@@ -5,7 +5,8 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class SendvidExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final Map<String, String> headers;
 
   SendvidExtractor(this.headers);

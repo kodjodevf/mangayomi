@@ -6,9 +6,7 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart'
-    as desktop_downloader_native;
+import 'package:mangayomi/services/background_downloader/src/downloader/downloader_http_client.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -32,8 +30,7 @@ Future<void> doDownloadTask(
     ResumeData? resumeData,
     bool isResume,
     Duration requestTimeout,
-    SendPort sendPort,
-    bool useNativeHttpClient) async {
+    SendPort sendPort) async {
   // use downloadTask from here on as a 'global' variable in this isolate,
   // as we may change the filename of the task
   downloadTask = task;
@@ -48,9 +45,7 @@ Future<void> doDownloadTask(
   final eTag = resumeData?.eTag;
   isResume = isResume &&
       await determineIfResumeIsPossible(tempFilePath, requiredStartByte);
-  final client = useNativeHttpClient
-      ? desktop_downloader_native.DesktopDownloaderNativeHttpClient.httpClient
-      : DesktopDownloaderHttpClient.httpClient;
+  final client = DownloaderHttpClient.httpClient;
   var request =
       http.Request(downloadTask.httpRequestMethod, Uri.parse(downloadTask.url));
   request.headers.addAll(downloadTask.headers);

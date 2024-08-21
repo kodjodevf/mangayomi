@@ -6,9 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'base_downloader.dart';
 import 'localstore/localstore.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_http_client.dart';
-import 'package:mangayomi/services/background_downloader/src/desktop/desktop_downloader_native_http_client.dart.dart'
-    as desktop_downloader_native;
+import 'package:mangayomi/services/background_downloader/src/downloader/downloader_http_client.dart';
 
 /// Provides access to all functions of the plugin in a single place.
 interface class FileDownloader {
@@ -33,24 +31,20 @@ interface class FileDownloader {
   @visibleForTesting
   BaseDownloader get downloaderForTesting => _downloader;
 
-  factory FileDownloader(
-      {PersistentStorage? persistentStorage,
-      bool useNativeHttpClient = false}) {
+  factory FileDownloader({PersistentStorage? persistentStorage}) {
     assert(
         _singleton == null || persistentStorage == null,
         'You can only supply a persistentStorage on the very first call to '
         'FileDownloader()');
     _singleton ??= FileDownloader._internal(
-        persistentStorage ?? LocalStorePersistentStorage(),
-        useNativeHttpClient);
+      persistentStorage ?? LocalStorePersistentStorage(),
+    );
     return _singleton!;
   }
 
-  FileDownloader._internal(
-      PersistentStorage persistentStorage, bool useNativeHttpClient) {
+  FileDownloader._internal(PersistentStorage persistentStorage) {
     database = Database(persistentStorage);
-    _downloader = BaseDownloader.instance(
-        persistentStorage, database, useNativeHttpClient);
+    _downloader = BaseDownloader.instance(persistentStorage, database);
   }
 
   /// True when initialization is complete and downloader ready for use
@@ -779,25 +773,12 @@ interface class FileDownloader {
   /// the downloader. If not set, the default [http.Client] will be used.
   /// The request is executed on an Isolate, to ensure minimal interference
   /// with the main Isolate
-  Future<http.Response> request(Request request, bool useNativeHttpClient) {
-    if (useNativeHttpClient) {
-      return compute(_doRequest, (
-        request,
-        desktop_downloader_native
-            .DesktopDownloaderNativeHttpClient.requestTimeout,
-        desktop_downloader_native.DesktopDownloaderNativeHttpClient.proxy,
-        desktop_downloader_native
-            .DesktopDownloaderNativeHttpClient.bypassTLSCertificateValidation,
-        true
-      ));
-    }
-
+  Future<http.Response> request(Request request) {
     return compute(_doRequest, (
       request,
-      DesktopDownloaderHttpClient.requestTimeout,
-      DesktopDownloaderHttpClient.proxy,
-      DesktopDownloaderHttpClient.bypassTLSCertificateValidation,
-      false
+      DownloaderHttpClient.requestTimeout,
+      DownloaderHttpClient.proxy,
+      DownloaderHttpClient.bypassTLSCertificateValidation
     ));
   }
 
@@ -910,26 +891,14 @@ interface class FileDownloader {
 /// This function is run on an Isolate to ensure performance on the main
 /// Isolate is not affected
 Future<http.Response> _doRequest(
-    (Request, Duration?, Map<String, dynamic>, bool, bool) params) async {
-  final (
-    request,
-    requestTimeout,
-    proxy,
-    bypassTLSCertificateValidation,
-    useNativeHttpClient
-  ) = params;
+    (Request, Duration?, Map<String, dynamic>, bool) params) async {
+  final (request, requestTimeout, proxy, bypassTLSCertificateValidation) =
+      params;
 
-  if (useNativeHttpClient) {
-    desktop_downloader_native.DesktopDownloaderNativeHttpClient.setHttpClient(
-        requestTimeout, proxy, bypassTLSCertificateValidation);
-  } else {
-    DesktopDownloaderHttpClient.setHttpClient(
-        requestTimeout, proxy, bypassTLSCertificateValidation);
-  }
+  DownloaderHttpClient.setHttpClient(
+      requestTimeout, proxy, bypassTLSCertificateValidation);
 
-  final client = useNativeHttpClient
-      ? desktop_downloader_native.DesktopDownloaderNativeHttpClient.httpClient
-      : DesktopDownloaderHttpClient.httpClient;
+  final client = DownloaderHttpClient.httpClient;
   var response = http.Response('', 499,
       reasonPhrase: 'Not attempted'); // dummy to start with
   while (request.retriesRemaining >= 0) {

@@ -8,7 +8,8 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class GogoCdnExtractor {
-  final InterceptedClient client = MClient.init();
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final JsonCodec json = const JsonCodec();
 
   Future<List<Video>> videosFromUrl(String serverUrl) async {

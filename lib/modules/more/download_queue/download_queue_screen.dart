@@ -149,8 +149,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                               });
                             } else if (value.toString() == 'CancelAll') {
                               final chapterIds = entries
-                                  .where((element) =>
-                                      element.chapter.value!.name ==
+                                  .where((e) =>
+                                      e.chapter.value!.name ==
                                       element.chapter.value!.name)
                                   .map((e) => e.chapterId)
                                   .toList();

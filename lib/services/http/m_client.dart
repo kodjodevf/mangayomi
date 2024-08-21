@@ -1,4 +1,3 @@
-import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
@@ -8,33 +7,32 @@ import 'package:mangayomi/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:mangayomi/models/settings.dart';
-import 'package:cronet_http/cronet_http.dart';
 import 'package:http/io_client.dart';
 import 'package:mangayomi/utils/log/log.dart';
+import 'package:rhttp/rhttp.dart' as rhttp;
 
 class MClient {
   MClient();
-  static Client httpClient() {
-    if (isar.settings.getSync(227)?.useNativeHttpClient ?? false) {
-      return nativeHttpClient();
-    }
-    return IOClient(HttpClient());
-  }
-
-  static Client nativeHttpClient() {
-    if (Platform.isAndroid) {
-      final engine = CronetEngine.build(
-          enablePublicKeyPinningBypassForLocalTrustAnchors: true,
-          enableHttp2: true,
-          enableBrotli: true,
-          cacheMode: CacheMode.memory,
-          cacheMaxSize: 5 * 1024 * 1024);
-      return CronetClient.fromCronetEngine(engine, closeEngine: true);
-    }
-    if (Platform.isIOS || Platform.isMacOS) {
-      final config = URLSessionConfiguration.ephemeralSessionConfiguration()
-        ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
-      return CupertinoClient.fromSessionConfiguration(config);
+  static Client httpClient(
+      {Map<String, dynamic>? reqcopyWith, rhttp.ClientSettings? settings}) {
+    if (!(reqcopyWith?["useDartHttpClient"] ?? false)) {
+      try {
+        settings ??= rhttp.ClientSettings(
+            throwOnStatusCode: false,
+            proxySettings: reqcopyWith?["noProxy"] ?? false
+                ? const rhttp.ProxySettings.noProxy()
+                : null,
+            timeout: reqcopyWith?["timeout"] != null
+                ? Duration(seconds: reqcopyWith?["timeout"])
+                : null,
+            connectTimeout: reqcopyWith?["connectTimeout"] != null
+                ? Duration(seconds: reqcopyWith?["connectTimeout"])
+                : null,
+            tlsSettings: rhttp.TlsSettings(
+                verifyCertificates:
+                    reqcopyWith?["verifyCertificates"] ?? false));
+        return rhttp.RhttpCompatibleClient.createSync(settings: settings);
+      } catch (_) {}
     }
     return IOClient(HttpClient());
   }
@@ -42,7 +40,7 @@ class MClient {
   static InterceptedClient init(
       {MSource? source, Map<String, dynamic>? reqcopyWith}) {
     return InterceptedClient.build(
-        client: httpClient(),
+        client: httpClient(reqcopyWith: reqcopyWith),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 

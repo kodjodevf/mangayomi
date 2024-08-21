@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
@@ -48,12 +46,6 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: l10n.browse_subtitle,
                 icon: Icons.explore_rounded,
                 onTap: () => context.push('/browseS')),
-            if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
-              ListTileWidget(
-                  title: l10n.advanced,
-                  subtitle: l10n.browse_subtitle,
-                  icon: Icons.code_rounded,
-                  onTap: () => context.push('/advancedScreen')),
             ListTileWidget(
               onTap: () {
                 context.push('/about');

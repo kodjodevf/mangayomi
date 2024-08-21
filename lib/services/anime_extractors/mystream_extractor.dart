@@ -9,7 +9,8 @@ class MyStreamExtractor {
       String url, Map<String, String> headers) async {
     final host = url.substringBefore("/watch");
 
-    final InterceptedClient client = MClient.init();
+    final InterceptedClient client =
+        MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
     try {
       final response = await client.get(Uri.parse(url), headers: headers);

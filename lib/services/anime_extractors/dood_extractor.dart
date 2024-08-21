@@ -10,7 +10,8 @@ class DoodExtractor {
     String? quality,
     bool redirect = true,
   }) async {
-    final InterceptedClient client = MClient.init();
+    final InterceptedClient client =
+        MClient.init(reqcopyWith: {'useDartHttpClient': true});
     final newQuality = quality ?? ('Doodstream ${redirect ? ' mirror' : ''}');
 
     try {
