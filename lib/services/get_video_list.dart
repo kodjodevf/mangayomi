@@ -8,6 +8,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_video_list.g.dart';
 
@@ -20,10 +21,8 @@ Future<(List<Video>, bool, String?)> getVideoList(
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
   final isLocalArchive = episode.manga.value!.isLocalArchive! &&
       episode.manga.value!.source != "torrent";
-  final forbiddenCharacters =
-      RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)');
   final mp4animePath =
-      "${mangaDirectory!.path}${episode.name!.replaceAll(forbiddenCharacters, ' ')}.mp4";
+      "${mangaDirectory!.path}${episode.name!.replaceForbiddenCharacters(' ')}.mp4";
 
   if (await File(mp4animePath).exists() || isLocalArchive) {
     final path = isLocalArchive ? episode.archivePath : mp4animePath;

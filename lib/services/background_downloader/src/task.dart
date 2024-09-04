@@ -35,9 +35,12 @@ base class Request {
   /// Set [post] to make the request using POST instead of GET.
   /// In the constructor, [post] must be one of the following:
   /// - a String: POST request with [post] as the body, encoded in utf8
-  /// - a List of bytes: POST request with [post] as the body
+  /// - a Map: will be jsonEncoded to a String and set as the POST body
+  /// - a List of bytes: will be converted to a String using String.fromCharCodes
+  ///   and set as the POST body
+  /// - a List: map will be jsonEncoded to a String and set as the POST body
   ///
-  /// The field [post] will be a UInt8List representing the bytes, or the String
+  /// The field [post] will be a String
   final String? post;
 
   /// Maximum number of retries the downloader should attempt
@@ -59,7 +62,10 @@ base class Request {
   /// [post] if set, uses POST instead of GET. Post must be one of the
   /// following:
   /// - a String: POST request with [post] as the body, encoded in utf8
-  /// - a List of bytes: POST request with [post] as the body
+  /// - a Map: will be jsonEncoded to a String and set as the POST body
+  /// - a List of bytes: will be converted to a String using String.fromCharCodes
+  ///   and set as the POST body
+  /// - a List: map will be jsonEncoded to a String and set as the POST body
   ///
   /// [retries] if >0 will retry a failed download this many times
   Request(
@@ -74,7 +80,11 @@ base class Request {
         headers = headers ?? {},
         httpRequestMethod =
             httpRequestMethod?.toUpperCase() ?? (post == null ? 'GET' : 'POST'),
-        post = post is Uint8List ? String.fromCharCodes(post) : post,
+        post = post is Uint8List
+            ? String.fromCharCodes(post)
+            : post is Map || post is List
+                ? jsonEncode(post)
+                : post,
         retriesRemaining = retries,
         creationTime = creationTime ?? DateTime.now() {
     if (retries < 0 || retries > 10) {
@@ -255,7 +265,10 @@ sealed class Task extends Request implements Comparable {
   /// [post] if set, uses POST instead of GET. Post must be one of the
   /// following:
   /// - a String: POST request with [post] as the body, encoded in utf8
-  /// - a List of bytes: POST request with [post] as the body
+  /// - a Map: will be jsonEncoded to a String and set as the POST body
+  /// - a List of bytes: will be converted to a String using String.fromCharCodes
+  ///   and set as the POST body
+  /// - a List: map will be jsonEncoded to a String and set as the POST body
   /// [directory] optional directory name, precedes [filename]
   /// [baseDirectory] one of the base directories, precedes [directory]
   /// [group] if set allows different callbacks or processing for different
@@ -346,6 +359,10 @@ sealed class Task extends Request implements Comparable {
   }
 
   /// Returns the path to the directory represented by [baseDirectory]
+  ///
+  /// On Windows, if [baseDirectory] is .root, returns the empty string
+  /// because the drive letter is required to be included in the directory
+  /// path
   static Future<String> baseDirectoryPath(BaseDirectory baseDirectory) async {
     Directory? externalStorageDirectory;
     Directory? externalCacheDirectory;
@@ -377,7 +394,9 @@ sealed class Task extends Request implements Comparable {
       (BaseDirectory.applicationLibrary, true) =>
         Directory(p.join(externalStorageDirectory!.path, 'Library'))
     };
-    return baseDir.absolute.path;
+    return (Platform.isWindows && baseDirectory == BaseDirectory.root)
+        ? ''
+        : baseDir.absolute.path;
   }
 
   /// Extract the baseDirectory, directory and filename from
@@ -398,19 +417,20 @@ sealed class Task extends Request implements Comparable {
     // try to match the start of the absoluteDirectory to one of the
     // directories represented by the BaseDirectory enum.
     // Order matters, as some may be subdirs of others
-    final testSequence = Platform.isAndroid || Platform.isLinux
-        ? [
-            BaseDirectory.temporary,
-            BaseDirectory.applicationLibrary,
-            BaseDirectory.applicationSupport,
-            BaseDirectory.applicationDocuments
-          ]
-        : [
-            BaseDirectory.temporary,
-            BaseDirectory.applicationSupport,
-            BaseDirectory.applicationLibrary,
-            BaseDirectory.applicationDocuments
-          ];
+    final testSequence =
+        Platform.isAndroid || Platform.isLinux || Platform.isWindows
+            ? [
+                BaseDirectory.temporary,
+                BaseDirectory.applicationLibrary,
+                BaseDirectory.applicationSupport,
+                BaseDirectory.applicationDocuments
+              ]
+            : [
+                BaseDirectory.temporary,
+                BaseDirectory.applicationSupport,
+                BaseDirectory.applicationLibrary,
+                BaseDirectory.applicationDocuments
+              ];
     for (final baseDirectoryEnum in testSequence) {
       final baseDirPath = await baseDirectoryPath(baseDirectoryEnum);
       final (match, directory) = _contains(baseDirPath, absoluteDirectoryPath);
@@ -437,7 +457,9 @@ sealed class Task extends Request implements Comparable {
   /// [dirPath] should not contain a filename - if it does, it is returned
   /// as part of the subdir.
   static (bool, String) _contains(String baseDirPath, String dirPath) {
-    final match = RegExp('^$baseDirPath/?(.*)').firstMatch(dirPath);
+    final escapedBaseDirPath =
+        '$baseDirPath${Platform.pathSeparator}?'.replaceAll(r'\', r'\\');
+    final match = RegExp('^$escapedBaseDirPath(.*)').firstMatch(dirPath);
     return (match != null, match?.group(1) ?? '');
   }
 
@@ -561,12 +583,11 @@ final class DownloadTask extends Task {
   /// [httpRequestMethod] the HTTP request method used (e.g. GET, POST)
   /// [post] if set, uses POST instead of GET. Post must be one of the
   /// following:
-  /// - true: POST request without a body
-  /// - a String: POST request with [post] as the body, encoded in utf8 and
-  ///   content-type 'text/plain'
-  /// - a List of bytes: POST request with [post] as the body
-  /// - a Map: POST request with [post] as form fields, encoded in utf8 and
-  ///   content-type 'application/x-www-form-urlencoded'
+  /// - a String: POST request with [post] as the body, encoded in utf8
+  /// - a Map: will be jsonEncoded to a String and set as the POST body
+  /// - a List of bytes: will be converted to a String using String.fromCharCodes
+  ///   and set as the POST body
+  /// - a List: map will be jsonEncoded to a String and set as the POST body
   ///
   /// [directory] optional directory name, precedes [filename]
   /// [baseDirectory] one of the base directories, precedes [directory]
@@ -667,6 +688,7 @@ final class DownloadTask extends Task {
   ///
   /// The suggested filename is obtained by making a HEAD request to the url
   /// represented by the [DownloadTask], including urlQueryParameters and headers
+  
 
   /// Constant used with `filename` field to indicate server suggestion requested
   static const suggestedFilename = '?';

@@ -37,16 +37,14 @@ Future<List<PageUrl>> downloadChapter(
   bool isOk = false;
   final manga = chapter.manga.value!;
   final path1 = await storageProvider.getDirectory();
-  final forbiddenCharacters =
-      RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)');
   String scanlator = chapter.scanlator!.isNotEmpty
-      ? "${chapter.scanlator!.replaceAll(forbiddenCharacters, '_')}_"
+      ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
       : "";
-  final chapterName = chapter.name!.replaceAll(forbiddenCharacters, ' ');
+  final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
 
   final isManga = chapter.manga.value!.isManga!;
   final finalPath =
-      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceAll(forbiddenCharacters, '_')}${isManga ? "/$scanlator${chapter.name!.replaceAll(forbiddenCharacters, '_')}" : ""}";
+      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}${isManga ? "/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}" : ""}";
   path = Directory("${path1!.path}$finalPath/");
   Map<String, String> videoHeader = {};
 
@@ -120,7 +118,7 @@ Future<List<PageUrl>> downloadChapter(
         final path4 = Directory(
             "${path5.path}${manga.source} (${manga.lang!.toUpperCase()})/");
         final path3 = Directory(
-            "${path4.path}${manga.name!.replaceAll(forbiddenCharacters, '_')}/");
+            "${path4.path}${manga.name!.replaceForbiddenCharacters('_')}/");
 
         if (!(await path1.exists())) {
           await path1.create();
