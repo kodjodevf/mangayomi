@@ -7,7 +7,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
-import 'package:mangayomi/sources/utils/utils.dart';
+import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_video_list.g.dart';
