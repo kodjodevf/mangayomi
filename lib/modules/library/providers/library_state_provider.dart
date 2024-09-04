@@ -646,7 +646,6 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
       final chapters = manga.chapters;
       if (chapters.isNotEmpty) {
         chapters.last.updateTrackChapterRead(ref);
-        chapters.last.syncProgressAfterChapterRead(ref);
         isar.writeTxnSync(() {
           for (var chapter in chapters) {
             chapter.isRead = true;
@@ -655,6 +654,7 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
             chapter.manga.saveSync();
           }
         });
+        chapters.last.syncProgressAfterChapterRead(ref);
       }
     }
 

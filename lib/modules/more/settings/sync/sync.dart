@@ -137,7 +137,7 @@ class SyncScreen extends ConsumerWidget {
                                       ref
                                           .read(syncServerProvider(syncId: 1)
                                               .notifier)
-                                          .syncToServer(ref, false);
+                                          .checkForSync(ref, false);
                                     },
                               icon: Icon(
                                 Icons.sync,

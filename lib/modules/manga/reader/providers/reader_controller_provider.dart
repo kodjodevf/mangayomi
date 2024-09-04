@@ -403,7 +403,7 @@ extension ChapterExtensions on Chapter {
     if (!(ref is WidgetRef || ref is AutoDisposeNotifierProviderRef)) return;
     final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
     if (!syncAfterReading) return;
-    ref.read(syncServerProvider(syncId: 1).notifier).syncToServer(ref, true);
+    ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(ref, true);
   }
 }
 

@@ -787,7 +787,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               onPressed: () {
                                 int index = chapters.indexOf(chap.first);
                                 chapters[index + 1].updateTrackChapterRead(ref);
-                                chapters[index + 1].syncProgressAfterChapterRead(ref);
                                 isar.writeTxnSync(() {
                                   for (var i = index + 1;
                                       i < chapters.length;
@@ -807,6 +806,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       .read(chaptersListStateProvider.notifier)
                                       .clear();
                                 });
+                                chapters[index + 1].syncProgressAfterChapterRead(ref);
                               },
                               child: Stack(
                                 children: [

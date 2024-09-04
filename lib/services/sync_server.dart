@@ -31,6 +31,7 @@ part 'sync_server.g.dart';
 class SyncServer extends _$SyncServer {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _loginUrl = '/login';
+  final String _checkUrl = '/check';
   final String _syncUrl = '/sync';
   final String _uploadUrl = '/upload/full';
   final String _downloadUrl = '/download';
@@ -64,6 +65,38 @@ class SyncServer extends _$SyncServer {
     }
   }
 
+  Future<void> checkForSync(WidgetRef ref, bool silent) async {
+    if (!silent) {
+      botToast("Checking for sync...", second: 2);
+    }
+    try {
+      final datas = _getData();
+      final accessToken = _getAccessToken();
+      final localHash = _getDataHash(datas);
+
+      var response = await http.get(
+        Uri.parse('${_getServer()}$_checkUrl'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
+        },
+      );
+      if (response.statusCode != 200) {
+        botToast("Check failed", second: 5);
+        return;
+      }
+      var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final remoteHash = jsonData["hash"];
+      if (localHash != remoteHash) {
+        syncToServer(ref, silent);
+      } else if (!silent) {
+        botToast("Sync up to date", second: 2);
+      }
+    } catch (error) {
+      botToast(error.toString(), second: 5);
+    }
+  }
+
   Future<void> syncToServer(WidgetRef ref, bool silent) async {
     if (!silent) {
       botToast("Sync started...", second: 2);
@@ -71,7 +104,6 @@ class SyncServer extends _$SyncServer {
     try {
       final datas = _getData();
       final accessToken = _getAccessToken();
-      final localHash = _getDataHash(datas);
 
       var response = await http.post(
         Uri.parse('${_getServer()}$_syncUrl'),
@@ -89,17 +121,12 @@ class SyncServer extends _$SyncServer {
       final decodedBackupData = jsonData["backupData"] is String
           ? jsonDecode(jsonData["backupData"])
           : jsonData["backupData"];
-      final remoteHash = _getDataHash(decodedBackupData);
-      if (localHash != remoteHash) {
-        _restoreMerge(decodedBackupData, ref);
-        ref
-            .read(synchingProvider(syncId: syncId).notifier)
-            .setLastSync(DateTime.now().millisecondsSinceEpoch);
-        if (!silent) {
-          botToast("Sync finished", second: 2);
-        }
-      } else if (!silent) {
-        botToast("Sync up to date", second: 2);
+      _restoreMerge(decodedBackupData, ref);
+      ref
+          .read(synchingProvider(syncId: syncId).notifier)
+          .setLastSync(DateTime.now().millisecondsSinceEpoch);
+      if (!silent) {
+        botToast("Sync finished", second: 2);
       }
     } catch (error) {
       botToast(error.toString(), second: 5);
