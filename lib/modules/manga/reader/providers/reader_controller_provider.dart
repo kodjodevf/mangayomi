@@ -11,7 +11,9 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
@@ -395,6 +397,13 @@ extension ChapterExtensions on Chapter {
             .updateManga();
       }
     }
+  }
+
+  void syncProgressAfterChapterRead(dynamic ref) {
+    if (!(ref is WidgetRef || ref is AutoDisposeNotifierProviderRef)) return;
+    final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
+    if (!syncAfterReading) return;
+    ref.read(syncServerProvider(syncId: 1).notifier).syncToServer(ref, true);
   }
 }
 

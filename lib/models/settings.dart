@@ -137,6 +137,10 @@ class Settings {
 
   List<int>? backupFrequencyOptions;
 
+  bool? syncOnAppLaunch;
+
+  bool? syncAfterReading;
+
   String? autoBackupLocation;
 
   bool? usePageTapZones;
@@ -246,6 +250,8 @@ class Settings {
       this.personalPageModeList,
       this.backupFrequency,
       this.backupFrequencyOptions,
+      this.syncOnAppLaunch,
+      this.syncAfterReading,
       this.autoBackupLocation,
       this.startDatebackup,
       this.usePageTapZones = true,
@@ -390,13 +396,15 @@ class Settings {
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
     backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
+    syncOnAppLaunch = json['syncOnAppLaunch'];
+    syncAfterReading = json['syncAfterReading'];
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
     markEpisodeAsSeenType = json['markEpisodeAsSeenType'];
     defaultSkipIntroLength = json['defaultSkipIntroLength'];
     defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
-    defaultPlayBackSpeed = json['defaultPlayBackSpeed'];
+    defaultPlayBackSpeed = json['defaultPlayBackSpeed'] is double ? json['defaultPlayBackSpeed'] : (json['defaultPlayBackSpeed'] as int).toDouble();
     updateProgressAfterReading = json['updateProgressAfterReading'];
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
@@ -410,7 +418,7 @@ class Settings {
     colorFilterBlendMode = ColorFilterBlendMode
         .values[json['colorFilterBlendMode'] ?? ColorFilterBlendMode.none];
     playerSubtitleSettings = json['playerSubtitleSettings'] != null
-        ? PlayerSubtitleSettings.fromJson(json['customColorFilter'])
+        ? PlayerSubtitleSettings.fromJson(json['playerSubtitleSettings'])
         : null;
     mangaHomeDisplayType = DisplayType.values[
         json['mangaHomeDisplayType'] ?? DisplayType.comfortableGrid.index];
@@ -503,6 +511,8 @@ class Settings {
         'userAgent': userAgent,
         'backupFrequency': backupFrequency,
         'backupFrequencyOptions': backupFrequencyOptions,
+        'syncOnAppLaunch': syncOnAppLaunch,
+        'syncAfterReading': syncAfterReading,
         'autoBackupLocation': autoBackupLocation,
         'startDatebackup': startDatebackup,
         'usePageTapZones': usePageTapZones,

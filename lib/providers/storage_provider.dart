@@ -10,6 +10,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:path_provider/path_provider.dart';
@@ -136,6 +137,7 @@ class StorageProvider {
       SettingsSchema,
       TrackPreferenceSchema,
       TrackSchema,
+      SyncPreferenceSchema,
       SourcePreferenceSchema,
       SourcePreferenceStringValueSchema
     ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);

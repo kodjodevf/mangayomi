@@ -168,6 +168,7 @@ class AnimeStreamController extends _$AnimeStreamController {
       });
       if (isWatch) {
         episode.updateTrackChapterRead(ref);
+        episode.syncProgressAfterChapterRead(ref);
       }
     }
   }

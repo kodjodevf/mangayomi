@@ -753,6 +753,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   chapter.manga.saveSync();
                                   if (chapter.isRead!) {
                                     chapter.updateTrackChapterRead(ref);
+                                    chapter.syncProgressAfterChapterRead(ref);
                                   }
                                 }
                               });
@@ -786,6 +787,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               onPressed: () {
                                 int index = chapters.indexOf(chap.first);
                                 chapters[index + 1].updateTrackChapterRead(ref);
+                                chapters[index + 1].syncProgressAfterChapterRead(ref);
                                 isar.writeTxnSync(() {
                                   for (var i = index + 1;
                                       i < chapters.length;
