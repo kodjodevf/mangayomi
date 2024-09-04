@@ -23,11 +23,6 @@ import 'isolate.dart';
 
 const okResponses = [200, 201, 202, 203, 204, 205, 206];
 
-/// Implementation of download functionality for desktop platforms
-///
-/// On desktop (MacOS, Linux, Windows) the download and upload are implemented
-/// in Dart, as there is no native platform equivalent of URLSession or
-/// WorkManager as there is on iOS and Android
 final class DownloaderHttpClient extends BaseDownloader {
   static final _log = Logger('DownloaderHttpClient');
   static const unlimited = 1 << 20;
