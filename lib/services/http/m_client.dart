@@ -1,3 +1,4 @@
+import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
@@ -16,6 +17,11 @@ class MClient {
   static Client httpClient(
       {Map<String, dynamic>? reqcopyWith, rhttp.ClientSettings? settings}) {
     if (!(reqcopyWith?["useDartHttpClient"] ?? false)) {
+      if (Platform.isIOS) {
+        final config = URLSessionConfiguration.ephemeralSessionConfiguration()
+          ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
+        return CupertinoClient.fromSessionConfiguration(config);
+      }
       try {
         settings ??= rhttp.ClientSettings(
             throwOnStatusCode: false,

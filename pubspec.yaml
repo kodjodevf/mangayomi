@@ -75,7 +75,12 @@ dependencies:
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
-  rhttp: ^0.7.0
+  rhttp:
+    git:
+      url: https://github.com/kodjodevf/rhttp.git
+      path: rhttp
+      ref: main
+  cupertino_http: ^1.5.1
 
 dependency_overrides:
   http: ^1.2.1

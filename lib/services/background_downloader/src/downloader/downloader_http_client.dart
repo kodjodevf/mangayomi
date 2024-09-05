@@ -571,7 +571,9 @@ final class DownloaderHttpClient extends BaseDownloader {
 
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads
   static _recreateClient() async {
-    await Rhttp.init();
+    if (!Platform.isIOS) {
+      await Rhttp.init();
+    }
     httpClient = MClient.httpClient(
         settings: const ClientSettings(
             throwOnStatusCode: false,
