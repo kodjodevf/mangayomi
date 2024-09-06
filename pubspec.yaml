@@ -81,6 +81,8 @@ dependencies:
       path: rhttp
       ref: main
   cupertino_http: ^1.5.1
+  shelf: ^1.4.2
+  path: ^1.9.0
 
 dependency_overrides:
   http: ^1.2.1
@@ -104,6 +106,7 @@ dependency_overrides:
       path: media_kit_video
       ref: 50c510d018cc5286eb6730f3ea165290f19dc5f6
   meta: ^1.15.0
+  collection: ^1.19.0
 
 dev_dependencies:
   flutter_test:
