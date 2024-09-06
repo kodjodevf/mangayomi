@@ -1790,13 +1790,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 mangaM: randomManga,
                                 source: randomManga.source!);
                           });
-                        }
-                        if (value == 2) {
+                        } else if (value == 2) {
                           _importLocal(context, widget.isManga);
-                        } else {
-                          if (!widget.isManga) {
-                            addTorrent(context);
-                          }
+                        } else if (value == 3 && !widget.isManga){
+                          addTorrent(context);
                         }
                       }),
                 ],

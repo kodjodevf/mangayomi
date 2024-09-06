@@ -424,8 +424,8 @@ func Init(w http.ResponseWriter, request *http.Request) {
 func playTorrent(w http.ResponseWriter, r *http.Request) {
 	infoHash, ihOk := r.URL.Query()["infohash"]
 	magnet, magOk := r.URL.Query()["magnet"]
-	displayName, _ := r.URL.Query()["dn"]
-	trackers, _ := r.URL.Query()["tr"]
+	displayName := r.URL.Query()["dn"]
+	trackers := r.URL.Query()["tr"]
 	files, fOk := r.URL.Query()["file"]
 
 	if !magOk && !ihOk {

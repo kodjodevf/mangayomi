@@ -41,11 +41,13 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   String? _infoHash;
+  HttpServer? _httpServer;
   @override
   void dispose() {
     if (_infoHash != null) {
       MTorrentServer().removeTorrent(_infoHash);
     }
+    _httpServer?.close();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -58,8 +60,9 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
-        final (videos, isLocal, infoHash) = data;
+        final (videos, isLocal, infoHash, httpServer) = data;
         _infoHash = infoHash;
+        _httpServer = httpServer;
         if (videos.isEmpty &&
             !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(

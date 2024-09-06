@@ -36,6 +36,13 @@ extension StringExtensions on String {
     return substring(leftIndex, rightIndex);
   }
 
+  String replaceForbiddenCharacters(String source) {
+    return replaceAll(
+        RegExp(
+            r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)'),
+        source);
+  }
+
   bool isMediaVideo() {
     return [
       "3gp",

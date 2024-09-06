@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -48,15 +49,12 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     List<XFile> files = [];
 
-    final cbzFileExist =
-        File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync();
-    final mp4FileExist =
-        File("${mangaDir.path}${widget.chapter.name}.mp4").existsSync();
-    if (cbzFileExist) {
-      final cbzFile = File("${mangaDir.path}${widget.chapter.name}.cbz");
+    final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
+    final mp4File = File(
+        "${mangaDir.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
+    if (cbzFile.existsSync()) {
       files = [XFile(cbzFile.path)];
-    } else if (mp4FileExist) {
-      final mp4File = File("${mangaDir.path}${widget.chapter.name}.mp4");
+    } else if (mp4File.existsSync()) {
       files = [XFile(mp4File.path)];
     } else {
       files = path!.listSync().map((e) => XFile(e.path)).toList();
@@ -74,13 +72,16 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       try {
-        if (File("${mangaDir!.path}${widget.chapter.name}.cbz").existsSync()) {
-          File("${mangaDir.path}${widget.chapter.name}.cbz").deleteSync();
+        final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
+        if (cbzFile.existsSync()) {
+          cbzFile.deleteSync();
         }
       } catch (_) {}
       try {
-        if (File("${mangaDir!.path}${widget.chapter.name}.mp4").existsSync()) {
-          File("${mangaDir.path}${widget.chapter.name}.mp4").deleteSync();
+        final mp4File = File(
+            "${mangaDir!.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
+        if (mp4File.existsSync()) {
+          mp4File.deleteSync();
         }
       } catch (_) {}
       path!.deleteSync(recursive: true);
