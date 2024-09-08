@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed_items.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -65,7 +65,7 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> checkForSync(WidgetRef ref, bool silent) async {
+  Future<void> checkForSync(bool silent) async {
     if (!silent) {
       botToast("Checking for sync...", second: 2);
     }
@@ -88,7 +88,7 @@ class SyncServer extends _$SyncServer {
       var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
       final remoteHash = jsonData["hash"];
       if (localHash != remoteHash) {
-        syncToServer(ref, silent);
+        syncToServer(silent);
       } else if (!silent) {
         botToast("Sync up to date", second: 2);
       }
@@ -97,7 +97,7 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> syncToServer(WidgetRef ref, bool silent) async {
+  Future<void> syncToServer(bool silent) async {
     if (!silent) {
       botToast("Sync started...", second: 2);
     }
@@ -111,7 +111,8 @@ class SyncServer extends _$SyncServer {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $accessToken'
         },
-        body: jsonEncode({'backupData': datas}),
+        body: jsonEncode(
+            {'backupData': datas, 'changedItems': _getChangedData()}),
       );
       if (response.statusCode != 200) {
         botToast("Sync failed", second: 5);
@@ -121,10 +122,13 @@ class SyncServer extends _$SyncServer {
       final decodedBackupData = jsonData["backupData"] is String
           ? jsonDecode(jsonData["backupData"])
           : jsonData["backupData"];
-      _restoreMerge(decodedBackupData, ref);
+      _restoreMerge(decodedBackupData);
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastSync(DateTime.now().millisecondsSinceEpoch);
+      ref
+          .read(changedItemsManagerProvider(managerId: 1).notifier)
+          .cleanChangedItems(true);
       if (!silent) {
         botToast("Sync finished", second: 2);
       }
@@ -154,13 +158,16 @@ class SyncServer extends _$SyncServer {
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastUpload(DateTime.now().millisecondsSinceEpoch);
+      ref
+          .read(changedItemsManagerProvider(managerId: 1).notifier)
+          .cleanChangedItems(true);
       botToast(l10n.sync_upload_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
     }
   }
 
-  Future<void> downloadFromServer(AppLocalizations l10n, WidgetRef ref) async {
+  Future<void> downloadFromServer(AppLocalizations l10n) async {
     botToast(l10n.sync_downloading, second: 2);
     try {
       final accessToken = _getAccessToken();
@@ -180,11 +187,13 @@ class SyncServer extends _$SyncServer {
       _restore(
           jsonData["backupData"] is String
               ? jsonDecode(jsonData["backupData"])
-              : jsonData["backupData"],
-          ref);
+              : jsonData["backupData"]);
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastDownload(DateTime.now().millisecondsSinceEpoch);
+      ref
+          .read(changedItemsManagerProvider(managerId: 1).notifier)
+          .cleanChangedItems(true);
       botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
@@ -201,6 +210,27 @@ class SyncServer extends _$SyncServer {
     datas["history"] = data["history"];
     var encodedJson = jsonEncode(datas);
     return sha256.convert(utf8.encode(encodedJson)).toString();
+  }
+
+  Map<String, dynamic> _getChangedData() {
+    Map<String, dynamic> data = {};
+    final changedItems = isar.changedItems.getSync(1);
+    if (changedItems != null) {
+      data.addAll({
+        "deletedMangas":
+            changedItems.deletedMangas?.map((e) => e.toJson()).toList() ?? []
+      });
+      data.addAll({
+        "updatedChapters":
+            changedItems.updatedChapters?.map((e) => e.toJson()).toList() ?? []
+      });
+      data.addAll({
+        "deletedCategories":
+            changedItems.deletedCategories?.map((e) => e.toJson()).toList() ??
+                []
+      });
+    }
+    return data;
   }
 
   Map<String, dynamic> _getData() {
@@ -270,7 +300,7 @@ class SyncServer extends _$SyncServer {
     return datas;
   }
 
-  void _restoreMerge(Map<String, dynamic> backup, WidgetRef ref) {
+  void _restoreMerge(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
       try {
         final manga =
@@ -336,7 +366,7 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  void _restore(Map<String, dynamic> backup, WidgetRef ref) {
+  void _restore(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
       try {
         log("DEBUG: ${jsonEncode(backup["version"])}");

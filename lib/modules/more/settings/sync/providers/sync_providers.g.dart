@@ -6,7 +6,8 @@ part of 'sync_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$synchingHash() => r'2ef7fd99da4292ed236252d2b727cff9a69f43a9';
+String _$addUpdatedChapterIndependentHash() =>
+    r'2a609f968ab03f617df4957fdd1ace6f013a3d2a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -28,6 +29,444 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [addUpdatedChapterIndependent].
+@ProviderFor(addUpdatedChapterIndependent)
+const addUpdatedChapterIndependentProvider =
+    AddUpdatedChapterIndependentFamily();
+
+/// See also [addUpdatedChapterIndependent].
+class AddUpdatedChapterIndependentFamily extends Family<void> {
+  /// See also [addUpdatedChapterIndependent].
+  const AddUpdatedChapterIndependentFamily();
+
+  /// See also [addUpdatedChapterIndependent].
+  AddUpdatedChapterIndependentProvider call(
+    Chapter chapter,
+    bool deleted,
+    bool txn,
+  ) {
+    return AddUpdatedChapterIndependentProvider(
+      chapter,
+      deleted,
+      txn,
+    );
+  }
+
+  @override
+  AddUpdatedChapterIndependentProvider getProviderOverride(
+    covariant AddUpdatedChapterIndependentProvider provider,
+  ) {
+    return call(
+      provider.chapter,
+      provider.deleted,
+      provider.txn,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'addUpdatedChapterIndependentProvider';
+}
+
+/// See also [addUpdatedChapterIndependent].
+class AddUpdatedChapterIndependentProvider extends AutoDisposeProvider<void> {
+  /// See also [addUpdatedChapterIndependent].
+  AddUpdatedChapterIndependentProvider(
+    Chapter chapter,
+    bool deleted,
+    bool txn,
+  ) : this._internal(
+          (ref) => addUpdatedChapterIndependent(
+            ref as AddUpdatedChapterIndependentRef,
+            chapter,
+            deleted,
+            txn,
+          ),
+          from: addUpdatedChapterIndependentProvider,
+          name: r'addUpdatedChapterIndependentProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$addUpdatedChapterIndependentHash,
+          dependencies: AddUpdatedChapterIndependentFamily._dependencies,
+          allTransitiveDependencies:
+              AddUpdatedChapterIndependentFamily._allTransitiveDependencies,
+          chapter: chapter,
+          deleted: deleted,
+          txn: txn,
+        );
+
+  AddUpdatedChapterIndependentProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.chapter,
+    required this.deleted,
+    required this.txn,
+  }) : super.internal();
+
+  final Chapter chapter;
+  final bool deleted;
+  final bool txn;
+
+  @override
+  Override overrideWith(
+    void Function(AddUpdatedChapterIndependentRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AddUpdatedChapterIndependentProvider._internal(
+        (ref) => create(ref as AddUpdatedChapterIndependentRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        chapter: chapter,
+        deleted: deleted,
+        txn: txn,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _AddUpdatedChapterIndependentProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AddUpdatedChapterIndependentProvider &&
+        other.chapter == chapter &&
+        other.deleted == deleted &&
+        other.txn == txn;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
+    hash = _SystemHash.combine(hash, deleted.hashCode);
+    hash = _SystemHash.combine(hash, txn.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin AddUpdatedChapterIndependentRef on AutoDisposeProviderRef<void> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
+
+  /// The parameter `deleted` of this provider.
+  bool get deleted;
+
+  /// The parameter `txn` of this provider.
+  bool get txn;
+}
+
+class _AddUpdatedChapterIndependentProviderElement
+    extends AutoDisposeProviderElement<void>
+    with AddUpdatedChapterIndependentRef {
+  _AddUpdatedChapterIndependentProviderElement(super.provider);
+
+  @override
+  Chapter get chapter =>
+      (origin as AddUpdatedChapterIndependentProvider).chapter;
+  @override
+  bool get deleted => (origin as AddUpdatedChapterIndependentProvider).deleted;
+  @override
+  bool get txn => (origin as AddUpdatedChapterIndependentProvider).txn;
+}
+
+String _$checkForSyncIndependentHash() =>
+    r'7f3820bbb551ad5a98145c0f05106bb104f2db26';
+
+/// See also [checkForSyncIndependent].
+@ProviderFor(checkForSyncIndependent)
+const checkForSyncIndependentProvider = CheckForSyncIndependentFamily();
+
+/// See also [checkForSyncIndependent].
+class CheckForSyncIndependentFamily extends Family<void> {
+  /// See also [checkForSyncIndependent].
+  const CheckForSyncIndependentFamily();
+
+  /// See also [checkForSyncIndependent].
+  CheckForSyncIndependentProvider call(
+    bool silent,
+  ) {
+    return CheckForSyncIndependentProvider(
+      silent,
+    );
+  }
+
+  @override
+  CheckForSyncIndependentProvider getProviderOverride(
+    covariant CheckForSyncIndependentProvider provider,
+  ) {
+    return call(
+      provider.silent,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'checkForSyncIndependentProvider';
+}
+
+/// See also [checkForSyncIndependent].
+class CheckForSyncIndependentProvider extends AutoDisposeProvider<void> {
+  /// See also [checkForSyncIndependent].
+  CheckForSyncIndependentProvider(
+    bool silent,
+  ) : this._internal(
+          (ref) => checkForSyncIndependent(
+            ref as CheckForSyncIndependentRef,
+            silent,
+          ),
+          from: checkForSyncIndependentProvider,
+          name: r'checkForSyncIndependentProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$checkForSyncIndependentHash,
+          dependencies: CheckForSyncIndependentFamily._dependencies,
+          allTransitiveDependencies:
+              CheckForSyncIndependentFamily._allTransitiveDependencies,
+          silent: silent,
+        );
+
+  CheckForSyncIndependentProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.silent,
+  }) : super.internal();
+
+  final bool silent;
+
+  @override
+  Override overrideWith(
+    void Function(CheckForSyncIndependentRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CheckForSyncIndependentProvider._internal(
+        (ref) => create(ref as CheckForSyncIndependentRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        silent: silent,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _CheckForSyncIndependentProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CheckForSyncIndependentProvider && other.silent == silent;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, silent.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin CheckForSyncIndependentRef on AutoDisposeProviderRef<void> {
+  /// The parameter `silent` of this provider.
+  bool get silent;
+}
+
+class _CheckForSyncIndependentProviderElement
+    extends AutoDisposeProviderElement<void> with CheckForSyncIndependentRef {
+  _CheckForSyncIndependentProviderElement(super.provider);
+
+  @override
+  bool get silent => (origin as CheckForSyncIndependentProvider).silent;
+}
+
+String _$changedItemsManagerHash() =>
+    r'a4f0363ab430ddb6c2a23fde6f5671ba8ec252cf';
+
+abstract class _$ChangedItemsManager
+    extends BuildlessAutoDisposeNotifier<ChangedItems?> {
+  late final int? managerId;
+
+  ChangedItems? build({
+    required int? managerId,
+  });
+}
+
+/// See also [ChangedItemsManager].
+@ProviderFor(ChangedItemsManager)
+const changedItemsManagerProvider = ChangedItemsManagerFamily();
+
+/// See also [ChangedItemsManager].
+class ChangedItemsManagerFamily extends Family<ChangedItems?> {
+  /// See also [ChangedItemsManager].
+  const ChangedItemsManagerFamily();
+
+  /// See also [ChangedItemsManager].
+  ChangedItemsManagerProvider call({
+    required int? managerId,
+  }) {
+    return ChangedItemsManagerProvider(
+      managerId: managerId,
+    );
+  }
+
+  @override
+  ChangedItemsManagerProvider getProviderOverride(
+    covariant ChangedItemsManagerProvider provider,
+  ) {
+    return call(
+      managerId: provider.managerId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'changedItemsManagerProvider';
+}
+
+/// See also [ChangedItemsManager].
+class ChangedItemsManagerProvider extends AutoDisposeNotifierProviderImpl<
+    ChangedItemsManager, ChangedItems?> {
+  /// See also [ChangedItemsManager].
+  ChangedItemsManagerProvider({
+    required int? managerId,
+  }) : this._internal(
+          () => ChangedItemsManager()..managerId = managerId,
+          from: changedItemsManagerProvider,
+          name: r'changedItemsManagerProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$changedItemsManagerHash,
+          dependencies: ChangedItemsManagerFamily._dependencies,
+          allTransitiveDependencies:
+              ChangedItemsManagerFamily._allTransitiveDependencies,
+          managerId: managerId,
+        );
+
+  ChangedItemsManagerProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.managerId,
+  }) : super.internal();
+
+  final int? managerId;
+
+  @override
+  ChangedItems? runNotifierBuild(
+    covariant ChangedItemsManager notifier,
+  ) {
+    return notifier.build(
+      managerId: managerId,
+    );
+  }
+
+  @override
+  Override overrideWith(ChangedItemsManager Function() create) {
+    return ProviderOverride(
+      origin: this,
+      override: ChangedItemsManagerProvider._internal(
+        () => create()..managerId = managerId,
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        managerId: managerId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeNotifierProviderElement<ChangedItemsManager, ChangedItems?>
+      createElement() {
+    return _ChangedItemsManagerProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ChangedItemsManagerProvider && other.managerId == managerId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, managerId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ChangedItemsManagerRef on AutoDisposeNotifierProviderRef<ChangedItems?> {
+  /// The parameter `managerId` of this provider.
+  int? get managerId;
+}
+
+class _ChangedItemsManagerProviderElement
+    extends AutoDisposeNotifierProviderElement<ChangedItemsManager,
+        ChangedItems?> with ChangedItemsManagerRef {
+  _ChangedItemsManagerProviderElement(super.provider);
+
+  @override
+  int? get managerId => (origin as ChangedItemsManagerProvider).managerId;
+}
+
+String _$synchingHash() => r'2ef7fd99da4292ed236252d2b727cff9a69f43a9';
 
 abstract class _$Synching
     extends BuildlessAutoDisposeNotifier<SyncPreference?> {

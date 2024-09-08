@@ -10,6 +10,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -357,6 +358,10 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                       ),
                                                       TextButton(
                                                           onPressed: () async {
+                                                            await manga.chapters
+                                                                .load();
+                                                            final chapters =
+                                                                manga.chapters;
                                                             await isar.writeTxn(
                                                                 () async {
                                                               await isar
@@ -364,6 +369,34 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                                   .delete(
                                                                       element
                                                                           .id!);
+                                                              for (var chapter
+                                                                  in chapters) {
+                                                                await ref
+                                                                    .read(changedItemsManagerProvider(
+                                                                            managerId:
+                                                                                1)
+                                                                        .notifier)
+                                                                    .addUpdatedChapterAsync(
+                                                                        chapter,
+                                                                        true,
+                                                                        false);
+                                                                await isar
+                                                                    .chapters
+                                                                    .delete(
+                                                                        chapter
+                                                                            .id!);
+                                                              }
+                                                              await ref
+                                                                  .read(changedItemsManagerProvider(
+                                                                          managerId:
+                                                                              1)
+                                                                      .notifier)
+                                                                  .addDeletedMangaAsync(
+                                                                      manga,
+                                                                      false);
+                                                              await isar.mangas
+                                                                  .delete(manga
+                                                                      .id!);
                                                             });
                                                             if (context
                                                                 .mounted) {

@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/changed_items.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
@@ -127,6 +128,7 @@ class StorageProvider {
 
     final isar = Isar.openSync([
       MangaSchema,
+      ChangedItemsSchema,
       ChapterSchema,
       CategorySchema,
       HistorySchema,
@@ -137,7 +139,7 @@ class StorageProvider {
       TrackSchema,
       SyncPreferenceSchema,
       SourcePreferenceSchema,
-      SourcePreferenceStringValueSchema
+      SourcePreferenceStringValueSchema,
     ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);
 
     if (isar.settings.filter().idEqualTo(227).isEmptySync()) {

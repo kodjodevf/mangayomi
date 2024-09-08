@@ -20,6 +20,7 @@ import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -1157,8 +1158,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                       }
 
                                       for (var chapter in manga.chapters) {
+                                        ref
+                                            .read(changedItemsManagerProvider(
+                                                    managerId: 1)
+                                                .notifier)
+                                            .addUpdatedChapter(
+                                                chapter, true, false);
                                         isar.chapters.deleteSync(chapter.id!);
                                       }
+                                      ref
+                                          .read(changedItemsManagerProvider(
+                                                  managerId: 1)
+                                              .notifier)
+                                          .addDeletedManga(manga, false);
                                       isar.mangas.deleteSync(manga.id!);
                                     } else {
                                       manga.favorite = false;
@@ -1792,7 +1804,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           });
                         } else if (value == 2) {
                           _importLocal(context, widget.isManga);
-                        } else if (value == 3 && !widget.isManga){
+                        } else if (value == 3 && !widget.isManga) {
                           addTorrent(context);
                         }
                       }),

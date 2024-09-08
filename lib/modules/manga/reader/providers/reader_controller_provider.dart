@@ -13,7 +13,6 @@ import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.d
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
-import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
@@ -194,6 +193,9 @@ class ReaderController extends _$ReaderController {
     final chap = chapter;
     isar.writeTxnSync(() {
       chap.isBookmarked = !isBookmarked;
+      ref
+          .read(changedItemsManagerProvider(managerId: 1).notifier)
+          .addUpdatedChapter(chap, false, false);
       isar.chapters.putSync(chap);
     });
   }
@@ -331,10 +333,14 @@ class ReaderController extends _$ReaderController {
             getIsarSetting()..chapterPageIndexList = chapterPageIndexs);
         chap.isRead = isRead;
         chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
+        ref
+            .read(changedItemsManagerProvider(managerId: 1).notifier)
+            .addUpdatedChapter(chap, false, false);
         isar.chapters.putSync(chap);
       });
       if (isRead) {
         chapter.updateTrackChapterRead(ref);
+        chapter.syncProgressAfterChapterRead(ref);
       }
     }
   }
@@ -403,7 +409,8 @@ extension ChapterExtensions on Chapter {
     if (!(ref is WidgetRef || ref is AutoDisposeNotifierProviderRef)) return;
     final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
     if (!syncAfterReading) return;
-    ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(ref, true);
+    checkForSyncIndependentProvider.call(true);
+    // ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(ref, true);
   }
 }
 

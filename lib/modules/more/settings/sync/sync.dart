@@ -137,7 +137,7 @@ class SyncScreen extends ConsumerWidget {
                                       ref
                                           .read(syncServerProvider(syncId: 1)
                                               .notifier)
-                                          .checkForSync(ref, false);
+                                          .checkForSync(false);
                                     },
                               icon: Icon(
                                 Icons.sync,
@@ -293,7 +293,7 @@ class SyncScreen extends ConsumerWidget {
                                                                               1)
                                                                       .notifier)
                                                               .downloadFromServer(
-                                                                  l10n, ref);
+                                                                  l10n);
                                                           Navigator.pop(
                                                               context);
                                                         },

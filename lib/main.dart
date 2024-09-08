@@ -74,7 +74,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final syncOnAppLaunch = ref.watch(syncOnAppLaunchStateProvider);
     if (syncOnAppLaunch) {
-      ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(ref, true);
+      ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(true);
     }
     final isDarkTheme = ref.watch(themeModeStateProvider);
     final blendLevel = ref.watch(blendLevelStateProvider);
