@@ -36,7 +36,9 @@ void main(List<String> args) async {
   }
   MediaKit.ensureInitialized();
   await RustLib.init();
-  await Rhttp.init();
+  if (!Platform.isIOS) {
+    await Rhttp.init();
+  }
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }
