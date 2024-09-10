@@ -2,6 +2,7 @@ import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
@@ -74,7 +75,6 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
           mangaId: mangaId,
         )..manga.value = manga;
         chapters.add(chapter);
-        // TODO add to feed collection
       }
     }
     if (chapters.isNotEmpty) {
@@ -84,6 +84,13 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
             .addUpdatedChapter(chap, false, false);
         isar.chapters.putSync(chap);
         chap.manga.saveSync();
+        final savedChapter = isar.chapters.getSync(chap.id!);
+        if (savedChapter != null) {
+          final feed = Feed(mangaId: mangaId, date: savedChapter.dateUpload)
+            ..chapter.value = savedChapter;
+          isar.feeds.putSync(feed);
+          feed.chapter.saveSync();
+        }
       }
     }
     final oldChapers =

@@ -178,6 +178,7 @@ class ReaderController extends _$ReaderController {
           .filter()
           .mangaIdEqualTo(getManga().id)
           .findFirstSync())!
+        ..chapterId = chapter.id
         ..chapter.value = chapter
         ..date = DateTime.now().millisecondsSinceEpoch.toString();
     }
