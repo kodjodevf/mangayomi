@@ -42,7 +42,7 @@ class MClient {
       Map<String, dynamic>? reqcopyWith,
       rhttp.ClientSettings? settings}) {
     return InterceptedClient.build(
-        client: httpClient(settings: settings),
+        client: httpClient(settings: settings, reqcopyWith: reqcopyWith),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 
