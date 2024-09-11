@@ -3,3 +3,4 @@
 //
 
 pub mod image;
+pub mod rhttp;
