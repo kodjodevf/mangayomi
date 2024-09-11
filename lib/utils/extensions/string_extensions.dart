@@ -57,8 +57,7 @@ extension StringExtensions on String {
       "mp4",
       "wmv",
       "mkv",
-      "mov",
-      "ts"
+      "mov"
     ].any((extension) => toLowerCase().endsWith(extension));
   }
 }
