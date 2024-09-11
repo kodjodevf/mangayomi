@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
@@ -45,8 +46,9 @@ class MainScreen extends ConsumerWidget {
           '/MangaLibrary' => 0,
           '/AnimeLibrary' => 1,
           '/history' => 2,
-          '/browse' => 3,
-          _ => 4,
+          '/feed' => 3,
+          '/browse' => 4,
+          _ => 5,
         };
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
@@ -96,6 +98,7 @@ class MainScreen extends ConsumerWidget {
                                   != '/MangaLibrary' &&
                                         != '/AnimeLibrary' &&
                                         != '/history' &&
+                                        != '/feed' &&
                                         != '/browse' &&
                                         != '/more' =>
                                     0,
@@ -142,6 +145,36 @@ class MainScreen extends ConsumerWidget {
                                                   const EdgeInsets.only(top: 5),
                                               child: Text(l10n.history))),
                                       NavigationRailDestination(
+                                          selectedIcon: Stack(
+                                            children: [
+                                              const Icon(Icons.rss_feed),
+                                              Positioned(
+                                                  right: 0,
+                                                  top: 0,
+                                                  child: _feedTotalNumbers(
+                                                      ref, false))
+                                            ],
+                                          ),
+                                          icon: Stack(
+                                            children: [
+                                              const Icon(
+                                                  Icons.rss_feed_outlined),
+                                              Positioned(
+                                                  right: 0,
+                                                  top: 0,
+                                                  child: _feedTotalNumbers(
+                                                      ref, false))
+                                            ],
+                                          ),
+                                          label: Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 5),
+                                              child: Stack(
+                                                children: [
+                                                  Text(l10n.feed),
+                                                ],
+                                              ))),
+                                      NavigationRailDestination(
                                           selectedIcon:
                                               const Icon(Icons.explore),
                                           icon: const Icon(
@@ -169,8 +202,10 @@ class MainScreen extends ConsumerWidget {
                                       } else if (newIndex == 2) {
                                         route.go('/history');
                                       } else if (newIndex == 3) {
-                                        route.go('/browse');
+                                        route.go('/feed');
                                       } else if (newIndex == 4) {
+                                        route.go('/browse');
+                                      } else if (newIndex == 5) {
                                         route.go('/more');
                                       }
                                     },
@@ -199,6 +234,7 @@ class MainScreen extends ConsumerWidget {
                               != '/MangaLibrary' &&
                                     != '/AnimeLibrary' &&
                                     != '/history' &&
+                                    != '/feed' &&
                                     != '/browse' &&
                                     != '/more' =>
                                 0,
@@ -231,6 +267,18 @@ class MainScreen extends ConsumerWidget {
                                   selectedIcon: const Icon(Icons.history),
                                   icon: const Icon(Icons.history_outlined),
                                   label: l10n.history),
+                              Stack(
+                                children: [
+                                  NavigationDestination(
+                                      selectedIcon: const Icon(Icons.rss_feed),
+                                      icon: const Icon(Icons.rss_feed_outlined),
+                                      label: l10n.feed),
+                                  Positioned(
+                                      right: 14,
+                                      top: 3,
+                                      child: _feedTotalNumbers(ref, true)),
+                                ],
+                              ),
                               Stack(
                                 children: [
                                   NavigationDestination(
@@ -303,6 +351,41 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
                   child: Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    child: Text(
+                      entries.length.toString(),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).textTheme.bodySmall!.color),
+                    ),
+                  ),
+                );
+        }
+        return Container();
+      });
+}
+
+Widget _feedTotalNumbers(WidgetRef ref, bool mobile) {
+  return StreamBuilder(
+      stream: isar.feeds.filter().idIsNotNull().watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final entries = snapshot.data!.where((element) {
+            if (!element.chapter.isLoaded) {
+              element.chapter.loadSync();
+            }
+            return !(element.chapter.value?.isRead ?? false);
+          }).toList();
+          return entries.isEmpty
+              ? Container()
+              : Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color.fromARGB(255, 176, 46, 37)),
+                  child: Padding(
+                    padding: mobile
+                        ? const EdgeInsets.symmetric(horizontal: 5, vertical: 3)
+                        : const EdgeInsets.symmetric(
+                            horizontal: 3, vertical: 1),
                     child: Text(
                       entries.length.toString(),
                       style: TextStyle(

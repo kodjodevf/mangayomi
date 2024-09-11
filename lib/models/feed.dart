@@ -9,6 +9,8 @@ class Feed {
 
   int? mangaId;
 
+  String? chapterName;
+
   final chapter = IsarLink<Chapter>();
 
   String? date;
@@ -16,18 +18,21 @@ class Feed {
   Feed({
     this.id = Isar.autoIncrement,
     required this.mangaId,
+    required this.chapterName,
     required this.date,
   });
 
   Feed.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     mangaId = json['mangaId'];
+    mangaId = json['chapterName'];
     date = json['date'];
   }
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'mangaId': mangaId,
+        'chapterName': chapterName,
         'date': date,
       };
 }

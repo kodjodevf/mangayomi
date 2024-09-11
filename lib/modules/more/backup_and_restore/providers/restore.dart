@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -59,6 +61,8 @@ void doRestore(DoRestoreRef ref,
       final extensionsPref = (backup["extensions_preferences"] as List?)
           ?.map((e) => SourcePreference.fromJson(e))
           .toList();
+      final feeds =
+          (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
 
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
@@ -92,6 +96,23 @@ void doRestore(DoRestoreRef ref,
                 if (chapter != null) {
                   isar.historys.putSync(element..chapter.value = chapter);
                   element.chapter.saveSync();
+                }
+              }
+            }
+
+            isar.feeds.clearSync();
+            if (feeds != null) {
+              final tempChapters =
+                  isar.chapters.filter().idIsNotNull().findAllSync().toList();
+              for (var feed in feeds) {
+                final matchingChapter = tempChapters
+                    .where((chapter) =>
+                        chapter.mangaId == feed.mangaId &&
+                        chapter.name == feed.chapterName)
+                    .firstOrNull;
+                if (matchingChapter != null) {
+                  isar.feeds.putSync(feed..chapter.value = matchingChapter);
+                  feed.chapter.saveSync();
                 }
               }
             }

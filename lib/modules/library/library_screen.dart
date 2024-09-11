@@ -16,6 +16,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
@@ -1164,6 +1165,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .notifier)
                                             .addUpdatedChapter(
                                                 chapter, true, false);
+                                        isar.feeds
+                                            .filter()
+                                            .mangaIdEqualTo(chapter.mangaId)
+                                            .chapterNameEqualTo(chapter.name)
+                                            .deleteAllSync();
                                         isar.chapters.deleteSync(chapter.id!);
                                       }
                                       ref

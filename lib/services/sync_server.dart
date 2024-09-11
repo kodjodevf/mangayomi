@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed_items.dart';
+import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -184,10 +183,9 @@ class SyncServer extends _$SyncServer {
         return;
       }
       var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      _restore(
-          jsonData["backupData"] is String
-              ? jsonDecode(jsonData["backupData"])
-              : jsonData["backupData"]);
+      _restore(jsonData["backupData"] is String
+          ? jsonDecode(jsonData["backupData"])
+          : jsonData["backupData"]);
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastDownload(DateTime.now().millisecondsSinceEpoch);
@@ -208,6 +206,7 @@ class SyncServer extends _$SyncServer {
     datas["chapters"] = data["chapters"];
     datas["tracks"] = data["tracks"];
     datas["history"] = data["history"];
+    datas["feeds"] = data["feeds"];
     var encodedJson = jsonEncode(datas);
     return sha256.convert(utf8.encode(encodedJson)).toString();
   }
@@ -297,6 +296,13 @@ class SyncServer extends _$SyncServer {
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions_preferences": sourcePreferences});
+    final feeds = isar.feeds
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"feeds": feeds});
     return datas;
   }
 
@@ -316,6 +322,8 @@ class SyncServer extends _$SyncServer {
         final history = (backup["history"] as List?)
             ?.map((e) => History.fromJson(e))
             .toList();
+        final feeds =
+            (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -338,6 +346,23 @@ class SyncServer extends _$SyncServer {
                   if (chapter != null) {
                     isar.historys.putSync(element..chapter.value = chapter);
                     element.chapter.saveSync();
+                  }
+                }
+              }
+
+              isar.feeds.clearSync();
+              if (feeds != null) {
+                final tempChapters =
+                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
+                for (var feed in feeds) {
+                  final matchingChapter = tempChapters
+                      .where((chapter) =>
+                          chapter.mangaId == feed.mangaId &&
+                          chapter.name == feed.chapterName)
+                      .firstOrNull;
+                  if (matchingChapter != null) {
+                    isar.feeds.putSync(feed..chapter.value = matchingChapter);
+                    feed.chapter.saveSync();
                   }
                 }
               }
@@ -369,7 +394,6 @@ class SyncServer extends _$SyncServer {
   void _restore(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
       try {
-        log("DEBUG: ${jsonEncode(backup["version"])}");
         final manga =
             (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
         final chapters = (backup["chapters"] as List?)
@@ -392,8 +416,8 @@ class SyncServer extends _$SyncServer {
         final extensionsPref = (backup["extensions_preferences"] as List?)
             ?.map((e) => SourcePreference.fromJson(e))
             .toList();
-        log("DEBUG 1: ${jsonEncode(backup["manga"])}");
-        log("DEBUG 2: ${jsonEncode(manga)}");
+        final feeds =
+            (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -416,6 +440,23 @@ class SyncServer extends _$SyncServer {
                   if (chapter != null) {
                     isar.historys.putSync(element..chapter.value = chapter);
                     element.chapter.saveSync();
+                  }
+                }
+              }
+
+              isar.feeds.clearSync();
+              if (feeds != null) {
+                final tempChapters =
+                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
+                for (var feed in feeds) {
+                  final matchingChapter = tempChapters
+                      .where((chapter) =>
+                          chapter.mangaId == feed.mangaId &&
+                          chapter.name == feed.chapterName)
+                      .firstOrNull;
+                  if (matchingChapter != null) {
+                    isar.feeds.putSync(feed..chapter.value = matchingChapter);
+                    feed.chapter.saveSync();
                   }
                 }
               }
