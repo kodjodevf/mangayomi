@@ -4,11 +4,15 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/image.dart';
+import 'api/rhttp/client.dart';
+import 'api/rhttp/error.dart';
+import 'api/rhttp/http.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
 import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
@@ -66,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.3.0';
 
   @override
-  int get rustContentHash => -287789500;
+  int get rustContentHash => 107666026;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -78,6 +82,51 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
 abstract class RustLibApi extends BaseApi {
   Uint8List crateApiImageProcessCropImage({required List<int> image});
+
+  Future<ClientSettings> crateApiRhttpClientClientSettingsDefault();
+
+  Future<void> crateApiRhttpHttpCancelRequest(
+      {required CancellationToken token});
+
+  Future<void> crateApiRhttpHttpCancelRunningRequests(
+      {required RequestClient client});
+
+  Stream<Uint8List> crateApiRhttpHttpMakeHttpRequestReceiveStream(
+      {RequestClient? client,
+      ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      Uint8List? body,
+      required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(RhttpError) onError,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable});
+
+  Future<RequestClient> crateApiRhttpHttpRegisterClient(
+      {required ClientSettings settings});
+
+  RequestClient crateApiRhttpHttpRegisterClientSync(
+      {required ClientSettings settings});
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_CancellationToken;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_CancellationToken;
+
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_CancellationTokenPtr;
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_RequestClient;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_RequestClient;
+
+  CrossPlatformFinalizerArg
+      get rust_arc_decrement_strong_count_RequestClientPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -112,6 +161,620 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         argNames: ["image"],
       );
 
+  @override
+  Future<ClientSettings> crateApiRhttpClientClientSettingsDefault() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 2, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_client_settings,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiRhttpClientClientSettingsDefaultConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiRhttpClientClientSettingsDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "client_settings_default",
+        argNames: [],
+      );
+
+  @override
+  Future<void> crateApiRhttpHttpCancelRequest(
+      {required CancellationToken token}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+            token, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 3, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiRhttpHttpCancelRequestConstMeta,
+      argValues: [token],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiRhttpHttpCancelRequestConstMeta =>
+      const TaskConstMeta(
+        debugName: "cancel_request",
+        argNames: ["token"],
+      );
+
+  @override
+  Future<void> crateApiRhttpHttpCancelRunningRequests(
+      {required RequestClient client}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            client, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: null,
+      ),
+      constMeta: kCrateApiRhttpHttpCancelRunningRequestsConstMeta,
+      argValues: [client],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiRhttpHttpCancelRunningRequestsConstMeta =>
+      const TaskConstMeta(
+        debugName: "cancel_running_requests",
+        argNames: ["client"],
+      );
+
+  @override
+  Stream<Uint8List> crateApiRhttpHttpMakeHttpRequestReceiveStream(
+      {RequestClient? client,
+      ClientSettings? settings,
+      required HttpMethod method,
+      required String url,
+      List<(String, String)>? query,
+      HttpHeaders? headers,
+      Uint8List? body,
+      required FutureOr<void> Function(HttpResponse) onResponse,
+      required FutureOr<void> Function(RhttpError) onError,
+      required FutureOr<void> Function(CancellationToken) onCancelToken,
+      required bool cancelable}) {
+    final streamSink = RustStreamSink<Uint8List>();
+    unawaited(handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            client, serializer);
+        sse_encode_opt_box_autoadd_client_settings(settings, serializer);
+        sse_encode_http_method(method, serializer);
+        sse_encode_String(url, serializer);
+        sse_encode_opt_list_record_string_string(query, serializer);
+        sse_encode_opt_box_autoadd_http_headers(headers, serializer);
+        sse_encode_opt_list_prim_u_8_strict(body, serializer);
+        sse_encode_StreamSink_list_prim_u_8_strict_Sse(streamSink, serializer);
+        sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+            onResponse, serializer);
+        sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+            onError, serializer);
+        sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+            onCancelToken, serializer);
+        sse_encode_bool(cancelable, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 5, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiRhttpHttpMakeHttpRequestReceiveStreamConstMeta,
+      argValues: [
+        client,
+        settings,
+        method,
+        url,
+        query,
+        headers,
+        body,
+        streamSink,
+        onResponse,
+        onError,
+        onCancelToken,
+        cancelable
+      ],
+      apiImpl: this,
+    )));
+    return streamSink.stream;
+  }
+
+  TaskConstMeta get kCrateApiRhttpHttpMakeHttpRequestReceiveStreamConstMeta =>
+      const TaskConstMeta(
+        debugName: "make_http_request_receive_stream",
+        argNames: [
+          "client",
+          "settings",
+          "method",
+          "url",
+          "query",
+          "headers",
+          "body",
+          "streamSink",
+          "onResponse",
+          "onError",
+          "onCancelToken",
+          "cancelable"
+        ],
+      );
+
+  @override
+  Future<RequestClient> crateApiRhttpHttpRegisterClient(
+      {required ClientSettings settings}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_client_settings(settings, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 6, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiRhttpHttpRegisterClientConstMeta,
+      argValues: [settings],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiRhttpHttpRegisterClientConstMeta =>
+      const TaskConstMeta(
+        debugName: "register_client",
+        argNames: ["settings"],
+      );
+
+  @override
+  RequestClient crateApiRhttpHttpRegisterClientSync(
+      {required ClientSettings settings}) {
+    return handler.executeSync(SyncTask(
+      callFfi: () {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_box_autoadd_client_settings(settings, serializer);
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+      },
+      codec: SseCodec(
+        decodeSuccessData:
+            sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient,
+        decodeErrorData: sse_decode_rhttp_error,
+      ),
+      constMeta: kCrateApiRhttpHttpRegisterClientSyncConstMeta,
+      argValues: [settings],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiRhttpHttpRegisterClientSyncConstMeta =>
+      const TaskConstMeta(
+        debugName: "register_client_sync",
+        argNames: ["settings"],
+      );
+
+  Future<void> Function(int, dynamic)
+      encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+          FutureOr<void> Function(CancellationToken) raw) {
+    return (callId, rawArg0) async {
+      final arg0 =
+          dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+              rawArg0);
+
+      Box<void>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_unit(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+          callId: callId,
+          ptr: output.ptr,
+          rustVecLen: output.rustVecLen,
+          dataLen: output.dataLen);
+    };
+  }
+
+  Future<void> Function(int, dynamic)
+      encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+          FutureOr<void> Function(HttpResponse) raw) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_http_response(rawArg0);
+
+      Box<void>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_unit(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+          callId: callId,
+          ptr: output.ptr,
+          rustVecLen: output.rustVecLen,
+          dataLen: output.dataLen);
+    };
+  }
+
+  Future<void> Function(int, dynamic)
+      encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+          FutureOr<void> Function(RhttpError) raw) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_rhttp_error(rawArg0);
+
+      Box<void>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_unit(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+          callId: callId,
+          ptr: output.ptr,
+          rustVecLen: output.rustVecLen,
+          dataLen: output.dataLen);
+    };
+  }
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_CancellationToken => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_CancellationToken => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+
+  RustArcIncrementStrongCountFnType
+      get rust_arc_increment_strong_count_RequestClient => wire
+          .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
+
+  RustArcDecrementStrongCountFnType
+      get rust_arc_decrement_strong_count_RequestClient => wire
+          .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
+
+  @protected
+  AnyhowException dco_decode_AnyhowException(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AnyhowException(raw as String);
+  }
+
+  @protected
+  RequestClient
+      dco_decode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+        raw);
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  RequestClient
+      dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  RequestClient
+      dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Duration dco_decode_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeDuration(dco_decode_i_64(raw).toInt());
+  }
+
+  @protected
+  FutureOr<void> Function(CancellationToken)
+      dco_decode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<void> Function(HttpResponse)
+      dco_decode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<void> Function(RhttpError)
+      dco_decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  Object dco_decode_DartOpaque(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return decodeDartOpaque(raw, generalizedFrbRustBinding);
+  }
+
+  @protected
+  Map<String, String> dco_decode_Map_String_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return Map.fromEntries(dco_decode_list_record_string_string(raw)
+        .map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  CancellationToken
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  RequestClient
+      dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  RustStreamSink<Uint8List> dco_decode_StreamSink_list_prim_u_8_strict_Sse(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError();
+  }
+
+  @protected
+  String dco_decode_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as String;
+  }
+
+  @protected
+  bool dco_decode_bool(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as bool;
+  }
+
+  @protected
+  Duration dco_decode_box_autoadd_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_Chrono_Duration(raw);
+  }
+
+  @protected
+  ClientCertificate dco_decode_box_autoadd_client_certificate(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_client_certificate(raw);
+  }
+
+  @protected
+  ClientSettings dco_decode_box_autoadd_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_client_settings(raw);
+  }
+
+  @protected
+  HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_http_headers(raw);
+  }
+
+  @protected
+  HttpResponseBody dco_decode_box_autoadd_http_response_body(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_http_response_body(raw);
+  }
+
+  @protected
+  ProxySettings dco_decode_box_autoadd_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_proxy_settings(raw);
+  }
+
+  @protected
+  RedirectSettings dco_decode_box_autoadd_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_redirect_settings(raw);
+  }
+
+  @protected
+  TlsSettings dco_decode_box_autoadd_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_tls_settings(raw);
+  }
+
+  @protected
+  TlsVersion dco_decode_box_autoadd_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_tls_version(raw);
+  }
+
+  @protected
+  ClientCertificate dco_decode_client_certificate(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ClientCertificate(
+      certificate: dco_decode_list_prim_u_8_strict(arr[0]),
+      privateKey: dco_decode_list_prim_u_8_strict(arr[1]),
+    );
+  }
+
+  @protected
+  ClientSettings dco_decode_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return ClientSettings(
+      timeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[0]),
+      connectTimeout: dco_decode_opt_box_autoadd_Chrono_Duration(arr[1]),
+      throwOnStatusCode: dco_decode_bool(arr[2]),
+      proxySettings: dco_decode_opt_box_autoadd_proxy_settings(arr[3]),
+      redirectSettings: dco_decode_opt_box_autoadd_redirect_settings(arr[4]),
+      tlsSettings: dco_decode_opt_box_autoadd_tls_settings(arr[5]),
+    );
+  }
+
+  @protected
+  HttpHeaders dco_decode_http_headers(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return HttpHeaders_Map(
+          dco_decode_Map_String_String(raw[1]),
+        );
+      case 1:
+        return HttpHeaders_List(
+          dco_decode_list_record_string_string(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  HttpMethod dco_decode_http_method(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return HttpMethod.values[raw as int];
+  }
+
+  @protected
+  HttpResponse dco_decode_http_response(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return HttpResponse(
+      headers: dco_decode_list_record_string_string(arr[0]),
+      version: dco_decode_http_version(arr[1]),
+      statusCode: dco_decode_u_16(arr[2]),
+      body: dco_decode_http_response_body(arr[3]),
+    );
+  }
+
+  @protected
+  HttpResponseBody dco_decode_http_response_body(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return HttpResponseBody_Text(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return HttpResponseBody_Bytes(
+          dco_decode_list_prim_u_8_strict(raw[1]),
+        );
+      case 2:
+        return HttpResponseBody_Stream();
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  HttpVersion dco_decode_http_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return HttpVersion.values[raw as int];
+  }
+
+  @protected
+  int dco_decode_i_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
+  PlatformInt64 dco_decode_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeI64(raw);
+  }
+
+  @protected
+  List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_list_prim_u_8_strict).toList();
+  }
+
   @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -125,6 +788,180 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, String)> dco_decode_list_record_string_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_string_string).toList();
+  }
+
+  @protected
+  RequestClient?
+      dco_decode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            raw);
+  }
+
+  @protected
+  Duration? dco_decode_opt_box_autoadd_Chrono_Duration(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_Chrono_Duration(raw);
+  }
+
+  @protected
+  ClientCertificate? dco_decode_opt_box_autoadd_client_certificate(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_client_certificate(raw);
+  }
+
+  @protected
+  ClientSettings? dco_decode_opt_box_autoadd_client_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_client_settings(raw);
+  }
+
+  @protected
+  HttpHeaders? dco_decode_opt_box_autoadd_http_headers(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_http_headers(raw);
+  }
+
+  @protected
+  ProxySettings? dco_decode_opt_box_autoadd_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_proxy_settings(raw);
+  }
+
+  @protected
+  RedirectSettings? dco_decode_opt_box_autoadd_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_redirect_settings(raw);
+  }
+
+  @protected
+  TlsSettings? dco_decode_opt_box_autoadd_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_tls_settings(raw);
+  }
+
+  @protected
+  TlsVersion? dco_decode_opt_box_autoadd_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_tls_version(raw);
+  }
+
+  @protected
+  Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_list_prim_u_8_strict(raw);
+  }
+
+  @protected
+  List<(String, String)>? dco_decode_opt_list_record_string_string(
+      dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_list_record_string_string(raw);
+  }
+
+  @protected
+  ProxySettings dco_decode_proxy_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return ProxySettings.values[raw as int];
+  }
+
+  @protected
+  (String, String) dco_decode_record_string_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (
+      dco_decode_String(arr[0]),
+      dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
+  RedirectSettings dco_decode_redirect_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RedirectSettings_NoRedirect();
+      case 1:
+        return RedirectSettings_LimitedRedirects(
+          dco_decode_i_32(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  RhttpError dco_decode_rhttp_error(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return RhttpError_RhttpCancelError();
+      case 1:
+        return RhttpError_RhttpTimeoutError();
+      case 2:
+        return RhttpError_RhttpRedirectError();
+      case 3:
+        return RhttpError_RhttpStatusCodeError(
+          dco_decode_u_16(raw[1]),
+          dco_decode_list_record_string_string(raw[2]),
+          dco_decode_box_autoadd_http_response_body(raw[3]),
+        );
+      case 4:
+        return RhttpError_RhttpInvalidCertificateError(
+          dco_decode_String(raw[1]),
+        );
+      case 5:
+        return RhttpError_RhttpConnectionError(
+          dco_decode_String(raw[1]),
+        );
+      case 6:
+        return RhttpError_RhttpUnknownError(
+          dco_decode_String(raw[1]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  TlsSettings dco_decode_tls_settings(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return TlsSettings(
+      trustRootCertificates: dco_decode_bool(arr[0]),
+      trustedRootCertificates: dco_decode_list_list_prim_u_8_strict(arr[1]),
+      verifyCertificates: dco_decode_bool(arr[2]),
+      clientCertificate: dco_decode_opt_box_autoadd_client_certificate(arr[3]),
+      minTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[4]),
+      maxTlsVersion: dco_decode_opt_box_autoadd_tls_version(arr[5]),
+    );
+  }
+
+  @protected
+  TlsVersion dco_decode_tls_version(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TlsVersion.values[raw as int];
+  }
+
+  @protected
+  int dco_decode_u_16(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -134,6 +971,308 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void dco_decode_unit(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return;
+  }
+
+  @protected
+  BigInt dco_decode_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
+  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_String(deserializer);
+    return AnyhowException(inner);
+  }
+
+  @protected
+  RequestClient
+      sse_decode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner =
+        sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+            deserializer);
+    return inner;
+  }
+
+  @protected
+  CancellationToken
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  RequestClient
+      sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return RequestClientImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  CancellationToken
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  RequestClient
+      sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return RequestClientImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  Duration sse_decode_Chrono_Duration(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_64(deserializer);
+    return Duration(microseconds: inner.toInt());
+  }
+
+  @protected
+  Object sse_decode_DartOpaque(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_usize(deserializer);
+    return decodeDartOpaque(inner, generalizedFrbRustBinding);
+  }
+
+  @protected
+  Map<String, String> sse_decode_Map_String_String(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_record_string_string(deserializer);
+    return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  CancellationToken
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return CancellationTokenImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  RequestClient
+      sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return RequestClientImpl.frbInternalSseDecode(
+        sse_decode_usize(deserializer), sse_decode_i_32(deserializer));
+  }
+
+  @protected
+  RustStreamSink<Uint8List> sse_decode_StreamSink_list_prim_u_8_strict_Sse(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    throw UnimplementedError('Unreachable ()');
+  }
+
+  @protected
+  String sse_decode_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_list_prim_u_8_strict(deserializer);
+    return utf8.decoder.convert(inner);
+  }
+
+  @protected
+  bool sse_decode_bool(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint8() != 0;
+  }
+
+  @protected
+  Duration sse_decode_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_Chrono_Duration(deserializer));
+  }
+
+  @protected
+  ClientCertificate sse_decode_box_autoadd_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_client_certificate(deserializer));
+  }
+
+  @protected
+  ClientSettings sse_decode_box_autoadd_client_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_client_settings(deserializer));
+  }
+
+  @protected
+  HttpHeaders sse_decode_box_autoadd_http_headers(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_http_headers(deserializer));
+  }
+
+  @protected
+  HttpResponseBody sse_decode_box_autoadd_http_response_body(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_http_response_body(deserializer));
+  }
+
+  @protected
+  ProxySettings sse_decode_box_autoadd_proxy_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_proxy_settings(deserializer));
+  }
+
+  @protected
+  RedirectSettings sse_decode_box_autoadd_redirect_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_redirect_settings(deserializer));
+  }
+
+  @protected
+  TlsSettings sse_decode_box_autoadd_tls_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_tls_settings(deserializer));
+  }
+
+  @protected
+  TlsVersion sse_decode_box_autoadd_tls_version(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_tls_version(deserializer));
+  }
+
+  @protected
+  ClientCertificate sse_decode_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_certificate = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_privateKey = sse_decode_list_prim_u_8_strict(deserializer);
+    return ClientCertificate(
+        certificate: var_certificate, privateKey: var_privateKey);
+  }
+
+  @protected
+  ClientSettings sse_decode_client_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_timeout = sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
+    var var_connectTimeout =
+        sse_decode_opt_box_autoadd_Chrono_Duration(deserializer);
+    var var_throwOnStatusCode = sse_decode_bool(deserializer);
+    var var_proxySettings =
+        sse_decode_opt_box_autoadd_proxy_settings(deserializer);
+    var var_redirectSettings =
+        sse_decode_opt_box_autoadd_redirect_settings(deserializer);
+    var var_tlsSettings = sse_decode_opt_box_autoadd_tls_settings(deserializer);
+    return ClientSettings(
+        timeout: var_timeout,
+        connectTimeout: var_connectTimeout,
+        throwOnStatusCode: var_throwOnStatusCode,
+        proxySettings: var_proxySettings,
+        redirectSettings: var_redirectSettings,
+        tlsSettings: var_tlsSettings);
+  }
+
+  @protected
+  HttpHeaders sse_decode_http_headers(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_Map_String_String(deserializer);
+        return HttpHeaders_Map(var_field0);
+      case 1:
+        var var_field0 = sse_decode_list_record_string_string(deserializer);
+        return HttpHeaders_List(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  HttpMethod sse_decode_http_method(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return HttpMethod.values[inner];
+  }
+
+  @protected
+  HttpResponse sse_decode_http_response(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_headers = sse_decode_list_record_string_string(deserializer);
+    var var_version = sse_decode_http_version(deserializer);
+    var var_statusCode = sse_decode_u_16(deserializer);
+    var var_body = sse_decode_http_response_body(deserializer);
+    return HttpResponse(
+        headers: var_headers,
+        version: var_version,
+        statusCode: var_statusCode,
+        body: var_body);
+  }
+
+  @protected
+  HttpResponseBody sse_decode_http_response_body(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_field0 = sse_decode_String(deserializer);
+        return HttpResponseBody_Text(var_field0);
+      case 1:
+        var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
+        return HttpResponseBody_Bytes(var_field0);
+      case 2:
+        return HttpResponseBody_Stream();
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  HttpVersion sse_decode_http_version(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return HttpVersion.values[inner];
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
+  }
+
+  @protected
+  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getPlatformInt64();
+  }
+
+  @protected
+  List<Uint8List> sse_decode_list_list_prim_u_8_strict(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <Uint8List>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_list_prim_u_8_strict(deserializer));
+    }
+    return ans_;
   }
 
   @protected
@@ -151,6 +1290,252 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<(String, String)> sse_decode_list_record_string_string(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(String, String)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_string_string(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  RequestClient?
+      sse_decode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  Duration? sse_decode_opt_box_autoadd_Chrono_Duration(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_Chrono_Duration(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ClientCertificate? sse_decode_opt_box_autoadd_client_certificate(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_client_certificate(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ClientSettings? sse_decode_opt_box_autoadd_client_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_client_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  HttpHeaders? sse_decode_opt_box_autoadd_http_headers(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_http_headers(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ProxySettings? sse_decode_opt_box_autoadd_proxy_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_proxy_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  RedirectSettings? sse_decode_opt_box_autoadd_redirect_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_redirect_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  TlsSettings? sse_decode_opt_box_autoadd_tls_settings(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_tls_settings(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  TlsVersion? sse_decode_opt_box_autoadd_tls_version(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_tls_version(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_list_prim_u_8_strict(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  List<(String, String)>? sse_decode_opt_list_record_string_string(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_list_record_string_string(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  ProxySettings sse_decode_proxy_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return ProxySettings.values[inner];
+  }
+
+  @protected
+  (String, String) sse_decode_record_string_string(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_String(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  RedirectSettings sse_decode_redirect_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return RedirectSettings_NoRedirect();
+      case 1:
+        var var_field0 = sse_decode_i_32(deserializer);
+        return RedirectSettings_LimitedRedirects(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  RhttpError sse_decode_rhttp_error(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return RhttpError_RhttpCancelError();
+      case 1:
+        return RhttpError_RhttpTimeoutError();
+      case 2:
+        return RhttpError_RhttpRedirectError();
+      case 3:
+        var var_field0 = sse_decode_u_16(deserializer);
+        var var_field1 = sse_decode_list_record_string_string(deserializer);
+        var var_field2 =
+            sse_decode_box_autoadd_http_response_body(deserializer);
+        return RhttpError_RhttpStatusCodeError(
+            var_field0, var_field1, var_field2);
+      case 4:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpInvalidCertificateError(var_field0);
+      case 5:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpConnectionError(var_field0);
+      case 6:
+        var var_field0 = sse_decode_String(deserializer);
+        return RhttpError_RhttpUnknownError(var_field0);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  TlsSettings sse_decode_tls_settings(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_trustRootCertificates = sse_decode_bool(deserializer);
+    var var_trustedRootCertificates =
+        sse_decode_list_list_prim_u_8_strict(deserializer);
+    var var_verifyCertificates = sse_decode_bool(deserializer);
+    var var_clientCertificate =
+        sse_decode_opt_box_autoadd_client_certificate(deserializer);
+    var var_minTlsVersion =
+        sse_decode_opt_box_autoadd_tls_version(deserializer);
+    var var_maxTlsVersion =
+        sse_decode_opt_box_autoadd_tls_version(deserializer);
+    return TlsSettings(
+        trustRootCertificates: var_trustRootCertificates,
+        trustedRootCertificates: var_trustedRootCertificates,
+        verifyCertificates: var_verifyCertificates,
+        clientCertificate: var_clientCertificate,
+        minTlsVersion: var_minTlsVersion,
+        maxTlsVersion: var_maxTlsVersion);
+  }
+
+  @protected
+  TlsVersion sse_decode_tls_version(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return TlsVersion.values[inner];
+  }
+
+  @protected
+  int sse_decode_u_16(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getUint16();
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
@@ -162,15 +1547,324 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
+  BigInt sse_decode_usize(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
+    return deserializer.buffer.getBigUint64();
   }
 
   @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
+  void sse_encode_AnyhowException(
+      AnyhowException self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8() != 0;
+    sse_encode_String(self.message, serializer);
+  }
+
+  @protected
+  void
+      sse_encode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+        self, serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: true),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as RequestClientImpl).frbInternalSseEncode(move: true),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: false),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as RequestClientImpl).frbInternalSseEncode(move: false),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_Chrono_Duration(Duration self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(PlatformInt64Util.from(self.inMicroseconds), serializer);
+  }
+
+  @protected
+  void
+      sse_encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+          FutureOr<void> Function(CancellationToken) self,
+          SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+        encode_DartFn_Inputs_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken_Output_unit_AnyhowException(
+            self),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(
+      FutureOr<void> Function(HttpResponse) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+        encode_DartFn_Inputs_http_response_Output_unit_AnyhowException(self),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
+      FutureOr<void> Function(RhttpError) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+        encode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(self),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_DartOpaque(Object self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        BigInt.from(PlatformPointerUtil.ptrToInt(encodeDartOpaque(
+                self, portManager.dartHandlerPort, generalizedFrbRustBinding)))
+            .toUnsigned(64),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_Map_String_String(
+      Map<String, String> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_string_string(
+        self.entries.map((e) => (e.key, e.value)).toList(), serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
+          CancellationToken self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as CancellationTokenImpl).frbInternalSseEncode(move: null),
+        serializer);
+  }
+
+  @protected
+  void
+      sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+        (self as RequestClientImpl).frbInternalSseEncode(move: null),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_StreamSink_list_prim_u_8_strict_Sse(
+      RustStreamSink<Uint8List> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(
+        self.setupAndSerialize(
+            codec: SseCodec(
+          decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: sse_decode_AnyhowException,
+        )),
+        serializer);
+  }
+
+  @protected
+  void sse_encode_String(String self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
+  }
+
+  @protected
+  void sse_encode_bool(bool self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint8(self ? 1 : 0);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_Chrono_Duration(
+      Duration self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_Chrono_Duration(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_client_certificate(
+      ClientCertificate self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_client_certificate(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_client_settings(
+      ClientSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_client_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_http_headers(
+      HttpHeaders self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_http_headers(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_http_response_body(
+      HttpResponseBody self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_http_response_body(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_proxy_settings(
+      ProxySettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_proxy_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_redirect_settings(
+      RedirectSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_redirect_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_tls_settings(
+      TlsSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_tls_settings(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_tls_version(
+      TlsVersion self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_tls_version(self, serializer);
+  }
+
+  @protected
+  void sse_encode_client_certificate(
+      ClientCertificate self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.certificate, serializer);
+    sse_encode_list_prim_u_8_strict(self.privateKey, serializer);
+  }
+
+  @protected
+  void sse_encode_client_settings(
+      ClientSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_box_autoadd_Chrono_Duration(self.timeout, serializer);
+    sse_encode_opt_box_autoadd_Chrono_Duration(self.connectTimeout, serializer);
+    sse_encode_bool(self.throwOnStatusCode, serializer);
+    sse_encode_opt_box_autoadd_proxy_settings(self.proxySettings, serializer);
+    sse_encode_opt_box_autoadd_redirect_settings(
+        self.redirectSettings, serializer);
+    sse_encode_opt_box_autoadd_tls_settings(self.tlsSettings, serializer);
+  }
+
+  @protected
+  void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case HttpHeaders_Map(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_Map_String_String(field0, serializer);
+      case HttpHeaders_List(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_record_string_string(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  void sse_encode_http_method(HttpMethod self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_http_response(HttpResponse self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_record_string_string(self.headers, serializer);
+    sse_encode_http_version(self.version, serializer);
+    sse_encode_u_16(self.statusCode, serializer);
+    sse_encode_http_response_body(self.body, serializer);
+  }
+
+  @protected
+  void sse_encode_http_response_body(
+      HttpResponseBody self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case HttpResponseBody_Text(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case HttpResponseBody_Bytes(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_list_prim_u_8_strict(field0, serializer);
+      case HttpResponseBody_Stream():
+        sse_encode_i_32(2, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  void sse_encode_http_version(HttpVersion self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
+  }
+
+  @protected
+  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putPlatformInt64(self);
+  }
+
+  @protected
+  void sse_encode_list_list_prim_u_8_strict(
+      List<Uint8List> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_list_prim_u_8_strict(item, serializer);
+    }
   }
 
   @protected
@@ -191,6 +1885,226 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_record_string_string(
+      List<(String, String)> self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_string_string(item, serializer);
+    }
+  }
+
+  @protected
+  void
+      sse_encode_opt_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          RequestClient? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
+          self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_Chrono_Duration(
+      Duration? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_Chrono_Duration(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_client_certificate(
+      ClientCertificate? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_client_certificate(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_client_settings(
+      ClientSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_client_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_http_headers(
+      HttpHeaders? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_http_headers(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_proxy_settings(
+      ProxySettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_proxy_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_redirect_settings(
+      RedirectSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_redirect_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_tls_settings(
+      TlsSettings? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_tls_settings(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_tls_version(
+      TlsVersion? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_tls_version(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_list_prim_u_8_strict(
+      Uint8List? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_list_prim_u_8_strict(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_list_record_string_string(
+      List<(String, String)>? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_list_record_string_string(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_proxy_settings(ProxySettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_record_string_string(
+      (String, String) self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_String(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_redirect_settings(
+      RedirectSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RedirectSettings_NoRedirect():
+        sse_encode_i_32(0, serializer);
+      case RedirectSettings_LimitedRedirects(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_i_32(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  void sse_encode_rhttp_error(RhttpError self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case RhttpError_RhttpCancelError():
+        sse_encode_i_32(0, serializer);
+      case RhttpError_RhttpTimeoutError():
+        sse_encode_i_32(1, serializer);
+      case RhttpError_RhttpRedirectError():
+        sse_encode_i_32(2, serializer);
+      case RhttpError_RhttpStatusCodeError(
+          field0: final field0,
+          field1: final field1,
+          field2: final field2
+        ):
+        sse_encode_i_32(3, serializer);
+        sse_encode_u_16(field0, serializer);
+        sse_encode_list_record_string_string(field1, serializer);
+        sse_encode_box_autoadd_http_response_body(field2, serializer);
+      case RhttpError_RhttpInvalidCertificateError(field0: final field0):
+        sse_encode_i_32(4, serializer);
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpConnectionError(field0: final field0):
+        sse_encode_i_32(5, serializer);
+        sse_encode_String(field0, serializer);
+      case RhttpError_RhttpUnknownError(field0: final field0):
+        sse_encode_i_32(6, serializer);
+        sse_encode_String(field0, serializer);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  void sse_encode_tls_settings(TlsSettings self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.trustRootCertificates, serializer);
+    sse_encode_list_list_prim_u_8_strict(
+        self.trustedRootCertificates, serializer);
+    sse_encode_bool(self.verifyCertificates, serializer);
+    sse_encode_opt_box_autoadd_client_certificate(
+        self.clientCertificate, serializer);
+    sse_encode_opt_box_autoadd_tls_version(self.minTlsVersion, serializer);
+    sse_encode_opt_box_autoadd_tls_version(self.maxTlsVersion, serializer);
+  }
+
+  @protected
+  void sse_encode_tls_version(TlsVersion self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_u_16(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putUint16(self);
+  }
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self);
@@ -202,14 +2116,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
+  void sse_encode_usize(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
+    serializer.buffer.putBigUint64(self);
   }
+}
 
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self ? 1 : 0);
-  }
+@sealed
+class CancellationTokenImpl extends RustOpaque implements CancellationToken {
+  // Not to be used by end users
+  CancellationTokenImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  CancellationTokenImpl.frbInternalSseDecode(
+      BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_CancellationToken,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_CancellationToken,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance.api.rust_arc_decrement_strong_count_CancellationTokenPtr,
+  );
+}
+
+@sealed
+class RequestClientImpl extends RustOpaque implements RequestClient {
+  // Not to be used by end users
+  RequestClientImpl.frbInternalDcoDecode(List<dynamic> wire)
+      : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  RequestClientImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+      : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_RequestClient,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_RequestClient,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_RequestClientPtr,
+  );
 }

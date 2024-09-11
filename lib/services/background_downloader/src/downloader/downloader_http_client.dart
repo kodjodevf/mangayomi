@@ -9,9 +9,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:rhttp/rhttp.dart';
+import 'package:mangayomi/services/http/rhttp/rhttp.dart';
 import '../base_downloader.dart';
 import '../chunk.dart';
 import '../exceptions.dart';
@@ -571,9 +572,7 @@ final class DownloaderHttpClient extends BaseDownloader {
 
   /// Recreates the [httpClient] used for Requests and isolate downloads/uploads
   static _recreateClient() async {
-    if (!Platform.isIOS) {
-      await Rhttp.init();
-    }
+    await RustLib.init();
     httpClient = MClient.httpClient(
         settings: const ClientSettings(
             throwOnStatusCode: false,

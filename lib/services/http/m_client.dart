@@ -1,4 +1,3 @@
-import 'package:cupertino_http/cupertino_http.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'dart:async';
@@ -10,18 +9,13 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
 import 'package:mangayomi/models/settings.dart';
 import 'package:http/io_client.dart';
 import 'package:mangayomi/utils/log/log.dart';
-import 'package:rhttp/rhttp.dart' as rhttp;
+import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
 
 class MClient {
   MClient();
   static Client httpClient(
       {Map<String, dynamic>? reqcopyWith, rhttp.ClientSettings? settings}) {
     if (!(reqcopyWith?["useDartHttpClient"] ?? false)) {
-      if (Platform.isIOS) {
-        final config = URLSessionConfiguration.ephemeralSessionConfiguration()
-          ..cache = URLCache.withCapacity(memoryCapacity: 5 * 1024 * 1024);
-        return CupertinoClient.fromSessionConfiguration(config);
-      }
       try {
         settings ??= rhttp.ClientSettings(
             throwOnStatusCode: false,
@@ -44,9 +38,11 @@ class MClient {
   }
 
   static InterceptedClient init(
-      {MSource? source, Map<String, dynamic>? reqcopyWith}) {
+      {MSource? source,
+      Map<String, dynamic>? reqcopyWith,
+      rhttp.ClientSettings? settings}) {
     return InterceptedClient.build(
-        client: httpClient(reqcopyWith: reqcopyWith),
+        client: httpClient(settings: settings),
         interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
   }
 

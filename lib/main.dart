@@ -20,7 +20,6 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:rhttp/rhttp.dart';
 import 'package:window_manager/window_manager.dart';
 
 late Isar isar;
@@ -34,7 +33,6 @@ void main(List<String> args) async {
   }
   MediaKit.ensureInitialized();
   await RustLib.init();
-  await Rhttp.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }

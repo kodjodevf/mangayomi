@@ -51,6 +51,7 @@ Future<List<PageUrl>> downloadChapter(
   bool hasM3U8File = false;
   bool nonM3U8File = false;
   M3u8Downloader? m3u8Downloader;
+  String? tsKey;
   void savePageUrls() {
     final settings = isar.settings.getSync(227)!;
     List<ChapterPageurls>? chapterPageUrls = [];
@@ -96,13 +97,9 @@ Future<List<PageUrl>> downloadChapter(
       final nonM3u8Urls = value.$1
           .where((element) => element.originalUrl.isMediaVideo())
           .toList();
-      nonM3U8File = nonM3u8Urls.isNotEmpty && !Platform.isIOS;
+      nonM3U8File = nonM3u8Urls.isNotEmpty;
       hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
-      final videosUrls = nonM3U8File
-          ? nonM3u8Urls
-          : (hasM3U8File || Platform.isIOS)
-              ? m3u8Urls
-              : nonM3u8Urls;
+      final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
       if (videosUrls.isNotEmpty) {
         List<TsInfo> tsList = [];
         if (hasM3U8File) {
@@ -110,7 +107,7 @@ Future<List<PageUrl>> downloadChapter(
               m3u8Url: videosUrls.first.url,
               downloadDir: "${path!.path}$chapterName",
               headers: videosUrls.first.headers ?? {});
-          tsList = await m3u8Downloader!.getTsList();
+          (tsList, tsKey) = await m3u8Downloader!.getTsList();
         }
         pageUrls = hasM3U8File
             ? [...tsList.map((e) => PageUrl(e.url))]
@@ -302,6 +299,7 @@ Future<List<PageUrl>> downloadChapter(
         isar.downloads.putSync(download..chapter.value = chapter);
       });
     } else {
+      savePageUrls();
       await FileDownloader().downloadBatch(
         tasks,
         batchProgressCallback: (succeeded, failed) async {
@@ -309,7 +307,6 @@ Future<List<PageUrl>> downloadChapter(
             if (succeeded == tasks.length) {
               if (hasM3U8File) {
               } else {
-                savePageUrls();
                 if (ref.watch(saveAsCBZArchiveStateProvider)) {
                   await ref.watch(convertToCBZProvider(
                           path!.path,

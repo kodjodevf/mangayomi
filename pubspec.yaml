@@ -75,14 +75,9 @@ dependencies:
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
-  rhttp:
-    git:
-      url: https://github.com/kodjodevf/rhttp.git
-      path: rhttp
-      ref: main
-  cupertino_http: ^1.5.1
   shelf: ^1.4.2
   path: ^1.9.0
+  freezed_annotation: ^2.0.0
 
 dependency_overrides:
   http: ^1.2.1
@@ -116,6 +111,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   isar_generator: ^3.1.0+1
   flutter_lints: ^4.0.0
+  freezed: ^2.0.0
 
 flutter:
   uses-material-design: true
