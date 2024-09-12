@@ -188,6 +188,12 @@ class ReaderController extends _$ReaderController {
     });
   }
 
+  void checkAndSyncProgress() {
+    final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
+    if (!syncAfterReading) return;
+    checkForSyncIndependentProvider.call(true);
+  }
+
   void setChapterBookmarked() {
     if (incognitoMode) return;
     final isBookmarked = getChapterBookmarked();
