@@ -764,7 +764,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   chapter.manga.saveSync();
                                   if (chapter.isRead!) {
                                     chapter.updateTrackChapterRead(ref);
-                                    chapter.syncProgressAfterChapterRead(ref);
                                   }
                                 }
                               });
@@ -823,8 +822,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       .read(chaptersListStateProvider.notifier)
                                       .clear();
                                 });
-                                chapters[index + 1]
-                                    .syncProgressAfterChapterRead(ref);
                               },
                               child: Stack(
                                 children: [

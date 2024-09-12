@@ -313,6 +313,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _currentPosition.value, _currentTotalDuration.value,
         save: save);
     _streamController.setAnimeHistoryUpdate();
+    _streamController.checkAndSyncProgress();
   }
 
   void _setLandscapeMode(bool state) {

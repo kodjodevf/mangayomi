@@ -658,7 +658,6 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
             chapter.manga.saveSync();
           }
         });
-        chapters.last.syncProgressAfterChapterRead(ref);
       }
     }
 
