@@ -1,7 +1,5 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 
 import 'package:isar/isar.dart';
@@ -10,16 +8,14 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/feed.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/feed/widgets/feed_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/cached_network.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
-import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -184,8 +180,7 @@ class _FeedTabState extends ConsumerState<FeedTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final feed =
-        ref.watch(getAllFeedStreamProvider(isManga: widget.isManga));
+    final feed = ref.watch(getAllFeedStreamProvider(isManga: widget.isManga));
     return Scaffold(
         body: feed.when(
       data: (data) {
@@ -196,10 +191,30 @@ class _FeedTabState extends ConsumerState<FeedTab> {
                     .contains(widget.query.toLowerCase())
                 : true)
             .toList();
-
+        final lastUpdatedList =
+            data.map((e) => e.chapter.value!.manga.value!.lastUpdate!).toList();
+        lastUpdatedList.sort((a, b) => a.compareTo(b));
+        final lastUpdated = lastUpdatedList.firstOrNull;
         if (entries.isNotEmpty) {
           return CustomScrollView(
             slivers: [
+              if (lastUpdated != null)
+                SliverPadding(
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 10, bottom: 20),
+                  sliver: SliverList(
+                      delegate: SliverChildListDelegate.fixed([
+                    Text(
+                        l10n.library_last_updated(dateFormat(
+                            lastUpdated.toString(),
+                            ref: ref,
+                            context: context,
+                            showHOURorMINUTE: true)),
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: context.secondaryColor))
+                  ])),
+                ),
               SliverGroupedListView<Feed, String>(
                 elements: entries,
                 groupBy: (element) => dateFormat(element.date!,
@@ -221,123 +236,9 @@ class _FeedTabState extends ConsumerState<FeedTab> {
                   ),
                 ),
                 itemBuilder: (context, Feed element) {
-                  final manga = element.chapter.value!.manga.value!;
                   final chapter = element.chapter.value!;
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0)),
-                        elevation: 0,
-                        shadowColor: Colors.transparent),
-                    onPressed: () {
-                      chapter.pushToReaderView(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: SizedBox(
-                        height: 105,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              height: 90,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.all(0),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(7)),
-                                ),
-                                onPressed: () {
-                                  context.push('/manga-reader/detail',
-                                      extra: manga.id);
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(7),
-                                  child: manga.customCoverImage != null
-                                      ? Image.memory(
-                                          manga.customCoverImage as Uint8List)
-                                      : cachedNetworkImage(
-                                          headers: ref.watch(headersProvider(
-                                              source: manga.source!,
-                                              lang: manga.lang!)),
-                                          imageUrl: toImgUrl(
-                                              manga.customCoverFromTracker ??
-                                                  manga.imageUrl ??
-                                                  ""),
-                                          width: 60,
-                                          height: 90,
-                                          fit: BoxFit.cover),
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              manga.name!,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge!
-                                                      .color,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.end,
-                                              children: [
-                                                Text(
-                                                  chapter.name!,
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .color,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  " - ${dateFormatHour(element.date!, context)}",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return FeedChapterListTileWidget(
+                      chapter: chapter, sourceExist: true);
                 },
                 itemComparator: (item1, item2) =>
                     item1.date!.compareTo(item2.date!),
@@ -347,7 +248,7 @@ class _FeedTabState extends ConsumerState<FeedTab> {
           );
         }
         return Center(
-          child: Text(l10n.nothing_read_recently),
+          child: Text(l10n.no_recent_updates),
         );
       },
       error: (Object error, StackTrace stackTrace) {

@@ -304,8 +304,10 @@ class MainScreen extends ConsumerWidget {
                               } else if (newIndex == 2) {
                                 route.go('/history');
                               } else if (newIndex == 3) {
-                                route.go('/browse');
+                                route.go('/feed');
                               } else if (newIndex == 4) {
+                                route.go('/browse');
+                              } else if (newIndex == 5) {
                                 route.go('/more');
                               }
                             },

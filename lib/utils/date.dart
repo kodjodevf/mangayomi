@@ -10,7 +10,8 @@ String dateFormat(String? timestamp,
     String? stringDate,
     bool forHistoryValue = false,
     bool useRelativeTimesTamps = true,
-    String dateFormat = ""}) {
+    String dateFormat = "",
+    bool showHOURorMINUTE = false}) {
   final l10n = l10nLocalizations(context)!;
   final locale = currentLocale(context);
   final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
@@ -34,6 +35,22 @@ String dateFormat(String? timestamp,
         dateFormat.isEmpty ? dateFrmt : dateFormat, locale.toLanguageTag());
 
     if (date == today && useRelativeTimesTamps && relativeTimestamps != 0) {
+      if (showHOURorMINUTE) {
+        final difference = now.difference(dateTime);
+        if (difference.inMinutes < 60) {
+          return switch (difference.inMinutes) {
+            0 => l10n.now,
+            1 => l10n.n_minute_ago(difference.inMinutes),
+            _ => l10n.n_minutes_ago(difference.inMinutes),
+          };
+        } else if (difference.inHours < 24) {
+          return switch (difference.inHours) {
+            1 => l10n.n_hour_ago(difference.inHours),
+            _ => l10n.n_hours_ago(difference.inHours),
+          };
+        }
+      }
+
       return l10n.today;
     } else if (date == yesterday &&
         useRelativeTimesTamps &&
@@ -48,7 +65,11 @@ String dateFormat(String? timestamp,
           date.isAfter(sixDaysAgo) ||
           date.isAfter(aWeekAgo)) {
         final difference = today.difference(date).inDays;
-        return difference != 7 ? l10n.n_days_ago(difference) : l10n.a_week_ago;
+        return switch (difference) {
+          1 => l10n.n_day_ago(difference),
+          != 7 => l10n.n_days_ago(difference),
+          _ => l10n.a_week_ago,
+        };
       }
     }
     return forHistoryValue

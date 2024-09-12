@@ -360,5 +360,12 @@
   "or": "OR",
   "advanced": "Advanced",
   "use_native_http_client": "Use native http client",
-  "use_native_http_client_info": "it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling"
+  "use_native_http_client_info": "it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling",
+  "n_hour_ago": "{hour} hour ago",
+  "n_hours_ago": "{hours} hours ago",
+  "n_minute_ago": "{minute} minute ago",
+  "n_minutes_ago": "{minutes} minutes ago",
+  "n_day_ago": "{day} day ago",
+  "now": "now",
+  "library_last_updated": "Library last updated: {lastUpdated}"
 }

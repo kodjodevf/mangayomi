@@ -84,13 +84,12 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
             .addUpdatedChapter(chap, false, false);
         isar.chapters.putSync(chap);
         chap.manga.saveSync();
-        final savedChapter = isar.chapters.getSync(chap.id!);
-        if (savedChapter != null) {
+        if (manga.chapters.isNotEmpty) {
           final feed = Feed(
               mangaId: mangaId,
-              chapterName: savedChapter.name,
-              date: savedChapter.dateUpload)
-            ..chapter.value = savedChapter;
+              chapterName: chap.name,
+              date: DateTime.now().millisecondsSinceEpoch.toString())
+            ..chapter.value = chap;
           isar.feeds.putSync(feed);
           feed.chapter.saveSync();
         }
