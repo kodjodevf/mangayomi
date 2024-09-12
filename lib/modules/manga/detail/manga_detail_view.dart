@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dar
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -708,6 +709,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               isar.writeTxnSync(() {
                                 for (var chapter in chapters) {
                                   chapter.isBookmarked = !chapter.isBookmarked!;
+                                  ref
+                                      .read(changedItemsManagerProvider(
+                                              managerId: 1)
+                                          .notifier)
+                                      .addUpdatedChapter(chapter, false, false);
                                   isar.chapters.putSync(
                                       chapter..manga.value = widget.manga);
                                   chapter.manga.saveSync();
@@ -748,11 +754,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   if (!chapter.isRead!) {
                                     chapter.lastPageRead = "1";
                                   }
+                                  ref
+                                      .read(changedItemsManagerProvider(
+                                              managerId: 1)
+                                          .notifier)
+                                      .addUpdatedChapter(chapter, false, false);
                                   isar.chapters.putSync(
                                       chapter..manga.value = widget.manga);
                                   chapter.manga.saveSync();
                                   if (chapter.isRead!) {
                                     chapter.updateTrackChapterRead(ref);
+                                    chapter.syncProgressAfterChapterRead(ref);
                                   }
                                 }
                               });
@@ -793,6 +805,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     if (!chapters[i].isRead!) {
                                       chapters[i].isRead = true;
                                       chapters[i].lastPageRead = "1";
+                                      ref
+                                          .read(changedItemsManagerProvider(
+                                                  managerId: 1)
+                                              .notifier)
+                                          .addUpdatedChapter(
+                                              chapters[i], false, false);
                                       isar.chapters.putSync(chapters[i]
                                         ..manga.value = widget.manga);
                                       chapters[i].manga.saveSync();
@@ -805,6 +823,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       .read(chaptersListStateProvider.notifier)
                                       .clear();
                                 });
+                                chapters[index + 1]
+                                    .syncProgressAfterChapterRead(ref);
                               },
                               child: Stack(
                                 children: [

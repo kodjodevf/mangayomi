@@ -10,10 +10,12 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/feed/feed_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/player/player_screen.dart';
+import 'package:mangayomi/modules/more/settings/sync/sync.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
@@ -112,6 +114,15 @@ class RouterNotifier extends ChangeNotifier {
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const HistoryScreen(),
+                ),
+              ),
+              GoRoute(
+                name: "feed",
+                path: '/feed',
+                builder: (context, state) => const FeedScreen(),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const FeedScreen(),
                 ),
               ),
               GoRoute(
@@ -324,6 +335,19 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: const TrackScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/sync",
+          name: "sync",
+          builder: (context, state) {
+            return const SyncScreen();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const SyncScreen(),
             );
           },
         ),

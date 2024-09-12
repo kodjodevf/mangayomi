@@ -42,6 +42,11 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.sync_outlined,
                 onTap: () => context.push('/track')),
             ListTileWidget(
+                title: l10n.syncing,
+                subtitle: l10n.syncing_subtitle,
+                icon: Icons.cloud_sync_outlined,
+                onTap: () => context.push('/sync')),
+            ListTileWidget(
                 title: l10n.browse,
                 subtitle: l10n.browse_subtitle,
                 icon: Icons.explore_rounded,

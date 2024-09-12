@@ -4,6 +4,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -155,8 +156,11 @@ class _ChapterListTileState extends State<ChapterListTile> {
             setState(() {
               isBookmarked = !isBookmarked;
             });
-            isar.writeTxnSync(() =>
-                isar.chapters.putSync(chapter..isBookmarked = isBookmarked));
+            isar.writeTxnSync(() => {
+                  addUpdatedChapterIndependentProvider.call(
+                      chapter, false, false),
+                  isar.chapters.putSync(chapter..isBookmarked = isBookmarked),
+                });
           },
           icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
               color: context.primaryColor),

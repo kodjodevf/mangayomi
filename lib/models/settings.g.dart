@@ -441,28 +441,38 @@ const SettingsSchema = CollectionSchema(
       name: r'startDatebackup',
       type: IsarType.long,
     ),
-    r'themeIsDark': PropertySchema(
+    r'syncAfterReading': PropertySchema(
       id: 80,
+      name: r'syncAfterReading',
+      type: IsarType.bool,
+    ),
+    r'syncOnAppLaunch': PropertySchema(
+      id: 81,
+      name: r'syncOnAppLaunch',
+      type: IsarType.bool,
+    ),
+    r'themeIsDark': PropertySchema(
+      id: 82,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 81,
+      id: 83,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'useLibass': PropertySchema(
-      id: 82,
+      id: 84,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 83,
+      id: 85,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 84,
+      id: 86,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -914,11 +924,13 @@ void _settingsSerialize(
     object.sortLibraryManga,
   );
   writer.writeLong(offsets[79], object.startDatebackup);
-  writer.writeBool(offsets[80], object.themeIsDark);
-  writer.writeBool(offsets[81], object.updateProgressAfterReading);
-  writer.writeBool(offsets[82], object.useLibass);
-  writer.writeBool(offsets[83], object.usePageTapZones);
-  writer.writeString(offsets[84], object.userAgent);
+  writer.writeBool(offsets[80], object.syncAfterReading);
+  writer.writeBool(offsets[81], object.syncOnAppLaunch);
+  writer.writeBool(offsets[82], object.themeIsDark);
+  writer.writeBool(offsets[83], object.updateProgressAfterReading);
+  writer.writeBool(offsets[84], object.useLibass);
+  writer.writeBool(offsets[85], object.usePageTapZones);
+  writer.writeString(offsets[86], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -1077,11 +1089,13 @@ Settings _settingsDeserialize(
       allOffsets,
     ),
     startDatebackup: reader.readLongOrNull(offsets[79]),
-    themeIsDark: reader.readBoolOrNull(offsets[80]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[81]),
-    useLibass: reader.readBoolOrNull(offsets[82]),
-    usePageTapZones: reader.readBoolOrNull(offsets[83]),
-    userAgent: reader.readStringOrNull(offsets[84]),
+    syncAfterReading: reader.readBoolOrNull(offsets[80]),
+    syncOnAppLaunch: reader.readBoolOrNull(offsets[81]),
+    themeIsDark: reader.readBoolOrNull(offsets[82]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[83]),
+    useLibass: reader.readBoolOrNull(offsets[84]),
+    usePageTapZones: reader.readBoolOrNull(offsets[85]),
+    userAgent: reader.readStringOrNull(offsets[86]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1375,6 +1389,10 @@ P _settingsDeserializeProp<P>(
     case 83:
       return (reader.readBoolOrNull(offset)) as P;
     case 84:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 85:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 86:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -6759,6 +6777,62 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncAfterReadingIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'syncAfterReading',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncAfterReadingIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'syncAfterReading',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncAfterReadingEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncAfterReading',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncOnAppLaunchIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'syncOnAppLaunch',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncOnAppLaunchIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'syncOnAppLaunch',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      syncOnAppLaunchEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncOnAppLaunch',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> themeIsDarkIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -8017,6 +8091,30 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortBySyncAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncAfterReading', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortBySyncAfterReadingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncAfterReading', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortBySyncOnAppLaunch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnAppLaunch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortBySyncOnAppLaunchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnAppLaunch', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeIsDark', Sort.asc);
@@ -8917,6 +9015,30 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenBySyncAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncAfterReading', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenBySyncAfterReadingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncAfterReading', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenBySyncOnAppLaunch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnAppLaunch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenBySyncOnAppLaunchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnAppLaunch', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'themeIsDark', Sort.asc);
@@ -9401,6 +9523,18 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByStartDatebackup() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDatebackup');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctBySyncAfterReading() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctBySyncOnAppLaunch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncOnAppLaunch');
     });
   }
 
@@ -9977,6 +10111,18 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, int?, QQueryOperations> startDatebackupProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDatebackup');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> syncAfterReadingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> syncOnAppLaunchProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncOnAppLaunch');
     });
   }
 

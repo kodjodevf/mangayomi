@@ -4,6 +4,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/categories/widgets/custom_textfield.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -177,13 +178,22 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                           onPressed: () async {
                                                             await isar.writeTxn(
                                                                 () async {
+                                                              await ref
+                                                                  .read(changedItemsManagerProvider(
+                                                                          managerId:
+                                                                              1)
+                                                                      .notifier)
+                                                                  .addDeletedCategoryAsync(
+                                                                      _entries[
+                                                                          index], false);
                                                               await isar
                                                                   .categorys
                                                                   .delete(_entries[
                                                                           index]
                                                                       .id!);
                                                             });
-                                                            if (context.mounted) {
+                                                            if (context
+                                                                .mounted) {
                                                               Navigator.pop(
                                                                   context);
                                                             }
