@@ -12,7 +12,7 @@ Future<HttpServer> m3u8Server(
   final server = await io.serve(handler, 'localhost', 3000);
   if (kDebugMode) {
     print(
-        '[INFO-M3U8_SERVER] Listening on running on http://${server.address.host}:${server.port}');
+        '[INFO-M3U8-SERVER] Listening on http://${server.address.host}:${server.port}');
   }
 
   return server;
