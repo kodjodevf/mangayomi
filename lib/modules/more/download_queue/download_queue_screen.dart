@@ -55,7 +55,8 @@ class DownloadQueueScreen extends ConsumerWidget {
             ),
             body: GroupedListView<Download, String>(
               elements: entries,
-              groupBy: (element) => element.chapter.value!.manga.value!.source!,
+              groupBy: (element) =>
+                  element.chapter.value?.manga.value?.source ?? "",
               groupSeparatorBuilder: (String groupByValue) {
                 final sourceQueueLength = entries
                     .where((element) =>
@@ -150,8 +151,12 @@ class DownloadQueueScreen extends ConsumerWidget {
                             } else if (value.toString() == 'CancelAll') {
                               final chapterIds = entries
                                   .where((e) =>
-                                      e.chapter.value!.name ==
-                                      element.chapter.value!.name)
+                                      e.chapter.value!.manga.value!.name ==
+                                          element.chapter.value!.manga.value!
+                                              .name &&
+                                      e.chapter.value!.manga.value!.source ==
+                                          element.chapter.value!.manga.value!
+                                              .source)
                                   .map((e) => e.chapterId)
                                   .toList();
                               for (var chapterId in chapterIds) {
@@ -165,21 +170,24 @@ class DownloadQueueScreen extends ConsumerWidget {
                                     [];
                                 await FileDownloader()
                                     .cancelTasksWithIds(taskIds);
-                                await Future.delayed(
-                                    const Duration(milliseconds: 300));
-                                final chapterD = isar.downloads
-                                    .filter()
-                                    .chapterIdEqualTo(chapterId)
-                                    .findFirstSync();
-                                if (chapterD != null) {
-                                  final verifyId =
-                                      isar.downloads.getSync(chapterD.id!);
-                                  isar.writeTxnSync(() {
-                                    if (verifyId != null) {
-                                      isar.downloads.deleteSync(chapterD.id!);
+                                Future.delayed(const Duration(seconds: 2)).then(
+                                  (value) {
+                                    final chapterD = isar.downloads
+                                        .filter()
+                                        .chapterIdEqualTo(chapterId)
+                                        .findFirstSync();
+                                    if (chapterD != null) {
+                                      final verifyId =
+                                          isar.downloads.getSync(chapterD.id!);
+                                      isar.writeTxnSync(() {
+                                        if (verifyId != null) {
+                                          isar.downloads
+                                              .deleteSync(chapterD.id!);
+                                        }
+                                      });
                                     }
-                                  });
-                                }
+                                  },
+                                );
                               }
                             }
                           },
@@ -196,9 +204,9 @@ class DownloadQueueScreen extends ConsumerWidget {
                   ),
                 );
               },
-              itemComparator: (item1, item2) => item1
-                  .chapter.value!.manga.value!.source!
-                  .compareTo(item2.chapter.value!.manga.value!.source!),
+              itemComparator: (item1, item2) =>
+                  (item1.chapter.value?.manga.value?.source ?? "").compareTo(
+                      item2.chapter.value?.manga.value?.source ?? ""),
               order: GroupedListOrder.DESC,
             ),
           );
