@@ -338,7 +338,7 @@ class Settings {
           .map((e) => FilterScanlator.fromJson(e))
           .toList();
     }
-    flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'];
+    flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'] is double ? json['flexColorSchemeBlendLevel'] : (json['flexColorSchemeBlendLevel'] as int).toDouble();
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
     id = json['id'];
     incognitoMode = json['incognitoMode'];
