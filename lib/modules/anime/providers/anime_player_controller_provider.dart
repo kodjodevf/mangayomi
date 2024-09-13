@@ -141,6 +141,7 @@ class AnimeStreamController extends _$AnimeStreamController {
           .filter()
           .mangaIdEqualTo(getAnime().id)
           .findFirstSync())!
+        ..chapterId = episode.id
         ..chapter.value = episode
         ..date = DateTime.now().millisecondsSinceEpoch.toString();
     }
