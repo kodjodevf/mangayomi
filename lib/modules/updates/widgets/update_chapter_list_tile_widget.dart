@@ -10,10 +10,10 @@ import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/headers.dart';
 
-class FeedChapterListTileWidget extends ConsumerWidget {
+class UpdateChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
   final bool sourceExist;
-  const FeedChapterListTileWidget({
+  const UpdateChapterListTileWidget({
     required this.chapter,
     required this.sourceExist,
     super.key,

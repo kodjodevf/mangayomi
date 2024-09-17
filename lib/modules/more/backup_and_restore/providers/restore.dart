@@ -9,7 +9,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/feed.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -61,8 +61,8 @@ void doRestore(DoRestoreRef ref,
       final extensionsPref = (backup["extensions_preferences"] as List?)
           ?.map((e) => SourcePreference.fromJson(e))
           .toList();
-      final feeds =
-          (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
+      final updates =
+          (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
@@ -100,19 +100,19 @@ void doRestore(DoRestoreRef ref,
               }
             }
 
-            isar.feeds.clearSync();
-            if (feeds != null) {
+            isar.updates.clearSync();
+            if (updates != null) {
               final tempChapters =
                   isar.chapters.filter().idIsNotNull().findAllSync().toList();
-              for (var feed in feeds) {
+              for (var update in updates) {
                 final matchingChapter = tempChapters
                     .where((chapter) =>
-                        chapter.mangaId == feed.mangaId &&
-                        chapter.name == feed.chapterName)
+                        chapter.mangaId == update.mangaId &&
+                        chapter.name == update.chapterName)
                     .firstOrNull;
                 if (matchingChapter != null) {
-                  isar.feeds.putSync(feed..chapter.value = matchingChapter);
-                  feed.chapter.saveSync();
+                  isar.updates.putSync(update..chapter.value = matchingChapter);
+                  update.chapter.saveSync();
                 }
               }
             }

@@ -1,10 +1,10 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/models/chapter.dart';
-part 'feed.g.dart';
+part 'update.g.dart';
 
 @collection
-@Name("Feed")
-class Feed {
+@Name("Update")
+class Update {
   Id? id;
 
   int? mangaId;
@@ -15,14 +15,14 @@ class Feed {
 
   String? date;
 
-  Feed({
+  Update({
     this.id = Isar.autoIncrement,
     required this.mangaId,
     required this.chapterName,
     required this.date,
   });
 
-  Feed.fromJson(Map<String, dynamic> json) {
+  Update.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     mangaId = json['mangaId'];
     chapterName = json['chapterName'];

@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/feed.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -19,9 +19,9 @@ Stream<List<History>> getAllHistoryStream(GetAllHistoryStreamRef ref,
 }
 
 @riverpod
-Stream<List<Feed>> getAllFeedStream(GetAllFeedStreamRef ref,
+Stream<List<Update>> getAllUpdateStream(GetAllUpdateStreamRef ref,
     {required bool isManga}) async* {
-  yield* isar.feeds
+  yield* isar.updates
       .filter()
       .idIsNotNull()
       .and()

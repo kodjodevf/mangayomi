@@ -10,7 +10,7 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
-import 'package:mangayomi/modules/feed/feed_screen.dart';
+import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
@@ -19,7 +19,6 @@ import 'package:mangayomi/modules/more/settings/sync/sync.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
-import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
@@ -117,12 +116,12 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "feed",
-                path: '/feed',
-                builder: (context, state) => const FeedScreen(),
+                name: "updates",
+                path: '/updates',
+                builder: (context, state) => const UpdatesScreen(),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const FeedScreen(),
+                  child: const UpdatesScreen(),
                 ),
               ),
               GoRoute(
@@ -144,15 +143,6 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
             ]),
-        GoRoute(
-          name: "updates",
-          path: '/updates',
-          builder: (context, state) => const UpdatesScreen(),
-          pageBuilder: (context, state) => transitionPage(
-            key: state.pageKey,
-            child: const UpdatesScreen(),
-          ),
-        ),
         GoRoute(
             path: "/mangaHome",
             name: "mangaHome",

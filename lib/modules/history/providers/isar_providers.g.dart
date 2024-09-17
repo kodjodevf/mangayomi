@@ -158,29 +158,30 @@ class _GetAllHistoryStreamProviderElement
   bool get isManga => (origin as GetAllHistoryStreamProvider).isManga;
 }
 
-String _$getAllFeedStreamHash() => r'3d60bca5377bf6fc2aee36e7bec5b319b2377add';
+String _$getAllUpdateStreamHash() =>
+    r'9f62b36ef0b268ee8c3cc93a10f8963def8dfbb0';
 
-/// See also [getAllFeedStream].
-@ProviderFor(getAllFeedStream)
-const getAllFeedStreamProvider = GetAllFeedStreamFamily();
+/// See also [getAllUpdateStream].
+@ProviderFor(getAllUpdateStream)
+const getAllUpdateStreamProvider = GetAllUpdateStreamFamily();
 
-/// See also [getAllFeedStream].
-class GetAllFeedStreamFamily extends Family<AsyncValue<List<Feed>>> {
-  /// See also [getAllFeedStream].
-  const GetAllFeedStreamFamily();
+/// See also [getAllUpdateStream].
+class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
+  /// See also [getAllUpdateStream].
+  const GetAllUpdateStreamFamily();
 
-  /// See also [getAllFeedStream].
-  GetAllFeedStreamProvider call({
+  /// See also [getAllUpdateStream].
+  GetAllUpdateStreamProvider call({
     required bool isManga,
   }) {
-    return GetAllFeedStreamProvider(
+    return GetAllUpdateStreamProvider(
       isManga: isManga,
     );
   }
 
   @override
-  GetAllFeedStreamProvider getProviderOverride(
-    covariant GetAllFeedStreamProvider provider,
+  GetAllUpdateStreamProvider getProviderOverride(
+    covariant GetAllUpdateStreamProvider provider,
   ) {
     return call(
       isManga: provider.isManga,
@@ -199,32 +200,33 @@ class GetAllFeedStreamFamily extends Family<AsyncValue<List<Feed>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getAllFeedStreamProvider';
+  String? get name => r'getAllUpdateStreamProvider';
 }
 
-/// See also [getAllFeedStream].
-class GetAllFeedStreamProvider extends AutoDisposeStreamProvider<List<Feed>> {
-  /// See also [getAllFeedStream].
-  GetAllFeedStreamProvider({
+/// See also [getAllUpdateStream].
+class GetAllUpdateStreamProvider
+    extends AutoDisposeStreamProvider<List<Update>> {
+  /// See also [getAllUpdateStream].
+  GetAllUpdateStreamProvider({
     required bool isManga,
   }) : this._internal(
-          (ref) => getAllFeedStream(
-            ref as GetAllFeedStreamRef,
+          (ref) => getAllUpdateStream(
+            ref as GetAllUpdateStreamRef,
             isManga: isManga,
           ),
-          from: getAllFeedStreamProvider,
-          name: r'getAllFeedStreamProvider',
+          from: getAllUpdateStreamProvider,
+          name: r'getAllUpdateStreamProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getAllFeedStreamHash,
-          dependencies: GetAllFeedStreamFamily._dependencies,
+                  : _$getAllUpdateStreamHash,
+          dependencies: GetAllUpdateStreamFamily._dependencies,
           allTransitiveDependencies:
-              GetAllFeedStreamFamily._allTransitiveDependencies,
+              GetAllUpdateStreamFamily._allTransitiveDependencies,
           isManga: isManga,
         );
 
-  GetAllFeedStreamProvider._internal(
+  GetAllUpdateStreamProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -238,12 +240,12 @@ class GetAllFeedStreamProvider extends AutoDisposeStreamProvider<List<Feed>> {
 
   @override
   Override overrideWith(
-    Stream<List<Feed>> Function(GetAllFeedStreamRef provider) create,
+    Stream<List<Update>> Function(GetAllUpdateStreamRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: GetAllFeedStreamProvider._internal(
-        (ref) => create(ref as GetAllFeedStreamRef),
+      override: GetAllUpdateStreamProvider._internal(
+        (ref) => create(ref as GetAllUpdateStreamRef),
         from: from,
         name: null,
         dependencies: null,
@@ -255,13 +257,13 @@ class GetAllFeedStreamProvider extends AutoDisposeStreamProvider<List<Feed>> {
   }
 
   @override
-  AutoDisposeStreamProviderElement<List<Feed>> createElement() {
-    return _GetAllFeedStreamProviderElement(this);
+  AutoDisposeStreamProviderElement<List<Update>> createElement() {
+    return _GetAllUpdateStreamProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllFeedStreamProvider && other.isManga == isManga;
+    return other is GetAllUpdateStreamProvider && other.isManga == isManga;
   }
 
   @override
@@ -273,18 +275,18 @@ class GetAllFeedStreamProvider extends AutoDisposeStreamProvider<List<Feed>> {
   }
 }
 
-mixin GetAllFeedStreamRef on AutoDisposeStreamProviderRef<List<Feed>> {
+mixin GetAllUpdateStreamRef on AutoDisposeStreamProviderRef<List<Update>> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
 }
 
-class _GetAllFeedStreamProviderElement
-    extends AutoDisposeStreamProviderElement<List<Feed>>
-    with GetAllFeedStreamRef {
-  _GetAllFeedStreamProviderElement(super.provider);
+class _GetAllUpdateStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<Update>>
+    with GetAllUpdateStreamRef {
+  _GetAllUpdateStreamProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as GetAllFeedStreamProvider).isManga;
+  bool get isManga => (origin as GetAllUpdateStreamProvider).isManga;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

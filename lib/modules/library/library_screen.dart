@@ -16,7 +16,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/feed.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
@@ -59,26 +59,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     botToast(context.l10n.updating_library,
         fontSize: 13, second: 1600, alignY: 0.8);
     int numbers = 0;
-    try {
-      for (var manga in mangaList) {
-        ref
-            .watch(updateMangaDetailProvider(mangaId: manga.id, isInit: false)
-                .future)
-            .then((value) {
-          numbers++;
-        });
-      }
-      await Future.doWhile(() async {
-        await Future.delayed(const Duration(seconds: 1));
-        if (mangaList.length == numbers) {
-          return false;
-        }
-        return true;
-      });
-      BotToast.cleanAll();
-    } catch (e) {
-      BotToast.cleanAll();
+    for (var manga in mangaList) {
+      try {
+        await ref.read(
+            updateMangaDetailProvider(mangaId: manga.id, isInit: false).future);
+      } catch (_) {}
+      numbers++;
     }
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      if (mangaList.length == numbers) {
+        return false;
+      }
+      return true;
+    });
+    BotToast.cleanAll();
   }
 
   @override
@@ -1165,7 +1160,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 .notifier)
                                             .addUpdatedChapter(
                                                 chapter, true, false);
-                                        isar.feeds
+                                        isar.updates
                                             .filter()
                                             .mangaIdEqualTo(chapter.mangaId)
                                             .chapterNameEqualTo(chapter.name)

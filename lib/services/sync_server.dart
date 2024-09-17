@@ -4,7 +4,7 @@ import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/eval/dart/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed_items.dart';
-import 'package:mangayomi/models/feed.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -206,7 +206,7 @@ class SyncServer extends _$SyncServer {
     datas["chapters"] = data["chapters"];
     datas["tracks"] = data["tracks"];
     datas["history"] = data["history"];
-    datas["feeds"] = data["feeds"];
+    datas["updates"] = data["updates"];
     var encodedJson = jsonEncode(datas);
     return sha256.convert(utf8.encode(encodedJson)).toString();
   }
@@ -296,13 +296,13 @@ class SyncServer extends _$SyncServer {
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions_preferences": sourcePreferences});
-    final feeds = isar.feeds
+    final updates = isar.updates
         .filter()
         .idIsNotNull()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();
-    datas.addAll({"feeds": feeds});
+    datas.addAll({"updates": updates});
     return datas;
   }
 
@@ -322,8 +322,8 @@ class SyncServer extends _$SyncServer {
         final history = (backup["history"] as List?)
             ?.map((e) => History.fromJson(e))
             .toList();
-        final feeds =
-            (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
+        final updates =
+            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -350,19 +350,19 @@ class SyncServer extends _$SyncServer {
                 }
               }
 
-              isar.feeds.clearSync();
-              if (feeds != null) {
+              isar.updates.clearSync();
+              if (updates != null) {
                 final tempChapters =
                     isar.chapters.filter().idIsNotNull().findAllSync().toList();
-                for (var feed in feeds) {
+                for (var update in updates) {
                   final matchingChapter = tempChapters
                       .where((chapter) =>
-                          chapter.mangaId == feed.mangaId &&
-                          chapter.name == feed.chapterName)
+                          chapter.mangaId == update.mangaId &&
+                          chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
-                    isar.feeds.putSync(feed..chapter.value = matchingChapter);
-                    feed.chapter.saveSync();
+                    isar.updates.putSync(update..chapter.value = matchingChapter);
+                    update.chapter.saveSync();
                   }
                 }
               }
@@ -416,8 +416,8 @@ class SyncServer extends _$SyncServer {
         final extensionsPref = (backup["extensions_preferences"] as List?)
             ?.map((e) => SourcePreference.fromJson(e))
             .toList();
-        final feeds =
-            (backup["feeds"] as List?)?.map((e) => Feed.fromJson(e)).toList();
+        final updates =
+            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -444,19 +444,19 @@ class SyncServer extends _$SyncServer {
                 }
               }
 
-              isar.feeds.clearSync();
-              if (feeds != null) {
+              isar.updates.clearSync();
+              if (updates != null) {
                 final tempChapters =
                     isar.chapters.filter().idIsNotNull().findAllSync().toList();
-                for (var feed in feeds) {
+                for (var update in updates) {
                   final matchingChapter = tempChapters
                       .where((chapter) =>
-                          chapter.mangaId == feed.mangaId &&
-                          chapter.name == feed.chapterName)
+                          chapter.mangaId == update.mangaId &&
+                          chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
-                    isar.feeds.putSync(feed..chapter.value = matchingChapter);
-                    feed.chapter.saveSync();
+                    isar.updates.putSync(update..chapter.value = matchingChapter);
+                    update.chapter.saveSync();
                   }
                 }
               }

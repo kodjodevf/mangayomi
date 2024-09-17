@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/feed.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
@@ -42,11 +42,10 @@ class MainScreen extends ConsumerWidget {
         bool isReadingScreen =
             location == '/mangareaderview' || location == '/animePlayerView';
         int currentIndex = switch (location) {
-          null => 0,
-          '/MangaLibrary' => 0,
+          null || '/MangaLibrary' => 0,
           '/AnimeLibrary' => 1,
-          '/history' => 2,
-          '/feed' => 3,
+          '/updates' => 2,
+          '/history' => 3,
           '/browse' => 4,
           _ => 5,
         };
@@ -98,7 +97,7 @@ class MainScreen extends ConsumerWidget {
                                   != '/MangaLibrary' &&
                                         != '/AnimeLibrary' &&
                                         != '/history' &&
-                                        != '/feed' &&
+                                        != '/updates' &&
                                         != '/browse' &&
                                         != '/more' =>
                                     0,
@@ -113,103 +112,112 @@ class MainScreen extends ConsumerWidget {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                   ),
-                                  child: NavigationRail(
-                                    labelType: NavigationRailLabelType.all,
-                                    useIndicator: true,
-                                    destinations: [
-                                      NavigationRailDestination(
-                                          selectedIcon: const Icon(
-                                              Icons.collections_bookmark),
-                                          icon: const Icon(Icons
-                                              .collections_bookmark_outlined),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(l10n.manga))),
-                                      NavigationRailDestination(
-                                          selectedIcon: const Icon(
-                                              Icons.video_collection),
-                                          icon: const Icon(
-                                              Icons.video_collection_outlined),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(l10n.anime))),
-                                      NavigationRailDestination(
-                                          selectedIcon:
-                                              const Icon(Icons.history),
-                                          icon: const Icon(
-                                              Icons.history_outlined),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(l10n.history))),
-                                      NavigationRailDestination(
-                                          selectedIcon: Stack(
-                                            children: [
-                                              const Icon(Icons.rss_feed),
-                                              Positioned(
-                                                  right: 0,
-                                                  top: 0,
-                                                  child: _feedTotalNumbers(
-                                                      ref, false))
-                                            ],
-                                          ),
-                                          icon: Stack(
-                                            children: [
-                                              const Icon(
-                                                  Icons.rss_feed_outlined),
-                                              Positioned(
-                                                  right: 0,
-                                                  top: 0,
-                                                  child: _feedTotalNumbers(
-                                                      ref, false))
-                                            ],
-                                          ),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Stack(
-                                                children: [
-                                                  Text(l10n.feed),
-                                                ],
-                                              ))),
-                                      NavigationRailDestination(
-                                          selectedIcon:
-                                              const Icon(Icons.explore),
-                                          icon: const Icon(
-                                              Icons.explore_outlined),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(l10n.browse))),
-                                      NavigationRailDestination(
-                                          selectedIcon:
-                                              const Icon(Icons.more_horiz),
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(l10n.more))),
-                                    ],
-                                    selectedIndex: currentIndex,
-                                    onDestinationSelected: (newIndex) {
-                                      if (newIndex == 0) {
-                                        route.go('/MangaLibrary');
-                                      } else if (newIndex == 1) {
-                                        route.go('/AnimeLibrary');
-                                      } else if (newIndex == 2) {
-                                        route.go('/history');
-                                      } else if (newIndex == 3) {
-                                        route.go('/feed');
-                                      } else if (newIndex == 4) {
-                                        route.go('/browse');
-                                      } else if (newIndex == 5) {
-                                        route.go('/more');
-                                      }
-                                    },
-                                  ),
+                                  child: Builder(builder: (context) {
+                                    final updatesTotalNumbersWidget = Positioned(
+                                        right: 0,
+                                        top: 0,
+                                        child: _updatesTotalNumbers(ref, false));
+                                    final extensionUpdateTotalNumbersWidget =
+                                        Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: _extensionUpdateTotalNumbers(
+                                                ref));
+                                    return NavigationRail(
+                                      labelType: NavigationRailLabelType.all,
+                                      useIndicator: true,
+                                      destinations: [
+                                        NavigationRailDestination(
+                                            selectedIcon: const Icon(
+                                                Icons.collections_bookmark),
+                                            icon: const Icon(Icons
+                                                .collections_bookmark_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.manga))),
+                                        NavigationRailDestination(
+                                            selectedIcon: const Icon(
+                                                Icons.video_collection),
+                                            icon: const Icon(Icons
+                                                .video_collection_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.anime))),
+                                        NavigationRailDestination(
+                                            selectedIcon: Stack(
+                                              children: [
+                                                const Icon(Icons.new_releases),
+                                                updatesTotalNumbersWidget
+                                              ],
+                                            ),
+                                            icon: Stack(
+                                              children: [
+                                                const Icon(Icons
+                                                    .new_releases_outlined),
+                                                updatesTotalNumbersWidget
+                                              ],
+                                            ),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Stack(
+                                                  children: [
+                                                    Text(l10n.updates),
+                                                  ],
+                                                ))),
+                                        NavigationRailDestination(
+                                            selectedIcon:
+                                                const Icon(Icons.history),
+                                            icon: const Icon(
+                                                Icons.history_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.history))),
+                                        NavigationRailDestination(
+                                            selectedIcon: Stack(
+                                              children: [
+                                                const Icon(Icons.explore),
+                                                extensionUpdateTotalNumbersWidget
+                                              ],
+                                            ),
+                                            icon: Stack(
+                                              children: [
+                                                const Icon(
+                                                    Icons.explore_outlined),
+                                                extensionUpdateTotalNumbersWidget
+                                              ],
+                                            ),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.browse))),
+                                        NavigationRailDestination(
+                                            selectedIcon:
+                                                const Icon(Icons.more_horiz),
+                                            icon: const Icon(
+                                                Icons.more_horiz_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.more))),
+                                      ],
+                                      selectedIndex: currentIndex,
+                                      onDestinationSelected: (newIndex) {
+                                        final fn = switch (newIndex) {
+                                          0 => route.go('/MangaLibrary'),
+                                          1 => route.go('/AnimeLibrary'),
+                                          2 => route.go('/updates'),
+                                          3 => route.go('/history'),
+                                          4 => route.go('/browse'),
+                                          _ => route.go('/more'),
+                                        };
+                                        fn;
+                                      },
+                                    );
+                                  }),
                                 ),
                                 Positioned(
                                     right: 18,
@@ -234,7 +242,7 @@ class MainScreen extends ConsumerWidget {
                               != '/MangaLibrary' &&
                                     != '/AnimeLibrary' &&
                                     != '/history' &&
-                                    != '/feed' &&
+                                    != '/updates' &&
                                     != '/browse' &&
                                     != '/more' =>
                                 0,
@@ -263,22 +271,24 @@ class MainScreen extends ConsumerWidget {
                                   icon: const Icon(
                                       Icons.video_collection_outlined),
                                   label: l10n.anime),
+                              Stack(
+                                children: [
+                                  NavigationDestination(
+                                      selectedIcon:
+                                          const Icon(Icons.new_releases),
+                                      icon: const Icon(
+                                          Icons.new_releases_outlined),
+                                      label: l10n.updates),
+                                  Positioned(
+                                      right: 14,
+                                      top: 3,
+                                      child: _updatesTotalNumbers(ref, true)),
+                                ],
+                              ),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.history),
                                   icon: const Icon(Icons.history_outlined),
                                   label: l10n.history),
-                              Stack(
-                                children: [
-                                  NavigationDestination(
-                                      selectedIcon: const Icon(Icons.rss_feed),
-                                      icon: const Icon(Icons.rss_feed_outlined),
-                                      label: l10n.feed),
-                                  Positioned(
-                                      right: 14,
-                                      top: 3,
-                                      child: _feedTotalNumbers(ref, true)),
-                                ],
-                              ),
                               Stack(
                                 children: [
                                   NavigationDestination(
@@ -297,19 +307,15 @@ class MainScreen extends ConsumerWidget {
                                   label: l10n.more),
                             ],
                             onDestinationSelected: (newIndex) {
-                              if (newIndex == 0) {
-                                route.go('/MangaLibrary');
-                              } else if (newIndex == 1) {
-                                route.go('/AnimeLibrary');
-                              } else if (newIndex == 2) {
-                                route.go('/history');
-                              } else if (newIndex == 3) {
-                                route.go('/feed');
-                              } else if (newIndex == 4) {
-                                route.go('/browse');
-                              } else if (newIndex == 5) {
-                                route.go('/more');
-                              }
+                              final fn = switch (newIndex) {
+                                0 => route.go('/MangaLibrary'),
+                                1 => route.go('/AnimeLibrary'),
+                                2 => route.go('/updates'),
+                                3 => route.go('/history'),
+                                4 => route.go('/browse'),
+                                _ => route.go('/more'),
+                              };
+                              fn;
                             },
                           ),
                         ),
@@ -366,9 +372,9 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
       });
 }
 
-Widget _feedTotalNumbers(WidgetRef ref, bool mobile) {
+Widget _updatesTotalNumbers(WidgetRef ref, bool mobile) {
   return StreamBuilder(
-      stream: isar.feeds.filter().idIsNotNull().watch(fireImmediately: true),
+      stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final entries = snapshot.data!.where((element) {
