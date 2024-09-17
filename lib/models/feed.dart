@@ -25,7 +25,7 @@ class Feed {
   Feed.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     mangaId = json['mangaId'];
-    mangaId = json['chapterName'];
+    chapterName = json['chapterName'];
     date = json['date'];
   }
 
