@@ -4,6 +4,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:path/path.dart' as path;
 
 class OkruExtractor {
   final InterceptedClient client =
@@ -25,6 +26,7 @@ class OkruExtractor {
           .substringAfter("ondemandHls\\\":\\\"")
           .substringBefore("\\\"")
           .replaceAll("\\\\u0026", "&"));
+
       final masterPlaylistResponse = await client.get(playlistUrl);
       final masterPlaylist = masterPlaylistResponse.body;
 
@@ -35,12 +37,10 @@ class OkruExtractor {
           .map((it) {
         final resolution =
             "${it.substringAfter("RESOLUTION=").substringBefore("\n").substringAfter("x").substringBefore(",")}p";
-        final videoUrl = "${Uri(
-          scheme: playlistUrl.scheme,
-          host: playlistUrl.host,
-          pathSegments: playlistUrl.pathSegments
-              .sublist(0, playlistUrl.pathSegments.length - 1),
-        ).toString()}/${it.substringAfter("\n").substringBefore("\n")}";
+        final m3u8Host =
+            "${playlistUrl.scheme}://${playlistUrl.host}${path.dirname(playlistUrl.path)}";
+        final videoUrl =
+            "$m3u8Host/${it.substringAfter("\n").substringBefore("\n")}";
         return Video(videoUrl,
             "${prefix.isNotEmpty ? prefix : ""}Okru:$resolution", videoUrl);
       }).toList();
