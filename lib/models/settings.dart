@@ -333,12 +333,12 @@ class Settings {
     doubleTapAnimationSpeed = json['doubleTapAnimationSpeed'];
     downloadLocation = json['downloadLocation'];
     downloadOnlyOnWifi = json['downloadOnlyOnWifi'];
-    if (json['filterScanlatorList'] != null) {
-      filterScanlatorList = (json['filterScanlatorList'] as List)
-          .map((e) => FilterScanlator.fromJson(e))
-          .toList();
-    }
-    flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'] is double ? json['flexColorSchemeBlendLevel'] : (json['flexColorSchemeBlendLevel'] as int).toDouble();
+    filterScanlatorList = (json['filterScanlatorList'] as List?)
+        ?.map((e) => FilterScanlator.fromJson(e))
+        .toList();
+    flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'] is double
+        ? json['flexColorSchemeBlendLevel']
+        : (json['flexColorSchemeBlendLevel'] as int).toDouble();
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
     id = json['id'];
     incognitoMode = json['incognitoMode'];
@@ -383,7 +383,9 @@ class Settings {
           .map((e) => SortChapter.fromJson(e))
           .toList();
     }
-    sortLibraryAnime = json['sortLibraryAnime'];
+    sortLibraryAnime = json['sortLibraryAnime'] != null
+        ? SortLibraryManga.fromJson(json['sortLibraryAnime'])
+        : null;
     sortLibraryManga = json['sortLibraryManga'] != null
         ? SortLibraryManga.fromJson(json['sortLibraryManga'])
         : null;
@@ -404,7 +406,9 @@ class Settings {
     markEpisodeAsSeenType = json['markEpisodeAsSeenType'];
     defaultSkipIntroLength = json['defaultSkipIntroLength'];
     defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
-    defaultPlayBackSpeed = json['defaultPlayBackSpeed'] is double ? json['defaultPlayBackSpeed'] : (json['defaultPlayBackSpeed'] as int).toDouble();
+    defaultPlayBackSpeed = json['defaultPlayBackSpeed'] is double
+        ? json['defaultPlayBackSpeed']
+        : (json['defaultPlayBackSpeed'] as int).toDouble();
     updateProgressAfterReading = json['updateProgressAfterReading'];
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
@@ -442,21 +446,16 @@ class Settings {
         'animeLibraryShowNumbersOfItems': animeLibraryShowNumbersOfItems,
         'autoExtensionsUpdates': autoExtensionsUpdates,
         'backgroundColor': backgroundColor.index,
-        if (chapterFilterBookmarkedList != null)
-          'chapterFilterBookmarkedList':
-              chapterFilterBookmarkedList!.map((v) => v.toJson()).toList(),
-        if (chapterFilterDownloadedList != null)
-          'chapterFilterDownloadedList':
-              chapterFilterDownloadedList!.map((v) => v.toJson()).toList(),
-        if (chapterFilterUnreadList != null)
-          'chapterFilterUnreadList':
-              chapterFilterUnreadList!.map((v) => v.toJson()).toList(),
-        if (chapterPageIndexList != null)
-          'chapterPageIndexList':
-              chapterPageIndexList!.map((v) => v.toJson()).toList(),
-        if (chapterPageUrlsList != null)
-          'chapterPageUrlsList':
-              chapterPageUrlsList!.map((v) => v.toJson()).toList(),
+        'chapterFilterBookmarkedList':
+            chapterFilterBookmarkedList?.map((v) => v.toJson()).toList(),
+        'chapterFilterDownloadedList':
+            chapterFilterDownloadedList?.map((v) => v.toJson()).toList(),
+        'chapterFilterUnreadList':
+            chapterFilterUnreadList?.map((v) => v.toJson()).toList(),
+        'chapterPageIndexList':
+            chapterPageIndexList?.map((v) => v.toJson()).toList(),
+        'chapterPageUrlsList':
+            chapterPageUrlsList?.map((v) => v.toJson()).toList(),
         'checkForExtensionUpdates': checkForExtensionUpdates,
         'cookiesList': cookiesList,
         'cropBorders': cropBorders,
@@ -485,28 +484,23 @@ class Settings {
         'libraryShowContinueReadingButton': libraryShowContinueReadingButton,
         'libraryShowLanguage': libraryShowLanguage,
         'libraryShowNumbersOfItems': libraryShowNumbersOfItems,
-        if (locale != null) 'locale': locale!.toJson(),
+        'locale': locale?.toJson(),
         'onlyIncludePinnedSources': onlyIncludePinnedSources,
         'pagePreloadAmount': pagePreloadAmount,
-        if (personalPageModeList != null)
-          'personalPageModeList':
-              personalPageModeList!.map((v) => v.toJson()).toList(),
-        if (personalReaderModeList != null)
-          'personalReaderModeList':
-              personalReaderModeList!.map((v) => v.toJson()).toList(),
+        'personalPageModeList':
+            personalPageModeList?.map((v) => v.toJson()).toList(),
+        'personalReaderModeList':
+            personalReaderModeList?.map((v) => v.toJson()).toList(),
         'pureBlackDarkMode': pureBlackDarkMode,
         'relativeTimesTamps': relativeTimesTamps,
         'saveAsCBZArchive': saveAsCBZArchive,
         'scaleType': scaleType.index,
         'showNSFW': showNSFW,
         'showPagesNumber': showPagesNumber,
-        if (sortChapterList != null)
-          'sortChapterList': sortChapterList!.map((v) => v.toJson()).toList(),
-        if (autoScrollPages != null)
-          'autoScrollPages': autoScrollPages!.map((v) => v.toJson()).toList(),
-        'sortLibraryAnime': sortLibraryAnime,
-        if (sortLibraryManga != null)
-          'sortLibraryManga': sortLibraryManga!.toJson(),
+        'sortChapterList': sortChapterList?.map((v) => v.toJson()).toList(),
+        'autoScrollPages': autoScrollPages?.map((v) => v.toJson()).toList(),
+        'sortLibraryAnime': sortLibraryAnime?.toJson(),
+        'sortLibraryManga': sortLibraryManga?.toJson(),
         'themeIsDark': themeIsDark,
         'userAgent': userAgent,
         'backupFrequency': backupFrequency,

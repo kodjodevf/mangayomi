@@ -919,8 +919,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     } else if (sortType == 5) {
       mangas.sort(
         (a, b) {
-          return a.chapters.last.dateUpload!
-              .compareTo(b.chapters.last.dateUpload!);
+          final aChaps = a.chapters;
+          final bChaps = b.chapters;
+          return (aChaps.isNotEmpty ? aChaps.last.dateUpload! : "")
+              .compareTo(bChaps.isNotEmpty ? bChaps.last.dateUpload! : "");
         },
       );
     } else if (sortType == 6) {
