@@ -36,9 +36,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
       _isLoading = true;
     });
     botToast(context.l10n.updating_library,
-        fontSize: 13, second: 1600, alignY: 0.8);
-    final mangaList =
-        isar.mangas.filter().idIsNotNull().favoriteEqualTo(true).findAllSync();
+        fontSize: 13, second: 1600, alignY: !context.isTablet ? 0.85 : 1);
+    final mangaList = isar.mangas
+        .filter()
+        .idIsNotNull()
+        .favoriteEqualTo(true)
+        .and()
+        .isMangaEqualTo(_tabBarController.index == 0)
+        .findAllSync();
     int numbers = 0;
 
     for (var manga in mangaList) {
