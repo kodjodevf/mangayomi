@@ -113,16 +113,6 @@ class MainScreen extends ConsumerWidget {
                                             BorderRadius.circular(30)),
                                   ),
                                   child: Builder(builder: (context) {
-                                    final updatesTotalNumbersWidget = Positioned(
-                                        right: 0,
-                                        top: 0,
-                                        child: _updatesTotalNumbers(ref, false));
-                                    final extensionUpdateTotalNumbersWidget =
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: _extensionUpdateTotalNumbers(
-                                                ref));
                                     return NavigationRail(
                                       labelType: NavigationRailLabelType.all,
                                       useIndicator: true,
@@ -146,19 +136,10 @@ class MainScreen extends ConsumerWidget {
                                                     top: 5),
                                                 child: Text(l10n.anime))),
                                         NavigationRailDestination(
-                                            selectedIcon: Stack(
-                                              children: [
+                                            selectedIcon:
                                                 const Icon(Icons.new_releases),
-                                                updatesTotalNumbersWidget
-                                              ],
-                                            ),
-                                            icon: Stack(
-                                              children: [
-                                                const Icon(Icons
-                                                    .new_releases_outlined),
-                                                updatesTotalNumbersWidget
-                                              ],
-                                            ),
+                                            icon: const Icon(
+                                                Icons.new_releases_outlined),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -177,19 +158,10 @@ class MainScreen extends ConsumerWidget {
                                                     top: 5),
                                                 child: Text(l10n.history))),
                                         NavigationRailDestination(
-                                            selectedIcon: Stack(
-                                              children: [
+                                            selectedIcon:
                                                 const Icon(Icons.explore),
-                                                extensionUpdateTotalNumbersWidget
-                                              ],
-                                            ),
-                                            icon: Stack(
-                                              children: [
-                                                const Icon(
-                                                    Icons.explore_outlined),
-                                                extensionUpdateTotalNumbersWidget
-                                              ],
-                                            ),
+                                            icon: const Icon(
+                                                Icons.explore_outlined),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -221,7 +193,11 @@ class MainScreen extends ConsumerWidget {
                                 ),
                                 Positioned(
                                     right: 18,
-                                    top: 210,
+                                    top: 140,
+                                    child: _updatesTotalNumbers(ref)),
+                                Positioned(
+                                    right: 18,
+                                    top: 275,
                                     child: _extensionUpdateTotalNumbers(ref)),
                               ],
                             ),
@@ -282,7 +258,7 @@ class MainScreen extends ConsumerWidget {
                                   Positioned(
                                       right: 14,
                                       top: 3,
-                                      child: _updatesTotalNumbers(ref, true)),
+                                      child: _updatesTotalNumbers(ref)),
                                 ],
                               ),
                               NavigationDestination(
@@ -372,7 +348,7 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
       });
 }
 
-Widget _updatesTotalNumbers(WidgetRef ref, bool mobile) {
+Widget _updatesTotalNumbers(WidgetRef ref) {
   return StreamBuilder(
       stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
       builder: (context, snapshot) {
@@ -390,10 +366,8 @@ Widget _updatesTotalNumbers(WidgetRef ref, bool mobile) {
                       borderRadius: BorderRadius.circular(10),
                       color: const Color.fromARGB(255, 176, 46, 37)),
                   child: Padding(
-                    padding: mobile
-                        ? const EdgeInsets.symmetric(horizontal: 5, vertical: 3)
-                        : const EdgeInsets.symmetric(
-                            horizontal: 3, vertical: 1),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                     child: Text(
                       entries.length.toString(),
                       style: TextStyle(
