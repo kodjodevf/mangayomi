@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
@@ -51,7 +52,23 @@ Future<List<PageUrl>> downloadChapter(
   bool hasM3U8File = false;
   bool nonM3U8File = false;
   M3u8Downloader? m3u8Downloader;
-  String? tsKey;
+  Uint8List? tsKey;
+  Uint8List? tsIv;
+  int? m3u8MediaSequence;
+
+  Future<void> processConvert() async {
+    if (hasM3U8File) {
+      await m3u8Downloader?.mergeTsToMp4(
+          "${path!.path}$chapterName.mp4", "${path.path}$chapterName");
+    } else {
+      if (ref.watch(saveAsCBZArchiveStateProvider)) {
+        await ref.watch(convertToCBZProvider(path!.path, mangaDir!.path,
+                chapter.name!, pageUrls.map((e) => e.url).toList())
+            .future);
+      }
+    }
+  }
+
   void savePageUrls() {
     final settings = isar.settings.getSync(227)!;
     List<ChapterPageurls>? chapterPageUrls = [];
@@ -85,10 +102,7 @@ Future<List<PageUrl>> downloadChapter(
       }
     });
   } else {
-    ref
-        .read(
-            getVideoListProvider(episode: chapter, ignoreM3u8File: true).future)
-        .then((value) async {
+    ref.read(getVideoListProvider(episode: chapter).future).then((value) async {
       final m3u8Urls = value.$1
           .where((element) =>
               element.originalUrl.endsWith(".m3u8") ||
@@ -107,7 +121,8 @@ Future<List<PageUrl>> downloadChapter(
               m3u8Url: videosUrls.first.url,
               downloadDir: "${path!.path}$chapterName",
               headers: videosUrls.first.headers ?? {});
-          (tsList, tsKey) = await m3u8Downloader!.getTsList();
+          (tsList, tsKey, tsIv, m3u8MediaSequence) =
+              await m3u8Downloader!.getTsList();
         }
         pageUrls = hasM3U8File
             ? [...tsList.map((e) => PageUrl(e.url))]
@@ -179,6 +194,7 @@ Future<List<PageUrl>> downloadChapter(
           final file = File(
               "${tempDir.path}/Mangayomi/$finalPath/${padIndex(index + 1)}.jpg");
           if (file.existsSync()) {
+            Directory(path.path).createSync(recursive: true);
             await file.copy("${path.path}${padIndex(index + 1)}.jpg");
             await file.delete();
           } else {
@@ -228,6 +244,7 @@ Future<List<PageUrl>> downloadChapter(
                 "${tempDir.path}/Mangayomi/$finalPath/$chapterName/TS_${index + 1}.ts");
             final file = File("${path.path}$chapterName/TS_${index + 1}.ts");
             if (tempFile.existsSync()) {
+              Directory("${path.path}$chapterName").createSync(recursive: true);
               await tempFile
                   .copy("${path.path}$chapterName/TS_${index + 1}.ts");
               await tempFile.delete();
@@ -284,6 +301,7 @@ Future<List<PageUrl>> downloadChapter(
     }
 
     if (tasks.isEmpty && pageUrls.isNotEmpty) {
+      await processConvert();
       savePageUrls();
       final download = Download(
           succeeded: 0,
@@ -299,23 +317,16 @@ Future<List<PageUrl>> downloadChapter(
         isar.downloads.putSync(download..chapter.value = chapter);
       });
     } else {
+      if (hasM3U8File) {
+        await Directory("${path.path}$chapterName").create(recursive: true);
+      }
       savePageUrls();
       await FileDownloader().downloadBatch(
         tasks,
         batchProgressCallback: (succeeded, failed) async {
           if (isManga || hasM3U8File) {
             if (succeeded == tasks.length) {
-              if (hasM3U8File) {
-              } else {
-                if (ref.watch(saveAsCBZArchiveStateProvider)) {
-                  await ref.watch(convertToCBZProvider(
-                          path!.path,
-                          mangaDir.path,
-                          chapter.name!,
-                          pageUrls.map((e) => e.url).toList())
-                      .future);
-                }
-              }
+              await processConvert();
             }
             bool isEmpty = isar.downloads
                 .filter()
@@ -384,9 +395,13 @@ Future<List<PageUrl>> downloadChapter(
           if (progress == 1.0) {
             final file = File(
                 "${tempDir.path}/${taskProgress.task.directory}/${taskProgress.task.filename}");
-            await file.copy(
+            final newFile = await file.copy(
                 "${path!.path}${hasM3U8File ? "$chapterName/" : ""}${taskProgress.task.filename}");
             await file.delete();
+            if (hasM3U8File) {
+              await m3u8Downloader?.processBytes(
+                  newFile, tsKey, tsIv, m3u8MediaSequence);
+            }
           }
         },
       );

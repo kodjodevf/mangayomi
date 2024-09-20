@@ -1,8 +1,14 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 import 'dart:async';
+import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:path/path.dart' as path;
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:convert/convert.dart';
 
 class TsInfo {
   final String name;
@@ -19,23 +25,37 @@ class M3u8Downloader {
       required this.downloadDir,
       required this.headers});
 
-  Future<(List<TsInfo>, String?)> getTsList() async {
-    String? key;
+  Future<(List<TsInfo>, Uint8List?, Uint8List?, int?)> getTsList() async {
+    Uint8List? key;
+    Uint8List? iv;
+    int? mediaSequence;
     final uri = Uri.parse(m3u8Url);
     final m3u8Host = "${uri.scheme}://${uri.host}${path.dirname(uri.path)}";
     final m3u8Body = await _getM3u8Body(m3u8Url);
     final tsList = _parseTsList(m3u8Host, m3u8Body);
+    mediaSequence = _extractMediaSequence(m3u8Body);
     if (kDebugMode) {
       print("Total TS files to download: ${tsList.length}");
     }
-    String? tsKey = await getM3u8Key(m3u8Body);
+    final (tsKey, tsIv) = await _getM3u8KeyAndIv(m3u8Body);
     if (tsKey?.isNotEmpty ?? false) {
       if (kDebugMode) {
         print("TS Key: $tsKey");
       }
       key = tsKey;
     }
-    return (tsList, key);
+    if (tsIv != null) {
+      if (kDebugMode) {
+        print("TS Iv: $tsIv");
+      }
+      iv = Uint8List.fromList(hex.decode(tsIv.replaceFirst("0x", "")));
+    }
+    if (mediaSequence != null) {
+      if (kDebugMode) {
+        print("Media sequence: $mediaSequence");
+      }
+    }
+    return (tsList, key, iv, mediaSequence);
   }
 
   Future<String> _getM3u8Body(
@@ -52,50 +72,122 @@ class M3u8Downloader {
 
   List<TsInfo> _parseTsList(String host, String body) {
     final lines = body.split("\n");
-    final tsList = <TsInfo>[];
+    List<TsInfo> tsList = [];
     int index = 0;
-    String allText = "";
     for (final line in lines) {
       if (!line.startsWith("#") && line.isNotEmpty) {
         index++;
         final tsUrl = line.startsWith("http")
             ? line
             : "$host/${line.replaceFirst("/", "")}";
-        allText += "http://localhost:3000/TS_$index.ts\n";
         tsList.add(TsInfo("TS_$index", tsUrl));
-      } else {
-        allText += "$line\n";
       }
     }
-    Directory(downloadDir).createSync(recursive: true);
-    File("$downloadDir/index.m3u8").writeAsStringSync(allText);
     return tsList;
   }
 
-  Future<String?> getM3u8Key(String m3u8Body) async {
+  Future<(Uint8List?, String?)> _getM3u8KeyAndIv(String m3u8Body) async {
     final uri = Uri.parse(m3u8Url);
     final m3u8Host = "${uri.scheme}://${uri.host}${path.dirname(uri.path)}";
     final lines = m3u8Body.split("\n");
     for (final line in lines) {
       if (line.contains("#EXT-X-KEY")) {
-        final keyUrl = _extractKeyUrl(m3u8Host, line);
-        final response =
-            await MClient.httpClient().get(Uri.parse(keyUrl), headers: headers);
-        if (response.statusCode == 200) {
-          return response.body;
+        final (keyUrl, iv) = _extractKeyAttributes(line, m3u8Host);
+        if (keyUrl != null) {
+          final response = await MClient.httpClient()
+              .get(Uri.parse(keyUrl), headers: headers);
+          if (response.statusCode == 200) {
+            return (response.bodyBytes, iv);
+          }
+        } else {
+          break;
         }
+      }
+    }
+    return (null, null);
+  }
+
+  (String?, String?) _extractKeyAttributes(String content, String host) {
+    final keyPattern = RegExp(
+        r'#EXT-X-KEY:METHOD=AES-128(?:,URI="([^"]+)")?(?:,IV=0x([A-F0-9]+))?',
+        caseSensitive: false);
+    final match = keyPattern.firstMatch(content);
+
+    String? uri = match?.group(1);
+    if (uri != null) {
+      if (!uri.contains("http")) {
+        uri = "$host/$uri";
+      }
+    }
+    final iv = match?.group(2);
+
+    return (uri, iv);
+  }
+
+  Uint8List _aesDecrypt(int sequence, Uint8List encrypted, Uint8List key,
+      {Uint8List? iv}) {
+    if (iv == null) {
+      iv = Uint8List(16);
+      ByteData.view(iv.buffer).setUint64(8, sequence);
+    }
+
+    final encrypter = encrypt.Encrypter(
+        encrypt.AES(encrypt.Key(key), mode: encrypt.AESMode.cbc));
+
+    try {
+      final decrypted = encrypter.decryptBytes(encrypt.Encrypted(encrypted),
+          iv: encrypt.IV(iv));
+
+      return Uint8List.fromList(decrypted);
+    } catch (e) {
+      throw ArgumentError('Decryption failed: $e');
+    }
+  }
+
+  int? _extractMediaSequence(String content) {
+    final lines = content.split('\n');
+    for (var line in lines) {
+      if (line.startsWith('#EXT-X-MEDIA-SEQUENCE')) {
+        final sequenceStr = line.substringAfter(':');
+        return int.tryParse(sequenceStr.trim());
       }
     }
     return null;
   }
 
-  String _extractKeyUrl(String host, String line) {
-    final uriPos = line.indexOf("URI");
-    final quotationMarkPos = line.lastIndexOf("\"");
-    var keyUrl = line.substring(uriPos, quotationMarkPos).split("\"")[1];
-    if (!line.contains("http")) {
-      keyUrl = "$host/$keyUrl";
+  Future<void> mergeTsToMp4(String fileName, String directory) async {
+    await Isolate.run(() async {
+      List<String> tsPathList = [];
+      final outFile = File(fileName).openWrite();
+      final dir = Directory(directory);
+      await for (var entity in dir.list()) {
+        if (entity is File && entity.path.endsWith('.ts')) {
+          tsPathList.add(entity.path);
+        }
+      }
+      tsPathList.sort((a, b) =>
+          int.parse(a.substringAfter("TS_").substringBefore(".")).compareTo(
+              int.parse(b.substringAfter("TS_").substringBefore("."))));
+      for (var path in tsPathList) {
+        final bytes = await File(path).readAsBytes();
+        outFile.add(bytes);
+      }
+      await outFile.flush();
+      await outFile.close();
+      await dir.delete(recursive: true);
+    });
+  }
+
+  Future<void> processBytes(File newFile, Uint8List? tsKey, Uint8List? tsIv,
+      int? m3u8Sequence) async {
+    Uint8List bytes = await newFile.readAsBytes();
+    if (tsKey != null) {
+      final index =
+          int.parse(newFile.path.substringAfter("TS_").substringBefore("."));
+      bytes = _aesDecrypt((m3u8Sequence ?? 1) + (index - 1), bytes, tsKey,
+          iv: tsIv);
     }
-    return keyUrl;
+
+    await newFile.writeAsBytes(bytes);
   }
 }

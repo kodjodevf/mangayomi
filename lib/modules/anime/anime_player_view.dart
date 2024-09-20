@@ -28,7 +28,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
-// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
@@ -41,13 +40,11 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   String? _infoHash;
-  HttpServer? _httpServer;
   @override
   void dispose() {
     if (_infoHash != null) {
       MTorrentServer().removeTorrent(_infoHash);
     }
-    _httpServer?.close();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -60,9 +57,8 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
-        final (videos, isLocal, infoHash, httpServer) = data;
+        final (videos, isLocal, infoHash) = data;
         _infoHash = infoHash;
-        _httpServer = httpServer;
         if (videos.isEmpty &&
             !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(

@@ -163,7 +163,7 @@ class LoggerInterceptor extends InterceptorContract {
     required BaseRequest request,
   }) async {
     Logger.add(LoggerLevel.info,
-        '----- Request -----\n${request.toString()}\nheader: ${request.headers.toString()}');
+        '----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}');
     return request;
   }
 

@@ -6,7 +6,7 @@ part of 'get_video_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'2002f381edbe8c3c5e8a00826b3d9aaf49410e57';
+String _$getVideoListHash() => r'e5cc579c492bdf4cd226b93c42766599cece4cd6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,18 +35,16 @@ const getVideoListProvider = GetVideoListFamily();
 
 /// See also [getVideoList].
 class GetVideoListFamily
-    extends Family<AsyncValue<(List<Video>, bool, String?, HttpServer?)>> {
+    extends Family<AsyncValue<(List<Video>, bool, String?)>> {
   /// See also [getVideoList].
   const GetVideoListFamily();
 
   /// See also [getVideoList].
   GetVideoListProvider call({
     required Chapter episode,
-    bool ignoreM3u8File = false,
   }) {
     return GetVideoListProvider(
       episode: episode,
-      ignoreM3u8File: ignoreM3u8File,
     );
   }
 
@@ -56,7 +54,6 @@ class GetVideoListFamily
   ) {
     return call(
       episode: provider.episode,
-      ignoreM3u8File: provider.ignoreM3u8File,
     );
   }
 
@@ -76,17 +73,15 @@ class GetVideoListFamily
 }
 
 /// See also [getVideoList].
-class GetVideoListProvider extends AutoDisposeFutureProvider<
-    (List<Video>, bool, String?, HttpServer?)> {
+class GetVideoListProvider
+    extends AutoDisposeFutureProvider<(List<Video>, bool, String?)> {
   /// See also [getVideoList].
   GetVideoListProvider({
     required Chapter episode,
-    bool ignoreM3u8File = false,
   }) : this._internal(
           (ref) => getVideoList(
             ref as GetVideoListRef,
             episode: episode,
-            ignoreM3u8File: ignoreM3u8File,
           ),
           from: getVideoListProvider,
           name: r'getVideoListProvider',
@@ -98,7 +93,6 @@ class GetVideoListProvider extends AutoDisposeFutureProvider<
           allTransitiveDependencies:
               GetVideoListFamily._allTransitiveDependencies,
           episode: episode,
-          ignoreM3u8File: ignoreM3u8File,
         );
 
   GetVideoListProvider._internal(
@@ -109,16 +103,13 @@ class GetVideoListProvider extends AutoDisposeFutureProvider<
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.episode,
-    required this.ignoreM3u8File,
   }) : super.internal();
 
   final Chapter episode;
-  final bool ignoreM3u8File;
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool, String?, HttpServer?)> Function(
-            GetVideoListRef provider)
+    FutureOr<(List<Video>, bool, String?)> Function(GetVideoListRef provider)
         create,
   ) {
     return ProviderOverride(
@@ -131,51 +122,43 @@ class GetVideoListProvider extends AutoDisposeFutureProvider<
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         episode: episode,
-        ignoreM3u8File: ignoreM3u8File,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<(List<Video>, bool, String?, HttpServer?)>
+  AutoDisposeFutureProviderElement<(List<Video>, bool, String?)>
       createElement() {
     return _GetVideoListProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetVideoListProvider &&
-        other.episode == episode &&
-        other.ignoreM3u8File == ignoreM3u8File;
+    return other is GetVideoListProvider && other.episode == episode;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, episode.hashCode);
-    hash = _SystemHash.combine(hash, ignoreM3u8File.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
 mixin GetVideoListRef
-    on AutoDisposeFutureProviderRef<(List<Video>, bool, String?, HttpServer?)> {
+    on AutoDisposeFutureProviderRef<(List<Video>, bool, String?)> {
   /// The parameter `episode` of this provider.
   Chapter get episode;
-
-  /// The parameter `ignoreM3u8File` of this provider.
-  bool get ignoreM3u8File;
 }
 
-class _GetVideoListProviderElement extends AutoDisposeFutureProviderElement<
-    (List<Video>, bool, String?, HttpServer?)> with GetVideoListRef {
+class _GetVideoListProviderElement
+    extends AutoDisposeFutureProviderElement<(List<Video>, bool, String?)>
+    with GetVideoListRef {
   _GetVideoListProviderElement(super.provider);
 
   @override
   Chapter get episode => (origin as GetVideoListProvider).episode;
-  @override
-  bool get ignoreM3u8File => (origin as GetVideoListProvider).ignoreM3u8File;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

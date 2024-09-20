@@ -74,7 +74,6 @@ dependencies:
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
-  shelf: ^1.4.2
   path: ^1.9.0
   freezed_annotation: ^2.0.0
 

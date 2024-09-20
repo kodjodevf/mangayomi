@@ -60,7 +60,7 @@ class DownloadQueueScreen extends ConsumerWidget {
               groupSeparatorBuilder: (String groupByValue) {
                 final sourceQueueLength = entries
                     .where((element) =>
-                        element.chapter.value!.manga.value!.source! ==
+                        (element.chapter.value?.manga.value?.source ?? "") ==
                         groupByValue)
                     .toList()
                     .length;
@@ -87,7 +87,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  element.chapter.value!.manga.value!.name!,
+                                  element.chapter.value?.manga.value?.name ??
+                                      "",
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
@@ -97,7 +98,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                               ],
                             ),
                             Text(
-                              element.chapter.value!.name!,
+                              element.chapter.value?.name ?? "",
                               style: const TextStyle(fontSize: 13),
                             ),
                             const SizedBox(
@@ -151,12 +152,12 @@ class DownloadQueueScreen extends ConsumerWidget {
                             } else if (value.toString() == 'CancelAll') {
                               final chapterIds = entries
                                   .where((e) =>
-                                      e.chapter.value!.manga.value!.name ==
-                                          element.chapter.value!.manga.value!
-                                              .name &&
-                                      e.chapter.value!.manga.value!.source ==
-                                          element.chapter.value!.manga.value!
-                                              .source)
+                                      e.chapter.value?.manga.value?.name ==
+                                          element.chapter.value?.manga.value
+                                              ?.name &&
+                                      e.chapter.value?.manga.value?.source ==
+                                          element.chapter.value?.manga.value
+                                              ?.source)
                                   .map((e) => e.chapterId)
                                   .toList();
                               for (var chapterId in chapterIds) {
