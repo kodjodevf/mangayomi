@@ -55,7 +55,7 @@ jobs:
           mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-x86_64.apk
 
       - name: upload artifact android apks
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
 
@@ -102,7 +102,7 @@ jobs:
           mv app-release.ipa Mangayomi-${{ github.ref_name }}-ios.ipa
 
       - name: upload artifact ios ipa
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
 
@@ -146,7 +146,7 @@ jobs:
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
       - name: upload artifact macos dmg
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
 
@@ -194,7 +194,7 @@ jobs:
   #         Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
 
   #     - name: upload artifact windows zip
-  #       uses: actions/upload-artifact@v4
+  #       uses: actions/upload-artifact@v3
   #       with:
   #         path: build\windows\Mangayomi-*.zip
 
@@ -244,7 +244,7 @@ jobs:
           directory: build/linux/x64/release/bundle
       
       - name: upload artifact linux zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: build/linux/x64/release/bundle/Mangayomi-*.zip
       - name: release packages linux zip
@@ -303,7 +303,7 @@ jobs:
           mv *.AppImage build/Mangayomi-${{ github.ref_name }}-linux_libmpv_so.AppImage
 
       - name: upload artifact linux appimage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: build/Mangayomi-*.AppImage
       - name: Rrelease packages appimage
@@ -358,7 +358,7 @@ jobs:
           mv *.AppImage build/Mangayomi-${{ github.ref_name }}-linux_libmpv_so_1.AppImage
 
       - name: upload artifact linux appimage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: build/Mangayomi-*.AppImage
       - name: Rrelease packages appimage
