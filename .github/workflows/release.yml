@@ -23,7 +23,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
 
       - name: Setup Rust toolchain
@@ -79,7 +78,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
       
       - name: Setup Rust toolchain
@@ -126,7 +124,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
 
       - name: Setup Rust toolchain
@@ -172,7 +169,6 @@ jobs:
   #     - name: setup flutter
   #       uses: subosito/flutter-action@v2
   #       with:
-  #         flutter-version-file: pubspec.yaml
   #         channel: 'stable'
 
   #     - name: Setup Rust toolchain
@@ -226,7 +222,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
 
       - name: Setup Rust toolchain
@@ -276,7 +271,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
           
       - name: Setup Rust toolchain
@@ -335,7 +329,6 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
           channel: 'stable'
           
       - name: Setup Rust toolchain
