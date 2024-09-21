@@ -52,12 +52,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             .and()
             .isMangaEqualTo(widget.isManga)
             .findAllSync();
-    sourceList = sourceList
-        .where(
-          (element) =>
-              ref.watch(showNSFWStateProvider) ? true : element.isNsfw == false,
-        )
-        .toList();
+
     return Scaffold(
       appBar: AppBar(
         leading: Container(),

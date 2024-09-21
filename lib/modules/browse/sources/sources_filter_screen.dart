@@ -4,7 +4,6 @@ import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -33,12 +32,7 @@ class SourcesFilterScreen extends ConsumerWidget {
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                final entries = snapshot.data!
-                    .where((element) => ref.watch(showNSFWStateProvider)
-                        ? true
-                        : element.isNsfw == false)
-                    .toList();
-
+                final entries = snapshot.data!;
                 return CustomScrollView(
                   slivers: [
                     SliverGroupedListView<Source, String>(

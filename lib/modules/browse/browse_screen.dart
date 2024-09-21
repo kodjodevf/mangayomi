@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
@@ -202,9 +201,6 @@ Widget _extensionUpdateNumbers(WidgetRef ref, bool isManga) {
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final entries = snapshot.data!
-              .where((element) => ref.watch(showNSFWStateProvider)
-                  ? true
-                  : element.isNsfw == false)
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();

@@ -408,71 +408,66 @@ const SettingsSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
-    r'showNSFW': PropertySchema(
-      id: 74,
-      name: r'showNSFW',
-      type: IsarType.bool,
-    ),
     r'showPagesNumber': PropertySchema(
-      id: 75,
+      id: 74,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 76,
+      id: 75,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 77,
+      id: 76,
       name: r'sortLibraryAnime',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 78,
+      id: 77,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'startDatebackup': PropertySchema(
-      id: 79,
+      id: 78,
       name: r'startDatebackup',
       type: IsarType.long,
     ),
     r'syncAfterReading': PropertySchema(
-      id: 80,
+      id: 79,
       name: r'syncAfterReading',
       type: IsarType.bool,
     ),
     r'syncOnAppLaunch': PropertySchema(
-      id: 81,
+      id: 80,
       name: r'syncOnAppLaunch',
       type: IsarType.bool,
     ),
     r'themeIsDark': PropertySchema(
-      id: 82,
+      id: 81,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 83,
+      id: 82,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'useLibass': PropertySchema(
-      id: 84,
+      id: 83,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 85,
+      id: 84,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 86,
+      id: 85,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -903,34 +898,33 @@ void _settingsSerialize(
   writer.writeLong(offsets[71], object.relativeTimesTamps);
   writer.writeBool(offsets[72], object.saveAsCBZArchive);
   writer.writeByte(offsets[73], object.scaleType.index);
-  writer.writeBool(offsets[74], object.showNSFW);
-  writer.writeBool(offsets[75], object.showPagesNumber);
+  writer.writeBool(offsets[74], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[76],
+    offsets[75],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[77],
+    offsets[76],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[78],
+    offsets[77],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
-  writer.writeLong(offsets[79], object.startDatebackup);
-  writer.writeBool(offsets[80], object.syncAfterReading);
-  writer.writeBool(offsets[81], object.syncOnAppLaunch);
-  writer.writeBool(offsets[82], object.themeIsDark);
-  writer.writeBool(offsets[83], object.updateProgressAfterReading);
-  writer.writeBool(offsets[84], object.useLibass);
-  writer.writeBool(offsets[85], object.usePageTapZones);
-  writer.writeString(offsets[86], object.userAgent);
+  writer.writeLong(offsets[78], object.startDatebackup);
+  writer.writeBool(offsets[79], object.syncAfterReading);
+  writer.writeBool(offsets[80], object.syncOnAppLaunch);
+  writer.writeBool(offsets[81], object.themeIsDark);
+  writer.writeBool(offsets[82], object.updateProgressAfterReading);
+  writer.writeBool(offsets[83], object.useLibass);
+  writer.writeBool(offsets[84], object.usePageTapZones);
+  writer.writeString(offsets[85], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -1070,32 +1064,31 @@ Settings _settingsDeserialize(
     scaleType:
         _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[73])] ??
             ScaleType.fitScreen,
-    showNSFW: reader.readBoolOrNull(offsets[74]),
-    showPagesNumber: reader.readBoolOrNull(offsets[75]),
+    showPagesNumber: reader.readBoolOrNull(offsets[74]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[76],
+      offsets[75],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[77],
+      offsets[76],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
     sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[78],
+      offsets[77],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    startDatebackup: reader.readLongOrNull(offsets[79]),
-    syncAfterReading: reader.readBoolOrNull(offsets[80]),
-    syncOnAppLaunch: reader.readBoolOrNull(offsets[81]),
-    themeIsDark: reader.readBoolOrNull(offsets[82]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[83]),
-    useLibass: reader.readBoolOrNull(offsets[84]),
-    usePageTapZones: reader.readBoolOrNull(offsets[85]),
-    userAgent: reader.readStringOrNull(offsets[86]),
+    startDatebackup: reader.readLongOrNull(offsets[78]),
+    syncAfterReading: reader.readBoolOrNull(offsets[79]),
+    syncOnAppLaunch: reader.readBoolOrNull(offsets[80]),
+    themeIsDark: reader.readBoolOrNull(offsets[81]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[82]),
+    useLibass: reader.readBoolOrNull(offsets[83]),
+    usePageTapZones: reader.readBoolOrNull(offsets[84]),
+    userAgent: reader.readStringOrNull(offsets[85]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1358,13 +1351,17 @@ P _settingsDeserializeProp<P>(
     case 74:
       return (reader.readBoolOrNull(offset)) as P;
     case 75:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 76:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
+      )) as P;
+    case 76:
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
       )) as P;
     case 77:
       return (reader.readObjectOrNull<SortLibraryManga>(
@@ -1373,13 +1370,9 @@ P _settingsDeserializeProp<P>(
         allOffsets,
       )) as P;
     case 78:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 79:
       return (reader.readLongOrNull(offset)) as P;
+    case 79:
+      return (reader.readBoolOrNull(offset)) as P;
     case 80:
       return (reader.readBoolOrNull(offset)) as P;
     case 81:
@@ -1391,8 +1384,6 @@ P _settingsDeserializeProp<P>(
     case 84:
       return (reader.readBoolOrNull(offset)) as P;
     case 85:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 86:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -6506,32 +6497,6 @@ extension SettingsQueryFilter
     });
   }
 
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'showNSFW',
-      ));
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'showNSFW',
-      ));
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWEqualTo(
-      bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'showNSFW',
-        value: value,
-      ));
-    });
-  }
-
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       showPagesNumberIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -8055,18 +8020,6 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
-  QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowNSFW() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'showNSFW', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowNSFWDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'showNSFW', Sort.desc);
-    });
-  }
-
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowPagesNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'showPagesNumber', Sort.asc);
@@ -8979,18 +8932,6 @@ extension SettingsQuerySortThenBy
     });
   }
 
-  QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowNSFW() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'showNSFW', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowNSFWDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'showNSFW', Sort.desc);
-    });
-  }
-
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowPagesNumber() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'showPagesNumber', Sort.asc);
@@ -9505,12 +9446,6 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByScaleType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scaleType');
-    });
-  }
-
-  QueryBuilder<Settings, Settings, QDistinct> distinctByShowNSFW() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'showNSFW');
     });
   }
 
@@ -10072,12 +10007,6 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, ScaleType, QQueryOperations> scaleTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scaleType');
-    });
-  }
-
-  QueryBuilder<Settings, bool?, QQueryOperations> showNSFWProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'showNSFW');
     });
   }
 
