@@ -14,7 +14,6 @@ class CreateExtension extends StatefulWidget {
 
 class _CreateExtensionState extends State<CreateExtension> {
   bool _isManga = false;
-  bool _isNsfw = false;
   String _name = "";
   String _lang = "";
   String _baseUrl = "";
@@ -131,13 +130,6 @@ class _CreateExtensionState extends State<CreateExtension> {
                   ),
                 ),
                 SwitchListTile(
-                  title: const Text("isNsfw"),
-                  value: _isNsfw,
-                  onChanged: (value) => setState(() {
-                    _isNsfw = value;
-                  }),
-                ),
-                SwitchListTile(
                   title: const Text("isManga"),
                   value: _isManga,
                   onChanged: (value) => setState(() {
@@ -171,7 +163,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   isAdded: true,
                                   isActive: true,
                                   version: "0.0.1",
-                                  isNsfw: _isNsfw)
+                                  isNsfw: false)
                                 ..sourceCodeLanguage = _sourceCodeLanguage;
                               source = source
                                 ..isLocal = true
@@ -296,7 +288,6 @@ const mangayomiSources = [{
     "iconUrl": "${source.iconUrl}",
     "typeSource": "${source.typeSource}",
     "isManga": ${source.isManga},
-    "isNsfw": ${source.isNsfw},
     "version": "${source.version}",
     "dateFormat": "",
     "dateFormatLocale": "",

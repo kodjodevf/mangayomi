@@ -62,33 +62,6 @@ class SourceListTile extends StatelessWidget {
             completeLanguageName(source.lang!.toLowerCase()),
             style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
           ),
-          if (source.isNsfw!)
-            Row(
-              children: [
-                const SizedBox(
-                  width: 2,
-                ),
-                SizedBox(
-                  height: 15,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Text(
-                            "NSFW",
-                            style: TextStyle(
-                                fontSize: 6,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      )),
-                ),
-              ],
-            ),
         ],
       ),
       title: Text(source.name!),
