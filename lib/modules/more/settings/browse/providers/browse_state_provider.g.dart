@@ -57,5 +57,39 @@ final checkForExtensionsUpdateStateProvider =
 );
 
 typedef _$CheckForExtensionsUpdateState = AutoDisposeNotifier<bool>;
+String _$customMangaSourcesIndexUrlStateHash() =>
+    r'858859046f1e2e1da90bd6cf6b4fe06cfd702826';
+
+/// See also [CustomMangaSourcesIndexUrlState].
+@ProviderFor(CustomMangaSourcesIndexUrlState)
+final customMangaSourcesIndexUrlStateProvider = AutoDisposeNotifierProvider<
+    CustomMangaSourcesIndexUrlState, String>.internal(
+  CustomMangaSourcesIndexUrlState.new,
+  name: r'customMangaSourcesIndexUrlStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$customMangaSourcesIndexUrlStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CustomMangaSourcesIndexUrlState = AutoDisposeNotifier<String>;
+String _$customAnimeSourcesIndexUrlStateHash() =>
+    r'96d285e7d2c7487fc0cb2c9a187c78fc215a8a43';
+
+/// See also [CustomAnimeSourcesIndexUrlState].
+@ProviderFor(CustomAnimeSourcesIndexUrlState)
+final customAnimeSourcesIndexUrlStateProvider = AutoDisposeNotifierProvider<
+    CustomAnimeSourcesIndexUrlState, String>.internal(
+  CustomAnimeSourcesIndexUrlState.new,
+  name: r'customAnimeSourcesIndexUrlStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$customAnimeSourcesIndexUrlStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CustomAnimeSourcesIndexUrlState = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

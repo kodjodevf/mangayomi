@@ -47,3 +47,35 @@ class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
         isar.settings.putSync(settings!..checkForExtensionUpdates = value));
   }
 }
+
+@riverpod
+class CustomMangaSourcesIndexUrlState
+    extends _$CustomMangaSourcesIndexUrlState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.customMangaSourcesIndexUrl ?? "";
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(() =>
+        isar.settings.putSync(settings!..customMangaSourcesIndexUrl = value));
+  }
+}
+
+@riverpod
+class CustomAnimeSourcesIndexUrlState
+    extends _$CustomAnimeSourcesIndexUrlState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.customAnimeSourcesIndexUrl ?? "";
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(() =>
+        isar.settings.putSync(settings!..customAnimeSourcesIndexUrl = value));
+  }
+}

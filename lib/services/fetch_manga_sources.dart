@@ -8,7 +8,7 @@ Future fetchMangaSourcesList(FetchMangaSourcesListRef ref,
     {int? id, required reFresh}) async {
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     await fetchSourcesList(
-        sourcesIndexUrl:
+        defaultSourcesIndexUrl:
             "https://kodjodevf.github.io/mangayomi-extensions/index.json",
         refresh: reFresh,
         id: id,
