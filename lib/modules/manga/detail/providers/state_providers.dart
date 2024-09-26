@@ -86,7 +86,11 @@ class SortChapterState extends _$SortChapterState {
         .sortChapterList!
         .where((element) => element.mangaId == mangaId)
         .toList()
-        .first;
+        .firstOrNull ?? SortChapter(
+          mangaId: mangaId,
+          index: 1,
+          reverse: false,
+        );
   }
 
   void update(bool reverse, int index) {
@@ -128,12 +132,15 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
   }
 
   int getType() {
-    return isar.settings
+    return (isar.settings
         .getSync(227)!
         .chapterFilterDownloadedList!
         .where((element) => element.mangaId == mangaId)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterDownloaded(
+          mangaId: mangaId,
+          type: 0,
+        ))
         .type!;
   }
 
@@ -177,12 +184,15 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
   }
 
   int getType() {
-    return isar.settings
+    return (isar.settings
         .getSync(227)!
         .chapterFilterUnreadList!
         .where((element) => element.mangaId == mangaId)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterUnread(
+          mangaId: mangaId,
+          type: 0,
+        ))
         .type!;
   }
 
@@ -225,12 +235,15 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
   }
 
   int getType() {
-    return isar.settings
+    return (isar.settings
         .getSync(227)!
         .chapterFilterBookmarkedList!
         .where((element) => element.mangaId == mangaId)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterBookmarked(
+          mangaId: mangaId,
+          type: 0,
+        ))
         .type!;
   }
 

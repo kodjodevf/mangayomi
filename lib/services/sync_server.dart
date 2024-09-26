@@ -488,6 +488,9 @@ class SyncServer extends _$SyncServer {
           if (settings != null) {
             isar.settings.putAllSync(settings);
           }
+          if (isar.settings.getSync(227) == null) {
+            isar.settings.putSync(Settings(id: 227));
+          }
           isar.settings.putSync(
               isar.settings.getSync(227)!..syncAfterReading = syncAfterReading);
           isar.settings.putSync(
