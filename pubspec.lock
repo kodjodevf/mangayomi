@@ -371,10 +371,10 @@ packages:
     dependency: "direct main"
     description:
       name: extended_image
-      sha256: "75235b2cf90de7663640c2da43b0549fc1f373340b7ee925696e92e8ec55c4db"
+      sha256: "8ad4917eaae7271ce6d975d5c0040c7903010262908fbdb49ff2798fca754d3b"
       url: "https://pub.dev"
     source: hosted
-    version: "8.2.4"
+    version: "8.3.0"
   extended_image_library:
     dependency: transitive
     description:
@@ -609,10 +609,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: "2ddb88e9ad56ae15ee144ed10e33886777eb5ca2509a914850a5faa7b52ff459"
+      sha256: "5cf5fdcf853b0629deb35891c7af643be900c3dcaed7489009f9e7dbcfe55ab6"
       url: "https://pub.dev"
     source: hosted
-    version: "14.2.7"
+    version: "14.2.8"
   google_fonts:
     dependency: "direct main"
     description:
@@ -945,29 +945,29 @@ packages:
     dependency: "direct overridden"
     description:
       path: "libs/windows/media_kit_libs_windows_video"
-      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
-      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
+      resolved-ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
       url: "https://github.com/media-kit/media-kit.git"
     source: git
-    version: "1.0.9"
+    version: "1.0.10"
   media_kit_native_event_loop:
     dependency: "direct overridden"
     description:
       path: media_kit_native_event_loop
-      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
-      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
+      resolved-ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
       url: "https://github.com/media-kit/media-kit.git"
     source: git
-    version: "1.0.8"
+    version: "1.0.9"
   media_kit_video:
     dependency: "direct main"
     description:
       path: media_kit_video
-      ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
-      resolved-ref: "50c510d018cc5286eb6730f3ea165290f19dc5f6"
+      ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
+      resolved-ref: "73c14623332003ce47f49b91528c73843e8ddcd2"
       url: "https://github.com/media-kit/media-kit.git"
     source: git
-    version: "1.2.4"
+    version: "1.2.5"
   meta:
     dependency: "direct overridden"
     description:
@@ -1560,10 +1560,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_macos
-      sha256: "9a1a42d5d2d95400c795b2914c36fdcb525870c752569438e4ebb09a2b5d90de"
+      sha256: "769549c999acdb42b8bcfa7c43d72bf79a382ca7441ab18a808e101149daf672"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.0"
+    version: "3.2.1"
   url_launcher_platform_interface:
     dependency: transitive
     description:
