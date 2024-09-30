@@ -1024,6 +1024,12 @@ class _MangaChapterPageGalleryState
       _autoScroll.value = false;
     }
     _autoPagescroll();
+    if (_readerController.getPageLength(_chapterUrlModel.pageUrls) == 1 &&
+        (readerMode == ReaderMode.ltr ||
+            readerMode == ReaderMode.rtl ||
+            readerMode == ReaderMode.vertical)) {
+      _onPageChanged(0);
+    }
   }
 
   void _onPageChanged(int index) {
@@ -1541,17 +1547,24 @@ class _MangaChapterPageGalleryState
                                             );
                                           } catch (_) {}
                                         },
-                                        divisions: _pageMode ==
-                                                PageMode.doublePage
-                                            ? ((_readerController.getPageLength(
-                                                            _chapterUrlModel
-                                                                .pageUrls)) /
-                                                        2)
-                                                    .ceil() +
+                                        divisions: _readerController
+                                                    .getPageLength(
+                                                        _chapterUrlModel
+                                                            .pageUrls) ==
                                                 1
-                                            : _readerController.getPageLength(
-                                                    _chapterUrlModel.pageUrls) -
-                                                1,
+                                            ? null
+                                            : _pageMode == PageMode.doublePage
+                                                ? ((_readerController.getPageLength(
+                                                                _chapterUrlModel
+                                                                    .pageUrls)) /
+                                                            2)
+                                                        .ceil() +
+                                                    1
+                                                : _readerController
+                                                        .getPageLength(
+                                                            _chapterUrlModel
+                                                                .pageUrls) -
+                                                    1,
                                         value: min(
                                             (currentIndex).toDouble(),
                                             (_pageMode == PageMode.doublePage &&
