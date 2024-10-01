@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -28,11 +27,6 @@ late Isar isar;
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isMacOS) {
-    if (runWebViewTitleBarWidget(args)) {
-      return;
-    }
-  }
   MediaKit.ensureInitialized();
   await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {

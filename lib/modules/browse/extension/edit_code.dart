@@ -217,6 +217,13 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                               ElevatedButton(
                                   onPressed: () async {
                                     setState(() {
+                                      source?.sourceCode = controller.text;
+                                    });
+                                    if (source != null && mounted) {
+                                      isar.writeTxnSync(
+                                          () => isar.sources.putSync(source!));
+                                    }
+                                    setState(() {
                                       result = null;
                                       _isLoading = true;
                                       _error = false;

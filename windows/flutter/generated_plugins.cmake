@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_inappwebview_windows
   flutter_qjs
   flutter_windows_webview
   isar_flutter_libs

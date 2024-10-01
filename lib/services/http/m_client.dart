@@ -63,7 +63,7 @@ class MClient {
 
   static Future<void> setCookie(String url, String ua, {String? cookie}) async {
     List<String> cookies = [];
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    if (Platform.isWindows) {
       cookies = cookie
               ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
               .where((cookie) => cookie.isNotEmpty)
@@ -71,7 +71,7 @@ class MClient {
           [];
     } else {
       cookies = (await flutter_inappwebview.CookieManager.instance()
-              .getCookies(url: Uri.parse(url)))
+              .getCookies(url: flutter_inappwebview.WebUri(url)))
           .map((e) => "${e.name}=${e.value}")
           .toList();
     }
