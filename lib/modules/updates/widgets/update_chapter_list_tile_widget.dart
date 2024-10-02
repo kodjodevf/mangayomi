@@ -90,10 +90,12 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontSize: 11,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .color)),
+                                      color: chapter.isRead ?? false
+                                          ? Colors.grey
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge!
+                                              .color)),
                             ],
                           ),
                         ),

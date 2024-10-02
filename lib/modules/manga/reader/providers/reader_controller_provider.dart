@@ -417,35 +417,48 @@ extension ChapterExtensions on Chapter {
 extension MangaExtensions on Manga {
   List<Chapter> getFilteredChapterList() {
     final data = this.chapters.toList().reversed.toList();
-    final filterUnread = isar.settings
+    final filterUnread = (isar.settings
         .getSync(227)!
         .chapterFilterUnreadList!
         .where((element) => element.mangaId == id)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterUnread(
+          mangaId: id,
+          type: 0,
+        ))
         .type!;
 
-    final filterBookmarked = isar.settings
+    final filterBookmarked = (isar.settings
         .getSync(227)!
         .chapterFilterBookmarkedList!
         .where((element) => element.mangaId == id)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterBookmarked(
+          mangaId: id,
+          type: 0,
+        ))
         .type!;
-    final filterDownloaded = isar.settings
+    final filterDownloaded = (isar.settings
         .getSync(227)!
         .chapterFilterDownloadedList!
         .where((element) => element.mangaId == id)
         .toList()
-        .first
+        .firstOrNull ?? ChapterFilterDownloaded(
+          mangaId: id,
+          type: 0,
+        ))
         .type!;
 
-    final sortChapter = isar.settings
+    final sortChapter = (isar.settings
         .getSync(227)!
         .sortChapterList!
         .where((element) => element.mangaId == id)
         .toList()
-        .first
+        .firstOrNull ?? SortChapter(
+          mangaId: id,
+          index: 1,
+          reverse: false,
+        ))
         .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
     List<Chapter>? chapterList;

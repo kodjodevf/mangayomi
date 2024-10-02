@@ -186,7 +186,6 @@ class _MangaChapterPageGalleryState
   List<double> doubleTapScales = <double>[1.0, 2.0];
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
-  final double _imageDetailY = 0;
   @override
   void initState() {
     _doubleClickAnimationController = AnimationController(
@@ -690,28 +689,14 @@ class _MangaChapterPageGalleryState
                                                         _failedToLoadImage
                                                             .value = false);
                                               }
-                                              return StreamBuilder(
-                                                builder: (context, data) {
-                                                  return ExtendedImageGesture(
-                                                    state,
-                                                    canScaleImage: (_) =>
-                                                        _imageDetailY == 0,
-                                                    imageBuilder: (image) {
-                                                      return Stack(
-                                                        children: [
-                                                          Positioned.fill(
-                                                            top: _imageDetailY,
-                                                            bottom:
-                                                                -_imageDetailY,
-                                                            child: image,
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
+                                              return ExtendedImageGesture(
+                                                state,
+                                                canScaleImage: (_) => true,
+                                                imageBuilder: (Widget image,
+                                                    {ExtendedImageGestureState?
+                                                        imageGestureState}) {
+                                                  return image;
                                                 },
-                                                initialData: _imageDetailY,
-                                                stream: _rebuildDetail.stream,
                                               );
                                             }
                                             if (state.extendedImageLoadState ==
@@ -1039,6 +1024,12 @@ class _MangaChapterPageGalleryState
       _autoScroll.value = false;
     }
     _autoPagescroll();
+    if (_readerController.getPageLength(_chapterUrlModel.pageUrls) == 1 &&
+        (readerMode == ReaderMode.ltr ||
+            readerMode == ReaderMode.rtl ||
+            readerMode == ReaderMode.vertical)) {
+      _onPageChanged(0);
+    }
   }
 
   void _onPageChanged(int index) {
@@ -1556,17 +1547,24 @@ class _MangaChapterPageGalleryState
                                             );
                                           } catch (_) {}
                                         },
-                                        divisions: _pageMode ==
-                                                PageMode.doublePage
-                                            ? ((_readerController.getPageLength(
-                                                            _chapterUrlModel
-                                                                .pageUrls)) /
-                                                        2)
-                                                    .ceil() +
+                                        divisions: _readerController
+                                                    .getPageLength(
+                                                        _chapterUrlModel
+                                                            .pageUrls) ==
                                                 1
-                                            : _readerController.getPageLength(
-                                                    _chapterUrlModel.pageUrls) -
-                                                1,
+                                            ? null
+                                            : _pageMode == PageMode.doublePage
+                                                ? ((_readerController.getPageLength(
+                                                                _chapterUrlModel
+                                                                    .pageUrls)) /
+                                                            2)
+                                                        .ceil() +
+                                                    1
+                                                : _readerController
+                                                        .getPageLength(
+                                                            _chapterUrlModel
+                                                                .pageUrls) -
+                                                    1,
                                         value: min(
                                             (currentIndex).toDouble(),
                                             (_pageMode == PageMode.doublePage &&

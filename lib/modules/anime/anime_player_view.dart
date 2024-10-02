@@ -226,14 +226,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   void initState() {
-    _seekToOrCurrentPosition();
     _currentPositionSub;
     _currentTotalDurationSub;
     _completed;
     _loadAndroidFont().then(
       (_) {
         _player.open(Media(_video.value!.videoTrack!.id,
-            httpHeaders: _video.value!.headers));
+            httpHeaders: _video.value!.headers,
+            start: _streamController.geTCurrentPosition()));
         _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
         _initAniSkip();
       },
@@ -257,14 +257,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             .setProperty('sub-font', 'Droid Sans Fallback');
       } catch (_) {}
     }
-  }
-
-  void _seekToOrCurrentPosition({Duration? duration}) async {
-    if (duration == null) {
-      await Future.delayed(const Duration(milliseconds: 300));
-    }
-    await _player.stream.buffer.first;
-    _player.seek(duration ?? _streamController.geTCurrentPosition());
   }
 
   void _initAniSkip() async {
@@ -378,13 +370,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   _player.setVideoTrack(quality.videoTrack!);
                 } else {
                   _player.open(Media(quality.videoTrack!.id,
-                      httpHeaders: quality.headers));
+                      httpHeaders: quality.headers,
+                      start: _currentPosition.value));
                 }
               } else {
                 _player.open(Media(quality.videoTrack!.id,
-                    httpHeaders: quality.headers));
+                    httpHeaders: quality.headers,
+                    start: _currentPosition.value));
               }
-              _seekToOrCurrentPosition(duration: _currentPosition.value);
               Navigator.pop(context);
             },
           );
