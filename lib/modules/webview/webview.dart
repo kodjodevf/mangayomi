@@ -1,7 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:async';
 import 'dart:io';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +9,6 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
   final String url;
@@ -29,59 +25,19 @@ class MangaWebView extends ConsumerStatefulWidget {
 }
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
-  final GlobalKey webViewKey = GlobalKey();
-
   double _progress = 0;
   @override
   void initState() {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      _runWebViewDesktop();
-    } else {
-      setState(() {
-        _isNotDesktop = true;
-      });
+    if (Platform.isWindows) {
+      _runWindowWebView();
     }
     super.initState();
   }
 
   final _windowsWebview = FlutterWindowsWebview();
-  Webview? _desktopWebview;
-  void _runWebViewDesktop() async {
-    if (Platform.isLinux || Platform.isMacOS) {
-      _desktopWebview = await WebviewWindow.create(
-        configuration: CreateConfiguration(
-          userDataFolderWindows: await getWebViewPath(),
-          titleBarTopPadding: Platform.isMacOS ? 20 : 0,
-        ),
-      );
-      final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-        try {
-          final cookieList = await _desktopWebview!.getCookies(widget.url);
-          for (var c in cookieList) {
-            final cookie =
-                c.entries.map((e) => "${e.key}=${e.value}").join(";");
-            await MClient.setCookie(_url, "", cookie: cookie);
-          }
-        } catch (_) {}
-      });
-      _desktopWebview!
-        ..launch(widget.url)
-        ..addOnWebMessageReceivedCallback((s) {
-          if (s.substring(0, 2) == "UA") {
-            MClient.setCookie(_url, s.replaceFirst("UA", ""));
-          }
-        })
-        ..addScriptToExecuteOnDocumentCreated(
-            "window.chrome.webview.postMessage(\"UA\" + navigator.userAgent)")
-        ..onClose.whenComplete(() async {
-          timer.cancel();
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        });
-    }
+  void _runWindowWebView() async {
     //credit: https://github.com/wgh136/PicaComic/blob/master/lib/network/nhentai_network/cloudflare.dart
-    else if (Platform.isWindows && await FlutterWindowsWebview.isAvailable()) {
+    if (await FlutterWindowsWebview.isAvailable()) {
       _windowsWebview.launchWebview(
           widget.url,
           WebviewOptions(messageReceiver: (s) {
@@ -100,7 +56,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     }
   }
 
-  bool _isNotDesktop = false;
   InAppWebViewController? _webViewController;
   late String _url = widget.url;
   late String _title = widget.title;
@@ -109,7 +64,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
-    return !_isNotDesktop
+    return Platform.isWindows
         ? Scaffold(
             appBar: AppBar(
               title: Text(
@@ -120,9 +75,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                   onPressed: () {
-                    if (Platform.isLinux || Platform.isMacOS) {
-                      _desktopWebview!.close();
-                    }
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.close)),
@@ -203,7 +155,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                   Share.share(_url);
                                 } else if (value == 2) {
                                   await InAppBrowser.openWithSystemBrowser(
-                                      url: Uri.parse(_url));
+                                      url: WebUri(_url));
                                 } else if (value == 3) {
                                   CookieManager.instance().deleteAllCookies();
                                   MClient.deleteAllCookies(_url);
@@ -217,7 +169,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         : Container(),
                     Expanded(
                       child: InAppWebView(
-                        key: webViewKey,
                         onWebViewCreated: (controller) async {
                           _webViewController = controller;
                         },
@@ -283,8 +234,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             });
                           }
                         },
-                        initialUrlRequest:
-                            URLRequest(url: Uri.parse(widget.url)),
+                        initialUrlRequest: URLRequest(url: WebUri(widget.url)),
                       ),
                     ),
                   ],
@@ -293,12 +243,4 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             ),
           );
   }
-}
-
-Future<String> getWebViewPath() async {
-  final document = await getApplicationDocumentsDirectory();
-  return p.join(
-    document.path,
-    'desktop_webview_window',
-  );
 }
