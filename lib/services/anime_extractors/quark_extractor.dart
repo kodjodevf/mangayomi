@@ -17,7 +17,7 @@ class QuarkExtractor {
 
   Future<void> initQuark(String cookie) async {
     this.cookie = cookie;
-    print('夸克云盘初始化完成,Cookie为:$cookie');
+    // print('夸克云盘初始化完成,Cookie为:$cookie');
   }
 
   Map<String, String> getHeaders() {
@@ -330,11 +330,11 @@ class QuarkExtractor {
       await getFilesByShareUrl(i + 1, shareUrl, videoItems, subItems);
     }
 
-    if (videoItems.isNotEmpty) {
-      print('获取播放链接成功,分享链接为:${shareUrlList.join("\t")}');
-    } else {
-      print('获取播放链接失败,检查分享链接为:${shareUrlList.join("\t")}');
-    }
+    // if (videoItems.isNotEmpty) {
+    //   print('获取播放链接成功,分享链接为:${shareUrlList.join("\t")}');
+    // } else {
+    //   print('获取播放链接失败,检查分享链接为:${shareUrlList.join("\t")}');
+    // }
 
     return await getVodFile(videoItems, subItems, typeName);
   }
@@ -354,7 +354,7 @@ class QuarkExtractor {
       String url = parts[1];
       vodItems.add({"name": name, "url": url});
     }
-    print(vodItems);
+    // print(vodItems);
     return vodItems;
   }
 
@@ -413,7 +413,6 @@ class QuarkExtractor {
     for (var video in videos) {
       video.subtitles = subtitles;
     }
-    print(videos);
     return videos;
   }
 
