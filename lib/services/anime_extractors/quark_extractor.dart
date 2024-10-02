@@ -17,7 +17,6 @@ class QuarkExtractor {
 
   Future<void> initQuark(String cookie) async {
     this.cookie = cookie;
-    // print('夸克云盘初始化完成,Cookie为:$cookie');
   }
 
   Map<String, String> getHeaders() {
@@ -267,7 +266,7 @@ class QuarkExtractor {
         }
         retry++;
         if (retry > 2) break;
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
       }
     }
     return null;
@@ -374,7 +373,7 @@ class QuarkExtractor {
         await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'normal');
 
     // 获取可用的质量列表
-    List<String> qualities = await getPlayFormtQuarkList();
+    List<String> qualities = getPlayFormtQuarkList();
     List<Video> videos = [];
 
     for (String quality in qualities) {
