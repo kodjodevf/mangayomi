@@ -33,6 +33,7 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:mangayomi/services/anime_extractors/quark_extractor.dart';
 
 class WordSet {
   final List<String> words;
@@ -342,6 +343,13 @@ class MBridge {
     }
     return await Mp4uploadExtractor()
         .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
+  }
+
+  static Future<List<Map<String, String>>> quarkFilesExtractor(
+      List<String> url, String cookie) async {
+    QuarkExtractor quark = QuarkExtractor();
+    await quark.initQuark(cookie);
+    return await quark.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> streamTapeExtractor(

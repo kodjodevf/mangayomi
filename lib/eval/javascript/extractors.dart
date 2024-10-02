@@ -25,6 +25,10 @@ class JsVideosExtractors {
     runtime.onMessage('vidBomExtractor', (dynamic args) async {
       return (await MBridge.vidBomExtractor(args[0])).encodeToJson();
     });
+    runtime.onMessage('quarkFilesExtractor', (dynamic args) async {
+      List<String> urls = (args[0] as List).cast<String>();
+      return (await MBridge.quarkFilesExtractor(urls, args[1]));
+    });
     runtime.onMessage('streamlareExtractor', (dynamic args) async {
       return (await MBridge.streamlareExtractor(
               args[0], args[1] ?? "", args[2] ?? ""))
@@ -177,6 +181,13 @@ async function filemoonExtractor(url, prefix, suffix) {
         JSON.stringify([url, prefix, suffix])
     );
     return JSON.parse(result);
+}
+async function quarkFilesExtractor(urls, cookie) {
+    const result = await sendMessage(
+        "quarkFilesExtractor",
+        JSON.stringify([urls, cookie])
+    );
+    return result;
 }
 ''');
   }
