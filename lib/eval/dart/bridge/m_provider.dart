@@ -330,6 +330,22 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
+        'quarkVideosExtractor': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
+              ])),
+              params: [
+                BridgeParameter(
+                    'url',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+                BridgeParameter(
+                    'cookie',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+              ]),
+        ),
         'quarkFilesExtractor': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
@@ -924,6 +940,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
       "filemoonExtractor" => $Function((_, __, List<$Value?> args) =>
           $Future.wrap(MBridge.filemoonExtractor(
                   args[0]!.$value, args[1]?.$value ?? "", args[2]?.$value ?? "")
+              .then((value) =>
+                  $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
+      "quarkVideosExtractor" => $Function((_, __, List<$Value?> args) => $Future
+          .wrap(MBridge.quarkVideosExtractor(args[0]!.$value, args[1]!.$value)
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "quarkFilesExtractor" => $Function((_, __, List<$Value?> args) =>

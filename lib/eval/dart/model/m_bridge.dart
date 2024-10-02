@@ -352,6 +352,13 @@ class MBridge {
     return await quark.videoFilesFromUrl(url);
   }
 
+  static Future<List<Video>> quarkVideosExtractor(
+      String url, String cookie) async {
+    QuarkExtractor quark = QuarkExtractor();
+    await quark.initQuark(cookie);
+    return await quark.videosFromUrl(url);
+  }
+
   static Future<List<Video>> streamTapeExtractor(
       String url, String? quality) async {
     return await StreamTapeExtractor()

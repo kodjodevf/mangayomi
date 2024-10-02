@@ -72,10 +72,6 @@ class QuarkExtractor {
     return null;
   }
 
-  List<String> getPlayFormatList() {
-    return ["4K", "超清", "高清", "普画"];
-  }
-
   List<String> getPlayFormtQuarkList() {
     return ["4k", "2k", "super", "high", "normal", "low"];
   }
@@ -278,7 +274,7 @@ class QuarkExtractor {
   }
 
   Future<String?> getLiveTranscoding(String shareId, String stoken,
-      String fileId, String fileToken, String flag) async {
+      String fileId, String fileToken, String quality) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
       if (saveFileId == null) return null;
@@ -294,15 +290,13 @@ class QuarkExtractor {
         'post');
     if (transcoding['data'] != null &&
         transcoding['data']['video_list'] != null) {
-      final flagId = flag.split("-").last;
-      final index = getPlayFormatList().indexOf(flagId);
-      final quarkFormat = getPlayFormtQuarkList()[index];
       for (final video in transcoding['data']['video_list']) {
-        if (video['resolution'] == quarkFormat) {
+        if (video['resolution'] == quality) {
           return video['video_info']['url'];
         }
       }
-      return transcoding['data']['video_list'][index]['video_info']['url'];
+      // 如果没有找到匹配的质量,返回第一个可用的视频URL
+      return transcoding['data']['video_list'][0]['video_info']['url'];
     }
     return null;
   }
@@ -363,23 +357,65 @@ class QuarkExtractor {
     print(vodItems);
     return vodItems;
   }
-  // Future<List<Video>> getVod(List<dynamic> videoItemList,
-  //     List<dynamic> subItemList, String typeName) async {
-  //   if (videoItemList.isEmpty) {
-  //     return [];
-  //   }
-  //   List<Video> vodItems = [];
-  //   for (var videoItem in videoItemList) {
-  //     String episodeUrl = videoItem.getEpisodeUrl(typeName);
-  //     String subtitles = findSubs(videoItem.getName(), subItemList);
-  //     String fullUrl = episodeUrl + subtitles;
-  //     List<String> parts = fullUrl.split('\$');
-  //     String name = parts[0].trim();
-  //     String url = parts[1];
-  //     vodItems.add(Video(url, name, url));
-  //   }
-  //   return vodItems;
-  // }
+
+  Future<List<Video>> videosFromUrl(String url) async {
+    List<String> parts = url.split('++');
+    String fileId = parts[0];
+    String fileToken = parts[1];
+    String shareId = parts[2];
+    String stoken = parts[3];
+
+    List<String> subtitleParts = parts.length > 4 ? parts[4].split('+') : [];
+
+    // 获取原画质量
+    var originalQuality =
+        await getDownload(shareId, stoken, fileId, fileToken, true);
+    String originalUrl = originalQuality?['download_url'] ?? '';
+
+    // 获取可用的质量列表
+    List<String> qualities = await getPlayFormtQuarkList();
+    List<Video> videos = [];
+
+    for (String quality in qualities) {
+      String? url =
+          await getLiveTranscoding(shareId, stoken, fileId, fileToken, quality);
+      if (url != null) {
+        var headers = getHeaders();
+        headers.remove('Host');
+        videos.add(Video(
+          url,
+          quality,
+          originalUrl,
+          headers: headers,
+        ));
+      }
+    }
+
+    // 处理字幕
+    List<Track> subtitles = [];
+    for (String subtitleInfo in subtitleParts) {
+      if (subtitleInfo.isNotEmpty) {
+        List<String> subParts = subtitleInfo.split('@@@');
+        if (subParts.length == 3) {
+          String subName = subParts[0];
+          String subFileId = subParts[2];
+          var subDownload =
+              await getDownload(shareId, stoken, subFileId, '', true);
+          String? subUrl = subDownload?['download_url'];
+          if (subUrl != null) {
+            subtitles.add(Track(file: subUrl, label: subName));
+          }
+        }
+      }
+    }
+
+    // 为所有视频添加字幕
+    for (var video in videos) {
+      video.subtitles = subtitles;
+    }
+    print(videos);
+    return videos;
+  }
 
   String findSubs(String name, List<dynamic> itemList) {
     List<dynamic> subItemList = [];

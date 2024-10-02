@@ -25,6 +25,10 @@ class JsVideosExtractors {
     runtime.onMessage('vidBomExtractor', (dynamic args) async {
       return (await MBridge.vidBomExtractor(args[0])).encodeToJson();
     });
+    runtime.onMessage('quarkVideosExtractor', (dynamic args) async {
+      return (await MBridge.quarkVideosExtractor(args[0], args[1]))
+          .encodeToJson();
+    });
     runtime.onMessage('quarkFilesExtractor', (dynamic args) async {
       List<String> urls = (args[0] as List).cast<String>();
       return (await MBridge.quarkFilesExtractor(urls, args[1]));
@@ -179,6 +183,13 @@ async function filemoonExtractor(url, prefix, suffix) {
     const result = await sendMessage(
         "filemoonExtractor",
         JSON.stringify([url, prefix, suffix])
+    );
+    return JSON.parse(result);
+}
+async function quarkVideosExtractor(url, cookie) {
+    const result = await sendMessage(
+        "quarkVideosExtractor",
+        JSON.stringify([url, cookie])
     );
     return JSON.parse(result);
 }
