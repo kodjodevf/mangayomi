@@ -101,7 +101,7 @@ class QuarkExtractor {
       {int page = 1}) async {
     const int prePage = 200;
     final listData = await api(
-        'share/sharepage/detail?$pr&pwd_id=$shareId&stoken=${Uri.encodeComponent(shareTokenCache[shareId]['stoken'])}&pdir_fid=$folderId&force=0&_page=$page&_size=$prePage&_sort=file_type:asc,file_name:asc',
+        'share/sharepage/detail?$pr&pwd_id=$shareId&stoken=${Uri.encodeComponent(shareTokenCache[shareId]['stoken'])}&pdir_fid=$folderId&force=0&_page=$page&_size=$prePage&_sort=file_type:asc,file_name:desc',
         null,
         'get');
     if (listData['data'] == null) return [];
