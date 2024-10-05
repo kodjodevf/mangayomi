@@ -33,7 +33,7 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:mangayomi/services/anime_extractors/quark_extractor.dart';
+import 'package:mangayomi/services/anime_extractors/quarkuc_extractor.dart';
 
 class WordSet {
   final List<String> words;
@@ -347,16 +347,30 @@ class MBridge {
 
   static Future<List<Map<String, String>>> quarkFilesExtractor(
       List<String> url, String cookie) async {
-    QuarkExtractor quark = QuarkExtractor();
-    await quark.initQuark(cookie);
+    QuarkUcExtractor quark = QuarkUcExtractor();
+    await quark.initCloudDrive(cookie, CloudDriveType.quark);
     return await quark.videoFilesFromUrl(url);
+  }
+
+  static Future<List<Map<String, String>>> ucFilesExtractor(
+      List<String> url, String cookie) async {
+    QuarkUcExtractor uc = QuarkUcExtractor();
+    await uc.initCloudDrive(cookie, CloudDriveType.uc);
+    return await uc.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> quarkVideosExtractor(
       String url, String cookie) async {
-    QuarkExtractor quark = QuarkExtractor();
-    await quark.initQuark(cookie);
+    QuarkUcExtractor quark = QuarkUcExtractor();
+    await quark.initCloudDrive(cookie, CloudDriveType.quark);
     return await quark.videosFromUrl(url);
+  }
+
+  static Future<List<Video>> ucVideosExtractor(
+      String url, String cookie) async {
+    QuarkUcExtractor uc = QuarkUcExtractor();
+    await uc.initCloudDrive(cookie, CloudDriveType.uc);
+    return await uc.videosFromUrl(url);
   }
 
   static Future<List<Video>> streamTapeExtractor(

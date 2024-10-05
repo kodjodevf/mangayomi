@@ -5,29 +5,55 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
-class QuarkExtractor {
-  final String apiUrl = "https://drive-pc.quark.cn/1/clouddrive/";
+enum CloudDriveType {
+  quark,
+  uc,
+}
+
+class QuarkUcExtractor {
+  late CloudDriveType cloudDriveType;
+  String apiUrl = ""; //"https://drive-pc.quark.cn/1/clouddrive/";
   String cookie = "";
   Map<String, dynamic> shareTokenCache = {};
-  final String pr = "pr=ucpro&fr=pc";
+  String pr = ""; //"pr=ucpro&fr=pc";
   final List<String> subtitleExts = ['.srt', '.ass', '.scc', '.stl', '.ttml'];
   Map<String, String> saveFileIdCaches = {};
   String? saveDirId;
   final String saveDirName = 'TV';
 
-  Future<void> initQuark(String cookie) async {
+  Future<void> initCloudDrive(
+      String cookie, CloudDriveType cloudDriveType) async {
     this.cookie = cookie;
+    this.cloudDriveType = cloudDriveType;
+    if (cloudDriveType == CloudDriveType.quark) {
+      apiUrl = "https://drive-pc.quark.cn/1/clouddrive/";
+      pr = "pr=ucpro&fr=pc";
+    } else {
+      apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
+      pr = "UCBrowser&fr=pc";
+    }
   }
 
   Map<String, String> getHeaders() {
-    return {
-      'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
-      'Referer': 'https://pan.quark.cn/',
-      "Content-Type": "application/json",
-      "Cookie": cookie,
-      "Host": "drive-pc.quark.cn"
-    };
+    if (cloudDriveType == CloudDriveType.quark) {
+      return {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
+        'Referer': 'https://pan.quark.cn/',
+        "Content-Type": "application/json",
+        "Cookie": cookie,
+        "Host": "drive-pc.quark.cn"
+      };
+    } else {
+      return {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
+        'Referer': 'https://drive.uc.cn/',
+        "Content-Type": "application/json",
+        "Cookie": cookie,
+        "Host": "pc-api.uc.cn"
+      };
+    }
   }
 
   Future<Map<String, dynamic>> api(
@@ -60,7 +86,12 @@ class QuarkExtractor {
   }
 
   Map<String, String>? getShareData(String url) {
-    final regex = RegExp(r'https://pan\.quark\.cn/s/([^\\|#/]+)');
+    RegExp regex;
+    if (cloudDriveType == CloudDriveType.quark) {
+      regex = RegExp(r'https://pan\.quark\.cn/s/([^\\|#/]+)');
+    } else {
+      regex = RegExp(r'https://drive\.uc\.cn/s/([^?]+)');
+    }
     final matches = regex.firstMatch(url);
     if (matches != null) {
       return {
@@ -71,7 +102,7 @@ class QuarkExtractor {
     return null;
   }
 
-  List<String> getPlayFormtQuarkList() {
+  List<String> getPlayFormtList() {
     return ["normal", "low", "high", "super", "2k", "4k"];
   }
 
@@ -114,10 +145,12 @@ class QuarkExtractor {
       } else if (item['file'] == true && item['obj_category'] == 'video') {
         if (item['size'] < 1024 * 1024 * 5) continue;
         item['stoken'] = shareTokenCache[shareData['shareId']]['stoken'];
-        videos.add(Item.objectFrom(item, shareData['shareId']!, shareIndex));
+        videos.add(Item.objectFrom(
+            item, shareData['shareId']!, shareIndex, cloudDriveType));
       } else if (item['type'] == 'file' &&
           subtitleExts.any((x) => item['file_name'].endsWith(x))) {
-        subtitles.add(Item.objectFrom(item, shareData['shareId']!, shareIndex));
+        subtitles.add(Item.objectFrom(
+            item, shareData['shareId']!, shareIndex, cloudDriveType));
       }
     }
     if (page < (listData['metadata']['_total'] / prePage).ceil()) {
@@ -359,21 +392,21 @@ class QuarkExtractor {
 
   Future<List<Video>> videosFromUrl(String url) async {
     List<String> parts = url.split('++');
-    String fileId = parts[0];
-    String fileToken = parts[1];
-    String shareId = parts[2];
-    String stoken = parts[3];
+    String fileId = parts[1];
+    String fileToken = parts[2];
+    String shareId = parts[3];
+    String stoken = parts[4];
 
-    List<String> subtitleParts = parts.length > 4 ? parts[4].split('+') : [];
+    List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 
     // 原画起播慢，所以先获取normal
     // var originalQuality =
     //     await getDownload(shareId, stoken, fileId, fileToken, true);
-    String? originalUrl =
+    String? originalUrl = //originalQuality?['download_url'];
         await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'normal');
 
     // 获取可用的质量列表
-    List<String> qualities = getPlayFormtQuarkList();
+    List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
 
     for (String quality in qualities) {
@@ -504,9 +537,10 @@ class Item {
   int shareIndex = 0;
   int lastUpdateAt = 0;
   dynamic subtitle;
+  late CloudDriveType cloudDriveType;
 
-  static Item objectFrom(
-      Map<String, dynamic> itemJson, String shareId, int shareIndex) {
+  static Item objectFrom(Map<String, dynamic> itemJson, String shareId,
+      int shareIndex, CloudDriveType cloudDriveType) {
     Item item = Item();
     item.fileId = itemJson['fid'] ?? "";
     item.shareId = shareId;
@@ -520,6 +554,7 @@ class Item {
     item.parent = itemJson['pdir_fid'] ?? "";
     item.lastUpdateAt = itemJson['last_update_at'] ?? 0;
     item.shareIndex = shareIndex;
+    item.cloudDriveType = cloudDriveType;
     return item;
   }
 
@@ -548,6 +583,8 @@ class Item {
   }
 
   String getDisplayName(String typeName) {
+    String drivePrefix =
+        cloudDriveType == CloudDriveType.quark ? '[quark]' : '[uc]';
     String displayName = getName();
     if (typeName == "电视剧") {
       List<String> replaceNameList = ["4k", "4K"];
@@ -567,11 +604,11 @@ class Item {
         displayName = numbers[0]!;
       }
     }
-    return "$displayName ${getSize()}";
+    return "$drivePrefix $displayName ${getSize()}";
   }
 
   String getEpisodeUrl(String typeName) {
-    return "${getDisplayName(typeName)}\$${getFileId()}++$shareFileToken++$shareId++$shareToken";
+    return "${getDisplayName(typeName)}\$${cloudDriveType == CloudDriveType.quark ? "quark" : "uc"}++${getFileId()}++$shareFileToken++$shareId++$shareToken";
   }
 
   String getHumanReadableSize(int bytes) {
