@@ -30,7 +30,7 @@ class QuarkUcExtractor {
       pr = "pr=ucpro&fr=pc";
     } else {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
-      pr = "UCBrowser&fr=pc";
+      pr = "pr=UCBrowser&fr=pc";
     }
   }
 
