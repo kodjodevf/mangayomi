@@ -346,7 +346,45 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     false),
               ]),
         ),
+        'ucVideosExtractor': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                BridgeTypeRef(CoreTypes.list, [$MVideo.$type])
+              ])),
+              params: [
+                BridgeParameter(
+                    'url',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+                BridgeParameter(
+                    'cookie',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+              ]),
+        ),
         'quarkFilesExtractor': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                BridgeTypeRef(CoreTypes.list, [
+                  BridgeTypeRef(CoreTypes.map, [
+                    BridgeTypeRef(CoreTypes.string),
+                    BridgeTypeRef(CoreTypes.string)
+                  ])
+                ])
+              ])),
+              params: [
+                BridgeParameter(
+                    'url',
+                    BridgeTypeAnnotation(BridgeTypeRef(
+                        CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                    false),
+                BridgeParameter(
+                    'cookie',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+              ]),
+        ),
+        'ucFilesExtractor': BridgeMethodDef(
           BridgeFunctionDef(
               returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
                 BridgeTypeRef(CoreTypes.list, [
@@ -946,9 +984,23 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
           .wrap(MBridge.quarkVideosExtractor(args[0]!.$value, args[1]!.$value)
               .then((value) =>
                   $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
+      "ucVideosExtractor" => $Function((_, __, List<$Value?> args) => $Future
+          .wrap(MBridge.ucVideosExtractor(args[0]!.$value, args[1]!.$value)
+              .then((value) =>
+                  $List.wrap(value.map((e) => _toMVideo(e)).toList())))),
       "quarkFilesExtractor" => $Function((_, __, List<$Value?> args) =>
           $Future.wrap(
               MBridge.quarkFilesExtractor(args[0]!.$value, args[1]!.$value)
+                  .then((value) {
+            return $List.wrap(value
+                .map((e) => $Map.wrap({
+                      $String('name'): $String(e['name'] ?? ''),
+                      $String('url'): $String(e['url'] ?? ''),
+                    }))
+                .toList());
+          }))),
+      "ucFilesExtractor" => $Function((_, __, List<$Value?> args) => $Future
+              .wrap(MBridge.ucFilesExtractor(args[0]!.$value, args[1]!.$value)
                   .then((value) {
             return $List.wrap(value
                 .map((e) => $Map.wrap({

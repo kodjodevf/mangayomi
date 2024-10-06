@@ -180,14 +180,16 @@ class M3u8Downloader {
 
   Future<void> processBytes(File newFile, Uint8List? tsKey, Uint8List? tsIv,
       int? m3u8Sequence) async {
-    Uint8List bytes = await newFile.readAsBytes();
-    if (tsKey != null) {
-      final index =
-          int.parse(newFile.path.substringAfter("TS_").substringBefore("."));
-      bytes = _aesDecrypt((m3u8Sequence ?? 1) + (index - 1), bytes, tsKey,
-          iv: tsIv);
-    }
+    await Isolate.run(() async {
+      Uint8List bytes = await newFile.readAsBytes();
+      if (tsKey != null) {
+        final index =
+            int.parse(newFile.path.substringAfter("TS_").substringBefore("."));
+        bytes = _aesDecrypt((m3u8Sequence ?? 1) + (index - 1), bytes, tsKey,
+            iv: tsIv);
+      }
 
-    await newFile.writeAsBytes(bytes);
+      await newFile.writeAsBytes(bytes);
+    });
   }
 }
