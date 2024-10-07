@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
+import 'package:mangayomi/modules/anime/widgets/video_preview.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
@@ -21,6 +22,7 @@ class DesktopControllerWidget extends StatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final Widget seekToWidget;
+  final VideoPrefs? video;
   const DesktopControllerWidget(
       {super.key,
       required this.videoController,
@@ -29,7 +31,8 @@ class DesktopControllerWidget extends StatefulWidget {
       required this.streamController,
       required this.videoStatekey,
       required this.seekToWidget,
-      required this.tempDuration});
+      required this.tempDuration,
+      required this.video});
 
   @override
   State<DesktopControllerWidget> createState() =>
@@ -42,6 +45,9 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
   Color backdropColor = const Color(0x66000000);
   Timer? _timer;
+  final ValueNotifier<bool> _isDragging = ValueNotifier(false);
+  final ValueNotifier<double?> _dragPosition = ValueNotifier(null);
+  final ValueNotifier<Duration?> _onDragDuration = ValueNotifier(null);
 
   int swipeDuration = 0; // Duration to seek in video
   bool showSwipeDuration = false; // Whether to show the seek duration overlay
@@ -374,6 +380,21 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                                             widget.tempDuration(null);
                                           },
                                           player: widget.videoController.player,
+                                          isDragging: (value) {
+                                            setState(() {
+                                              _isDragging.value = value;
+                                            });
+                                          },
+                                          dragPosition: (value) {
+                                            setState(() {
+                                              _dragPosition.value = value;
+                                            });
+                                          },
+                                          onDragDuration: (value) {
+                                            setState(() {
+                                              _onDragDuration.value = value;
+                                            });
+                                          },
                                         ),
                                       ),
                                     ),
@@ -439,6 +460,11 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
               ),
             ),
           ),
+          VideoPreview(
+              isDragging: _isDragging,
+              dragPosition: _dragPosition,
+              onDragDuration: _onDragDuration,
+              video: widget.video!),
         ],
       ),
     );

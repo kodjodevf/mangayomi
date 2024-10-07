@@ -1054,6 +1054,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   tempDuration: (value) {
                     _tempPosition.value = value;
                   },
+                  video: _video.value,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1061,6 +1062,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   videoStatekey: _key,
                   bottomButtonBarWidget: _mobileBottomButtonBar(context),
                   streamController: _streamController,
+                  video: _video.value,
                 ),
           controller: _controller,
           width: context.width(1),

@@ -9,13 +9,19 @@ class CustomSeekBar extends StatefulWidget {
   final Duration? delta;
   final Function(Duration)? onSeekStart;
   final Function(Duration)? onSeekEnd;
+  final Function(bool) isDragging;
+  final Function(double?) dragPosition;
+  final Function(Duration) onDragDuration;
 
   const CustomSeekBar(
       {super.key,
       this.onSeekStart,
       this.onSeekEnd,
       required this.player,
-      this.delta});
+      this.delta,
+      required this.isDragging,
+      required this.dragPosition,
+      required this.onDragDuration});
 
   @override
   CustomSeekBarState createState() => CustomSeekBarState();
@@ -58,6 +64,27 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   }
 
   final isDesktop = Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  final GlobalKey _sliderKey = GlobalKey();
+
+  void _onMove(PointerEvent details) {
+    final RenderBox box =
+        _sliderKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset localOffset = box.globalToLocal(details.position);
+
+    if (localOffset.dx >= 0 && localOffset.dx <= box.size.width) {
+      final pourcentage = (localOffset.dx.ceil() / box.size.width.ceil()) * 100;
+      widget.onDragDuration.call(
+          Duration(seconds: ((pourcentage / 100) * duration.inSeconds).ceil()));
+      widget.isDragging.call(true);
+      widget.dragPosition.call(localOffset.dx);
+      Future.delayed(const Duration(milliseconds: 50))
+          .then((e) => widget.isDragging(false));
+    } else {
+      widget.isDragging.call(true);
+      widget.dragPosition.call(null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -78,33 +105,56 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                   ),
                 ))),
           Expanded(
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                trackHeight: isDesktop ? null : 3,
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
-              ),
-              child: Slider(
-                max: max(duration.inMilliseconds.toDouble(), 0),
-                value: max(
-                    (widget.delta ?? tempPosition ?? position)
-                        .inMilliseconds
-                        .toDouble(),
-                    0),
-                secondaryTrackValue: max(buffer.inMilliseconds.toDouble(), 0),
-                onChanged: (value) {
-                  widget.onSeekStart?.call(Duration(
-                      milliseconds: value.toInt() - position.inMilliseconds));
-                  if (mounted) {
-                    setState(() {
-                      tempPosition = Duration(milliseconds: value.toInt());
-                    });
-                  }
+            child: Listener(
+              onPointerMove: (details) {
+                _onMove(details);
+              },
+              child: MouseRegion(
+                onExit: (_) {
+                  widget.isDragging.call(false);
+                  widget.dragPosition.call(null);
                 },
-                onChangeEnd: (value) async {
-                  widget.onSeekEnd?.call(Duration(
-                      milliseconds: value.toInt() - position.inMilliseconds));
-                  widget.player.seek(Duration(milliseconds: value.toInt()));
+                onHover: (details) {
+                  _onMove(details);
                 },
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: isDesktop ? null : 3,
+                    overlayShape:
+                        const RoundSliderOverlayShape(overlayRadius: 5.0),
+                  ),
+                  child: Slider(
+                    key: _sliderKey,
+                    max: max(duration.inMilliseconds.toDouble(), 0),
+                    value: max(
+                        (widget.delta ?? tempPosition ?? position)
+                            .inMilliseconds
+                            .toDouble(),
+                        0),
+                    secondaryTrackValue:
+                        max(buffer.inMilliseconds.toDouble(), 0),
+                    onChanged: (value) {
+                      widget.onSeekStart?.call(Duration(
+                          milliseconds:
+                              value.toInt() - position.inMilliseconds));
+                      if (mounted) {
+                        setState(() {
+                          tempPosition = Duration(milliseconds: value.toInt());
+                        });
+                      }
+                    },
+                    onChangeStart: (value) {
+                      widget.isDragging.call(true);
+                    },
+                    onChangeEnd: (value) async {
+                      widget.isDragging.call(false);
+                      widget.onSeekEnd?.call(Duration(
+                          milliseconds:
+                              value.toInt() - position.inMilliseconds));
+                      widget.player.seek(Duration(milliseconds: value.toInt()));
+                    },
+                  ),
+                ),
               ),
             ),
           ),

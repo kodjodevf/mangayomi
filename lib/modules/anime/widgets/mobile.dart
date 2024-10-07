@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
+import 'package:mangayomi/modules/anime/widgets/video_preview.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:volume_controller/volume_controller.dart';
@@ -21,13 +22,15 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final Widget topButtonBarWidget;
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
+  final VideoPrefs? video;
   const MobileControllerWidget(
       {super.key,
       required this.videoController,
       required this.topButtonBarWidget,
       required this.bottomButtonBarWidget,
       required this.streamController,
-      required this.videoStatekey});
+      required this.videoStatekey,
+      required this.video});
 
   @override
   ConsumerState<MobileControllerWidget> createState() =>
@@ -49,6 +52,10 @@ class _MobileControllerWidgetState
 
   final ValueNotifier<double> _volumeValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _volumeIndicator = ValueNotifier(false);
+
+  final ValueNotifier<bool> _isDragging = ValueNotifier(false);
+  final ValueNotifier<double?> _dragPosition = ValueNotifier(null);
+  final ValueNotifier<Duration?> _onDragDuration = ValueNotifier(null);
   Timer? _volumeTimer;
   // The default event stream in package:volume_controller is buggy.
   bool _volumeInterceptEventStream = false;
@@ -438,6 +445,21 @@ class _MobileControllerWidgetState
                                       });
                                     },
                                     player: widget.videoController.player,
+                                    isDragging: (value) {
+                                      setState(() {
+                                        _isDragging.value = value;
+                                      });
+                                    },
+                                    dragPosition: (value) {
+                                      setState(() {
+                                        _dragPosition.value = value;
+                                      });
+                                    },
+                                    onDragDuration: (value) {
+                                      setState(() {
+                                        _onDragDuration.value = value;
+                                      });
+                                    },
                                   ),
                                 ),
                                 widget.bottomButtonBarWidget
@@ -463,8 +485,12 @@ class _MobileControllerWidgetState
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: CustomSeekBar(
-                                delta: _seekBarDeltaValueNotifier,
-                                player: widget.videoController.player),
+                              delta: _seekBarDeltaValueNotifier,
+                              player: widget.videoController.player,
+                              isDragging: (value) {},
+                              dragPosition: (value) {},
+                              onDragDuration: (value) {},
+                            ),
                           ),
                         ],
                       ),
@@ -662,6 +688,11 @@ class _MobileControllerWidgetState
             ],
           ),
         ),
+        VideoPreview(
+            isDragging: _isDragging,
+            dragPosition: _dragPosition,
+            onDragDuration: _onDragDuration,
+            video: widget.video!),
       ],
     );
   }
