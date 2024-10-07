@@ -115,6 +115,10 @@ class Settings {
 
   bool? animeLibraryLocalSource;
 
+  String? customMangaSourcesIndexUrl;
+
+  String? customAnimeSourcesIndexUrl;
+
   late SortLibraryManga? sortLibraryAnime;
 
   int? pagePreloadAmount;
@@ -239,6 +243,8 @@ class Settings {
       this.animeLibraryShowNumbersOfItems = false,
       this.animeLibraryShowContinueReadingButton = false,
       this.animeLibraryLocalSource,
+      this.customAnimeSourcesIndexUrl = "",
+      this.customMangaSourcesIndexUrl = "",
       this.sortLibraryAnime,
       this.pagePreloadAmount = 6,
       this.scaleType = ScaleType.fitScreen,
@@ -323,6 +329,8 @@ class Settings {
           .toList();
     }
     cropBorders = json['cropBorders'];
+    customAnimeSourcesIndexUrl = json['customAnimeSourcesIndexUrl'];
+    customMangaSourcesIndexUrl = json['customMangaSourcesIndexUrl'];
     dateFormat = json['dateFormat'];
     defaultReaderMode = ReaderMode
         .values[json['defaultReaderMode'] ?? ReaderMode.vertical.index];
@@ -455,6 +463,8 @@ class Settings {
         'checkForExtensionUpdates': checkForExtensionUpdates,
         'cookiesList': cookiesList,
         'cropBorders': cropBorders,
+        'customAnimeSourcesIndexUrl': customAnimeSourcesIndexUrl,
+        'customMangaSourcesIndexUrl': customMangaSourcesIndexUrl,
         'dateFormat': dateFormat,
         'defaultReaderMode': defaultReaderMode.index,
         'displayType': displayType.index,

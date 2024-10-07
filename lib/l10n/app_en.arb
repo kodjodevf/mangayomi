@@ -208,6 +208,8 @@
   "n_episodes": "{n} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
+  "custom_manga_sources_index_url": "Custom Manga Sources Url",
+  "custom_anime_sources_index_url": "Custom Anime Sources Url",
   "anime_extensions": "Anime Extensions",
   "manga_extensions": "Manga Extensions",
   "anime": "Anime",

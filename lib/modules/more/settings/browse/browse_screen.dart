@@ -57,6 +57,37 @@ class BrowseSScreen extends ConsumerWidget {
                               .read(autoUpdateExtensionsStateProvider.notifier)
                               .set(value);
                         }),
+                  TextFormField(
+                    initialValue:
+                        ref.watch(customMangaSourcesIndexUrlStateProvider),
+                    decoration: InputDecoration(
+                      labelText: l10n.custom_manga_sources_index_url,
+                      hintText:
+                          "https://kodjodevf.github.io/mangayomi-extensions/index.json",
+                    ),
+                    onChanged: (value) {
+                      ref
+                          .read(
+                              customMangaSourcesIndexUrlStateProvider.notifier)
+                          .set(value);
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    initialValue:
+                        ref.watch(customAnimeSourcesIndexUrlStateProvider),
+                    decoration: InputDecoration(
+                      labelText: l10n.custom_anime_sources_index_url,
+                      hintText:
+                          "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json",
+                    ),
+                    onChanged: (value) {
+                      ref
+                          .read(
+                              customAnimeSourcesIndexUrlStateProvider.notifier)
+                          .set(value);
+                    },
+                  ),
                 ],
               ),
             ),

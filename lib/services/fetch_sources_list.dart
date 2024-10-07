@@ -12,9 +12,20 @@ import 'package:package_info_plus/package_info_plus.dart';
 Future<void> fetchSourcesList(
     {int? id,
     required bool refresh,
-    required String sourcesIndexUrl,
+    required String defaultSourcesIndexUrl,
     required AutoDisposeRef ref,
     required bool isManga}) async {
+  final customMangaSourcessettings =
+      ref.watch(customMangaSourcesIndexUrlStateProvider);
+  final customMAnimeSourcessettings =
+      ref.watch(customAnimeSourcesIndexUrlStateProvider);
+  final sourcesIndexUrl = isManga
+      ? (customMangaSourcessettings?.isNotEmpty == true
+          ? customMangaSourcessettings!
+          : defaultSourcesIndexUrl)
+      : (customMAnimeSourcessettings?.isNotEmpty == true
+          ? customMAnimeSourcessettings!
+          : defaultSourcesIndexUrl);
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(sourcesIndexUrl));
 
