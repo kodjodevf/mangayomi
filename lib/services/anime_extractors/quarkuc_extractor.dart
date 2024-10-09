@@ -103,7 +103,7 @@ class QuarkUcExtractor {
   }
 
   List<String> getPlayFormtList() {
-    return ["normal", "low", "high", "super", "2k", "4k"];
+    return ["high", "normal", "low", "super", "2k", "4k"];
   }
 
   Future<void> getShareToken(Map<String, String> shareData) async {
@@ -327,8 +327,8 @@ class QuarkUcExtractor {
           return video['video_info']['url'];
         }
       }
-      // 如果没有找到匹配的质量,返回第一个可用的视频URL
-      return transcoding['data']['video_list'][0]['video_info']['url'];
+      // 如果没有找到匹配的质量,返回null
+      return null;
     }
     return null;
   }
@@ -399,11 +399,11 @@ class QuarkUcExtractor {
 
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 
-    // 原画起播慢，所以先获取normal
+    // 原画起播慢，所以先获取high
     // var originalQuality =
     //     await getDownload(shareId, stoken, fileId, fileToken, true);
     String? originalUrl = //originalQuality?['download_url'];
-        await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'normal');
+        await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'high');
 
     // 获取可用的质量列表
     List<String> qualities = getPlayFormtList();
