@@ -399,22 +399,21 @@ class QuarkUcExtractor {
 
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 
-    // 原画起播慢，所以先获取high
-    // var originalQuality =
-    //     await getDownload(shareId, stoken, fileId, fileToken, true);
-    String? originalUrl = //originalQuality?['download_url'];
-        await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'high');
+    // 原画起播慢，所以先获取high/low
+
+    String? originalUrl = (await getLiveTranscoding(
+            shareId, stoken, fileId, fileToken, 'high')) ??
+        (await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'low'));
 
     // 获取可用的质量列表
     List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
-
+    var headers = getHeaders();
+    headers.remove('Host');
     for (String quality in qualities) {
       String? url =
           await getLiveTranscoding(shareId, stoken, fileId, fileToken, quality);
       if (url != null) {
-        var headers = getHeaders();
-        headers.remove('Host');
         videos.add(Video(
           url,
           quality,
