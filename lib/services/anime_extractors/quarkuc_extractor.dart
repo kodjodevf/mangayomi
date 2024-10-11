@@ -103,7 +103,7 @@ class QuarkUcExtractor {
   }
 
   List<String> getPlayFormtList() {
-    return ["high", "normal", "low", "super", "2k", "4k", "原画"];
+    return ["4k", "2k", "super", "high", "normal", "low", "原画"];
   }
 
   Future<void> getShareToken(Map<String, String> shareData) async {
@@ -411,19 +411,18 @@ class QuarkUcExtractor {
         videos.add(Video(url, "原画", url, headers: headers));
       }
     } else {
-      // 原画起播慢，所以先获取high/low
       String? originalUrl = (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, 'high')) ??
-          (await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'low'));
-
+              shareId, stoken, fileId, fileToken, "4k")) ??
+          (await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, 'super'));
+      var headers = getHeaders();
+      headers.remove('Host');
+      headers.remove('Content-Type');
       for (String quality in qualities) {
         if (quality == "原画") {
           String? url = (await getDownload(
               shareId, stoken, fileId, fileToken, true))?['download_url'];
           if (url != null) {
-            var headers = getHeaders();
-            headers.remove('Host');
-            headers.remove('Content-Type');
             videos
                 .add(Video(url, quality, originalUrl ?? '', headers: headers));
           }
@@ -431,8 +430,6 @@ class QuarkUcExtractor {
           String? url = await getLiveTranscoding(
               shareId, stoken, fileId, fileToken, quality);
           if (url != null) {
-            var headers = getHeaders();
-            headers.remove('Host');
             videos.add(Video(
               url,
               quality,
