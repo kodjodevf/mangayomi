@@ -103,7 +103,7 @@ class QuarkUcExtractor {
   }
 
   List<String> getPlayFormtList() {
-    return ["high", "normal", "low", "super", "2k", "4k"];
+    return ["high", "normal", "low", "super", "2k", "4k", "原画"];
   }
 
   Future<void> getShareToken(Map<String, String> shareData) async {
@@ -396,30 +396,51 @@ class QuarkUcExtractor {
     String fileToken = parts[2];
     String shareId = parts[3];
     String stoken = parts[4];
-
+    String type = parts[0];
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
-
-    // 原画起播慢，所以先获取high/low
-
-    String? originalUrl = (await getLiveTranscoding(
-            shareId, stoken, fileId, fileToken, 'high')) ??
-        (await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'low'));
-
-    // 获取可用的质量列表
+// 获取可用的质量列表
     List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
-    var headers = getHeaders();
-    headers.remove('Host');
-    for (String quality in qualities) {
-      String? url =
-          await getLiveTranscoding(shareId, stoken, fileId, fileToken, quality);
+    if (type == "uc") {
+      var headers = getHeaders();
+      headers.remove('Host');
+      headers.remove('Content-Type');
+      String? url = (await getDownload(
+          shareId, stoken, fileId, fileToken, true))?['download_url'];
       if (url != null) {
-        videos.add(Video(
-          url,
-          quality,
-          originalUrl ?? '',
-          headers: headers,
-        ));
+        videos.add(Video(url, "原画", url, headers: headers));
+      }
+    } else {
+      // 原画起播慢，所以先获取high/low
+      String? originalUrl = (await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, 'high')) ??
+          (await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'low'));
+
+      for (String quality in qualities) {
+        if (quality == "原画") {
+          String? url = (await getDownload(
+              shareId, stoken, fileId, fileToken, true))?['download_url'];
+          if (url != null) {
+            var headers = getHeaders();
+            headers.remove('Host');
+            headers.remove('Content-Type');
+            videos
+                .add(Video(url, quality, originalUrl ?? '', headers: headers));
+          }
+        } else {
+          String? url = await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, quality);
+          if (url != null) {
+            var headers = getHeaders();
+            headers.remove('Host');
+            videos.add(Video(
+              url,
+              quality,
+              originalUrl ?? '',
+              headers: headers,
+            ));
+          }
+        }
       }
     }
 
