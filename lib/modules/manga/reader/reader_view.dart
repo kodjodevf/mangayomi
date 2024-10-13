@@ -476,6 +476,7 @@ class _MangaChapterPageGalleryState
         child: Material(
           child: SafeArea(
             top: !fullScreenReader,
+            bottom: false,
             child: ValueListenableBuilder(
                 valueListenable: _failedToLoadImage,
                 builder: (context, failedToLoadImage, child) {
