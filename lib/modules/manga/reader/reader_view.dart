@@ -72,7 +72,7 @@ class MangaReaderView extends ConsumerWidget {
               leading: BackButton(
                 onPressed: () {
                   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                      overlays: [SystemUiOverlay.top]);
+                      overlays: SystemUiOverlay.values);
                   Navigator.pop(context);
                 },
               ),
@@ -476,6 +476,7 @@ class _MangaChapterPageGalleryState
         child: Material(
           child: SafeArea(
             top: !fullScreenReader,
+            bottom: false,
             child: ValueListenableBuilder(
                 valueListenable: _failedToLoadImage,
                 builder: (context, failedToLoadImage, child) {
@@ -1290,7 +1291,7 @@ class _MangaChapterPageGalleryState
 
   void _goBack(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
+        overlays: SystemUiOverlay.values);
     Navigator.pop(context);
   }
 
@@ -1827,7 +1828,7 @@ class _MangaChapterPageGalleryState
     if (fullScreenReader) {
       if (_isView) {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-            overlays: [SystemUiOverlay.top]);
+            overlays: SystemUiOverlay.values);
       } else {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
