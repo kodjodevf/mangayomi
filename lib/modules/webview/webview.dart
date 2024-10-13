@@ -12,13 +12,8 @@ import 'package:share_plus/share_plus.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
   final String url;
-  final String sourceId;
   final String title;
-  const MangaWebView(
-      {super.key,
-      required this.url,
-      required this.sourceId,
-      required this.title});
+  const MangaWebView({super.key, required this.url, required this.title});
 
   @override
   ConsumerState<MangaWebView> createState() => _MangaWebViewState();

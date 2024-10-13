@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' hide Text;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/dart/model/document.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/filemoon.dart';
 import 'package:mangayomi/services/anime_extractors/gogocdn_extractor.dart';
@@ -29,6 +31,7 @@ import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
@@ -667,7 +670,10 @@ void botToast(String title,
     {int second = 10,
     double? fontSize,
     double alignX = 0,
-    double alignY = 0.99}) {
+    double alignY = 0.99,
+    bool hasCloudFlare = false,
+    String? url}) {
+  final context = navigatorKey.currentState?.context;
   final assets = [
     'assets/app_icons/icon-black.png',
     'assets/app_icons/icon-red.png'
@@ -680,10 +686,19 @@ void botToast(String title,
     animationDuration: const Duration(milliseconds: 200),
     animationReverseDuration: const Duration(milliseconds: 200),
     leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
-    title: (_) => Text(
-      title,
-      style: TextStyle(fontSize: fontSize),
-    ),
+    title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
+    trailing: hasCloudFlare
+        ? (_) => OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(elevation: 10),
+              onPressed: () {
+                context
+                    ?.push("/mangawebview", extra: {'url': url, 'title': ''});
+              },
+              label: Text("Resolve Cloudflare challenge",
+                  style: TextStyle(color: context?.secondaryColor)),
+              icon: const Icon(Icons.public),
+            )
+        : null,
   );
 }
 

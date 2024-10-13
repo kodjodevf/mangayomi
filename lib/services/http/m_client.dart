@@ -176,7 +176,8 @@ class LoggerInterceptor extends InterceptorContract {
     Logger.add(LoggerLevel.info,
         "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
     if (cloudflare) {
-      botToast("${response.statusCode} Failed to bypass Cloudflare");
+      botToast("${response.statusCode} Failed to bypass Cloudflare",
+          hasCloudFlare: cloudflare, url: response.request!.url.toString());
     }
     return response;
   }

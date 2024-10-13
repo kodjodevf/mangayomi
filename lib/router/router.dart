@@ -41,17 +41,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/cupertino.dart';
 part 'router.g.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
 GoRouter router(RouterRef ref) {
   final router = RouterNotifier();
 
   return GoRouter(
-    observers: [BotToastNavigatorObserver()],
-    initialLocation: '/MangaLibrary',
-    debugLogDiagnostics: kDebugMode,
-    refreshListenable: router,
-    routes: router._routes,
-  );
+      observers: [BotToastNavigatorObserver()],
+      initialLocation: '/MangaLibrary',
+      debugLogDiagnostics: kDebugMode,
+      refreshListenable: router,
+      routes: router._routes,
+      navigatorKey: navigatorKey);
 }
 
 @riverpod
@@ -380,7 +381,6 @@ class RouterNotifier extends ChangeNotifier {
             final data = state.extra as Map<String, dynamic>;
             return MangaWebView(
               url: data["url"]!,
-              sourceId: data["sourceId"]!,
               title: data['title']!,
             );
           },
@@ -390,7 +390,6 @@ class RouterNotifier extends ChangeNotifier {
               key: state.pageKey,
               child: MangaWebView(
                 url: data["url"]!,
-                sourceId: data["sourceId"]!,
                 title: data['title']!,
               ),
             );
