@@ -200,7 +200,17 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+      
+      - name: Update anime sources URL
+        shell: pwsh
+        run: |
+          (Get-Content lib/services/fetch_anime_sources.dart) -replace 'https://kodjodevf.github.io/mangayomi-extensions/anime_index.json', 'https://yxxyun.github.io/mangayomi-extensions/anime_index.json' | Set-Content lib/services/fetch_anime_sources.dart
 
+      - name: Update manga sources URL
+        shell: pwsh
+        run: |
+          (Get-Content lib/services/fetch_manga_sources.dart) -replace 'https://kodjodevf.github.io/mangayomi-extensions/index.json', 'https://yxxyun.github.io/mangayomi-extensions/index.json' | Set-Content lib/services/fetch_manga_sources.dart
+      
       - name: build windows
         run: |
           flutter build windows --release
