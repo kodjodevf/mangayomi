@@ -46,6 +46,12 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
+
       - name: build android apks
         run: |
           flutter build apk --release --split-per-abi
@@ -89,6 +95,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+- name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build ios
         run: |
@@ -135,6 +147,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build macos
         run: |
@@ -234,6 +252,12 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
+
       - name: build linux
         run: flutter build linux --verbose
       - name: Zip 
@@ -282,6 +306,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build linux
         run: |  
@@ -340,6 +370,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+      
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build linux
         run: |  
