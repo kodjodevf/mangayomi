@@ -215,7 +215,7 @@ jobs:
         run: |
           flutter build windows --release
           $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
-          $SrcDir = "build\windows\runner\Release"
+          $SrcDir = "build\windows\x64\runner\Release"
           New-Item -Path $DestDir -ItemType Directory
           Copy-Item $SrcDir\* -Recurse $DestDir
           Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
