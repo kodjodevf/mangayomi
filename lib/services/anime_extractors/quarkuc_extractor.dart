@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 
 enum CloudDriveType {
   quark,
@@ -42,7 +43,7 @@ class QuarkUcExtractor {
         'Referer': 'https://pan.quark.cn/',
         "Content-Type": "application/json",
         "Cookie": cookie,
-        "Host": "drive-pc.quark.cn"
+        // "Host": "drive-pc.quark.cn"
       };
     } else {
       return {
@@ -51,7 +52,7 @@ class QuarkUcExtractor {
         'Referer': 'https://drive.uc.cn/',
         "Content-Type": "application/json",
         "Cookie": cookie,
-        "Host": "pc-api.uc.cn"
+        // "Host": "pc-api.uc.cn"
       };
     }
   }
@@ -403,7 +404,7 @@ class QuarkUcExtractor {
     List<Video> videos = [];
     if (type == "uc") {
       var headers = getHeaders();
-      headers.remove('Host');
+      // headers.remove('Host');
       headers.remove('Content-Type');
       String? url = (await getDownload(
           shareId, stoken, fileId, fileToken, true))?['download_url'];
@@ -416,15 +417,17 @@ class QuarkUcExtractor {
           (await getLiveTranscoding(
               shareId, stoken, fileId, fileToken, 'super'));
       var headers = getHeaders();
-      headers.remove('Host');
+      // headers.remove('Host');
       headers.remove('Content-Type');
       for (String quality in qualities) {
         if (quality == "原画") {
+          final baseUrl = MTorrentServer().getBaseUrl();
           String? url = (await getDownload(
               shareId, stoken, fileId, fileToken, true))?['download_url'];
           if (url != null) {
+            final playUrl = "$baseUrl/?thread=4&url=$url&header=$headers";
             videos
-                .add(Video(url, quality, originalUrl ?? '', headers: headers));
+                .add(Video(playUrl, quality, originalUrl ?? '', headers: null));
           }
         } else {
           String? url = await getLiveTranscoding(
