@@ -183,15 +183,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 ? SubtitleTrack.uri(file, title: label, language: label)
                 : SubtitleTrack.data(file, title: label, language: label));
           } catch (_) {}
+          try {
+            if (_firstVid.audios?.isNotEmpty ?? false) {
+              _player.setAudioTrack(AudioTrack.uri(
+                  _firstVid.audios!.first.file ?? "",
+                  title: _firstVid.audios!.first.label,
+                  language: _firstVid.audios!.first.label));
+            }
+          } catch (_) {}
         }
-        try {
-          if (_firstVid.audios?.isNotEmpty ?? false) {
-            _player.setAudioTrack(AudioTrack.uri(
-                _firstVid.audios!.first.file ?? "",
-                title: _firstVid.audios!.first.label,
-                language: _firstVid.audios!.first.label));
-          }
-        } catch (_) {}
         _initSubtitleAndAudio = false;
       }
     },
