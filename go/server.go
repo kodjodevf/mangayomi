@@ -48,7 +48,7 @@ func Start(config *Config) (int, error) {
 	log.SetPrefix("[MediaServer] ")
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
-	DnsResolverIP = "1.1.1.1:53"
+	// DnsResolverIP = "1.1.1.1:53"
 
 	InitClient()
 
@@ -615,10 +615,10 @@ var (
 	RestyClient               *resty.Client
 	RestyClientWithProxy      *resty.Client
 	HttpClient                *http.Client
-	DnsResolverIP             string // Initialize to empty string
-	IdleConnTimeout           = 10 * time.Second
-	dnsResolverProto          = "udp"
-	dnsResolverTimeoutMs      = 10000
+	// DnsResolverIP             string // Initialize to empty string
+	IdleConnTimeout = 10 * time.Second
+	// dnsResolverProto     = "udp"
+	// dnsResolverTimeoutMs = 10000
 )
 var UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
 var DefaultTimeout = time.Second * 30
@@ -647,12 +647,12 @@ func NewRestyClient() *resty.Client {
 		// Timeout: ConnectTimeout * time.Second, // 设置连接超时为
 		Resolver: &net.Resolver{
 			PreferGo: true,
-			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-				d := net.Dialer{
-					Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
-				}
-				return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
-			},
+			// Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			// 	d := net.Dialer{
+			// 		Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+			// 	}
+			// 	return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+			// },
 		},
 	}
 
@@ -681,12 +681,12 @@ func NewHttpClient() *http.Client {
 		// Timeout: ConnectTimeout, // 设置连接超时为
 		Resolver: &net.Resolver{
 			PreferGo: true,
-			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-				d := net.Dialer{
-					Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
-				}
-				return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
-			},
+			// Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			// 	d := net.Dialer{
+			// 		Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+			// 	}
+			// 	return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+			// },
 		},
 	}
 
