@@ -41,7 +41,7 @@ class QuarkUcExtractor {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
         'Referer': 'https://pan.quark.cn/',
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         "Cookie": cookie,
         // "Host": "drive-pc.quark.cn"
       };
@@ -50,7 +50,7 @@ class QuarkUcExtractor {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
         'Referer': 'https://drive.uc.cn/',
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         "Cookie": cookie,
         // "Host": "pc-api.uc.cn"
       };
@@ -403,31 +403,27 @@ class QuarkUcExtractor {
     List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
     if (type == "uc") {
-      var headers = getHeaders();
-      // headers.remove('Host');
-      headers.remove('Content-Type');
       String? url = (await getDownload(
           shareId, stoken, fileId, fileToken, true))?['download_url'];
       if (url != null) {
-        videos.add(Video(url, "原画", url, headers: headers));
+        videos.add(Video(url, "原画", url, headers: getHeaders()));
       }
     } else {
       String? originalUrl = (await getLiveTranscoding(
               shareId, stoken, fileId, fileToken, "4k")) ??
           (await getLiveTranscoding(
               shareId, stoken, fileId, fileToken, 'super'));
-      var headers = getHeaders();
-      // headers.remove('Host');
-      headers.remove('Content-Type');
+
       for (String quality in qualities) {
         if (quality == "原画") {
           final baseUrl = MTorrentServer().getBaseUrl();
           String? url = (await getDownload(
               shareId, stoken, fileId, fileToken, true))?['download_url'];
           if (url != null) {
-            final playUrl = "$baseUrl/?thread=4&url=$url&header=$headers";
-            videos
-                .add(Video(playUrl, quality, originalUrl ?? '', headers: null));
+            var headers = getHeaders();
+            final playUrl = "$baseUrl/?thread=8&url=$url&header=$headers";
+            videos.add(Video(playUrl, quality, originalUrl ?? '',
+                headers: getHeaders()));
           }
         } else {
           String? url = await getLiveTranscoding(
@@ -437,7 +433,7 @@ class QuarkUcExtractor {
               url,
               quality,
               originalUrl ?? '',
-              headers: headers,
+              headers: getHeaders(),
             ));
           }
         }
