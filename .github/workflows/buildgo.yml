@@ -92,6 +92,8 @@ jobs:
       - name: Build
         run: |
           cd go
+          # 删除 desktop 目录
+          rm -rf desktop
           # 设置通用标志
           export CGO_CFLAGS="-fPIC"
           export CGO_LDFLAGS="-fPIC -static-libstdc++"
@@ -130,7 +132,8 @@ jobs:
       - name: Build for iOS
         run: |
           cd go
-        
+          # 删除 desktop 目录
+          rm -rf desktop
           # 设置通用标志
           export CGO_CFLAGS="-fembed-bitcode -fPIC"
           export CGO_LDFLAGS="-fembed-bitcode -fPIC"
