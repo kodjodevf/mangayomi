@@ -48,14 +48,14 @@ func Start(config *Config) (int, error) {
 	log.SetPrefix("[MediaServer] ")
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
-	// DnsResolverIP = "1.1.1.1:53"
+	// DnsResolverIP = "8.8.8.8:53"
 
 	InitClient()
 
 	if isWorkPool == nil {
 		isWorkPool = new(bool)
 	}
-	*isWorkPool = false
+	*isWorkPool = true
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
 
@@ -617,8 +617,8 @@ var (
 	HttpClient                *http.Client
 	// DnsResolverIP             string // Initialize to empty string
 	IdleConnTimeout = 10 * time.Second
-	// dnsResolverProto     = "udp"
-	// dnsResolverTimeoutMs = 10000
+	// dnsResolverProto          = "udp"
+	// dnsResolverTimeoutMs      = 10000
 )
 var UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
 var DefaultTimeout = time.Second * 30
@@ -643,21 +643,21 @@ func InitClient() {
 }
 
 func NewRestyClient() *resty.Client {
-	dialer := &net.Dialer{
-		// Timeout: ConnectTimeout * time.Second, // 设置连接超时为
-		Resolver: &net.Resolver{
-			PreferGo: true,
-			// Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-			// 	d := net.Dialer{
-			// 		Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
-			// 	}
-			// 	return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
-			// },
-		},
-	}
+	// dialer := &net.Dialer{
+	// 	// Timeout: ConnectTimeout * time.Second, // 设置连接超时为
+	// 	Resolver: &net.Resolver{
+	// 		PreferGo: true,
+	// 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+	// 			d := net.Dialer{
+	// 				Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+	// 			}
+	// 			return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+	// 		},
+	// 	},
+	// }
 
 	transport := &http.Transport{
-		DialContext: dialer.DialContext,
+		// DialContext: dialer.DialContext,
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 			VerifyPeerCertificate: func(certificates [][]byte, _ [][]*x509.Certificate) error {
@@ -677,24 +677,25 @@ func NewRestyClient() *resty.Client {
 }
 
 func NewHttpClient() *http.Client {
-	dialer := &net.Dialer{
-		// Timeout: ConnectTimeout, // 设置连接超时为
-		Resolver: &net.Resolver{
-			PreferGo: true,
-			// Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-			// 	d := net.Dialer{
-			// 		Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
-			// 	}
-			// 	return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
-			// },
-		},
-	}
+	// dialer := &net.Dialer{
+	// 	//Timeout: 30 * time.Second,
+	// 	// Timeout: ConnectTimeout, // 设置连接超时为
+	// 	Resolver: &net.Resolver{
+	// 		PreferGo: true,
+	// 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+	// 			d := net.Dialer{
+	// 				Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+	// 			}
+	// 			return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+	// 		},
+	// 	},
+	// }
 
 	return &http.Client{
 		Timeout: time.Hour * 48,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			DialContext:     dialer.DialContext,
+			// DialContext:     dialer.DialContext,
 			IdleConnTimeout: IdleConnTimeout,
 		},
 	}
@@ -1036,19 +1037,7 @@ func handleGetMethod(w http.ResponseWriter, req *http.Request) {
 	strHeader := query.Get("header")
 	strThread := req.URL.Query().Get("thread")
 	strSplitSize := req.URL.Query().Get("size")
-	if urlStr != "" {
-		if strForm == "base64" {
-			bytesUrl, err := base64.StdEncoding.DecodeString(urlStr)
-			if err != nil {
-				http.Error(w, fmt.Sprintf("Invalid Base64 Url: %v", err), http.StatusBadRequest)
-				return
-			}
-			urlStr = string(bytesUrl)
-		}
-	} else {
-		http.Error(w, "Missing url parameter", http.StatusBadRequest)
-		return
-	}
+	quarkFids := query.Get("quarkfids")
 
 	if strHeader != "" {
 		if strForm == "base64" {
@@ -1076,9 +1065,59 @@ func handleGetMethod(w http.ResponseWriter, req *http.Request) {
 			newHeader[key] = value
 		}
 	}
+	if urlStr == "" && quarkFids != "" {
+		data := map[string]interface{}{
+			"fids": []string{quarkFids},
+		}
+		var apiResponse struct {
+			Data []struct {
+				DownloadUrl string `json:"download_url"`
+			} `json:"data"`
+		}
+		resp, err := RestyClient.
+			SetRetryCount(3).
+			R().
+			SetHeaderMultiValues(newHeader).
+			SetBody(data).
+			Post("https://drive-pc.quark.cn/1/clouddrive/file/download?pr=ucpro&fr=pc&uc_param_str=")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to download %v link: %v", urlStr, err), http.StatusInternalServerError)
+			return
+		}
+		err = json.Unmarshal(resp.Body(), &apiResponse)
+		if err != nil {
+			http.Error(w, "Failed to parse API response", http.StatusInternalServerError)
+			return
+		}
+
+		if len(apiResponse.Data) == 0 {
+			http.Error(w, "No download URL found", http.StatusNotFound)
+			return
+		}
+		urlStr = apiResponse.Data[0].DownloadUrl
+		// for key, value := range resp.Header() {
+		// 	if !shouldFilterHeaderName(key) {
+		// 		newHeader[key] = value
+		// 	}
+		// }
+		// req.Header = newHeader
+	}
+	if urlStr != "" {
+		if strForm == "base64" {
+			bytesUrl, err := base64.StdEncoding.DecodeString(urlStr)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid Base64 Url: %v", err), http.StatusBadRequest)
+				return
+			}
+			urlStr = string(bytesUrl)
+		}
+	} else {
+		http.Error(w, "Missing url parameter", http.StatusBadRequest)
+		return
+	}
 
 	for parameterName := range query {
-		if parameterName == "url" || parameterName == "form" || parameterName == "thread" || parameterName == "size" || parameterName == "header" {
+		if parameterName == "url" || parameterName == "form" || parameterName == "thread" || parameterName == "size" || parameterName == "header" || parameterName == "quarkfids" {
 			continue
 		}
 		urlStr = urlStr + "&" + parameterName + "=" + query.Get(parameterName)
@@ -1107,7 +1146,7 @@ func handleGetMethod(w http.ResponseWriter, req *http.Request) {
 		statusCode = 200
 	}
 
-	log.Printf("[Debug] 请求头: %+v", newHeader)
+	log.Printf("[Debug] Headers: %+v", newHeader)
 	headersKey := urlStr + "#Headers"
 	var responseHeaders interface{}
 	var connection = "keep-alive"

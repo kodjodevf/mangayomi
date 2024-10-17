@@ -306,8 +306,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<String?> getLiveTranscoding(String shareId, String stoken,
-      String fileId, String fileToken, String quality) async {
+  Future<List<Map<String, String>>?> getLiveTranscoding(
+      String shareId, String stoken, String fileId, String fileToken) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
       if (saveFileId == null) return null;
@@ -323,13 +323,15 @@ class QuarkUcExtractor {
         'post');
     if (transcoding['data'] != null &&
         transcoding['data']['video_list'] != null) {
+      List<Map<String, String>> qualityOptions = [];
       for (final video in transcoding['data']['video_list']) {
-        if (video['resolution'] == quality) {
-          return video['video_info']['url'];
-        }
+        // qualityOptions[video['resolution']] = video['video_info']['url'];
+        qualityOptions.add({
+          'url': video['video_info']['url'],
+          'quality': video['resolution']
+        });
       }
-      // 如果没有找到匹配的质量,返回null
-      return null;
+      return qualityOptions;
     }
     return null;
   }
@@ -400,8 +402,9 @@ class QuarkUcExtractor {
     String type = parts[0];
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 // 获取可用的质量列表
-    List<String> qualities = getPlayFormtList();
+    //List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
+
     if (type == "uc") {
       String? url = (await getDownload(
           shareId, stoken, fileId, fileToken, true))?['download_url'];
@@ -409,34 +412,33 @@ class QuarkUcExtractor {
         videos.add(Video(url, "原画", url, headers: getHeaders()));
       }
     } else {
-      String? originalUrl = (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, "4k")) ??
-          (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, 'super'));
-
-      for (String quality in qualities) {
-        if (quality == "原画") {
-          final baseUrl = MTorrentServer().getBaseUrl();
-          String? url = (await getDownload(
-              shareId, stoken, fileId, fileToken, true))?['download_url'];
-          if (url != null) {
-            var headers = getHeaders();
-            final playUrl = "$baseUrl/?thread=8&url=$url&header=$headers";
-            videos.add(Video(playUrl, quality, originalUrl ?? '',
-                headers: getHeaders()));
-          }
-        } else {
-          String? url = await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, quality);
-          if (url != null) {
-            videos.add(Video(
-              url,
-              quality,
-              originalUrl ?? '',
-              headers: getHeaders(),
-            ));
-          }
+      String? originalUrl;
+      List<Map<String, String>>? qualityOptions =
+          await getLiveTranscoding(shareId, stoken, fileId, fileToken);
+      originalUrl = qualityOptions?[0]['url'];
+      if (qualityOptions != null) {
+        for (Map<String, String> qualityOption in qualityOptions) {
+          videos.add(Video(
+            qualityOption['url'] ?? '',
+            qualityOption['quality'] ?? '',
+            originalUrl ?? '',
+            headers: getHeaders(),
+          ));
         }
+      }
+      final baseUrl = MTorrentServer().getBaseUrl();
+      String? url = (await getDownload(
+          shareId, stoken, fileId, fileToken, true))?['download_url'];
+      if (url != null) {
+        var headers = getHeaders();
+        // nomal usage
+        // "$baseUrl/?thread=8&url=https://xxxx&&header=$headers";
+        // for quark, cookies changed every time and download url is not allowed to be cached
+        // so we need to use quarkfids to get the download url with the same cookies on server side
+        String playUrl =
+            "$baseUrl/?thread=8&url=&quarkfids=${saveFileIdCaches[fileId]}&header=$headers";
+
+        videos.add(Video(playUrl, "原画Go", originalUrl ?? ''));
       }
     }
 
