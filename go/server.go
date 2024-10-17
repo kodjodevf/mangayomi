@@ -2,28 +2,60 @@ package server
 
 //credits: https://github.com/glblduh/StreamRest
 import (
+	"bufio"
+	"bytes"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"regexp"
+	"runtime"
+	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/anacrolix/torrent"
 	"github.com/anacrolix/torrent/metainfo"
 	"github.com/rs/cors"
+
+	"github.com/bzsome/chaoGo/workpool"
+	"github.com/go-resty/resty/v2"
+	"github.com/patrickmn/go-cache"
 )
 
 var torrentCli *torrent.Client
 var torrentcliCfg *torrent.ClientConfig
 
 func Start(config *Config) (int, error) {
+	signal.Ignore(syscall.SIGPIPE)
+	// Set log output
+	log.SetOutput(os.Stdout)
+
+	// Set log prefix and flags
+	log.SetPrefix("[MediaServer] ")
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+
+	// DnsResolverIP = "8.8.8.8:53"
+
+	InitClient()
+
+	if isWorkPool == nil {
+		isWorkPool = new(bool)
+	}
+	*isWorkPool = true
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
 
@@ -62,7 +94,7 @@ func Start(config *Config) (int, error) {
 	mux.HandleFunc("/torrent/torrents", listTorrents)
 	mux.HandleFunc("/torrent/play", playTorrent)
 	mux.HandleFunc("/torrent/add", AddTorrent)
-	mux.HandleFunc("/", Init)
+	mux.HandleFunc("/", handleMethod)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -528,4 +560,982 @@ type torrentStatsFilesOnDisk struct {
 type Config struct {
 	Address string `json:"address"`
 	Path    string `json:"path"`
+}
+
+type Emitter struct {
+	pipeReader *io.PipeReader
+	pipeWriter *io.PipeWriter
+	closed     bool
+}
+
+func (em *Emitter) IsClosed() bool {
+	return em.closed
+}
+
+func (em *Emitter) Read(b []byte) (int, error) {
+	n, err := em.pipeReader.Read(b)
+	if err != nil {
+		em.Close()
+		return 0, err
+	}
+	return n, nil
+}
+
+func (em *Emitter) Write(b []byte) (int, error) {
+	n, err := em.pipeWriter.Write(b)
+	if err != nil {
+		em.Close()
+		return 0, err
+	}
+	return n, nil
+}
+
+func (em *Emitter) WriteString(s string) (int, error) {
+	return em.Write([]byte(s))
+}
+
+func (em *Emitter) Close() error {
+	em.closed = true
+	em.pipeReader.Close()
+	em.pipeWriter.Close()
+	return nil
+}
+
+func NewEmitter(reader *io.PipeReader, writer *io.PipeWriter) *Emitter {
+	return &Emitter{
+		pipeReader: reader,
+		pipeWriter: writer,
+		closed:     false,
+	}
+}
+
+var (
+	NoRedirectClient          *resty.Client
+	NoRedirectClientWithProxy *resty.Client
+	RestyClient               *resty.Client
+	RestyClientWithProxy      *resty.Client
+	HttpClient                *http.Client
+	// DnsResolverIP             string // Initialize to empty string
+	IdleConnTimeout = 10 * time.Second
+	// dnsResolverProto          = "udp"
+	// dnsResolverTimeoutMs      = 10000
+)
+var UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
+var DefaultTimeout = time.Second * 30
+
+func InitClient() {
+	NoRedirectClient = resty.New().SetRedirectPolicy(
+		resty.RedirectPolicyFunc(func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}),
+	).SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	NoRedirectClient.SetHeader("user-agent", UserAgent)
+
+	NoRedirectClientWithProxy = resty.New().SetRedirectPolicy(
+		resty.RedirectPolicyFunc(func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		}),
+	)
+	NoRedirectClientWithProxy.SetHeader("user-agent", UserAgent)
+	RestyClient = NewRestyClient()
+	RestyClientWithProxy = NewRestyClient()
+	HttpClient = NewHttpClient()
+}
+
+func NewRestyClient() *resty.Client {
+	// dialer := &net.Dialer{
+	// 	// Timeout: ConnectTimeout * time.Second, // 设置连接超时为
+	// 	Resolver: &net.Resolver{
+	// 		PreferGo: true,
+	// 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+	// 			d := net.Dialer{
+	// 				Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+	// 			}
+	// 			return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+	// 		},
+	// 	},
+	// }
+
+	transport := &http.Transport{
+		// DialContext: dialer.DialContext,
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			VerifyPeerCertificate: func(certificates [][]byte, _ [][]*x509.Certificate) error {
+				// Completely ignore certificate verification 完全忽略证书验证
+				return nil
+			},
+		},
+		IdleConnTimeout: IdleConnTimeout,
+	}
+
+	client := resty.New().
+		SetHeader("user-agent", UserAgent).
+		SetRetryCount(3).
+		SetTimeout(DefaultTimeout).
+		SetTransport(transport)
+	return client
+}
+
+func NewHttpClient() *http.Client {
+	// dialer := &net.Dialer{
+	// 	//Timeout: 30 * time.Second,
+	// 	// Timeout: ConnectTimeout, // 设置连接超时为
+	// 	Resolver: &net.Resolver{
+	// 		PreferGo: true,
+	// 		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+	// 			d := net.Dialer{
+	// 				Timeout: time.Duration(dnsResolverTimeoutMs) * time.Millisecond,
+	// 			}
+	// 			return d.DialContext(ctx, dnsResolverProto, DnsResolverIP)
+	// 		},
+	// 	},
+	// }
+
+	return &http.Client{
+		Timeout: time.Hour * 48,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			// DialContext:     dialer.DialContext,
+			IdleConnTimeout: IdleConnTimeout,
+		},
+	}
+}
+
+var isWorkPool *bool
+var proxyTimeout = int64(10)
+var mediaCache = cache.New(4*time.Hour, 10*time.Minute)
+
+type Chunk struct {
+	startOffset int64
+	endOffset   int64
+	buffer      []byte
+}
+
+func newChunk(start int64, end int64) *Chunk {
+	return &Chunk{
+		startOffset: start,
+		endOffset:   end,
+	}
+}
+
+func (ch *Chunk) get() []byte {
+	return ch.buffer
+}
+
+func (ch *Chunk) put(buffer []byte) {
+	ch.buffer = buffer
+}
+
+type ProxyDownloadStruct struct {
+	ProxyRunning         bool
+	NextChunkStartOffset int64
+	CurrentOffset        int64
+	CurrentChunk         int64
+	ChunkSize            int64
+	MaxBufferedChunk     int64
+	startOffset          int64
+	EndOffset            int64
+	ProxyMutex           *sync.Mutex
+	ProxyTimeout         int64
+	ReadyChunkQueue      chan *Chunk
+	ThreadCount          int64
+	DownloadUrl          string
+	CookieJar            *cookiejar.Jar
+	OriginThreadNum      int
+}
+
+func newProxyDownloadStruct(downloadUrl string, proxyTimeout int64, maxBuferredChunk int64, chunkSize int64, startOffset int64, endOffset int64, numTasks int64, cookiejar *cookiejar.Jar, originThreadNum int) *ProxyDownloadStruct {
+	return &ProxyDownloadStruct{
+		ProxyRunning:         true,
+		MaxBufferedChunk:     int64(maxBuferredChunk),
+		ProxyTimeout:         proxyTimeout,
+		ReadyChunkQueue:      make(chan *Chunk, maxBuferredChunk),
+		ProxyMutex:           &sync.Mutex{},
+		ChunkSize:            chunkSize,
+		NextChunkStartOffset: startOffset,
+		CurrentOffset:        startOffset,
+		startOffset:          startOffset,
+		EndOffset:            endOffset,
+		ThreadCount:          numTasks,
+		DownloadUrl:          downloadUrl,
+		CookieJar:            cookiejar,
+		OriginThreadNum:      originThreadNum,
+	}
+}
+
+func ConcurrentDownload(p *ProxyDownloadStruct, downloadUrl string, rangeStart int64, rangeEnd int64, splitSize int64, numTasks int64, emitter *Emitter, req *http.Request, jar *cookiejar.Jar) {
+	totalLength := rangeEnd - rangeStart + 1
+	numSplits := int64(totalLength/int64(splitSize)) + 1
+	if numSplits > int64(numTasks) {
+		numSplits = int64(numTasks)
+	}
+
+	log.Printf("[Debug] Processing: %+v, rangeStart: %+v, rangeEnd: %+v, contentLength :%+v, splitSize: %+v, numSplits: %+v, numTasks: %+v", downloadUrl, rangeStart, rangeEnd, totalLength, splitSize, numSplits, numTasks)
+
+	if *isWorkPool {
+		var wp *workpool.WorkPool
+		workPoolKey := downloadUrl + "#Workpool"
+		if x, found := mediaCache.Get(workPoolKey); found {
+			wp = x.(*workpool.WorkPool)
+			if isWorkPool == nil {
+				wp = workpool.New(int(numTasks))
+				wp.SetTimeout(time.Duration(proxyTimeout) * time.Second)
+				mediaCache.Set(workPoolKey, wp, 14400*time.Second)
+			}
+		} else {
+			wp = workpool.New(int(numTasks))
+			wp.SetTimeout(time.Duration(proxyTimeout) * time.Second)
+			mediaCache.Set(workPoolKey, wp, 14400*time.Second)
+		}
+		for numSplit := 0; numSplit < int(numSplits); numSplit++ {
+			wp.Do(func() error {
+				p.ProxyWorker(req)
+				return nil
+			})
+		}
+	} else {
+		for numSplit := 0; numSplit < int(numSplits); numSplit++ {
+			go p.ProxyWorker(req)
+		}
+	}
+
+	defer func() {
+		p.ProxyStop()
+		p = nil
+	}()
+
+	for {
+		buffer := p.ProxyRead()
+
+		if len(buffer) == 0 {
+			p.ProxyStop()
+			emitter.Close()
+			log.Printf("[Debug] ProxyRead failed")
+			buffer = nil
+			return
+		}
+
+		_, err := emitter.Write(buffer)
+
+		if err != nil {
+			p.ProxyStop()
+			emitter.Close()
+			log.Printf("[Error] emitter write failed, error: %+v", err)
+			buffer = nil
+			return
+		}
+
+		if p.CurrentOffset >= rangeEnd {
+			p.ProxyStop()
+			emitter.Close()
+			log.Printf("[Debug] All services have completed size: %+v", totalLength)
+			buffer = nil
+			return
+		}
+		buffer = nil
+	}
+}
+
+func (p *ProxyDownloadStruct) ProxyRead() []byte {
+	// Check if the file is downloaded
+	if p.CurrentOffset >= p.EndOffset {
+		p.ProxyStop()
+		return nil
+	}
+
+	// Get the data of the current chunk
+	var currentChunk *Chunk
+	select {
+	case currentChunk = <-p.ReadyChunkQueue:
+		break
+	case <-time.After(time.Duration(p.ProxyTimeout) * time.Second):
+		log.Printf("[Debug] ProxyRead execution timeout")
+		p.ProxyStop()
+		return nil
+	}
+
+	for {
+		if !p.ProxyRunning {
+			break
+		}
+		buffer := currentChunk.get()
+		if len(buffer) > 0 {
+			p.CurrentOffset += int64(len(buffer))
+			currentChunk = nil
+			return buffer
+		} else {
+			time.Sleep(50 * time.Millisecond)
+		}
+	}
+	currentChunk = nil
+	return nil
+}
+
+func (p *ProxyDownloadStruct) ProxyStop() {
+	p.ProxyRunning = false
+	var currentChunk *Chunk
+	for {
+		select {
+		case currentChunk = <-p.ReadyChunkQueue:
+			currentChunk.buffer = nil
+			currentChunk = nil
+		case <-time.After(1 * time.Second):
+			return
+		}
+	}
+}
+
+func (p *ProxyDownloadStruct) ProxyWorker(req *http.Request) {
+	log.Printf("[Debug] Current number of active goroutines: %d", runtime.NumGoroutine()-p.OriginThreadNum)
+	for {
+		if !p.ProxyRunning {
+			break
+		}
+
+		p.ProxyMutex.Lock()
+		// Generate the next chunk
+		var chunk *Chunk
+		chunk = nil
+		startOffset := p.NextChunkStartOffset
+		p.NextChunkStartOffset += p.ChunkSize
+		if startOffset <= p.EndOffset {
+			endOffset := startOffset + p.ChunkSize - 1
+			if endOffset > p.EndOffset {
+				endOffset = p.EndOffset
+			}
+			chunk = newChunk(startOffset, endOffset)
+
+			p.ReadyChunkQueue <- chunk
+		}
+		p.ProxyMutex.Unlock()
+
+		// All chunks are downloaded
+		if chunk == nil {
+			break
+		}
+
+		for {
+			if !p.ProxyRunning {
+				break
+			} else {
+				// Too much data is not taken, rest for a while to avoid memory overflow
+				remainingSize := p.GetRemainingSize(p.ChunkSize)
+				maxBufferSize := p.ChunkSize * p.MaxBufferedChunk
+				if remainingSize >= maxBufferSize {
+					log.Printf("[Debug] Unread data: %d >= buffer: %d , Rest for a while to avoid memory overflow", remainingSize, maxBufferSize)
+					time.Sleep(1 * time.Second)
+				} else {
+					// logrus.Debugf("未读取数据: %d < 缓冲区: %d , 下载继续", remainingSize, maxBufferSize)
+					break
+				}
+			}
+		}
+
+		for {
+			if !p.ProxyRunning {
+				break
+			} else {
+				// Establish connection
+				rangeStr := fmt.Sprintf("bytes=%d-%d", chunk.startOffset, chunk.endOffset)
+				newHeader := make(map[string][]string)
+				for key, value := range req.Header {
+					if !shouldFilterHeaderName(key) {
+						newHeader[key] = value
+					}
+				}
+
+				maxRetries := 5
+				if startOffset < int64(1048576) || (p.EndOffset-startOffset)/p.EndOffset*1000 < 2 {
+					maxRetries = 7
+				}
+
+				var resp *resty.Response
+				var err error
+				for retry := 0; retry < maxRetries; retry++ {
+					resp, err = RestyClient.
+						SetTimeout(10*time.Second).
+						SetRetryCount(1).
+						SetCookieJar(p.CookieJar).
+						R().
+						SetHeaderMultiValues(newHeader).
+						SetHeader("Range", rangeStr).
+						Get(p.DownloadUrl)
+
+					if err != nil {
+						log.Printf("[Error] Processing %+v link range=%d-%d partially failed: %+v", p.DownloadUrl, chunk.startOffset, chunk.endOffset, err)
+						time.Sleep(1 * time.Second)
+						resp = nil
+						continue
+					}
+					if !strings.HasPrefix(resp.Status(), "20") {
+						log.Printf("[Debug] Processing %+v link range=%d-%d partially failed, statusCode: %+v: %s", p.DownloadUrl, chunk.startOffset, chunk.endOffset, resp.StatusCode(), resp.String())
+						resp = nil
+						p.ProxyStop()
+						return
+					}
+					break
+				}
+
+				if err != nil {
+					resp = nil
+					p.ProxyStop()
+					return
+				}
+
+				// Receive data
+				if resp != nil && resp.Body() != nil {
+					buffer := make([]byte, chunk.endOffset-chunk.startOffset+1)
+					copy(buffer, resp.Body())
+					chunk.put(buffer)
+				}
+				resp = nil
+				break
+			}
+		}
+	}
+}
+
+func (p *ProxyDownloadStruct) GetRemainingSize(bufferSize int64) int64 {
+	p.ProxyMutex.Lock()
+	defer p.ProxyMutex.Unlock()
+	return int64(len(p.ReadyChunkQueue)) * bufferSize
+}
+
+func handleMethod(w http.ResponseWriter, req *http.Request) {
+	switch req.Method {
+	case http.MethodGet:
+		// Process GET requests
+		log.Printf("[Info] Processing GET request")
+		// Check if the query parameters are empty
+		if req.URL.RawQuery == "" {
+			// Get the embedded index.html file
+			http.Error(w, "Missing url parameter", http.StatusBadRequest)
+			return
+		} else {
+			// If there are query parameters, return custom content
+			handleGetMethod(w, req)
+		}
+	default:
+		// Process other method requests
+		log.Printf("[Info] Processing %v request", req.Method)
+		handleOtherMethod(w, req)
+	}
+}
+
+func handleGetMethod(w http.ResponseWriter, req *http.Request) {
+	pw := bufio.NewWriterSize(w, 128*1024)
+	defer func() {
+		if pw.Buffered() > 0 {
+			pw.Flush()
+		}
+	}()
+
+	var urlStr string
+	query := req.URL.Query()
+	urlStr = query.Get("url")
+	strForm := query.Get("form")
+	strHeader := query.Get("header")
+	strThread := req.URL.Query().Get("thread")
+	strSplitSize := req.URL.Query().Get("size")
+	quarkFids := query.Get("quarkfids")
+
+	if strHeader != "" {
+		if strForm == "base64" {
+			bytesStrHeader, err := base64.StdEncoding.DecodeString(strHeader)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid Base64 Headers: %v", err), http.StatusBadRequest)
+				return
+			}
+			strHeader = string(bytesStrHeader)
+		}
+		var header map[string]string
+		err := json.Unmarshal([]byte(strHeader), &header)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Header Json format error: %v", err), http.StatusInternalServerError)
+			return
+		}
+		for key, value := range header {
+			req.Header.Set(key, value)
+		}
+	}
+
+	newHeader := make(map[string][]string)
+	for key, value := range req.Header {
+		if !shouldFilterHeaderName(key) {
+			newHeader[key] = value
+		}
+	}
+	if urlStr == "" && quarkFids != "" {
+		data := map[string]interface{}{
+			"fids": []string{quarkFids},
+		}
+		var apiResponse struct {
+			Data []struct {
+				DownloadUrl string `json:"download_url"`
+			} `json:"data"`
+		}
+		resp, err := RestyClient.
+			SetRetryCount(3).
+			R().
+			SetHeaderMultiValues(newHeader).
+			SetBody(data).
+			Post("https://drive-pc.quark.cn/1/clouddrive/file/download?pr=ucpro&fr=pc&uc_param_str=")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to download %v link: %v", urlStr, err), http.StatusInternalServerError)
+			return
+		}
+		err = json.Unmarshal(resp.Body(), &apiResponse)
+		if err != nil {
+			http.Error(w, "Failed to parse API response", http.StatusInternalServerError)
+			return
+		}
+
+		if len(apiResponse.Data) == 0 {
+			http.Error(w, "No download URL found", http.StatusNotFound)
+			return
+		}
+		urlStr = apiResponse.Data[0].DownloadUrl
+		// for key, value := range resp.Header() {
+		// 	if !shouldFilterHeaderName(key) {
+		// 		newHeader[key] = value
+		// 	}
+		// }
+		// req.Header = newHeader
+	}
+	if urlStr != "" {
+		if strForm == "base64" {
+			bytesUrl, err := base64.StdEncoding.DecodeString(urlStr)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid Base64 Url: %v", err), http.StatusBadRequest)
+				return
+			}
+			urlStr = string(bytesUrl)
+		}
+	} else {
+		http.Error(w, "Missing url parameter", http.StatusBadRequest)
+		return
+	}
+
+	for parameterName := range query {
+		if parameterName == "url" || parameterName == "form" || parameterName == "thread" || parameterName == "size" || parameterName == "header" || parameterName == "quarkfids" {
+			continue
+		}
+		urlStr = urlStr + "&" + parameterName + "=" + query.Get(parameterName)
+	}
+
+	jar, _ := cookiejar.New(nil)
+	cookies := req.Cookies()
+	if len(cookies) > 0 {
+		// Add cookies to the cookie jar
+		u, _ := url.Parse(urlStr)
+		jar.SetCookies(u, cookies)
+	}
+
+	var statusCode int
+	var rangeStart, rangeEnd = int64(0), int64(0)
+	requestRange := req.Header.Get("Range")
+	rangeRegex := regexp.MustCompile(`bytes= *([0-9]+) *- *([0-9]*)`)
+	matchGroup := rangeRegex.FindStringSubmatch(requestRange)
+	if matchGroup != nil {
+		statusCode = 206
+		rangeStart, _ = strconv.ParseInt(matchGroup[1], 10, 64)
+		if len(matchGroup) > 2 {
+			rangeEnd, _ = strconv.ParseInt(matchGroup[2], 10, 64)
+		}
+	} else {
+		statusCode = 200
+	}
+
+	log.Printf("[Debug] Headers: %+v", newHeader)
+	headersKey := urlStr + "#Headers"
+	var responseHeaders interface{}
+	var connection = "keep-alive"
+	responseHeaders, found := mediaCache.Get(headersKey)
+	if !found {
+		// Close Idle timeout setting
+		IdleConnTimeout = 0
+		resp, err := RestyClient.
+			SetTimeout(0).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetDoNotParseResponse(true).
+			SetOutput(os.DevNull).
+			SetHeaderMultiValues(newHeader).
+			SetHeader("Range", "bytes=0-1023").
+			Get(urlStr)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to download %v link: %v", urlStr, err), http.StatusInternalServerError)
+			return
+		}
+		if resp.StatusCode() < 200 || resp.StatusCode() >= 400 {
+			http.Error(w, resp.Status(), resp.StatusCode())
+			return
+		}
+		responseHeaders = resp.Header()
+
+		var fileName string
+		contentDisposition := strings.ToLower(responseHeaders.(http.Header).Get("Content-Disposition"))
+		if contentDisposition != "" {
+			regCompile := regexp.MustCompile(`^.*filename=\"([^\"]+)\".*$`)
+			if regCompile.MatchString(contentDisposition) {
+				fileName = regCompile.ReplaceAllString(contentDisposition, "$1")
+			}
+		} else {
+			// Find the index of the last "/"
+			lastSlashIndex := strings.LastIndex(urlStr, "/")
+			// Find the index of the first "?"
+			queryIndex := strings.Index(urlStr, "?")
+			if queryIndex == -1 {
+				// If there is no "?", extract the string from the last "/" to the end
+				fileName = urlStr[lastSlashIndex+1:]
+			} else {
+				// If there is a "?", extract the string from the last "/" to the "?"
+				fileName = urlStr[lastSlashIndex+1 : queryIndex]
+			}
+		}
+
+		contentType := responseHeaders.(http.Header).Get("Content-Type")
+		if contentType == "" || contentType == "application/octet-stream" {
+			if strings.HasSuffix(fileName, ".webm") {
+				contentType = "video/webm"
+			} else if strings.HasSuffix(fileName, ".avi") {
+				contentType = "video/x-msvideo"
+			} else if strings.HasSuffix(fileName, ".wmv") {
+				contentType = "video/x-ms-wmv"
+			} else if strings.HasSuffix(fileName, ".flv") {
+				contentType = "video/x-flv"
+			} else if strings.HasSuffix(fileName, ".mov") {
+				contentType = "video/quicktime"
+			} else if strings.HasSuffix(fileName, ".mkv") {
+				contentType = "video/x-matroska"
+			} else if strings.HasSuffix(fileName, ".ts") {
+				contentType = "video/mp2t"
+			} else if strings.HasSuffix(fileName, ".mpeg") || strings.HasSuffix(fileName, ".mpg") {
+				contentType = "video/mpeg"
+			} else if strings.HasSuffix(fileName, ".3gpp") || strings.HasSuffix(fileName, ".3gp") {
+				contentType = "video/3gpp"
+			} else if strings.HasSuffix(fileName, ".mp4") || strings.HasSuffix(fileName, ".m4s") {
+				contentType = "video/mp4"
+			}
+			responseHeaders.(http.Header).Set("Content-Type", contentType)
+		}
+
+		contentRange := responseHeaders.(http.Header).Get("Content-Range")
+		if contentRange != "" {
+			matchGroup := regexp.MustCompile(`.*/([0-9]+)`).FindStringSubmatch(contentRange)
+			contentSize, _ := strconv.ParseInt(matchGroup[1], 10, 64)
+			responseHeaders.(http.Header).Set("Content-Length", strconv.FormatInt(contentSize, 10))
+		} else {
+			if resp.Size() > 0 {
+				responseHeaders.(http.Header).Set("Content-Length", strconv.FormatInt(resp.Size(), 10))
+			} else {
+				responseHeaders.(http.Header).Set("Content-Length", strconv.FormatInt(resp.RawResponse.ContentLength, 10))
+			}
+
+		}
+
+		acceptRange := responseHeaders.(http.Header).Get("Accept-Ranges")
+		if contentRange == "" && acceptRange == "" {
+			// Not support resume download
+			log.Printf("[Debug] Not support resume download")
+			buf := make([]byte, 1024*64)
+			for {
+				n, err := resp.RawBody().Read(buf)
+				if n > 0 {
+					// Write data to client
+					_, writeErr := pw.Write(buf[:n])
+					if writeErr != nil {
+						http.Error(w, fmt.Sprintf("Failed to write Response to client: %v", writeErr), http.StatusInternalServerError)
+						return
+					}
+				}
+				if err != nil {
+					if err != io.EOF {
+						log.Printf("[Error] Read Response Body error: %v", err)
+					}
+					break
+				}
+			}
+			responseHeaders.(http.Header).Set("Content-Disposition", fmt.Sprintf("attachment; filename*=UTF-8''%s", fileName))
+
+			defer func() {
+				if resp != nil && resp.RawBody() != nil {
+					log.Printf("[Debug] resp.RawBody closed")
+					resp.RawBody().Close()
+				}
+			}()
+		} else {
+			// Support resume download
+			log.Printf("[Debug] Support resume download")
+			mediaCache.Set(headersKey, responseHeaders, 1800*time.Second)
+
+			if resp != nil && resp.RawBody() != nil {
+				log.Printf("[Debug] resp.RawBody closed")
+				resp.RawBody().Close()
+			}
+		}
+	}
+
+	acceptRange := responseHeaders.(http.Header).Get("Accept-Ranges")
+	contentRange := responseHeaders.(http.Header).Get("Content-Range")
+	if contentRange == "" && acceptRange == "" {
+		// Not support resume download
+		log.Printf("[Debug] Not support resume download-Get Headers from cache")
+		for key, values := range responseHeaders.(http.Header) {
+			if strings.EqualFold(strings.ToLower(key), "connection") || strings.EqualFold(strings.ToLower(key), "proxy-connection") {
+				continue
+			}
+			w.Header().Set(key, strings.Join(values, ","))
+		}
+		w.Header().Set("Connection", "keep-alive")
+		w.WriteHeader(statusCode)
+	} else {
+		// Support resume download
+		log.Printf("[Debug] Support resume download-Get Headers from cache")
+		responseHeaders.(http.Header).Del("Content-Range")
+		responseHeaders.(http.Header).Set("Accept-Ranges", "bytes")
+
+		var splitSize int64
+		var numTasks int64
+
+		contentSize := int64(0)
+		matchGroup = regexp.MustCompile(`.*/([0-9]+)`).FindStringSubmatch(contentRange)
+		if matchGroup != nil {
+			contentSize, _ = strconv.ParseInt(matchGroup[1], 10, 64)
+		} else {
+			contentSize, _ = strconv.ParseInt(responseHeaders.(http.Header).Get("Content-Length"), 10, 64)
+		}
+
+		if rangeEnd == int64(0) {
+			rangeEnd = contentSize - 1
+		}
+		if rangeStart < contentSize {
+			if strThread == "" {
+				if contentSize < 1*1024*1024*1024 {
+					numTasks = 4
+				} else if contentSize < 4*1024*1024*1024 {
+					numTasks = 8
+				} else if contentSize < 16*1024*1024*1024 {
+					numTasks = 12
+				} else {
+					numTasks = 16
+				}
+			} else {
+				numTasks, _ = strconv.ParseInt(strThread, 10, 64)
+			}
+
+			if numTasks <= 0 {
+				numTasks = 1
+			}
+
+			if strSplitSize != "" {
+				splitSize, _ = strconv.ParseInt(strSplitSize, 10, 64)
+			} else {
+				splitSize = int64(128 * 1024)
+			}
+			responseHeaders.(http.Header).Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", rangeStart, rangeEnd, contentSize))
+
+			for key, values := range responseHeaders.(http.Header) {
+				if strings.EqualFold(strings.ToLower(key), "connection") || strings.EqualFold(strings.ToLower(key), "proxy-connection") || strings.EqualFold(strings.ToLower(key), "transfer-encoding") {
+					continue
+				}
+				if statusCode == 200 && strings.EqualFold(strings.ToLower(key), "content-range") {
+					continue
+				} else if statusCode == 206 && strings.EqualFold(strings.ToLower(key), "accept-ranges") {
+					continue
+				}
+				w.Header().Set(key, strings.Join(values, ","))
+			}
+			w.Header().Set("Connection", "keep-alive")
+			w.WriteHeader(statusCode)
+
+			rp, wp := io.Pipe()
+			emitter := NewEmitter(rp, wp)
+
+			maxChunks := int64(128*1024*1024) / splitSize
+			p := newProxyDownloadStruct(urlStr, proxyTimeout, maxChunks, splitSize, rangeStart, rangeEnd, numTasks, jar, runtime.NumGoroutine()+1)
+
+			go ConcurrentDownload(p, urlStr, rangeStart, rangeEnd, splitSize, numTasks, emitter, req, jar)
+			io.Copy(pw, emitter)
+
+			defer func() {
+				log.Printf("[Debug] handleGetMethod emitter closed-Support resume download")
+				p.ProxyStop()
+				p = nil
+				emitter.Close()
+			}()
+
+		} else {
+			statusCode = 200
+			connection = "close"
+			for key, values := range responseHeaders.(http.Header) {
+				if strings.EqualFold(strings.ToLower(key), "connection") || strings.EqualFold(strings.ToLower(key), "proxy-connection") || strings.EqualFold(strings.ToLower(key), "transfer-encoding") {
+					continue
+				}
+				w.Header().Del(key)
+				w.Header().Set(key, strings.Join(values, ","))
+			}
+			w.Header().Set("Connection", connection)
+			w.WriteHeader(statusCode)
+		}
+	}
+}
+
+func handleOtherMethod(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+
+	var urlStr string
+	query := req.URL.Query()
+	urlStr = query.Get("url")
+	strForm := query.Get("form")
+	strHeader := query.Get("header")
+
+	if urlStr != "" {
+		if strForm == "base64" {
+			bytesUrl, err := base64.StdEncoding.DecodeString(urlStr)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid Base64 Url: %v", err), http.StatusBadRequest)
+				return
+			}
+			urlStr = string(bytesUrl)
+		}
+	} else {
+		http.Error(w, "Missing url parameter", http.StatusBadRequest)
+		return
+	}
+
+	// Process custom header
+	var header map[string]string
+	if strHeader != "" {
+		if strForm == "base64" {
+			bytesStrHeader, err := base64.StdEncoding.DecodeString(strHeader)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid Base64 Headers: %v", err), http.StatusBadRequest)
+				return
+			}
+			strHeader = string(bytesStrHeader)
+		}
+		err := json.Unmarshal([]byte(strHeader), &header)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Header Json format error: %v", err), http.StatusInternalServerError)
+			return
+		}
+		for key, value := range header {
+			req.Header.Set(key, value)
+		}
+	}
+	newHeader := make(map[string][]string)
+	for key, value := range req.Header {
+		if !shouldFilterHeaderName(key) {
+			newHeader[key] = value
+		}
+	}
+
+	// Build new URL
+	for parameterName := range query {
+		if parameterName == "url" || parameterName == "form" || parameterName == "thread" || parameterName == "size" || parameterName == "header" {
+			continue
+		}
+		urlStr = urlStr + "&" + parameterName + "=" + query.Get(parameterName)
+	}
+
+	jar, _ := cookiejar.New(nil)
+	cookies := req.Cookies()
+	if len(cookies) > 0 {
+		// Add cookies to the cookie jar
+		u, _ := url.Parse(req.URL.String())
+		jar.SetCookies(u, cookies)
+	}
+
+	var reqBody []byte
+	// Read request body to record
+	if req.Body != nil {
+		reqBody, _ = io.ReadAll(req.Body)
+	}
+
+	var resp *resty.Response
+	var err error
+	switch req.Method {
+	case http.MethodPost:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetBody(reqBody).
+			SetHeaderMultiValues(newHeader).
+			Post(urlStr)
+	case http.MethodPut:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetBody(reqBody).
+			SetHeaderMultiValues(newHeader).
+			Put(urlStr)
+	case http.MethodOptions:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetHeaderMultiValues(newHeader).
+			Options(urlStr)
+	case http.MethodDelete:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetHeaderMultiValues(newHeader).
+			Delete(urlStr)
+	case http.MethodPatch:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetHeaderMultiValues(newHeader).
+			Patch(urlStr)
+	case http.MethodHead:
+		resp, err = RestyClient.
+			SetTimeout(10 * time.Second).
+			SetRetryCount(3).
+			SetCookieJar(jar).
+			R().
+			SetHeaderMultiValues(newHeader).
+			Head(urlStr)
+	default:
+		http.Error(w, fmt.Sprintf("Invalid Method: %v", req.Method), http.StatusBadRequest)
+	}
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%v link %v failed: %v", req.Method, urlStr, err), http.StatusInternalServerError)
+		resp = nil
+		return
+	}
+	if resp.StatusCode() < 200 || resp.StatusCode() >= 400 {
+		http.Error(w, resp.Status(), resp.StatusCode())
+		resp = nil
+		return
+	}
+
+	// Process response
+	w.Header().Set("Connection", "close")
+	for key, values := range resp.Header() {
+		w.Header().Set(key, strings.Join(values, ","))
+	}
+	w.WriteHeader(resp.StatusCode())
+	bodyReader := bytes.NewReader(resp.Body())
+	io.Copy(w, bodyReader)
+}
+
+func shouldFilterHeaderName(key string) bool {
+	if len(strings.TrimSpace(key)) == 0 {
+		return false
+	}
+	key = strings.ToLower(key)
+	return key == "range" || key == "host" || key == "http-client-ip" || key == "remote-addr" || key == "accept-encoding"
 }
