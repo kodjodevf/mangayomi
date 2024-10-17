@@ -73,7 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with: 
           name: libmtorrentserver-windows
-          path: go/libmtorrentserver.*、
+          path: go/libmtorrentserver.*
    
   build-for-android:
     runs-on: ubuntu-latest
@@ -91,23 +91,21 @@ jobs:
           java-version: "17"
       - name: Build
         run: |
-          cd go
-          # 删除 desktop 目录
-          rm -rf desktop
+          cd go          
           # 设置通用标志
           export CGO_CFLAGS="-fPIC"
           export CGO_LDFLAGS="-fPIC -static-libstdc++"
           # arm64-v8a
-          GOOS=android GOARCH=arm64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_arm64-v8a.so ./binding/mobile
+          GOOS=android GOARCH=arm64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_arm64-v8a.so ./binding/desktop
     
           # armeabi-v7a
-          GOOS=android GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_armeabi-v7a.so ./binding/mobile
+          GOOS=android GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_armeabi-v7a.so ./binding/desktop
     
           # x86
-          GOOS=android GOARCH=386 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86.so ./binding/mobile
+          GOOS=android GOARCH=386 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86.so ./binding/desktop
     
           # x86_64
-          GOOS=android GOARCH=amd64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86_64.so ./binding/mobile
+          GOOS=android GOARCH=amd64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86_64.so ./binding/desktop
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -132,8 +130,6 @@ jobs:
       - name: Build for iOS
         run: |
           cd go
-          # 删除 desktop 目录
-          rm -rf desktop
           # 设置通用标志
           export CGO_CFLAGS="-fembed-bitcode -fPIC"
           export CGO_LDFLAGS="-fembed-bitcode -fPIC"
@@ -141,17 +137,17 @@ jobs:
           # 为 iOS 设备 (arm64) 构建
           CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64.a ./binding/mobile
+          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64.a ./binding/desktop
         
           # 为 iOS 模拟器 (x86_64) 构建
           CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_x86_64.a ./binding/mobile
+          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_x86_64.a ./binding/desktop
         
           # 为 iOS 模拟器 (arm64) 构建
           CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64_simulator.a ./binding/mobile
+          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64_simulator.a ./binding/desktop
         
           # 创建通用库（合并 arm64 和 x86_64）
           lipo -create libmtorrentserver_ios_x86_64.a libmtorrentserver_ios_arm64_simulator.a -output libmtorrentserver_ios_simulator.a
