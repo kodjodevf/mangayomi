@@ -73,4 +73,58 @@ jobs:
         uses: actions/upload-artifact@v4
         with: 
           name: libmtorrentserver-windows
+          path: go/libmtorrentserver.*、
+   
+  build-for-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Setup Java toolchain (Only Android target)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: Build
+        run: |
+          cd go
+          # arm64-v8a
+          GOOS=android GOARCH=arm64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_arm64-v8a.so ./binding/mobile
+    
+          # armeabi-v7a
+          GOOS=android GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_armeabi-v7a.so ./binding/mobile
+    
+          # x86
+          GOOS=android GOARCH=386 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86.so ./binding/mobile
+    
+          # x86_64
+          GOOS=android GOARCH=amd64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86_64.so ./binding/mobile
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-android
+          path: go/libmtorrentserver_*.so
+
+  build-for-iOS:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Build
+        run: |
+          cd go
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dylib ./binding/mobile
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-macos
           path: go/libmtorrentserver.*
