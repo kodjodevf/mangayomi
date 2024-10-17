@@ -57,26 +57,29 @@ class MTorrentServer {
     }
   }
 
+  Future<void> startMServer() async {
+    final isRunning = await check();
+    if (!isRunning) {
+      final path = (await StorageProvider().getBtDirectory())!.path;
+      final config = jsonEncode({"path": path, "address": "127.0.0.1:0"});
+      int port = 0;
+      if (Platform.isAndroid || Platform.isIOS) {
+        const channel =
+            MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
+        port = await channel.invokeMethod('start', {"config": config});
+      } else {
+        port = await Isolate.run(() async {
+          return libmtorrentserver_ffi.start(config);
+        });
+      }
+      _setBtServerPort(port);
+    }
+  }
+
   Future<(List<Video>, String?)> getTorrentPlaylist(
       String? url, String? archivePath) async {
     try {
       final isFilePath = archivePath?.isNotEmpty ?? false;
-      final isRunning = await check();
-      if (!isRunning) {
-        final path = (await StorageProvider().getBtDirectory())!.path;
-        final config = jsonEncode({"path": path, "address": "127.0.0.1:0"});
-        int port = 0;
-        if (Platform.isAndroid || Platform.isIOS) {
-          const channel =
-              MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
-          port = await channel.invokeMethod('start', {"config": config});
-        } else {
-          port = await Isolate.run(() async {
-            return libmtorrentserver_ffi.start(config);
-          });
-        }
-        _setBtServerPort(port);
-      }
       url = isFilePath ? archivePath! : url!;
       bool isMagnet = url.startsWith("magnet:?");
       String finalUrl = "";
@@ -103,6 +106,13 @@ class MTorrentServer {
     } catch (e) {
       rethrow;
     }
+  }
+
+  String getBaseUrl() {
+    final settings = isar.settings.getSync(227);
+    final port = settings!.btServerPort ?? 0;
+    final address = settings.btServerAddress ?? "127.0.0.1";
+    return "http://$address:$port";
   }
 }
 

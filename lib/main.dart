@@ -22,6 +22,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 
 late Isar isar;
 
@@ -29,6 +30,7 @@ void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   await RustLib.init();
+
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }
@@ -36,7 +38,9 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();
-
+  if (!(await MTorrentServer().check())) {
+    await MTorrentServer().startMServer();
+  }
   runApp(const ProviderScope(child: MyApp()));
 }
 

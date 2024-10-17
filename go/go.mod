@@ -4,6 +4,9 @@ go 1.22
 
 require (
 	github.com/anacrolix/torrent v1.56.1
+	github.com/bzsome/chaoGo v0.0.0-20200507035022-6877566c86c4
+	github.com/go-resty/resty/v2 v2.15.3
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rs/cors v1.11.1
 )
 
@@ -84,6 +87,7 @@ require (
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
+	gopkg.in/eapache/queue.v1 v1.1.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.3.0 // indirect
 	modernc.org/libc v1.60.1 // indirect
