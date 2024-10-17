@@ -17,6 +17,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 jobs:
+
   build-for-linux:
     runs-on: ubuntu-latest
     steps:
@@ -30,10 +31,46 @@ jobs:
         run: |
           cd go
           go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.so ./binding/desktop
-          mv libmtorrentserver.so libmtorrentserver.linux.so
-          mv libmtorrentserver.h libmtorrentserver.linux.h
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with: 
           name: libmtorrentserver-linux
-          path: go/libmtorrentserver.linux.*
+          path: go/libmtorrentserver.*
+
+  build-for-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Build
+        run: |
+          cd go
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dylib ./binding/desktop
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-macos
+          path: go/libmtorrentserver.*
+
+  build-for-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Build
+        run: |
+          cd go
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dll ./binding/desktop
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-windows
+          path: go/libmtorrentserver.*
