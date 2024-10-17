@@ -131,21 +131,25 @@ jobs:
         run: |
           cd go
           # 设置通用标志
-          export CGO_CFLAGS="-fembed-bitcode -fPIC"
-          export CGO_LDFLAGS="-fembed-bitcode -fPIC"
+          export CGO_CFLAGS="-fembed-bitcode -fPIC -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
+          export CGO_LDFLAGS="-fembed-bitcode -fPIC -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
+        
         
           # 为 iOS 设备 (arm64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
+          CC=$(xcrun -find -sdk iphoneos clang) \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
           go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64.a ./binding/mobile
         
           # 为 iOS 模拟器 (x86_64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 \
+          CC=$(xcrun -find -sdk iphonesimulator clang) \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
           go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_x86_64.a ./binding/mobile
         
           # 为 iOS 模拟器 (arm64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 CC=$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang \
+          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
+          CC=$(xcrun -find -sdk iphonesimulator clang) \
           IPHONEOS_DEPLOYMENT_TARGET=11.0 \
           go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64_simulator.a ./binding/mobile
         
