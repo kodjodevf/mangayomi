@@ -41,7 +41,7 @@ class QuarkUcExtractor {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
         'Referer': 'https://pan.quark.cn/',
-        // "Content-Type": "application/json",
+        "Content-Type": "application/json",
         "Cookie": cookie,
         // "Host": "drive-pc.quark.cn"
       };
@@ -50,7 +50,7 @@ class QuarkUcExtractor {
         'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
         'Referer': 'https://drive.uc.cn/',
-        // "Content-Type": "application/json",
+        "Content-Type": "application/json",
         "Cookie": cookie,
         // "Host": "pc-api.uc.cn"
       };
@@ -406,12 +406,16 @@ class QuarkUcExtractor {
     List<Video> videos = [];
 
     if (type == "uc") {
+      var headers = getHeaders();
+      headers.remove('Content-Type');
       String? url = (await getDownload(
           shareId, stoken, fileId, fileToken, true))?['download_url'];
       if (url != null) {
-        videos.add(Video(url, "原画", url, headers: getHeaders()));
+        videos.add(Video(url, "原画", url, headers: headers));
       }
     } else {
+      var headers = getHeaders();
+      headers.remove('Content-Type');
       String? originalUrl;
       List<Map<String, String>>? qualityOptions =
           await getLiveTranscoding(shareId, stoken, fileId, fileToken);
@@ -422,24 +426,18 @@ class QuarkUcExtractor {
             qualityOption['url'] ?? '',
             qualityOption['quality'] ?? '',
             originalUrl ?? '',
-            headers: getHeaders(),
+            headers: headers,
           ));
         }
       }
       final baseUrl = MTorrentServer().getBaseUrl();
-      String? url = (await getDownload(
-          shareId, stoken, fileId, fileToken, true))?['download_url'];
-      if (url != null) {
-        var headers = getHeaders();
-        // nomal usage
-        // "$baseUrl/?thread=8&url=https://xxxx&&header=$headers";
-        // for quark, cookies changed every time and download url is not allowed to be cached
-        // so we need to use quarkfids to get the download url with the same cookies on server side
-        String playUrl =
-            "$baseUrl/?thread=8&url=&quarkfids=${saveFileIdCaches[fileId]}&header=$headers";
-
-        videos.add(Video(playUrl, "原画Go", originalUrl ?? ''));
-      }
+      // nomal usage
+      // "$baseUrl/?thread=8&url=https://xxxx&&header=$headers";
+      // for quark, cookies changed every time and download url is not allowed to be cached
+      // so we need to use quarkfids to get the download url with the same cookies on server side
+      String playUrl =
+          "$baseUrl/?thread=8&url=&quarkfids=${saveFileIdCaches[fileId]}&header=$headers";
+      videos.add(Video(playUrl, "原画Go", originalUrl ?? ''));
     }
 
     // 处理字幕
