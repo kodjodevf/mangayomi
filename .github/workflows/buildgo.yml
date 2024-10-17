@@ -27,11 +27,11 @@ jobs:
         with:
           go-version: 1.22
       - name: Build
-        run: 
-            cd go
-            go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.so ./binding/desktop
-            mv libmtorrentserver.so libmtorrentserver.linux.so
-            mv libmtorrentserver.h libmtorrentserver.linux.h
+        run: |
+          cd go
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.so ./binding/desktop
+          mv libmtorrentserver.so libmtorrentserver.linux.so
+          mv libmtorrentserver.h libmtorrentserver.linux.h
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:          
