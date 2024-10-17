@@ -34,5 +34,6 @@ jobs:
           mv libmtorrentserver.h libmtorrentserver.linux.h
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
-        with:          
-          path: libmtorrentserver.*
+        with: 
+          name: libmtorrentserver-linux
+          path: go/libmtorrentserver.linux.*
