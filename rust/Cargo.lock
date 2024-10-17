@@ -482,9 +482,9 @@ dependencies = [
 
 [[package]]
 name = "flutter_rust_bridge"
-version = "2.4.0"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ff967a5893be60d849e4362910762acdc275febe44333153a11dcec1bca2cd2"
+checksum = "35a06af75bcc46b5443c2293f99fda22819e816f8a5f5bea04c72f8cb04a106a"
 dependencies = [
  "allo-isolate",
  "android_logger",
@@ -502,6 +502,7 @@ dependencies = [
  "lazy_static",
  "log",
  "oslog",
+ "portable-atomic",
  "threadpool",
  "tokio",
  "wasm-bindgen",
@@ -511,9 +512,9 @@ dependencies = [
 
 [[package]]
 name = "flutter_rust_bridge_macros"
-version = "2.4.0"
+version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d48b4d3fae9d29377b19134a38386d8792bde70b9448cde49e96391bcfc8fed1"
+checksum = "9250f0a18500e7825617ddb677bccf1336a2fe4c4edf6c6ce7717967ed67f42e"
 dependencies = [
  "hex",
  "md-5",
@@ -1276,6 +1277,12 @@ dependencies = [
  "flate2",
  "miniz_oxide",
 ]
+
+[[package]]
+name = "portable-atomic"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
 
 [[package]]
 name = "ppv-lite86"
