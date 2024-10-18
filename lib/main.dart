@@ -61,15 +61,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     iniDateFormatting();
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initMTorrentServer();
-    });
-  }
-
-  Future<void> _initMTorrentServer() async {
-    if (!(await MTorrentServer().check())) {
-      await MTorrentServer().startMServer();
-    }
+    MTorrentServer().ensureRunning();
   }
 
   @override

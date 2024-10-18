@@ -12,6 +12,13 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
 
 class MTorrentServer {
+  static final MTorrentServer _instance = MTorrentServer._internal();
+  factory MTorrentServer() => _instance;
+  MTorrentServer._internal();
+
+  bool _isRunning = false;
+  int? _serverPort;
+
   final http = MClient.init();
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
@@ -28,13 +35,10 @@ class MTorrentServer {
   }
 
   Future<bool> check() async {
-    if (_baseUrl == "http://127.0.0.1:0") return false;
+    if (!_isRunning || _serverPort == null) return false;
     try {
-      final res = await http.get(Uri.parse("$_baseUrl/"));
-      if (res.statusCode == 200) {
-        return true;
-      }
-      return false;
+      final res = await http.get(Uri.parse("http://127.0.0.1:$_serverPort/"));
+      return res.statusCode == 200;
     } catch (_) {
       return false;
     }
@@ -58,21 +62,32 @@ class MTorrentServer {
   }
 
   Future<void> startMServer() async {
-    final isRunning = await check();
-    if (!isRunning) {
+    if (_isRunning) return;
+    if (!_isRunning) {
       final path = (await StorageProvider().getBtDirectory())!.path;
       final config = jsonEncode({"path": path, "address": "127.0.0.1:0"});
-      int port = 0;
-      if (Platform.isAndroid || Platform.isIOS) {
-        const channel =
-            MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
-        port = await channel.invokeMethod('start', {"config": config});
-      } else {
-        port = await Isolate.run(() async {
-          return libmtorrentserver_ffi.start(config);
-        });
+      try {
+        if (Platform.isAndroid || Platform.isIOS) {
+          const channel =
+              MethodChannel('com.kodjodevf.mangayomi.libmtorrentserver');
+          _serverPort = await channel.invokeMethod('start', {"config": config});
+        } else {
+          _serverPort = await Isolate.run(() async {
+            return libmtorrentserver_ffi.start(config);
+          });
+        }
+        _setBtServerPort(_serverPort!);
+        _isRunning = true;
+      } catch (e) {
+        _isRunning = false;
+        _serverPort = null;
       }
-      _setBtServerPort(port);
+    }
+  }
+
+  Future<void> ensureRunning() async {
+    if (!await check()) {
+      await startMServer();
     }
   }
 
