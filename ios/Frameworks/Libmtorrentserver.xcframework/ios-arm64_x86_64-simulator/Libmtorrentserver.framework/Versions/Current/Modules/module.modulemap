@@ -1,8 +1,0 @@
-framework module "Libmtorrentserver" {
-	header "ref.h"
-    header "Libmtorrentserver.objc.h"
-    header "Universe.objc.h"
-    header "Libmtorrentserver.h"
-
-    export *
-}
