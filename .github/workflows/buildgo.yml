@@ -1,12 +1,12 @@
 name: Build Go
 
 on:
-  push:
-    branches:
-      - cn
-  pull_request:
-    branches:
-      - cn
+  # push:
+  #   branches:
+  #     - cn
+  # pull_request:
+  #   branches:
+  #     - cn
   workflow_dispatch:
     inputs:
       reason:
@@ -18,46 +18,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
 
-  # build-for-linux:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version: 1.22
-  #     - name: Build
-  #       run: |
-  #         cd go
-  #         go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.so ./binding/desktop
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with: 
-  #         name: libmtorrentserver-linux
-  #         path: go/libmtorrentserver.*
-
-  # build-for-macos:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version: 1.22
-  #     - name: Build
-  #       run: |
-  #         cd go
-  #         go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dylib ./binding/desktop
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@v4
-  #       with: 
-  #         name: libmtorrentserver-macos
-  #         path: go/libmtorrentserver.*
-
-  build-for-windows:
-    runs-on: windows-latest
+  build-for-linux:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,25 +27,37 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.22
-      - name: Download and extract TDM-GCC
-        run: |
-          Invoke-WebRequest -Uri "https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm-1/tdm64-gcc-10.3.0-2.exe" -OutFile "tdm-gcc.exe"
-          7z x tdm-gcc.exe -otdm-gcc
-          echo "C:\tdm-gcc\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Build for Windows
+      - name: Build
         run: |
           cd go
-          $env:CGO_ENABLED = "1"
-          $env:CC = "gcc"
-          go build -buildmode=c-shared -ldflags="-s -w -extldflags=-Wl,--allow-multiple-definition" -trimpath -o libmtorrentserver.dll ./binding/desktop
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.so ./binding/desktop
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with: 
-          name: libmtorrentserver-windows
+          name: libmtorrentserver-linux
           path: go/libmtorrentserver.*
-   
-  # build-for-android:
-  #   runs-on: ubuntu-latest
+
+  build-for-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Build
+        run: |
+          cd go
+          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dylib ./binding/desktop
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-macos
+          path: go/libmtorrentserver.*
+
+  # build-for-windows:
+  #   runs-on: windows-latest
   #   steps:
   #     - name: Checkout code
   #       uses: actions/checkout@v4
@@ -91,63 +65,89 @@ jobs:
   #       uses: actions/setup-go@v4
   #       with:
   #         go-version: 1.22
-  #     - name: Setup Java toolchain
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: "temurin"
-  #         java-version: "17"
-  #     - name: Setup Android SDK
-  #       uses: android-actions/setup-android@v3
-  #     - name: Setup Android SDK and NDK
+  #     - name: Download and extract TDM-GCC
   #       run: |
-  #         sdkmanager --install "ndk;25.2.9519653"
-  #         echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
-  #     - name: Install gomobile
-  #       run: |
-  #         go install golang.org/x/mobile/cmd/gomobile@latest
-  #         go install golang.org/x/mobile/cmd/gobind@latest
-  #     - name: Initialize gomobile
-  #       run: |
-  #         export PATH=$PATH:$(go env GOPATH)/bin
-  #         gomobile init -v
-  #     - name: Build Android AAR
+  #         Invoke-WebRequest -Uri "https://github.com/jmeubank/tdm-gcc/releases/download/v10.3.0-tdm-1/tdm64-gcc-10.3.0-2.exe" -OutFile "tdm-gcc.exe"
+  #         7z x tdm-gcc.exe -otdm-gcc
+  #         echo "C:\tdm-gcc\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+  #     - name: Build for Windows
   #       run: |
   #         cd go
-  #         go get -u golang.org/x/mobile
-  #         gomobile bind -v -target=android/arm,android/arm64,android/amd64,android/386 -androidapi 21 -ldflags="-s -w" -trimpath -o libmtorrentserver.aar ./binding/mobile
-  #     - name: Upload Android Artifact
+  #         $env:CGO_ENABLED = "1"
+  #         $env:CC = "gcc"
+  #         go build -buildmode=c-shared -ldflags="-s -w -extldflags=-Wl,--allow-multiple-definition" -trimpath -o libmtorrentserver.dll ./binding/desktop
+  #     - name: Upload Artifact
   #       uses: actions/upload-artifact@v4
   #       with: 
-  #         name: libmtorrentserver-android
-  #         path: go/libmtorrentserver.aar
+  #         name: libmtorrentserver-windows
+  #         path: go/libmtorrentserver.*
+   
+  build-for-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Setup Java toolchain
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Setup Android SDK and NDK
+        run: |
+          sdkmanager --install "ndk;25.2.9519653"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+      - name: Install gomobile
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go install golang.org/x/mobile/cmd/gobind@latest
+      - name: Initialize gomobile
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          gomobile init -v
+      - name: Build Android AAR
+        run: |
+          cd go
+          go get -u golang.org/x/mobile
+          gomobile bind -v -target=android/arm,android/arm64,android/amd64,android/386 -androidapi 21 -ldflags="-s -w" -trimpath -o libmtorrentserver.aar ./binding/mobile
+      - name: Upload Android Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: libmtorrentserver-android
+          path: go/libmtorrentserver.aar
 
-  # build-for-iOS:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Set up Go
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version: 1.22
-  #     - name: Set up Xcode
-  #       uses: maxim-lobanov/setup-xcode@v1
-  #       with:
-  #         xcode-version: latest-stable
-  #     - name: Install gomobile
-  #       run: |
-  #         go install golang.org/x/mobile/cmd/gomobile@latest
-  #         go install golang.org/x/mobile/cmd/gobind@latest
-  #     - name: Initialize gomobile
-  #       run: |
-  #         gomobile init -v
-  #     - name: Build for iOS
-  #       run: |
-  #         cd go
-  #         go get -u golang.org/x/mobile
-  #         gomobile bind -target=ios,iossimulator -ldflags="-s -w" -trimpath -o libmtorrentserver.xcframework ./binding/mobile
-  #     - name: Upload iOS Artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: libmtorrentserver-ios
-  #         path: go/libmtorrentserver.xcframework
+  build-for-iOS:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Install gomobile
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go install golang.org/x/mobile/cmd/gobind@latest
+      - name: Initialize gomobile
+        run: |
+          gomobile init -v
+      - name: Build for iOS
+        run: |
+          cd go
+          go get -u golang.org/x/mobile
+          gomobile bind -target=ios,iossimulator -ldflags="-s -w" -trimpath -o libmtorrentserver.xcframework ./binding/mobile
+      - name: Upload iOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: libmtorrentserver-ios
+          path: go/libmtorrentserver.xcframework

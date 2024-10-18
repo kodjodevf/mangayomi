@@ -38,9 +38,7 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();
-  if (!(await MTorrentServer().check())) {
-    await MTorrentServer().startMServer();
-  }
+  await MTorrentServer().startMServer();
   runApp(const ProviderScope(child: MyApp()));
 }
 
