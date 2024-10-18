@@ -1,12 +1,12 @@
 name: Build Go
 
 on:
-  push:
-    branches:
-      - cn
-  pull_request:
-    branches:
-      - cn
+  # push:
+  #   branches:
+  #     - cn
+  # pull_request:
+  #   branches:
+  #     - cn
   workflow_dispatch:
     inputs:
       reason:
