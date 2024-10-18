@@ -84,34 +84,26 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.22
-      - name: Setup Java toolchain (Only Android target)
+      - name: Setup Java toolchain
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
-      - name: Build
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install gomobile
+        run: go install golang.org/x/mobile/cmd/gomobile@latest
+      - name: Initialize gomobile
+        run: gomobile init
+      - name: Build Android AAR
         run: |
-          cd go          
-          # 设置通用标志
-          export CGO_CFLAGS="-fPIC"
-          export CGO_LDFLAGS="-fPIC -static-libstdc++"
-          # arm64-v8a
-          GOOS=android GOARCH=arm64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_arm64-v8a.so ./binding/mobile
-    
-          # armeabi-v7a
-          GOOS=android GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_armeabi-v7a.so ./binding/mobile
-    
-          # x86
-          GOOS=android GOARCH=386 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/i686-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86.so ./binding/mobile
-    
-          # x86_64
-          GOOS=android GOARCH=amd64 CGO_ENABLED=1 CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android21-clang go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_x86_64.so ./binding/mobile
-
-      - name: Upload Artifact
+          cd go
+          gomobile bind -target=android/arm,android/arm64,android/amd64,android/386 -o libmtorrentserver.aar ./binding/mobile
+      - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with: 
           name: libmtorrentserver-android
-          path: go/libmtorrentserver_*.so
+          path: go/libmtorrentserver.aar
 
   build-for-iOS:
     runs-on: macos-latest
@@ -126,44 +118,16 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-        
+      - name: Install gomobile
+        run: go install golang.org/x/mobile/cmd/gomobile@latest
+      - name: Initialize gomobile
+        run: gomobile init
       - name: Build for iOS
         run: |
           cd go
-          # 设置通用标志
-          export CGO_CFLAGS="-fembed-bitcode -fPIC -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
-          export CGO_LDFLAGS="-fembed-bitcode -fPIC -isysroot $(xcrun --sdk iphoneos --show-sdk-path)"
-        
-        
-          # 为 iOS 设备 (arm64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
-          CC=$(xcrun -find -sdk iphoneos clang) \
-          IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64.a ./binding/mobile
-        
-          # 为 iOS 模拟器 (x86_64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 \
-          CC=$(xcrun -find -sdk iphonesimulator clang) \
-          IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_x86_64.a ./binding/mobile
-        
-          # 为 iOS 模拟器 (arm64) 构建
-          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
-          CC=$(xcrun -find -sdk iphonesimulator clang) \
-          IPHONEOS_DEPLOYMENT_TARGET=11.0 \
-          go build -buildmode=c-archive -ldflags="-s -w" -trimpath -o libmtorrentserver_ios_arm64_simulator.a ./binding/mobile
-        
-          # 创建通用库（合并 arm64 和 x86_64）
-          lipo -create libmtorrentserver_ios_x86_64.a libmtorrentserver_ios_arm64_simulator.a -output libmtorrentserver_ios_simulator.a
-        
-          # 清理中间文件
-          rm libmtorrentserver_ios_x86_64.a libmtorrentserver_ios_arm64_simulator.a
-
+          gomobile bind -target=ios,iossimulator -o libmtorrentserver.xcframework ./binding/mobile
       - name: Upload iOS Artifacts
         uses: actions/upload-artifact@v4
         with:
-            name: libmtorrentserver-ios
-            path: |
-              go/libmtorrentserver_ios_arm64.a
-              go/libmtorrentserver_ios_simulator.a
-              go/libmtorrentserver_ios_arm64.h
+          name: libmtorrentserver-ios
+          path: go/libmtorrentserver.xcframework

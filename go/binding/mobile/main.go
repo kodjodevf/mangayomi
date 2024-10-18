@@ -1,4 +1,4 @@
-package main
+package libmtorrentserver
 
 // #cgo LDFLAGS: -static-libstdc++
 import "C"
@@ -13,4 +13,3 @@ func Start(mcfg string) (int, error) {
 	json.Unmarshal([]byte(mcfg), &config)
 	return server.Start(&config)
 }
-func main() {}
