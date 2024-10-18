@@ -68,6 +68,8 @@ jobs:
       - name: Build
         run: |
           cd go
+          set CGO_ENABLED=1
+          set CC=x86_64-w64-mingw32-gcc
           go build -buildmode=c-shared -ldflags="-s -w -extldflags=-Wl,--allow-multiple-definition" -trimpath -o libmtorrentserver.dll ./binding/desktop
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
