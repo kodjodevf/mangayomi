@@ -106,7 +106,7 @@ jobs:
       - name: Build Android AAR
         run: |
           cd go
-          export PATH=$PATH:$(go env GOPATH)/bin
+          go get -u golang.org/x/mobile
           gomobile bind -v -target=android/arm,android/arm64,android/amd64,android/386 -androidapi 21 -o libmtorrentserver.aar ./binding/mobile
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
@@ -137,6 +137,7 @@ jobs:
       - name: Build for iOS
         run: |
           cd go
+          go get -u golang.org/x/mobile
           gomobile bind -target=ios,iossimulator -o libmtorrentserver.xcframework ./binding/mobile
       - name: Upload iOS Artifacts
         uses: actions/upload-artifact@v4
