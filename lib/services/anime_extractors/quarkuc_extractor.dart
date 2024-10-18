@@ -33,6 +33,7 @@ class QuarkUcExtractor {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
     }
+    MTorrentServer().ensureRunning();
   }
 
   Map<String, String> getHeaders() {

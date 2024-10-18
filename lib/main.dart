@@ -61,7 +61,6 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     iniDateFormatting();
     super.initState();
-    MTorrentServer().ensureRunning();
   }
 
   @override
