@@ -91,14 +91,24 @@ jobs:
           java-version: "17"
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+      - name: Setup Android SDK and NDK
+        run: |
+          sdkmanager --install "ndk;25.2.9519653"
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
       - name: Install gomobile
-        run: go install golang.org/x/mobile/cmd/gomobile@latest
+        run: |
+          go get -u golang.org/x/mobile
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go install golang.org/x/mobile/cmd/gobind@latest
       - name: Initialize gomobile
-        run: gomobile init
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          gomobile init -v
       - name: Build Android AAR
         run: |
           cd go
-          gomobile bind -target=android/arm,android/arm64,android/amd64,android/386 -o libmtorrentserver.aar ./binding/mobile
+          export PATH=$PATH:$(go env GOPATH)/bin
+          gomobile bind -v -target=android/arm,android/arm64,android/amd64,android/386 -androidapi 21 -o libmtorrentserver.aar ./binding/mobile
       - name: Upload Android Artifact
         uses: actions/upload-artifact@v4
         with: 
@@ -119,9 +129,14 @@ jobs:
         with:
           xcode-version: latest-stable
       - name: Install gomobile
-        run: go install golang.org/x/mobile/cmd/gomobile@latest
+        run: |
+          go get -u golang.org/x/mobile
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go install golang.org/x/mobile/cmd/gobind@latest
       - name: Initialize gomobile
-        run: gomobile init
+        run: |
+          gomobile init -v
+          go mod tidy
       - name: Build for iOS
         run: |
           cd go
