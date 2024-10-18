@@ -38,9 +38,6 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();
-  if (!(await MTorrentServer().check())) {
-    await MTorrentServer().startMServer();
-  }
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -64,6 +61,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     iniDateFormatting();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initMTorrentServer();
+    });
+  }
+
+  Future<void> _initMTorrentServer() async {
+    if (!(await MTorrentServer().check())) {
+      await MTorrentServer().startMServer();
+    }
   }
 
   @override
