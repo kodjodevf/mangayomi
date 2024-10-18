@@ -97,7 +97,6 @@ jobs:
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
       - name: Install gomobile
         run: |
-          go get -u golang.org/x/mobile
           go install golang.org/x/mobile/cmd/gomobile@latest
           go install golang.org/x/mobile/cmd/gobind@latest
       - name: Initialize gomobile
@@ -130,13 +129,11 @@ jobs:
           xcode-version: latest-stable
       - name: Install gomobile
         run: |
-          go get -u golang.org/x/mobile
           go install golang.org/x/mobile/cmd/gomobile@latest
           go install golang.org/x/mobile/cmd/gobind@latest
       - name: Initialize gomobile
         run: |
           gomobile init -v
-          go mod tidy
       - name: Build for iOS
         run: |
           cd go
