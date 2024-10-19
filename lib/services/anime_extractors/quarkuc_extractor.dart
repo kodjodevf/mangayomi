@@ -33,6 +33,7 @@ class QuarkUcExtractor {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
     }
+    MTorrentServer().ensureRunning();
   }
 
   Map<String, String> getHeaders() {
@@ -414,12 +415,12 @@ class QuarkUcExtractor {
         videos.add(Video(url, "原画", url, headers: headers));
       }
     } else {
-      var headers = getHeaders();
-      headers.remove('Content-Type');
       String? originalUrl;
       List<Map<String, String>>? qualityOptions =
           await getLiveTranscoding(shareId, stoken, fileId, fileToken);
       originalUrl = qualityOptions?[0]['url'];
+      var headers = getHeaders();
+      headers.remove('Content-Type');
       if (qualityOptions != null) {
         for (Map<String, String> qualityOption in qualityOptions) {
           videos.add(Video(

@@ -95,6 +95,7 @@ class MTorrentServer {
       String? url, String? archivePath) async {
     try {
       final isFilePath = archivePath?.isNotEmpty ?? false;
+      await ensureRunning();
       url = isFilePath ? archivePath! : url!;
       bool isMagnet = url.startsWith("magnet:?");
       String finalUrl = "";
