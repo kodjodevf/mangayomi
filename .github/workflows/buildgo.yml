@@ -46,15 +46,23 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.22
-      - name: Build
+      - name: Build for ARM64
         run: |
           cd go
-          go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver.dylib ./binding/desktop
+          CGO_ENABLED=1 GOARCH=arm64 go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_arm64.dylib ./binding/desktop
+      - name: Build for AMD64
+        run: |
+          cd go
+          CGO_ENABLED=1 GOARCH=amd64 go build -buildmode=c-shared -ldflags="-s -w" -trimpath -o libmtorrentserver_amd64.dylib ./binding/desktop
+      - name: Create Universal Binary
+        run: |
+          cd go
+          lipo -create -output libmtorrentserver.dylib libmtorrentserver_arm64.dylib libmtorrentserver_amd64.dylib
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with: 
           name: libmtorrentserver-macos
-          path: go/libmtorrentserver.*
+          path: go/libmtorrentserver*
 
   build-for-windows:
     runs-on: windows-latest
