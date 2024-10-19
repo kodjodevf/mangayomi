@@ -344,6 +344,8 @@ class QuarkUcExtractor {
       if (saveFileId == null) return null;
       saveFileIdCaches[fileId] = saveFileId;
     }
+    var headers = getHeaders();
+    headers.remove('Content-Type');
     final down = await api(
         'file/download?$pr&uc_param_str=',
         {
@@ -351,7 +353,10 @@ class QuarkUcExtractor {
         },
         'post');
     if (down['data'] != null) {
-      return down['data'][0];
+      return {
+        'downloadInfo': down['data'][0],
+        'headers': headers,
+      };
     }
     return null;
   }
@@ -407,11 +412,12 @@ class QuarkUcExtractor {
     List<Video> videos = [];
 
     if (type == "uc") {
-      var headers = getHeaders();
-      headers.remove('Content-Type');
-      String? url = (await getDownload(
-          shareId, stoken, fileId, fileToken, true))?['download_url'];
-      if (url != null) {
+      var downloadinfo =
+          await getDownload(shareId, stoken, fileId, fileToken, true);
+
+      if (downloadinfo != null) {
+        var url = downloadinfo['downloadInfo']['download_url'];
+        var headers = downloadinfo['headers'];
         videos.add(Video(url, "原画", url, headers: headers));
       }
     } else {
