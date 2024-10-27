@@ -46,6 +46,12 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
+
       - name: build android apks
         run: |
           flutter build apk --release --split-per-abi
@@ -89,6 +95,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+      - name: Update anime sources URL
+        run: sed -i '' 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i '' 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build ios
         run: |
@@ -136,6 +148,12 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: Update anime sources URL
+        run: sed -i '' 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i '' 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
+
       - name: build macos
         run: |
           cd macos
@@ -157,52 +175,62 @@ jobs:
           allowUpdates: true
 
 
-  # build-and-release-windows-zip:
-  #   permissions:
-  #     contents: write
-  #   runs-on: windows-latest
-  #   steps:
+  build-and-release-windows-zip:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
       
-  #     - name: checkout branch
-  #       uses: actions/checkout@v4
+      - name: checkout branch
+        uses: actions/checkout@v4
 
-  #     - name: setup flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: 'stable'
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-  #     - name: Setup Rust toolchain
-  #       uses: dtolnay/rust-toolchain@stable
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-  #     - name: Install the CLI tool
-  #       run: cargo install 'flutter_rust_bridge_codegen'
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
         
-  #     - name: flutter_rust_bridge_codegen
-  #       run: flutter_rust_bridge_codegen generate
+      - name: flutter_rust_bridge_codegen
+        run: flutter_rust_bridge_codegen generate
 
-  #     - name: flutter pub get
-  #       run: flutter pub get
+      - name: flutter pub get
+        run: flutter pub get
+      
+      - name: Update anime sources URL
+        shell: pwsh
+        run: |
+          (Get-Content lib/services/fetch_anime_sources.dart) -replace 'https://kodjodevf.github.io/mangayomi-extensions/anime_index.json', 'https://yxxyun.github.io/mangayomi-extensions/anime_index.json' | Set-Content lib/services/fetch_anime_sources.dart
 
-  #     - name: build windows
-  #       run: |
-  #         flutter build windows --release
-  #         $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
-  #         $SrcDir = "build\windows\runner\Release"
-  #         New-Item -Path $DestDir -ItemType Directory
-  #         Copy-Item $SrcDir\* -Recurse $DestDir
-  #         Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
-  #         Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
+      - name: Update manga sources URL
+        shell: pwsh
+        run: |
+          (Get-Content lib/services/fetch_manga_sources.dart) -replace 'https://kodjodevf.github.io/mangayomi-extensions/index.json', 'https://yxxyun.github.io/mangayomi-extensions/index.json' | Set-Content lib/services/fetch_manga_sources.dart
+      
+      - name: build windows
+        run: |
+          flutter build windows --release
+          $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
+          $SrcDir = "build\windows\x64\runner\Release"
+          New-Item -Path $DestDir -ItemType Directory
+          Copy-Item $SrcDir\* -Recurse $DestDir
+          Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
+          Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
 
-  #     - name: upload artifact windows zip
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         path: build\windows\Mangayomi-*.zip
+      - name: upload artifact windows zip
+        uses: actions/upload-artifact@v3
+        with:
+          path: build\windows\Mangayomi-*.zip
 
-  #     - name: release package windows zip
-  #       uses: ncipollo/release-action@v1
-  #       with:
-  #         artifacts: build\windows\Mangayomi-*.zip
-  #         allowUpdates: true
+      - name: release package windows zip
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: build\windows\Mangayomi-*.zip
+          allowUpdates: true
 
           
   build-and-release-linux-zip:
@@ -233,6 +261,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build linux
         run: flutter build linux --verbose
@@ -282,6 +316,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build linux
         run: |  
@@ -340,6 +380,12 @@ jobs:
 
       - name: flutter pub get
         run: flutter pub get
+      
+      - name: Update anime sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/anime_index.json|https://yxxyun.github.io/mangayomi-extensions/anime_index.json|g' lib/services/fetch_anime_sources.dart
+
+      - name: Update manga sources URL
+        run: sed -i 's|https://kodjodevf.github.io/mangayomi-extensions/index.json|https://yxxyun.github.io/mangayomi-extensions/index.json|g' lib/services/fetch_manga_sources.dart
 
       - name: build linux
         run: |  
