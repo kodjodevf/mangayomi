@@ -17,6 +17,13 @@ Future<int> start(String mcfg) async {
   return completer.future;
 }
 
+Future<void> stop() async {
+  var res = _bindings.Stop();
+  if (res.r1 != nullptr) {
+    throw Exception(res.r1.cast<Utf8>().toDartString());
+  }
+}
+
 const String _libName = 'libmtorrentserver';
 
 final DynamicLibrary _dylib = () {

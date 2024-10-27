@@ -40,6 +40,9 @@ class JsVideosExtractors {
       List<String> urls = (args[0] as List).cast<String>();
       return (await MBridge.ucFilesExtractor(urls, args[1]));
     });
+    runtime.onMessage('getProxyUrl', (dynamic args) async {
+      return await MBridge.getProxyUrl();
+    });
     runtime.onMessage('streamlareExtractor', (dynamic args) async {
       return (await MBridge.streamlareExtractor(
               args[0], args[1] ?? "", args[2] ?? ""))
@@ -218,6 +221,13 @@ async function ucFilesExtractor(urls, cookie) {
     const result = await sendMessage(
         "ucFilesExtractor",
         JSON.stringify([urls, cookie])
+    );
+    return result;
+}
+async function getProxyUrl() {
+    const result = await sendMessage(
+        "getProxyUrl",
+        JSON.stringify([])
     );
     return result;
 }

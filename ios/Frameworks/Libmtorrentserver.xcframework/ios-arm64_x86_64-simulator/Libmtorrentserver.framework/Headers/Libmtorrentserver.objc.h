@@ -13,4 +13,6 @@
 
 FOUNDATION_EXPORT BOOL LibmtorrentserverStart(NSString* _Nullable mcfg, long* _Nullable ret0_, NSError* _Nullable* _Nullable error);
 
+FOUNDATION_EXPORT BOOL LibmtorrentserverStop(NSError* _Nullable* _Nullable error);
+
 #endif

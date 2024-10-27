@@ -17,4 +17,13 @@ func Start(mcfg *C.char) (int, *C.char) {
 	return port, nil
 }
 
+//export Stop
+func Stop() (int, *C.char) {
+	err := server.Stop()
+	if err != nil {
+		return 1, C.CString(err.Error())
+	}
+	return 0, nil
+}
+
 func main() {}

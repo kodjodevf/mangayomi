@@ -876,6 +876,14 @@ class TorrentLibrary {
           'Start');
   late final _Start =
       _StartPtr.asFunction<Start_return Function(ffi.Pointer<ffi.Char>)>();
+
+  Stop_return Stop() {
+    return _Stop();
+  }
+
+  late final _StopPtr =
+      _lookup<ffi.NativeFunction<Stop_return Function()>>('Stop');
+  late final _Stop = _StopPtr.asFunction<Stop_return Function()>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;
@@ -961,6 +969,14 @@ typedef DartGoInt64 = int;
 
 /// Return type for Start
 final class Start_return extends ffi.Struct {
+  @GoInt()
+  external int r0;
+
+  external ffi.Pointer<ffi.Char> r1;
+}
+
+/// Return type for Stop
+final class Stop_return extends ffi.Struct {
   @GoInt()
   external int r0;
 

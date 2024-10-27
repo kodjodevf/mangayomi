@@ -82,6 +82,13 @@ struct Start_return {
 };
 extern struct Start_return Start(char* mcfg);
 
+/* Return type for Stop */
+struct Stop_return {
+	GoInt r0;
+	char* r1;
+};
+extern struct Stop_return Stop();
+
 #ifdef __cplusplus
 }
 #endif

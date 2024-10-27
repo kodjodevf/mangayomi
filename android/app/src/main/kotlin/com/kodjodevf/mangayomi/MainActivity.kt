@@ -27,6 +27,10 @@ class MainActivity: FlutterActivity() {
                         result.error("ERROR", e.message, null)
                     }
                 }
+                "stop" -> {
+                    Libmtorrentserver.stop()
+                    result.success(null)
+                }
                 else -> {
                     result.notImplemented()
                 }

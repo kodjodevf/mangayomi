@@ -13,3 +13,8 @@ func Start(mcfg string) (int, error) {
 	json.Unmarshal([]byte(mcfg), &config)
 	return server.Start(&config)
 }
+
+//export Stop
+func Stop() error {
+	return server.Stop()
+}

@@ -37,6 +37,7 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:mangayomi/services/anime_extractors/quarkuc_extractor.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 
 class WordSet {
   final List<String> words;
@@ -348,32 +349,44 @@ class MBridge {
         .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
   }
 
-  static Future<List<Map<String, String>>> quarkFilesExtractor(
-      List<String> url, String cookie) async {
-    QuarkUcExtractor quark = QuarkUcExtractor();
-    await quark.initCloudDrive(cookie, CloudDriveType.quark);
-    return await quark.videoFilesFromUrl(url);
+  static final Map<CloudDriveType, QuarkUcExtractor> _extractorCache = {};
+
+  static QuarkUcExtractor _getExtractor(String cookie, CloudDriveType type) {
+    if (!_extractorCache.containsKey(type)) {
+      QuarkUcExtractor extractor = QuarkUcExtractor();
+      extractor.initCloudDrive(cookie, type);
+      _extractorCache[type] = extractor;
+    }
+    return _extractorCache[type]!;
   }
 
-  static Future<List<Map<String, String>>> ucFilesExtractor(
+  static Future<List<Map<String, String>>> quarkFilesExtractor(
       List<String> url, String cookie) async {
-    QuarkUcExtractor uc = QuarkUcExtractor();
-    await uc.initCloudDrive(cookie, CloudDriveType.uc);
-    return await uc.videoFilesFromUrl(url);
+    var quark = _getExtractor(cookie, CloudDriveType.quark);
+    return await quark.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> quarkVideosExtractor(
       String url, String cookie) async {
-    QuarkUcExtractor quark = QuarkUcExtractor();
-    await quark.initCloudDrive(cookie, CloudDriveType.quark);
+    var quark = _getExtractor(cookie, CloudDriveType.quark);
     return await quark.videosFromUrl(url);
+  }
+
+  static Future<List<Map<String, String>>> ucFilesExtractor(
+      List<String> url, String cookie) async {
+    var uc = _getExtractor(cookie, CloudDriveType.uc);
+    return await uc.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> ucVideosExtractor(
       String url, String cookie) async {
-    QuarkUcExtractor uc = QuarkUcExtractor();
-    await uc.initCloudDrive(cookie, CloudDriveType.uc);
+    var uc = _getExtractor(cookie, CloudDriveType.uc);
     return await uc.videosFromUrl(url);
+  }
+
+  static Future<String> getProxyUrl() async {
+    await MTorrentServer().ensureRunning();
+    return MTorrentServer().getBaseUrl();
   }
 
   static Future<List<Video>> streamTapeExtractor(

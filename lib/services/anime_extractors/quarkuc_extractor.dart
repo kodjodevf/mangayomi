@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 
 enum CloudDriveType {
   quark,
@@ -12,10 +13,12 @@ enum CloudDriveType {
 
 class QuarkUcExtractor {
   late CloudDriveType cloudDriveType;
-  String apiUrl = ""; //"https://drive-pc.quark.cn/1/clouddrive/";
+  String apiUrl = "";
   String cookie = "";
+  String refererUrl = "";
+  String ua = "";
   Map<String, dynamic> shareTokenCache = {};
-  String pr = ""; //"pr=ucpro&fr=pc";
+  String pr = "";
   final List<String> subtitleExts = ['.srt', '.ass', '.scc', '.stl', '.ttml'];
   Map<String, String> saveFileIdCaches = {};
   String? saveDirId;
@@ -23,37 +26,32 @@ class QuarkUcExtractor {
 
   Future<void> initCloudDrive(
       String cookie, CloudDriveType cloudDriveType) async {
-    this.cookie = cookie;
     this.cloudDriveType = cloudDriveType;
     if (cloudDriveType == CloudDriveType.quark) {
       apiUrl = "https://drive-pc.quark.cn/1/clouddrive/";
       pr = "pr=ucpro&fr=pc";
+      ua =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      refererUrl = "https://pan.quark.cn/";
     } else {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
+      ua =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      refererUrl = "https://drive.uc.cn/";
+    }
+    if (this.cookie.isEmpty) {
+      this.cookie = cookie;
     }
   }
 
   Map<String, String> getHeaders() {
-    if (cloudDriveType == CloudDriveType.quark) {
-      return {
-        'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
-        'Referer': 'https://pan.quark.cn/',
-        "Content-Type": "application/json",
-        "Cookie": cookie,
-        "Host": "drive-pc.quark.cn"
-      };
-    } else {
-      return {
-        'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
-        'Referer': 'https://drive.uc.cn/',
-        "Content-Type": "application/json",
-        "Cookie": cookie,
-        "Host": "pc-api.uc.cn"
-      };
-    }
+    return {
+      'User-Agent': ua,
+      'Referer': refererUrl,
+      "Content-Type": "application/json",
+      "Cookie": cookie,
+    };
   }
 
   Future<Map<String, dynamic>> api(
@@ -100,10 +98,6 @@ class QuarkUcExtractor {
       };
     }
     return null;
-  }
-
-  List<String> getPlayFormtList() {
-    return ["4k", "2k", "super", "high", "normal", "low", "原画"];
   }
 
   Future<void> getShareToken(Map<String, String> shareData) async {
@@ -305,8 +299,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<String?> getLiveTranscoding(String shareId, String stoken,
-      String fileId, String fileToken, String quality) async {
+  Future<List<Map<String, String>>?> getLiveTranscoding(
+      String shareId, String stoken, String fileId, String fileToken) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
       if (saveFileId == null) return null;
@@ -322,13 +316,14 @@ class QuarkUcExtractor {
         'post');
     if (transcoding['data'] != null &&
         transcoding['data']['video_list'] != null) {
+      List<Map<String, String>> qualityOptions = [];
       for (final video in transcoding['data']['video_list']) {
-        if (video['resolution'] == quality) {
-          return video['video_info']['url'];
-        }
+        qualityOptions.add({
+          'url': video['video_info']['url'],
+          'quality': video['resolution']
+        });
       }
-      // 如果没有找到匹配的质量,返回null
-      return null;
+      return qualityOptions;
     }
     return null;
   }
@@ -362,12 +357,6 @@ class QuarkUcExtractor {
       await getFilesByShareUrl(i + 1, shareUrl, videoItems, subItems);
     }
 
-    // if (videoItems.isNotEmpty) {
-    //   print('获取播放链接成功,分享链接为:${shareUrlList.join("\t")}');
-    // } else {
-    //   print('获取播放链接失败,检查分享链接为:${shareUrlList.join("\t")}');
-    // }
-
     return await getVodFile(videoItems, subItems, typeName);
   }
 
@@ -399,46 +388,52 @@ class QuarkUcExtractor {
     String type = parts[0];
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 // 获取可用的质量列表
-    List<String> qualities = getPlayFormtList();
+    //List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
     if (type == "uc") {
       var headers = getHeaders();
-      headers.remove('Host');
       headers.remove('Content-Type');
       String? url = (await getDownload(
           shareId, stoken, fileId, fileToken, true))?['download_url'];
+
       if (url != null) {
         videos.add(Video(url, "原画", url, headers: headers));
+        // following both work
+        // String playUrl =
+        //     "$baseUrl/?thread=1&url=${Uri.encodeComponent(url)}&header=${Uri.encodeComponent(jsonEncode(headers))}";
+        // videos.add(Video(playUrl, "原画Go", url));
+        // headers = getHeaders();
+        // headers.remove('Content-Type');
+        // String goUrl =
+        //     "$baseUrl/?thread=1&url=&ucfids=${saveFileIdCaches[fileId]}&header=${Uri.encodeComponent(jsonEncode(headers))}";
+        // videos.add(Video(goUrl, "原画Go2", url));
       }
     } else {
-      String? originalUrl = (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, "4k")) ??
-          (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, 'super'));
+      String? originalUrl;
+      List<Map<String, String>>? qualityOptions =
+          await getLiveTranscoding(shareId, stoken, fileId, fileToken);
+      originalUrl = qualityOptions?[0]['url'];
       var headers = getHeaders();
-      headers.remove('Host');
       headers.remove('Content-Type');
-      for (String quality in qualities) {
-        if (quality == "原画") {
-          String? url = (await getDownload(
-              shareId, stoken, fileId, fileToken, true))?['download_url'];
-          if (url != null) {
-            videos
-                .add(Video(url, quality, originalUrl ?? '', headers: headers));
-          }
-        } else {
-          String? url = await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, quality);
-          if (url != null) {
-            videos.add(Video(
-              url,
-              quality,
-              originalUrl ?? '',
-              headers: headers,
-            ));
-          }
+      if (qualityOptions != null) {
+        for (Map<String, String> qualityOption in qualityOptions) {
+          videos.add(Video(
+            qualityOption['url'] ?? '',
+            qualityOption['quality'] ?? '',
+            originalUrl ?? '',
+            headers: headers,
+          ));
         }
       }
+      await MTorrentServer().ensureRunning();
+      final baseUrl = MTorrentServer().getBaseUrl();
+      // nomal usage
+      // "$baseUrl/?thread=8&url=https://xxxx&&header=$headers";
+      // for quark, cookies changed every time and download url is not allowed to be cached
+      // so we need to use quarkfids to get the download url with the same cookies on server side
+      String playUrl =
+          "$baseUrl/?thread=8&url=&quarkfids=${saveFileIdCaches[fileId]}&header=${Uri.encodeComponent(jsonEncode(headers))}";
+      videos.add(Video(playUrl, "原画Go", originalUrl ?? ''));
     }
 
     // 处理字幕
