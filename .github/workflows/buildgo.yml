@@ -81,7 +81,7 @@ jobs:
           $env:CGO_ENABLED = "1"
           $env:CC = "gcc"
           $env:GOARCH = "amd64"
-          go build -buildmode=c-shared -ldflags="-s -w -extldflags=-Wl,--allow-multiple-definition" -trimpath -o libmtorrentserver.dll ./binding/desktop
+          go build -buildmode=c-shared -ldflags="-s -w -extldflags=-static" -trimpath -o libmtorrentserver.dll ./binding/desktop
     
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
