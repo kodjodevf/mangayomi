@@ -34,6 +34,7 @@ class CustomExtendedNetworkImageProvider
     this.cancelToken,
     this.imageCacheName,
     this.cacheMaxAge = const Duration(days: 30),
+    this.showCloudFlareError = false,
   });
 
   /// The name of [ImageCache], you can define custom [ImageCache] to store this provider.
@@ -91,6 +92,8 @@ class CustomExtendedNetworkImageProvider
   /// After this time the cache is expired and the image is reloaded.
   @override
   final Duration? cacheMaxAge;
+
+  final bool showCloudFlareError;
 
   @override
   ImageStreamCompleter loadImage(
@@ -278,7 +281,19 @@ class CustomExtendedNetworkImageProvider
     var request = Request('GET', resolved);
     request.headers.addAll(headers ?? {});
 
-    StreamedResponse response = await MClient.init().send(request);
+    StreamedResponse response =
+        await MClient.init(showCloudFlareError: showCloudFlareError)
+            .send(request);
+    if (response.request != null) {
+      final res = await MClient.init(
+              reqcopyWith: {'useDartHttpClient': true},
+              showCloudFlareError: showCloudFlareError)
+          .send(response.request!);
+      if (![403, 503].contains(res.statusCode) &&
+          ["cloudflare-nginx", "cloudflare"].contains(res.headers["server"])) {
+        return res;
+      }
+    }
 
     return response;
   }

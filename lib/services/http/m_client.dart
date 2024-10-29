@@ -40,10 +40,14 @@ class MClient {
   static InterceptedClient init(
       {MSource? source,
       Map<String, dynamic>? reqcopyWith,
-      rhttp.ClientSettings? settings}) {
+      rhttp.ClientSettings? settings,
+      bool showCloudFlareError = true}) {
     return InterceptedClient.build(
         client: httpClient(settings: settings, reqcopyWith: reqcopyWith),
-        interceptors: [MCookieManager(reqcopyWith), LoggerInterceptor()]);
+        interceptors: [
+          MCookieManager(reqcopyWith),
+          LoggerInterceptor(showCloudFlareError)
+        ]);
   }
 
   static Map<String, String> getCookiesPref(String url) {
@@ -158,6 +162,8 @@ class MCookieManager extends InterceptorContract {
 }
 
 class LoggerInterceptor extends InterceptorContract {
+  LoggerInterceptor(this.showCloudFlareError);
+  bool showCloudFlareError;
   @override
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
@@ -171,14 +177,18 @@ class LoggerInterceptor extends InterceptorContract {
   Future<BaseResponse> interceptResponse({
     required BaseResponse response,
   }) async {
-    final cloudflare = [403, 503].contains(response.statusCode) &&
-        ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
-    Logger.add(LoggerLevel.info,
-        "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
-    if (cloudflare) {
-      botToast("${response.statusCode} Failed to bypass Cloudflare",
-          hasCloudFlare: cloudflare, url: response.request!.url.toString());
+    if (showCloudFlareError) {
+      final cloudflare = [403, 503].contains(response.statusCode) &&
+          ["cloudflare-nginx", "cloudflare"]
+              .contains(response.headers["server"]);
+      Logger.add(LoggerLevel.info,
+          "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
+      if (cloudflare) {
+        botToast("${response.statusCode} Failed to bypass Cloudflare",
+            hasCloudFlare: cloudflare, url: response.request!.url.toString());
+      }
     }
+
     return response;
   }
 }
