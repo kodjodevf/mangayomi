@@ -59,7 +59,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     return imageBytes;
   }
 
-  ImageProvider<Object> getImageProvider(WidgetRef ref) {
+  ImageProvider<Object> getImageProvider(
+      WidgetRef ref, bool showCloudFlareError) {
     final data = this;
     final isLocale = data.isLocale!;
     final archiveImage = data.archiveImage;
@@ -75,6 +76,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                 data.pageUrl!.url.trim().trimLeft().trimRight(),
                 cache: true,
                 cacheMaxAge: const Duration(days: 7),
+                showCloudFlareError: showCloudFlareError,
                 headers: {
                     ...data.pageUrl!.headers ?? {},
                     ...ref.watch(headersProvider(

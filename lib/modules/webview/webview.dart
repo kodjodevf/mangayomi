@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_windows_webview/flutter_windows_webview.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -79,7 +80,12 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             child: SafeArea(
               child: WillPopScope(
                 onWillPop: () async {
-                  _webViewController?.goBack();
+                  final canGoback = await _webViewController?.canGoBack();
+                  if (canGoback ?? false) {
+                    _webViewController?.goBack();
+                  } else if (context.mounted) {
+                    context.pop();
+                  }
                   return false;
                 },
                 child: Column(

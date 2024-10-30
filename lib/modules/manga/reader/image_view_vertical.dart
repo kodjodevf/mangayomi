@@ -27,7 +27,7 @@ class ImageViewVertical extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final imageWidget = ExtendedImage(
-        image: data.getImageProvider(ref),
+        image: data.getImageProvider(ref, true),
         filterQuality: FilterQuality.medium,
         handleLoadingProgress: true,
         fit: getBoxFit(ref.watch(scaleTypeStateProvider)),

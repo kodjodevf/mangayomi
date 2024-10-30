@@ -26,7 +26,7 @@ class ImageViewPaged extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scaleType = ref.watch(scaleTypeStateProvider);
-    final image = data.getImageProvider(ref);
+    final image = data.getImageProvider(ref, true);
     return GestureDetector(
       onLongPress: () => onLongPressData.call(data),
       child: ColorFilterWidget(
