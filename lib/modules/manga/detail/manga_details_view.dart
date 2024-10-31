@@ -196,7 +196,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       .filter()
                       .idIsNotNull()
                       .and()
-                      .forMangaEqualTo(widget.manga.isManga)
+                      .forItemTypeEqualTo(widget.manga.itemType)
                       .isNotEmptySync();
                   if (checkCategoryList) {
                     _openCategory(widget.manga);
@@ -257,7 +257,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           .filter()
                           .idIsNotNull()
                           .and()
-                          .forMangaEqualTo(widget.manga.isManga)
+                          .forItemTypeEqualTo(widget.manga.itemType)
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {

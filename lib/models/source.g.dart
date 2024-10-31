@@ -107,49 +107,55 @@ const SourceSchema = CollectionSchema(
       name: r'isTorrent',
       type: IsarType.bool,
     ),
-    r'lang': PropertySchema(
+    r'itemType': PropertySchema(
       id: 18,
+      name: r'itemType',
+      type: IsarType.byte,
+      enumMap: _SourceitemTypeEnumValueMap,
+    ),
+    r'lang': PropertySchema(
+      id: 19,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'name',
       type: IsarType.string,
     ),
     r'sourceCode': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeLanguage': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'sourceCodeLanguage',
       type: IsarType.byte,
       enumMap: _SourcesourceCodeLanguageEnumValueMap,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -291,15 +297,16 @@ void _sourceSerialize(
   writer.writeBool(offsets[15], object.isObsolete);
   writer.writeBool(offsets[16], object.isPinned);
   writer.writeBool(offsets[17], object.isTorrent);
-  writer.writeString(offsets[18], object.lang);
-  writer.writeBool(offsets[19], object.lastUsed);
-  writer.writeString(offsets[20], object.name);
-  writer.writeString(offsets[21], object.sourceCode);
-  writer.writeByte(offsets[22], object.sourceCodeLanguage.index);
-  writer.writeString(offsets[23], object.sourceCodeUrl);
-  writer.writeString(offsets[24], object.typeSource);
-  writer.writeString(offsets[25], object.version);
-  writer.writeString(offsets[26], object.versionLast);
+  writer.writeByte(offsets[18], object.itemType.index);
+  writer.writeString(offsets[19], object.lang);
+  writer.writeBool(offsets[20], object.lastUsed);
+  writer.writeString(offsets[21], object.name);
+  writer.writeString(offsets[22], object.sourceCode);
+  writer.writeByte(offsets[23], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[24], object.sourceCodeUrl);
+  writer.writeString(offsets[25], object.typeSource);
+  writer.writeString(offsets[26], object.version);
+  writer.writeString(offsets[27], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -327,17 +334,19 @@ Source _sourceDeserialize(
     isNsfw: reader.readBoolOrNull(offsets[14]),
     isObsolete: reader.readBoolOrNull(offsets[15]),
     isPinned: reader.readBoolOrNull(offsets[16]),
-    lang: reader.readStringOrNull(offsets[18]),
-    lastUsed: reader.readBoolOrNull(offsets[19]),
-    name: reader.readStringOrNull(offsets[20]),
-    sourceCode: reader.readStringOrNull(offsets[21]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[23]),
-    typeSource: reader.readStringOrNull(offsets[24]),
-    version: reader.readStringOrNull(offsets[25]),
-    versionLast: reader.readStringOrNull(offsets[26]),
+    itemType: _SourceitemTypeValueEnumMap[reader.readByteOrNull(offsets[18])] ??
+        ItemType.manga,
+    lang: reader.readStringOrNull(offsets[19]),
+    lastUsed: reader.readBoolOrNull(offsets[20]),
+    name: reader.readStringOrNull(offsets[21]),
+    sourceCode: reader.readStringOrNull(offsets[22]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[24]),
+    typeSource: reader.readStringOrNull(offsets[25]),
+    version: reader.readStringOrNull(offsets[26]),
+    versionLast: reader.readStringOrNull(offsets[27]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
-          reader.readByteOrNull(offsets[22])] ??
+          reader.readByteOrNull(offsets[23])] ??
       SourceCodeLanguage.dart;
   return object;
 }
@@ -386,30 +395,43 @@ P _sourceDeserializeProp<P>(
     case 17:
       return (reader.readBool(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_SourceitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ItemType.manga) as P;
     case 19:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 20:
       return (reader.readStringOrNull(offset)) as P;
+    case 20:
+      return (reader.readBoolOrNull(offset)) as P;
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
+      return (reader.readStringOrNull(offset)) as P;
+    case 23:
       return (_SourcesourceCodeLanguageValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SourceCodeLanguage.dart) as P;
-    case 23:
-      return (reader.readStringOrNull(offset)) as P;
     case 24:
       return (reader.readStringOrNull(offset)) as P;
     case 25:
       return (reader.readStringOrNull(offset)) as P;
     case 26:
       return (reader.readStringOrNull(offset)) as P;
+    case 27:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
+const _SourceitemTypeEnumValueMap = {
+  'manga': 0,
+  'anime': 1,
+  'novel': 2,
+};
+const _SourceitemTypeValueEnumMap = {
+  0: ItemType.manga,
+  1: ItemType.anime,
+  2: ItemType.novel,
+};
 const _SourcesourceCodeLanguageEnumValueMap = {
   'dart': 0,
   'javascript': 1,
@@ -1997,6 +2019,59 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> itemTypeEqualTo(
+      ItemType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> itemTypeGreaterThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> itemTypeLessThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> itemTypeBetween(
+    ItemType lower,
+    ItemType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'itemType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> langIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3321,6 +3396,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByItemTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -3659,6 +3746,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByItemTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByLang() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lang', Sort.asc);
@@ -3887,6 +3986,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'itemType');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByLang(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -4062,6 +4167,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, bool, QQueryOperations> isTorrentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isTorrent');
+    });
+  }
+
+  QueryBuilder<Source, ItemType, QQueryOperations> itemTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'itemType');
     });
   }
 

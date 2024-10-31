@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/categories/widgets/custom_textfield.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
@@ -52,10 +53,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
         ),
         body: TabBarView(controller: _tabBarController, children: const [
           CategoriesTab(
-            isManga: true,
+            itemType: ItemType.manga,
           ),
           CategoriesTab(
-            isManga: false,
+            itemType: ItemType.anime,
+          ),
+          CategoriesTab(
+            itemType: ItemType.novel,
           )
         ]),
       ),
@@ -64,8 +68,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
 }
 
 class CategoriesTab extends ConsumerStatefulWidget {
-  final bool isManga;
-  const CategoriesTab({required this.isManga, super.key});
+  final ItemType itemType;
+  const CategoriesTab({required this.itemType, super.key});
 
   @override
   ConsumerState<CategoriesTab> createState() => _CategoriesTabState();
@@ -77,7 +81,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final categories =
-        ref.watch(getMangaCategorieStreamProvider(isManga: widget.isManga));
+        ref.watch(getMangaCategorieStreamProvider(itemType: widget.itemType));
     return Scaffold(
       body: categories.when(
         data: (data) {
@@ -279,7 +283,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         : () async {
                                             await isar.writeTxn(() async {
                                               await isar.categorys.put(Category(
-                                                forManga: widget.isManga,
+                                                forItemType: widget.itemType,
                                                 name: controller.text,
                                               ));
                                             });

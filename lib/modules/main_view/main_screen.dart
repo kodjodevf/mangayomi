@@ -39,10 +39,10 @@ class MainScreen extends ConsumerWidget {
           routerCurrentLocationStateProvider(context),
         );
         bool isReadingScreen =
-            location == '/mangareaderview' || location == '/animePlayerView';
+            location == '/mangaReaderView' || location == '/animePlayerView' || location == '/novelReaderView';
         int currentIndex = switch (location) {
           null || '/MangaLibrary' => 0,
-          '/AnimeLibrary' => 1,
+          '/AnimeLibrary' => 1, // TODO add /NovelLibrary
           '/updates' => 2,
           '/history' => 3,
           '/browse' => 4,

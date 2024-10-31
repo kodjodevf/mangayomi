@@ -636,8 +636,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                   manga: manga);
                                                             } else {
                                                               await ref.watch(importArchivesFromFileProvider(
-                                                                      isManga: manga
-                                                                          .isManga!,
+                                                                      itemType:
+                                                                          manga
+                                                                              .itemType,
                                                                       manga,
                                                                       init:
                                                                           false)
@@ -1393,7 +1394,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     } else {
                                       await ref.watch(
                                           importArchivesFromFileProvider(
-                                                  isManga: manga.isManga!,
+                                                  itemType: manga.itemType,
                                                   manga,
                                                   init: false)
                                               .future);

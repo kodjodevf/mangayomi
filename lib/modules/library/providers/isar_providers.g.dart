@@ -6,7 +6,7 @@ part of 'isar_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAllMangaStreamHash() => r'd06c3a94ba847055746f2d52566cc94db4c28b7e';
+String _$getAllMangaStreamHash() => r'9073754a9086e922dd502e9333482342196a300c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -41,11 +41,11 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider call({
     required int? categoryId,
-    required bool? isManga,
+    required ItemType itemType,
   }) {
     return GetAllMangaStreamProvider(
       categoryId: categoryId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -55,7 +55,7 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   ) {
     return call(
       categoryId: provider.categoryId,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -79,12 +79,12 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaStream].
   GetAllMangaStreamProvider({
     required int? categoryId,
-    required bool? isManga,
+    required ItemType itemType,
   }) : this._internal(
           (ref) => getAllMangaStream(
             ref as GetAllMangaStreamRef,
             categoryId: categoryId,
-            isManga: isManga,
+            itemType: itemType,
           ),
           from: getAllMangaStreamProvider,
           name: r'getAllMangaStreamProvider',
@@ -96,7 +96,7 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
           allTransitiveDependencies:
               GetAllMangaStreamFamily._allTransitiveDependencies,
           categoryId: categoryId,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   GetAllMangaStreamProvider._internal(
@@ -107,11 +107,11 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.categoryId,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
   final int? categoryId;
-  final bool? isManga;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
@@ -127,7 +127,7 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         categoryId: categoryId,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -141,14 +141,14 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   bool operator ==(Object other) {
     return other is GetAllMangaStreamProvider &&
         other.categoryId == categoryId &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, categoryId.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -158,8 +158,8 @@ mixin GetAllMangaStreamRef on AutoDisposeStreamProviderRef<List<Manga>> {
   /// The parameter `categoryId` of this provider.
   int? get categoryId;
 
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _GetAllMangaStreamProviderElement
@@ -170,11 +170,11 @@ class _GetAllMangaStreamProviderElement
   @override
   int? get categoryId => (origin as GetAllMangaStreamProvider).categoryId;
   @override
-  bool? get isManga => (origin as GetAllMangaStreamProvider).isManga;
+  ItemType get itemType => (origin as GetAllMangaStreamProvider).itemType;
 }
 
 String _$getAllMangaWithoutCategoriesStreamHash() =>
-    r'03581754f330a87894f953f8eaae528642b0afc2';
+    r'd0ca0954d452102dc845a4aae414e88add666615';
 
 /// See also [getAllMangaWithoutCategoriesStream].
 @ProviderFor(getAllMangaWithoutCategoriesStream)
@@ -189,10 +189,10 @@ class GetAllMangaWithoutCategoriesStreamFamily
 
   /// See also [getAllMangaWithoutCategoriesStream].
   GetAllMangaWithoutCategoriesStreamProvider call({
-    required bool? isManga,
+    required ItemType itemType,
   }) {
     return GetAllMangaWithoutCategoriesStreamProvider(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -201,7 +201,7 @@ class GetAllMangaWithoutCategoriesStreamFamily
     covariant GetAllMangaWithoutCategoriesStreamProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -225,11 +225,11 @@ class GetAllMangaWithoutCategoriesStreamProvider
     extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaWithoutCategoriesStream].
   GetAllMangaWithoutCategoriesStreamProvider({
-    required bool? isManga,
+    required ItemType itemType,
   }) : this._internal(
           (ref) => getAllMangaWithoutCategoriesStream(
             ref as GetAllMangaWithoutCategoriesStreamRef,
-            isManga: isManga,
+            itemType: itemType,
           ),
           from: getAllMangaWithoutCategoriesStreamProvider,
           name: r'getAllMangaWithoutCategoriesStreamProvider',
@@ -240,7 +240,7 @@ class GetAllMangaWithoutCategoriesStreamProvider
           dependencies: GetAllMangaWithoutCategoriesStreamFamily._dependencies,
           allTransitiveDependencies: GetAllMangaWithoutCategoriesStreamFamily
               ._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   GetAllMangaWithoutCategoriesStreamProvider._internal(
@@ -250,10 +250,10 @@ class GetAllMangaWithoutCategoriesStreamProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
-  final bool? isManga;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
@@ -269,7 +269,7 @@ class GetAllMangaWithoutCategoriesStreamProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -282,13 +282,13 @@ class GetAllMangaWithoutCategoriesStreamProvider
   @override
   bool operator ==(Object other) {
     return other is GetAllMangaWithoutCategoriesStreamProvider &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -296,8 +296,8 @@ class GetAllMangaWithoutCategoriesStreamProvider
 
 mixin GetAllMangaWithoutCategoriesStreamRef
     on AutoDisposeStreamProviderRef<List<Manga>> {
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _GetAllMangaWithoutCategoriesStreamProviderElement
@@ -306,8 +306,8 @@ class _GetAllMangaWithoutCategoriesStreamProviderElement
   _GetAllMangaWithoutCategoriesStreamProviderElement(super.provider);
 
   @override
-  bool? get isManga =>
-      (origin as GetAllMangaWithoutCategoriesStreamProvider).isManga;
+  ItemType get itemType =>
+      (origin as GetAllMangaWithoutCategoriesStreamProvider).itemType;
 }
 
 String _$getSettingsStreamHash() => r'273ef0597a1078ab7c31af861628f1be7ab154d8';

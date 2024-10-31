@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
@@ -10,6 +11,7 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -85,12 +87,12 @@ class RouterNotifier extends ChangeNotifier {
                 name: "MangaLibrary",
                 path: '/MangaLibrary',
                 builder: (context, state) => const LibraryScreen(
-                  isManga: true,
+                  itemType: ItemType.manga,
                 ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const LibraryScreen(
-                    isManga: true,
+                    itemType: ItemType.manga,
                   ),
                 ),
               ),
@@ -98,12 +100,25 @@ class RouterNotifier extends ChangeNotifier {
                 name: "AnimeLibrary",
                 path: '/AnimeLibrary',
                 builder: (context, state) => const LibraryScreen(
-                  isManga: false,
+                  itemType: ItemType.anime,
                 ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const LibraryScreen(
-                    isManga: false,
+                    itemType: ItemType.anime,
+                  ),
+                ),
+              ),
+              GoRoute(
+                name: "NovelLibrary",
+                path: '/NovelLibrary',
+                builder: (context, state) => const LibraryScreen(
+                  itemType: ItemType.novel,
+                ),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const LibraryScreen(
+                    itemType: ItemType.novel,
                   ),
                 ),
               ),
@@ -183,8 +198,8 @@ class RouterNotifier extends ChangeNotifier {
                   ));
             }),
         GoRoute(
-          path: "/mangareaderview",
-          name: "mangareaderview",
+          path: "/mangaReaderView",
+          name: "mangaReaderView",
           builder: (context, state) {
             final chapter = state.extra as Chapter;
             return MangaReaderView(
@@ -220,6 +235,25 @@ class RouterNotifier extends ChangeNotifier {
             );
           },
         ),
+        /*GoRoute(
+          path: "/novelReaderView",
+          name: "novelReaderView",
+          builder: (context, state) {
+            final chapter = state.extra as Chapter;
+            return NovelReaderView(
+              chapter: chapter,
+            );
+          },
+          pageBuilder: (context, state) {
+            final chapter = state.extra as Chapter;
+            return transitionPage(
+              key: state.pageKey,
+              child: NovelReaderView(
+                chapter: chapter,
+              ),
+            );
+          },
+        ),*/
         GoRoute(
           path: "/ExtensionLang",
           name: "ExtensionLang",

@@ -185,10 +185,37 @@ class Settings {
 
   int? animeGridSize;
 
+  int? novelGridSize;
+
   @enumerated
   late SectionType disableSectionType;
 
   bool? useLibass;
+
+  int? libraryFilterNovelDownloadType;
+
+  int? libraryFilterNovelUnreadType;
+
+  int? libraryFilterNovelStartedType;
+
+  int? libraryFilterNovelBookMarkedType;
+
+  bool? novelLibraryShowCategoryTabs;
+
+  bool? novelLibraryDownloadedChapters;
+
+  bool? novelLibraryShowLanguage;
+
+  bool? novelLibraryShowNumbersOfItems;
+
+  bool? novelLibraryShowContinueReadingButton;
+
+  bool? novelLibraryLocalSource;
+
+  late SortLibraryManga? sortLibraryNovel;
+
+  @enumerated
+  late DisplayType novelDisplayType;
 
   Settings(
       {this.id = 227,
@@ -239,7 +266,7 @@ class Settings {
       this.animeLibraryShowNumbersOfItems = false,
       this.animeLibraryShowContinueReadingButton = false,
       this.animeLibraryLocalSource,
-      this.sortLibraryAnime,
+      this.sortLibraryAnime, // TODO add novel settings
       this.pagePreloadAmount = 6,
       this.scaleType = ScaleType.fitScreen,
       this.checkForExtensionUpdates = true,

@@ -555,7 +555,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                 : Consumer(builder: (context, ref, child) {
                                     final gridSize = ref.watch(
                                         libraryGridSizeStateProvider(
-                                            isManga: source.isManga!));
+                                            itemType: source.itemType));
 
                                     return GridViewWidget(
                                       gridSize: gridSize,
