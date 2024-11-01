@@ -31,14 +31,12 @@ import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/global_style.dart';
-import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -850,38 +848,11 @@ class _MangaChapterPageGalleryState
     );
   }
 
-  void _precacheImages(int index) {
+  Future<void> _precacheImages(int index) async {
     try {
       if (0 <= index && index < _uChapDataPreload.length) {
-        if (!_uChapDataPreload[index].isLocale!) {
-          precacheImage(
-              ExtendedNetworkImageProvider(
-                _uChapDataPreload[index].pageUrl!.url,
-                cache: true,
-                cacheMaxAge: const Duration(days: 7),
-                headers: {
-                  ..._uChapDataPreload[index].pageUrl!.headers ?? {},
-                  ...ref.watch(headersProvider(
-                      source: chapter.manga.value!.source!,
-                      lang: chapter.manga.value!.lang!))
-                },
-              ),
-              context);
-        } else {
-          final archiveImage = (_uChapDataPreload[index].archiveImage);
-
-          if (archiveImage != null) {
-            precacheImage(
-                ExtendedMemoryImageProvider(
-                    (_uChapDataPreload[index].archiveImage)!),
-                context);
-          } else {
-            precacheImage(
-                ExtendedFileImageProvider(File(
-                    "${_uChapDataPreload[index].directory!.path}${padIndex(_uChapDataPreload[index].index! + 1)}.jpg")),
-                context);
-          }
-        }
+        await precacheImage(
+            _uChapDataPreload[index].getImageProvider(ref, false), context);
       }
     } catch (_) {}
   }
