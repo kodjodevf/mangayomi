@@ -78,10 +78,10 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         }
 
         return AnimeStreamPage(
-          episode: widget.episode,
-          videos: videos,
-          isLocal: isLocal,
-        );
+            episode: widget.episode,
+            videos: videos,
+            isLocal: isLocal,
+            isTorrent: _infoHash != null);
       },
       error: (error, stackTrace) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -125,11 +125,13 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final List<vid.Video> videos;
   final Chapter episode;
   final bool isLocal;
+  final bool isTorrent;
   const AnimeStreamPage(
       {super.key,
       required this.isLocal,
       required this.videos,
-      required this.episode});
+      required this.episode,
+      required this.isTorrent});
 
   @override
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
@@ -234,6 +236,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _player.open(Media(_video.value!.videoTrack!.id,
             httpHeaders: _video.value!.headers,
             start: _streamController.geTCurrentPosition()));
+        if (widget.isTorrent) {
+          Future.delayed(const Duration(seconds: 10)).then((_) {
+            if (mounted) {
+              _player.open(Media(_video.value!.videoTrack!.id,
+                  httpHeaders: _video.value!.headers,
+                  start: _streamController.geTCurrentPosition()));
+            }
+          });
+        }
         _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
         _initAniSkip();
       },
