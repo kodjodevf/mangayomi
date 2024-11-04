@@ -188,14 +188,30 @@ func handleProxy(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing url parameter", http.StatusBadRequest)
 		return
 	}
-
+	regStr := r.URL.Query().Get("reg")
+	if regStr != "" {
+		// 检查是否是base64编码
+		if strings.HasPrefix(regStr, "base64:") {
+			encoded := strings.TrimPrefix(regStr, "base64:")
+			decoded, err := base64.StdEncoding.DecodeString(encoded)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("Invalid base64 regex: %v", err), http.StatusBadRequest)
+				return
+			}
+			regStr = string(decoded)
+		}
+	}
 	m3u8Content, err := fetchM3U8(urlStr)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to fetch M3U8: %v", err), http.StatusInternalServerError)
 		return
 	}
-
-	fixedM3U8 := fixAdM3u8Ai(urlStr, m3u8Content)
+	fixedM3U8 := ""
+	if regStr != "" {
+		fixedM3U8 = fixAdM3u8(urlStr, m3u8Content, regStr)
+	} else {
+		fixedM3U8 = fixAdM3u8Ai(urlStr, m3u8Content)
+	}
 
 	w.Header().Set("Content-Type", "application/vnd.apple.mpegurl")
 	w.Write([]byte(fixedM3U8))
@@ -208,6 +224,111 @@ func fetchM3U8(url string) (string, error) {
 		return "", err
 	}
 	return resp.String(), nil
+}
+
+/**
+ * 根据正则处理原始m3u8里的广告ts片段
+ * @param m3u8Text m3u8原始文本
+ * @param m3u8Url m3u8原始地址
+ * @param adRemove 正则表达式，支持多个正则用|分隔
+ * @returns string
+ */
+func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
+	// 参数验证
+	if (m3u8Content == "" && m3u8Url == "") || (m3u8Content == "" && m3u8Url != "" && !strings.HasPrefix(m3u8Url, "http")) {
+		return ""
+	}
+	lines := strings.Split(strings.TrimSpace(m3u8Content), "\n")
+	// 处理嵌套m3u8
+	lastUrl := lines[len(lines)-1]
+	if strings.Contains(lastUrl, ".m3u8") && lastUrl != m3u8Url {
+		nestedM3u8Url := urljoin(m3u8Url, lastUrl)
+		log.Printf("[Debug] Nested m3u8_url: %s", nestedM3u8Url)
+		nestedContent, err := fetchM3U8(nestedM3u8Url)
+		if err == nil {
+			//lines = strings.Split(strings.TrimSpace(nestedContent), "\n")
+			//lines = processM3U8Lines(nestedM3u8Url, lines)
+			m3u8Content = nestedContent
+			m3u8Url = nestedM3u8Url
+		} else {
+			log.Printf("[Error] Failed to fetch nested m3u8: %v", err)
+		}
+	}
+
+	if adRemove == "" {
+		return m3u8Content
+	}
+
+	// 处理正则表达式前缀
+	if strings.HasPrefix(adRemove, "reg:") {
+		adRemove = adRemove[4:]
+	} else if strings.HasPrefix(adRemove, "js:") {
+		adRemove = adRemove[3:]
+	}
+
+	// 处理多个正则表达式
+	adPatterns := strings.Split(adRemove, "|")
+	for _, pattern := range adPatterns {
+		pattern = strings.TrimSpace(pattern)
+		if pattern == "" {
+			continue
+		}
+
+		// 转换 JavaScript 特殊语法为 Go 支持的语法
+		pattern = strings.ReplaceAll(pattern, "(?!", "(?:")  // 替换负向前瞻
+		pattern = strings.ReplaceAll(pattern, "(?<=", "(?:") // 替换正向后顾
+		pattern = strings.ReplaceAll(pattern, "(?<!", "(?:") // 替换负向后顾
+
+		// 处理量词
+		pattern = strings.ReplaceAll(pattern, "?+", "?") // 处理占有量词
+		pattern = strings.ReplaceAll(pattern, "*+", "*") // 处理占有量词
+		pattern = strings.ReplaceAll(pattern, "++", "+") // 处理占有量词
+
+		// 处理命名捕获组
+		nameGroupRegex := regexp.MustCompile(`\(\?<\w+>`)
+		pattern = nameGroupRegex.ReplaceAllString(pattern, "(?:")
+
+		// 处理条件表达式
+		pattern = regexp.MustCompile(`\((\?)\(([\w=!])+\)`).ReplaceAllString(pattern, "(?:")
+
+		// 处理 \p{L} 这样的 Unicode 属性
+		pattern = strings.ReplaceAll(pattern, "\\p{L}", "[\\p{L}]")
+
+		// 处理 x 模式下的注释
+		pattern = regexp.MustCompile(`\(\?x\).*?(?:\(\?-x\)|$)`).ReplaceAllString(pattern, "")
+
+		// 转换反向引用
+		pattern = strings.ReplaceAll(pattern, "\\1", "$1")
+		pattern = strings.ReplaceAll(pattern, "\\2", "$2")
+		pattern = strings.ReplaceAll(pattern, "\\k<", "${") // 命名捕获组引用
+
+		// 处理特殊字符类
+		pattern = strings.ReplaceAll(pattern, "[\\w\\W]", "[\\s\\S]") // 等价替换
+
+		// 尝试编译和应用正则表达式
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			log.Printf("[Error] Invalid regex pattern: %s, error: %v", pattern, err)
+			// 尝试使用更宽松的模式
+			pattern = "#EXT-X-DISCONTINUITY[\\s\\S]*?#EXT-X-DISCONTINUITY"
+			re, err = regexp.Compile(pattern)
+			if err != nil {
+				continue
+			}
+		}
+		m3u8Content = re.ReplaceAllString(m3u8Content, "")
+	}
+
+	// 清理多余的空行
+	m3u8Content = regexp.MustCompile(`\n\s*\n`).ReplaceAllString(m3u8Content, "\n")
+	m3u8Content = strings.TrimSpace(m3u8Content)
+	// 使用已有的 processM3U8Lines 处理链接
+	if m3u8Url != "" {
+		lines := strings.Split(m3u8Content, "\n")
+		processedLines := processM3U8Lines(m3u8Url, lines)
+		m3u8Content = strings.Join(processedLines, "\n")
+	}
+	return m3u8Content
 }
 
 func processM3U8Lines(baseUrl string, lines []string) []string {
@@ -259,7 +380,7 @@ func fixAdM3u8Ai(m3u8Url string, m3u8Content string) string {
 		nestedContent, err := fetchM3U8(nestedM3u8Url)
 		if err == nil {
 			lines = strings.Split(strings.TrimSpace(nestedContent), "\n")
-			lines = processM3U8Lines(nestedM3u8Url, lines)
+			//lines = processM3U8Lines(nestedM3u8Url, lines)
 		} else {
 			log.Printf("[Error] Failed to fetch nested m3u8: %v", err)
 		}
@@ -353,7 +474,6 @@ func fixAdM3u8Ai(m3u8Url string, m3u8Content string) string {
 	// Process all URLs
 	baseUrl := getBaseUrl(m3u8Url)
 	processedLines := processM3U8Lines(baseUrl, filteredLines)
-
 	return strings.Join(processedLines, "\n")
 }
 

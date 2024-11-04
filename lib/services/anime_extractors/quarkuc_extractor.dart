@@ -14,9 +14,10 @@ enum CloudDriveType {
 class QuarkUcExtractor {
   late CloudDriveType cloudDriveType;
   String apiUrl = "";
-  String cookie = "";
+  // String cookie = "";
   String refererUrl = "";
   String ua = "";
+  String host = "";
   Map<String, dynamic> shareTokenCache = {};
   String pr = "";
   final List<String> subtitleExts = ['.srt', '.ass', '.scc', '.stl', '.ttml'];
@@ -33,16 +34,23 @@ class QuarkUcExtractor {
       ua =
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
       refererUrl = "https://pan.quark.cn/";
+      host = "https://quark.cn";
     } else {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
       ua =
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
       refererUrl = "https://drive.uc.cn/";
+      host = "https://uc.cn";
     }
-    if (this.cookie.isEmpty) {
-      this.cookie = cookie;
+    if (getCurrentCookie() == null) {
+      MClient.setCookie(host, ua, cookie: cookie);
     }
+  }
+
+  String? getCurrentCookie() {
+    var cookie = MClient.getCookiesPref(host);
+    return cookie.isNotEmpty ? cookie.values.first : null;
   }
 
   Map<String, String> getHeaders() {
@@ -50,7 +58,7 @@ class QuarkUcExtractor {
       'User-Agent': ua,
       'Referer': refererUrl,
       "Content-Type": "application/json",
-      "Cookie": cookie,
+      "Cookie": getCurrentCookie() ?? "",
     };
   }
 
@@ -65,18 +73,42 @@ class QuarkUcExtractor {
     } else {
       resp = await client.get(Uri.parse(apiUrl + url), headers: getHeaders());
     }
+    // if (resp.headers['set-cookie'] != null) {
+    //   print('headers: ${resp.headers}');
+    //   final puus = resp.headers['set-cookie']!
+    //       .split(';;;')
+    //       .join()
+    //       .split(';')
+    //       .firstWhere((element) => element.startsWith('__puus='),
+    //           orElse: () => '');
+    //   if (puus.isNotEmpty) {
+    //     final newPuus = puus.split('=')[1];
+    //     var cookie = getCurrentCookie();
+    //     if (cookie != null && cookie.contains('__puus=')) {
+    //       cookie =
+    //           cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
+    //     }
+    //     MClient.setCookie(host, ua, cookie: cookie);
+    //   }
+    // }
+    // 处理 set-cookie
     if (resp.headers['set-cookie'] != null) {
-      final puus = resp.headers['set-cookie']!
-          .split(';;;')
-          .join()
-          .split(';')
-          .firstWhere((element) => element.startsWith('__puus='),
-              orElse: () => '');
-      if (puus.isNotEmpty) {
-        final newPuus = puus.split('=')[1];
+      final cookies = resp.headers['set-cookie']!.split(';;;');
+      for (var cookie in cookies) {
         if (cookie.contains('__puus=')) {
-          cookie =
-              cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
+          final newPuus = cookie.split(';')[0]; // 获取新的 __puus
+          var currentCookie = getCurrentCookie();
+          if (currentCookie != null) {
+            // 更新 __puus
+            if (currentCookie.contains('__puus=')) {
+              currentCookie =
+                  currentCookie.replaceFirst(RegExp(r'__puus=[^;]+'), newPuus);
+            } else {
+              currentCookie = '$currentCookie; $newPuus';
+            }
+            MClient.setCookie(host, ua, cookie: currentCookie);
+          }
+          break;
         }
       }
     }
@@ -390,24 +422,33 @@ class QuarkUcExtractor {
 // 获取可用的质量列表
     //List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
+    await MTorrentServer().ensureRunning();
+    final baseUrl = MTorrentServer().getBaseUrl();
     if (type == "uc") {
+      if (!saveFileIdCaches.containsKey(fileId)) {
+        final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
+        if (saveFileId != null) {
+          saveFileIdCaches[fileId] = saveFileId;
+        }
+      }
       var headers = getHeaders();
       headers.remove('Content-Type');
-      String? url = (await getDownload(
-          shareId, stoken, fileId, fileToken, true))?['download_url'];
+      String goUrl =
+          "$baseUrl/?thread=2&url=&ucfids=${saveFileIdCaches[fileId]}&header=${Uri.encodeComponent(jsonEncode(headers))}";
+      videos.add(Video(goUrl, "原画Go", goUrl));
+      // String? url = (await getDownload(
+      //     shareId, stoken, fileId, fileToken, true))?['download_url'];
 
-      if (url != null) {
-        videos.add(Video(url, "原画", url, headers: headers));
-        // following both work
-        // String playUrl =
-        //     "$baseUrl/?thread=1&url=${Uri.encodeComponent(url)}&header=${Uri.encodeComponent(jsonEncode(headers))}";
-        // videos.add(Video(playUrl, "原画Go", url));
-        // headers = getHeaders();
-        // headers.remove('Content-Type');
-        // String goUrl =
-        //     "$baseUrl/?thread=1&url=&ucfids=${saveFileIdCaches[fileId]}&header=${Uri.encodeComponent(jsonEncode(headers))}";
-        // videos.add(Video(goUrl, "原画Go2", url));
-      }
+      // if (url != null) {
+      //   //videos.add(Video(url, "原画", url, headers: headers));
+      //   // following both work
+      //   // String playUrl =
+      //   //     "$baseUrl/?thread=1&url=${Uri.encodeComponent(url)}&header=${Uri.encodeComponent(jsonEncode(headers))}";
+      //   // videos.add(Video(playUrl, "原画Go", url));
+      //   //headers = getHeaders();
+      //   //headers.remove('Content-Type');
+
+      // }
     } else {
       String? originalUrl;
       List<Map<String, String>>? qualityOptions =
@@ -425,8 +466,7 @@ class QuarkUcExtractor {
           ));
         }
       }
-      await MTorrentServer().ensureRunning();
-      final baseUrl = MTorrentServer().getBaseUrl();
+
       // nomal usage
       // "$baseUrl/?thread=8&url=https://xxxx&&header=$headers";
       // for quark, cookies changed every time and download url is not allowed to be cached
