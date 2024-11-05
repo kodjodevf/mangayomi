@@ -44,7 +44,7 @@ class QuarkUcExtractor {
       host = "https://uc.cn";
     }
     if (getCurrentCookie() == null) {
-      MClient.setCookie(host, ua, cookie: cookie);
+      MClient.writeCookie(host, ua, cookie: cookie);
     }
   }
 
@@ -106,7 +106,7 @@ class QuarkUcExtractor {
             } else {
               currentCookie = '$currentCookie; $newPuus';
             }
-            MClient.setCookie(host, ua, cookie: currentCookie);
+            MClient.writeCookie(host, ua, cookie: currentCookie);
           }
           break;
         }

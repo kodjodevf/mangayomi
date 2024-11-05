@@ -63,6 +63,44 @@ class MClient {
 
   static Future<void> setCookie(String url, String ua, {String? cookie}) async {
     List<String> cookies = [];
+    if (Platform.isWindows) {
+      cookies = cookie
+              ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+              .where((cookie) => cookie.isNotEmpty)
+              .toList() ??
+          [];
+    } else {
+      cookies = (await flutter_inappwebview.CookieManager.instance()
+              .getCookies(url: flutter_inappwebview.WebUri(url)))
+          .map((e) => "${e.name}=${e.value}")
+          .toList();
+    }
+
+    if (cookies.isNotEmpty) {
+      final host = Uri.parse(url).host;
+      final newCookie = cookies.join("; ");
+      final settings = isar.settings.getSync(227);
+      List<MCookie>? cookieList = [];
+      for (var cookie in settings!.cookiesList ?? []) {
+        if (cookie.host != host || (!host.contains(cookie.host))) {
+          cookieList.add(cookie);
+        }
+      }
+      cookieList.add(MCookie()
+        ..host = host
+        ..cookie = newCookie);
+      isar.writeTxnSync(
+          () => isar.settings.putSync(settings..cookiesList = cookieList));
+    }
+    if (ua.isNotEmpty) {
+      final settings = isar.settings.getSync(227);
+      isar.writeTxnSync(() => isar.settings.putSync(settings!..userAgent = ua));
+    }
+  }
+
+  static Future<void> writeCookie(String url, String ua,
+      {String? cookie}) async {
+    List<String> cookies = [];
     final host = Uri.parse(url).host;
 
     // if incoming cookie is not empty, use it first
