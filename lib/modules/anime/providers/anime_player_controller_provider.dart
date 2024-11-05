@@ -133,7 +133,7 @@ class AnimeStreamController extends _$AnimeStreamController {
       history = History(
           mangaId: getAnime().id,
           date: DateTime.now().millisecondsSinceEpoch.toString(),
-          isManga: getAnime().isManga,
+          itemType: getAnime().itemType,
           chapterId: episode.id)
         ..chapter.value = episode;
     } else {

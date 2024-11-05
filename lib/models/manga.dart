@@ -22,8 +22,6 @@ class Manga {
   @enumerated
   late Status status;
 
-  bool? isManga;
-
   @enumerated
   late ItemType itemType;
 
@@ -65,7 +63,6 @@ class Manga {
       required this.name,
       required this.status,
       required this.description,
-      this.isManga = true,
       this.itemType = ItemType.manga,
       this.dateAdded,
       this.lastUpdate,
@@ -87,7 +84,6 @@ class Manga {
     id = json['id'];
     imageUrl = json['imageUrl'];
     isLocalArchive = json['isLocalArchive'];
-    isManga = json['isManga'];
     itemType = ItemType.values[json['itemType']];
     lang = json['lang'];
     lastRead = json['lastRead'];
@@ -111,7 +107,6 @@ class Manga {
         'id': id,
         'imageUrl': imageUrl,
         'isLocalArchive': isLocalArchive,
-        'isManga': isManga,
         'itemType': itemType.index,
         'lang': lang,
         'lastRead': lastRead,

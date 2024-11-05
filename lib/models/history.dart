@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 part 'history.g.dart';
 
 @collection
@@ -11,7 +12,7 @@ class History {
 
   int? chapterId;
 
-  bool? isManga;
+  ItemType? itemType;
 
   final chapter = IsarLink<Chapter>();
 
@@ -19,7 +20,7 @@ class History {
 
   History({
     this.id = Isar.autoIncrement,
-    required this.isManga,
+    required this.itemType,
     required this.chapterId,
     required this.mangaId,
     required this.date,
@@ -29,7 +30,7 @@ class History {
     chapterId = json['chapterId'];
     date = json['date'];
     id = json['id'];
-    isManga = json['isManga'];
+    itemType = json['itemType'];
     mangaId = json['mangaId'];
   }
 
@@ -37,7 +38,7 @@ class History {
         'chapterId': chapterId,
         'date': date,
         'id': id,
-        'isManga': isManga,
+        'itemType': itemType,
         'mangaId': mangaId
       };
 }

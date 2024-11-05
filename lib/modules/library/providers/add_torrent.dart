@@ -32,7 +32,7 @@ Future addTorrentFromUrlOrFromFile(
           favorite: true,
           source: 'torrent',
           author: '',
-          isManga: false,
+          itemType: ItemType.anime,
           genre: [],
           imageUrl: '',
           lang: '',

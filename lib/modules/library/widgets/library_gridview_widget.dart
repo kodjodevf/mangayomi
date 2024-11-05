@@ -279,7 +279,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                       .idIsNotNull()
                                       .and()
                                       .chapter((q) => q.manga((q) =>
-                                          q.isMangaEqualTo(entry.isManga!)))
+                                          q.itemTypeEqualTo(entry.itemType!)))
                                       .watch(fireImmediately: true),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData &&
