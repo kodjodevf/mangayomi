@@ -337,7 +337,13 @@ func processM3U8Lines(baseUrl string, lines []string) []string {
 		if strings.HasPrefix(line, "#EXT-X-KEY") {
 			processed[i] = fixKeyLine(line, baseUrl)
 		} else if !strings.HasPrefix(line, "#") {
-			processed[i] = urljoin(baseUrl, line)
+			// 检查是否已经是完整的URL
+			if strings.HasPrefix(strings.ToLower(line), "http://") ||
+				strings.HasPrefix(strings.ToLower(line), "https://") {
+				processed[i] = line // 如果已经是完整URL，直接使用
+			} else {
+				processed[i] = urljoin(baseUrl, line) // 否则进行URL拼接
+			}
 		} else {
 			processed[i] = line
 		}
@@ -350,7 +356,11 @@ func fixKeyLine(line, baseUrl string) string {
 	for i, part := range parts {
 		if strings.HasPrefix(part, "URI=") {
 			uri := strings.Trim(strings.TrimPrefix(part, "URI="), "\"")
-			uri = urljoin(baseUrl, uri)
+			// 检查URI是否已经是完整URL
+			if !strings.HasPrefix(strings.ToLower(uri), "http://") &&
+				!strings.HasPrefix(strings.ToLower(uri), "https://") {
+				uri = urljoin(baseUrl, uri)
+			}
 			parts[i] = "URI=\"" + uri + "\""
 		}
 	}
