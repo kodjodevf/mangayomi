@@ -259,15 +259,8 @@ func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
 		return m3u8Content
 	}
 
-	// 处理正则表达式前缀
-	if strings.HasPrefix(adRemove, "reg:") {
-		adRemove = adRemove[4:]
-	} else if strings.HasPrefix(adRemove, "js:") {
-		adRemove = adRemove[3:]
-	}
-
 	// 处理多个正则表达式
-	adPatterns := strings.Split(adRemove, "|")
+	adPatterns := strings.Split(adRemove, "@@")
 	for _, pattern := range adPatterns {
 		pattern = strings.TrimSpace(pattern)
 		if pattern == "" {
@@ -309,12 +302,7 @@ func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
 		re, err := regexp.Compile(pattern)
 		if err != nil {
 			log.Printf("[Error] Invalid regex pattern: %s, error: %v", pattern, err)
-			// 尝试使用更宽松的模式
-			pattern = "#EXT-X-DISCONTINUITY[\\s\\S]*?#EXT-X-DISCONTINUITY"
-			re, err = regexp.Compile(pattern)
-			if err != nil {
-				continue
-			}
+			continue
 		}
 		m3u8Content = re.ReplaceAllString(m3u8Content, "")
 	}
@@ -337,7 +325,13 @@ func processM3U8Lines(baseUrl string, lines []string) []string {
 		if strings.HasPrefix(line, "#EXT-X-KEY") {
 			processed[i] = fixKeyLine(line, baseUrl)
 		} else if !strings.HasPrefix(line, "#") {
-			processed[i] = urljoin(baseUrl, line)
+			// 检查是否已经是完整的URL
+			if strings.HasPrefix(strings.ToLower(line), "http://") ||
+				strings.HasPrefix(strings.ToLower(line), "https://") {
+				processed[i] = line // 如果已经是完整URL，直接使用
+			} else {
+				processed[i] = urljoin(baseUrl, line) // 否则进行URL拼接
+			}
 		} else {
 			processed[i] = line
 		}
@@ -350,7 +344,11 @@ func fixKeyLine(line, baseUrl string) string {
 	for i, part := range parts {
 		if strings.HasPrefix(part, "URI=") {
 			uri := strings.Trim(strings.TrimPrefix(part, "URI="), "\"")
-			uri = urljoin(baseUrl, uri)
+			// 检查URI是否已经是完整URL
+			if !strings.HasPrefix(strings.ToLower(uri), "http://") &&
+				!strings.HasPrefix(strings.ToLower(uri), "https://") {
+				uri = urljoin(baseUrl, uri)
+			}
 			parts[i] = "URI=\"" + uri + "\""
 		}
 	}
