@@ -259,13 +259,6 @@ func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
 		return m3u8Content
 	}
 
-	// 处理正则表达式前缀
-	if strings.HasPrefix(adRemove, "reg:") {
-		adRemove = adRemove[4:]
-	} else if strings.HasPrefix(adRemove, "js:") {
-		adRemove = adRemove[3:]
-	}
-
 	// 处理多个正则表达式
 	adPatterns := strings.Split(adRemove, "|")
 	for _, pattern := range adPatterns {
@@ -309,12 +302,7 @@ func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
 		re, err := regexp.Compile(pattern)
 		if err != nil {
 			log.Printf("[Error] Invalid regex pattern: %s, error: %v", pattern, err)
-			// 尝试使用更宽松的模式
-			pattern = "#EXT-X-DISCONTINUITY[\\s\\S]*?#EXT-X-DISCONTINUITY"
-			re, err = regexp.Compile(pattern)
-			if err != nil {
-				continue
-			}
+			continue
 		}
 		m3u8Content = re.ReplaceAllString(m3u8Content, "")
 	}
