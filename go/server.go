@@ -260,7 +260,7 @@ func fixAdM3u8(m3u8Url string, m3u8Content string, adRemove string) string {
 	}
 
 	// 处理多个正则表达式
-	adPatterns := strings.Split(adRemove, ";")
+	adPatterns := strings.Split(adRemove, "@@")
 	for _, pattern := range adPatterns {
 		pattern = strings.TrimSpace(pattern)
 		if pattern == "" {
