@@ -188,17 +188,17 @@ func handleProxy(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Missing url parameter", http.StatusBadRequest)
 		return
 	}
-	regStr := r.URL.Query().Get("reg")
-	if regStr != "" {
+	ruleStr := r.URL.Query().Get("rule")
+	if ruleStr != "" {
 		// 检查是否是base64编码
-		if strings.HasPrefix(regStr, "base64:") {
-			encoded := strings.TrimPrefix(regStr, "base64:")
+		if strings.HasPrefix(ruleStr, "base64:") {
+			encoded := strings.TrimPrefix(ruleStr, "base64:")
 			decoded, err := base64.StdEncoding.DecodeString(encoded)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("Invalid base64 regex: %v", err), http.StatusBadRequest)
 				return
 			}
-			regStr = string(decoded)
+			ruleStr = string(decoded)
 		}
 	}
 	m3u8Content, err := fetchM3U8(urlStr)
@@ -207,8 +207,8 @@ func handleProxy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fixedM3U8 := ""
-	if regStr != "" {
-		fixedM3U8 = fixAdM3u8(urlStr, m3u8Content, regStr)
+	if ruleStr != "" {
+		fixedM3U8 = fixAdM3u8(urlStr, m3u8Content, ruleStr)
 	} else {
 		fixedM3U8 = fixAdM3u8Ai(urlStr, m3u8Content)
 	}
