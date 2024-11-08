@@ -48,7 +48,7 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
     ..source = manga.source
     ..lang = manga.lang
-    ..isManga = source.isManga
+    ..itemType = source.itemType
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
   final checkManga = isar.mangas.getSync(mangaId);
   if (checkManga!.chapters.isNotEmpty && isInit) {

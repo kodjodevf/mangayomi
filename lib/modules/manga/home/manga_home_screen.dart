@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/dart/model/m_manga.dart';
 import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
@@ -548,7 +549,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                         return buildProgressIndicator();
                                       }
                                       return MangaHomeImageCardListTile(
-                                          isManga: source.isManga ?? true,
+                                          itemType: source.itemType,
                                           manga: _mangaList[index],
                                           source: source);
                                     })
@@ -568,7 +569,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                           return buildProgressIndicator();
                                         }
                                         return MangaHomeImageCard(
-                                          isManga: source.isManga ?? true,
+                                          itemType: source.itemType,
                                           manga: _mangaList[index],
                                           source: source,
                                           isComfortableGrid: isComfortableGrid,
@@ -693,14 +694,14 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
 class MangaHomeImageCard extends ConsumerStatefulWidget {
   final MManga manga;
-  final bool isManga;
+  final ItemType itemType;
   final Source source;
   final bool isComfortableGrid;
   const MangaHomeImageCard(
       {super.key,
       required this.manga,
       required this.source,
-      required this.isManga,
+      required this.itemType,
       required this.isComfortableGrid});
 
   @override
@@ -716,7 +717,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
     return MangaImageCardWidget(
         getMangaDetail: widget.manga,
         source: widget.source,
-        isManga: widget.isManga,
+        itemType: widget.itemType,
         isComfortableGrid: widget.isComfortableGrid);
   }
 
@@ -726,13 +727,13 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
 
 class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
   final MManga manga;
-  final bool isManga;
+  final ItemType itemType;
   final Source source;
   const MangaHomeImageCardListTile(
       {super.key,
       required this.manga,
       required this.source,
-      required this.isManga});
+      required this.itemType});
 
   @override
   ConsumerState<MangaHomeImageCardListTile> createState() =>
@@ -749,7 +750,7 @@ class _MangaHomeImageCardListTileState
     return MangaImageCardListTileWidget(
         getMangaDetail: widget.manga,
         source: widget.source,
-        isManga: widget.isManga);
+        itemType: widget.itemType);
   }
 
   @override

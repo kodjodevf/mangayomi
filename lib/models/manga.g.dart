@@ -72,49 +72,44 @@ const MangaSchema = CollectionSchema(
       name: r'isLocalArchive',
       type: IsarType.bool,
     ),
-    r'isManga': PropertySchema(
-      id: 11,
-      name: r'isManga',
-      type: IsarType.bool,
-    ),
     r'itemType': PropertySchema(
-      id: 12,
+      id: 11,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _MangaitemTypeEnumValueMap,
     ),
     r'lang': PropertySchema(
-      id: 13,
+      id: 12,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastRead': PropertySchema(
-      id: 14,
+      id: 13,
       name: r'lastRead',
       type: IsarType.long,
     ),
     r'lastUpdate': PropertySchema(
-      id: 15,
+      id: 14,
       name: r'lastUpdate',
       type: IsarType.long,
     ),
     r'link': PropertySchema(
-      id: 16,
+      id: 15,
       name: r'link',
       type: IsarType.string,
     ),
     r'name': PropertySchema(
-      id: 17,
+      id: 16,
       name: r'name',
       type: IsarType.string,
     ),
     r'source': PropertySchema(
-      id: 18,
+      id: 17,
       name: r'source',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 19,
+      id: 18,
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
@@ -246,15 +241,14 @@ void _mangaSerialize(
   writer.writeStringList(offsets[8], object.genre);
   writer.writeString(offsets[9], object.imageUrl);
   writer.writeBool(offsets[10], object.isLocalArchive);
-  writer.writeBool(offsets[11], object.isManga);
-  writer.writeByte(offsets[12], object.itemType.index);
-  writer.writeString(offsets[13], object.lang);
-  writer.writeLong(offsets[14], object.lastRead);
-  writer.writeLong(offsets[15], object.lastUpdate);
-  writer.writeString(offsets[16], object.link);
-  writer.writeString(offsets[17], object.name);
-  writer.writeString(offsets[18], object.source);
-  writer.writeByte(offsets[19], object.status.index);
+  writer.writeByte(offsets[11], object.itemType.index);
+  writer.writeString(offsets[12], object.lang);
+  writer.writeLong(offsets[13], object.lastRead);
+  writer.writeLong(offsets[14], object.lastUpdate);
+  writer.writeString(offsets[15], object.link);
+  writer.writeString(offsets[16], object.name);
+  writer.writeString(offsets[17], object.source);
+  writer.writeByte(offsets[18], object.status.index);
 }
 
 Manga _mangaDeserialize(
@@ -276,16 +270,15 @@ Manga _mangaDeserialize(
     id: id,
     imageUrl: reader.readStringOrNull(offsets[9]),
     isLocalArchive: reader.readBoolOrNull(offsets[10]),
-    isManga: reader.readBoolOrNull(offsets[11]),
-    itemType: _MangaitemTypeValueEnumMap[reader.readByteOrNull(offsets[12])] ??
+    itemType: _MangaitemTypeValueEnumMap[reader.readByteOrNull(offsets[11])] ??
         ItemType.manga,
-    lang: reader.readStringOrNull(offsets[13]),
-    lastRead: reader.readLongOrNull(offsets[14]),
-    lastUpdate: reader.readLongOrNull(offsets[15]),
-    link: reader.readStringOrNull(offsets[16]),
-    name: reader.readStringOrNull(offsets[17]),
-    source: reader.readStringOrNull(offsets[18]),
-    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[19])] ??
+    lang: reader.readStringOrNull(offsets[12]),
+    lastRead: reader.readLongOrNull(offsets[13]),
+    lastUpdate: reader.readLongOrNull(offsets[14]),
+    link: reader.readStringOrNull(offsets[15]),
+    name: reader.readStringOrNull(offsets[16]),
+    source: reader.readStringOrNull(offsets[17]),
+    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[18])] ??
         Status.ongoing,
   );
   return object;
@@ -321,23 +314,21 @@ P _mangaDeserializeProp<P>(
     case 10:
       return (reader.readBoolOrNull(offset)) as P;
     case 11:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 12:
       return (_MangaitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ItemType.manga) as P;
-    case 13:
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readLongOrNull(offset)) as P;
     case 14:
       return (reader.readLongOrNull(offset)) as P;
     case 15:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 16:
       return (reader.readStringOrNull(offset)) as P;
     case 17:
       return (reader.readStringOrNull(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
-    case 19:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
           Status.ongoing) as P;
     default:
@@ -1933,32 +1924,6 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> isMangaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'isManga',
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> isMangaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'isManga',
-      ));
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterFilterCondition> isMangaEqualTo(
-      bool? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isManga',
-        value: value,
-      ));
-    });
-  }
-
   QueryBuilder<Manga, Manga, QAfterFilterCondition> itemTypeEqualTo(
       ItemType value) {
     return QueryBuilder.apply(this, (query) {
@@ -2938,18 +2903,6 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QAfterSortBy> sortByIsManga() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterSortBy> sortByIsMangaDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.desc);
-    });
-  }
-
   QueryBuilder<Manga, Manga, QAfterSortBy> sortByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemType', Sort.asc);
@@ -3156,18 +3109,6 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QAfterSortBy> thenByIsManga() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Manga, Manga, QAfterSortBy> thenByIsMangaDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.desc);
-    });
-  }
-
   QueryBuilder<Manga, Manga, QAfterSortBy> thenByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemType', Sort.asc);
@@ -3338,12 +3279,6 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
-  QueryBuilder<Manga, Manga, QDistinct> distinctByIsManga() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isManga');
-    });
-  }
-
   QueryBuilder<Manga, Manga, QDistinct> distinctByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'itemType');
@@ -3468,12 +3403,6 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, bool?, QQueryOperations> isLocalArchiveProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isLocalArchive');
-    });
-  }
-
-  QueryBuilder<Manga, bool?, QQueryOperations> isMangaProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isManga');
     });
   }
 

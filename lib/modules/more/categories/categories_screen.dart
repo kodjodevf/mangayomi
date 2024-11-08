@@ -48,6 +48,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             tabs: [
               Tab(text: l10n.manga),
               Tab(text: l10n.anime),
+              Tab(text: l10n.novel),
             ],
           ),
         ),
@@ -189,7 +190,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                                       .notifier)
                                                                   .addDeletedCategoryAsync(
                                                                       _entries[
-                                                                          index], false);
+                                                                          index],
+                                                                      false);
                                                               await isar
                                                                   .categorys
                                                                   .delete(_entries[

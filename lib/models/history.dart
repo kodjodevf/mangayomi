@@ -12,7 +12,8 @@ class History {
 
   int? chapterId;
 
-  ItemType? itemType;
+  @enumerated
+  late ItemType itemType;
 
   final chapter = IsarLink<Chapter>();
 

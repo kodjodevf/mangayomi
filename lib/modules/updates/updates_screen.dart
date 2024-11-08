@@ -42,7 +42,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         .idIsNotNull()
         .favoriteEqualTo(true)
         .and()
-        .isMangaEqualTo(_tabBarController.index == 0)
+        .itemTypeEqualTo(_tabBarController.index == 0
+            ? ItemType.manga
+            : _tabBarController.index == 1
+                ? ItemType.anime
+                : ItemType.novel)
         .findAllSync();
     int numbers = 0;
 
@@ -160,10 +164,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                                       List<Update> updates = isar.updates
                                           .filter()
                                           .idIsNotNull()
-                                          .chapter((q) => q.manga((q) =>
-                                              q.isMangaEqualTo(
-                                                  _tabBarController.index ==
-                                                      0)))
+                                          .chapter((q) => q.manga((q) => q
+                                              .itemTypeEqualTo(_tabBarController
+                                                          .index ==
+                                                      0
+                                                  ? ItemType.manga
+                                                  : _tabBarController.index == 1
+                                                      ? ItemType.anime
+                                                      : ItemType.novel)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -191,6 +199,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
             tabs: [
               Tab(text: l10n.manga),
               Tab(text: l10n.anime),
+              Tab(text: l10n.novel),
             ],
           ),
         ),
@@ -198,11 +207,15 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
           padding: const EdgeInsets.only(top: 10),
           child: TabBarView(controller: _tabBarController, children: [
             UpdateTab(
-                isManga: true,
+                itemType: ItemType.manga,
                 query: _textEditingController.text,
                 isLoading: _isLoading),
             UpdateTab(
-                isManga: false,
+                itemType: ItemType.anime,
+                query: _textEditingController.text,
+                isLoading: _isLoading),
+            UpdateTab(
+                itemType: ItemType.novel,
                 query: _textEditingController.text,
                 isLoading: _isLoading)
           ]),
@@ -214,10 +227,10 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
 
 class UpdateTab extends ConsumerStatefulWidget {
   final String query;
-  final bool isManga;
+  final ItemType itemType;
   final bool isLoading;
   const UpdateTab(
-      {required this.isManga,
+      {required this.itemType,
       required this.query,
       required this.isLoading,
       super.key});
@@ -231,7 +244,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final update =
-        ref.watch(getAllUpdateStreamProvider(isManga: widget.isManga));
+        ref.watch(getAllUpdateStreamProvider(itemType: widget.itemType));
     return Scaffold(
         body: Stack(
       children: [
