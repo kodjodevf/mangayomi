@@ -26,16 +26,16 @@ Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
     botToast(e.toString());
     return;
   }
+  final genre = getManga.genre
+          ?.map((e) => e.toString().trim().trimLeft().trimRight())
+          .toList()
+          .toSet()
+          .toList() ??
+      [];
   manga
     ..imageUrl = getManga.imageUrl ?? manga.imageUrl
     ..name = getManga.name?.trim().trimLeft().trimRight() ?? manga.name
-    ..genre = getManga.genre
-            ?.map((e) => e.toString().trim().trimLeft().trimRight())
-            .toList()
-            .toSet()
-            .toList() ??
-        manga.genre ??
-        []
+    ..genre = (genre.isEmpty ? null : genre) ?? manga.genre ?? []
     ..author =
         getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
     ..artist =

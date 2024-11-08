@@ -5,7 +5,7 @@ completeLanguageName(String lang) {
       return element.key;
     }
   }
-  return lang.toUpperCase();
+  return lang.trim().toUpperCase();
 }
 
 final languagesMap = {
@@ -24,6 +24,7 @@ final languagesMap = {
   'Pусский язык': 'ru',
   'Español': 'es',
   'Español (Latinoamérica)': 'es-419',
+  'Español (Latinoamérica) ': 'es-la',
   'Indonesia': 'id',
   'हिन्दी, हिंदी': 'hi',
   '日本語': 'ja',
