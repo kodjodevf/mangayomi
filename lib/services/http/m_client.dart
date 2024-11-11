@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:mangayomi/models/settings.dart';
 import 'package:http/io_client.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/log/log.dart';
 import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
 
@@ -67,17 +68,17 @@ class MClient {
 
   static Future<void> setCookie(String url, String ua, {String? cookie}) async {
     List<String> cookies = [];
+    final cookieList = (await flutter_inappwebview.CookieManager.instance(
+            webViewEnvironment: webViewEnvironment)
+        .getCookies(url: flutter_inappwebview.WebUri(url)));
     if (Platform.isWindows) {
-      cookies = cookie
-              ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
-              .where((cookie) => cookie.isNotEmpty)
-              .toList() ??
-          [];
-    } else {
-      cookies = (await flutter_inappwebview.CookieManager.instance()
-              .getCookies(url: flutter_inappwebview.WebUri(url)))
+      cookies = cookieList
+          .where((e) =>
+              ((e.domain ?? "").substringAfter(".") == Uri.parse(url).host))
           .map((e) => "${e.name}=${e.value}")
           .toList();
+    } else {
+      cookies = cookieList.map((e) => "${e.name}=${e.value}").toList();
     }
 
     if (cookies.isNotEmpty) {
@@ -191,4 +192,14 @@ class LoggerInterceptor extends InterceptorContract {
 
     return response;
   }
+}
+
+String _cleanText(String text) {
+  return text
+      .trim()
+      .replaceAll(
+          RegExp(
+              r'[\u0000-\u001F\u007F-\u009F\u00A0\u200B-\u200D\u2060\uFEFF]'),
+          '')
+      .replaceAll(RegExp(r'\s+'), ' ');
 }

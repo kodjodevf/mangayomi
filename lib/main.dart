@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -21,10 +22,12 @@ import 'package:mangayomi/services/sync_server.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:path/path.dart' as p;
 
 late Isar isar;
-
+WebViewEnvironment? webViewEnvironment;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
@@ -32,7 +35,15 @@ void main(List<String> args) async {
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }
-
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+    final availableVersion = await WebViewEnvironment.getAvailableVersion();
+    assert(availableVersion != null,
+        'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
+    final document = await getApplicationDocumentsDirectory();
+    webViewEnvironment = await WebViewEnvironment.create(
+        settings: WebViewEnvironmentSettings(
+            userDataFolder: p.join(document.path, 'flutter_inappwebview')));
+  }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
   GoogleFonts.aBeeZee();

@@ -26,7 +26,7 @@ dependencies:
   url_launcher: ^6.3.0
   package_info_plus: ^8.0.0
   permission_handler: ^11.3.1
-  flutter_inappwebview: ^6.1.4
+  flutter_inappwebview: ^6.2.0-beta.1
   draggable_menu: ^4.4.1
   isar: 3.1.0+1
   isar_flutter_libs: 3.1.0+1
@@ -52,10 +52,6 @@ dependencies:
   ffigen: ^12.0.0
   http_interceptor: ^2.0.0
   js_packer: ^0.0.5
-  flutter_windows_webview:
-    git:
-      url: https://github.com/wgh136/flutter_windows_webview
-      ref: master
   flutter_qjs:
     git:
       url: https://github.com/kodjodevf/flutter_qjs.git
@@ -96,6 +92,37 @@ dependency_overrides:
       ref: 73c14623332003ce47f49b91528c73843e8ddcd2
   meta: ^1.15.0
   collection: ^1.19.0
+
+  flutter_inappwebview_windows:
+    git:
+      url: https://github.com/kodjodevf/flutter_inappwebview.git
+      path: flutter_inappwebview_windows
+      ref: fix_windows_get_cookies
+  flutter_inappwebview_android:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      path: flutter_inappwebview_android
+      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+  flutter_inappwebview_ios:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      path: flutter_inappwebview_ios
+      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+  flutter_inappwebview_macos:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      path: flutter_inappwebview_macos
+      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+  flutter_inappwebview_platform_interface:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      path: flutter_inappwebview_platform_interface
+      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+  flutter_inappwebview:
+    git:
+      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
+      path: flutter_inappwebview
+      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
 
 dev_dependencies:
   flutter_test:
