@@ -63,7 +63,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       : widget.isSearch
           ? 2
           : 0;
-  List<dynamic> filters = [];
+  late Source source = widget.source;
+  late List<dynamic> filters = getFilterList(source: source);
   final List<MManga> _mangaList = [];
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -74,7 +75,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     ];
   }
 
-  late Source source = widget.source;
   Future<MPages?> _loadMore() async {
     MPages? mangaRes;
     if (_isLoading) {
@@ -389,18 +389,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   query: _query,
                                   page: 1,
                                   filterList: filters));
-                            } else {
-                              if (mounted) {
-                                setState(() {
-                                  if (!_isFiltering) {
-                                    _selectedIndex = _selectedIndex == 2
-                                        ? 0
-                                        : _selectedIndex;
-                                  }
-                                });
-
-                                _getManga = _refreshCurrentView();
-                              }
                             }
                           } else {
                             setState(() {
@@ -677,17 +665,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   child: CircularProgressIndicator(),
                 ),
               ));
-  }
-
-  AsyncValue<MPages?> _refreshCurrentView() {
-    if (_selectedIndex == 0) {
-      return ref.refresh(getPopularProvider(source: source, page: 1));
-    } else if (_selectedIndex == 1) {
-      return ref.refresh(getLatestUpdatesProvider(source: source, page: 1));
-    } else {
-      return ref.refresh(searchProvider(
-          source: source, query: _query, page: 1, filterList: filters));
-    }
   }
 }
 
