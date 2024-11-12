@@ -173,7 +173,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                     final ua = await controller.evaluateJavascript(
                             source: "navigator.userAgent") ??
                         "";
-                    await MClient.setCookie(url.toString(), ua);
+                    await MClient.setCookie(url.toString(), ua, controller);
                     final canGoback = await controller.canGoBack();
                     final canGoForward = await controller.canGoForward();
                     final title = await controller.getTitle();

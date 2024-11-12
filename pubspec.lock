@@ -479,8 +479,8 @@ packages:
     dependency: "direct main"
     description:
       path: flutter_inappwebview
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "6.2.0-beta.2"
@@ -488,8 +488,8 @@ packages:
     dependency: "direct overridden"
     description:
       path: flutter_inappwebview_android
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.2.0-beta.2"
@@ -497,8 +497,8 @@ packages:
     dependency: transitive
     description:
       path: "dev_packages/flutter_inappwebview_internal_annotations"
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.2.0"
@@ -506,8 +506,8 @@ packages:
     dependency: "direct overridden"
     description:
       path: flutter_inappwebview_ios
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.2.0-beta.2"
@@ -515,8 +515,8 @@ packages:
     dependency: "direct overridden"
     description:
       path: flutter_inappwebview_macos
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.2.0-beta.2"
@@ -524,8 +524,8 @@ packages:
     dependency: "direct overridden"
     description:
       path: flutter_inappwebview_platform_interface
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.4.0-beta.2"
@@ -533,8 +533,8 @@ packages:
     dependency: transitive
     description:
       path: flutter_inappwebview_web
-      ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
-      resolved-ref: abf95722cb8d6df66c07e4feebac9e6154706d4f
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
       url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "1.2.0-beta.2"
@@ -542,9 +542,9 @@ packages:
     dependency: "direct overridden"
     description:
       path: flutter_inappwebview_windows
-      ref: fix_windows_get_cookies
-      resolved-ref: "22dfdc54d26001a739030ca261284837ef7e923f"
-      url: "https://github.com/kodjodevf/flutter_inappwebview.git"
+      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      resolved-ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
+      url: "https://github.com/pichillilorenzo/flutter_inappwebview.git"
     source: git
     version: "0.7.0-beta.2"
   flutter_launcher_icons:
