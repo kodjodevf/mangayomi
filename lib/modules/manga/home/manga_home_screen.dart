@@ -300,7 +300,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         selected: _selectedIndex == index,
                         text: _types(context)[index].title,
                         onPressed: () async {
-                          _mangaList.clear();
                           if (filters.isEmpty) {
                             filters = filterList;
                           }
@@ -358,6 +357,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                               }),
                             );
                             if (result == 'filter') {
+                              _mangaList.clear();
                               if (mounted) {
                                 setState(() {
                                   _selectedIndex = 2;
@@ -374,6 +374,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                   filterList: filters));
                             }
                           } else {
+                            _mangaList.clear();
                             setState(() {
                               _selectedIndex = index;
                               _isFiltering = false;
