@@ -318,6 +318,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.10"
+  desktop_webview_window:
+    dependency: "direct main"
+    description:
+      path: "packages/desktop_webview_window"
+      ref: main
+      resolved-ref: "2aa8d449881974182d033df9635cf7c198d2553a"
+      url: "https://github.com/kodjodevf/desktop_webview_window.git"
+    source: git
+    version: "0.2.4"
   directed_graph:
     dependency: transitive
     description:
@@ -671,10 +680,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: ce89c5a993ca5eea74535f798478502c30a625ecb10a1de4d7fef5cd1bcac2a4
+      sha256: "8ae664a70174163b9f65ea68dd8673e29db8f9095de7b5cd00e167c621f4fef5"
       url: "https://pub.dev"
     source: hosted
-    version: "14.4.1"
+    version: "14.6.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -1614,10 +1623,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_linux
-      sha256: e2b9622b4007f97f504cd64c0128309dfb978ae66adbe944125ed9e1750f06af
+      sha256: "4e9ba368772369e3e08f231d2301b4ef72b9ff87c31192ef471b380ef29a4935"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.0"
+    version: "3.2.1"
   url_launcher_macos:
     dependency: transitive
     description:

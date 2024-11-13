@@ -41,7 +41,6 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
 typedef DoubleClickAnimationListener = void Function();
@@ -1344,22 +1343,7 @@ class _MangaChapterPageGalleryState
                         'sourceId': source.id.toString(),
                         'title': chapter.name!
                       };
-                      if (Platform.isLinux) {
-                        final urll = Uri.parse(url);
-                        if (!await launchUrl(
-                          urll,
-                          mode: LaunchMode.inAppBrowserView,
-                        )) {
-                          if (!await launchUrl(
-                            urll,
-                            mode: LaunchMode.externalApplication,
-                          )) {
-                            throw 'Could not launch $url';
-                          }
-                        }
-                      } else {
-                        context.push("/mangawebview", extra: data);
-                      }
+                      context.push("/mangawebview", extra: data);
                     },
                     icon: const Icon(Icons.public)),
             ],

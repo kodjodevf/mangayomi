@@ -67,16 +67,24 @@ class MClient {
   }
 
   static Future<void> setCookie(String url, String ua,
-      flutter_inappwebview.InAppWebViewController webViewController,
+      flutter_inappwebview.InAppWebViewController? webViewController,
       {String? cookie}) async {
     List<String> cookies = [];
-    cookies = (await flutter_inappwebview.CookieManager.instance(
-                webViewEnvironment: webViewEnvironment)
-            .getCookies(
-                url: flutter_inappwebview.WebUri(url),
-                webViewController: webViewController))
-        .map((e) => "${e.name}=${e.value}")
-        .toList();
+    if (Platform.isLinux) {
+      cookies = cookie
+              ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+              .where((cookie) => cookie.isNotEmpty)
+              .toList() ??
+          [];
+    } else {
+      cookies = (await flutter_inappwebview.CookieManager.instance(
+                  webViewEnvironment: webViewEnvironment)
+              .getCookies(
+                  url: flutter_inappwebview.WebUri(url),
+                  webViewController: webViewController))
+          .map((e) => "${e.name}=${e.value}")
+          .toList();
+    }
     if (cookies.isNotEmpty) {
       final host = Uri.parse(url).host;
       final newCookie = cookies.join("; ");

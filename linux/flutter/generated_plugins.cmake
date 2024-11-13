@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_webview_window
   flutter_qjs
   isar_flutter_libs
   media_kit_libs_linux
