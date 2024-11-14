@@ -185,12 +185,7 @@ jobs:
 
   #     - name: build windows
   #       run: |
-  #         flutter build windows --release
-  #         $DestDir = "build\windows\Mangayomi-${{ github.ref_name }}-windows"
-  #         $SrcDir = "build\windows\runner\Release"
-  #         New-Item -Path $DestDir -ItemType Directory
-  #         Copy-Item $SrcDir\* -Recurse $DestDir
-  #         Copy-Item -Filter *.dll -Path windows\* -Destination $DestDir -Force
+  #         flutter build windows
   #         Compress-Archive $DestDir build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
 
   #     - name: upload artifact windows zip
@@ -205,164 +200,154 @@ jobs:
   #         allowUpdates: true
 
           
-  build-and-release-linux-zip:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
+  # build-and-release-linux-zip:
+  #   permissions:
+  #     contents: write
+  #   runs-on: ubuntu-latest
+  #   steps:
       
-      - name: checkout branch
-        uses: actions/checkout@v4
+  #     - name: checkout branch
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
 
-      - name: setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+  #     - name: setup flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
+  #     - name: Install the CLI tool
+  #       run: cargo install 'flutter_rust_bridge_codegen'
         
 
-      - name: flutter pub get
-        run: flutter pub get
+  #     - name: flutter pub get
+  #       run: flutter pub get
 
-      - name: build linux
-        run: flutter build linux --verbose
-      - name: Zip 
-        uses: thedoctor0/zip-release@master
-        with:
-          type: "zip"
-          filename: Mangayomi-${{ github.ref_name }}-linux.zip
-          directory: build/linux/x64/release/bundle
+  #     - name: build linux
+  #       run: flutter build linux --verbose
+  #     - name: Zip 
+  #       uses: thedoctor0/zip-release@master
+  #       with:
+  #         type: "zip"
+  #         filename: Mangayomi-${{ github.ref_name }}-linux.zip
+  #         directory: build/linux/x64/release/bundle
       
-      - name: upload artifact linux zip
-        uses: actions/upload-artifact@v3
-        with:
-          path: build/linux/x64/release/bundle/Mangayomi-*.zip
-      - name: release packages linux zip
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: build/linux/x64/release/bundle/Mangayomi-*.zip
-          allowUpdates: true
+  #     - name: upload artifact linux zip
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: build/linux/x64/release/bundle/Mangayomi-*.zip
+  #     - name: release packages linux zip
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         artifacts: build/linux/x64/release/bundle/Mangayomi-*.zip
+  #         allowUpdates: true
 
 
-  build-and-release-linux-appimage_libmpv_so:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
+  # build-and-release-linux-deb:
+  #   permissions:
+  #     contents: write
+  #   runs-on: ubuntu-latest
+  #   steps:
       
-      - name: checkout branch
-        uses: actions/checkout@v4
+  #     - name: checkout branch
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libfuse2
 
-      - name: setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  #     - name: setup flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
+
+  #     - name: Install the CLI tool
+  #       run: cargo install 'flutter_rust_bridge_codegen'
         
+  #     - name: flutter pub get
+  #       run: flutter pub get
 
-      - name: flutter pub get
-        run: flutter pub get
+  #     - name: Enable dart_distributor
+  #       run: dart pub global activate flutter_distributor
 
-      - name: build linux
-        run: |  
+  #     - name: Update PATH
+  #       run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
 
-          sudo apt install -y libfuse2
-          
-          curl -JOL https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod a+x appimagetool-x86_64.AppImage
-          mv appimagetool-x86_64.AppImage appimagetool
+  #     - name: Build deb package
+  #       run: flutter_distributor package --platform linux --targets deb
 
-          flutter build linux --release
+  #     - name: Move deb file
+  #       run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
-          patchelf --replace-needed libmpv.so.1 libmpv.so build/linux/x64/release/bundle/lib/libmedia_kit_video_plugin.so
-          patchelf --replace-needed libmpv.so.1 libmpv.so build/linux/x64/release/bundle/lib/libmedia_kit_native_event_loop.so
-                    
-          mv build/linux/x64/release/bundle/{mangayomi,AppRun}
-          cp linux/appimage/* build/linux/x64/release/bundle/
-          ./appimagetool build/linux/x64/release/bundle/
-          mv *.AppImage build/Mangayomi-${{ github.ref_name }}-linux_libmpv_so.AppImage
+  #     - name: upload artifact linux deb
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: dist/Mangayomi-*.deb
 
-      - name: upload artifact linux appimage
-        uses: actions/upload-artifact@v3
-        with:
-          path: build/Mangayomi-*.AppImage
-      - name: Rrelease packages appimage
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: build/Mangayomi-*.AppImage
-          allowUpdates: true
+  #     - name: Release package deb
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         artifacts: dist/Mangayomi-*.deb
+  #         allowUpdates: true
 
-  build-and-release-linux-appimage_libmpv_so_1:
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
+
+  # build-and-release-linux-appimage:
+  #   permissions:
+  #     contents: write
+  #   runs-on: ubuntu-latest
+  #   steps:
       
-      - name: checkout branch
-        uses: actions/checkout@v4
+  #     - name: checkout branch
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev
+  #     - name: Install dependencies
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libfuse2
 
-      - name: setup flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  #     - name: setup flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
+
+  #     - name: Install the CLI tool
+  #       run: cargo install 'flutter_rust_bridge_codegen'
         
+  #     - name: flutter pub get
+  #       run: flutter pub get
 
-      - name: flutter pub get
-        run: flutter pub get
+  #     - name: Enable dart_distributor
+  #       run: dart pub global activate flutter_distributor
 
-      - name: build linux
-        run: |  
+  #     - name: Update PATH
+  #       run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
 
-          sudo apt install -y libfuse2
-          
-          curl -JOL https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod a+x appimagetool-x86_64.AppImage
-          mv appimagetool-x86_64.AppImage appimagetool
+  #     - name: Build AppImage package
+  #       run: flutter_distributor package --platform linux --targets deb
 
-          flutter build linux --release
-          
-          mv build/linux/x64/release/bundle/{mangayomi,AppRun}
-          cp linux/appimage/* build/linux/x64/release/bundle/
-          ./appimagetool build/linux/x64/release/bundle/
-          mv *.AppImage build/Mangayomi-${{ github.ref_name }}-linux_libmpv_so_1.AppImage
+  #     - name: Move AppImage file
+  #       run: mv $(find dist -type f -name "mangayomi*.AppImage") dist/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
-      - name: upload artifact linux appimage
-        uses: actions/upload-artifact@v3
-        with:
-          path: build/Mangayomi-*.AppImage
-      - name: Rrelease packages appimage
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: build/Mangayomi-*.AppImage
-          allowUpdates: true
+  #     - name: upload artifact linux AppImage
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         path: dist/Mangayomi-*.AppImage
+
+  #     - name: Release package AppImage
+  #       uses: ncipollo/release-action@v1
+  #       with:
+  #         artifacts: dist/Mangayomi-*.AppImage
+  #         allowUpdates: true
