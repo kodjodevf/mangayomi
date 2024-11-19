@@ -40,6 +40,7 @@ class SyncServer extends _$SyncServer {
 
   Future<(bool, String)> login(AppLocalizations l10n, String server,
       String username, String password) async {
+    server = server[server.length - 1] == '/' ? server.substring(0, server.length - 1) : server;
     try {
       var response = await http.post(
         Uri.parse('$server$_loginUrl'),

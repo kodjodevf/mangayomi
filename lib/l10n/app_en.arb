@@ -182,6 +182,7 @@
   "n_tracker": "{n} trackers",
   "tracking": "Tracking",
   "syncing": "Sync",
+  "sync_password": "Password (at least 8 characters)",
   "sync_logged": "Login successful",
   "syncing_subtitle": "Sync your progress across multiple devices via a self-hosted \nserver. Make sure to upload first if this is your first time \nsyncing or download before using (auto) sync on this device!",
   "last_sync": "Last sync at: ",
