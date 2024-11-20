@@ -38,12 +38,13 @@ import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 part 'router.g.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
-GoRouter router(RouterRef ref) {
+GoRouter router(Ref ref) {
   final router = RouterNotifier();
 
   return GoRouter(

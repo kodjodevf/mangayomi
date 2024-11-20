@@ -6,10 +6,11 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'migration.g.dart';
 
 @riverpod
-Future<void> migration(MigrationRef ref) async {
+Future<void> migration(Ref ref) async {
   final chapters =
       isar.chapters.filter().idIsNotNull().mangaIdIsNull().findAllSync();
   final downloads =

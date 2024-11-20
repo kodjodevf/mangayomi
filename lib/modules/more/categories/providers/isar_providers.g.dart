@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaCategorieStreamHash() =>
-    r'16b3a35e4962b39a2948a257eba66124bbff139a';
+    r'97e90977f4696eedcf597c655a40dd6ccd47ed37';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -144,6 +144,8 @@ class GetMangaCategorieStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetMangaCategorieStreamRef
     on AutoDisposeStreamProviderRef<List<Category>> {
   /// The parameter `isManga` of this provider.
@@ -159,4 +161,4 @@ class _GetMangaCategorieStreamProviderElement
   bool get isManga => (origin as GetMangaCategorieStreamProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

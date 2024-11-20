@@ -6,7 +6,7 @@ part of 'isar_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAllMangaStreamHash() => r'd06c3a94ba847055746f2d52566cc94db4c28b7e';
+String _$getAllMangaStreamHash() => r'1c0b5442ae86b2fa899d509a555f5d375f0ff79a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetAllMangaStreamRef on AutoDisposeStreamProviderRef<List<Manga>> {
   /// The parameter `categoryId` of this provider.
   int? get categoryId;
@@ -174,7 +176,7 @@ class _GetAllMangaStreamProviderElement
 }
 
 String _$getAllMangaWithoutCategoriesStreamHash() =>
-    r'03581754f330a87894f953f8eaae528642b0afc2';
+    r'78076f291274b7defd9567e55314002d9aeecab1';
 
 /// See also [getAllMangaWithoutCategoriesStream].
 @ProviderFor(getAllMangaWithoutCategoriesStream)
@@ -294,6 +296,8 @@ class GetAllMangaWithoutCategoriesStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetAllMangaWithoutCategoriesStreamRef
     on AutoDisposeStreamProviderRef<List<Manga>> {
   /// The parameter `isManga` of this provider.
@@ -310,7 +314,7 @@ class _GetAllMangaWithoutCategoriesStreamProviderElement
       (origin as GetAllMangaWithoutCategoriesStreamProvider).isManga;
 }
 
-String _$getSettingsStreamHash() => r'273ef0597a1078ab7c31af861628f1be7ab154d8';
+String _$getSettingsStreamHash() => r'c5a51e0e3473b25d2365025832a27ed2cc029b27';
 
 /// See also [getSettingsStream].
 @ProviderFor(getSettingsStream)
@@ -325,6 +329,8 @@ final getSettingsStreamProvider =
   allTransitiveDependencies: null,
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef GetSettingsStreamRef = AutoDisposeStreamProviderRef<List<Settings>>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

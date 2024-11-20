@@ -6,7 +6,7 @@ part of 'get_detail.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getDetailHash() => r'c782ef7d6b995a9788fa4072e3f5dc54afe32909';
+String _$getDetailHash() => r'c9e268bb19e786b3bb160023f74336b80da65b6c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -153,6 +153,8 @@ class GetDetailProvider extends AutoDisposeFutureProvider<MManga> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetDetailRef on AutoDisposeFutureProviderRef<MManga> {
   /// The parameter `url` of this provider.
   String get url;
@@ -171,4 +173,4 @@ class _GetDetailProviderElement extends AutoDisposeFutureProviderElement<MManga>
   Source get source => (origin as GetDetailProvider).source;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

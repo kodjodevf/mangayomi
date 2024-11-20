@@ -16,6 +16,7 @@ import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'get_chapter_pages.g.dart';
 
 class GetChapterPagesModel {
@@ -34,7 +35,7 @@ class GetChapterPagesModel {
 
 @riverpod
 Future<GetChapterPagesModel> getChapterPages(
-  GetChapterPagesRef ref, {
+  Ref ref, {
   required Chapter chapter,
 }) async {
   List<UChapDataPreload> uChapDataPreloadp = [];

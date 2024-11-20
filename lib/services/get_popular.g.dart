@@ -6,7 +6,7 @@ part of 'get_popular.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularHash() => r'e6ab4a663361dea09f7b430e1101101cdf3f1577';
+String _$getPopularHash() => r'2db0191dd013043970cfac2153e22054b0927ad1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class GetPopularProvider extends AutoDisposeFutureProvider<MPages?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetPopularRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
@@ -172,4 +174,4 @@ class _GetPopularProviderElement
   int get page => (origin as GetPopularProvider).page;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

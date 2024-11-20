@@ -7,7 +7,7 @@ part of 'sync_providers.dart';
 // **************************************************************************
 
 String _$addUpdatedChapterIndependentHash() =>
-    r'2a609f968ab03f617df4957fdd1ace6f013a3d2a';
+    r'7abb8f085a229ec0573c730234fa4fc4ff86d794';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -167,6 +167,8 @@ class AddUpdatedChapterIndependentProvider extends AutoDisposeProvider<void> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin AddUpdatedChapterIndependentRef on AutoDisposeProviderRef<void> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
@@ -193,7 +195,7 @@ class _AddUpdatedChapterIndependentProviderElement
 }
 
 String _$checkForSyncIndependentHash() =>
-    r'7f3820bbb551ad5a98145c0f05106bb104f2db26';
+    r'3a3658a67cd6cb210e76126b33592bd1ea67e3f0';
 
 /// See also [checkForSyncIndependent].
 @ProviderFor(checkForSyncIndependent)
@@ -308,6 +310,8 @@ class CheckForSyncIndependentProvider extends AutoDisposeProvider<void> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin CheckForSyncIndependentRef on AutoDisposeProviderRef<void> {
   /// The parameter `silent` of this provider.
   bool get silent;
@@ -452,6 +456,8 @@ class ChangedItemsManagerProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChangedItemsManagerRef on AutoDisposeNotifierProviderRef<ChangedItems?> {
   /// The parameter `managerId` of this provider.
   int? get managerId;
@@ -595,6 +601,8 @@ class SynchingProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SynchingRef on AutoDisposeNotifierProviderRef<SyncPreference?> {
   /// The parameter `syncId` of this provider.
   int? get syncId;
@@ -644,4 +652,4 @@ final syncAfterReadingStateProvider =
 
 typedef _$SyncAfterReadingState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,7 +6,7 @@ part of 'get_chapter_pages.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterPagesHash() => r'8c7b5e87ced01c6b1c4c54115b44cf3ea3ae72c7';
+String _$getChapterPagesHash() => r'c806798536b6d4ca5b2a51417f12c648100cfc44';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -143,6 +143,8 @@ class GetChapterPagesProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetChapterPagesRef on AutoDisposeFutureProviderRef<GetChapterPagesModel> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
@@ -157,4 +159,4 @@ class _GetChapterPagesProviderElement
   Chapter get chapter => (origin as GetChapterPagesProvider).chapter;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

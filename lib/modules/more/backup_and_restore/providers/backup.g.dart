@@ -6,7 +6,7 @@ part of 'backup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doBackUpHash() => r'0d6e453341320645998071e8888a6f07c3e28cfc';
+String _$doBackUpHash() => r'2d631e10437666ce38354969c7c05e22a0237b29';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -164,6 +164,8 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin DoBackUpRef on AutoDisposeProviderRef<void> {
   /// The parameter `list` of this provider.
   List<int> get list;
@@ -187,4 +189,4 @@ class _DoBackUpProviderElement extends AutoDisposeProviderElement<void>
   BuildContext? get context => (origin as DoBackUpProvider).context;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

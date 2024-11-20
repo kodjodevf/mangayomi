@@ -4,11 +4,11 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'add_torrent.g.dart';
 
 @riverpod
-Future addTorrentFromUrlOrFromFile(
-    AddTorrentFromUrlOrFromFileRef ref, Manga? mManga,
+Future addTorrentFromUrlOrFromFile(Ref ref, Manga? mManga,
     {required bool init, String? url}) async {
   FilePickerResult? result;
   if (url == null) {

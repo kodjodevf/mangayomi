@@ -8,10 +8,11 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'update_manga_detail_providers.g.dart';
 
 @riverpod
-Future<dynamic> updateMangaDetail(UpdateMangaDetailRef ref,
+Future<dynamic> updateMangaDetail(Ref ref,
     {required int? mangaId, required bool isInit}) async {
   final manga = isar.mangas.getSync(mangaId!);
   if (manga!.chapters.isNotEmpty && isInit) {

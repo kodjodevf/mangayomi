@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'ef2852f888f93e5f344241bc6b486c9dd9037251';
+String _$downloadChapterHash() => r'f407f5839eff9754f9590f2f2189bcb604f3fa06';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<PageUrl>> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
@@ -173,4 +175,4 @@ class _DownloadChapterProviderElement
   bool? get useWifi => (origin as DownloadChapterProvider).useWifi;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

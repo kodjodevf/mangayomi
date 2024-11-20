@@ -6,7 +6,7 @@ part of 'router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'b08b3dc93b39ca2a8b7ef3dfbb5e47d516411c9d';
+String _$routerHash() => r'898ce90fa3d611eeb9ada09b0b29672c5accb22a';
 
 /// See also [router].
 @ProviderFor(router)
@@ -19,6 +19,8 @@ final routerProvider = AutoDisposeProvider<GoRouter>.internal(
   allTransitiveDependencies: null,
 );
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
 String _$routerCurrentLocationStateHash() =>
     r'6d08e611ff9bb4c7b91e02b7ffc456df010990aa';
@@ -174,6 +176,8 @@ class RouterCurrentLocationStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin RouterCurrentLocationStateRef on AutoDisposeNotifierProviderRef<String?> {
   /// The parameter `context` of this provider.
   BuildContext get context;
@@ -189,4 +193,4 @@ class _RouterCurrentLocationStateProviderElement
       (origin as RouterCurrentLocationStateProvider).context;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

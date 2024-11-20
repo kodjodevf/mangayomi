@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaDetailStreamHash() =>
-    r'1c8bd2eb2db6f3384626fae22bcc93422aa0e118';
+    r'6e7c5dc20ee7d32a091e884ac6980e191f698c8c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -143,6 +143,8 @@ class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetMangaDetailStreamRef on AutoDisposeStreamProviderRef<Manga?> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -157,7 +159,7 @@ class _GetMangaDetailStreamProviderElement
   int get mangaId => (origin as GetMangaDetailStreamProvider).mangaId;
 }
 
-String _$getChaptersStreamHash() => r'31879a8ff45e1cd61255de50d030a0141450180d';
+String _$getChaptersStreamHash() => r'0f03db54c5a639c4356a81e4bad50fa8a077ceac';
 
 /// See also [getChaptersStream].
 @ProviderFor(getChaptersStream)
@@ -273,6 +275,8 @@ class GetChaptersStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetChaptersStreamRef on AutoDisposeStreamProviderRef<List<Chapter>> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -287,4 +291,4 @@ class _GetChaptersStreamProviderElement
   int get mangaId => (origin as GetChaptersStreamProvider).mangaId;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -7,7 +7,7 @@ part of 'local_archive.dart';
 // **************************************************************************
 
 String _$importArchivesFromFileHash() =>
-    r'4ac9e6c438919a1ea8cebd28cb554b13b5e53cc2';
+    r'8be95f0947ab5247e3305a355a6f17f0aaecad00';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -167,6 +167,8 @@ class ImportArchivesFromFileProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `mManga` of this provider.
   Manga? get mManga;
@@ -191,4 +193,4 @@ class _ImportArchivesFromFileProviderElement
   bool get init => (origin as ImportArchivesFromFileProvider).init;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

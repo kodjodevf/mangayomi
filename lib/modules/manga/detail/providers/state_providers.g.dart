@@ -206,6 +206,8 @@ class SortChapterStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SortChapterStateRef on AutoDisposeNotifierProviderRef<SortChapter> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -353,6 +355,8 @@ class ChapterFilterDownloadedStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -499,6 +503,8 @@ class ChapterFilterUnreadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterFilterUnreadStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -646,6 +652,8 @@ class ChapterFilterBookmarkedStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaId` of this provider.
   int get mangaId;
@@ -791,6 +799,8 @@ class ChapterFilterResultStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterFilterResultStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `manga` of this provider.
   Manga get manga;
@@ -936,6 +946,8 @@ class ChapterSetIsBookmarkStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterSetIsBookmarkStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
@@ -1081,6 +1093,8 @@ class ChapterSetIsReadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
@@ -1226,6 +1240,8 @@ class ChapterSetDownloadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ChapterSetDownloadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `manga` of this provider.
   Manga get manga;
@@ -1389,6 +1405,8 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ScanlatorsFilterStateRef on AutoDisposeNotifierProviderRef<
     (List<String>, List<String>, List<String>)> {
   /// The parameter `manga` of this provider.
@@ -1405,4 +1423,4 @@ class _ScanlatorsFilterStateProviderElement
   Manga get manga => (origin as ScanlatorsFilterStateProvider).manga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -176,6 +176,8 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryDisplayTypeStateRef
     on AutoDisposeNotifierProviderRef<DisplayType> {
   /// The parameter `isManga` of this provider.
@@ -327,6 +329,8 @@ class LibraryGridSizeStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryGridSizeStateRef on AutoDisposeNotifierProviderRef<int?> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -505,6 +509,8 @@ class MangaFilterDownloadedStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangaFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
@@ -695,6 +701,8 @@ class MangaFilterUnreadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangaFilterUnreadStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
@@ -884,6 +892,8 @@ class MangaFilterStartedStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangaFilterStartedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
@@ -1073,6 +1083,8 @@ class MangaFilterBookmarkedStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangaFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
@@ -1263,6 +1275,8 @@ class MangasFilterResultStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangasFilterResultStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
@@ -1439,6 +1453,8 @@ class LibraryShowCategoryTabsStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryShowCategoryTabsStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -1610,6 +1626,8 @@ class LibraryDownloadedChaptersStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryDownloadedChaptersStateRef
     on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
@@ -1781,6 +1799,8 @@ class LibraryLanguageStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryLanguageStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -1949,6 +1969,8 @@ class LibraryLocalSourceStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryLocalSourceStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -2119,6 +2141,8 @@ class LibraryShowNumbersOfItemsStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryShowNumbersOfItemsStateRef
     on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
@@ -2294,6 +2318,8 @@ class LibraryShowContinueReadingButtonStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin LibraryShowContinueReadingButtonStateRef
     on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `isManga` of this provider.
@@ -2466,6 +2492,8 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SortLibraryMangaStateRef
     on AutoDisposeNotifierProviderRef<SortLibraryManga> {
   /// The parameter `isManga` of this provider.
@@ -2650,6 +2678,8 @@ class MangasSetIsReadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangasSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `mangaIds` of this provider.
   List<int> get mangaIds;
@@ -2795,6 +2825,8 @@ class MangasSetUnReadStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin MangasSetUnReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `mangaIds` of this provider.
   List<int> get mangaIds;
@@ -2809,4 +2841,4 @@ class _MangasSetUnReadStateProviderElement
   List<int> get mangaIds => (origin as MangasSetUnReadStateProvider).mangaIds;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

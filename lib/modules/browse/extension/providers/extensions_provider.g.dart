@@ -7,7 +7,7 @@ part of 'extensions_provider.dart';
 // **************************************************************************
 
 String _$getExtensionsStreamHash() =>
-    r'010b67dcc4ccc0736c5ca779c33751302ab28cd8';
+    r'62f2884dd64a2f3d8928f7399c6b2547f0311078';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -144,6 +144,8 @@ class GetExtensionsStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetExtensionsStreamRef on AutoDisposeStreamProviderRef<List<Source>> {
   /// The parameter `isManga` of this provider.
   bool? get isManga;
@@ -158,4 +160,4 @@ class _GetExtensionsStreamProviderElement
   bool? get isManga => (origin as GetExtensionsStreamProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

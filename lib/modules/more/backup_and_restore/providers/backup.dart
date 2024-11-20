@@ -17,11 +17,12 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 part 'backup.g.dart';
 
 @riverpod
-void doBackUp(DoBackUpRef ref,
+void doBackUp(Ref ref,
     {required List<int> list,
     required String path,
     required BuildContext? context}) {

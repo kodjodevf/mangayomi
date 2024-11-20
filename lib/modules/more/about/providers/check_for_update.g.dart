@@ -6,7 +6,7 @@ part of 'check_for_update.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkForUpdateHash() => r'f460e78c666e58d2a33037b160f5b0fd460cbb5d';
+String _$checkForUpdateHash() => r'ff9623d8b0b4a0485cde58c0a8b5447b64bb02ab';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class CheckForUpdateProvider extends AutoDisposeFutureProvider<void> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin CheckForUpdateRef on AutoDisposeFutureProviderRef<void> {
   /// The parameter `context` of this provider.
   BuildContext? get context;
@@ -172,4 +174,4 @@ class _CheckForUpdateProviderElement
   bool? get manualUpdate => (origin as CheckForUpdateProvider).manualUpdate;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

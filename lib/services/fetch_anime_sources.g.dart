@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'd3bd9a4e8842f55c823ba355a8666b6ffedbb590';
+    r'8fbe1642aee4d475583a1f04b2d236984c6fcfb4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -155,6 +155,8 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchAnimeSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
@@ -174,4 +176,4 @@ class _FetchAnimeSourcesListProviderElement
   bool get reFresh => (origin as FetchAnimeSourcesListProvider).reFresh;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

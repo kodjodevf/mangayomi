@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getAllHistoryStreamHash() =>
-    r'32dc5fa16315f199a5c86ee99cf59b7190c4d28e';
+    r'53b3a7837efab9e7d2808930e5070dbd788c59f8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -144,6 +144,8 @@ class GetAllHistoryStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetAllHistoryStreamRef on AutoDisposeStreamProviderRef<List<History>> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -159,7 +161,7 @@ class _GetAllHistoryStreamProviderElement
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'9f62b36ef0b268ee8c3cc93a10f8963def8dfbb0';
+    r'01f77807c8be11f471b6acee6e7bc358ce600a65';
 
 /// See also [getAllUpdateStream].
 @ProviderFor(getAllUpdateStream)
@@ -275,6 +277,8 @@ class GetAllUpdateStreamProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetAllUpdateStreamRef on AutoDisposeStreamProviderRef<List<Update>> {
   /// The parameter `isManga` of this provider.
   bool get isManga;
@@ -289,4 +293,4 @@ class _GetAllUpdateStreamProviderElement
   bool get isManga => (origin as GetAllUpdateStreamProvider).isManga;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -4,10 +4,11 @@ import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'headers.g.dart';
 
 @riverpod
-Map<String, String> headers(HeadersRef ref,
+Map<String, String> headers(Ref ref,
     {required String source, required String lang}) {
   final mSource = getSource(lang, source);
   if (mSource == null) return {};

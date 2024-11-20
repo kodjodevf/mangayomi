@@ -10,10 +10,11 @@ import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'get_video_list.g.dart';
 
 @riverpod
-Future<(List<Video>, bool, String?)> getVideoList(GetVideoListRef ref,
+Future<(List<Video>, bool, String?)> getVideoList(Ref ref,
     {required Chapter episode}) async {
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);

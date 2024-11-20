@@ -5,10 +5,11 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'isar_providers.g.dart';
 
 @riverpod
-Stream<List<History>> getAllHistoryStream(GetAllHistoryStreamRef ref,
+Stream<List<History>> getAllHistoryStream(Ref ref,
     {required bool isManga}) async* {
   yield* isar.historys
       .filter()
@@ -19,7 +20,7 @@ Stream<List<History>> getAllHistoryStream(GetAllHistoryStreamRef ref,
 }
 
 @riverpod
-Stream<List<Update>> getAllUpdateStream(GetAllUpdateStreamRef ref,
+Stream<List<Update>> getAllUpdateStream(Ref ref,
     {required bool isManga}) async* {
   yield* isar.updates
       .filter()

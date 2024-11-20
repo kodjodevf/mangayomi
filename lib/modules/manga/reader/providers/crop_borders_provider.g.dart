@@ -6,7 +6,7 @@ part of 'crop_borders_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$cropBordersHash() => r'b275a01ce80a3322b70a6c1e87abe1df0d35dc64';
+String _$cropBordersHash() => r'04b24357737d6cc75caa38feca77bb5d41f00aa6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin CropBordersRef on FutureProviderRef<Uint8List?> {
   /// The parameter `data` of this provider.
   UChapDataPreload get data;
@@ -172,4 +174,4 @@ class _CropBordersProviderElement extends FutureProviderElement<Uint8List?>
   bool get cropBorder => (origin as CropBordersProvider).cropBorder;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -22,11 +22,11 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'restore.g.dart';
 
 @riverpod
-void doRestore(DoRestoreRef ref,
-    {required String path, required BuildContext context}) {
+void doRestore(Ref ref, {required String path, required BuildContext context}) {
   final inputStream = InputFileStream(path);
   final archive = ZipDecoder().decodeBuffer(inputStream);
   final backup = jsonDecode(utf8.decode(archive.files.first.content))

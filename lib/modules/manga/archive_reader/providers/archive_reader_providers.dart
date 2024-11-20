@@ -3,30 +3,29 @@ import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'archive_reader_providers.g.dart';
 
 @riverpod
 Future<List<(String, LocalExtensionType, Uint8List, String)>>
-    getArchivesDataFromDirectory(
-        GetArchivesDataFromDirectoryRef ref, String path) async {
+    getArchivesDataFromDirectory(Ref ref, String path) async {
   return compute(_extractOnly, path);
 }
 
 @riverpod
 Future<List<LocalArchive>> getArchiveDataFromDirectory(
-    GetArchiveDataFromDirectoryRef ref, String path) async {
+    Ref ref, String path) async {
   return compute(_extract, path);
 }
 
 @riverpod
 Future<(String, LocalExtensionType, Uint8List, String)> getArchivesDataFromFile(
-    GetArchivesDataFromFileRef ref, String path) async {
+    Ref ref, String path) async {
   return compute(_extractArchiveOnly, path);
 }
 
 @riverpod
-Future<LocalArchive> getArchiveDataFromFile(
-    GetArchiveDataFromFileRef ref, String path) async {
+Future<LocalArchive> getArchiveDataFromFile(Ref ref, String path) async {
   return compute(_extractArchive, path);
 }
 

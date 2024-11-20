@@ -6,7 +6,7 @@ part of 'headers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'9ec5e31ef5ee097be7de6bed89a65b0afa5a51da';
+String _$headersHash() => r'05b066bcfad24a9238d4f7cefdabc7aec01d2e26';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -153,6 +153,8 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
   /// The parameter `source` of this provider.
   String get source;
@@ -171,4 +173,4 @@ class _HeadersProviderElement
   String get lang => (origin as HeadersProvider).lang;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

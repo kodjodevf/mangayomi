@@ -7,7 +7,7 @@ part of 'add_torrent.dart';
 // **************************************************************************
 
 String _$addTorrentFromUrlOrFromFileHash() =>
-    r'473a3494fd8c5089afdd460637f37faf2a498400';
+    r'8102259b30765a5c5cc57870f5c583bd5d421eee';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -167,6 +167,8 @@ class AddTorrentFromUrlOrFromFileProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin AddTorrentFromUrlOrFromFileRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `mManga` of this provider.
   Manga? get mManga;
@@ -191,4 +193,4 @@ class _AddTorrentFromUrlOrFromFileProviderElement
   String? get url => (origin as AddTorrentFromUrlOrFromFileProvider).url;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

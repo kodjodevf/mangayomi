@@ -6,7 +6,7 @@ part of 'get_source_baseurl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sourceBaseUrlHash() => r'c5700cf74e688979c8ded7a2ceee43e833649165';
+String _$sourceBaseUrlHash() => r'853fdcc3b12f567c7570a8569c7832234d2bf7bf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -142,6 +142,8 @@ class SourceBaseUrlProvider extends AutoDisposeProvider<String> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SourceBaseUrlRef on AutoDisposeProviderRef<String> {
   /// The parameter `source` of this provider.
   Source get source;
@@ -155,4 +157,4 @@ class _SourceBaseUrlProviderElement extends AutoDisposeProviderElement<String>
   Source get source => (origin as SourceBaseUrlProvider).source;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

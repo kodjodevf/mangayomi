@@ -7,7 +7,7 @@ part of 'fetch_manga_sources.dart';
 // **************************************************************************
 
 String _$fetchMangaSourcesListHash() =>
-    r'f32cfd3a729d0659a98a35d06e3df940173bb077';
+    r'8bc08c334cfdba887227c154e249355f33e69da4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -155,6 +155,8 @@ class FetchMangaSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin FetchMangaSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
@@ -174,4 +176,4 @@ class _FetchMangaSourcesListProviderElement
   dynamic get reFresh => (origin as FetchMangaSourcesListProvider).reFresh;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

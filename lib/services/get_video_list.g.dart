@@ -6,7 +6,7 @@ part of 'get_video_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'e5cc579c492bdf4cd226b93c42766599cece4cd6';
+String _$getVideoListHash() => r'1c62b1a5bef8b55a73ba7a436f23609ec8270436';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -146,6 +146,8 @@ class GetVideoListProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetVideoListRef
     on AutoDisposeFutureProviderRef<(List<Video>, bool, String?)> {
   /// The parameter `episode` of this provider.
@@ -161,4 +163,4 @@ class _GetVideoListProviderElement
   Chapter get episode => (origin as GetVideoListProvider).episode;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,7 +6,7 @@ part of 'convert_to_cbz.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$convertToCBZHash() => r'a0aed321ca44ee59f46f04ecf6f37e496dc55c87';
+String _$convertToCBZHash() => r'56f4320034ec2420c8c2c2b22a2522721181ab54';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -176,6 +176,8 @@ class ConvertToCBZProvider extends AutoDisposeFutureProvider<List<String>> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin ConvertToCBZRef on AutoDisposeFutureProviderRef<List<String>> {
   /// The parameter `chapterDir` of this provider.
   String get chapterDir;
@@ -205,4 +207,4 @@ class _ConvertToCBZProviderElement
   List<String> get pageList => (origin as ConvertToCBZProvider).pageList;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

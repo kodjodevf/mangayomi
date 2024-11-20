@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'69153ba0467229d219346aab9e6ec87c52f66095';
+String _$doRestoreHash() => r'a14a93347e059b6cf4478e8e299dc67d5e151b64';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -153,6 +153,8 @@ class DoRestoreProvider extends AutoDisposeProvider<void> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin DoRestoreRef on AutoDisposeProviderRef<void> {
   /// The parameter `path` of this provider.
   String get path;
@@ -171,4 +173,4 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

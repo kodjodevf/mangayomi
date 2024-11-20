@@ -2,11 +2,12 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'convert_to_cbz.g.dart';
 
 @riverpod
-Future<List<String>> convertToCBZ(ConvertToCBZRef ref, String chapterDir,
-    String mangaDir, String chapterName, List<String> pageList) async {
+Future<List<String>> convertToCBZ(Ref ref, String chapterDir, String mangaDir,
+    String chapterName, List<String> pageList) async {
   return compute(_convertToCBZ, (chapterDir, mangaDir, chapterName, pageList));
 }
 

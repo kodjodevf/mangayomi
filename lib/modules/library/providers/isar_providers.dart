@@ -3,10 +3,11 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'isar_providers.g.dart';
 
 @riverpod
-Stream<List<Manga>> getAllMangaStream(GetAllMangaStreamRef ref,
+Stream<List<Manga>> getAllMangaStream(Ref ref,
     {required int? categoryId, required bool? isManga}) async* {
   yield* categoryId == null
       ? isar.mangas
@@ -28,8 +29,7 @@ Stream<List<Manga>> getAllMangaStream(GetAllMangaStreamRef ref,
 }
 
 @riverpod
-Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
-    GetAllMangaWithoutCategoriesStreamRef ref,
+Stream<List<Manga>> getAllMangaWithoutCategoriesStream(Ref ref,
     {required bool? isManga}) async* {
   yield* isar.mangas
       .filter()
@@ -48,7 +48,7 @@ Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
 }
 
 @riverpod
-Stream<List<Settings>> getSettingsStream(GetSettingsStreamRef ref) async* {
+Stream<List<Settings>> getSettingsStream(Ref ref) async* {
   yield* isar.settings
       .filter()
       .idIsNotNull()

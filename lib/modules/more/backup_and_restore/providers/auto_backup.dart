@@ -4,6 +4,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'auto_backup.g.dart';
 
 @riverpod
@@ -65,7 +66,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
 }
 
 @riverpod
-Future<void> checkAndBackup(CheckAndBackupRef ref) async {
+Future<void> checkAndBackup(Ref ref) async {
   final settings = isar.settings.getSync(227);
   if (settings!.backupFrequency != null) {
     final backupFrequency = _duration(settings.backupFrequency);

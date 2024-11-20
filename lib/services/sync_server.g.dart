@@ -6,7 +6,7 @@ part of 'sync_server.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncServerHash() => r'546749093c21066a77c7bba22c1354a2bdf06e24';
+String _$syncServerHash() => r'99e16d503937f2973f00c0cf2e834a03cf4aa245';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -155,6 +155,8 @@ class SyncServerProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SyncServerRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
@@ -169,4 +171,4 @@ class _SyncServerProviderElement
   int get syncId => (origin as SyncServerProvider).syncId;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

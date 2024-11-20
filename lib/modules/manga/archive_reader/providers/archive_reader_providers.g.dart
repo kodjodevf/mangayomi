@@ -7,7 +7,7 @@ part of 'archive_reader_providers.dart';
 // **************************************************************************
 
 String _$getArchivesDataFromDirectoryHash() =>
-    r'7ca5e7d4a2a79745c92dd0370703c614406be2ad';
+    r'2a4d1a11e2b028e569ffd8a2700e4a1779bb9264';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -149,6 +149,8 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetArchivesDataFromDirectoryRef on AutoDisposeFutureProviderRef<
     List<(String, LocalExtensionType, Uint8List, String)>> {
   /// The parameter `path` of this provider.
@@ -166,7 +168,7 @@ class _GetArchivesDataFromDirectoryProviderElement
 }
 
 String _$getArchiveDataFromDirectoryHash() =>
-    r'fb85bd2b43ae73f083bdfa0760d8185ef989dd09';
+    r'49aa47895feafd9fa0c4f20e25d7674a3d54b212';
 
 /// See also [getArchiveDataFromDirectory].
 @ProviderFor(getArchiveDataFromDirectory)
@@ -285,6 +287,8 @@ class GetArchiveDataFromDirectoryProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetArchiveDataFromDirectoryRef
     on AutoDisposeFutureProviderRef<List<LocalArchive>> {
   /// The parameter `path` of this provider.
@@ -301,7 +305,7 @@ class _GetArchiveDataFromDirectoryProviderElement
 }
 
 String _$getArchivesDataFromFileHash() =>
-    r'f118f903a693c2f2ad5ec2452430a1eb10b661b2';
+    r'79874b548614b4410c19bca5f74978ec761742c5';
 
 /// See also [getArchivesDataFromFile].
 @ProviderFor(getArchivesDataFromFile)
@@ -421,6 +425,8 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetArchivesDataFromFileRef on AutoDisposeFutureProviderRef<
     (String, LocalExtensionType, Uint8List, String)> {
   /// The parameter `path` of this provider.
@@ -438,7 +444,7 @@ class _GetArchivesDataFromFileProviderElement
 }
 
 String _$getArchiveDataFromFileHash() =>
-    r'e5dc60fea6c36346c47542c141703bb027173215';
+    r'a5d8bf8246bfa250af6a7fd3c09bba6a012e0b2d';
 
 /// See also [getArchiveDataFromFile].
 @ProviderFor(getArchiveDataFromFile)
@@ -554,6 +560,8 @@ class GetArchiveDataFromFileProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetArchiveDataFromFileRef on AutoDisposeFutureProviderRef<LocalArchive> {
   /// The parameter `path` of this provider.
   String get path;
@@ -568,4 +576,4 @@ class _GetArchiveDataFromFileProviderElement
   String get path => (origin as GetArchiveDataFromFileProvider).path;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

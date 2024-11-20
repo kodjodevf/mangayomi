@@ -7,10 +7,10 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-flutter_rust_bridge = { version = "=2.5.0", features = ["chrono"] }
-image = "0.25.0"
+flutter_rust_bridge = { version = "=2.6.0", features = ["chrono"] }
+image = "0.25.5"
 chrono = "0.4.38"
-futures-util = "0.3.30"
-reqwest = { version = "0.12.7", default-features = false, features = ["charset", "http2", "rustls-tls", "rustls-tls-native-roots", "stream", "multipart"] }
-tokio = { version = "1.39.3", features = ["full"] }
-tokio-util = "0.7.11"
+futures-util = "0.3.31"
+reqwest = { version = "0.12.9", default-features = false, features = ["charset", "http2", "rustls-tls", "rustls-tls-native-roots", "stream", "multipart", "brotli", "gzip"] }
+tokio = { version = "1.41.1", features = ["full"] }
+tokio-util = "0.7.12"

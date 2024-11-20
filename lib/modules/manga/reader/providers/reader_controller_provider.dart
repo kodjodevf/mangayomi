@@ -368,7 +368,7 @@ class ReaderController extends _$ReaderController {
 
 extension ChapterExtensions on Chapter {
   void updateTrackChapterRead(dynamic ref) {
-    if (!(ref is WidgetRef || ref is AutoDisposeNotifierProviderRef)) return;
+    if (!(ref is WidgetRef || ref is Ref)) return;
     final updateProgressAfterReading =
         ref.watch(updateProgressAfterReadingStateProvider);
     if (!updateProgressAfterReading) return;
@@ -418,47 +418,51 @@ extension MangaExtensions on Manga {
   List<Chapter> getFilteredChapterList() {
     final data = this.chapters.toList().reversed.toList();
     final filterUnread = (isar.settings
-        .getSync(227)!
-        .chapterFilterUnreadList!
-        .where((element) => element.mangaId == id)
-        .toList()
-        .firstOrNull ?? ChapterFilterUnread(
-          mangaId: id,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterUnreadList!
+                .where((element) => element.mangaId == id)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterUnread(
+              mangaId: id,
+              type: 0,
+            ))
         .type!;
 
     final filterBookmarked = (isar.settings
-        .getSync(227)!
-        .chapterFilterBookmarkedList!
-        .where((element) => element.mangaId == id)
-        .toList()
-        .firstOrNull ?? ChapterFilterBookmarked(
-          mangaId: id,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterBookmarkedList!
+                .where((element) => element.mangaId == id)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterBookmarked(
+              mangaId: id,
+              type: 0,
+            ))
         .type!;
     final filterDownloaded = (isar.settings
-        .getSync(227)!
-        .chapterFilterDownloadedList!
-        .where((element) => element.mangaId == id)
-        .toList()
-        .firstOrNull ?? ChapterFilterDownloaded(
-          mangaId: id,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterDownloadedList!
+                .where((element) => element.mangaId == id)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterDownloaded(
+              mangaId: id,
+              type: 0,
+            ))
         .type!;
 
     final sortChapter = (isar.settings
-        .getSync(227)!
-        .sortChapterList!
-        .where((element) => element.mangaId == id)
-        .toList()
-        .firstOrNull ?? SortChapter(
-          mangaId: id,
-          index: 1,
-          reverse: false,
-        ))
+                .getSync(227)!
+                .sortChapterList!
+                .where((element) => element.mangaId == id)
+                .toList()
+                .firstOrNull ??
+            SortChapter(
+              mangaId: id,
+              index: 1,
+              reverse: false,
+            ))
         .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
     List<Chapter>? chapterList;

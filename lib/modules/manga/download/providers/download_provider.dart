@@ -20,11 +20,12 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'download_provider.g.dart';
 
 @riverpod
 Future<List<PageUrl>> downloadChapter(
-  DownloadChapterRef ref, {
+  Ref ref, {
   required Chapter chapter,
   bool? useWifi,
 }) async {

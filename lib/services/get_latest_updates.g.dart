@@ -6,7 +6,7 @@ part of 'get_latest_updates.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getLatestUpdatesHash() => r'5ca26c8679972d70a77ca12d38cadc360b14b372';
+String _$getLatestUpdatesHash() => r'ed983c23ad7d8a1af4332230537daede29b9275e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,6 +154,8 @@ class GetLatestUpdatesProvider extends AutoDisposeFutureProvider<MPages?> {
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin GetLatestUpdatesRef on AutoDisposeFutureProviderRef<MPages?> {
   /// The parameter `source` of this provider.
   Source get source;
@@ -172,4 +174,4 @@ class _GetLatestUpdatesProviderElement
   int get page => (origin as GetLatestUpdatesProvider).page;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -10,10 +10,11 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'sync_providers.g.dart';
 
 @riverpod
-void addUpdatedChapterIndependent(AddUpdatedChapterIndependentRef ref,
+void addUpdatedChapterIndependent(Ref ref,
     Chapter chapter, bool deleted, bool txn) {
   final changedItems = isar.changedItems.getSync(1) ?? ChangedItems();
   bool updated = false;
@@ -47,7 +48,7 @@ void addUpdatedChapterIndependent(AddUpdatedChapterIndependentRef ref,
 }
 
 @riverpod
-void checkForSyncIndependent(CheckForSyncIndependentRef ref, bool silent) {
+void checkForSyncIndependent(Ref ref, bool silent) {
   ref.read(SyncServerProvider(syncId: 1).notifier).checkForSync(silent);
 }
 
