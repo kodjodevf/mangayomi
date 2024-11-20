@@ -407,7 +407,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                           password = value;
                         }),
                     decoration: InputDecoration(
-                        hintText: l10n.password,
+                        hintText: l10n.sync_password,
                         suffixIcon: IconButton(
                             onPressed: () => setState(() {
                                   obscureText = !obscureText;
