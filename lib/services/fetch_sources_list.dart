@@ -55,7 +55,8 @@ Future<void> fetchSourcesList(
                     ..isFullData = source.isFullData ?? false
                     ..appMinVerReq = source.appMinVerReq
                     ..sourceCodeLanguage = source.sourceCodeLanguage
-                    ..additionalParams = source.additionalParams ?? "");
+                    ..additionalParams = source.additionalParams ?? ""
+                    ..isObsolete = false);
                 });
                 // log("successfully installed or updated");
               }
@@ -93,7 +94,8 @@ Future<void> fetchSourcesList(
                         ..isFullData = source.isFullData ?? false
                         ..appMinVerReq = source.appMinVerReq
                         ..sourceCodeLanguage = source.sourceCodeLanguage
-                        ..additionalParams = source.additionalParams ?? "");
+                        ..additionalParams = source.additionalParams ?? ""
+                        ..isObsolete = false);
                     });
                   } else {
                     // log("update aivalable");
@@ -121,7 +123,8 @@ Future<void> fetchSourcesList(
                 ..isManga = source.isManga
                 ..sourceCodeLanguage = source.sourceCodeLanguage
                 ..isFullData = source.isFullData ?? false
-                ..appMinVerReq = source.appMinVerReq);
+                ..appMinVerReq = source.appMinVerReq
+                ..isObsolete = false);
               // log("new source");
             }
           }
@@ -142,10 +145,8 @@ void checkIfSourceIsObsolete(List<Source> sourceList, bool isManga) {
       final ids =
           sourceList.where((e) => e.id != null).map((e) => e.id).toList();
       if (ids.isNotEmpty) {
-        if (!ids.contains(source.id)) {
-          isar.writeTxnSync(
-              () => isar.sources.putSync(source..isObsolete = true));
-        }
+        isar.writeTxnSync(() => isar.sources
+            .putSync(source..isObsolete = !ids.contains(source.id)));
       }
     }
   }
