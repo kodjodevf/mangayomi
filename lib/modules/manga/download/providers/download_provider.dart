@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
@@ -45,9 +46,15 @@ Future<List<PageUrl>> downloadChapter(
       : "";
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
 
-  final isManga = chapter.manga.value!.isManga!;
+  final itemType = chapter.manga.value!.itemType;
+  final isManga = itemType == ItemType.manga;
+  final itemTypePath = itemType == ItemType.manga
+      ? "Manga"
+      : itemType == ItemType.anime
+          ? "Anime"
+          : "Novel";
   final finalPath =
-      "downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}${isManga ? "/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}" : ""}";
+      "downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}${isManga ? "/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}" : ""}";
   path = Directory("${path1!.path}$finalPath/");
   Map<String, String> videoHeader = {};
   bool hasM3U8File = false;

@@ -17,10 +17,11 @@ const CategorySchema = CollectionSchema(
   name: r'Category',
   id: 5751694338128944171,
   properties: {
-    r'forManga': PropertySchema(
+    r'forItemType': PropertySchema(
       id: 0,
-      name: r'forManga',
-      type: IsarType.bool,
+      name: r'forItemType',
+      type: IsarType.byte,
+      enumMap: _CategoryforItemTypeEnumValueMap,
     ),
     r'name': PropertySchema(
       id: 1,
@@ -63,7 +64,7 @@ void _categorySerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.forManga);
+  writer.writeByte(offsets[0], object.forItemType.index);
   writer.writeString(offsets[1], object.name);
 }
 
@@ -74,7 +75,9 @@ Category _categoryDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Category(
-    forManga: reader.readBoolOrNull(offsets[0]),
+    forItemType:
+        _CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
+            ItemType.manga,
     id: id,
     name: reader.readStringOrNull(offsets[1]),
   );
@@ -89,13 +92,25 @@ P _categoryDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (_CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ItemType.manga) as P;
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _CategoryforItemTypeEnumValueMap = {
+  'manga': 0,
+  'anime': 1,
+  'novel': 2,
+};
+const _CategoryforItemTypeValueEnumMap = {
+  0: ItemType.manga,
+  1: ItemType.anime,
+  2: ItemType.novel,
+};
 
 Id _categoryGetId(Category object) {
   return object.id ?? Isar.autoIncrement;
@@ -186,28 +201,56 @@ extension CategoryQueryWhere on QueryBuilder<Category, Category, QWhereClause> {
 
 extension CategoryQueryFilter
     on QueryBuilder<Category, Category, QFilterCondition> {
-  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'forManga',
-      ));
-    });
-  }
-
-  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'forManga',
-      ));
-    });
-  }
-
-  QueryBuilder<Category, Category, QAfterFilterCondition> forMangaEqualTo(
-      bool? value) {
+  QueryBuilder<Category, Category, QAfterFilterCondition> forItemTypeEqualTo(
+      ItemType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'forManga',
+        property: r'forItemType',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition>
+      forItemTypeGreaterThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'forItemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> forItemTypeLessThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'forItemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> forItemTypeBetween(
+    ItemType lower,
+    ItemType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'forItemType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -434,15 +477,15 @@ extension CategoryQueryLinks
     on QueryBuilder<Category, Category, QFilterCondition> {}
 
 extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
-  QueryBuilder<Category, Category, QAfterSortBy> sortByForManga() {
+  QueryBuilder<Category, Category, QAfterSortBy> sortByForItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'forManga', Sort.asc);
+      return query.addSortBy(r'forItemType', Sort.asc);
     });
   }
 
-  QueryBuilder<Category, Category, QAfterSortBy> sortByForMangaDesc() {
+  QueryBuilder<Category, Category, QAfterSortBy> sortByForItemTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'forManga', Sort.desc);
+      return query.addSortBy(r'forItemType', Sort.desc);
     });
   }
 
@@ -461,15 +504,15 @@ extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
 
 extension CategoryQuerySortThenBy
     on QueryBuilder<Category, Category, QSortThenBy> {
-  QueryBuilder<Category, Category, QAfterSortBy> thenByForManga() {
+  QueryBuilder<Category, Category, QAfterSortBy> thenByForItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'forManga', Sort.asc);
+      return query.addSortBy(r'forItemType', Sort.asc);
     });
   }
 
-  QueryBuilder<Category, Category, QAfterSortBy> thenByForMangaDesc() {
+  QueryBuilder<Category, Category, QAfterSortBy> thenByForItemTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'forManga', Sort.desc);
+      return query.addSortBy(r'forItemType', Sort.desc);
     });
   }
 
@@ -500,9 +543,9 @@ extension CategoryQuerySortThenBy
 
 extension CategoryQueryWhereDistinct
     on QueryBuilder<Category, Category, QDistinct> {
-  QueryBuilder<Category, Category, QDistinct> distinctByForManga() {
+  QueryBuilder<Category, Category, QDistinct> distinctByForItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'forManga');
+      return query.addDistinctBy(r'forItemType');
     });
   }
 
@@ -522,9 +565,9 @@ extension CategoryQueryProperty
     });
   }
 
-  QueryBuilder<Category, bool?, QQueryOperations> forMangaProperty() {
+  QueryBuilder<Category, ItemType, QQueryOperations> forItemTypeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'forManga');
+      return query.addPropertyName(r'forItemType');
     });
   }
 
