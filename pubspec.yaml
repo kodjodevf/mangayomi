@@ -78,6 +78,7 @@ dependency_overrides:
   http: ^1.2.1
   ffi: ^2.1.2
   flex_seed_scheme: ^2.0.0
+  analyzer: ">=5.2.0 <7.0.0"
   html: ^0.15.4
   media_kit_native_event_loop:
     git:
