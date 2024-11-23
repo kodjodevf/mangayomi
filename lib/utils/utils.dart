@@ -5,7 +5,7 @@ import 'package:mangayomi/models/source.dart';
 Source? getSource(String lang, String name) {
   try {
     final sourcesList = isar.sources.filter().idIsNotNull().findAllSync();
-    return sourcesList.firstWhere(
+    return sourcesList.lastWhere(
       (element) =>
           element.name!.toLowerCase() == name.toLowerCase() &&
           element.lang == lang,
