@@ -210,12 +210,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _player.stream.completed.listen(
     (val) async {
       if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
-        if (isDesktop) {
-          final isFullScreen = await windowManager.isFullScreen();
-          if (isFullScreen) {
-            await setFullScreen(value: false);
-          }
-        }
         if (mounted) {
           pushReplacementMangaReaderView(
             context: context,
@@ -743,12 +737,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 if (hasPrevEpisode)
                   IconButton(
                     onPressed: () async {
-                      if (isDesktop) {
-                        final isFullScreen = await windowManager.isFullScreen();
-                        if (isFullScreen) {
-                          await setFullScreen(value: false);
-                        }
-                      }
                       if (context.mounted) {
                         pushReplacementMangaReaderView(
                             context: context,
@@ -766,12 +754,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
-                      if (isDesktop) {
-                        final isFullScreen = await windowManager.isFullScreen();
-                        if (isFullScreen) {
-                          await setFullScreen(value: false);
-                        }
-                      }
                       if (context.mounted) {
                         pushReplacementMangaReaderView(
                           context: context,
