@@ -21,10 +21,8 @@ Future<void> migration(Ref ref) async {
       .chapterIdIsNull()
       .or()
       .idIsNotNull()
-      .isMangaIsNull()
       .findAllSync();
-  final tracks =
-      isar.tracks.filter().idIsNotNull().isMangaIsNull().findAllSync();
+  final tracks = isar.tracks.filter().idIsNotNull().findAllSync();
 
   isar.writeTxnSync(() {
     //mangaId in chapter
@@ -40,14 +38,17 @@ Future<void> migration(Ref ref) async {
     //chapterId and isManga in History
     for (var history in histories) {
       final chapterId = history.chapter.value?.id;
-      final isManga = history.chapter.value?.manga.value?.isManga;
+      final itemType =
+          history.chapter.value?.manga.value?.itemType ?? ItemType.manga;
       isar.historys.putSync(history
         ..chapterId = chapterId
-        ..isManga = isManga);
+        ..itemType = itemType);
     }
     // isManga in Track
     for (var track in tracks) {
-      final isManga = isar.mangas.getSync(track.mangaId!)?.isManga;
+      final isManga =
+          (isar.mangas.getSync(track.mangaId!)?.itemType ?? ItemType.manga) ==
+              ItemType.manga;
       isar.tracks.putSync(track..isManga = isManga);
     }
   });

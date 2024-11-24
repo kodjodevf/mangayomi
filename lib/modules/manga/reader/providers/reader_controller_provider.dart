@@ -171,7 +171,7 @@ class ReaderController extends _$ReaderController {
       history = History(
           mangaId: getManga().id,
           date: DateTime.now().millisecondsSinceEpoch.toString(),
-          isManga: getManga().isManga,
+          itemType: getManga().itemType,
           chapterId: chapter.id)
         ..chapter.value = chapter;
     } else {
@@ -379,7 +379,7 @@ extension ChapterExtensions on Chapter {
     final tracks = isar.tracks
         .filter()
         .idIsNotNull()
-        .isMangaEqualTo(manga.isManga)
+        .isMangaEqualTo(manga.itemType == ItemType.manga)
         .mangaIdEqualTo(manga.id!)
         .findAllSync();
 
@@ -398,15 +398,17 @@ extension ChapterExtensions on Chapter {
             track.status = TrackStatus.completed;
             track.finishedReadingDate = DateTime.now().millisecondsSinceEpoch;
           } else {
-            track.status =
-                manga.isManga! ? TrackStatus.reading : TrackStatus.watching;
+            track.status = manga.itemType == ItemType.manga
+                ? TrackStatus.reading
+                : TrackStatus.watching;
             if (track.lastChapterRead == 1) {
               track.startedReadingDate = DateTime.now().millisecondsSinceEpoch;
             }
           }
         }
         ref
-            .read(trackStateProvider(track: track, isManga: manga.isManga)
+            .read(trackStateProvider(
+                    track: track, isManga: manga.itemType == ItemType.manga)
                 .notifier)
             .updateManga();
       }

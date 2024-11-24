@@ -185,10 +185,37 @@ class Settings {
 
   int? animeGridSize;
 
+  int? novelGridSize;
+
   @enumerated
   late SectionType disableSectionType;
 
   bool? useLibass;
+
+  int? libraryFilterNovelDownloadType;
+
+  int? libraryFilterNovelUnreadType;
+
+  int? libraryFilterNovelStartedType;
+
+  int? libraryFilterNovelBookMarkedType;
+
+  bool? novelLibraryShowCategoryTabs;
+
+  bool? novelLibraryDownloadedChapters;
+
+  bool? novelLibraryShowLanguage;
+
+  bool? novelLibraryShowNumbersOfItems;
+
+  bool? novelLibraryShowContinueReadingButton;
+
+  bool? novelLibraryLocalSource;
+
+  late SortLibraryManga? sortLibraryNovel;
+
+  @enumerated
+  late DisplayType novelDisplayType;
 
   Settings(
       {this.id = 227,
@@ -273,7 +300,19 @@ class Settings {
       this.mangaGridSize,
       this.animeGridSize,
       this.disableSectionType = SectionType.all,
-      this.useLibass = true});
+      this.useLibass = true,
+      this.libraryFilterNovelDownloadType = 0,
+      this.libraryFilterNovelUnreadType = 0,
+      this.libraryFilterNovelStartedType = 0,
+      this.libraryFilterNovelBookMarkedType = 0,
+      this.novelLibraryShowCategoryTabs = false,
+      this.novelLibraryDownloadedChapters = false,
+      this.novelLibraryShowLanguage = false,
+      this.novelLibraryShowNumbersOfItems = false,
+      this.novelLibraryShowContinueReadingButton = false,
+      this.novelLibraryLocalSource,
+      this.sortLibraryNovel,
+      this.novelDisplayType = DisplayType.comfortableGrid});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -428,6 +467,22 @@ class Settings {
     disableSectionType =
         SectionType.values[json['disableSectionType'] ?? SectionType.all];
     useLibass = json['useLibass'];
+    libraryFilterNovelBookMarkedType = json['libraryFilterNovelBookMarkedType'];
+    libraryFilterNovelDownloadType = json['libraryFilterNovelDownloadType'];
+    libraryFilterNovelStartedType = json['libraryFilterNovelStartedType'];
+    libraryFilterNovelUnreadType = json['libraryFilterNovelUnreadType'];
+    novelLibraryShowCategoryTabs = json['novelLibraryShowCategoryTabs'];
+    novelLibraryDownloadedChapters = json['novelLibraryDownloadedChapters'];
+    novelLibraryShowLanguage = json['novelLibraryShowLanguage'];
+    novelLibraryShowNumbersOfItems = json['novelLibraryShowNumbersOfItems'];
+    novelLibraryShowContinueReadingButton =
+        json['novelLibraryShowContinueReadingButton'];
+    novelLibraryLocalSource = json['novelLibraryLocalSource'];
+    sortLibraryNovel = json['sortLibraryNovel'] != null
+        ? SortLibraryManga.fromJson(json['sortLibraryNovel'])
+        : null;
+    novelDisplayType = DisplayType
+        .values[json['novelDisplayType'] ?? DisplayType.compactGrid.index];
   }
 
   Map<String, dynamic> toJson() => {
@@ -527,7 +582,20 @@ class Settings {
         'mangaGridSize': mangaGridSize,
         'animeGridSize': animeGridSize,
         'disableSectionType': disableSectionType.index,
-        'useLibass': useLibass
+        'useLibass': useLibass,
+        'libraryFilterNovelBookMarkedType': libraryFilterNovelBookMarkedType,
+        'libraryFilterNovelDownloadType': libraryFilterNovelDownloadType,
+        'libraryFilterNovelStartedType': libraryFilterNovelStartedType,
+        'libraryFilterNovelUnreadType': libraryFilterNovelUnreadType,
+        'novelLibraryShowCategoryTabs': novelLibraryShowCategoryTabs,
+        'novelLibraryDownloadedChapters': novelLibraryDownloadedChapters,
+        'novelLibraryShowLanguage': novelLibraryShowLanguage,
+        'novelLibraryShowNumbersOfItems': novelLibraryShowNumbersOfItems,
+        'novelLibraryShowContinueReadingButton':
+            novelLibraryShowContinueReadingButton,
+        'novelLibraryLocalSource': novelLibraryLocalSource,
+        'sortLibraryNovel': sortLibraryNovel?.toJson(),
+        'novelDisplayType': novelDisplayType.index,
       };
 }
 
