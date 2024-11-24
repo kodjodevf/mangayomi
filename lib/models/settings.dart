@@ -153,6 +153,8 @@ class Settings {
 
   double? defaultPlayBackSpeed;
 
+  bool? fullScreenPlayer;
+
   bool? updateProgressAfterReading;
 
   bool? enableAniSkip;
@@ -257,6 +259,7 @@ class Settings {
       this.defaultSkipIntroLength = 85,
       this.defaultDoubleTapToSkipLength = 10,
       this.defaultPlayBackSpeed = 1.0,
+      this.fullScreenPlayer = false,
       this.updateProgressAfterReading = true,
       this.enableAniSkip,
       this.enableAutoSkip,
@@ -405,6 +408,7 @@ class Settings {
     defaultPlayBackSpeed = json['defaultPlayBackSpeed'] is double
         ? json['defaultPlayBackSpeed']
         : (json['defaultPlayBackSpeed'] as int).toDouble();
+    fullScreenPlayer = json['fullScreenPlayer'];
     updateProgressAfterReading = json['updateProgressAfterReading'];
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
@@ -509,6 +513,7 @@ class Settings {
         'defaultSkipIntroLength': defaultSkipIntroLength,
         'defaultDoubleTapToSkipLength': defaultDoubleTapToSkipLength,
         'defaultPlayBackSpeed': defaultPlayBackSpeed,
+        'fullScreenPlayer': fullScreenPlayer,
         'updateProgressAfterReading': updateProgressAfterReading,
         'enableAniSkip': enableAniSkip,
         'enableAutoSkip': enableAutoSkip,

@@ -65,6 +65,21 @@ class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
 }
 
 @riverpod
+class FullScreenPlayerState extends _$FullScreenPlayerState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.fullScreenPlayer ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..fullScreenPlayer = value));
+  }
+}
+
+@riverpod
 class EnableAniSkipState extends _$EnableAniSkipState {
   @override
   bool build() {

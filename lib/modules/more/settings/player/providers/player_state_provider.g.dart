@@ -74,6 +74,23 @@ final defaultPlayBackSpeedStateProvider =
 );
 
 typedef _$DefaultPlayBackSpeedState = AutoDisposeNotifier<double>;
+String _$fullScreenPlayerStateHash() =>
+    r'c041e3caa51c8320a3f136c19890120b38bb86be';
+
+/// See also [FullScreenPlayerState].
+@ProviderFor(FullScreenPlayerState)
+final fullScreenPlayerStateProvider =
+    AutoDisposeNotifierProvider<FullScreenPlayerState, bool>.internal(
+  FullScreenPlayerState.new,
+  name: r'fullScreenPlayerStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fullScreenPlayerStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$FullScreenPlayerState = AutoDisposeNotifier<bool>;
 String _$enableAniSkipStateHash() =>
     r'1b448453e54f2a261820d40ca2d82971d165372a';
 
