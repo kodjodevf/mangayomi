@@ -34,7 +34,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 2, vsync: this);
+    _tabBarController = TabController(length: 3, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       setState(() {

@@ -43,10 +43,10 @@ class MainScreen extends ConsumerWidget {
         int currentIndex = switch (location) {
           null || '/MangaLibrary' => 0,
           '/AnimeLibrary' => 1,
-          '/updates' => 2,
-          '/history' => 3,
-          '/browse' => 4,
-          '/NovelLibrary' => 5,
+          '/NovelLibrary' => 2,
+          '/updates' => 3,
+          '/history' => 4,
+          '/browse' => 5,
           _ => 6,
         };
 
@@ -259,6 +259,12 @@ class MainScreen extends ConsumerWidget {
                                   icon: const Icon(
                                       Icons.video_collection_outlined),
                                   label: l10n.anime),
+                              NavigationDestination(
+                                  selectedIcon:
+                                      const Icon(Icons.local_library),
+                                  icon: const Icon(
+                                      Icons.local_library_outlined),
+                                  label: l10n.novel),
                               Stack(
                                 children: [
                                   NavigationDestination(
@@ -298,9 +304,10 @@ class MainScreen extends ConsumerWidget {
                               final fn = switch (newIndex) {
                                 0 => route.go('/MangaLibrary'),
                                 1 => route.go('/AnimeLibrary'),
-                                2 => route.go('/updates'),
-                                3 => route.go('/history'),
-                                4 => route.go('/browse'),
+                                2 => route.go('/NovelLibrary'),
+                                3 => route.go('/updates'),
+                                4 => route.go('/history'),
+                                5 => route.go('/browse'),
                                 _ => route.go('/more'),
                               };
                               fn;

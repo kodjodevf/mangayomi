@@ -22,7 +22,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   late TabController _tabBarController;
   @override
   void initState() {
-    _tabBarController = TabController(length: 2, vsync: this);
+    _tabBarController = TabController(length: 3, vsync: this);
     _tabBarController.animateTo(widget.data.$2);
 
     super.initState();

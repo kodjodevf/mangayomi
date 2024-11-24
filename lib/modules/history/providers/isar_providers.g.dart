@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getAllHistoryStreamHash() =>
-    r'53b3a7837efab9e7d2808930e5070dbd788c59f8';
+    r'42048cb03035be55b52fc501fb2309cdb2acfcb8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -161,7 +161,7 @@ class _GetAllHistoryStreamProviderElement
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'01f77807c8be11f471b6acee6e7bc358ce600a65';
+    r'6a20f8feba3010c2ab7a80560f7a7f6cf10c7366';
 
 /// See also [getAllUpdateStream].
 @ProviderFor(getAllUpdateStream)

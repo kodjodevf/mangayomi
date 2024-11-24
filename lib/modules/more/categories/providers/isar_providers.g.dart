@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaCategorieStreamHash() =>
-    r'97e90977f4696eedcf597c655a40dd6ccd47ed37';
+    r'1dcf15018a6467eef7a26c1728b9e531ebd984d0';
 
 /// Copied from Dart SDK
 class _SystemHash {

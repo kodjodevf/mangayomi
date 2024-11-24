@@ -1122,6 +1122,10 @@ Settings _settingsDeserialize(
     libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[53]),
     libraryFilterMangasStartedType: reader.readLongOrNull(offsets[54]),
     libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[55]),
+    libraryFilterNovelBookMarkedType: reader.readLongOrNull(offsets[56]),
+    libraryFilterNovelDownloadType: reader.readLongOrNull(offsets[57]),
+    libraryFilterNovelStartedType: reader.readLongOrNull(offsets[58]),
+    libraryFilterNovelUnreadType: reader.readLongOrNull(offsets[59]),
     libraryLocalSource: reader.readBoolOrNull(offsets[60]),
     libraryShowCategoryTabs: reader.readBoolOrNull(offsets[61]),
     libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[62]),
@@ -1132,6 +1136,15 @@ Settings _settingsDeserialize(
             reader.readByteOrNull(offsets[67])] ??
         DisplayType.comfortableGrid,
     markEpisodeAsSeenType: reader.readLongOrNull(offsets[68]),
+    novelDisplayType: _SettingsnovelDisplayTypeValueEnumMap[
+            reader.readByteOrNull(offsets[69])] ??
+        DisplayType.comfortableGrid,
+    novelLibraryDownloadedChapters: reader.readBoolOrNull(offsets[71]),
+    novelLibraryLocalSource: reader.readBoolOrNull(offsets[72]),
+    novelLibraryShowCategoryTabs: reader.readBoolOrNull(offsets[73]),
+    novelLibraryShowContinueReadingButton: reader.readBoolOrNull(offsets[74]),
+    novelLibraryShowLanguage: reader.readBoolOrNull(offsets[75]),
+    novelLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[76]),
     onlyIncludePinnedSources: reader.readBoolOrNull(offsets[77]),
     pagePreloadAmount: reader.readLongOrNull(offsets[78]),
     personalPageModeList: reader.readObjectList<PersonalPageMode>(
@@ -1174,6 +1187,11 @@ Settings _settingsDeserialize(
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
+    sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[90],
+      SortLibraryMangaSchema.deserialize,
+      allOffsets,
+    ),
     startDatebackup: reader.readLongOrNull(offsets[91]),
     syncAfterReading: reader.readBoolOrNull(offsets[92]),
     syncOnAppLaunch: reader.readBoolOrNull(offsets[93]),
@@ -1202,31 +1220,12 @@ Settings _settingsDeserialize(
     allOffsets,
     FilterScanlator(),
   );
-  object.libraryFilterNovelBookMarkedType = reader.readLongOrNull(offsets[56]);
-  object.libraryFilterNovelDownloadType = reader.readLongOrNull(offsets[57]);
-  object.libraryFilterNovelStartedType = reader.readLongOrNull(offsets[58]);
-  object.libraryFilterNovelUnreadType = reader.readLongOrNull(offsets[59]);
   object.locale = reader.readObjectOrNull<L10nLocale>(
     offsets[65],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
-  object.novelDisplayType = _SettingsnovelDisplayTypeValueEnumMap[
-          reader.readByteOrNull(offsets[69])] ??
-      DisplayType.compactGrid;
   object.novelGridSize = reader.readLongOrNull(offsets[70]);
-  object.novelLibraryDownloadedChapters = reader.readBoolOrNull(offsets[71]);
-  object.novelLibraryLocalSource = reader.readBoolOrNull(offsets[72]);
-  object.novelLibraryShowCategoryTabs = reader.readBoolOrNull(offsets[73]);
-  object.novelLibraryShowContinueReadingButton =
-      reader.readBoolOrNull(offsets[74]);
-  object.novelLibraryShowLanguage = reader.readBoolOrNull(offsets[75]);
-  object.novelLibraryShowNumbersOfItems = reader.readBoolOrNull(offsets[76]);
-  object.sortLibraryNovel = reader.readObjectOrNull<SortLibraryManga>(
-    offsets[90],
-    SortLibraryMangaSchema.deserialize,
-    allOffsets,
-  );
   return object;
 }
 
@@ -1439,7 +1438,7 @@ P _settingsDeserializeProp<P>(
     case 69:
       return (_SettingsnovelDisplayTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
-          DisplayType.compactGrid) as P;
+          DisplayType.comfortableGrid) as P;
     case 70:
       return (reader.readLongOrNull(offset)) as P;
     case 71:
