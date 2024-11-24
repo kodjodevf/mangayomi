@@ -39,6 +39,7 @@ class DesktopControllerWidget extends StatefulWidget {
 class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
   bool mount = true;
   bool visible = true;
+  bool cursorVisible = true;
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
   Color backdropColor = const Color(0x66000000);
   Timer? _timer;
@@ -102,6 +103,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
     setState(() {
       mount = true;
       visible = true;
+      cursorVisible = true;
     });
 
     _timer?.cancel();
@@ -109,6 +111,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
       if (mounted) {
         setState(() {
           visible = false;
+          cursorVisible = false;
         });
       }
     });
@@ -118,6 +121,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
     setState(() {
       mount = true;
       visible = true;
+      cursorVisible = true;
     });
 
     _timer?.cancel();
@@ -125,6 +129,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
       if (mounted) {
         setState(() {
           visible = false;
+          cursorVisible = false;
         });
       }
     });
@@ -133,6 +138,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
   void onExit() {
     setState(() {
       visible = false;
+      cursorVisible = true;
     });
 
     _timer?.cancel();
@@ -254,6 +260,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                   onHover: (_) => onHover(),
                   onEnter: (_) => onEnter(),
                   onExit: (_) => onExit(),
+                  cursor: cursorVisible ? SystemMouseCursors.basic : SystemMouseCursors.none,
                   child: Stack(
                     children: [
                       AnimatedOpacity(
