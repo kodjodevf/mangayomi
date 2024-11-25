@@ -205,6 +205,8 @@
   "sync_confirm_download": "A full download will completely replace your current data with the remote one!",
   "dialog_confirm": "Confirm",
   "description": "Description",
+  "full_screen_player": "Use Fullscreen",
+  "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
   "manga_sources": "Manga Sources",

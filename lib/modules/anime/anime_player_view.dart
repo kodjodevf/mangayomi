@@ -249,6 +249,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _initAniSkip();
       },
     );
+    if (isDesktop) {
+        setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
+    }
     super.initState();
   }
 

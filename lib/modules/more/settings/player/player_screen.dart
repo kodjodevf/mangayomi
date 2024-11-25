@@ -20,6 +20,7 @@ class PlayerScreen extends ConsumerWidget {
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
     final useLibass = ref.watch(useLibassStateProvider);
+    final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.player),
@@ -372,6 +373,15 @@ class PlayerScreen extends ConsumerWidget {
                 ),
               ],
             ),
+            SwitchListTile(
+                value: fullScreenPlayer,
+                title: Text(context.l10n.full_screen_player),
+                subtitle: Text(context.l10n.full_screen_player_info,
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor)),
+                onChanged: (value) {
+                  ref.read(fullScreenPlayerStateProvider.notifier).set(value);
+                }),
           ],
         ),
       ),
