@@ -25,7 +25,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 4, vsync: this);
+    _tabBarController = TabController(length: 6, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -48,7 +48,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 4,
+      length: 6,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,

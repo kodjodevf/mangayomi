@@ -7,7 +7,7 @@ part of 'fetch_novel_sources.dart';
 // **************************************************************************
 
 String _$fetchNovelSourcesListHash() =>
-    r'110b23568136e32ebfba7e5414bdf524881a8579';
+    r'464573fff74edd4bf1f0bf36eb9ad44ef38accfc';
 
 /// Copied from Dart SDK
 class _SystemHash {

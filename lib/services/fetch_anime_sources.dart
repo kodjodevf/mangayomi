@@ -1,3 +1,4 @@
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,6 +14,6 @@ Future fetchAnimeSourcesList(Ref ref, {int? id, required bool reFresh}) async {
         refresh: reFresh,
         id: id,
         ref: ref,
-        isManga: false);
+        itemType: ItemType.anime);
   }
 }
