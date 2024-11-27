@@ -236,7 +236,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
             context: context,
             getManga: getMangaDetail,
             lang: widget.source.lang!,
-            isManga: widget.source.isManga ?? true,
+            itemType: widget.source.itemType,
             useMaterialRoute: true,
             source: widget.source.name!);
       },

@@ -27,10 +27,11 @@ const HistorySchema = CollectionSchema(
       name: r'date',
       type: IsarType.string,
     ),
-    r'isManga': PropertySchema(
+    r'itemType': PropertySchema(
       id: 2,
-      name: r'isManga',
-      type: IsarType.bool,
+      name: r'itemType',
+      type: IsarType.byte,
+      enumMap: _HistoryitemTypeEnumValueMap,
     ),
     r'mangaId': PropertySchema(
       id: 3,
@@ -82,7 +83,7 @@ void _historySerialize(
 ) {
   writer.writeLong(offsets[0], object.chapterId);
   writer.writeString(offsets[1], object.date);
-  writer.writeBool(offsets[2], object.isManga);
+  writer.writeByte(offsets[2], object.itemType.index);
   writer.writeLong(offsets[3], object.mangaId);
 }
 
@@ -96,7 +97,8 @@ History _historyDeserialize(
     chapterId: reader.readLongOrNull(offsets[0]),
     date: reader.readStringOrNull(offsets[1]),
     id: id,
-    isManga: reader.readBoolOrNull(offsets[2]),
+    itemType: _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        ItemType.manga,
     mangaId: reader.readLongOrNull(offsets[3]),
   );
   return object;
@@ -114,13 +116,25 @@ P _historyDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (_HistoryitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ItemType.manga) as P;
     case 3:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _HistoryitemTypeEnumValueMap = {
+  'manga': 0,
+  'anime': 1,
+  'novel': 2,
+};
+const _HistoryitemTypeValueEnumMap = {
+  0: ItemType.manga,
+  1: ItemType.anime,
+  2: ItemType.novel,
+};
 
 Id _historyGetId(History object) {
   return object.id ?? Isar.autoIncrement;
@@ -495,28 +509,55 @@ extension HistoryQueryFilter
     });
   }
 
-  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'isManga',
-      ));
-    });
-  }
-
-  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'isManga',
-      ));
-    });
-  }
-
-  QueryBuilder<History, History, QAfterFilterCondition> isMangaEqualTo(
-      bool? value) {
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeEqualTo(
+      ItemType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isManga',
+        property: r'itemType',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeGreaterThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeLessThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeBetween(
+    ItemType lower,
+    ItemType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'itemType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -635,15 +676,15 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
     });
   }
 
-  QueryBuilder<History, History, QAfterSortBy> sortByIsManga() {
+  QueryBuilder<History, History, QAfterSortBy> sortByItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.asc);
+      return query.addSortBy(r'itemType', Sort.asc);
     });
   }
 
-  QueryBuilder<History, History, QAfterSortBy> sortByIsMangaDesc() {
+  QueryBuilder<History, History, QAfterSortBy> sortByItemTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.desc);
+      return query.addSortBy(r'itemType', Sort.desc);
     });
   }
 
@@ -698,15 +739,15 @@ extension HistoryQuerySortThenBy
     });
   }
 
-  QueryBuilder<History, History, QAfterSortBy> thenByIsManga() {
+  QueryBuilder<History, History, QAfterSortBy> thenByItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.asc);
+      return query.addSortBy(r'itemType', Sort.asc);
     });
   }
 
-  QueryBuilder<History, History, QAfterSortBy> thenByIsMangaDesc() {
+  QueryBuilder<History, History, QAfterSortBy> thenByItemTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'isManga', Sort.desc);
+      return query.addSortBy(r'itemType', Sort.desc);
     });
   }
 
@@ -738,9 +779,9 @@ extension HistoryQueryWhereDistinct
     });
   }
 
-  QueryBuilder<History, History, QDistinct> distinctByIsManga() {
+  QueryBuilder<History, History, QDistinct> distinctByItemType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'isManga');
+      return query.addDistinctBy(r'itemType');
     });
   }
 
@@ -771,9 +812,9 @@ extension HistoryQueryProperty
     });
   }
 
-  QueryBuilder<History, bool?, QQueryOperations> isMangaProperty() {
+  QueryBuilder<History, ItemType, QQueryOperations> itemTypeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'isManga');
+      return query.addPropertyName(r'itemType');
     });
   }
 

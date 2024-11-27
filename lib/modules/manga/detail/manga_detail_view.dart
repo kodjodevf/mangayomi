@@ -509,7 +509,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     if (value == 0) {
                                       context.push("/categories", extra: (
                                         true,
-                                        widget.manga!.isManga! ? 0 : 1
+                                        widget.manga!.itemType == ItemType.manga
+                                            ? 0
+                                            : widget.manga!.itemType ==
+                                                    ItemType.anime
+                                                ? 1
+                                                : 2
                                       ));
                                     } else if (value == 1) {
                                     } else if (value == 2) {
@@ -583,7 +588,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                       8),
                                                           child: Text(
                                                             widget.manga!
-                                                                    .isManga!
+                                                                        .itemType !=
+                                                                    ItemType
+                                                                        .anime
                                                                 ? l10n.n_chapters(
                                                                     chapters
                                                                         .length)
@@ -612,7 +619,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                               color: context
                                                                   .secondaryColor),
                                                           label: Text(
-                                                            widget.manga!.isManga!
+                                                            widget.manga!
+                                                                        .itemType !=
+                                                                    ItemType
+                                                                        .anime
                                                                 ? l10n
                                                                     .add_chapters
                                                                 : l10n
@@ -634,8 +644,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                   manga: manga);
                                                             } else {
                                                               await ref.watch(importArchivesFromFileProvider(
-                                                                      isManga: manga
-                                                                          .isManga!,
+                                                                      itemType:
+                                                                          manga
+                                                                              .itemType,
                                                                       manga,
                                                                       init:
                                                                           false)
@@ -1360,7 +1371,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
-                                  widget.manga!.isManga!
+                                  widget.manga!.itemType != ItemType.anime
                                       ? l10n.n_chapters(chapterLength)
                                       : l10n.n_episodes(chapterLength),
                                   style: const TextStyle(
@@ -1377,7 +1388,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   icon: Icon(Icons.add,
                                       color: context.secondaryColor),
                                   label: Text(
-                                    widget.manga!.isManga!
+                                    widget.manga!.itemType != ItemType.anime
                                         ? l10n.add_chapters
                                         : l10n.add_episodes,
                                     style: TextStyle(
@@ -1391,7 +1402,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     } else {
                                       await ref.watch(
                                           importArchivesFromFileProvider(
-                                                  isManga: manga.isManga!,
+                                                  itemType: manga.itemType,
                                                   manga,
                                                   init: false)
                                               .future);
@@ -1642,7 +1653,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             final trackSearch =
                                                 await trackersSearchraggableMenu(
                                               context,
-                                              isManga: widget.manga!.isManga!,
+                                              isManga: widget.manga!.itemType !=
+                                                  ItemType.anime,
                                               track: Track(
                                                   status:
                                                       TrackStatus.planToRead,
@@ -1960,14 +1972,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 mangaId: widget.manga!.id!,
                                 syncId: entries[index].syncId!,
                                 trackRes: trackRes.first,
-                                isManga: widget.manga!.isManga!)
+                                isManga:
+                                    widget.manga!.itemType == ItemType.manga)
                             : TrackListile(
                                 text: l10nLocalizations(context)!.add_tracker,
                                 onTap: () async {
                                   final trackSearch =
                                       await trackersSearchraggableMenu(
                                     context,
-                                    isManga: widget.manga!.isManga!,
+                                    isManga: widget.manga!.itemType !=
+                                        ItemType.anime,
                                     track: Track(
                                         status: TrackStatus.planToRead,
                                         syncId: entries[index].syncId!,
@@ -1977,7 +1991,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     await ref
                                         .read(trackStateProvider(
                                                 track: null,
-                                                isManga: widget.manga!.isManga!)
+                                                isManga:
+                                                    widget.manga!.itemType !=
+                                                        ItemType.anime)
                                             .notifier)
                                         .setTrackSearch(
                                             trackSearch,

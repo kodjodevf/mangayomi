@@ -364,6 +364,47 @@ const SettingsSchema = CollectionSchema(
       name: r'markEpisodeAsSeenType',
       type: IsarType.long,
     ),
+    r'novelDisplayType': PropertySchema(
+      id: 69,
+      name: r'novelDisplayType',
+      type: IsarType.byte,
+      enumMap: _SettingsnovelDisplayTypeEnumValueMap,
+    ),
+    r'novelGridSize': PropertySchema(
+      id: 70,
+      name: r'novelGridSize',
+      type: IsarType.long,
+    ),
+    r'novelLibraryDownloadedChapters': PropertySchema(
+      id: 71,
+      name: r'novelLibraryDownloadedChapters',
+      type: IsarType.bool,
+    ),
+    r'novelLibraryLocalSource': PropertySchema(
+      id: 72,
+      name: r'novelLibraryLocalSource',
+      type: IsarType.bool,
+    ),
+    r'novelLibraryShowCategoryTabs': PropertySchema(
+      id: 73,
+      name: r'novelLibraryShowCategoryTabs',
+      type: IsarType.bool,
+    ),
+    r'novelLibraryShowContinueReadingButton': PropertySchema(
+      id: 74,
+      name: r'novelLibraryShowContinueReadingButton',
+      type: IsarType.bool,
+    ),
+    r'novelLibraryShowLanguage': PropertySchema(
+      id: 75,
+      name: r'novelLibraryShowLanguage',
+      type: IsarType.bool,
+    ),
+    r'novelLibraryShowNumbersOfItems': PropertySchema(
+      id: 76,
+      name: r'novelLibraryShowNumbersOfItems',
+      type: IsarType.bool,
+    ),
     r'onlyIncludePinnedSources': PropertySchema(
       id: 66,
       name: r'onlyIncludePinnedSources',
@@ -433,6 +474,12 @@ const SettingsSchema = CollectionSchema(
     r'sortLibraryManga': PropertySchema(
       id: 78,
       name: r'sortLibraryManga',
+      type: IsarType.object,
+      target: r'SortLibraryManga',
+    ),
+    r'sortLibraryNovel': PropertySchema(
+      id: 90,
+      name: r'sortLibraryNovel',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
@@ -743,6 +790,14 @@ int _settingsEstimateSize(
   }
   {
     final value = object.sortLibraryManga;
+    if (value != null) {
+      bytesCount += 3 +
+          SortLibraryMangaSchema.estimateSize(
+              value, allOffsets[SortLibraryManga]!, allOffsets);
+    }
+  }
+  {
+    final value = object.sortLibraryNovel;
     if (value != null) {
       bytesCount += 3 +
           SortLibraryMangaSchema.estimateSize(
@@ -1121,6 +1176,7 @@ Settings _settingsDeserialize(
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
+  object.novelGridSize = reader.readLongOrNull(offsets[70]);
   return object;
 }
 
@@ -1301,11 +1357,11 @@ P _settingsDeserializeProp<P>(
     case 56:
       return (reader.readLongOrNull(offset)) as P;
     case 57:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 58:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 59:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 60:
       return (reader.readBoolOrNull(offset)) as P;
     case 61:
@@ -1382,13 +1438,13 @@ P _settingsDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 80:
       return (reader.readBoolOrNull(offset)) as P;
-    case 81:
+    case 94:
       return (reader.readBoolOrNull(offset)) as P;
-    case 82:
+    case 95:
       return (reader.readBoolOrNull(offset)) as P;
-    case 83:
+    case 96:
       return (reader.readBoolOrNull(offset)) as P;
-    case 84:
+    case 97:
       return (reader.readBoolOrNull(offset)) as P;
     case 85:
       return (reader.readBoolOrNull(offset)) as P;
@@ -1498,6 +1554,18 @@ const _SettingsmangaHomeDisplayTypeEnumValueMap = {
   'list': 3,
 };
 const _SettingsmangaHomeDisplayTypeValueEnumMap = {
+  0: DisplayType.compactGrid,
+  1: DisplayType.comfortableGrid,
+  2: DisplayType.coverOnlyGrid,
+  3: DisplayType.list,
+};
+const _SettingsnovelDisplayTypeEnumValueMap = {
+  'compactGrid': 0,
+  'comfortableGrid': 1,
+  'coverOnlyGrid': 2,
+  'list': 3,
+};
+const _SettingsnovelDisplayTypeValueEnumMap = {
   0: DisplayType.compactGrid,
   1: DisplayType.comfortableGrid,
   2: DisplayType.coverOnlyGrid,
@@ -5660,6 +5728,302 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterNovelBookMarkedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterNovelBookMarkedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterNovelBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterNovelBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterNovelBookMarkedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelBookMarkedTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterNovelBookMarkedType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterNovelDownloadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterNovelDownloadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterNovelDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterNovelDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterNovelDownloadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelDownloadTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterNovelDownloadType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterNovelStartedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterNovelStartedType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterNovelStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterNovelStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterNovelStartedType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelStartedTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterNovelStartedType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'libraryFilterNovelUnreadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'libraryFilterNovelUnreadType',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'libraryFilterNovelUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'libraryFilterNovelUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'libraryFilterNovelUnreadType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      libraryFilterNovelUnreadTypeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'libraryFilterNovelUnreadType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       libraryLocalSourceIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -6013,6 +6377,302 @@ extension SettingsQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelDisplayTypeEqualTo(DisplayType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelDisplayTypeGreaterThan(
+    DisplayType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'novelDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelDisplayTypeLessThan(
+    DisplayType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'novelDisplayType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelDisplayTypeBetween(
+    DisplayType lower,
+    DisplayType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'novelDisplayType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelGridSizeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelGridSize',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelGridSizeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelGridSize',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> novelGridSizeEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelGridSize',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelGridSizeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'novelGridSize',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> novelGridSizeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'novelGridSize',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> novelGridSizeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'novelGridSize',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryDownloadedChaptersIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryDownloadedChapters',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryDownloadedChaptersIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryDownloadedChapters',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryDownloadedChaptersEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryDownloadedChapters',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryLocalSourceIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryLocalSource',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryLocalSourceIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryLocalSource',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryLocalSourceEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryLocalSource',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowCategoryTabsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryShowCategoryTabs',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowCategoryTabsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryShowCategoryTabs',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowCategoryTabsEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryShowCategoryTabs',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowContinueReadingButtonIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryShowContinueReadingButton',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowContinueReadingButtonIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryShowContinueReadingButton',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowContinueReadingButtonEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryShowContinueReadingButton',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowLanguageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryShowLanguage',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowLanguageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryShowLanguage',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowLanguageEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryShowLanguage',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowNumbersOfItemsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'novelLibraryShowNumbersOfItems',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowNumbersOfItemsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'novelLibraryShowNumbersOfItems',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      novelLibraryShowNumbersOfItemsEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'novelLibraryShowNumbersOfItems',
+        value: value,
       ));
     });
   }
@@ -6706,6 +7366,24 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      sortLibraryNovelIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sortLibraryNovel',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      sortLibraryNovelIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sortLibraryNovel',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       startDatebackupIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -7205,6 +7883,13 @@ extension SettingsQueryObject
       FilterQuery<SortLibraryManga> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'sortLibraryManga');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> sortLibraryNovel(
+      FilterQuery<SortLibraryManga> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'sortLibraryNovel');
     });
   }
 }
@@ -7888,6 +8573,62 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelBookMarkedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelBookMarkedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelBookMarkedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelDownloadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelDownloadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelDownloadType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelStartedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelStartedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelStartedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelUnreadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByLibraryFilterNovelUnreadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelUnreadType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByLibraryLocalSource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'libraryLocalSource', Sort.asc);
@@ -7991,6 +8732,116 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
       sortByMarkEpisodeAsSeenTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'markEpisodeAsSeenType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByNovelDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelDisplayType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByNovelDisplayTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelDisplayType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByNovelGridSize() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelGridSize', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByNovelGridSizeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelGridSize', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryDownloadedChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryDownloadedChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryLocalSource', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryLocalSourceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryLocalSource', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowCategoryTabs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowCategoryTabsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowCategoryTabs', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'novelLibraryShowContinueReadingButton', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowContinueReadingButtonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'novelLibraryShowContinueReadingButton', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowNumbersOfItems', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByNovelLibraryShowNumbersOfItemsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowNumbersOfItems', Sort.desc);
     });
   }
 
@@ -8812,6 +9663,62 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelBookMarkedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelBookMarkedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelBookMarkedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelDownloadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelDownloadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelDownloadType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelStartedType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelStartedTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelStartedType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelUnreadType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByLibraryFilterNovelUnreadTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'libraryFilterNovelUnreadType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByLibraryLocalSource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'libraryLocalSource', Sort.asc);
@@ -8915,6 +9822,116 @@ extension SettingsQuerySortThenBy
       thenByMarkEpisodeAsSeenTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'markEpisodeAsSeenType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByNovelDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelDisplayType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByNovelDisplayTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelDisplayType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByNovelGridSize() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelGridSize', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByNovelGridSizeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelGridSize', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryDownloadedChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryDownloadedChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryDownloadedChapters', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryLocalSource', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryLocalSourceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryLocalSource', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowCategoryTabs', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowCategoryTabsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowCategoryTabs', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'novelLibraryShowContinueReadingButton', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowContinueReadingButtonDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(
+          r'novelLibraryShowContinueReadingButton', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowNumbersOfItems', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByNovelLibraryShowNumbersOfItemsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'novelLibraryShowNumbersOfItems', Sort.desc);
     });
   }
 
@@ -9427,6 +10444,34 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterNovelBookMarkedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterNovelBookMarkedType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterNovelDownloadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterNovelDownloadType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterNovelStartedType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterNovelStartedType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByLibraryFilterNovelUnreadType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'libraryFilterNovelUnreadType');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByLibraryLocalSource() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'libraryLocalSource');
@@ -9476,6 +10521,60 @@ extension SettingsQueryWhereDistinct
       distinctByMarkEpisodeAsSeenType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'markEpisodeAsSeenType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByNovelDisplayType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelDisplayType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByNovelGridSize() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelGridSize');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryDownloadedChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryDownloadedChapters');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryLocalSource() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryLocalSource');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryShowCategoryTabs() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryShowCategoryTabs');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryShowContinueReadingButton() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryShowContinueReadingButton');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryShowLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryShowLanguage');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByNovelLibraryShowNumbersOfItems() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'novelLibraryShowNumbersOfItems');
     });
   }
 
@@ -9965,6 +11064,34 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterNovelBookMarkedTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterNovelBookMarkedType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterNovelDownloadTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterNovelDownloadType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterNovelStartedTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterNovelStartedType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations>
+      libraryFilterNovelUnreadTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'libraryFilterNovelUnreadType');
+    });
+  }
+
   QueryBuilder<Settings, bool?, QQueryOperations> libraryLocalSourceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'libraryLocalSource');
@@ -10022,6 +11149,61 @@ extension SettingsQueryProperty
       markEpisodeAsSeenTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'markEpisodeAsSeenType');
+    });
+  }
+
+  QueryBuilder<Settings, DisplayType, QQueryOperations>
+      novelDisplayTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelDisplayType');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations> novelGridSizeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelGridSize');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryDownloadedChaptersProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryDownloadedChapters');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryLocalSourceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryLocalSource');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryShowCategoryTabsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryShowCategoryTabs');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryShowContinueReadingButtonProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryShowContinueReadingButton');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryShowLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryShowLanguage');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      novelLibraryShowNumbersOfItemsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'novelLibraryShowNumbersOfItems');
     });
   }
 
@@ -10107,6 +11289,13 @@ extension SettingsQueryProperty
       sortLibraryMangaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sortLibraryManga');
+    });
+  }
+
+  QueryBuilder<Settings, SortLibraryManga?, QQueryOperations>
+      sortLibraryNovelProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sortLibraryNovel');
     });
   }
 

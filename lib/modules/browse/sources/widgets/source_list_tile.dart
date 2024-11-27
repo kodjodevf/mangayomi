@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -10,10 +11,10 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class SourceListTile extends StatelessWidget {
-  final bool isManga;
+  final ItemType itemType;
   final Source source;
   const SourceListTile(
-      {super.key, required this.source, required this.isManga});
+      {super.key, required this.source, required this.itemType});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class SourceListTile extends StatelessWidget {
             .filter()
             .idIsNotNull()
             .and()
-            .isMangaEqualTo(isManga)
+            .itemTypeEqualTo(itemType)
             .findAllSync();
         isar.writeTxnSync(() {
           for (var src in sources) {

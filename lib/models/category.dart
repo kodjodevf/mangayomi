@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:mangayomi/models/manga.dart';
 part 'category.g.dart';
 
 @collection
@@ -6,18 +7,19 @@ part 'category.g.dart';
 class Category {
   Id? id;
   String? name;
-  bool? forManga;
+  @enumerated
+  late ItemType forItemType;
   Category(
       {this.id = Isar.autoIncrement,
       required this.name,
-      required this.forManga});
+      required this.forItemType});
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    forManga = json['forManga'];
+    forItemType = json['forItemType'];
   }
 
   Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'forManga': forManga};
+      {'id': id, 'name': name, 'forItemType': forItemType};
 }
