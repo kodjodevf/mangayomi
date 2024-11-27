@@ -169,19 +169,19 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
               const Duration(seconds: 10);
           widget.videoController.player.seek(rate);
         },
-        const SingleActivator(LogicalKeyboardKey.keyI): () {
+        const SingleActivator(LogicalKeyboardKey.keyL): () {
           final rate = widget.videoController.player.state.position +
               const Duration(seconds: 10);
           widget.videoController.player.seek(rate);
         },
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
           final rate = widget.videoController.player.state.position -
-              const Duration(seconds: 2);
+              const Duration(seconds: 5);
           widget.videoController.player.seek(rate);
         },
         const SingleActivator(LogicalKeyboardKey.arrowRight): () {
           final rate = widget.videoController.player.state.position +
-              const Duration(seconds: 2);
+              const Duration(seconds: 5);
           widget.videoController.player.seek(rate);
         },
         const SingleActivator(LogicalKeyboardKey.arrowUp): () {
