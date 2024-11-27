@@ -52,6 +52,7 @@ void main(List<String> args) async {
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
+  await StorageProvider().deleteBtDirectory();
   GoogleFonts.aBeeZee();
 
   runApp(const ProviderScope(child: MyApp()));

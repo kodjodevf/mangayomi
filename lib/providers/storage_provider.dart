@@ -37,6 +37,11 @@ class StorageProvider {
     return true;
   }
 
+  Future<void> deleteBtDirectory() async {
+    final d = await getBtDirectory();
+    await Directory(d!.path).delete(recursive: true);
+  }
+
   Future<Directory?> getDefaultDirectory() async {
     Directory? directory;
     if (Platform.isAndroid) {

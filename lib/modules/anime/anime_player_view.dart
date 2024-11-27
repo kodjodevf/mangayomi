@@ -21,7 +21,6 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
-import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -42,9 +41,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   String? _infoHash;
   @override
   void dispose() {
-    if (_infoHash != null) {
-      MTorrentServer().removeTorrent(_infoHash);
-    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -250,7 +246,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       },
     );
     if (isDesktop) {
-        setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
+      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
     }
     super.initState();
   }
