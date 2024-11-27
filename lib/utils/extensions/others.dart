@@ -77,6 +77,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                 cache: true,
                 cacheMaxAge: const Duration(days: 7),
                 showCloudFlareError: showCloudFlareError,
+                imageCacheFolderName: "cacheimagemanga",
                 headers: {
                     ...data.pageUrl!.headers ?? {},
                     ...ref.watch(headersProvider(

@@ -98,36 +98,6 @@ dependency_overrides:
   meta: ^1.15.0
   collection: ^1.19.0
 
-  flutter_inappwebview_windows:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview_windows
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
-  flutter_inappwebview_android:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview_android
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
-  flutter_inappwebview_ios:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview_ios
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
-  flutter_inappwebview_macos:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview_macos
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
-  flutter_inappwebview_platform_interface:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview_platform_interface
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
-  flutter_inappwebview:
-    git:
-      url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      path: flutter_inappwebview
-      ref: fe5949f7fa8478943e98e748b19152a9fdc36be4
 
 dev_dependencies:
   flutter_test:

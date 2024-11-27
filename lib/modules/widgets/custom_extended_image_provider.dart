@@ -33,6 +33,7 @@ class CustomExtendedNetworkImageProvider
     this.cacheRawData = false,
     this.cancelToken,
     this.imageCacheName,
+    this.imageCacheFolderName,
     this.cacheMaxAge = const Duration(days: 30),
     this.showCloudFlareError = false,
   });
@@ -94,6 +95,8 @@ class CustomExtendedNetworkImageProvider
   final Duration? cacheMaxAge;
 
   final bool showCloudFlareError;
+
+  final String? imageCacheFolderName;
 
   @override
   ImageStreamCompleter loadImage(
@@ -187,8 +190,9 @@ class CustomExtendedNetworkImageProvider
     StreamController<ImageChunkEvent>? chunkEvents,
     String md5Key,
   ) async {
-    final Directory cacheImagesDirectory = Directory(
-        join((await getTemporaryDirectory()).path, cacheImageFolderName));
+    final Directory cacheImagesDirectory = Directory(join(
+        (await getTemporaryDirectory()).path,
+        'Mangayomi/${imageCacheFolderName ?? "cacheimagecover"}'));
     Uint8List? data;
     // exist, try to find cache image file
     if (cacheImagesDirectory.existsSync()) {
@@ -284,15 +288,12 @@ class CustomExtendedNetworkImageProvider
     StreamedResponse response =
         await MClient.init(showCloudFlareError: showCloudFlareError)
             .send(request);
-    if (response.request != null) {
+    if (response.statusCode != 200) {
       final res = await MClient.init(
               reqcopyWith: {'useDartHttpClient': true},
               showCloudFlareError: showCloudFlareError)
           .send(response.request!);
-      if (![403, 503].contains(res.statusCode) &&
-          ["cloudflare-nginx", "cloudflare"].contains(res.headers["server"])) {
-        return res;
-      }
+      return res;
     }
 
     return response;
