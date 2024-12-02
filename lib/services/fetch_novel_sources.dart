@@ -9,10 +9,9 @@ part 'fetch_novel_sources.g.dart';
 Future fetchNovelSourcesList(Ref ref,
     {int? id, required reFresh}) async {
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
-    return;
     await fetchSourcesList(
         sourcesIndexUrl:
-            "https://kodjodevf.github.io/mangayomi-extensions/novel_index.json",
+            "https://raw.githubusercontent.com/Schnitzel5/mangayomi-extensions/refs/heads/main/novel_index.json",
         refresh: reFresh,
         id: id,
         ref: ref,
