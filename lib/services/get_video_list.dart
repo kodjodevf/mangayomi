@@ -14,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'get_video_list.g.dart';
 
 @riverpod
-Future<(List<Video>, bool, String?)> getVideoList(Ref ref,
+Future<(List<Video>, bool, List<String>)> getVideoList(Ref ref,
     {required Chapter episode}) async {
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
@@ -22,18 +22,40 @@ Future<(List<Video>, bool, String?)> getVideoList(Ref ref,
       episode.manga.value!.source != "torrent";
   final mp4animePath =
       "${mangaDirectory!.path}${episode.name!.replaceForbiddenCharacters(' ')}.mp4";
-
+  List<String> infoHashes = [];
   if (await File(mp4animePath).exists() || isLocalArchive) {
     final path = isLocalArchive ? episode.archivePath : mp4animePath;
-    return ([Video(path!, episode.name!, path, subtitles: [])], true, null);
+    return (
+      [Video(path!, episode.name!, path, subtitles: [])],
+      true,
+      infoHashes
+    );
   }
   final source =
       getSource(episode.manga.value!.lang!, episode.manga.value!.source!);
 
   if (source?.isTorrent ?? false || episode.manga.value!.source == "torrent") {
-    final (videos, infohash) = await MTorrentServer()
-        .getTorrentPlaylist(episode.url, episode.archivePath);
-    return (videos, false, infohash);
+    List<Video> list = [];
+
+    List<Video> torrentList = [];
+
+    if (source?.sourceCodeLanguage == SourceCodeLanguage.dart) {
+      list = await DartExtensionService(source).getVideoList(episode.url!);
+    } else {
+      list = await JsExtensionService(source).getVideoList(episode.url!);
+    }
+    for (var v in list) {
+      final (videos, infohash) =
+          await MTorrentServer().getTorrentPlaylist(v.url, episode.archivePath);
+      for (var video in videos) {
+        torrentList
+            .add(video..quality = video.quality.substringBeforeLast("."));
+        if (infohash != null) {
+          infoHashes.add(infohash);
+        }
+      }
+    }
+    return (torrentList, false, infoHashes);
   }
 
   List<Video> list = [];
@@ -48,5 +70,5 @@ Future<(List<Video>, bool, String?)> getVideoList(Ref ref,
       videos.add(video);
     }
   }
-  return (videos, false, null);
+  return (videos, false, infoHashes);
 }

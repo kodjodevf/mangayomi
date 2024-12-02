@@ -21,6 +21,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
+import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -38,9 +39,12 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 }
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
-  String? _infoHash;
+  List<String> _infoHashList = [];
   @override
   void dispose() {
+    for (var infoHash in _infoHashList) {
+      MTorrentServer().removeTorrent(infoHash);
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
@@ -53,8 +57,8 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
-        final (videos, isLocal, infoHash) = data;
-        _infoHash = infoHash;
+        final (videos, isLocal, infoHashList) = data;
+        _infoHashList = infoHashList;
         if (videos.isEmpty &&
             !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(
@@ -77,7 +81,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             episode: widget.episode,
             videos: videos,
             isLocal: isLocal,
-            isTorrent: _infoHash != null);
+            isTorrent: _infoHashList.isNotEmpty);
       },
       error: (error, stackTrace) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

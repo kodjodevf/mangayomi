@@ -13,6 +13,19 @@ import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
 
 class MTorrentServer {
   final http = MClient.init();
+  Future<bool> removeTorrent(String? inforHash) async {
+    if (inforHash == null || inforHash.isEmpty) return false;
+    try {
+      final res = await http
+          .delete(Uri.parse("$_baseUrl/torrent/remove?infohash=$inforHash"));
+      if (res.statusCode == 200) {
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
 
   Future<bool> check() async {
     if (_baseUrl == "http://127.0.0.1:0") return false;
