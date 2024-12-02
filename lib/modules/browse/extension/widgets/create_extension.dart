@@ -301,6 +301,9 @@ class DefaultExtension extends MProvider {
     async getPopular(page) {
         throw new Error("getPopular not implemented");
     }
+    get supportsLatest() {
+        throw new Error("supportsLatest not implemented");
+    }
     async getLatestUpdates(page) {
         throw new Error("getLatestUpdates not implemented");
     }

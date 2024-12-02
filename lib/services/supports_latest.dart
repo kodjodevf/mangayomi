@@ -1,4 +1,5 @@
 import 'package:mangayomi/eval/dart/service.dart';
+import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +11,7 @@ bool supportsLatest(Ref ref, {required Source source}) {
   if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
     supportsLatest = DartExtensionService(source).supportsLatest;
   } else {
-    supportsLatest = true;
+    supportsLatest = JsExtensionService(source).supportsLatest;
   }
   return supportsLatest;
 }

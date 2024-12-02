@@ -31,6 +31,9 @@ class MProvider {
     get source() {
         return JSON.parse('${jsonEncode(source!.toMSource().toJson())}');
     }
+    get supportsLatest() {
+        throw new Error("supportsLatest not implemented");
+    }
     getHeaders(url) {
         throw new Error("getHeaders not implemented");
     }
@@ -78,6 +81,17 @@ var extention = new DefaultExtension();
       return (jsonDecode(res) as Map).toMapStringString!;
     } catch (_) {
       return {};
+    }
+  }
+
+  bool get supportsLatest {
+    _init();
+    try {
+      return jsonDecode(runtime
+          .evaluate('JSON.stringify(extention.supportsLatest)')
+          .stringResult) as bool;
+    } catch (e) {
+      return true;
     }
   }
 
