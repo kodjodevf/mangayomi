@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class ListViewWidget extends StatelessWidget {
   final ScrollController? controller;
@@ -16,7 +17,7 @@ class ListViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: ListView.builder(
+      child: SuperListView.builder(
           padding: const EdgeInsets.only(top: 13),
           controller: controller,
           itemCount: itemCount,

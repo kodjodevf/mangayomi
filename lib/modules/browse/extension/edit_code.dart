@@ -32,13 +32,13 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   late final source =
       widget.sourceId == null ? null : isar.sources.getSync(widget.sourceId!);
   late final controller = CodeController(
-    text: source?.sourceCode ?? "",
-    language: source == null
-        ? dart
-        : source!.sourceCodeLanguage == SourceCodeLanguage.dart
-            ? dart
-            : javascript,
-  );
+      text: source?.sourceCode ?? "",
+      language: source == null
+          ? dart
+          : source!.sourceCodeLanguage == SourceCodeLanguage.dart
+              ? dart
+              : javascript,
+      namedSectionParser: const BracketsStartEndNamedSectionParser());
 
   List<(String, int)> _getServices(BuildContext context) => [
         ("getPopular", 0),

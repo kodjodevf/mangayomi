@@ -894,7 +894,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     } else if (sortType == 2) {
       mangas.sort(
         (a, b) {
-          return a.lastUpdate!.compareTo(b.lastUpdate!);
+          return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
         },
       );
     } else if (sortType == 3) {
@@ -921,14 +921,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         (a, b) {
           final aChaps = a.chapters;
           final bChaps = b.chapters;
-          return (aChaps.isNotEmpty ? aChaps.last.dateUpload! : "")
-              .compareTo(bChaps.isNotEmpty ? bChaps.last.dateUpload! : "");
+          return (aChaps.lastOrNull?.dateUpload ?? "")
+              .compareTo(bChaps.lastOrNull?.dateUpload ?? "");
         },
       );
     } else if (sortType == 6) {
       mangas.sort(
         (a, b) {
-          return a.dateAdded!.compareTo(b.dateAdded!);
+          return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
         },
       );
     }

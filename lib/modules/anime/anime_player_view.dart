@@ -81,7 +81,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             episode: widget.episode,
             videos: videos,
             isLocal: isLocal,
-            isTorrent: _infoHashList.isNotEmpty);
+            isTorrent: infoHashList.isNotEmpty);
       },
       error: (error, stackTrace) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
