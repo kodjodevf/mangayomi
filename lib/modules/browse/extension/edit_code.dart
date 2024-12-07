@@ -153,6 +153,13 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                       child: SingleChildScrollView(
                         child: CodeField(
                           controller: controller,
+                          gutterStyle: const GutterStyle(
+                            textStyle: TextStyle(
+                              color: Colors.grey,
+                              height: 1.5, // Issue #307 fix, found in package: flutter-code-editor issue #270
+                            ),
+                            showLineNumbers:true,
+                          ),
                           onChanged: (a) {
                             setState(() {
                               source?.sourceCode = a;
