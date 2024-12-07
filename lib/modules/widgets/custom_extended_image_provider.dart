@@ -192,7 +192,8 @@ class CustomExtendedNetworkImageProvider
   ) async {
     final Directory cacheImagesDirectory = Directory(join(
         (await getTemporaryDirectory()).path,
-        'Mangayomi/${imageCacheFolderName ?? "cacheimagecover"}'));
+        'Mangayomi',
+        imageCacheFolderName ?? 'cacheimagecover'));
     Uint8List? data;
     // exist, try to find cache image file
     if (cacheImagesDirectory.existsSync()) {
@@ -213,7 +214,7 @@ class CustomExtendedNetworkImageProvider
     }
     // create folder
     else {
-      await cacheImagesDirectory.create();
+      await cacheImagesDirectory.create(recursive: true);
     }
     // load from network
     if (data == null) {
