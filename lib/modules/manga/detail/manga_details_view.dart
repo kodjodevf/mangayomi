@@ -33,6 +33,20 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 }
 
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
+
+  Size measureText(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return textPainter.size;
+  }
+
+  double calculateDynamicButtonWidth(String text, TextStyle textStyle, double padding) {
+    final textSize = measureText(text, textStyle);
+    return textSize.width + padding;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -58,9 +72,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               (q) => q.isMangaEqualTo(widget.manga.isManga!)))
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
-                        final isFr =
-                            ref.watch(l10nLocaleStateProvider).languageCode ==
-                                "fr";
+                        String buttonLabel = widget.manga.isManga! ? l10n.read : l10n.watch;
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           final incognitoMode =
                               ref.watch(incognitoModeStateProvider);
@@ -79,13 +91,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               onPressed: () {
                                 chap.pushToReaderView(context);
                               },
-                              textWidth: 70,
-                              width: 110,
+                              textWidth: measureText(l10n.resume, Theme.of(context).textTheme.labelLarge!).width,
+                              width: calculateDynamicButtonWidth(l10n.resume, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
                             );
                           }
                           return CustomFloatingActionBtn(
                             isExtended: !isExtended,
-                            label: l10n.read,
+                            label: buttonLabel,
                             onPressed: () {
                               widget.manga.chapters
                                   .toList()
@@ -94,13 +106,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   .last
                                   .pushToReaderView(context);
                             },
-                            textWidth: isFr ? 80 : 40,
-                            width: isFr ? 130 : 90,
+                            textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
+                            width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
                           );
                         }
                         return CustomFloatingActionBtn(
                           isExtended: !isExtended,
-                          label: l10n.read,
+                          label: buttonLabel,
                           onPressed: () {
                             widget.manga.chapters
                                 .toList()
@@ -109,8 +121,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 .last
                                 .pushToReaderView(context);
                           },
-                          textWidth: isFr ? 80 : 40,
-                          width: isFr ? 130 : 90,
+                          textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
+                          width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
                         );
                       },
                     )
