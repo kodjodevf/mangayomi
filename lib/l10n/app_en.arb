@@ -275,7 +275,7 @@
   "backup_location": "Backup location",
   "backup_options": "Backup options",
   "backup_options_dialog_title": "What do you want to backup?",
-  "backup_options_subtitle": "What information to include in the backup file",
+  "backup_options_subtitle": "What information to include in the backup file?",
   "backup_and_restore_warning_info": "You should keep copies of backups in other places as well",
   "library_entries": "Library entries",
   "chapters_and_episode": "Chapters and episode",
