@@ -276,7 +276,7 @@
     "backup_options": "Sicherungsoptionen",
     "backup_options_dialog_title": "Was möchtest du sichern?",
     "backup_options_subtitle": "Welche Informationen sollen in die Sicherungsdatei aufgenommen werden?",
-    "backup_and_restore_warning_info": "Due solltest Kopien der Sicherungen auch an anderen Orten aufbewahren",
+    "backup_and_restore_warning_info": "Du solltest Kopien der Sicherungen auch an anderen Orten aufbewahren",
     "library_entries": "Bibliothekseinträge",
     "chapters_and_episode": "Kapitel und Episode",
     "every_6_hours": "Alle 6 Stunden",
