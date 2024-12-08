@@ -27,8 +27,9 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as path;
+
+bool _isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final Chapter episode;
@@ -40,14 +41,26 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   List<String> _infoHashList = [];
+  bool desktopFullScreenPlayer = false;
   @override
   void dispose() {
+    if (_isDesktop) {
+      setFullScreen(value: desktopFullScreenPlayer);
+    }
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
+  }
+
+  @override
+  initState() {
+    super.initState();
+    if (_isDesktop) {
+      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
+    }
   }
 
   @override
@@ -81,7 +94,10 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             episode: widget.episode,
             videos: videos,
             isLocal: isLocal,
-            isTorrent: infoHashList.isNotEmpty);
+            isTorrent: infoHashList.isNotEmpty,
+            desktopFullScreenPlayer: (value) {
+              desktopFullScreenPlayer = value;
+            });
       },
       error: (error, stackTrace) => Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -126,12 +142,14 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final Chapter episode;
   final bool isLocal;
   final bool isTorrent;
+  final void Function(bool) desktopFullScreenPlayer;
   const AnimeStreamPage(
       {super.key,
       required this.isLocal,
       required this.videos,
       required this.episode,
-      required this.isTorrent});
+      required this.isTorrent,
+      required this.desktopFullScreenPlayer});
 
   @override
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
@@ -207,25 +225,22 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   );
 
   late final StreamSubscription<bool> _completed =
-      _player.stream.completed.listen(
-    (val) async {
-      if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
-        if (isDesktop) {
-          final isFullScreen = await windowManager.isFullScreen();
-          if (isFullScreen) {
-            await setFullScreen(value: false);
-          }
-        }
-        if (mounted) {
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _streamController.getNextEpisode(),
-          );
-        }
+      _player.stream.completed.listen((val) {
+    if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
+      if (mounted) {
+        pushToNewEpisode(context, _streamController.getNextEpisode());
       }
-    },
-  );
+    }
+  });
 
+  void pushToNewEpisode(BuildContext context, Chapter episode) {
+    widget.desktopFullScreenPlayer.call(true);
+    if (context.mounted) {
+      pushReplacementMangaReaderView(context: context, chapter: episode);
+    }
+  }
+
+  bool isFFF = false;
   @override
   void initState() {
     _currentPositionSub;
@@ -249,9 +264,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _initAniSkip();
       },
     );
-    if (isDesktop) {
-      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
-    }
     super.initState();
   }
 
@@ -294,7 +306,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     });
   }
 
-  bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   @override
   void dispose() {
     _setCurrentPosition(true);
@@ -302,9 +313,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
     _completed.cancel();
-    if (isDesktop) {
-      setFullScreen(value: false);
-    } else {
+    if (!_isDesktop) {
       _setLandscapeMode(false);
     }
     super.dispose();
@@ -745,18 +754,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               children: [
                 if (hasPrevEpisode)
                   IconButton(
-                    onPressed: () async {
-                      if (isDesktop) {
-                        final isFullScreen = await windowManager.isFullScreen();
-                        if (isFullScreen) {
-                          await setFullScreen(value: false);
-                        }
-                      }
-                      if (context.mounted) {
-                        pushReplacementMangaReaderView(
-                            context: context,
-                            chapter: _streamController.getPrevEpisode());
-                      }
+                    onPressed: () {
+                      pushToNewEpisode(
+                          context, _streamController.getPrevEpisode());
                     },
                     icon: const Icon(
                       Icons.skip_previous,
@@ -769,18 +769,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
-                      if (isDesktop) {
-                        final isFullScreen = await windowManager.isFullScreen();
-                        if (isFullScreen) {
-                          await setFullScreen(value: false);
-                        }
-                      }
-                      if (context.mounted) {
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _streamController.getNextEpisode(),
-                        );
-                      }
+                      pushToNewEpisode(
+                          context, _streamController.getNextEpisode());
                     },
                     icon: const Icon(Icons.skip_next, color: Colors.white),
                   ),
@@ -915,7 +905,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         builder: (context, fullScreen, _) {
           return Padding(
             padding: EdgeInsets.only(
-                top: !isDesktop && !fullScreen
+                top: !_isDesktop && !fullScreen
                     ? MediaQuery.of(context).padding.top
                     : 0),
             child: Row(
@@ -923,7 +913,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 BackButton(
                   color: Colors.white,
                   onPressed: () async {
-                    if (isDesktop) {
+                    if (_isDesktop) {
                       if (fullScreen) {
                         setFullScreen(value: false);
                       } else {
@@ -1050,7 +1040,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               visible: false, style: subtileTextStyle(ref)),
           fit: fit,
           key: _key,
-          controls: (state) => isDesktop
+          controls: (state) => _isDesktop
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
