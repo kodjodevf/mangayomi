@@ -575,9 +575,9 @@ class LibraryLocalSourceState extends _$LibraryLocalSourceState {
   bool build({required ItemType itemType, required Settings settings}) {
     switch (itemType) {
       case ItemType.manga:
-        return settings.libraryLocalSource!;
+        return settings.libraryLocalSource ?? false;
       case ItemType.anime:
-        return settings.animeLibraryLocalSource!;
+        return settings.animeLibraryLocalSource ?? false;
       default:
         return settings.novelLibraryLocalSource ?? false;
     }
