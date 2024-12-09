@@ -236,7 +236,7 @@ class RouterNotifier extends ChangeNotifier {
             );
           },
         ),
-        /*GoRoute(
+        GoRoute(
           path: "/novelReaderView",
           name: "novelReaderView",
           builder: (context, state) {
@@ -254,7 +254,7 @@ class RouterNotifier extends ChangeNotifier {
               ),
             );
           },
-        ),*/
+        ),
         GoRoute(
           path: "/ExtensionLang",
           name: "ExtensionLang",
