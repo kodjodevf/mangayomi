@@ -25,6 +25,17 @@ class MainScreen extends ConsumerWidget {
 
   final Widget child;
 
+  String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
+    switch (languageCode) {
+      case 'de': return "Aktuali-\nsierungen";
+      case 'es':
+      case 'es_419': return "Actuali-\nzaciones";
+      case 'it': return "Aggiorna-\nmenti";
+      case 'tr': return "Güncel-\nlemeler";
+      default: return defaultLabel;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
@@ -144,7 +155,13 @@ class MainScreen extends ConsumerWidget {
                                                     top: 5),
                                                 child: Stack(
                                                   children: [
-                                                    Text(l10n.updates),
+                                                    Text(
+                                                      getHyphenatedUpdatesLabel(
+                                                        ref.watch(l10nLocaleStateProvider).languageCode,
+                                                        l10n.updates,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
                                                   ],
                                                 ))),
                                         NavigationRailDestination(
