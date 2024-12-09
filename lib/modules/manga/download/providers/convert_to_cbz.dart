@@ -3,6 +3,7 @@ import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as path;
 part 'convert_to_cbz.g.dart';
 
 @riverpod
@@ -34,7 +35,7 @@ List<String> _convertToCBZ((String, String, String, List<String>) datas) {
 
   if (imagesPaths.isNotEmpty && pageList.length == imagesPaths.length) {
     var encoder = ZipFileEncoder();
-    encoder.create("$mangaDir/$chapterName.cbz");
+    encoder.create(path.join(mangaDir, "$chapterName.cbz"));
     for (var path in imagesPaths) {
       encoder.addFile(File(path));
     }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
 part 'archive_reader_providers.g.dart';
 
 @riverpod
@@ -99,13 +100,8 @@ LocalArchive _extractArchive(String path) {
   final localArchive = LocalArchive()
     ..path = path
     ..extensionType =
-        setTypeExtension(path.split('/').last.split("\\").last.split(".").last)
-    ..name = path
-        .split('/')
-        .last
-        .split("\\")
-        .last
-        .replaceAll(RegExp(r'\.(cbz|zip|cbt|tar)'), '');
+        setTypeExtension(p.extension(path).replaceFirst(".", ""))
+    ..name = p.basenameWithoutExtension(path);
   Archive? archive;
   final inputStream = InputFileStream(path);
   final extensionType = localArchive.extensionType;
@@ -120,14 +116,13 @@ LocalArchive _extractArchive(String path) {
     final filename = file.name;
     if (file.isFile) {
       if (_isImageFile(filename) && !filename.startsWith('.')) {
+        final data = file.content as Uint8List;
         if (filename.contains("cover")) {
-          final data = file.content as Uint8List;
           localArchive.coverImage = data;
         } else {
-          final data = file.content as Uint8List;
           localArchive.images!.add(LocalImage()
             ..image = data
-            ..name = filename.split('/').last.split("\\").last);
+            ..name = p.basename(filename));
         }
       }
     }
@@ -140,13 +135,8 @@ LocalArchive _extractArchive(String path) {
 (String, LocalExtensionType, Uint8List, String) _extractArchiveOnly(
     String path) {
   final extensionType =
-      setTypeExtension(path.split('/').last.split("\\").last.split(".").last);
-  final name = path
-      .split('/')
-      .last
-      .split("\\")
-      .last
-      .replaceAll(RegExp(r'\.(cbz|zip|cbt|tar)'), '');
+      setTypeExtension(p.extension(path).replaceFirst('.', ''));
+  final name = p.basenameWithoutExtension(path);
   Uint8List? coverImage;
 
   Archive? archive;

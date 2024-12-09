@@ -3,6 +3,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path/path.dart' as path;
 part 'downloads_state_provider.g.dart';
 
 @riverpod
@@ -44,7 +45,7 @@ class DownloadLocationState extends _$DownloadLocationState {
 
   void set(String location) {
     final settings = isar.settings.getSync(227);
-    state = ("${_storageProvider!.path}downloads", location);
+    state = (path.join(_storageProvider!.path, 'downloads'), location);
     isar.writeTxnSync(
         () => isar.settings.putSync(settings!..downloadLocation = location));
   }
@@ -55,7 +56,7 @@ class DownloadLocationState extends _$DownloadLocationState {
     _storageProvider = await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
     state = (
-      "${_storageProvider!.path}downloads",
+      path.join(_storageProvider!.path, 'downloads'),
       settings!.downloadLocation ?? ""
     );
   }
