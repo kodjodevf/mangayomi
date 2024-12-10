@@ -118,12 +118,27 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "updates",
-                path: '/updates',
-                builder: (context, state) => const UpdatesScreen(),
+                name: "mangaUpdates",
+                path: '/mangaUpdates',
+                builder: (context, state) => const UpdatesScreen(isManga: true),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const UpdatesScreen(),
+                  child: const UpdatesScreen(
+                    isManga: true,
+                  ),
+                ),
+              ),
+              GoRoute(
+                name: "animeUpdates",
+                path: '/animeUpdates',
+                builder: (context, state) => const UpdatesScreen(
+                  isManga: false,
+                ),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const UpdatesScreen(
+                    isManga: false,
+                  ),
                 ),
               ),
               GoRoute(
