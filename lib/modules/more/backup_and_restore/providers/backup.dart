@@ -19,6 +19,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path/path.dart' as p;
 part 'backup.g.dart';
 
 @riverpod
@@ -118,12 +119,12 @@ void doBackUp(Ref ref,
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =
       'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
-  final backupFilePath = '$path/$name.backup.db';
+  final backupFilePath = p.join(path, "$name.backup.db");
   final file = File(backupFilePath);
 
   file.writeAsStringSync(jsonEncode(datas));
   var encoder = ZipFileEncoder();
-  encoder.create('$path/$name.backup');
+  encoder.create(p.join(path, "$name.backup"));
   encoder.addFile(File(backupFilePath));
   encoder.close();
   Directory(backupFilePath).deleteSync(recursive: true);
@@ -147,8 +148,8 @@ void doBackUp(Ref ref,
               alignment: Alignment.topLeft,
               child: ElevatedButton(
                   onPressed: () {
-                    Share.shareXFiles([XFile('$path/$name.backup')],
-                        text: '$name.backup');
+                    Share.shareXFiles([XFile(p.join(path, "$name.backup"))],
+                        text: "$name.backup");
                   },
                   child: Text(context.l10n.share)),
             ),
