@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
@@ -51,8 +52,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton.icon(
-                          onPressed: () =>
-                              widget.tabIndex(widget.isManga ? 2 : 3),
+                          onPressed: () => context.go('/extensions'),
                           icon: const Icon(Icons.extension_rounded),
                           label: Text(context.l10n.show_extensions)),
                     )

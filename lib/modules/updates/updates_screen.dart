@@ -83,7 +83,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
           backgroundColor: Colors.transparent,
           leading: BackButton(
               onPressed: () => context
-                  .go(widget.isManga ? '/MangaLibrary' : '/AnimeLibrary')),
+                  .go(widget.isManga ? '/browse/manga' : '/browse/anime')),
           title: _isSearch
               ? null
               : Text(

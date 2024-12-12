@@ -1702,6 +1702,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             : AppBar(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back,
+                      color: Theme.of(context).hintColor),
+                  onPressed: () {
+                    context.push(
+                        widget.isManga ? '/browse/manga' : '/browse/anime');
+                  },
+                ),
                 title: _isSearch
                     ? null
                     : Row(
@@ -1762,25 +1770,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           icon: const Icon(
                             Icons.search,
                           )),
-                  Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.new_releases_outlined),
-                        onPressed: () {
-                          context.go(widget.isManga
-                              ? '/mangaUpdates'
-                              : '/animeUpdates');
-                        },
-                        tooltip: l10n.updates,
-                      ),
-                      Positioned(
-                        right: 14,
-                        top: 3,
-                        child: _updatesTotalNumbers(ref),
-                      ),
-                    ],
-                  ),
                   IconButton(
                       splashRadius: 20,
                       onPressed: () {
@@ -2107,38 +2096,5 @@ void addTorrent(BuildContext context, {Manga? manga}) {
             )
           ],
         );
-      });
-}
-
-Widget _updatesTotalNumbers(WidgetRef ref) {
-  return StreamBuilder(
-      stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!.where((element) {
-            if (!element.chapter.isLoaded) {
-              element.chapter.loadSync();
-            }
-            return !(element.chapter.value?.isRead ?? false);
-          }).toList();
-          return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 176, 46, 37)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
-        }
-        return Container();
       });
 }
