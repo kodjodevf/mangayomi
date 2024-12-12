@@ -20,7 +20,6 @@ import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
-import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
 import 'package:mangayomi/modules/browse/global_search/global_search_screen.dart';
 import 'package:mangayomi/modules/main_view/main_screen.dart';
@@ -40,6 +39,8 @@ import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mangayomi/modules/browse/browse_sources_screen.dart';
+import 'package:mangayomi/modules/browse/browse_extensions_screen.dart';
 part 'router.g.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -49,7 +50,7 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
       observers: [BotToastNavigatorObserver()],
-      initialLocation: '/MangaLibrary',
+      initialLocation: '/browse/manga',
       debugLogDiagnostics: kDebugMode,
       refreshListenable: router,
       routes: router._routes,
@@ -109,30 +110,78 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "history",
-                path: '/history',
-                builder: (context, state) => const HistoryScreen(),
+                name: "History",
+                path: '/history/:type',
+                builder: (context, state) => HistoryScreen(
+                  isManga: state.pathParameters['type'] == 'manga',
+                ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const HistoryScreen(),
+                  child: HistoryScreen(
+                    isManga: state.pathParameters['type'] == 'manga',
+                  ),
+                ),
+              ),
+              // GoRoute(
+              //   name: "history",
+              //   path: '/history',
+              //   builder: (context, state) => const HistoryScreen(),
+              //   pageBuilder: (context, state) => transitionPage(
+              //     key: state.pageKey,
+              //     child: const HistoryScreen(),
+              //   ),
+              // ),
+              GoRoute(
+                name: "mangaUpdates",
+                path: '/mangaUpdates',
+                builder: (context, state) => const UpdatesScreen(isManga: true),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const UpdatesScreen(
+                    isManga: true,
+                  ),
                 ),
               ),
               GoRoute(
-                name: "updates",
-                path: '/updates',
-                builder: (context, state) => const UpdatesScreen(),
+                name: "animeUpdates",
+                path: '/animeUpdates',
+                builder: (context, state) => const UpdatesScreen(
+                  isManga: false,
+                ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const UpdatesScreen(),
+                  child: const UpdatesScreen(
+                    isManga: false,
+                  ),
                 ),
               ),
               GoRoute(
-                name: "browse",
-                path: '/browse',
-                builder: (context, state) => const BrowseScreen(),
+                name: "mangaBrowse",
+                path: '/browse/manga',
+                builder: (context, state) =>
+                    const BrowseSourcesScreen(isManga: true),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const BrowseScreen(),
+                  child: const BrowseSourcesScreen(isManga: true),
+                ),
+              ),
+              GoRoute(
+                name: "animeBrowse",
+                path: '/browse/anime',
+                builder: (context, state) =>
+                    const BrowseSourcesScreen(isManga: false),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const BrowseSourcesScreen(isManga: false),
+                ),
+              ),
+              GoRoute(
+                name: "extensions",
+                path: '/extensions',
+                builder: (context, state) => const BrowseExtensionsScreen(),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const BrowseExtensionsScreen(),
                 ),
               ),
               GoRoute(

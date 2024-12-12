@@ -1702,6 +1702,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             : AppBar(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back,
+                      color: Theme.of(context).hintColor),
+                  onPressed: () {
+                    context.push(
+                        widget.isManga ? '/browse/manga' : '/browse/anime');
+                  },
+                ),
                 title: _isSearch
                     ? null
                     : Row(
