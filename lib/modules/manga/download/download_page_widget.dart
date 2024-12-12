@@ -14,7 +14,6 @@ import 'package:mangayomi/services/background_downloader/background_downloader.d
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path/path.dart' as p;
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -50,9 +49,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     List<XFile> files = [];
 
-    final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
+    final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
     final mp4File = File(
-        p.join(mangaDir.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
+        "${mangaDir.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
     if (cbzFile.existsSync()) {
       files = [XFile(cbzFile.path)];
     } else if (mp4File.existsSync()) {
@@ -73,14 +72,14 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       try {
-        final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
+        final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
         if (cbzFile.existsSync()) {
           cbzFile.deleteSync();
         }
       } catch (_) {}
       try {
         final mp4File = File(
-            p.join(mangaDir!.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
+            "${mangaDir!.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
         if (mp4File.existsSync()) {
           mp4File.deleteSync();
         }
