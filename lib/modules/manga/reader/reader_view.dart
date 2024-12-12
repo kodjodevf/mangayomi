@@ -42,6 +42,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:path/path.dart' as p;
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -360,7 +361,7 @@ class _MangaChapterPageGalleryState
                             () async {
                           final dir =
                               await StorageProvider().getGalleryDirectory();
-                          final file = File("${dir!.path}/$name.png");
+                          final file = File(p.join(dir!.path, "$name.png"));
                           file.writeAsBytesSync(imageBytes);
                           if (context.mounted) {
                             botToast(context.l10n.picture_saved, second: 3);

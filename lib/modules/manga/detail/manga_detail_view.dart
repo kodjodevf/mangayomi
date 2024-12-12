@@ -49,6 +49,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../../utils/constant.dart';
+import 'package:path/path.dart' as p;
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -1457,7 +1458,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(widget.manga!.name!,
+        SelectableText(widget.manga!.name!,
             style: const TextStyle(
               fontSize: 20,
             )),
@@ -1744,7 +1745,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             if (bytes != null &&
                                                 context.mounted) {
                                               final file = File(
-                                                  '${dir!.path}/${widget.manga!.name}.png');
+                                                  p.join(dir!.path, "${widget.manga!.name}.png"));
                                               file.writeAsBytesSync(bytes);
                                               botToast(context.l10n.cover_saved,
                                                   second: 3);
