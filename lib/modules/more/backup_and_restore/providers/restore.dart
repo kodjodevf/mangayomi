@@ -28,7 +28,7 @@ part 'restore.g.dart';
 @riverpod
 void doRestore(Ref ref, {required String path, required BuildContext context}) {
   final inputStream = InputFileStream(path);
-  final archive = ZipDecoder().decodeBuffer(inputStream);
+  final archive = ZipDecoder().decodeStream(inputStream);
   final backup = jsonDecode(utf8.decode(archive.files.first.content))
       as Map<String, dynamic>;
   if (backup['version'] == "1") {

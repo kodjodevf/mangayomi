@@ -131,7 +131,7 @@ class _MobileControllerWidgetState
     // package:screen_brightness
     Future.microtask(() async {
       try {
-        await ScreenBrightness().resetScreenBrightness();
+        await ScreenBrightness.instance.resetApplicationScreenBrightness();
       } catch (_) {}
     });
     // --------------------------------------------------
@@ -238,8 +238,9 @@ class _MobileControllerWidgetState
     // package:screen_brightness
     Future.microtask(() async {
       try {
-        _brightnessValue.value = await ScreenBrightness().current;
-        ScreenBrightness().onCurrentBrightnessChanged.listen((value) {
+        _brightnessValue.value = await ScreenBrightness.instance.application;
+        ScreenBrightness.instance.onApplicationScreenBrightnessChanged
+            .listen((value) {
           if (mounted) {
             _brightnessValue.value = value;
           }
@@ -272,7 +273,7 @@ class _MobileControllerWidgetState
     // --------------------------------------------------
     // package:screen_brightness
     try {
-      await ScreenBrightness().setScreenBrightness(value);
+      await ScreenBrightness.instance.setApplicationScreenBrightness(value);
     } catch (_) {}
     _brightnessIndicator.value = true;
     _brightnessTimer?.cancel();

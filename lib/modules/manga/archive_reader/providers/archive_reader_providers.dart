@@ -99,24 +99,23 @@ bool _isArchiveFile(String path) {
 LocalArchive _extractArchive(String path) {
   final localArchive = LocalArchive()
     ..path = path
-    ..extensionType =
-        setTypeExtension(p.extension(path).replaceFirst(".", ""))
+    ..extensionType = setTypeExtension(p.extension(path).replaceFirst(".", ""))
     ..name = p.basenameWithoutExtension(path);
   Archive? archive;
   final inputStream = InputFileStream(path);
   final extensionType = localArchive.extensionType;
   if (extensionType == LocalExtensionType.cbt ||
       extensionType == LocalExtensionType.tar) {
-    archive = TarDecoder().decodeBuffer(inputStream);
+    archive = TarDecoder().decodeStream(inputStream);
   } else {
-    archive = ZipDecoder().decodeBuffer(inputStream);
+    archive = ZipDecoder().decodeStream(inputStream);
   }
 
   for (final file in archive.files) {
     final filename = file.name;
     if (file.isFile) {
       if (_isImageFile(filename) && !filename.startsWith('.')) {
-        final data = file.content as Uint8List;
+        final data = file.content;
         if (filename.contains("cover")) {
           localArchive.coverImage = data;
         } else {
@@ -144,16 +143,16 @@ LocalArchive _extractArchive(String path) {
 
   if (extensionType == LocalExtensionType.cbt ||
       extensionType == LocalExtensionType.tar) {
-    archive = TarDecoder().decodeBuffer(inputStream);
+    archive = TarDecoder().decodeStream(inputStream);
   } else {
-    archive = ZipDecoder().decodeBuffer(inputStream);
+    archive = ZipDecoder().decodeStream(inputStream);
   }
 
   final cover = archive.files.where((file) =>
       file.isFile && _isImageFile(file.name) && file.name.contains("cover"));
 
   if (cover.isNotEmpty) {
-    coverImage = cover.first.content as Uint8List;
+    coverImage = cover.first.content;
   } else {
     List<ArchiveFile> lArchive = archive.files
         .where((file) =>
@@ -164,7 +163,7 @@ LocalArchive _extractArchive(String path) {
     lArchive.sort(
       (a, b) => a.name.compareTo(b.name),
     );
-    coverImage = lArchive.first.content as Uint8List;
+    coverImage = lArchive.first.content;
   }
 
   return (name, extensionType, coverImage, path);
