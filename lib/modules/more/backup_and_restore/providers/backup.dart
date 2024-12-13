@@ -144,7 +144,8 @@ void doBackUp(Ref ref,
               "Backup created!",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-        trailing: (_) => UnconstrainedBox(
+        trailing: Platform.isLinux ? null : // Don't show share button on Linux, as there is no share-feature
+            (_) => UnconstrainedBox(
               alignment: Alignment.topLeft,
               child: ElevatedButton(
                   onPressed: () {
