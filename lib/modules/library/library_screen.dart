@@ -1706,8 +1706,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   icon: Icon(Icons.arrow_back,
                       color: Theme.of(context).hintColor),
                   onPressed: () {
-                    context.push(
-                        widget.isManga ? '/browse/manga' : '/browse/anime');
+                    context
+                        .go(widget.isManga ? '/browse/manga' : '/browse/anime');
                   },
                 ),
                 title: _isSearch
