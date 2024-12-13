@@ -124,7 +124,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                         size: 25,
                         Icons.check_circle,
                         color:
-                            Theme.of(context).iconTheme.color!.withOpacity(0.7),
+                            Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
                       ),
                       onSelected: (value) {
                         if (value == 0) {
@@ -193,7 +193,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                             color: Theme.of(context)
                                                 .iconTheme
                                                 .color!
-                                                .withOpacity(0.7),
+                                                .withValues(alpha: 0.7),
                                           ),
                                         ),
                                       ),
@@ -210,7 +210,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                               : Theme.of(context)
                                                   .iconTheme
                                                   .color!
-                                                  .withOpacity(0.7),
+                                                  .withValues(alpha: 0.7),
                                         )),
                                   ],
                                 ),
@@ -246,7 +246,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     color: Theme.of(context)
                                         .iconTheme
                                         .color!
-                                        .withOpacity(0.7),
+                                        .withValues(alpha: 0.7),
                                     size: 25,
                                   ))
                               : SizedBox(
@@ -349,7 +349,7 @@ Widget _downloadWidget(BuildContext context, bool isLoading) {
           child: Icon(
             size: 18,
             Icons.arrow_downward_sharp,
-            color: Theme.of(context).iconTheme.color!.withOpacity(0.7),
+            color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
           )),
       Align(
         alignment: Alignment.center,
@@ -358,7 +358,7 @@ Widget _downloadWidget(BuildContext context, bool isLoading) {
           width: 20,
           child: CircularProgressIndicator(
             value: isLoading ? null : 1,
-            color: Theme.of(context).iconTheme.color!.withOpacity(0.7),
+            color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
             strokeWidth: 2,
           ),
         ),

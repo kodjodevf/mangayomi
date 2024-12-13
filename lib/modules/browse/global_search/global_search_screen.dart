@@ -293,7 +293,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                     width: 110,
                     height: 150,
                     color: hasData && snapshot.data!.first.favorite!
-                        ? Colors.black.withOpacity(0.7)
+                        ? Colors.black.withValues(alpha: 0.7)
                         : null,
                   ),
                   if (hasData && snapshot.data!.first.favorite!)

@@ -26,16 +26,16 @@ class ChapterListTileWidget extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     return Container(
       color: chapterList.contains(chapter)
-          ? context.primaryColor.withOpacity(0.4)
+          ? context.primaryColor.withValues(alpha: 0.4)
           : null,
       child: ListTile(
         textColor: chapter.isRead!
             ? context.isLight
-                ? Colors.black.withOpacity(0.4)
-                : Colors.white.withOpacity(0.3)
+                ? Colors.black.withValues(alpha: 0.4)
+                : Colors.white.withValues(alpha: 0.3)
             : null,
         selectedColor:
-            chapter.isRead! ? Colors.white.withOpacity(0.3) : Colors.white,
+            chapter.isRead! ? Colors.white.withValues(alpha: 0.3) : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
             ref.read(chaptersListStateProvider.notifier).update(chapter);
@@ -99,8 +99,8 @@ class ChapterListTileWidget extends ConsumerWidget {
                       style: TextStyle(
                           fontSize: 11,
                           color: context.isLight
-                              ? Colors.black.withOpacity(0.4)
-                              : Colors.white.withOpacity(0.3)),
+                              ? Colors.black.withValues(alpha: 0.4)
+                              : Colors.white.withValues(alpha: 0.3)),
                     ),
                   ],
                 ),
@@ -114,8 +114,8 @@ class ChapterListTileWidget extends ConsumerWidget {
                         fontSize: 11,
                         color: chapter.isRead!
                             ? context.isLight
-                                ? Colors.black.withOpacity(0.4)
-                                : Colors.white.withOpacity(0.3)
+                                ? Colors.black.withValues(alpha: 0.4)
+                                : Colors.white.withValues(alpha: 0.3)
                             : null),
                   ),
                 ],

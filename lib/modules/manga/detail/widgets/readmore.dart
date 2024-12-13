@@ -65,7 +65,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                             colors: [
                               Theme.of(context)
                                   .scaffoldBackgroundColor
-                                  .withOpacity(0.2),
+                                  .withValues(alpha: 0.2),
                               Theme.of(context).scaffoldBackgroundColor
                             ],
                             stops: const [0, .9],

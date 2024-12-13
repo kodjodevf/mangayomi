@@ -98,7 +98,7 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
               },
                   iconColors: subtitleSettings.useBold!
                       ? null
-                      : context.dynamicWhiteBlackColor.withOpacity(0.5)),
+                      : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
               iconButton(Icons.format_italic, () {
                 ref.read(subtitleSettingsStateProvider.notifier).set(
                     subtitleSettings..useItalic = !subtitleSettings.useItalic!,
@@ -107,7 +107,7 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
               },
                   iconColors: subtitleSettings.useItalic!
                       ? null
-                      : context.dynamicWhiteBlackColor.withOpacity(0.5)),
+                      : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
             ],
           ),
           Padding(

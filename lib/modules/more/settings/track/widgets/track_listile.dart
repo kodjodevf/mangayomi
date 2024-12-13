@@ -78,7 +78,7 @@ class TrackListile extends ConsumerWidget {
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor:
-                                          Colors.red.withOpacity(0.7)),
+                                          Colors.red.withValues(alpha: 0.7)),
                                   onPressed: () {
                                     ref
                                         .read(

@@ -41,7 +41,7 @@ Future<List<PageUrl>> downloadChapter(
   bool isOk = false;
   final manga = chapter.manga.value!;
   final path1 = await storageProvider.getDirectory();
-  String scanlator = chapter.scanlator!.isNotEmpty
+  String scanlator = (chapter.scanlator?.isNotEmpty ?? false)
       ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
       : "";
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
@@ -69,8 +69,8 @@ Future<List<PageUrl>> downloadChapter(
 
   Future<void> processConvert() async {
     if (hasM3U8File) {
-      await m3u8Downloader?.mergeTsToMp4(
-          p.join(path!.path, "$chapterName.mp4"), p.join(path.path, chapterName));
+      await m3u8Downloader?.mergeTsToMp4(p.join(path!.path, "$chapterName.mp4"),
+          p.join(path.path, chapterName));
     } else {
       if (ref.watch(saveAsCBZArchiveStateProvider)) {
         await ref.watch(convertToCBZProvider(path!.path, mangaDir!.path,
@@ -156,14 +156,16 @@ Future<List<PageUrl>> downloadChapter(
     bool cbzFileExist =
         await File(p.join(mangaDir!.path, "${chapter.name}.cbz")).exists() &&
             ref.watch(saveAsCBZArchiveStateProvider);
-    bool mp4FileExist = await File(p.join(mangaDir.path, "$chapterName.mp4")).exists();
+    bool mp4FileExist =
+        await File(p.join(mangaDir.path, "$chapterName.mp4")).exists();
     if (!cbzFileExist && isManga || !mp4FileExist && !isManga) {
       for (var index = 0; index < pageUrls.length; index++) {
-        final path2 = Directory(p.join(path1.path,
-                                      "downloads",
-                                      isManga ? "Manga" : "Anime",
-                                      "${manga.source} (${manga.lang!.toUpperCase()})",
-                                      manga.name!.replaceForbiddenCharacters('_')));
+        final path2 = Directory(p.join(
+            path1.path,
+            "downloads",
+            isManga ? "Manga" : "Anime",
+            "${manga.source} (${manga.lang!.toUpperCase()})",
+            manga.name!.replaceForbiddenCharacters('_')));
         if (!(await path2.exists())) {
           await path2.create(recursive: true);
         }
@@ -187,7 +189,8 @@ Future<List<PageUrl>> downloadChapter(
         pageHeaders.addAll(page.headers ?? {});
 
         if (isManga) {
-          final file = File(p.join(tempDir.path, "Mangayomi", finalPath, "${padIndex(index + 1)}.jpg"));
+          final file = File(p.join(tempDir.path, "Mangayomi", finalPath,
+              "${padIndex(index + 1)}.jpg"));
           if (file.existsSync()) {
             Directory(path.path).createSync(recursive: true);
             await file.copy(p.join(path.path, "${padIndex(index + 1)}.jpg"));
@@ -196,7 +199,8 @@ Future<List<PageUrl>> downloadChapter(
             if (!(await path.exists())) {
               await path.create();
             }
-            if (!(await File(p.join(path.path, "${padIndex(index + 1)}.jpg")).exists())) {
+            if (!(await File(p.join(path.path, "${padIndex(index + 1)}.jpg"))
+                .exists())) {
               tasks.add(DownloadTask(
                   taskId: page.url,
                   headers: pageHeaders,
@@ -211,16 +215,21 @@ Future<List<PageUrl>> downloadChapter(
             }
           }
         } else {
-          final file = File(p.join(tempDir.path, "Mangayomi", finalPath, "$chapterName.mp4"));
+          final file = File(
+              p.join(tempDir.path, "Mangayomi", finalPath, "$chapterName.mp4"));
           if (file.existsSync()) {
             await file.copy(p.join(path.path, "$chapterName.mp4"));
             await file.delete();
           } else if (hasM3U8File) {
-            final tempFile = File(p.join(tempDir.path, "Mangayomi", finalPath, chapterName, "TS_${index + 1}.ts"));
-            final file = File(p.join(path.path, chapterName, "TS_${index + 1}.ts"));
+            final tempFile = File(p.join(tempDir.path, "Mangayomi", finalPath,
+                chapterName, "TS_${index + 1}.ts"));
+            final file =
+                File(p.join(path.path, chapterName, "TS_${index + 1}.ts"));
             if (tempFile.existsSync()) {
-              Directory(p.join(path.path, chapterName)).createSync(recursive: true);
-              await tempFile.copy(p.join(path.path, chapterName, "TS_${index + 1}.ts"));
+              Directory(p.join(path.path, chapterName))
+                  .createSync(recursive: true);
+              await tempFile
+                  .copy(p.join(path.path, chapterName, "TS_${index + 1}.ts"));
               await tempFile.delete();
             } else if (!(file.existsSync())) {
               tasks.add(DownloadTask(
@@ -350,11 +359,14 @@ Future<List<PageUrl>> downloadChapter(
             }
           }
           if (progress == 1.0) {
-            final file = File(p.join(tempDir.path, taskProgress.task.directory, taskProgress.task.filename));
-            if(hasM3U8File) {
-              final newFile = await file.copy(p.join(path!.path, chapterName, taskProgress.task.filename));
+            final file = File(p.join(tempDir.path, taskProgress.task.directory,
+                taskProgress.task.filename));
+            if (hasM3U8File) {
+              final newFile = await file.copy(
+                  p.join(path!.path, chapterName, taskProgress.task.filename));
               await file.delete();
-              await m3u8Downloader?.processBytes(newFile, tsKey, tsIv, m3u8MediaSequence);
+              await m3u8Downloader?.processBytes(
+                  newFile, tsKey, tsIv, m3u8MediaSequence);
             } else {
               await file.copy(p.join(path!.path, taskProgress.task.filename));
               await file.delete();

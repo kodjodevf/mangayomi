@@ -91,7 +91,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               children: [
                 Container(
                     color: hasData && snapshot.data!.first.favorite!
-                        ? Colors.black.withOpacity(0.5)
+                        ? Colors.black.withValues(alpha: 0.5)
                         : null),
                 if (hasData && snapshot.data!.first.favorite!)
                   Positioned(
@@ -206,7 +206,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                             height: 55,
                             width: 40,
                             color: hasData && snapshot.data!.first.favorite!
-                                ? Colors.black.withOpacity(0.5)
+                                ? Colors.black.withValues(alpha: 0.5)
                                 : null,
                           ),
                         ],

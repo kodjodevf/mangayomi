@@ -238,7 +238,7 @@ class _MangaChapterPageGalleryState
       StateProvider((ref) => _readerController.getShowPageNumber());
 
   Color _backgroundColor(BuildContext context) =>
-      Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
+      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9);
 
   void _setFullScreen({bool? value}) async {
     if (isDesktop) {
@@ -301,7 +301,7 @@ class _MangaChapterPageGalleryState
                         width: 35,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
-                            color: context.secondaryColor.withOpacity(0.4)),
+                            color: context.secondaryColor.withValues(alpha: 0.4)),
                       ),
                     ),
                     Row(
@@ -721,7 +721,7 @@ class _MangaChapterPageGalleryState
                                                         l10n.image_loading_error,
                                                         style: TextStyle(
                                                             color: Colors.white
-                                                                .withOpacity(
+                                                                .withValues(alpha: 
                                                                     0.7)),
                                                       ),
                                                       Padding(
@@ -1431,7 +1431,7 @@ class _MangaChapterPageGalleryState
                                           .textTheme
                                           .bodyLarge!
                                           .color!
-                                          .withOpacity(0.4)),
+                                          .withValues(alpha: 0.4)),
                             )),
                       ),
                     ),
@@ -1608,7 +1608,7 @@ class _MangaChapterPageGalleryState
                                       .textTheme
                                       .bodyLarge!
                                       .color!
-                                      .withOpacity(0.4),
+                                      .withValues(alpha: 0.4),
                               // size: 17,
                             ),
                           ),
@@ -2032,7 +2032,7 @@ class _MangaChapterPageGalleryState
                               .textTheme
                               .bodyLarge!
                               .color!
-                              .withOpacity(0.9),
+                              .withValues(alpha: 0.9),
                           fontSize: 14),
                     ),
                     onChanged: (value) {
@@ -2046,7 +2046,7 @@ class _MangaChapterPageGalleryState
                                 .textTheme
                                 .bodyLarge!
                                 .color!
-                                .withOpacity(0.9),
+                                .withValues(alpha: 0.9),
                             fontSize: 14)),
                     onChanged: (value) {
                       ref
@@ -2071,7 +2071,7 @@ class _MangaChapterPageGalleryState
                                           .textTheme
                                           .bodyLarge!
                                           .color!
-                                          .withOpacity(0.9),
+                                          .withValues(alpha: 0.9),
                                       fontSize: 14)),
                               onChanged: (val) {
                                 _readerController.setAutoScroll(
@@ -2159,7 +2159,7 @@ class _MangaChapterPageGalleryState
                               .textTheme
                               .bodyLarge!
                               .color!
-                              .withOpacity(0.9),
+                              .withValues(alpha: 0.9),
                           fontSize: 14),
                     ),
                     onChanged: (value) {
@@ -2174,7 +2174,7 @@ class _MangaChapterPageGalleryState
                               .textTheme
                               .bodyLarge!
                               .color!
-                              .withOpacity(0.9),
+                              .withValues(alpha: 0.9),
                           fontSize: 14),
                     ),
                     onChanged: (value) {
@@ -2190,7 +2190,7 @@ class _MangaChapterPageGalleryState
                               .textTheme
                               .bodyLarge!
                               .color!
-                              .withOpacity(0.9),
+                              .withValues(alpha: 0.9),
                           fontSize: 14),
                     ),
                     onChanged: (value) {
@@ -2228,7 +2228,7 @@ class _MangaChapterPageGalleryState
                               .textTheme
                               .bodyLarge!
                               .color!
-                              .withOpacity(0.9),
+                              .withValues(alpha: 0.9),
                           fontSize: 14),
                     ),
                     onChanged: (value) {
@@ -2358,7 +2358,7 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
                           .textTheme
                           .bodyLarge!
                           .color!
-                          .withOpacity(0.9)),
+                          .withValues(alpha: 0.9)),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
