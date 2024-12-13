@@ -5,6 +5,7 @@ import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart'
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
 part 'auto_backup.g.dart';
 
 @riverpod
@@ -44,7 +45,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
 
   void set(String location) {
     final settings = isar.settings.getSync(227);
-    state = ("${_storageProvider!.path}backup", location);
+    state = (p.join(_storageProvider!.path, "backup"), location);
     isar.writeTxnSync(
         () => isar.settings.putSync(settings!..autoBackupLocation = location));
   }
@@ -59,7 +60,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
     state = (
       Platform.isIOS
           ? _storageProvider!.path
-          : "${_storageProvider!.path}backup/",
+          : p.join(_storageProvider!.path, "backup"),
       settings!.autoBackupLocation ?? ""
     );
   }
@@ -82,7 +83,7 @@ Future<void> checkAndBackup(Ref ref) async {
           final backupLocation = ref.watch(autoBackupLocationStateProvider).$2;
           Directory? backupDirectory;
           backupDirectory = Directory(backupLocation.isEmpty
-              ? "${defaulteDirectory!.path}backup/"
+              ? p.join(defaulteDirectory!.path, "backup")
               : backupLocation);
           if (Platform.isIOS) {
             backupDirectory = await (storageProvider.getIosBackupDirectory());
