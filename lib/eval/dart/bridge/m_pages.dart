@@ -1,8 +1,8 @@
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
-import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
 
 class $MPages implements MPages, $Instance {
   $MPages.wrap(this.$value) : _superclass = $Object($value);

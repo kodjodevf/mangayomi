@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:mangayomi/eval/dart/service.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
-import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -63,11 +61,7 @@ Future<GetChapterPagesModel> getChapterPages(
         pageUrls.add(PageUrl(isarPageUrls.first.urls![i], headers: headers));
       }
     } else {
-      if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-        pageUrls = await DartExtensionService(source).getPageList(chapter.url!);
-      } else {
-        pageUrls = await JsExtensionService(source).getPageList(chapter.url!);
-      }
+      pageUrls = await getExtensionService(source).getPageList(chapter.url!);
     }
   }
 

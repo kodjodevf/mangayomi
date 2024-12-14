@@ -1,4 +1,4 @@
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 
 class MPages {
   List<MManga> list;

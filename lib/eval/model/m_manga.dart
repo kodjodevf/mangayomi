@@ -1,4 +1,4 @@
-import 'package:mangayomi/eval/dart/model/m_chapter.dart';
+import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 

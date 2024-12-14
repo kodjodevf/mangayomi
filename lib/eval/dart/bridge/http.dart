@@ -4,7 +4,7 @@ import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/dart/bridge/m_source.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 /// dart_eval wrapper for [InterceptedClient]

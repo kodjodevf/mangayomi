@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:mangayomi/eval/dart/service.dart';
-import 'package:mangayomi/eval/javascript/service.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
@@ -34,11 +32,9 @@ Future<(List<Video>, bool, List<String>)> getVideoList(Ref ref, {required Chapte
       final (videos, infohash) = await MTorrentServer().getTorrentPlaylist(episode.url, episode.archivePath);
       return (videos, false, [infohash ?? ""]);
     }
-    if (source?.sourceCodeLanguage == SourceCodeLanguage.dart) {
-      list = await DartExtensionService(source).getVideoList(episode.url!);
-    } else {
-      list = await JsExtensionService(source).getVideoList(episode.url!);
-    }
+
+    list = await getExtensionService(source!).getVideoList(episode.url!);
+
     for (var v in list) {
       final (videos, infohash) = await MTorrentServer().getTorrentPlaylist(v.url, episode.archivePath);
       for (var video in videos) {
@@ -51,17 +47,14 @@ Future<(List<Video>, bool, List<String>)> getVideoList(Ref ref, {required Chapte
     return (torrentList, false, infoHashes);
   }
 
-  List<Video> list = [];
-  if (source?.sourceCodeLanguage == SourceCodeLanguage.dart) {
-    list = await DartExtensionService(source).getVideoList(episode.url!);
-  } else {
-    list = await JsExtensionService(source).getVideoList(episode.url!);
-  }
+  List<Video> list = await getExtensionService(source!).getVideoList(episode.url!);
   List<Video> videos = [];
+
   for (var video in list) {
     if (!videos.any((element) => element.quality == video.quality)) {
       videos.add(video);
     }
   }
+
   return (videos, false, infoHashes);
 }

@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:html/dom.dart';
-import 'package:mangayomi/eval/dart/model/element.dart';
+import 'package:mangayomi/eval/model/element.dart';
 
 class $MElement implements MElement, $Instance {
   $MElement.wrap(this.$value) : _superclass = $Object($value);
@@ -192,48 +192,56 @@ class $MElement implements MElement, $Instance {
   }
 
   static const $Function __attr = $Function(_attr);
+
   static $Value? _attr(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).attr(args[0]?.$value ?? "");
     return res == null ? const $null() : $String(res);
   }
 
   static const $Function __select = $Function(_select);
+
   static $Value? _select(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).select(args[0]?.$value);
     return res == null ? const $null() : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
   }
 
   static const $Function __selectFirst = $Function(_selectFirst);
+
   static $Value? _selectFirst(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).selectFirst(args[0]?.$value);
     return res == null ? const $null() : $MElement.wrap(res);
   }
 
   static const $Function __getElementsByClassName = $Function(_getElementsByClassName);
+
   static $Value? _getElementsByClassName(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).getElementsByClassName(args[0]?.$value);
     return res == null ? const $null() : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
   }
 
   static const $Function __getElementsByTagName = $Function(_getElementsByTagName);
+
   static $Value? _getElementsByTagName(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).getElementsByTagName(args[0]?.$value);
     return res == null ? const $null() : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
   }
 
   static const $Function __xpath = $Function(_xpath);
+
   static $Value? _xpath(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).xpath(args[0]?.$value);
     return res == null ? const $null() : $List.wrap(res.map((e) => $String(e)).toList());
   }
 
   static const $Function __xpathFirst = $Function(_xpathFirst);
+
   static $Value? _xpathFirst(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).xpathFirst(args[0]?.$value);
     return res == null ? const $null() : $String(res);
   }
 
   static const $Function __hasAttr = $Function(_hasAttr);
+
   static $Value? _hasAttr(final Runtime runtime, final $Value? target, final List<$Value?> args) {
     final res = (target!.$value as MElement).attr(args[0]?.$value ?? "");
     return res == null ? const $null() : $String(res);

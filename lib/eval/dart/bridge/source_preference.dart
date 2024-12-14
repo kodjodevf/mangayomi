@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 
 class $CheckBoxPreference implements SourcePreference, $Instance {
   $CheckBoxPreference.wrap(this.$value) : _superclass = $Object($value);

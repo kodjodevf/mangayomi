@@ -4,7 +4,7 @@ class FilterList {
   List<dynamic> filters;
   FilterList(this.filters);
   factory FilterList.fromJson(Map<String, dynamic> json) {
-    return FilterList(fromJsonFilterValuestoList(json['filters']));
+    return FilterList(fromJsonFilterValuesToList(json['filters']));
   }
   Map<String, dynamic> toJson() => {'filters': filterValuesListToJson(filters)};
 }
@@ -19,7 +19,7 @@ class SelectFilter {
   SelectFilter(this.type, this.name, this.state, this.values, this.typeName);
   factory SelectFilter.fromJson(Map<String, dynamic> json) {
     return SelectFilter(
-        json['type'], json['name'], json['state'] ?? 0, fromJsonFilterValuestoList(json['values']), json['type_name']);
+        json['type'], json['name'], json['state'] ?? 0, fromJsonFilterValuesToList(json['values']), json['type_name']);
   }
   Map<String, dynamic> toJson() => {
         'type': type,
@@ -89,7 +89,7 @@ class SortFilter {
         json['type'],
         json['name'],
         json['state'] == null ? SortState(0, false, "") : SortState.fromJson(json['state']),
-        fromJsonFilterValuestoList(json['values']),
+        fromJsonFilterValuesToList(json['values']),
         json['type_name']);
   }
   Map<String, dynamic> toJson() => {
@@ -136,7 +136,7 @@ class GroupFilter {
 
   GroupFilter(this.type, this.name, this.state, this.typeName);
   factory GroupFilter.fromJson(Map<String, dynamic> json) {
-    return GroupFilter(json['type'], json['name'], fromJsonFilterValuestoList(json['state']), json['type_name']);
+    return GroupFilter(json['type'], json['name'], fromJsonFilterValuesToList(json['state']), json['type_name']);
   }
   Map<String, dynamic> toJson() =>
       {'type': type, 'name': name, 'state': filterValuesListToJson(state), 'type_name': "GroupFilter"};
@@ -157,31 +157,27 @@ class CheckBoxFilter {
       {'type': type, 'name': name, 'value': value, 'state': state, 'type_name': "CheckBox"};
 }
 
-List<dynamic> fromJsonFilterValuestoList(List list) {
-  return list.map((e) {
-    final map = (e as Map).toMapStringDynamic!;
-    if (map['type_name'] == 'TriState') {
-      return TriStateFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'CheckBox') {
-      return CheckBoxFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'SelectOption') {
-      return SelectFilterOption.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'SelectFilter') {
-      return SelectFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'SeparatorFilter') {
-      return SeparatorFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'HeaderFilter') {
-      return HeaderFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'TextFilter') {
-      return TextFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'SortFilter') {
-      return SortFilter.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'SortState') {
-      return SortState.fromJson(map.toMapStringDynamic!);
-    } else if (map['type_name'] == 'GroupFilter') {
-      return GroupFilter.fromJson(map.toMapStringDynamic!);
-    }
-  }).toList();
+List<dynamic> fromJsonFilterValuesToList(List list) {
+  return list
+      .map((e) {
+        final map = (e as Map).toMapStringDynamic!;
+
+        return switch (map['type_name']) {
+          'TriState' => TriStateFilter.fromJson(map.toMapStringDynamic!),
+          'CheckBox' => CheckBoxFilter.fromJson(map.toMapStringDynamic!),
+          'SelectOption' => SelectFilterOption.fromJson(map.toMapStringDynamic!),
+          'SelectFilter' => SelectFilter.fromJson(map.toMapStringDynamic!),
+          'SeparatorFilter' => SeparatorFilter.fromJson(map.toMapStringDynamic!),
+          'HeaderFilter' => HeaderFilter.fromJson(map.toMapStringDynamic!),
+          'TextFilter' => TextFilter.fromJson(map.toMapStringDynamic!),
+          'SortFilter' => SortFilter.fromJson(map.toMapStringDynamic!),
+          'SortState' => SortState.fromJson(map.toMapStringDynamic!),
+          'GroupFilter' => GroupFilter.fromJson(map.toMapStringDynamic!),
+          _ => null,
+        };
+      })
+      .where((filter) => filter != null)
+      .toList();
 }
 
 List<Map<String, dynamic>?> filterValuesListToJson(List<dynamic> values) {

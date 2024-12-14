@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/atom-one-dark.dart';
+import 'package:highlight/highlight.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/dart.dart';
 import 'package:highlight/languages/javascript.dart';
-import 'package:mangayomi/eval/dart/service.dart';
-import 'package:mangayomi/eval/javascript/service.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
@@ -27,16 +27,20 @@ class CodeEditor extends ConsumerStatefulWidget {
   ConsumerState<CodeEditor> createState() => _CodeEditorState();
 }
 
+Mode getSourceMode(Source? source) {
+  return switch (source?.sourceCodeLanguage) {
+    SourceCodeLanguage.dart => dart,
+    SourceCodeLanguage.javascript => javascript,
+    _ => dart,
+  };
+}
+
 class _CodeEditorState extends ConsumerState<CodeEditor> {
   dynamic result;
   late final source = widget.sourceId == null ? null : isar.sources.getSync(widget.sourceId!);
   late final controller = CodeController(
       text: source?.sourceCode ?? "",
-      language: source == null
-          ? dart
-          : source!.sourceCodeLanguage == SourceCodeLanguage.dart
-              ? dart
-              : javascript,
+      language: getSourceMode(source),
       namedSectionParser: const BracketsStartEndNamedSectionParser());
 
   List<(String, int)> _getServices(BuildContext context) => [
@@ -224,6 +228,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                       _errorText = "";
                                     });
                                     if (source != null) {
+                                      final service = getExtensionService(source!);
+
                                       try {
                                         if (_serviceIndex == 0) {
                                           final getManga =
@@ -243,26 +249,15 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                               await ref.watch(getDetailProvider(source: source!, url: _url).future);
                                           result = getManga.toJson();
                                         } else if (_serviceIndex == 4) {
-                                          if (source!.sourceCodeLanguage == SourceCodeLanguage.dart) {
-                                            result = (await DartExtensionService(source).getPageList(_url))
+                                          result = {
+                                            "pages": (await service.getPageList(_url))
                                                 .map((e) => e.toJson())
-                                                .toList();
-                                          } else {
-                                            result = (await JsExtensionService(source).getPageList(_url))
-                                                .map((e) => e.toJson())
-                                                .toList();
-                                          }
-                                          result = {"pages": result};
+                                                .toList(),
+                                          };
                                         } else {
-                                          if (source!.sourceCodeLanguage == SourceCodeLanguage.dart) {
-                                            result = (await DartExtensionService(source).getVideoList(_url))
-                                                .map((e) => e.toJson())
-                                                .toList();
-                                          } else {
-                                            result = (await JsExtensionService(source).getVideoList(_url))
-                                                .map((e) => e.toJson())
-                                                .toList();
-                                          }
+                                          result = (await service.getVideoList(_url))
+                                              .map((e) => e.toJson())
+                                              .toList();
                                         }
                                         if (mounted) {
                                           setState(() {
