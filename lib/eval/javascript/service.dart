@@ -131,7 +131,15 @@ var extention = new DefaultExtension();
 
   @override
   FilterList getFilterList() {
-    return FilterList(fromJsonFilterValuesToList(_extensionCall('getFilterList()', [])));
+    List<dynamic> list;
+
+    try {
+      list = fromJsonFilterValuesToList(_extensionCall('getFilterList()', []));
+    } catch (_) {
+      list = [];
+    }
+
+    return FilterList(list);
   }
 
   @override

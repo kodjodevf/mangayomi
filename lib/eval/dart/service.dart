@@ -114,7 +114,15 @@ class DartExtensionService implements ExtensionService {
 
   @override
   FilterList getFilterList() {
-    return FilterList(_executeLib().getFilterList().map((e) => e is $Value ? e.$reified : e).toList());
+    List<dynamic> list;
+
+    try {
+      list = _executeLib().getFilterList().map((e) => e is $Value ? e.$reified : e).toList();
+    } catch (_) {
+      list = [];
+    }
+
+    return FilterList(list);
   }
 
   @override
