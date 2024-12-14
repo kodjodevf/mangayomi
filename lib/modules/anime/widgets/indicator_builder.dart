@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class MediaIndicatorBuilder extends StatelessWidget {
   final bool isVolumeIndicator;
   final ValueNotifier<double> value;
-  const MediaIndicatorBuilder(
-      {super.key, required this.value, required this.isVolumeIndicator});
+  const MediaIndicatorBuilder({super.key, required this.value, required this.isVolumeIndicator});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +12,7 @@ class MediaIndicatorBuilder extends StatelessWidget {
         builder: (context, value, child) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Row(
-                mainAxisAlignment: isVolumeIndicator
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
+                mainAxisAlignment: isVolumeIndicator ? MainAxisAlignment.start : MainAxisAlignment.end,
                 children: [
                   Container(
                     clipBehavior: Clip.antiAlias,
@@ -45,9 +42,8 @@ class MediaIndicatorBuilder extends StatelessWidget {
                                   ),
                                   child: SizedBox.fromSize(
                                       size: const Size(130, 20),
-                                      child: LinearProgressIndicator(
-                                          value: value,
-                                          backgroundColor: Colors.transparent)),
+                                      child:
+                                          LinearProgressIndicator(value: value, backgroundColor: Colors.transparent)),
                                 ),
                               ),
                             ),

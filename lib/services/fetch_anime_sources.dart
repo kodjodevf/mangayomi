@@ -8,8 +8,7 @@ part 'fetch_anime_sources.g.dart';
 Future fetchAnimeSourcesList(Ref ref, {int? id, required bool reFresh}) async {
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     await fetchSourcesList(
-        sourcesIndexUrl:
-            "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json",
+        sourcesIndexUrl: "https://kodjodevf.github.io/mangayomi-extensions/anime_index.json",
         refresh: reFresh,
         id: id,
         ref: ref,

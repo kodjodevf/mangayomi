@@ -43,9 +43,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       try {
         final cookieList = await _desktopWebview!.getAllCookies();
-        final ua =
-            await _desktopWebview!.evaluateJavaScript("navigator.userAgent") ??
-                "";
+        final ua = await _desktopWebview!.evaluateJavaScript("navigator.userAgent") ?? "";
         final cookie = cookieList.map((e) => "${e.name}=${e.value}").join(";");
         await MClient.setCookie(_url, ua, null, cookie: cookie);
       } catch (_) {}
@@ -72,9 +70,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
             appBar: AppBar(
               title: Text(
                 _title,
-                style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                    fontWeight: FontWeight.bold),
+                style: const TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold),
               ),
               leading: IconButton(
                   onPressed: () {
@@ -107,15 +103,11 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               dense: true,
                               subtitle: Text(
                                 _url,
-                                style: const TextStyle(
-                                    fontSize: 10,
-                                    overflow: TextOverflow.ellipsis),
+                                style: const TextStyle(fontSize: 10, overflow: TextOverflow.ellipsis),
                               ),
                               title: Text(
                                 _title,
-                                style: const TextStyle(
-                                    overflow: TextOverflow.ellipsis,
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(overflow: TextOverflow.ellipsis, fontWeight: FontWeight.bold),
                               ),
                               leading: IconButton(
                                   onPressed: () {
@@ -125,8 +117,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.arrow_back,
-                                color: _canGoback ? null : Colors.grey),
+                            icon: Icon(Icons.arrow_back, color: _canGoback ? null : Colors.grey),
                             onPressed: _canGoback
                                 ? () {
                                     _webViewController?.goBack();
@@ -134,8 +125,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                 : null,
                           ),
                           IconButton(
-                            icon: Icon(Icons.arrow_forward,
-                                color: _canGoForward ? null : Colors.grey),
+                            icon: Icon(Icons.arrow_forward, color: _canGoForward ? null : Colors.grey),
                             onPressed: _canGoForward
                                 ? () {
                                     _webViewController?.goForward();
@@ -146,15 +136,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               popUpAnimationStyle: popupAnimationStyle,
                               itemBuilder: (context) {
                                 return [
-                                  PopupMenuItem<int>(
-                                      value: 0, child: Text(l10n!.refresh)),
-                                  PopupMenuItem<int>(
-                                      value: 1, child: Text(l10n.share)),
-                                  PopupMenuItem<int>(
-                                      value: 2,
-                                      child: Text(l10n.open_in_browser)),
-                                  PopupMenuItem<int>(
-                                      value: 3, child: Text(l10n.clear_cookie)),
+                                  PopupMenuItem<int>(value: 0, child: Text(l10n!.refresh)),
+                                  PopupMenuItem<int>(value: 1, child: Text(l10n.share)),
+                                  PopupMenuItem<int>(value: 2, child: Text(l10n.open_in_browser)),
+                                  PopupMenuItem<int>(value: 3, child: Text(l10n.clear_cookie)),
                                 ];
                               },
                               onSelected: (value) async {
@@ -163,8 +148,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                 } else if (value == 1) {
                                   Share.share(_url);
                                 } else if (value == 2) {
-                                  await InAppBrowser.openWithSystemBrowser(
-                                      url: WebUri(_url));
+                                  await InAppBrowser.openWithSystemBrowser(url: WebUri(_url));
                                 } else if (value == 3) {
                                   CookieManager.instance().deleteAllCookies();
                                   MClient.deleteAllCookies(_url);
@@ -173,9 +157,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         ],
                       ),
                     ),
-                    _progress < 1.0
-                        ? LinearProgressIndicator(value: _progress)
-                        : Container(),
+                    _progress < 1.0 ? LinearProgressIndicator(value: _progress) : Container(),
                     Expanded(
                       child: InAppWebView(
                         webViewEnvironment: webViewEnvironment,
@@ -187,19 +169,11 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             _url = url.toString();
                           });
                         },
-                        shouldOverrideUrlLoading:
-                            (controller, navigationAction) async {
+                        shouldOverrideUrlLoading: (controller, navigationAction) async {
                           var uri = navigationAction.request.url!;
 
-                          if (![
-                            "http",
-                            "https",
-                            "file",
-                            "chrome",
-                            "data",
-                            "javascript",
-                            "about"
-                          ].contains(uri.scheme)) {
+                          if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
+                              .contains(uri.scheme)) {
                             if (await canLaunchUrl(uri)) {
                               // Launch the App
                               await launchUrl(
@@ -226,13 +200,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                             });
                           }
                         },
-                        onUpdateVisitedHistory:
-                            (controller, url, isReload) async {
-                          final ua = await controller.evaluateJavascript(
-                                  source: "navigator.userAgent") ??
-                              "";
-                          await MClient.setCookie(
-                              url.toString(), ua, controller);
+                        onUpdateVisitedHistory: (controller, url, isReload) async {
+                          final ua = await controller.evaluateJavascript(source: "navigator.userAgent") ?? "";
+                          await MClient.setCookie(url.toString(), ua, controller);
                           final canGoback = await controller.canGoBack();
                           final canGoForward = await controller.canGoForward();
                           final title = await controller.getTitle();

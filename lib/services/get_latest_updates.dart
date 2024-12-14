@@ -14,11 +14,9 @@ Future<MPages?> getLatestUpdates(
 }) async {
   MPages? latestUpdatesManga;
   if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-    latestUpdatesManga =
-        await DartExtensionService(source).getLatestUpdates(page);
+    latestUpdatesManga = await DartExtensionService(source).getLatestUpdates(page);
   } else {
-    latestUpdatesManga =
-        await JsExtensionService(source).getLatestUpdates(page);
+    latestUpdatesManga = await JsExtensionService(source).getLatestUpdates(page);
   }
   return latestUpdatesManga;
 }

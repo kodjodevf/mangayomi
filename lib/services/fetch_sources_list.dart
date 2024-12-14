@@ -10,16 +10,11 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> fetchSourcesList(
-    {int? id,
-    required bool refresh,
-    required String sourcesIndexUrl,
-    required Ref ref,
-    required bool isManga}) async {
+    {int? id, required bool refresh, required String sourcesIndexUrl, required Ref ref, required bool isManga}) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(sourcesIndexUrl));
 
-  final sourceList =
-      (jsonDecode(req.body) as List).map((e) => Source.fromJson(e)).toList();
+  final sourceList = (jsonDecode(req.body) as List).map((e) => Source.fromJson(e)).toList();
 
   final info = await PackageInfo.fromPlatform();
   isar.writeTxnSync(() async {
@@ -67,10 +62,8 @@ Future<void> fetchSourcesList(
                 if (compareVersions(sourc.version!, source.version!) < 0) {
                   // log("update aivalable auto update");
                   if (ref.watch(autoUpdateExtensionsStateProvider)) {
-                    final req =
-                        await http.get(Uri.parse(source.sourceCodeUrl!));
-                    final headers =
-                        getSourceHeaders(source..sourceCode = req.body);
+                    final req = await http.get(Uri.parse(source.sourceCodeUrl!));
+                    final headers = getSourceHeaders(source..sourceCode = req.body);
                     isar.writeTxnSync(() {
                       isar.sources.putSync(sourc
                         ..headers = jsonEncode(headers)
@@ -136,17 +129,11 @@ Future<void> fetchSourcesList(
 }
 
 void checkIfSourceIsObsolete(List<Source> sourceList, bool isManga) {
-  for (var source in isar.sources
-      .filter()
-      .idIsNotNull()
-      .isMangaEqualTo(isManga)
-      .findAllSync()) {
+  for (var source in isar.sources.filter().idIsNotNull().isMangaEqualTo(isManga).findAllSync()) {
     if (sourceList.isNotEmpty && !(source.isLocal ?? false)) {
-      final ids =
-          sourceList.where((e) => e.id != null).map((e) => e.id).toList();
+      final ids = sourceList.where((e) => e.id != null).map((e) => e.id).toList();
       if (ids.isNotEmpty) {
-        isar.writeTxnSync(() => isar.sources
-            .putSync(source..isObsolete = !ids.contains(source.id)));
+        isar.writeTxnSync(() => isar.sources.putSync(source..isObsolete = !ids.contains(source.id)));
       }
     }
   }
@@ -173,13 +160,9 @@ int compareVersions(String version1, String version2) {
 
   for (int i = 0; i < v1Components.length && i < v2Components.length; i++) {
     int v1Value = int.parse(
-        v1Components.length == i + 1 && v1Components[i].length == 1
-            ? "${v1Components[i]}0"
-            : v1Components[i]);
+        v1Components.length == i + 1 && v1Components[i].length == 1 ? "${v1Components[i]}0" : v1Components[i]);
     int v2Value = int.parse(
-        v2Components.length == i + 1 && v2Components[i].length == 1
-            ? "${v2Components[i]}0"
-            : v2Components[i]);
+        v2Components.length == i + 1 && v2Components[i].length == 1 ? "${v2Components[i]}0" : v2Components[i]);
 
     if (v1Value < v2Value) {
       return -1;

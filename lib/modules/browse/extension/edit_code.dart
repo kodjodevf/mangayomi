@@ -29,8 +29,7 @@ class CodeEditor extends ConsumerStatefulWidget {
 
 class _CodeEditorState extends ConsumerState<CodeEditor> {
   dynamic result;
-  late final source =
-      widget.sourceId == null ? null : isar.sources.getSync(widget.sourceId!);
+  late final source = widget.sourceId == null ? null : isar.sources.getSync(widget.sourceId!);
   late final controller = CodeController(
       text: source?.sourceCode ?? "",
       language: source == null
@@ -56,8 +55,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   bool _isLoading = false;
   String _errorText = "";
   bool _error = false;
-  final _logsNotifier =
-      ValueNotifier<List<(LoggerLevel, String, DateTime)>>([]);
+  final _logsNotifier = ValueNotifier<List<(LoggerLevel, String, DateTime)>>([]);
   late final _logStreamController = Logger.logStreamController;
   final _scrollController = ScrollController();
   @override
@@ -94,15 +92,13 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: context.primaryColor),
+                    style: ElevatedButton.styleFrom(backgroundColor: context.primaryColor),
                     onPressed: () {
                       Navigator.pop(context, 'filter');
                     },
                     child: Text(
                       context.l10n.filter,
-                      style: TextStyle(
-                          color: Theme.of(context).scaffoldBackgroundColor),
+                      style: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
                     ),
                   ),
                 ],
@@ -158,15 +154,14 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                               color: Colors.grey,
                               height: 1.5, // Issue #307 fix, found in package: flutter-code-editor issue #270
                             ),
-                            showLineNumbers:true,
+                            showLineNumbers: true,
                           ),
                           onChanged: (a) {
                             setState(() {
                               source?.sourceCode = a;
                             });
                             if (source != null && mounted) {
-                              isar.writeTxnSync(
-                                  () => isar.sources.putSync(source!));
+                              isar.writeTxnSync(() => isar.sources.putSync(source!));
                             }
                           },
                         ),
@@ -183,13 +178,11 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                             icon: const Icon(Icons.keyboard_arrow_down),
                             isExpanded: true,
                             value: _serviceIndex,
-                            hint: Text(_getServices(context)[_serviceIndex].$1,
-                                style: const TextStyle(fontSize: 13)),
+                            hint: Text(_getServices(context)[_serviceIndex].$1, style: const TextStyle(fontSize: 13)),
                             items: _getServices(context)
                                 .map((e) => DropdownMenuItem(
                                       value: e.$2,
-                                      child: Text(e.$1,
-                                          style: const TextStyle(fontSize: 13)),
+                                      child: Text(e.$1, style: const TextStyle(fontSize: 13)),
                                     ))
                                 .toList(),
                             onChanged: (v) {
@@ -199,9 +192,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                             },
                           ),
                         ),
-                        if (_serviceIndex == 0 ||
-                            _serviceIndex == 1 ||
-                            _serviceIndex == 2)
+                        if (_serviceIndex == 0 || _serviceIndex == 1 || _serviceIndex == 2)
                           _textEditing("Page", context, "ex: 1", (v) {
                             _page = int.tryParse(v) ?? 1;
                           }),
@@ -209,11 +200,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                           _textEditing("Query", context, "ex: one piece", (v) {
                             _query = v;
                           }),
-                        if (_serviceIndex == 3 ||
-                            _serviceIndex == 4 ||
-                            _serviceIndex == 5)
-                          _textEditing("Url", context, "ex: url of the entry",
-                              (v) {
+                        if (_serviceIndex == 3 || _serviceIndex == 4 || _serviceIndex == 5)
+                          _textEditing("Url", context, "ex: url of the entry", (v) {
                             _url = v;
                           }),
                         Padding(
@@ -227,8 +215,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                       source?.sourceCode = controller.text;
                                     });
                                     if (source != null && mounted) {
-                                      isar.writeTxnSync(
-                                          () => isar.sources.putSync(source!));
+                                      isar.writeTxnSync(() => isar.sources.putSync(source!));
                                     }
                                     setState(() {
                                       result = null;
@@ -239,65 +226,40 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                     if (source != null) {
                                       try {
                                         if (_serviceIndex == 0) {
-                                          final getManga = await ref.watch(
-                                              getPopularProvider(
-                                                      source: source!,
-                                                      page: _page)
-                                                  .future);
+                                          final getManga =
+                                              await ref.watch(getPopularProvider(source: source!, page: _page).future);
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 1) {
-                                          final getManga = await ref.watch(
-                                              getLatestUpdatesProvider(
-                                                      source: source!,
-                                                      page: _page)
-                                                  .future);
+                                          final getManga = await ref
+                                              .watch(getLatestUpdatesProvider(source: source!, page: _page).future);
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 2) {
-                                          final getManga = await ref.watch(
-                                              searchProvider(
-                                                      source: source!,
-                                                      query: _query,
-                                                      page: _page,
-                                                      filterList: filterList)
-                                                  .future);
+                                          final getManga = await ref.watch(searchProvider(
+                                                  source: source!, query: _query, page: _page, filterList: filterList)
+                                              .future);
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 3) {
-                                          final getManga = await ref.watch(
-                                              getDetailProvider(
-                                                      source: source!,
-                                                      url: _url)
-                                                  .future);
+                                          final getManga =
+                                              await ref.watch(getDetailProvider(source: source!, url: _url).future);
                                           result = getManga.toJson();
                                         } else if (_serviceIndex == 4) {
-                                          if (source!.sourceCodeLanguage ==
-                                              SourceCodeLanguage.dart) {
-                                            result =
-                                                (await DartExtensionService(
-                                                            source)
-                                                        .getPageList(_url))
-                                                    .map((e) => e.toJson())
-                                                    .toList();
+                                          if (source!.sourceCodeLanguage == SourceCodeLanguage.dart) {
+                                            result = (await DartExtensionService(source).getPageList(_url))
+                                                .map((e) => e.toJson())
+                                                .toList();
                                           } else {
-                                            result = (await JsExtensionService(
-                                                        source)
-                                                    .getPageList(_url))
+                                            result = (await JsExtensionService(source).getPageList(_url))
                                                 .map((e) => e.toJson())
                                                 .toList();
                                           }
                                           result = {"pages": result};
                                         } else {
-                                          if (source!.sourceCodeLanguage ==
-                                              SourceCodeLanguage.dart) {
-                                            result =
-                                                (await DartExtensionService(
-                                                            source)
-                                                        .getVideoList(_url))
-                                                    .map((e) => e.toJson())
-                                                    .toList();
+                                          if (source!.sourceCodeLanguage == SourceCodeLanguage.dart) {
+                                            result = (await DartExtensionService(source).getVideoList(_url))
+                                                .map((e) => e.toJson())
+                                                .toList();
                                           } else {
-                                            result = (await JsExtensionService(
-                                                        source)
-                                                    .getVideoList(_url))
+                                            result = (await JsExtensionService(source).getVideoList(_url))
                                                 .map((e) => e.toJson())
                                                 .toList();
                                           }
@@ -341,8 +303,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                           if (filters.isEmpty) {
                                             filters = filterList;
                                           }
-                                          final res =
-                                              await filterDialog(context);
+                                          final res = await filterDialog(context);
                                           if (res == 'filter' && mounted) {
                                             setState(() {
                                               result = null;
@@ -350,13 +311,9 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                               _error = false;
                                               _errorText = "";
                                             });
-                                            final getManga = await ref.watch(
-                                                searchProvider(
-                                                        source: source!,
-                                                        query: _query,
-                                                        page: _page,
-                                                        filterList: filters)
-                                                    .future);
+                                            final getManga = await ref.watch(searchProvider(
+                                                    source: source!, query: _query, page: _page, filterList: filters)
+                                                .future);
                                             result = getManga!.toJson();
                                             setState(() {
                                               _isLoading = false;
@@ -379,26 +336,22 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                             child: _error
                                 ? SingleChildScrollView(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(_errorText),
                                       ],
                                     ),
                                   )
                                 : _isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
+                                    ? const Center(child: CircularProgressIndicator())
                                     : result != null
                                         ? JsonConfig(
                                             data: JsonConfigData(
                                               gap: 100,
                                               style: const JsonStyleScheme(
-                                                quotation:
-                                                    JsonQuotation.same('"'),
+                                                quotation: JsonQuotation.same('"'),
                                                 openAtStart: false,
-                                                arrow:
-                                                    Icon(Icons.arrow_forward),
+                                                arrow: Icon(Icons.arrow_forward),
                                                 depth: 4,
                                               ),
                                               color: const JsonColorScheme(),
@@ -431,10 +384,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                   itemBuilder: (context, index) {
                     final value = logs[index];
                     return SelectableText(value.$2,
-                        style: TextStyle(
-                            color: value.$1 == LoggerLevel.info
-                                ? Colors.yellow
-                                : Colors.blueAccent));
+                        style: TextStyle(color: value.$1 == LoggerLevel.info ? Colors.yellow : Colors.blueAccent));
                   },
                 ),
               ),
@@ -445,8 +395,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   }
 }
 
-Widget _textEditing(String label, BuildContext context, String hintText,
-    void Function(String)? onChanged) {
+Widget _textEditing(String label, BuildContext context, String hintText, void Function(String)? onChanged) {
   return Padding(
     padding: const EdgeInsets.all(4),
     child: TextFormField(
@@ -458,12 +407,9 @@ Widget _textEditing(String label, BuildContext context, String hintText,
           isDense: true,
           filled: true,
           fillColor: Colors.transparent,
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor)),
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor))),
+          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor)),
+          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor)),
+          border: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor))),
     ),
   );
 }

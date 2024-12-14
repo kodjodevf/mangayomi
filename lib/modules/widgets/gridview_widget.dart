@@ -29,8 +29,7 @@ class GridViewWidget extends StatelessWidget {
                     maxCrossAxisExtent: 220,
                   )
                 : SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: gridSize!,
-                    childAspectRatio: childAspectRatio!),
+                    crossAxisCount: gridSize!, childAspectRatio: childAspectRatio!),
             itemCount: itemCount,
             itemBuilder: itemBuilder));
   }

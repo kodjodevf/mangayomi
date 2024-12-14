@@ -8,8 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'headers.g.dart';
 
 @riverpod
-Map<String, String> headers(Ref ref,
-    {required String source, required String lang}) {
+Map<String, String> headers(Ref ref, {required String source, required String lang}) {
   final mSource = getSource(lang, source);
   if (mSource == null) return {};
   Map<String, String> headers = {};

@@ -19,8 +19,7 @@ Future<RequestClient> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiRhttpHttpRegisterClient(settings: settings);
 
 RequestClient registerClientSync({required ClientSettings settings}) =>
-    RustLib.instance.api
-        .crateApiRhttpHttpRegisterClientSync(settings: settings);
+    RustLib.instance.api.crateApiRhttpHttpRegisterClientSync(settings: settings);
 
 Future<void> cancelRunningRequests({required RequestClient client}) =>
     RustLib.instance.api.crateApiRhttpHttpCancelRunningRequests(client: client);
@@ -92,8 +91,7 @@ class HttpResponse {
   });
 
   @override
-  int get hashCode =>
-      headers.hashCode ^ version.hashCode ^ statusCode.hashCode ^ body.hashCode;
+  int get hashCode => headers.hashCode ^ version.hashCode ^ statusCode.hashCode ^ body.hashCode;
 
   @override
   bool operator ==(Object other) =>

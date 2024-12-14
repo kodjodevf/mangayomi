@@ -26,11 +26,7 @@ class Tracks extends _$Tracks {
   }
 
   void updateTrackManga(Track track, bool? isManga) {
-    final tra = isar.tracks
-        .filter()
-        .syncIdEqualTo(syncId)
-        .mangaIdEqualTo(track.mangaId)
-        .findAllSync();
+    final tra = isar.tracks.filter().syncIdEqualTo(syncId).mangaIdEqualTo(track.mangaId).findAllSync();
     if (tra.isNotEmpty) {
       if (tra.first.mediaId != track.mangaId) {
         track.id = tra.first.id;
@@ -57,7 +53,6 @@ class UpdateProgressAfterReadingState extends _$UpdateProgressAfterReadingState 
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..updateProgressAfterReading = value));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..updateProgressAfterReading = value));
   }
 }

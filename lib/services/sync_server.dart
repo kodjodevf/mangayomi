@@ -38,8 +38,7 @@ class SyncServer extends _$SyncServer {
   @override
   void build({required int syncId}) {}
 
-  Future<(bool, String)> login(AppLocalizations l10n, String server,
-      String username, String password) async {
+  Future<(bool, String)> login(AppLocalizations l10n, String server, String username, String password) async {
     server = server[server.length - 1] == '/' ? server.substring(0, server.length - 1) : server;
     try {
       var response = await http.post(
@@ -53,11 +52,9 @@ class SyncServer extends _$SyncServer {
       if (response.statusCode != 200) {
         return (false, jsonData["error"] as String);
       }
-      ref.read(synchingProvider(syncId: syncId).notifier).login(SyncPreference(
-          syncId: syncId,
-          email: username,
-          server: server,
-          authToken: jsonData["token"]));
+      ref
+          .read(synchingProvider(syncId: syncId).notifier)
+          .login(SyncPreference(syncId: syncId, email: username, server: server, authToken: jsonData["token"]));
       botToast(l10n.sync_logged);
       return (true, "");
     } catch (e) {
@@ -76,10 +73,7 @@ class SyncServer extends _$SyncServer {
 
       var response = await http.get(
         Uri.parse('${_getServer()}$_checkUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $accessToken'},
       );
       if (response.statusCode != 200) {
         botToast("Check failed", second: 5);
@@ -107,28 +101,19 @@ class SyncServer extends _$SyncServer {
 
       var response = await http.post(
         Uri.parse('${_getServer()}$_syncUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
-        body: jsonEncode(
-            {'backupData': datas, 'changedItems': _getChangedData()}),
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $accessToken'},
+        body: jsonEncode({'backupData': datas, 'changedItems': _getChangedData()}),
       );
       if (response.statusCode != 200) {
         botToast("Sync failed", second: 5);
         return;
       }
       var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final decodedBackupData = jsonData["backupData"] is String
-          ? jsonDecode(jsonData["backupData"])
-          : jsonData["backupData"];
+      final decodedBackupData =
+          jsonData["backupData"] is String ? jsonDecode(jsonData["backupData"]) : jsonData["backupData"];
       _restoreMerge(decodedBackupData);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastSync(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
+      ref.read(synchingProvider(syncId: syncId).notifier).setLastSync(DateTime.now().millisecondsSinceEpoch);
+      ref.read(changedItemsManagerProvider(managerId: 1).notifier).cleanChangedItems(true);
       if (!silent) {
         botToast("Sync finished", second: 2);
       }
@@ -145,22 +130,15 @@ class SyncServer extends _$SyncServer {
 
       var response = await http.post(
         Uri.parse('${_getServer()}$_uploadUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $accessToken'},
         body: jsonEncode({'backupData': datas}),
       );
       if (response.statusCode != 200) {
         botToast(l10n.sync_upload_failed, second: 5);
         return;
       }
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastUpload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
+      ref.read(synchingProvider(syncId: syncId).notifier).setLastUpload(DateTime.now().millisecondsSinceEpoch);
+      ref.read(changedItemsManagerProvider(managerId: 1).notifier).cleanChangedItems(true);
       botToast(l10n.sync_upload_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
@@ -174,25 +152,16 @@ class SyncServer extends _$SyncServer {
 
       var response = await http.get(
         Uri.parse('${_getServer()}$_downloadUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $accessToken'},
       );
       if (response.statusCode != 200) {
         botToast(l10n.sync_download_failed, second: 5);
         return;
       }
       var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      _restore(jsonData["backupData"] is String
-          ? jsonDecode(jsonData["backupData"])
-          : jsonData["backupData"]);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastDownload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
+      _restore(jsonData["backupData"] is String ? jsonDecode(jsonData["backupData"]) : jsonData["backupData"]);
+      ref.read(synchingProvider(syncId: syncId).notifier).setLastDownload(DateTime.now().millisecondsSinceEpoch);
+      ref.read(changedItemsManagerProvider(managerId: 1).notifier).cleanChangedItems(true);
       botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
@@ -216,19 +185,9 @@ class SyncServer extends _$SyncServer {
     Map<String, dynamic> data = {};
     final changedItems = isar.changedItems.getSync(1);
     if (changedItems != null) {
-      data.addAll({
-        "deletedMangas":
-            changedItems.deletedMangas?.map((e) => e.toJson()).toList() ?? []
-      });
-      data.addAll({
-        "updatedChapters":
-            changedItems.updatedChapters?.map((e) => e.toJson()).toList() ?? []
-      });
-      data.addAll({
-        "deletedCategories":
-            changedItems.deletedCategories?.map((e) => e.toJson()).toList() ??
-                []
-      });
+      data.addAll({"deletedMangas": changedItems.deletedMangas?.map((e) => e.toJson()).toList() ?? []});
+      data.addAll({"updatedChapters": changedItems.updatedChapters?.map((e) => e.toJson()).toList() ?? []});
+      data.addAll({"deletedCategories": changedItems.deletedCategories?.map((e) => e.toJson()).toList() ?? []});
     }
     return data;
   }
@@ -245,64 +204,24 @@ class SyncServer extends _$SyncServer {
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"manga": mangas});
-    final categorys = isar.categorys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final categorys = isar.categorys.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"categories": categorys});
-    final chapters = isar.chapters
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final chapters = isar.chapters.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"chapters": chapters});
     datas.addAll({"downloads": []});
-    final tracks = isar.tracks
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final tracks = isar.tracks.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"tracks": tracks});
     datas.addAll({"trackPreferences": []});
-    final historys = isar.historys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final historys = isar.historys.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"history": historys});
-    final settings = isar.settings
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final settings = isar.settings.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"settings": settings});
-    final sources = isar.sources
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final sources = isar.sources.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"extensions": sources});
-    final sourcePreferences = isar.sourcePreferences
-        .filter()
-        .idIsNotNull()
-        .keyIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final sourcePreferences =
+        isar.sourcePreferences.filter().idIsNotNull().keyIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"extensions_preferences": sourcePreferences});
-    final updates = isar.updates
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final updates = isar.updates.filter().idIsNotNull().findAllSync().map((e) => e.toJson()).toList();
     datas.addAll({"updates": updates});
     return datas;
   }
@@ -310,21 +229,12 @@ class SyncServer extends _$SyncServer {
   void _restoreMerge(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
       try {
-        final manga =
-            (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-        final chapters = (backup["chapters"] as List?)
-            ?.map((e) => Chapter.fromJson(e))
-            .toList();
-        final categories = (backup["categories"] as List?)
-            ?.map((e) => Category.fromJson(e))
-            .toList();
-        final track =
-            (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-        final history = (backup["history"] as List?)
-            ?.map((e) => History.fromJson(e))
-            .toList();
-        final updates =
-            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+        final manga = (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
+        final chapters = (backup["chapters"] as List?)?.map((e) => Chapter.fromJson(e)).toList();
+        final categories = (backup["categories"] as List?)?.map((e) => Category.fromJson(e)).toList();
+        final track = (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
+        final history = (backup["history"] as List?)?.map((e) => History.fromJson(e)).toList();
+        final updates = (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -353,13 +263,10 @@ class SyncServer extends _$SyncServer {
 
               isar.updates.clearSync();
               if (updates != null) {
-                final tempChapters =
-                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
+                final tempChapters = isar.chapters.filter().idIsNotNull().findAllSync().toList();
                 for (var update in updates) {
                   final matchingChapter = tempChapters
-                      .where((chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName)
+                      .where((chapter) => chapter.mangaId == update.mangaId && chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
                     isar.updates.putSync(update..chapter.value = matchingChapter);
@@ -395,30 +302,16 @@ class SyncServer extends _$SyncServer {
   void _restore(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
       try {
-        final manga =
-            (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-        final chapters = (backup["chapters"] as List?)
-            ?.map((e) => Chapter.fromJson(e))
-            .toList();
-        final categories = (backup["categories"] as List?)
-            ?.map((e) => Category.fromJson(e))
-            .toList();
-        final track =
-            (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-        final history = (backup["history"] as List?)
-            ?.map((e) => History.fromJson(e))
-            .toList();
-        final settings = (backup["settings"] as List?)
-            ?.map((e) => Settings.fromJson(e))
-            .toList();
-        final extensions = (backup["extensions"] as List?)
-            ?.map((e) => Source.fromJson(e))
-            .toList();
-        final extensionsPref = (backup["extensions_preferences"] as List?)
-            ?.map((e) => SourcePreference.fromJson(e))
-            .toList();
-        final updates =
-            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+        final manga = (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
+        final chapters = (backup["chapters"] as List?)?.map((e) => Chapter.fromJson(e)).toList();
+        final categories = (backup["categories"] as List?)?.map((e) => Category.fromJson(e)).toList();
+        final track = (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
+        final history = (backup["history"] as List?)?.map((e) => History.fromJson(e)).toList();
+        final settings = (backup["settings"] as List?)?.map((e) => Settings.fromJson(e)).toList();
+        final extensions = (backup["extensions"] as List?)?.map((e) => Source.fromJson(e)).toList();
+        final extensionsPref =
+            (backup["extensions_preferences"] as List?)?.map((e) => SourcePreference.fromJson(e)).toList();
+        final updates = (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -447,13 +340,10 @@ class SyncServer extends _$SyncServer {
 
               isar.updates.clearSync();
               if (updates != null) {
-                final tempChapters =
-                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
+                final tempChapters = isar.chapters.filter().idIsNotNull().findAllSync().toList();
                 for (var update in updates) {
                   final matchingChapter = tempChapters
-                      .where((chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName)
+                      .where((chapter) => chapter.mangaId == update.mangaId && chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
                     isar.updates.putSync(update..chapter.value = matchingChapter);
@@ -492,10 +382,8 @@ class SyncServer extends _$SyncServer {
           if (isar.settings.getSync(227) == null) {
             isar.settings.putSync(Settings(id: 227));
           }
-          isar.settings.putSync(
-              isar.settings.getSync(227)!..syncAfterReading = syncAfterReading);
-          isar.settings.putSync(
-              isar.settings.getSync(227)!..syncOnAppLaunch = syncOnAppLaunch);
+          isar.settings.putSync(isar.settings.getSync(227)!..syncAfterReading = syncAfterReading);
+          isar.settings.putSync(isar.settings.getSync(227)!..syncOnAppLaunch = syncOnAppLaunch);
           ref.invalidate(themeModeStateProvider);
           ref.invalidate(blendLevelStateProvider);
           ref.invalidate(flexSchemeColorStateProvider);
@@ -517,8 +405,7 @@ class SyncServer extends _$SyncServer {
     if (paddedPayload.length % 4 > 0) {
       paddedPayload += '=' * (4 - paddedPayload.length % 4);
     }
-    final decodedJwt = jsonDecode(utf8.decode(base64Decode(paddedPayload)))
-        as Map<String, dynamic>;
+    final decodedJwt = jsonDecode(utf8.decode(base64Decode(paddedPayload))) as Map<String, dynamic>;
     final auth = JWToken.fromJson(decodedJwt);
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(auth.exp!);
     if (DateTime.now().isAfter(expiresIn)) {

@@ -50,8 +50,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -65,15 +64,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    final serversData =
-        ref.watch(getVideoListProvider(episode: widget.episode));
+    final serversData = ref.watch(getVideoListProvider(episode: widget.episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
         final (videos, isLocal, infoHashList) = data;
         _infoHashList = infoHashList;
-        if (videos.isEmpty &&
-            !(widget.episode.manga.value!.isLocalArchive ?? false)) {
+        if (videos.isEmpty && !(widget.episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
@@ -105,8 +102,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           title: const Text(''),
           leading: BackButton(
             onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
+              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
               Navigator.pop(context);
             },
           ),
@@ -124,8 +120,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             leading: BackButton(
               color: Colors.white,
               onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
+                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
                 Navigator.pop(context);
               },
             ),
@@ -155,24 +150,18 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
-class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
-    with TickerProviderStateMixin {
+class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage> with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
-  late final Player _player =
-      Player(configuration: PlayerConfiguration(libass: useLibass));
+  late final Player _player = Player(configuration: PlayerConfiguration(libass: useLibass));
   late final VideoController _controller = VideoController(_player);
-  late final _streamController =
-      ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
+  late final _streamController = ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
   late final _firstVid = widget.videos.first;
   late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(VideoPrefs(
-      videoTrack: VideoTrack(
-          _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
-      headers: _firstVid.headers));
+      videoTrack: VideoTrack(_firstVid.originalUrl, _firstVid.quality, _firstVid.quality), headers: _firstVid.headers));
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
-  late final ValueNotifier<Duration> _currentPosition =
-      ValueNotifier(_streamController.geTCurrentPosition());
+  late final ValueNotifier<Duration> _currentPosition = ValueNotifier(_streamController.geTCurrentPosition());
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
@@ -186,12 +175,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
 
-  late final StreamSubscription<Duration> _currentPositionSub =
-      _player.stream.position.listen(
+  late final StreamSubscription<Duration> _currentPositionSub = _player.stream.position.listen(
     (position) async {
-      _isCompleted.value =
-          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
-              10;
+      _isCompleted.value = _player.state.duration.inSeconds - _currentPosition.value.inSeconds <= 10;
       _currentPosition.value = position;
 
       if (_firstVid.subtitles?.isNotEmpty ?? false) {
@@ -205,10 +191,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           } catch (_) {}
           try {
             if (_firstVid.audios?.isNotEmpty ?? false) {
-              _player.setAudioTrack(AudioTrack.uri(
-                  _firstVid.audios!.first.file ?? "",
-                  title: _firstVid.audios!.first.label,
-                  language: _firstVid.audios!.first.label));
+              _player.setAudioTrack(AudioTrack.uri(_firstVid.audios!.first.file ?? "",
+                  title: _firstVid.audios!.first.label, language: _firstVid.audios!.first.label));
             }
           } catch (_) {}
         }
@@ -217,15 +201,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     },
   );
 
-  late final StreamSubscription<Duration> _currentTotalDurationSub =
-      _player.stream.duration.listen(
+  late final StreamSubscription<Duration> _currentTotalDurationSub = _player.stream.duration.listen(
     (duration) {
       _currentTotalDuration.value = duration;
     },
   );
 
-  late final StreamSubscription<bool> _completed =
-      _player.stream.completed.listen((val) {
+  late final StreamSubscription<bool> _completed = _player.stream.completed.listen((val) {
     if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
       if (mounted) {
         pushToNewEpisode(context, _streamController.getNextEpisode());
@@ -249,14 +231,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _loadAndroidFont().then(
       (_) {
         _player.open(Media(_video.value!.videoTrack!.id,
-            httpHeaders: _video.value!.headers,
-            start: _streamController.geTCurrentPosition()));
+            httpHeaders: _video.value!.headers, start: _streamController.geTCurrentPosition()));
         if (widget.isTorrent) {
           Future.delayed(const Duration(seconds: 10)).then((_) {
             if (mounted) {
               _player.open(Media(_video.value!.videoTrack!.id,
-                  httpHeaders: _video.value!.headers,
-                  start: _streamController.geTCurrentPosition()));
+                  httpHeaders: _video.value!.headers, start: _streamController.geTCurrentPosition()));
             }
           });
         }
@@ -273,14 +253,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         final subDir = await getApplicationDocumentsDirectory();
         final fontPath = path.join(subDir.path, 'subfont.ttf');
         final data = await rootBundle.load('assets/fonts/subfont.ttf');
-        final bytes =
-            data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
+        final bytes = data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
         final fontFile = await File(fontPath).create(recursive: true);
         await fontFile.writeAsBytes(bytes);
-        await (_player.platform as NativePlayer)
-            .setProperty('sub-fonts-dir', subDir.path);
-        await (_player.platform as NativePlayer)
-            .setProperty('sub-font', 'Droid Sans Fallback');
+        await (_player.platform as NativePlayer).setProperty('sub-fonts-dir', subDir.path);
+        await (_player.platform as NativePlayer).setProperty('sub-font', 'Droid Sans Fallback');
       } catch (_) {}
     }
   }
@@ -288,14 +265,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   void _initAniSkip() async {
     await _player.stream.buffer.first;
     _streamController.getAniSkipResults((result) {
-      final openingRes =
-          result.where((element) => element.skipType == "op").toList();
+      final openingRes = result.where((element) => element.skipType == "op").toList();
       _hasOpeningSkip = openingRes.isNotEmpty;
       if (_hasOpeningSkip) {
         _openingResult = openingRes.first;
       }
-      final endingRes =
-          result.where((element) => element.skipType == "ed").toList();
+      final endingRes = result.where((element) => element.skipType == "ed").toList();
       _hasEndingSkip = endingRes.isNotEmpty;
       if (_hasEndingSkip) {
         _endingResult = endingRes.first;
@@ -320,17 +295,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   void _setCurrentPosition(bool save) {
-    _streamController.setCurrentPosition(
-        _currentPosition.value, _currentTotalDuration.value,
-        save: save);
+    _streamController.setCurrentPosition(_currentPosition.value, _currentTotalDuration.value, save: save);
     _streamController.setAnimeHistoryUpdate();
     _streamController.checkAndSyncProgress();
   }
 
   void _setLandscapeMode(bool state) {
     if (state) {
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     } else {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
@@ -345,8 +317,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         children: [
           Flexible(
               child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).padding.top),
+            padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).padding.top),
             child: Text(text,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontSize: 16,
@@ -360,8 +331,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Widget _videoQualityWidget(BuildContext context) {
     List<VideoPrefs> videoQuality = _player.state.tracks.video
-        .where((element) =>
-            element.w != null && element.h != null && widget.isLocal)
+        .where((element) => element.w != null && element.h != null && widget.isLocal)
         .toList()
         .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
         .toList();
@@ -369,9 +339,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
         videoQuality.add(VideoPrefs(
-            videoTrack: VideoTrack(video.url, video.quality, video.quality),
-            headers: video.headers,
-            isLocal: false));
+            videoTrack: VideoTrack(video.url, video.quality, video.quality), headers: video.headers, isLocal: false));
       }
     }
 
@@ -379,27 +347,21 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
         children: videoQuality.map((quality) {
-          final selected =
-              _video.value!.videoTrack!.title == quality.videoTrack!.title ||
-                  widget.isLocal;
+          final selected = _video.value!.videoTrack!.title == quality.videoTrack!.title || widget.isLocal;
           return GestureDetector(
-            child: textWidget(
-                widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
-                selected),
+            child: textWidget(widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!, selected),
             onTap: () async {
               _video.value = quality;
               if (quality.isLocal) {
                 if (widget.isLocal) {
                   _player.setVideoTrack(quality.videoTrack!);
                 } else {
-                  _player.open(Media(quality.videoTrack!.id,
-                      httpHeaders: quality.headers,
-                      start: _currentPosition.value));
+                  _player
+                      .open(Media(quality.videoTrack!.id, httpHeaders: quality.headers, start: _currentPosition.value));
                 }
               } else {
-                _player.open(Media(quality.videoTrack!.id,
-                    httpHeaders: quality.headers,
-                    start: _currentPosition.value));
+                _player
+                    .open(Media(quality.videoTrack!.id, httpHeaders: quality.headers, start: _currentPosition.value));
               }
               Navigator.pop(context);
             },
@@ -457,10 +419,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
-    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
-        .toList();
+    List<VideoPrefs> videoSubtitle =
+        _player.state.tracks.subtitle.toList().map((e) => VideoPrefs(isLocal: true, subtitle: e)).toList();
 
     List<String> subs = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
@@ -483,10 +443,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     videoSubtitle = videoSubtitle
         .map((e) {
           VideoPrefs vid = e;
-          vid.title = vid.subtitle?.title ??
-              vid.subtitle?.language ??
-              vid.subtitle?.channels ??
-              "";
+          vid.title = vid.subtitle?.title ?? vid.subtitle?.language ?? vid.subtitle?.channels ?? "";
           return vid;
         })
         .toList()
@@ -494,16 +451,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         .toList();
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
     hasSubtitleTrack.call(videoSubtitle.isNotEmpty);
-    videoSubtitle.insert(
-        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+    videoSubtitle.insert(0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
     List<VideoPrefs> videoSubtitleLast = [];
     for (var element in videoSubtitle) {
       final contains = videoSubtitleLast.any((sub) {
-        return (sub.title ??
-                sub.subtitle?.title ??
-                sub.subtitle?.language ??
-                sub.subtitle?.channels ??
-                "None") ==
+        return (sub.title ?? sub.subtitle?.title ?? sub.subtitle?.language ?? sub.subtitle?.channels ?? "None") ==
             (element.title ??
                 element.subtitle?.title ??
                 element.subtitle?.language ??
@@ -518,17 +470,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
         children: videoSubtitleLast.toSet().toList().map((sub) {
-          final title = sub.title ??
-              sub.subtitle?.title ??
-              sub.subtitle?.language ??
-              sub.subtitle?.channels ??
-              "None";
+          final title = sub.title ?? sub.subtitle?.title ?? sub.subtitle?.language ?? sub.subtitle?.channels ?? "None";
 
-          final selected = (title ==
-                  (subtitle.title ??
-                      subtitle.language ??
-                      subtitle.channels ??
-                      "None")) ||
+          final selected = (title == (subtitle.title ?? subtitle.language ?? subtitle.channels ?? "None")) ||
               (subtitle.id == "no" && title == "None");
           return GestureDetector(
             onTap: () {
@@ -545,10 +489,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _videoAudios(BuildContext context) {
-    List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, audio: e))
-        .toList();
+    List<VideoPrefs> videoAudio =
+        _player.state.tracks.audio.toList().map((e) => VideoPrefs(isLocal: true, audio: e)).toList();
 
     List<String> audios = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
@@ -556,9 +498,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         for (var audio in video.audios ?? []) {
           if (!audios.contains(audio.file)) {
             videoAudio.add(VideoPrefs(
-                isLocal: false,
-                audio: AudioTrack.uri(audio.file!,
-                    title: audio.label, language: audio.label)));
+                isLocal: false, audio: AudioTrack.uri(audio.file!, title: audio.label, language: audio.label)));
             audios.add(audio.file!);
           }
         }
@@ -568,10 +508,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     videoAudio = videoAudio
         .map((e) {
           VideoPrefs vid = e;
-          vid.title = vid.audio?.title ??
-              vid.audio?.language ??
-              vid.audio?.channels ??
-              "";
+          vid.title = vid.audio?.title ?? vid.audio?.language ?? vid.audio?.channels ?? "";
           return vid;
         })
         .toList()
@@ -583,13 +520,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
         children: videoAudio.toSet().toList().map((aud) {
-          final title = aud.title ??
-              aud.audio?.title ??
-              aud.audio?.language ??
-              aud.audio?.channels ??
-              "None";
-          final selected =
-              (aud.audio == audio) || (audio.id == "no" && title == "None");
+          final title = aud.title ?? aud.audio?.title ?? aud.audio?.language ?? aud.audio?.channels ?? "None";
+          final selected = (aud.audio == audio) || (audio.id == "no" && title == "None");
           return GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -610,10 +542,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   void _togglePlaybackSpeed() {
     List<double> allowedSpeeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
-    if (allowedSpeeds.indexOf(_playbackSpeed.value) <
-        allowedSpeeds.length - 1) {
-      _setPlaybackSpeed(
-          allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1]);
+    if (allowedSpeeds.indexOf(_playbackSpeed.value) < allowedSpeeds.length - 1) {
+      _setPlaybackSpeed(allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1]);
     } else {
       _setPlaybackSpeed(allowedSpeeds[0]);
     }
@@ -646,26 +576,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _seekToWidget() {
-    final defaultSkipIntroLength =
-        ref.watch(defaultSkipIntroLengthStateProvider);
+    final defaultSkipIntroLength = ref.watch(defaultSkipIntroLengthStateProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: SizedBox(
         height: 35,
         child: ElevatedButton(
             onPressed: () async {
-              _tempPosition.value = Duration(
-                  seconds: defaultSkipIntroLength +
-                      _currentPosition.value.inSeconds);
-              await _player.seek(Duration(
-                  seconds: _currentPosition.value.inSeconds +
-                      defaultSkipIntroLength));
+              _tempPosition.value = Duration(seconds: defaultSkipIntroLength + _currentPosition.value.inSeconds);
+              await _player.seek(Duration(seconds: _currentPosition.value.inSeconds + defaultSkipIntroLength));
               _tempPosition.value = null;
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("+$defaultSkipIntroLength",
-                  style: const TextStyle(fontWeight: FontWeight.w100)),
+              child: Text("+$defaultSkipIntroLength", style: const TextStyle(fontWeight: FontWeight.w100)),
             )),
       ),
     );
@@ -707,8 +631,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                           _togglePlaybackSpeed();
                         }),
                     IconButton(
-                      icon: const Icon(Icons.fit_screen_outlined,
-                          color: Colors.white),
+                      icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
                       onPressed: () async {
                         _changeFitLabel(ref);
                       },
@@ -721,9 +644,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                               _setLandscapeMode(!snapshot);
                               _enterFullScreen.value = !snapshot;
                             },
-                            icon: Icon(snapshot
-                                ? Icons.fullscreen_exit
-                                : Icons.fullscreen),
+                            icon: Icon(snapshot ? Icons.fullscreen_exit : Icons.fullscreen),
                             iconSize: 25,
                             color: Colors.white,
                           );
@@ -740,8 +661,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Widget _desktopBottomButtonBar(BuildContext context) {
     bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController
-            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
+        _streamController.getEpisodesLength(_streamController.getEpisodeIndex().$2);
     bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
     final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
@@ -755,8 +675,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 if (hasPrevEpisode)
                   IconButton(
                     onPressed: () {
-                      pushToNewEpisode(
-                          context, _streamController.getPrevEpisode());
+                      pushToNewEpisode(context, _streamController.getPrevEpisode());
                     },
                     icon: const Icon(
                       Icons.skip_previous,
@@ -769,8 +688,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
-                      pushToNewEpisode(
-                          context, _streamController.getNextEpisode());
+                      pushToNewEpisode(context, _streamController.getNextEpisode());
                     },
                     icon: const Icon(Icons.skip_next, color: Colors.white),
                   ),
@@ -779,12 +697,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   width: 50,
                   child: IconButton(
                     onPressed: () async {
-                      _tempPosition.value = Duration(
-                          seconds:
-                              skipDuration - _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds - skipDuration));
+                      _tempPosition.value = Duration(seconds: skipDuration - _currentPosition.value.inSeconds);
+                      await _player.seek(Duration(seconds: _currentPosition.value.inSeconds - skipDuration));
                       _tempPosition.value = null;
                     },
                     icon: Stack(
@@ -802,8 +716,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               skipDuration.toString(),
-                              style: const TextStyle(
-                                  fontSize: 9, color: Colors.white),
+                              style: const TextStyle(fontSize: 9, color: Colors.white),
                             ),
                           )),
                         ),
@@ -816,12 +729,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   width: 50,
                   child: IconButton(
                     onPressed: () async {
-                      _tempPosition.value = Duration(
-                          seconds:
-                              skipDuration + _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds + skipDuration));
+                      _tempPosition.value = Duration(seconds: skipDuration + _currentPosition.value.inSeconds);
+                      await _player.seek(Duration(seconds: _currentPosition.value.inSeconds + skipDuration));
                       _tempPosition.value = null;
                     },
                     icon: Stack(
@@ -839,8 +748,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               skipDuration.toString(),
-                              style: const TextStyle(
-                                  fontSize: 9, color: Colors.white),
+                              style: const TextStyle(fontSize: 9, color: Colors.white),
                             ),
                           )),
                         ),
@@ -854,8 +762,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 ValueListenableBuilder(
                   valueListenable: _tempPosition,
                   builder: (context, value, child) =>
-                      CustomMaterialDesktopPositionIndicator(
-                          delta: value, controller: _controller),
+                      CustomMaterialDesktopPositionIndicator(delta: value, controller: _controller),
                 )
               ],
             ),
@@ -882,8 +789,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       _togglePlaybackSpeed();
                     }),
                 IconButton(
-                  icon: const Icon(Icons.fit_screen_outlined,
-                      color: Colors.white),
+                  icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
                   onPressed: () async {
                     _changeFitLabel(ref);
                   },
@@ -904,10 +810,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         valueListenable: _enterFullScreen,
         builder: (context, fullScreen, _) {
           return Padding(
-            padding: EdgeInsets.only(
-                top: !_isDesktop && !fullScreen
-                    ? MediaQuery.of(context).padding.top
-                    : 0),
+            padding: EdgeInsets.only(top: !_isDesktop && !fullScreen ? MediaQuery.of(context).padding.top : 0),
             child: Row(
               children: [
                 BackButton(
@@ -922,8 +825,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         }
                       }
                     } else {
-                      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                          overlays: SystemUiOverlay.values);
+                      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
                       if (mounted) {
                         Navigator.pop(context);
                       }
@@ -937,8 +839,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       width: context.width(0.8),
                       child: Text(
                         widget.episode.manga.value!.name!,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -947,9 +848,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       child: Text(
                         widget.episode.name!,
                         style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white.withValues(alpha: 0.7)),
+                            fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white.withValues(alpha: 0.7)),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -1025,8 +924,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   void _resize(BoxFit fit) async {
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
-      _key.currentState?.update(
-          fit: fit, width: context.width(1), height: context.height(1));
+      _key.currentState?.update(fit: fit, width: context.width(1), height: context.height(1));
     }
   }
 
@@ -1036,8 +934,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     return Stack(
       children: [
         Video(
-          subtitleViewConfiguration: SubtitleViewConfiguration(
-              visible: false, style: subtileTextStyle(ref)),
+          subtitleViewConfiguration: SubtitleViewConfiguration(visible: false, style: subtileTextStyle(ref)),
           fit: fit,
           key: _key,
           controls: (state) => _isDesktop
@@ -1079,10 +976,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             builder: (context, value, child) {
               if (_hasOpeningSkip || _hasEndingSkip) {
                 if (_hasOpeningSkip) {
-                  if (_openingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _openingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
+                  if (_openingResult!.interval!.startTime!.ceil() <= value.inSeconds &&
+                      _openingResult!.interval!.endTime!.toInt() > value.inSeconds) {
                     _showAniSkipOpeningButton.value = true;
                     _showAniSkipEndingButton.value = false;
                   } else {
@@ -1090,10 +985,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   }
                 }
                 if (_hasEndingSkip) {
-                  if (_endingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _endingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
+                  if (_endingResult!.interval!.startTime!.ceil() <= value.inSeconds &&
+                      _endingResult!.interval!.endTime!.toInt() > value.inSeconds) {
                     _showAniSkipEndingButton.value = true;
                     _showAniSkipOpeningButton.value = false;
                   }
@@ -1102,12 +995,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 }
               }
               return Consumer(builder: (context, ref, _) {
-                late final enableAniSkip =
-                    ref.watch(enableAniSkipStateProvider);
-                late final enableAutoSkip =
-                    ref.watch(enableAutoSkipStateProvider);
-                late final aniSkipTimeoutLength =
-                    ref.watch(aniSkipTimeoutLengthStateProvider);
+                late final enableAniSkip = ref.watch(enableAniSkipStateProvider);
+                late final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
+                late final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
                 return ValueListenableBuilder(
                   valueListenable: _showAniSkipOpeningButton,
                   builder: (context, showAniSkipOpENINGButton, child) {
@@ -1165,13 +1055,11 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
     children: [
       Text(
         Duration(seconds: value).label(),
-        style: const TextStyle(
-            fontSize: 65.0, fontWeight: FontWeight.bold, color: Colors.white),
+        style: const TextStyle(fontSize: 65.0, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       Text(
         "[${swipeDuration > 0 ? "+${Duration(seconds: swipeDuration).label()}" : "-${Duration(seconds: swipeDuration).label()}"}]",
-        style: const TextStyle(
-            fontSize: 40.0, color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 40.0, color: Colors.white, fontWeight: FontWeight.bold),
       ),
     ],
   );
@@ -1184,11 +1072,5 @@ class VideoPrefs {
   AudioTrack? audio;
   bool isLocal;
   final Map<String, String>? headers;
-  VideoPrefs(
-      {this.videoTrack,
-      this.isLocal = true,
-      this.headers,
-      this.subtitle,
-      this.audio,
-      this.title});
+  VideoPrefs({this.videoTrack, this.isLocal = true, this.headers, this.subtitle, this.audio, this.title});
 }

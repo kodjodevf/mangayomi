@@ -10,8 +10,7 @@ class JsVideosExtractors {
 
   void init() {
     runtime.onMessage('sibnetExtractor', (dynamic args) async {
-      return (await MBridge.sibnetExtractor(args[0], args[1] ?? ""))
-          .encodeToJson();
+      return (await MBridge.sibnetExtractor(args[0], args[1] ?? "")).encodeToJson();
     });
     runtime.onMessage('myTvExtractor', (dynamic args) async {
       return (await MBridge.myTvExtractor(args[0])).encodeToJson();
@@ -26,8 +25,7 @@ class JsVideosExtractors {
       return (await MBridge.vidBomExtractor(args[0])).encodeToJson();
     });
     runtime.onMessage('quarkVideosExtractor', (dynamic args) async {
-      return (await MBridge.quarkVideosExtractor(args[0], args[1]))
-          .encodeToJson();
+      return (await MBridge.quarkVideosExtractor(args[0], args[1])).encodeToJson();
     });
     runtime.onMessage('ucVideosExtractor', (dynamic args) async {
       return (await MBridge.ucVideosExtractor(args[0], args[1])).encodeToJson();
@@ -41,27 +39,16 @@ class JsVideosExtractors {
       return (await MBridge.ucFilesExtractor(urls, args[1]));
     });
     runtime.onMessage('streamlareExtractor', (dynamic args) async {
-      return (await MBridge.streamlareExtractor(
-              args[0], args[1] ?? "", args[2] ?? ""))
-          .encodeToJson();
+      return (await MBridge.streamlareExtractor(args[0], args[1] ?? "", args[2] ?? "")).encodeToJson();
     });
     runtime.onMessage('sendVidExtractor', (dynamic args) async {
       return (await MBridge.sendVidExtractor(
-              args[0],
-              args[1] != null
-                  ? jsonEncode((args[1] as Map?).toMapStringString)
-                  : null,
-              args[2] ?? ""))
+              args[0], args[1] != null ? jsonEncode((args[1] as Map?).toMapStringString) : null, args[2] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('yourUploadExtractor', (dynamic args) async {
-      return (await MBridge.yourUploadExtractor(
-              args[0],
-              args[1] != null
-                  ? jsonEncode((args[1] as Map?).toMapStringString)
-                  : null,
-              args[2],
-              args[3] ?? ""))
+      return (await MBridge.yourUploadExtractor(args[0],
+              args[1] != null ? jsonEncode((args[1] as Map?).toMapStringString) : null, args[2], args[3] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('gogoCdnExtractor', (dynamic args) async {
@@ -71,27 +58,18 @@ class JsVideosExtractors {
       return (await MBridge.doodExtractor(args[0], args[1])).encodeToJson();
     });
     runtime.onMessage('streamTapeExtractor', (dynamic args) async {
-      return (await MBridge.streamTapeExtractor(args[0], args[1]))
-          .encodeToJson();
+      return (await MBridge.streamTapeExtractor(args[0], args[1])).encodeToJson();
     });
     runtime.onMessage('mp4UploadExtractor', (dynamic args) async {
-      return (await MBridge.mp4UploadExtractor(
-              args[0],
-              args[1] != null
-                  ? jsonEncode((args[1] as Map?).toMapStringString)
-                  : null,
-              args[2] ?? "",
-              args[3] ?? ""))
+      return (await MBridge.mp4UploadExtractor(args[0],
+              args[1] != null ? jsonEncode((args[1] as Map?).toMapStringString) : null, args[2] ?? "", args[3] ?? ""))
           .encodeToJson();
     });
     runtime.onMessage('streamWishExtractor', (dynamic args) async {
-      return (await MBridge.streamWishExtractor(args[0], args[1] ?? ""))
-          .encodeToJson();
+      return (await MBridge.streamWishExtractor(args[0], args[1] ?? "")).encodeToJson();
     });
     runtime.onMessage('filemoonExtractor', (dynamic args) async {
-      return (await MBridge.filemoonExtractor(
-              args[0], args[1] ?? "", args[2] ?? ""))
-          .encodeToJson();
+      return (await MBridge.filemoonExtractor(args[0], args[1] ?? "", args[2] ?? "")).encodeToJson();
     });
 
     runtime.evaluate('''

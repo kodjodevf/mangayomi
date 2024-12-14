@@ -9,8 +9,7 @@ import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
-Widget btnToShowChapterListDialog(
-    BuildContext context, String title, Chapter chapter,
+Widget btnToShowChapterListDialog(BuildContext context, String title, Chapter chapter,
     {void Function(bool)? onChanged}) {
   return IconButton(
       onPressed: () async {
@@ -20,9 +19,7 @@ Widget btnToShowChapterListDialog(
             builder: (context) {
               return AlertDialog(
                 title: Text(title),
-                content: SizedBox(
-                    width: context.width(0.8),
-                    child: ChapterListWidget(chapter: chapter)),
+                content: SizedBox(width: context.width(0.8), child: ChapterListWidget(chapter: chapter)),
               );
             });
         onChanged?.call(true);
@@ -54,9 +51,7 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
 
   Future<void> _jumpTo() async {
     await Future.delayed(const Duration(milliseconds: 5));
-    controller.jumpTo(controller.position.maxScrollExtent /
-        chapterList.length *
-        currentChapIndex);
+    controller.jumpTo(controller.position.maxScrollExtent / chapterList.length * currentChapIndex);
   }
 
   @override
@@ -75,10 +70,8 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
                   itemCount: chapterList.length,
                   itemBuilder: (context, index) {
                     final chapter = chapterList[index];
-                    final currentChap =
-                        chapter == chapterList[currentChapIndex];
-                    return ChapterListTile(
-                        chapter: chapter, currentChap: currentChap);
+                    final currentChap = chapter == chapterList[currentChapIndex];
+                    return ChapterListTile(chapter: chapter, currentChap: currentChap);
                   }),
             ),
           ],
@@ -89,8 +82,7 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
 class ChapterListTile extends StatefulWidget {
   final Chapter chapter;
   final bool currentChap;
-  const ChapterListTile(
-      {super.key, required this.chapter, required this.currentChap});
+  const ChapterListTile({super.key, required this.chapter, required this.currentChap});
 
   @override
   State<ChapterListTile> createState() => _ChapterListTileState();
@@ -109,8 +101,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
                 ? Colors.black.withValues(alpha: 0.4)
                 : Colors.white.withValues(alpha: 0.3)
             : null,
-        selectedColor:
-            chapter.isRead! ? Colors.white.withValues(alpha: 0.3) : Colors.white,
+        selectedColor: chapter.isRead! ? Colors.white.withValues(alpha: 0.3) : Colors.white,
         onTap: () async {
           if (!widget.currentChap) {
             Navigator.pop(context);
@@ -129,12 +120,10 @@ class _ChapterListTileState extends State<ChapterListTile> {
                   builder: (context, ref, child) => Text(
                       chapter.dateUpload == null || chapter.dateUpload!.isEmpty
                           ? ""
-                          : dateFormat(chapter.dateUpload!,
-                              ref: ref, context: context),
+                          : dateFormat(chapter.dateUpload!, ref: ref, context: context),
                       style: const TextStyle(fontSize: 11))),
             if (!chapter.isRead!)
-              if (chapter.lastPageRead!.isNotEmpty &&
-                  chapter.lastPageRead != "1")
+              if (chapter.lastPageRead!.isNotEmpty && chapter.lastPageRead != "1")
                 if (chapter.scanlator!.isNotEmpty)
                   Row(
                     children: [
@@ -157,13 +146,11 @@ class _ChapterListTileState extends State<ChapterListTile> {
               isBookmarked = !isBookmarked;
             });
             isar.writeTxnSync(() => {
-                  addUpdatedChapterIndependentProvider.call(
-                      chapter, false, false),
+                  addUpdatedChapterIndependentProvider.call(chapter, false, false),
                   isar.chapters.putSync(chapter..isBookmarked = isBookmarked),
                 });
           },
-          icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-              color: context.primaryColor),
+          icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline, color: context.primaryColor),
         ),
       ),
     );

@@ -71,8 +71,7 @@ class StorageProvider {
     Directory? directory;
     String path = isar.settings.getSync(227)!.downloadLocation ?? "";
     if (Platform.isAndroid) {
-      directory =
-          Directory(path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/");
+      directory = Directory(path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = path.isEmpty ? dir.path : path;
@@ -85,9 +84,8 @@ class StorageProvider {
     Chapter chapter,
   ) async {
     final manga = chapter.manga.value!;
-    String scanlator = chapter.scanlator?.isNotEmpty ?? false
-        ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
-        : "";
+    String scanlator =
+        chapter.scanlator?.isNotEmpty ?? false ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_" : "";
     final isManga = chapter.manga.value!.isManga!;
     final dir = await getDirectory();
     return Directory(

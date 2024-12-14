@@ -52,8 +52,7 @@ class ClientSettings {
     this.tlsSettings,
   });
 
-  static Future<ClientSettings> default_() =>
-      RustLib.instance.api.crateApiRhttpClientClientSettingsDefault();
+  static Future<ClientSettings> default_() => RustLib.instance.api.crateApiRhttpClientClientSettingsDefault();
 
   @override
   int get hashCode =>

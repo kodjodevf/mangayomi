@@ -18,8 +18,7 @@ class TrackScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final updateProgressAfterReading =
-        ref.watch(updateProgressAfterReadingStateProvider);
+    final updateProgressAfterReading = ref.watch(updateProgressAfterReadingStateProvider);
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -27,40 +26,28 @@ class TrackScreen extends ConsumerWidget {
       ),
       body: SingleChildScrollView(
         child: StreamBuilder(
-            stream: isar.trackPreferences
-                .filter()
-                .syncIdIsNotNull()
-                .watch(fireImmediately: true),
+            stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(fireImmediately: true),
             builder: (context, snapshot) {
-              List<TrackPreference>? entries =
-                  snapshot.hasData ? snapshot.data : [];
+              List<TrackPreference>? entries = snapshot.hasData ? snapshot.data : [];
               return Column(
                 children: [
                   SwitchListTile(
                       value: updateProgressAfterReading,
                       title: Text(context.l10n.updateProgressAfterReading),
                       onChanged: (value) {
-                        ref
-                            .read(updateProgressAfterReadingStateProvider
-                                .notifier)
-                            .set(value);
+                        ref.read(updateProgressAfterReadingStateProvider.notifier).set(value);
                       }),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        left: 15, right: 15, bottom: 10, top: 5),
+                    padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10, top: 5),
                     child: Row(
                       children: [
-                        Text(l10n.services,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.services, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
                   TrackListile(
                       onTap: () async {
-                        await ref
-                            .read(anilistProvider(syncId: 2).notifier)
-                            .login();
+                        await ref.read(anilistProvider(syncId: 2).notifier).login();
                       },
                       id: 2,
                       entries: entries!),
@@ -72,10 +59,7 @@ class TrackScreen extends ConsumerWidget {
                       entries: entries),
                   TrackListile(
                       onTap: () async {
-                        await ref
-                            .read(myAnimeListProvider(syncId: 1, isManga: null)
-                                .notifier)
-                            .login();
+                        await ref.read(myAnimeListProvider(syncId: 1, isManga: null).notifier).login();
                       },
                       id: 1,
                       entries: entries),
@@ -91,14 +75,11 @@ class TrackScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    subtitle: Text(l10n.tracking_warning_info,
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor)),
+                    subtitle:
+                        Text(l10n.tracking_warning_info, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                   ),
                   ListTileWidget(
-                      title: l10n.manage_trackers,
-                      icon: Icons.settings,
-                      onTap: () => context.push('/manageTrackers')),
+                      title: l10n.manage_trackers, icon: Icons.settings, onTap: () => context.push('/manageTrackers')),
                 ],
               );
             }),
@@ -144,14 +125,11 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                         filled: false,
                         contentPadding: const EdgeInsets.all(12),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(width: 0.4),
-                            borderRadius: BorderRadius.circular(5)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(5)),
+                            borderSide: const BorderSide(width: 0.4), borderRadius: BorderRadius.circular(5)),
+                        focusedBorder:
+                            OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(5)),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide()))),
+                            borderRadius: BorderRadius.circular(5), borderSide: const BorderSide()))),
               ),
               const SizedBox(height: 10),
               Padding(
@@ -168,20 +146,15 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                             onPressed: () => setState(() {
                                   obscureText = !obscureText;
                                 }),
-                            icon: Icon(obscureText
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined)),
+                            icon: Icon(obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined)),
                         filled: false,
                         contentPadding: const EdgeInsets.all(12),
                         enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(width: 0.4),
-                            borderRadius: BorderRadius.circular(5)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(5)),
+                            borderSide: const BorderSide(width: 0.4), borderRadius: BorderRadius.circular(5)),
+                        focusedBorder:
+                            OutlineInputBorder(borderSide: const BorderSide(), borderRadius: BorderRadius.circular(5)),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide()))),
+                            borderRadius: BorderRadius.circular(5), borderSide: const BorderSide()))),
               ),
               const SizedBox(height: 10),
               Text(errorMessage, style: const TextStyle(color: Colors.red)),
@@ -198,9 +171,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                final res = await ref
-                                    .read(kitsuProvider(syncId: 3).notifier)
-                                    .login(email, password);
+                                final res = await ref.read(kitsuProvider(syncId: 3).notifier).login(email, password);
                                 if (!res.$1) {
                                   setState(() {
                                     isLoading = false;
@@ -212,9 +183,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                                   }
                                 }
                               },
-                        child: isLoading
-                            ? const CircularProgressIndicator()
-                            : Text(l10n.login))),
+                        child: isLoading ? const CircularProgressIndicator() : Text(l10n.login))),
               )
             ],
           ),

@@ -22,8 +22,7 @@ class DartExtensionService {
 
     final runtime = runtimeEval(bytecode);
 
-    return runtime.executeLib('package:mangayomi/main.dart', 'main',
-        [$MSource.wrap(source!.toMSource())]) as MProvider;
+    return runtime.executeLib('package:mangayomi/main.dart', 'main', [$MSource.wrap(source!.toMSource())]) as MProvider;
   }
 
   Map<String, String> getHeaders() {
@@ -81,8 +80,7 @@ class DartExtensionService {
     return await _executeLib().getLatestUpdates(page);
   }
 
-  Future<MPages> search(
-      String query, int page, List<dynamic> filterList) async {
+  Future<MPages> search(String query, int page, List<dynamic> filterList) async {
     return await _executeLib().search(query, page, FilterList(filterList));
   }
 
@@ -92,9 +90,7 @@ class DartExtensionService {
 
   Future<List<PageUrl>> getPageList(String url) async {
     return (await _executeLib().getPageList(url))
-        .map((e) => e is String
-            ? PageUrl(e.toString().trim())
-            : PageUrl.fromJson((e as Map).toMapStringDynamic!))
+        .map((e) => e is String ? PageUrl(e.toString().trim()) : PageUrl.fromJson((e as Map).toMapStringDynamic!))
         .toList();
   }
 
@@ -103,10 +99,7 @@ class DartExtensionService {
   }
 
   List<dynamic> getFilterList() {
-    return _executeLib()
-        .getFilterList()
-        .map((e) => e is $Value ? e.$reified : e)
-        .toList();
+    return _executeLib().getFilterList().map((e) => e is $Value ? e.$reified : e).toList();
   }
 
   List<SourcePreference> getSourcePreferences() {

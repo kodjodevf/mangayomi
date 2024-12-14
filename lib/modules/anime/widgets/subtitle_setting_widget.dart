@@ -43,9 +43,9 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               iconButton(Icons.remove, () {
-                ref.read(subtitleSettingsStateProvider.notifier).set(
-                    subtitleSettings..fontSize = subtitleSettings.fontSize! - 1,
-                    true);
+                ref
+                    .read(subtitleSettingsStateProvider.notifier)
+                    .set(subtitleSettings..fontSize = subtitleSettings.fontSize! - 1, true);
                 setState(() {});
               },
                   backgroundColor: context.dynamicWhiteBlackColor,
@@ -54,15 +54,12 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
               SizedBox(
                 width: 200,
                 child: TextFormField(
-                  controller: TextEditingController(
-                      text: subtitleSettings.fontSize.toString()),
+                  controller: TextEditingController(text: subtitleSettings.fontSize.toString()),
                   keyboardType: TextInputType.number,
                   onChanged: (v) {
                     final val = int.tryParse(v);
                     if (val != null) {
-                      ref
-                          .read(subtitleSettingsStateProvider.notifier)
-                          .set(subtitleSettings..fontSize = val, true);
+                      ref.read(subtitleSettingsStateProvider.notifier).set(subtitleSettings..fontSize = val, true);
                     }
                   },
                   decoration: InputDecoration(
@@ -70,51 +67,40 @@ class _FontSettingWidgetState extends ConsumerState<FontSettingWidget> {
                       isDense: true,
                       filled: true,
                       fillColor: Colors.transparent,
-                      enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: context.dynamicThemeColor)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: context.dynamicThemeColor)),
-                      border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: context.dynamicThemeColor))),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor)),
+                      border: OutlineInputBorder(borderSide: BorderSide(color: context.dynamicThemeColor))),
                 ),
               ),
               iconButton(Icons.add, () {
-                ref.read(subtitleSettingsStateProvider.notifier).set(
-                    subtitleSettings..fontSize = subtitleSettings.fontSize! + 1,
-                    true);
+                ref
+                    .read(subtitleSettingsStateProvider.notifier)
+                    .set(subtitleSettings..fontSize = subtitleSettings.fontSize! + 1, true);
                 setState(() {});
               },
                   backgroundColor: context.dynamicWhiteBlackColor,
                   iconColors: context.isLight ? Colors.white : Colors.black,
                   size: 25),
               iconButton(Icons.format_bold, () {
-                ref.read(subtitleSettingsStateProvider.notifier).set(
-                    subtitleSettings..useBold = !subtitleSettings.useBold!,
-                    true);
+                ref
+                    .read(subtitleSettingsStateProvider.notifier)
+                    .set(subtitleSettings..useBold = !subtitleSettings.useBold!, true);
                 setState(() {});
-              },
-                  iconColors: subtitleSettings.useBold!
-                      ? null
-                      : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
+              }, iconColors: subtitleSettings.useBold! ? null : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
               iconButton(Icons.format_italic, () {
-                ref.read(subtitleSettingsStateProvider.notifier).set(
-                    subtitleSettings..useItalic = !subtitleSettings.useItalic!,
-                    true);
+                ref
+                    .read(subtitleSettingsStateProvider.notifier)
+                    .set(subtitleSettings..useItalic = !subtitleSettings.useItalic!, true);
                 setState(() {});
               },
-                  iconColors: subtitleSettings.useItalic!
-                      ? null
-                      : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
+                  iconColors:
+                      subtitleSettings.useItalic! ? null : context.dynamicWhiteBlackColor.withValues(alpha: 0.5)),
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text("Lorem ipsum dolor sit amet",
-                style: subtileTextStyle(ref).copyWith(fontSize: 22),
-                textAlign: TextAlign.center),
+                style: subtileTextStyle(ref).copyWith(fontSize: 22), textAlign: TextAlign.center),
           ),
           TextButton(
               onPressed: () {
@@ -168,8 +154,7 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: color,
-                  border: Border.all(
-                      width: 2, color: context.dynamicWhiteBlackColor)),
+                  border: Border.all(width: 2, color: context.dynamicWhiteBlackColor)),
             ),
           ),
           Text("#${color.hexCode}", style: TextStyle(color: context.textColor)),
@@ -185,15 +170,12 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
   @override
   Widget build(BuildContext context) {
     final subSets = ref.watch(subtitleSettingsStateProvider);
-    final textColor = Color.fromARGB(subSets.textColorA!, subSets.textColorR!,
-        subSets.textColorG!, subSets.textColorB!);
-    final borderColor = Color.fromARGB(subSets.borderColorA!,
-        subSets.borderColorR!, subSets.borderColorG!, subSets.borderColorB!);
+    final textColor =
+        Color.fromARGB(subSets.textColorA!, subSets.textColorR!, subSets.textColorG!, subSets.textColorB!);
+    final borderColor =
+        Color.fromARGB(subSets.borderColorA!, subSets.borderColorR!, subSets.borderColorG!, subSets.borderColorB!);
     final backgroundColor = Color.fromARGB(
-        subSets.backgroundColorA!,
-        subSets.backgroundColorR!,
-        subSets.backgroundColorG!,
-        subSets.backgroundColorB!);
+        subSets.backgroundColorA!, subSets.backgroundColorR!, subSets.backgroundColorG!, subSets.backgroundColorB!);
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -216,72 +198,45 @@ class _ColorSettingWidgetState extends ConsumerState<ColorSettingWidget> {
             ),
           Row(
             children: [
-              Expanded(
-                  flex: 3, child: button(context.l10n.text, "text", textColor)),
-              Expanded(
-                  flex: 3,
-                  child: button(context.l10n.border, "border", borderColor)),
-              Expanded(
-                  flex: 3,
-                  child: button(
-                      context.l10n.background, "backgroud", backgroundColor)),
+              Expanded(flex: 3, child: button(context.l10n.text, "text", textColor)),
+              Expanded(flex: 3, child: button(context.l10n.border, "border", borderColor)),
+              Expanded(flex: 3, child: button(context.l10n.background, "backgroud", backgroundColor)),
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text("Lorem ipsum dolor sit amet",
-                style: subtileTextStyle(ref).copyWith(fontSize: 22),
-                textAlign: TextAlign.center),
+                style: subtileTextStyle(ref).copyWith(fontSize: 22), textAlign: TextAlign.center),
           ),
           if (selector == "text") ...[
-            rgbaFilterWidget(subSets.textColorA!, subSets.textColorR!,
-                subSets.textColorG!, subSets.textColorB!, (val) {
+            rgbaFilterWidget(subSets.textColorA!, subSets.textColorR!, subSets.textColorG!, subSets.textColorB!, (val) {
               if (val.$3 == "r") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..textColorR = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..textColorR = val.$1.toInt(), val.$2);
               } else if (val.$3 == "g") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..textColorG = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..textColorG = val.$1.toInt(), val.$2);
               } else if (val.$3 == "b") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..textColorB = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..textColorB = val.$1.toInt(), val.$2);
               } else {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..textColorA = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..textColorA = val.$1.toInt(), val.$2);
               }
               setState(() {});
             }, context),
           ] else if (selector == "border") ...[
-            rgbaFilterWidget(subSets.borderColorA!, subSets.borderColorR!,
-                subSets.borderColorG!, subSets.borderColorB!, (val) {
+            rgbaFilterWidget(subSets.borderColorA!, subSets.borderColorR!, subSets.borderColorG!, subSets.borderColorB!,
+                (val) {
               if (val.$3 == "r") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..borderColorR = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..borderColorR = val.$1.toInt(), val.$2);
               } else if (val.$3 == "g") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..borderColorG = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..borderColorG = val.$1.toInt(), val.$2);
               } else if (val.$3 == "b") {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..borderColorB = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..borderColorB = val.$1.toInt(), val.$2);
               } else {
-                ref
-                    .read(subtitleSettingsStateProvider.notifier)
-                    .set(subSets..borderColorA = val.$1.toInt(), val.$2);
+                ref.read(subtitleSettingsStateProvider.notifier).set(subSets..borderColorA = val.$1.toInt(), val.$2);
               }
               setState(() {});
             }, context),
           ] else ...[
-            rgbaFilterWidget(
-                subSets.backgroundColorA!,
-                subSets.backgroundColorR!,
-                subSets.backgroundColorG!,
+            rgbaFilterWidget(subSets.backgroundColorA!, subSets.backgroundColorR!, subSets.backgroundColorG!,
                 subSets.backgroundColorB!, (val) {
               if (val.$3 == "r") {
                 ref
@@ -324,8 +279,7 @@ Widget iconButton(IconData icon, void Function()? onPressed,
         width: size,
         child: IconButton(
             iconSize: size * 0.9,
-            style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(backgroundColor)),
+            style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(backgroundColor)),
             padding: const EdgeInsets.all(1),
             onPressed: onPressed,
             icon: Icon(icon, color: iconColors)),

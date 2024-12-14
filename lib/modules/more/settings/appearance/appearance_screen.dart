@@ -32,8 +32,7 @@ class AppearanceScreen extends ConsumerWidget {
         : GoogleFonts.asMap()
             .entries
             .toList()
-            .firstWhere(
-                (element) => element.value().fontFamily! == appFontFamily)
+            .firstWhere((element) => element.value().fontFamily! == appFontFamily)
             .key;
     return Scaffold(
       appBar: AppBar(
@@ -50,9 +49,7 @@ class AppearanceScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.theme,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.theme, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -65,13 +62,10 @@ class AppearanceScreen extends ConsumerWidget {
                           title: Text(l10n.pure_black_dark_mode),
                           value: pureBlackDarkMode,
                           onChanged: (value) {
-                            ref
-                                .read(pureBlackDarkModeStateProvider.notifier)
-                                .set(value);
+                            ref.read(pureBlackDarkModeStateProvider.notifier).set(value);
                           }),
                     ),
-                  if (!pureBlackDarkMode || !isDarkTheme)
-                    const BlendLevelSlider()
+                  if (!pureBlackDarkMode || !isDarkTheme) const BlendLevelSlider()
                 ],
               ),
             ),
@@ -83,9 +77,7 @@ class AppearanceScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.appearance,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.appearance, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -102,25 +94,19 @@ class AppearanceScreen extends ConsumerWidget {
                                   width: context.width(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount: AppLocalizations
-                                        .supportedLocales.length,
+                                    itemCount: AppLocalizations.supportedLocales.length,
                                     itemBuilder: (context, index) {
-                                      final locale = AppLocalizations
-                                          .supportedLocales[index];
+                                      final locale = AppLocalizations.supportedLocales[index];
                                       return RadioListTile(
                                         dense: true,
                                         contentPadding: const EdgeInsets.all(0),
                                         value: locale,
                                         groupValue: l10nLocale,
                                         onChanged: (value) {
-                                          ref
-                                              .read(l10nLocaleStateProvider
-                                                  .notifier)
-                                              .setLocale(locale);
+                                          ref.read(l10nLocaleStateProvider.notifier).setLocale(locale);
                                           Navigator.pop(context);
                                         },
-                                        title: Text(completeLanguageName(
-                                            locale.toLanguageTag())),
+                                        title: Text(completeLanguageName(locale.toLanguageTag())),
                                       );
                                     },
                                   )),
@@ -134,8 +120,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         },
                                         child: Text(
                                           l10n.cancel,
-                                          style: TextStyle(
-                                              color: context.primaryColor),
+                                          style: TextStyle(color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -146,8 +131,7 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.app_language),
                     subtitle: Text(
                       completeLanguageName(l10nLocale.toLanguageTag()),
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor),
+                      style: TextStyle(fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                   ListTile(
@@ -159,15 +143,13 @@ class AppearanceScreen extends ConsumerWidget {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(context.l10n.font),
-                              content:
-                                  StatefulBuilder(builder: (context, setState) {
+                              content: StatefulBuilder(builder: (context, setState) {
                                 return SizedBox(
                                     width: context.width(0.8),
                                     child: Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12, horizontal: 8),
+                                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                                           child: TextField(
                                               onChanged: (v) {
                                                 setState(() {
@@ -177,37 +159,24 @@ class AppearanceScreen extends ConsumerWidget {
                                               decoration: InputDecoration(
                                                   isDense: true,
                                                   filled: false,
-                                                  enabledBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: context
-                                                            .secondaryColor),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: context.secondaryColor),
                                                   ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: context
-                                                            .primaryColor),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: context.primaryColor),
                                                   ),
-                                                  border:
-                                                      const OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide()),
+                                                  border: const OutlineInputBorder(borderSide: BorderSide()),
                                                   hintText: l10n.search)),
                                         ),
                                         Builder(builder: (context) {
-                                          List values = GoogleFonts.asMap()
-                                              .entries
-                                              .toList();
+                                          List values = GoogleFonts.asMap().entries.toList();
                                           values = values
-                                              .where((values) => values.key
-                                                  .toLowerCase()
-                                                  .contains(
-                                                      textValue.toLowerCase()))
+                                              .where((values) =>
+                                                  values.key.toLowerCase().contains(textValue.toLowerCase()))
                                               .toList();
                                           return Flexible(
                                             child: Scrollbar(
-              interactive: true,
+                                              interactive: true,
                                               thickness: 12,
                                               radius: const Radius.circular(10),
                                               controller: controller,
@@ -215,35 +184,21 @@ class AppearanceScreen extends ConsumerWidget {
                                                 controller: controller,
                                                 slivers: [
                                                   SliverPadding(
-                                                    padding:
-                                                        const EdgeInsets.all(0),
-                                                    sliver:
-                                                        SuperSliverList.builder(
+                                                    padding: const EdgeInsets.all(0),
+                                                    sliver: SuperSliverList.builder(
                                                       itemCount: values.length,
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        final value =
-                                                            values[index];
+                                                      itemBuilder: (context, index) {
+                                                        final value = values[index];
                                                         return RadioListTile(
                                                           dense: true,
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(0),
-                                                          value: value
-                                                              .value()
-                                                              .fontFamily,
-                                                          groupValue:
-                                                              appFontFamily,
+                                                          contentPadding: const EdgeInsets.all(0),
+                                                          value: value.value().fontFamily,
+                                                          groupValue: appFontFamily,
                                                           onChanged: (value) {
-                                                            ref
-                                                                .read(appFontFamilyProvider
-                                                                    .notifier)
-                                                                .set(value);
-                                                            Navigator.pop(
-                                                                context);
+                                                            ref.read(appFontFamilyProvider.notifier).set(value);
+                                                            Navigator.pop(context);
                                                           },
-                                                          title:
-                                                              Text(value.key),
+                                                          title: Text(value.key),
                                                         );
                                                       },
                                                     ),
@@ -262,16 +217,12 @@ class AppearanceScreen extends ConsumerWidget {
                                   children: [
                                     TextButton(
                                         onPressed: () async {
-                                          ref
-                                              .read(appFontFamilyProvider
-                                                  .notifier)
-                                              .set(null);
+                                          ref.read(appFontFamilyProvider.notifier).set(null);
                                           Navigator.pop(context);
                                         },
                                         child: Text(
                                           l10n.default0,
-                                          style: TextStyle(
-                                              color: context.primaryColor),
+                                          style: TextStyle(color: context.primaryColor),
                                         )),
                                     TextButton(
                                         onPressed: () async {
@@ -279,8 +230,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         },
                                         child: Text(
                                           l10n.cancel,
-                                          style: TextStyle(
-                                              color: context.primaryColor),
+                                          style: TextStyle(color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -291,8 +241,7 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(context.l10n.font),
                     subtitle: Text(
                       appFontFamilySub,
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor),
+                      style: TextStyle(fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                 ],
@@ -306,9 +255,7 @@ class AppearanceScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.timestamp,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.timestamp, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -325,8 +272,7 @@ class AppearanceScreen extends ConsumerWidget {
                                   width: context.width(0.8),
                                   child: ListView.builder(
                                     shrinkWrap: true,
-                                    itemCount:
-                                        relativeTimestampsList(context).length,
+                                    itemCount: relativeTimestampsList(context).length,
                                     itemBuilder: (context, index) {
                                       return RadioListTile(
                                         dense: true,
@@ -334,18 +280,11 @@ class AppearanceScreen extends ConsumerWidget {
                                         value: index,
                                         groupValue: relativeTimestamps,
                                         onChanged: (value) {
-                                          ref
-                                              .read(
-                                                  relativeTimesTampsStateProvider
-                                                      .notifier)
-                                              .set(value!);
+                                          ref.read(relativeTimesTampsStateProvider.notifier).set(value!);
                                           Navigator.pop(context);
                                         },
                                         title: Row(
-                                          children: [
-                                            Text(relativeTimestampsList(
-                                                context)[index])
-                                          ],
+                                          children: [Text(relativeTimestampsList(context)[index])],
                                         ),
                                       );
                                     },
@@ -360,8 +299,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         },
                                         child: Text(
                                           l10n.cancel,
-                                          style: TextStyle(
-                                              color: context.primaryColor),
+                                          style: TextStyle(color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -372,8 +310,7 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.relative_timestamp),
                     subtitle: Text(
                       relativeTimestampsList(context)[relativeTimestamps],
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor),
+                      style: TextStyle(fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                   ListTile(
@@ -397,10 +334,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         value: dateFormatsList[index],
                                         groupValue: dateFormatState,
                                         onChanged: (value) {
-                                          ref
-                                              .read(dateFormatStateProvider
-                                                  .notifier)
-                                              .set(value!);
+                                          ref.read(dateFormatStateProvider.notifier).set(value!);
                                           Navigator.pop(context);
                                         },
                                         title: Row(
@@ -422,8 +356,7 @@ class AppearanceScreen extends ConsumerWidget {
                                         },
                                         child: Text(
                                           l10n.cancel,
-                                          style: TextStyle(
-                                              color: context.primaryColor),
+                                          style: TextStyle(color: context.primaryColor),
                                         )),
                                   ],
                                 )
@@ -434,8 +367,7 @@ class AppearanceScreen extends ConsumerWidget {
                     title: Text(l10n.date_format),
                     subtitle: Text(
                       "$dateFormatState (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor),
+                      style: TextStyle(fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
                 ],

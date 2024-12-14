@@ -15,8 +15,7 @@ part 'anilist.g.dart';
 @riverpod
 class Anilist extends _$Anilist {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  final String _clientId =
-      (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
+  final String _clientId = (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
   static const String _baseApiUrl = "https://graphql.anilist.co/";
   final String _redirectUri = (Platform.isWindows || Platform.isLinux)
       ? 'http://localhost:43824/success?code=1337'
@@ -29,15 +28,12 @@ class Anilist extends _$Anilist {
   void build({required int syncId, bool? isManga}) {}
 
   Future<bool?> login() async {
-    final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)
-        ? 'http://localhost:43824'
-        : 'mangayomi';
+    final callbackUrlScheme = (Platform.isWindows || Platform.isLinux) ? 'http://localhost:43824' : 'mangayomi';
     final loginUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=$_clientId&redirect_uri=$_redirectUri&response_type=code';
 
     try {
-      final uri = await FlutterWebAuth2.authenticate(
-          url: loginUrl, callbackUrlScheme: callbackUrlScheme);
+      final uri = await FlutterWebAuth2.authenticate(url: loginUrl, callbackUrlScheme: callbackUrlScheme);
 
       final code = Uri.parse(uri).queryParameters['code'];
       final response = await http.post(
@@ -88,10 +84,7 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     final data = json.decode(response.body);
@@ -121,10 +114,7 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     final data = json.decode(response.body);
@@ -165,10 +155,7 @@ class Anilist extends _$Anilist {
 
     await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     return track;
@@ -206,10 +193,7 @@ class Anilist extends _$Anilist {
     };
     await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     return track;
@@ -251,17 +235,13 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
 
     final data = json.decode(response.body);
 
-    final entries =
-        List<Map<String, dynamic>>.from(data['data']['Page']['media']);
+    final entries = List<Map<String, dynamic>>.from(data['data']['Page']['media']);
     return entries
         .map((jsonRes) => TrackSearch(
             libraryId: jsonRes['id'],
@@ -273,9 +253,7 @@ class Anilist extends _$Anilist {
             coverUrl: jsonRes['coverImage']['large'] ?? "",
             title: jsonRes['title']['userPreferred'],
             startDate: jsonRes["start_date"] ??
-                DateTime.fromMillisecondsSinceEpoch(
-                        parseDate(jsonRes, 'startDate'))
-                    .toString(),
+                DateTime.fromMillisecondsSinceEpoch(parseDate(jsonRes, 'startDate')).toString(),
             publishingType: "",
             publishingStatus: jsonRes['status']))
         .toList();
@@ -317,17 +295,13 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
 
     final data = json.decode(response.body);
 
-    final entries =
-        List<Map<String, dynamic>>.from(data['data']['Page']['media']);
+    final entries = List<Map<String, dynamic>>.from(data['data']['Page']['media']);
     return entries
         .map((jsonRes) => TrackSearch(
             libraryId: jsonRes['id'],
@@ -339,9 +313,7 @@ class Anilist extends _$Anilist {
             coverUrl: jsonRes['coverImage']['large'] ?? "",
             title: jsonRes['title']['userPreferred'],
             startDate: jsonRes["start_date"] ??
-                DateTime.fromMillisecondsSinceEpoch(
-                        parseDate(jsonRes, 'startDate'))
-                    .toString(),
+                DateTime.fromMillisecondsSinceEpoch(parseDate(jsonRes, 'startDate')).toString(),
             publishingType: "",
             publishingStatus: jsonRes['status']))
         .toList();
@@ -404,15 +376,11 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     final data = json.decode(response.body);
-    final entries =
-        List<Map<String, dynamic>>.from(data['data']['Page']['mediaList']);
+    final entries = List<Map<String, dynamic>>.from(data['data']['Page']['mediaList']);
     if (entries.isNotEmpty) {
       final jsonRes = entries.first;
       track.libraryId = jsonRes['id'];
@@ -486,15 +454,11 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     final data = json.decode(response.body);
-    final entries =
-        List<Map<String, dynamic>>.from(data['data']['Page']['mediaList']);
+    final entries = List<Map<String, dynamic>>.from(data['data']['Page']['mediaList']);
     if (entries.isNotEmpty) {
       final jsonRes = entries.first;
       track.libraryId = jsonRes['id'];
@@ -529,25 +493,18 @@ class Anilist extends _$Anilist {
 
     final response = await http.post(
       Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken'
-      },
+      headers: {"Content-Type": "application/json", 'Authorization': 'Bearer $accessToken'},
       body: json.encode(body),
     );
     final data = json.decode(response.body);
 
     final viewer = data['data']['Viewer'];
-    return (
-      viewer['id'].toString(),
-      viewer['mediaListOptions']['scoreFormat'].toString()
-    );
+    return (viewer['id'].toString(), viewer['mediaListOptions']['scoreFormat'].toString());
   }
 
   Future<String> _getAccesToken() async {
     final track = ref.watch(tracksProvider(syncId: syncId));
-    final mALOAuth =
-        OAuth.fromJson(jsonDecode(track!.oAuth!) as Map<String, dynamic>);
+    final mALOAuth = OAuth.fromJson(jsonDecode(track!.oAuth!) as Map<String, dynamic>);
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
       ref.read(tracksProvider(syncId: syncId).notifier).logout();
@@ -563,20 +520,8 @@ class Anilist extends _$Anilist {
     return switch (scoreFormat) {
       "POINT_10" => (score / 10).toString(),
       "POINT_100" => score.toString(),
-      "POINT_5" => switch (score) {
-          0 => "0",
-          < 30 => "1",
-          < 50 => "2",
-          < 70 => "3",
-          < 90 => "4",
-          _ => "5"
-        },
-      "POINT_3" => switch (score) {
-          0 => "0",
-          <= 35 => ":(",
-          <= 60 => ":|",
-          _ => ":)"
-        },
+      "POINT_5" => switch (score) { 0 => "0", < 30 => "1", < 50 => "2", < 70 => "3", < 90 => "4", _ => "5" },
+      "POINT_3" => switch (score) { 0 => "0", <= 35 => ":(", <= 60 => ":|", _ => ":)" },
       "POINT_10_DECIMAL" => (score / 10).toString(),
       _ => throw ("Unknown score type")
     };
@@ -676,16 +621,8 @@ class Anilist extends _$Anilist {
     final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
-      'POINT_5' => switch (score) {
-          0 => "0 ★",
-          _ => "${(score + 10) ~/ 20} ★"
-        },
-      'POINT_3' => switch (score) {
-          0 => "-",
-          <= 35 => "😦",
-          <= 60 => "😐",
-          _ => "😊"
-        },
+      'POINT_5' => switch (score) { 0 => "0 ★", _ => "${(score + 10) ~/ 20} ★" },
+      'POINT_3' => switch (score) { 0 => "-", <= 35 => "😦", <= 60 => "😐", _ => "😊" },
       _ => _toAnilistScore(score),
     };
   }
