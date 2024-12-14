@@ -38,7 +38,7 @@ class CoverViewWidget extends StatelessWidget {
                     onSecondaryTap: onSecondaryTap,
                     child: Container(
                       color: isLongPressed != null && isLongPressed!
-                          ? context.primaryColor.withOpacity(0.4)
+                          ? context.primaryColor.withValues(alpha: 0.4)
                           : Colors.transparent,
                       child: image == null
                           ? isComfortableGrid

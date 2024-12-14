@@ -302,7 +302,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(5),
                                               color: context.primaryColor
-                                                  .withOpacity(0.9),
+                                                  .withValues(alpha: 0.9),
                                             ),
                                             child: const Padding(
                                                 padding: EdgeInsets.all(7),
@@ -328,7 +328,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                             borderRadius:
                                                 BorderRadius.circular(5),
                                             color: context.primaryColor
-                                                .withOpacity(0.9),
+                                                .withValues(alpha: 0.9),
                                           ),
                                           child: const Padding(
                                               padding: EdgeInsets.all(7),
@@ -354,7 +354,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                           borderRadius:
                                               BorderRadius.circular(5),
                                           color: context.primaryColor
-                                              .withOpacity(0.9),
+                                              .withValues(alpha: 0.9),
                                         ),
                                         child: const Padding(
                                             padding: EdgeInsets.all(7),

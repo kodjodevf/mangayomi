@@ -14,6 +14,7 @@ import 'package:mangayomi/services/background_downloader/background_downloader.d
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:path/path.dart' as p;
 
 class ChapterPageDownload extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -49,9 +50,9 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     List<XFile> files = [];
 
-    final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
+    final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
     final mp4File = File(
-        "${mangaDir.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
+        p.join(mangaDir.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
     if (cbzFile.existsSync()) {
       files = [XFile(cbzFile.path)];
     } else if (mp4File.existsSync()) {
@@ -72,14 +73,14 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       try {
-        final cbzFile = File("${mangaDir!.path}${widget.chapter.name}.cbz");
+        final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
         if (cbzFile.existsSync()) {
           cbzFile.deleteSync();
         }
       } catch (_) {}
       try {
         final mp4File = File(
-            "${mangaDir!.path}${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4");
+            p.join(mangaDir!.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
         if (mp4File.existsSync()) {
           mp4File.deleteSync();
         }
@@ -123,7 +124,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                         size: 25,
                         Icons.check_circle,
                         color:
-                            Theme.of(context).iconTheme.color!.withOpacity(0.7),
+                            Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
                       ),
                       onSelected: (value) {
                         if (value == 0) {
@@ -192,7 +193,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                             color: Theme.of(context)
                                                 .iconTheme
                                                 .color!
-                                                .withOpacity(0.7),
+                                                .withValues(alpha: 0.7),
                                           ),
                                         ),
                                       ),
@@ -209,7 +210,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                               : Theme.of(context)
                                                   .iconTheme
                                                   .color!
-                                                  .withOpacity(0.7),
+                                                  .withValues(alpha: 0.7),
                                         )),
                                   ],
                                 ),
@@ -245,7 +246,7 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                                     color: Theme.of(context)
                                         .iconTheme
                                         .color!
-                                        .withOpacity(0.7),
+                                        .withValues(alpha: 0.7),
                                     size: 25,
                                   ))
                               : SizedBox(
@@ -348,7 +349,7 @@ Widget _downloadWidget(BuildContext context, bool isLoading) {
           child: Icon(
             size: 18,
             Icons.arrow_downward_sharp,
-            color: Theme.of(context).iconTheme.color!.withOpacity(0.7),
+            color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
           )),
       Align(
         alignment: Alignment.center,
@@ -357,7 +358,7 @@ Widget _downloadWidget(BuildContext context, bool isLoading) {
           width: 20,
           child: CircularProgressIndicator(
             value: isLoading ? null : 1,
-            color: Theme.of(context).iconTheme.color!.withOpacity(0.7),
+            color: Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
             strokeWidth: 2,
           ),
         ),

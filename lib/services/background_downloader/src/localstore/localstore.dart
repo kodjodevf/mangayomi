@@ -1,6 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
-library localstore;
+library;
 
 import 'dart:async';
 import 'dart:io';

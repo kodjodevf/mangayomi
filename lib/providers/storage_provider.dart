@@ -48,7 +48,7 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
-      directory = Directory("${dir.path}/Mangayomi/");
+      directory = Directory("${dir.path}/Mangayomi/".fixSeparator);
     }
     return directory;
   }
@@ -76,7 +76,7 @@ class StorageProvider {
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = path.isEmpty ? dir.path : path;
-      directory = Directory("$p/Mangayomi/");
+      directory = Directory("$p/Mangayomi/".fixSeparator);
     }
     return directory;
   }
@@ -91,7 +91,8 @@ class StorageProvider {
     final isManga = chapter.manga.value!.isManga!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/");
+        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
+            .fixSeparator);
   }
 
   Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
@@ -99,7 +100,8 @@ class StorageProvider {
     final isManga = chapter.manga.value!.isManga!;
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/");
+        "${dir!.path}/downloads/${isManga ? "Manga" : "Anime"}/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
+            .fixSeparator);
   }
 
   Future<Directory?> getDatabaseDirectory() async {
@@ -120,6 +122,7 @@ class StorageProvider {
     } else {
       gPath = path.join(gPath, 'Pictures');
     }
+    gPath = gPath.fixSeparator;
     await Directory(gPath).create(recursive: true);
     return Directory(gPath);
   }
@@ -159,4 +162,8 @@ class StorageProvider {
 
     return isar;
   }
+}
+
+extension StringPathExtension on String {
+  String get fixSeparator => replaceAll("/", path.separator);
 }

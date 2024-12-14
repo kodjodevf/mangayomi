@@ -294,7 +294,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                               controller.text.isEmpty || isExist
                                                   ? Theme.of(context)
                                                       .primaryColor
-                                                      .withOpacity(0.2)
+                                                      .withValues(alpha: 0.2)
                                                   : null),
                                     )),
                               ],
@@ -381,7 +381,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         isSameName
                                     ? Theme.of(context)
                                         .primaryColor
-                                        .withOpacity(0.2)
+                                        .withValues(alpha: 0.2)
                                     : null),
                           )),
                     ],

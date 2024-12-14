@@ -49,6 +49,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../../utils/constant.dart';
+import 'package:path/path.dart' as p;
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -260,7 +261,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .scaffoldBackgroundColor
                                       : Theme.of(context)
                                           .scaffoldBackgroundColor
-                                          .withOpacity(0.9),
+                                          .withValues(alpha: 0.9),
                                 ),
                                 Container(
                                   width: context.width(1),
@@ -270,7 +271,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .scaffoldBackgroundColor
                                       : Theme.of(context)
                                           .scaffoldBackgroundColor
-                                          .withOpacity(0.9),
+                                          .withValues(alpha: 0.9),
                                 ),
                               ],
                             ),
@@ -307,7 +308,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             child: AppBar(
                               title: Text(chapterList.length.toString()),
                               backgroundColor:
-                                  context.primaryColor.withOpacity(0.2),
+                                  context.primaryColor.withValues(alpha: 0.2),
                               leading: IconButton(
                                   onPressed: () {
                                     ref
@@ -682,7 +683,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
-                    color: context.primaryColor.withOpacity(0.2),
+                    color: context.primaryColor.withValues(alpha: 0.2),
                     borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20))),
@@ -1218,7 +1219,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Theme.of(context).scaffoldBackgroundColor.withOpacity(0.05),
+                Theme.of(context)
+                    .scaffoldBackgroundColor
+                    .withValues(alpha: 0.05),
                 Theme.of(context).scaffoldBackgroundColor
               ],
               stops: const [0, .3],
@@ -1289,7 +1292,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             style: ElevatedButton.styleFrom(
                                                 elevation: 0,
                                                 backgroundColor: Colors.grey
-                                                    .withOpacity(0.2),
+                                                    .withValues(alpha: 0.2),
                                                 shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -1325,7 +1328,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               style: ElevatedButton.styleFrom(
                                                   elevation: 0,
                                                   backgroundColor: Colors.grey
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1457,7 +1460,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(widget.manga!.name!,
+        SelectableText(widget.manga!.name!,
             style: const TextStyle(
               fontSize: 20,
             )),
@@ -1743,8 +1746,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                 .getBytes(context);
                                             if (bytes != null &&
                                                 context.mounted) {
-                                              final file = File(
-                                                  '${dir!.path}/${widget.manga!.name}.png');
+                                              final file = File(p.join(
+                                                  dir!.path,
+                                                  "${widget.manga!.name}.png"));
                                               file.writeAsBytesSync(bytes);
                                               botToast(context.l10n.cover_saved,
                                                   second: 3);
@@ -1931,9 +1935,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           allowToShrink: true,
           child: Material(
             color: context.isLight
-                ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
+                ? Theme.of(context)
+                    .scaffoldBackgroundColor
+                    .withValues(alpha: 0.9)
                 : !ref.watch(pureBlackDarkModeStateProvider)
-                    ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9)
+                    ? Theme.of(context)
+                        .scaffoldBackgroundColor
+                        .withValues(alpha: 0.9)
                     : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
             clipBehavior: Clip.antiAliasWithSaveLayer,

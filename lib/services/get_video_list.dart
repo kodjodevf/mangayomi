@@ -38,7 +38,11 @@ Future<(List<Video>, bool, List<String>)> getVideoList(Ref ref,
     List<Video> list = [];
 
     List<Video> torrentList = [];
-
+    if (episode.archivePath?.isNotEmpty ?? false) {
+      final (videos, infohash) = await MTorrentServer()
+          .getTorrentPlaylist(episode.url, episode.archivePath);
+      return (videos, false, [infohash ?? ""]);
+    }
     if (source?.sourceCodeLanguage == SourceCodeLanguage.dart) {
       list = await DartExtensionService(source).getVideoList(episode.url!);
     } else {

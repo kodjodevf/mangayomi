@@ -474,7 +474,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             return AnimatedContainer(
               curve: Curves.easeIn,
               decoration: BoxDecoration(
-                  color: context.primaryColor.withOpacity(0.2),
+                  color: context.primaryColor.withValues(alpha: 0.2),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
@@ -1416,7 +1416,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             shadowColor: Colors.transparent,
                             elevation: 0,
                             backgroundColor: selected
-                                ? context.primaryColor.withOpacity(0.2)
+                                ? context.primaryColor.withValues(alpha: 0.2)
                                 : Colors.transparent),
                         onPressed: () {
                           displayV.setLibraryDisplayType(e);
@@ -1648,7 +1648,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: AppBar(
                     title: Text(mangaIdsList.length.toString()),
-                    backgroundColor: context.primaryColor.withOpacity(0.2),
+                    backgroundColor: context.primaryColor.withValues(alpha: 0.2),
                     leading: IconButton(
                         onPressed: () {
                           ref.read(mangasListStateProvider.notifier).clear();

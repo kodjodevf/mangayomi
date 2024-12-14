@@ -36,7 +36,7 @@ extension BuildContextExtensions on BuildContext {
   }
 
   Color get secondaryColor {
-    return Theme.of(this).iconTheme.color!.withOpacity(0.7);
+    return Theme.of(this).iconTheme.color!.withValues(alpha: 0.7);
   }
 
   ThemeData get themeData {

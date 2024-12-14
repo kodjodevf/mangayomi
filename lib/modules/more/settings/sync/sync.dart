@@ -198,7 +198,7 @@ class SyncScreen extends ConsumerWidget {
                                                             .styleFrom(
                                                                 backgroundColor:
                                                                     Colors.red
-                                                                        .withOpacity(
+                                                                        .withValues(alpha: 
                                                                             0.7)),
                                                         onPressed: () {
                                                           ref
@@ -283,7 +283,7 @@ class SyncScreen extends ConsumerWidget {
                                                             .styleFrom(
                                                                 backgroundColor:
                                                                     Colors.red
-                                                                        .withOpacity(
+                                                                        .withValues(alpha: 
                                                                             0.7)),
                                                         onPressed: () {
                                                           ref
