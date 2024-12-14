@@ -26,9 +26,7 @@ class _ListTileMangaCategoryState extends State<ListTileMangaCategory> {
   void initState() {
     final res = widget.mangasList.where(
       (element) {
-        return element.categories == null
-            ? false
-            : element.categories!.contains(widget.category.id);
+        return element.categories == null ? false : element.categories!.contains(widget.category.id);
       },
     ).toList();
     widget.res(res);

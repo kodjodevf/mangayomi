@@ -13,7 +13,6 @@ class IncognitoModeState extends _$IncognitoModeState {
   void setIncognitoMode(bool value) {
     final settings = isar.settings.getSync(227)!;
     state = value;
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings..incognitoMode = state));
+    isar.writeTxnSync(() => isar.settings.putSync(settings..incognitoMode = state));
   }
 }

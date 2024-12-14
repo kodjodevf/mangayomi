@@ -67,10 +67,8 @@ class JsDomSelector {
       final type = args[0];
       final key = args[1];
       final ele = _elements[key];
-      final element = switch (type) {
-        'nextElementSibling' => ele?.nextElementSibling,
-        _ => ele?.previousElementSibling
-      };
+      final element =
+          switch (type) { 'nextElementSibling' => ele?.nextElementSibling, _ => ele?.previousElementSibling };
       _elementKey++;
       _elements[_elementKey] = element;
       return _elementKey;

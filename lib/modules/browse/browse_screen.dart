@@ -18,8 +18,7 @@ class BrowseScreen extends ConsumerStatefulWidget {
   ConsumerState<BrowseScreen> createState() => _BrowseScreenState();
 }
 
-class _BrowseScreenState extends ConsumerState<BrowseScreen>
-    with TickerProviderStateMixin {
+class _BrowseScreenState extends ConsumerState<BrowseScreen> with TickerProviderStateMixin {
   late TabController _tabBarController;
 
   @override
@@ -75,33 +74,26 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   )
                 : Row(
                     children: [
-                      if (_tabBarController.index == 2 ||
-                          _tabBarController.index == 3)
+                      if (_tabBarController.index == 2 || _tabBarController.index == 3)
                         IconButton(
                             onPressed: () {
                               context.push('/createExtension');
                             },
-                            icon: Icon(Icons.add_outlined,
-                                color: Theme.of(context).hintColor)),
+                            icon: Icon(Icons.add_outlined, color: Theme.of(context).hintColor)),
                       _tabBarController.index != 4
                           ? IconButton(
                               splashRadius: 20,
                               onPressed: () {
-                                if (_tabBarController.index != 1 &&
-                                    _tabBarController.index != 0) {
+                                if (_tabBarController.index != 1 && _tabBarController.index != 0) {
                                   setState(() {
                                     _isSearch = true;
                                   });
                                 } else {
-                                  context.push('/globalSearch',
-                                      extra: _tabBarController.index == 0
-                                          ? true
-                                          : false);
+                                  context.push('/globalSearch', extra: _tabBarController.index == 0 ? true : false);
                                 }
                               },
                               icon: Icon(
-                                  _tabBarController.index == 0 ||
-                                          _tabBarController.index == 1
+                                  _tabBarController.index == 0 || _tabBarController.index == 1
                                       ? Icons.travel_explore_rounded
                                       : Icons.search_rounded,
                                   color: Theme.of(context).hintColor))
@@ -126,8 +118,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                 icon: Icon(
                     _tabBarController.index == 0 || _tabBarController.index == 1
                         ? Icons.filter_list_sharp
-                        : _tabBarController.index == 2 ||
-                                _tabBarController.index == 3
+                        : _tabBarController.index == 2 || _tabBarController.index == 3
                             ? Icons.translate_rounded
                             : Icons.help_outline_outlined,
                     color: Theme.of(context).hintColor)),
@@ -141,11 +132,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
               Tab(text: l10n.anime_sources),
               Tab(
                 child: Row(
-                  children: [
-                    Text(l10n.manga_extensions),
-                    const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, true)
-                  ],
+                  children: [Text(l10n.manga_extensions), const SizedBox(width: 8), _extensionUpdateNumbers(ref, true)],
                 ),
               ),
               Tab(
@@ -200,23 +187,18 @@ Widget _extensionUpdateNumbers(WidgetRef ref, bool isManga) {
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!
-              .where((element) =>
-                  compareVersions(element.version!, element.versionLast!) < 0)
-              .toList();
+          final entries =
+              snapshot.data!.where((element) => compareVersions(element.version!, element.versionLast!) < 0).toList();
           return entries.isEmpty
               ? Container()
               : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Theme.of(context).focusColor),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(20), color: Theme.of(context).focusColor),
                   child: Padding(
                     padding: const EdgeInsets.all(5),
                     child: Text(
                       entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall!.color),
                     ),
                   ),
                 );

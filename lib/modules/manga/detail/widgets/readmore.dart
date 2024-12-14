@@ -4,8 +4,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class ReadMoreWidget extends StatefulWidget {
-  const ReadMoreWidget(
-      {super.key, required this.text, required this.onChanged});
+  const ReadMoreWidget({super.key, required this.text, required this.onChanged});
   final Function(bool) onChanged;
   final String text;
 
@@ -13,8 +12,7 @@ class ReadMoreWidget extends StatefulWidget {
   ReadMoreWidgetState createState() => ReadMoreWidgetState();
 }
 
-class ReadMoreWidgetState extends State<ReadMoreWidget>
-    with TickerProviderStateMixin {
+class ReadMoreWidgetState extends State<ReadMoreWidget> with TickerProviderStateMixin {
   late bool expanded = true;
   @override
   Widget build(BuildContext context) {
@@ -63,9 +61,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Theme.of(context)
-                                  .scaffoldBackgroundColor
-                                  .withValues(alpha: 0.2),
+                              Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.2),
                               Theme.of(context).scaffoldBackgroundColor
                             ],
                             stops: const [0, .9],

@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
-import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
@@ -38,12 +38,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   @override
   Widget build(BuildContext context) {
     List<Source> sourceList = ref.watch(onlyIncludePinnedSourceStateProvider)
-        ? isar.sources
-            .filter()
-            .isPinnedEqualTo(true)
-            .and()
-            .isMangaEqualTo(widget.isManga)
-            .findAllSync()
+        ? isar.sources.filter().isPinnedEqualTo(true).and().isMangaEqualTo(widget.isManga).findAllSync()
         : isar.sources
             .filter()
             .idIsNotNull()
@@ -128,8 +123,7 @@ class _SourceSearchScreenState extends State<SourceSearchScreen> {
   _init() async {
     try {
       _errorMessage = "";
-      pages = await search(
-          source: widget.source, page: 1, query: widget.query, filterList: []);
+      pages = await search(source: widget.source, page: 1, query: widget.query, filterList: []);
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -220,8 +214,7 @@ class MangaGlobalImageCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MangaGlobalImageCard> createState() =>
-      _MangaGlobalImageCardState();
+  ConsumerState<MangaGlobalImageCard> createState() => _MangaGlobalImageCardState();
 }
 
 class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
@@ -258,20 +251,16 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                     child: Column(children: [
                       Builder(
                         builder: (context) {
-                          if (hasData &&
-                              snapshot.data!.first.customCoverImage != null) {
-                            return Image.memory(snapshot
-                                .data!.first.customCoverImage as Uint8List);
+                          if (hasData && snapshot.data!.first.customCoverImage != null) {
+                            return Image.memory(snapshot.data!.first.customCoverImage as Uint8List);
                           }
                           return ClipRRect(
                               borderRadius: BorderRadius.circular(5),
                               child: cachedNetworkImage(
-                                  headers: ref.watch(headersProvider(
-                                      source: widget.source.name!,
-                                      lang: widget.source.lang!)),
+                                  headers: ref
+                                      .watch(headersProvider(source: widget.source.name!, lang: widget.source.lang!)),
                                   imageUrl: toImgUrl(hasData
-                                      ? snapshot.data!.first
-                                              .customCoverFromTracker ??
+                                      ? snapshot.data!.first.customCoverFromTracker ??
                                           snapshot.data!.first.imageUrl ??
                                           ""
                                       : getMangaDetail.imageUrl ?? ""),
@@ -292,9 +281,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                   Container(
                     width: 110,
                     height: 150,
-                    color: hasData && snapshot.data!.first.favorite!
-                        ? Colors.black.withValues(alpha: 0.7)
-                        : null,
+                    color: hasData && snapshot.data!.first.favorite! ? Colors.black.withValues(alpha: 0.7) : null,
                   ),
                   if (hasData && snapshot.data!.first.favorite!)
                     Positioned(
@@ -302,8 +289,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                         left: 0,
                         child: Padding(
                           padding: const EdgeInsets.all(4),
-                          child: Icon(Icons.collections_bookmark,
-                              color: context.primaryColor),
+                          child: Icon(Icons.collections_bookmark, color: context.primaryColor),
                         ))
                 ],
               ),

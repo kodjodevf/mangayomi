@@ -21,9 +21,7 @@ class MoreScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Image.asset(
                 "assets/app_icons/icon.png",
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
+                color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
                 fit: BoxFit.cover,
                 height: 100,
               ),

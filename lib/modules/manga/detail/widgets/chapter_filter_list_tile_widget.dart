@@ -4,11 +4,7 @@ class ListTileChapterFilter extends StatelessWidget {
   final String label;
   final int type;
   final VoidCallback onTap;
-  const ListTileChapterFilter(
-      {super.key,
-      required this.label,
-      required this.type,
-      required this.onTap});
+  const ListTileChapterFilter({super.key, required this.label, required this.type, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

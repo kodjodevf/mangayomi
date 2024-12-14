@@ -7,8 +7,8 @@ import 'package:path/path.dart' as path;
 part 'convert_to_cbz.g.dart';
 
 @riverpod
-Future<List<String>> convertToCBZ(Ref ref, String chapterDir, String mangaDir,
-    String chapterName, List<String> pageList) async {
+Future<List<String>> convertToCBZ(
+    Ref ref, String chapterDir, String mangaDir, String chapterName, List<String> pageList) async {
   return compute(_convertToCBZ, (chapterDir, mangaDir, chapterName, pageList));
 }
 

@@ -10,8 +10,7 @@ class MeasureWidgetSize extends StatefulWidget {
   final Function(Size? size) onCalculateSize;
   final Widget child;
 
-  const MeasureWidgetSize(
-      {super.key, required this.onCalculateSize, required this.child});
+  const MeasureWidgetSize({super.key, required this.onCalculateSize, required this.child});
 
   @override
   State<MeasureWidgetSize> createState() => _MeasureWidgetSizeState();
@@ -22,8 +21,7 @@ class _MeasureWidgetSizeState extends State<MeasureWidgetSize> {
 
   @override
   initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => widget.onCalculateSize(_key.currentContext?.size));
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onCalculateSize(_key.currentContext?.size));
     super.initState();
   }
 
@@ -49,8 +47,7 @@ Future<void> customDraggableTabBar(
   List<Map<String, dynamic>> widgetsHeight = [];
 
   void refresh() {
-    controller.animateTo(
-        widgetsHeight.indexWhere((element) => element["index"] == index));
+    controller.animateTo(widgetsHeight.indexWhere((element) => element["index"] == index));
   }
 
   tabBarController.animation!.addListener(() {
@@ -73,10 +70,7 @@ Future<void> customDraggableTabBar(
             for (var i = 0; i < children.length; i++) ...[
               MeasureWidgetSize(
                   onCalculateSize: (size) {
-                    final additionnalHeight =
-                        ((List.generate(10000, (index) => index * 0.0001))
-                              ..shuffle())
-                            .first;
+                    final additionnalHeight = ((List.generate(10000, (index) => index * 0.0001))..shuffle()).first;
                     double newHeight = size!.height + 52.0 + additionnalHeight;
                     if (!(newHeight <= maxHeight)) {
                       newHeight = maxHeight + additionnalHeight;
@@ -93,30 +87,20 @@ Future<void> customDraggableTabBar(
       );
     },
   );
-  widgetsHeight
-      .sort((a, b) => (a["height"] as double).compareTo(b["height"] as double));
+  widgetsHeight.sort((a, b) => (a["height"] as double).compareTo(b["height"] as double));
   if (context.mounted) {
     await DraggableMenu.open(
         context,
         DraggableMenu(
             curve: Curves.linearToEaseOut,
             controller: controller,
-            levels: widgetsHeight
-                .map((e) => e["height"])
-                .map((e) => DraggableMenuLevel(height: e))
-                .toList(),
+            levels: widgetsHeight.map((e) => e["height"]).map((e) => DraggableMenuLevel(height: e)).toList(),
             customUi: Consumer(builder: (context, ref, child) {
-              final location =
-                  ref.watch(routerCurrentLocationStateProvider(context));
+              final location = ref.watch(routerCurrentLocationStateProvider(context));
               final width = context.isTablet && !fullWidth
                   ? switch (location) {
                       null => 100,
-                      != '/MangaLibrary' &&
-                            != '/AnimeLibrary' &&
-                            != '/history' &&
-                            != '/browse' &&
-                            != '/more' =>
-                        0,
+                      != '/MangaLibrary' && != '/AnimeLibrary' && != '/history' && != '/browse' && != '/more' => 0,
                       _ => 100,
                     }
                   : 0;
@@ -125,9 +109,8 @@ Future<void> customDraggableTabBar(
                 body: Container(
                   width: context.width(1) - width,
                   decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
+                      borderRadius:
+                          const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                       color: Theme.of(context).scaffoldBackgroundColor),
                   child: DefaultTabController(
                     length: tabs.length,
@@ -138,13 +121,9 @@ Future<void> customDraggableTabBar(
                           Flexible(
                             flex: 9,
                             child: TabBar(
-                                unselectedLabelStyle: const TextStyle(
-                                    fontWeight: FontWeight.w500),
-                                labelStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                                dividerColor: context.isLight
-                                    ? Colors.black
-                                    : Colors.grey,
+                                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+                                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                dividerColor: context.isLight ? Colors.black : Colors.grey,
                                 dividerHeight: 0.4,
                                 controller: tabBarController,
                                 tabs: tabs),
@@ -159,11 +138,8 @@ Future<void> customDraggableTabBar(
                                   Row(
                                     children: [
                                       Flexible(
-                                        child: Container(
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.grey,
-                                            height: 0.4),
+                                        child:
+                                            Container(color: context.isLight ? Colors.black : Colors.grey, height: 0.4),
                                       ),
                                     ],
                                   )
@@ -177,9 +153,7 @@ Future<void> customDraggableTabBar(
                               controller: tabBarController,
                               children: children
                                   .map((e) => SingleChildScrollView(
-                                      child: MeasureWidgetSize(
-                                          onCalculateSize: (_) => refresh(),
-                                          child: e)))
+                                      child: MeasureWidgetSize(onCalculateSize: (_) => refresh(), child: e)))
                                   .toList()))
                     ]),
                   ),

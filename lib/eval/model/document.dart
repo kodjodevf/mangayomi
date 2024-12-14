@@ -1,5 +1,5 @@
 import 'package:html/dom.dart';
-import 'package:mangayomi/eval/dart/model/element.dart';
+import 'package:mangayomi/eval/model/element.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 class MDocument {
@@ -19,8 +19,7 @@ class MDocument {
 
   String? get text => _document?.text;
 
-  List<MElement>? get children =>
-      _document?.children.map((e) => MElement(e)).toList();
+  List<MElement>? get children => _document?.children.map((e) => MElement(e)).toList();
 
   List<MElement>? select(String selector) {
     return _document?.select(selector)?.map((e) => MElement(e)).toList();
@@ -35,17 +34,11 @@ class MDocument {
   }
 
   List<MElement>? getElementsByClassName(String classNames) {
-    return _document
-        ?.getElementsByClassName(classNames)
-        .map((e) => MElement(e))
-        .toList();
+    return _document?.getElementsByClassName(classNames).map((e) => MElement(e)).toList();
   }
 
   List<MElement>? getElementsByTagName(String localNames) {
-    return _document
-        ?.getElementsByTagName(localNames)
-        .map((e) => MElement(e))
-        .toList();
+    return _document?.getElementsByTagName(localNames).map((e) => MElement(e)).toList();
   }
 
   MElement? getElementById(String id) {

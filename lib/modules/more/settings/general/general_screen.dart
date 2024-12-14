@@ -32,24 +32,19 @@ class GeneralScreen extends ConsumerWidget {
                             width: context.width(0.8),
                             child: ListView.builder(
                               shrinkWrap: true,
-                              itemCount:
-                                  AppLocalizations.supportedLocales.length,
+                              itemCount: AppLocalizations.supportedLocales.length,
                               itemBuilder: (context, index) {
-                                final locale =
-                                    AppLocalizations.supportedLocales[index];
+                                final locale = AppLocalizations.supportedLocales[index];
                                 return RadioListTile(
                                   dense: true,
                                   contentPadding: const EdgeInsets.all(0),
                                   value: locale,
                                   groupValue: l10nLocale,
                                   onChanged: (value) {
-                                    ref
-                                        .read(l10nLocaleStateProvider.notifier)
-                                        .setLocale(locale);
+                                    ref.read(l10nLocaleStateProvider.notifier).setLocale(locale);
                                     Navigator.pop(context);
                                   },
-                                  title: Text(completeLanguageName(
-                                      locale.toLanguageTag())),
+                                  title: Text(completeLanguageName(locale.toLanguageTag())),
                                 );
                               },
                             )),
@@ -63,8 +58,7 @@ class GeneralScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )

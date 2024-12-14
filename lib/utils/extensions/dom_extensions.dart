@@ -7,9 +7,7 @@ void _initPseudoSelector() {
   bool nthChild(Element element, String? args) {
     if (int.tryParse(args!) != null) {
       final parent = element.parentNode;
-      return parent != null &&
-          (int.parse(args) as num) > 0 &&
-          parent.nodes.indexOf(element) == int.parse(args);
+      return parent != null && (int.parse(args) as num) > 0 && parent.nodes.indexOf(element) == int.parse(args);
     }
     return true;
   }
@@ -17,18 +15,14 @@ void _initPseudoSelector() {
   bool has(Element element, String? args) {
     if (args == null) return false;
     final parent = element.parent;
-    final res = parent == null
-        ? false
-        : pseudom.parse(args).selectFirst(parent) == element;
+    final res = parent == null ? false : pseudom.parse(args).selectFirst(parent) == element;
     return res ? res : pseudom.parse(args).selectFirst(element) != null;
   }
 
   bool inot(Element element, String? args) {
     if (args == null) return false;
     final parent = element.parent;
-    final res = parent == null
-        ? false
-        : pseudom.parse(args).selectFirst(parent) != element;
+    final res = parent == null ? false : pseudom.parse(args).selectFirst(parent) != element;
     return res ? res : pseudom.parse(args).selectFirst(element) == null;
   }
 
@@ -121,8 +115,7 @@ extension ElementtExtension on Element {
       _initPseudoSelector();
       return pseudom
           .parse(_fixSelector(selector))
-          .select(
-              parent!.nodes.firstWhere((element) => element == this) as Element)
+          .select(parent!.nodes.firstWhere((element) => element == this) as Element)
           .toList();
     } catch (e) {
       return null;
@@ -147,8 +140,9 @@ extension ElementtExtension on Element {
   Element? selectFirst(String selector) {
     try {
       _initPseudoSelector();
-      return pseudom.parse(_fixSelector(selector)).selectFirst(
-          parent!.nodes.firstWhere((element) => element == this) as Element);
+      return pseudom
+          .parse(_fixSelector(selector))
+          .selectFirst(parent!.nodes.firstWhere((element) => element == this) as Element);
     } catch (e) {
       return null;
     }

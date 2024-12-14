@@ -13,17 +13,13 @@ import 'dart:ffi' as ffi;
 /// Bindings to `lib/ffi/libmtorrentserver.h`.
 class TorrentLibrary {
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  TorrentLibrary(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+  TorrentLibrary(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
-  TorrentLibrary.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
+  TorrentLibrary.fromLookup(ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup)
       : _lookup = lookup;
 
   void __va_start(
@@ -34,21 +30,15 @@ class TorrentLibrary {
     );
   }
 
-  late final ___va_startPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<va_list>)>>(
-          '__va_start');
-  late final ___va_start =
-      ___va_startPtr.asFunction<void Function(ffi.Pointer<va_list>)>();
+  late final ___va_startPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<va_list>)>>('__va_start');
+  late final ___va_start = ___va_startPtr.asFunction<void Function(ffi.Pointer<va_list>)>();
 
   void __security_init_cookie() {
     return ___security_init_cookie();
   }
 
-  late final ___security_init_cookiePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
-          '__security_init_cookie');
-  late final ___security_init_cookie =
-      ___security_init_cookiePtr.asFunction<void Function()>();
+  late final ___security_init_cookiePtr = _lookup<ffi.NativeFunction<ffi.Void Function()>>('__security_init_cookie');
+  late final ___security_init_cookie = ___security_init_cookiePtr.asFunction<void Function()>();
 
   void __security_check_cookie(
     int _StackCookie,
@@ -59,10 +49,8 @@ class TorrentLibrary {
   }
 
   late final ___security_check_cookiePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>(
-          '__security_check_cookie');
-  late final ___security_check_cookie =
-      ___security_check_cookiePtr.asFunction<void Function(int)>();
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>('__security_check_cookie');
+  late final ___security_check_cookie = ___security_check_cookiePtr.asFunction<void Function(int)>();
 
   void __report_gsfailure(
     int _StackCookie,
@@ -72,14 +60,10 @@ class TorrentLibrary {
     );
   }
 
-  late final ___report_gsfailurePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>(
-          '__report_gsfailure');
-  late final ___report_gsfailure =
-      ___report_gsfailurePtr.asFunction<void Function(int)>();
+  late final ___report_gsfailurePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.UintPtr)>>('__report_gsfailure');
+  late final ___report_gsfailure = ___report_gsfailurePtr.asFunction<void Function(int)>();
 
-  late final ffi.Pointer<ffi.UintPtr> ___security_cookie =
-      _lookup<ffi.UintPtr>('__security_cookie');
+  late final ffi.Pointer<ffi.UintPtr> ___security_cookie = _lookup<ffi.UintPtr>('__security_cookie');
 
   int get __security_cookie => ___security_cookie.value;
 
@@ -90,20 +74,16 @@ class TorrentLibrary {
   }
 
   late final __invalid_parameter_noinfoPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
-          '_invalid_parameter_noinfo');
-  late final __invalid_parameter_noinfo =
-      __invalid_parameter_noinfoPtr.asFunction<void Function()>();
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('_invalid_parameter_noinfo');
+  late final __invalid_parameter_noinfo = __invalid_parameter_noinfoPtr.asFunction<void Function()>();
 
   void _invalid_parameter_noinfo_noreturn() {
     return __invalid_parameter_noinfo_noreturn();
   }
 
   late final __invalid_parameter_noinfo_noreturnPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>(
-          '_invalid_parameter_noinfo_noreturn');
-  late final __invalid_parameter_noinfo_noreturn =
-      __invalid_parameter_noinfo_noreturnPtr.asFunction<void Function()>();
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('_invalid_parameter_noinfo_noreturn');
+  late final __invalid_parameter_noinfo_noreturn = __invalid_parameter_noinfo_noreturnPtr.asFunction<void Function()>();
 
   void _invoke_watson(
     ffi.Pointer<ffi.WChar> _Expression,
@@ -123,22 +103,16 @@ class TorrentLibrary {
 
   late final __invoke_watsonPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Void Function(
-              ffi.Pointer<ffi.WChar>,
-              ffi.Pointer<ffi.WChar>,
-              ffi.Pointer<ffi.WChar>,
-              ffi.UnsignedInt,
+          ffi.Void Function(ffi.Pointer<ffi.WChar>, ffi.Pointer<ffi.WChar>, ffi.Pointer<ffi.WChar>, ffi.UnsignedInt,
               ffi.UintPtr)>>('_invoke_watson');
-  late final __invoke_watson = __invoke_watsonPtr.asFunction<
-      void Function(ffi.Pointer<ffi.WChar>, ffi.Pointer<ffi.WChar>,
-          ffi.Pointer<ffi.WChar>, int, int)>();
+  late final __invoke_watson = __invoke_watsonPtr
+      .asFunction<void Function(ffi.Pointer<ffi.WChar>, ffi.Pointer<ffi.WChar>, ffi.Pointer<ffi.WChar>, int, int)>();
 
   ffi.Pointer<ffi.Int> _errno() {
     return __errno();
   }
 
-  late final __errnoPtr =
-      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int> Function()>>('_errno');
+  late final __errnoPtr = _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Int> Function()>>('_errno');
   late final __errno = __errnoPtr.asFunction<ffi.Pointer<ffi.Int> Function()>();
 
   int _set_errno(
@@ -149,8 +123,7 @@ class TorrentLibrary {
     );
   }
 
-  late final __set_errnoPtr =
-      _lookup<ffi.NativeFunction<errno_t Function(ffi.Int)>>('_set_errno');
+  late final __set_errnoPtr = _lookup<ffi.NativeFunction<errno_t Function(ffi.Int)>>('_set_errno');
   late final __set_errno = __set_errnoPtr.asFunction<int Function(int)>();
 
   int _get_errno(
@@ -161,26 +134,21 @@ class TorrentLibrary {
     );
   }
 
-  late final __get_errnoPtr =
-      _lookup<ffi.NativeFunction<errno_t Function(ffi.Pointer<ffi.Int>)>>(
-          '_get_errno');
-  late final __get_errno =
-      __get_errnoPtr.asFunction<int Function(ffi.Pointer<ffi.Int>)>();
+  late final __get_errnoPtr = _lookup<ffi.NativeFunction<errno_t Function(ffi.Pointer<ffi.Int>)>>('_get_errno');
+  late final __get_errno = __get_errnoPtr.asFunction<int Function(ffi.Pointer<ffi.Int>)>();
 
   int __threadid() {
     return ___threadid();
   }
 
-  late final ___threadidPtr =
-      _lookup<ffi.NativeFunction<ffi.UnsignedLong Function()>>('__threadid');
+  late final ___threadidPtr = _lookup<ffi.NativeFunction<ffi.UnsignedLong Function()>>('__threadid');
   late final ___threadid = ___threadidPtr.asFunction<int Function()>();
 
   int __threadhandle() {
     return ___threadhandle();
   }
 
-  late final ___threadhandlePtr =
-      _lookup<ffi.NativeFunction<ffi.UintPtr Function()>>('__threadhandle');
+  late final ___threadhandlePtr = _lookup<ffi.NativeFunction<ffi.UintPtr Function()>>('__threadhandle');
   late final ___threadhandle = ___threadhandlePtr.asFunction<int Function()>();
 
   double cabs(
@@ -191,8 +159,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cabsPtr =
-      _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('cabs');
+  late final _cabsPtr = _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('cabs');
   late final _cabs = _cabsPtr.asFunction<double Function(_Dcomplex)>();
 
   _Dcomplex cacos(
@@ -203,8 +170,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cacosPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cacos');
+  late final _cacosPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cacos');
   late final _cacos = _cacosPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex cacosh(
@@ -215,8 +181,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cacoshPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cacosh');
+  late final _cacoshPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cacosh');
   late final _cacosh = _cacoshPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   double carg(
@@ -227,8 +192,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cargPtr =
-      _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('carg');
+  late final _cargPtr = _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('carg');
   late final _carg = _cargPtr.asFunction<double Function(_Dcomplex)>();
 
   _Dcomplex casin(
@@ -239,8 +203,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _casinPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('casin');
+  late final _casinPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('casin');
   late final _casin = _casinPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex casinh(
@@ -251,8 +214,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _casinhPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('casinh');
+  late final _casinhPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('casinh');
   late final _casinh = _casinhPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex catan(
@@ -263,8 +225,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _catanPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('catan');
+  late final _catanPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('catan');
   late final _catan = _catanPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex catanh(
@@ -275,8 +236,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _catanhPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('catanh');
+  late final _catanhPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('catanh');
   late final _catanh = _catanhPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex ccos(
@@ -287,8 +247,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ccosPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ccos');
+  late final _ccosPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ccos');
   late final _ccos = _ccosPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex ccosh(
@@ -299,8 +258,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ccoshPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ccosh');
+  late final _ccoshPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ccosh');
   late final _ccosh = _ccoshPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex cexp(
@@ -311,8 +269,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cexpPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cexp');
+  late final _cexpPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cexp');
   late final _cexp = _cexpPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   double cimag(
@@ -323,8 +280,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cimagPtr =
-      _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('cimag');
+  late final _cimagPtr = _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('cimag');
   late final _cimag = _cimagPtr.asFunction<double Function(_Dcomplex)>();
 
   _Dcomplex clog(
@@ -335,8 +291,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _clogPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('clog');
+  late final _clogPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('clog');
   late final _clog = _clogPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex clog10(
@@ -347,8 +302,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _clog10Ptr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('clog10');
+  late final _clog10Ptr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('clog10');
   late final _clog10 = _clog10Ptr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex conj(
@@ -359,8 +313,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _conjPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('conj');
+  late final _conjPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('conj');
   late final _conj = _conjPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex cpow(
@@ -373,11 +326,8 @@ class TorrentLibrary {
     );
   }
 
-  late final _cpowPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>>(
-          'cpow');
-  late final _cpow =
-      _cpowPtr.asFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>();
+  late final _cpowPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>>('cpow');
+  late final _cpow = _cpowPtr.asFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>();
 
   _Dcomplex cproj(
     _Dcomplex _Z,
@@ -387,8 +337,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cprojPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cproj');
+  late final _cprojPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('cproj');
   late final _cproj = _cprojPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   double creal(
@@ -399,8 +348,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _crealPtr =
-      _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('creal');
+  late final _crealPtr = _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('creal');
   late final _creal = _crealPtr.asFunction<double Function(_Dcomplex)>();
 
   _Dcomplex csin(
@@ -411,8 +359,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csinPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csin');
+  late final _csinPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csin');
   late final _csin = _csinPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex csinh(
@@ -423,8 +370,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csinhPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csinh');
+  late final _csinhPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csinh');
   late final _csinh = _csinhPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex csqrt(
@@ -435,8 +381,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csqrtPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csqrt');
+  late final _csqrtPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('csqrt');
   late final _csqrt = _csqrtPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex ctan(
@@ -447,8 +392,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ctanPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ctan');
+  late final _ctanPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ctan');
   late final _ctan = _ctanPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   _Dcomplex ctanh(
@@ -459,8 +403,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ctanhPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ctanh');
+  late final _ctanhPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex)>>('ctanh');
   late final _ctanh = _ctanhPtr.asFunction<_Dcomplex Function(_Dcomplex)>();
 
   double norm(
@@ -471,8 +414,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _normPtr =
-      _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('norm');
+  late final _normPtr = _lookup<ffi.NativeFunction<ffi.Double Function(_Dcomplex)>>('norm');
   late final _norm = _normPtr.asFunction<double Function(_Dcomplex)>();
 
   double cabsf(
@@ -483,8 +425,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cabsfPtr =
-      _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cabsf');
+  late final _cabsfPtr = _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cabsf');
   late final _cabsf = _cabsfPtr.asFunction<double Function(_Fcomplex)>();
 
   _Fcomplex cacosf(
@@ -495,8 +436,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cacosfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cacosf');
+  late final _cacosfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cacosf');
   late final _cacosf = _cacosfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex cacoshf(
@@ -507,8 +447,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cacoshfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cacoshf');
+  late final _cacoshfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cacoshf');
   late final _cacoshf = _cacoshfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   double cargf(
@@ -519,8 +458,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cargfPtr =
-      _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cargf');
+  late final _cargfPtr = _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cargf');
   late final _cargf = _cargfPtr.asFunction<double Function(_Fcomplex)>();
 
   _Fcomplex casinf(
@@ -531,8 +469,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _casinfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('casinf');
+  late final _casinfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('casinf');
   late final _casinf = _casinfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex casinhf(
@@ -543,8 +480,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _casinhfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('casinhf');
+  late final _casinhfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('casinhf');
   late final _casinhf = _casinhfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex catanf(
@@ -555,8 +491,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _catanfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('catanf');
+  late final _catanfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('catanf');
   late final _catanf = _catanfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex catanhf(
@@ -567,8 +502,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _catanhfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('catanhf');
+  late final _catanhfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('catanhf');
   late final _catanhf = _catanhfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex ccosf(
@@ -579,8 +513,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ccosfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ccosf');
+  late final _ccosfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ccosf');
   late final _ccosf = _ccosfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex ccoshf(
@@ -591,8 +524,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ccoshfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ccoshf');
+  late final _ccoshfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ccoshf');
   late final _ccoshf = _ccoshfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex cexpf(
@@ -603,8 +535,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cexpfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cexpf');
+  late final _cexpfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cexpf');
   late final _cexpf = _cexpfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   double cimagf(
@@ -615,8 +546,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cimagfPtr =
-      _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cimagf');
+  late final _cimagfPtr = _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('cimagf');
   late final _cimagf = _cimagfPtr.asFunction<double Function(_Fcomplex)>();
 
   _Fcomplex clogf(
@@ -627,8 +557,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _clogfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('clogf');
+  late final _clogfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('clogf');
   late final _clogf = _clogfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex clog10f(
@@ -639,8 +568,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _clog10fPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('clog10f');
+  late final _clog10fPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('clog10f');
   late final _clog10f = _clog10fPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex conjf(
@@ -651,8 +579,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _conjfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('conjf');
+  late final _conjfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('conjf');
   late final _conjf = _conjfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex cpowf(
@@ -665,11 +592,8 @@ class TorrentLibrary {
     );
   }
 
-  late final _cpowfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>>(
-          'cpowf');
-  late final _cpowf =
-      _cpowfPtr.asFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>();
+  late final _cpowfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>>('cpowf');
+  late final _cpowf = _cpowfPtr.asFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>();
 
   _Fcomplex cprojf(
     _Fcomplex _Z,
@@ -679,8 +603,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _cprojfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cprojf');
+  late final _cprojfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('cprojf');
   late final _cprojf = _cprojfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   double crealf(
@@ -691,8 +614,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _crealfPtr =
-      _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('crealf');
+  late final _crealfPtr = _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('crealf');
   late final _crealf = _crealfPtr.asFunction<double Function(_Fcomplex)>();
 
   _Fcomplex csinf(
@@ -703,8 +625,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csinfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csinf');
+  late final _csinfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csinf');
   late final _csinf = _csinfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex csinhf(
@@ -715,8 +636,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csinhfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csinhf');
+  late final _csinhfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csinhf');
   late final _csinhf = _csinhfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex csqrtf(
@@ -727,8 +647,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _csqrtfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csqrtf');
+  late final _csqrtfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('csqrtf');
   late final _csqrtf = _csqrtfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex ctanf(
@@ -739,8 +658,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ctanfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ctanf');
+  late final _ctanfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ctanf');
   late final _ctanf = _ctanfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   _Fcomplex ctanhf(
@@ -751,8 +669,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _ctanhfPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ctanhf');
+  late final _ctanhfPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex)>>('ctanhf');
   late final _ctanhf = _ctanhfPtr.asFunction<_Fcomplex Function(_Fcomplex)>();
 
   double normf(
@@ -763,8 +680,7 @@ class TorrentLibrary {
     );
   }
 
-  late final _normfPtr =
-      _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('normf');
+  late final _normfPtr = _lookup<ffi.NativeFunction<ffi.Float Function(_Fcomplex)>>('normf');
   late final _normf = _normfPtr.asFunction<double Function(_Fcomplex)>();
 
   _Dcomplex _Cbuild(
@@ -777,11 +693,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __CbuildPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(ffi.Double, ffi.Double)>>(
-          '_Cbuild');
-  late final __Cbuild =
-      __CbuildPtr.asFunction<_Dcomplex Function(double, double)>();
+  late final __CbuildPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(ffi.Double, ffi.Double)>>('_Cbuild');
+  late final __Cbuild = __CbuildPtr.asFunction<_Dcomplex Function(double, double)>();
 
   _Dcomplex _Cmulcc(
     _Dcomplex _X,
@@ -793,11 +706,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __CmulccPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>>(
-          '_Cmulcc');
-  late final __Cmulcc =
-      __CmulccPtr.asFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>();
+  late final __CmulccPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>>('_Cmulcc');
+  late final __Cmulcc = __CmulccPtr.asFunction<_Dcomplex Function(_Dcomplex, _Dcomplex)>();
 
   _Dcomplex _Cmulcr(
     _Dcomplex _X,
@@ -809,11 +719,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __CmulcrPtr =
-      _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, ffi.Double)>>(
-          '_Cmulcr');
-  late final __Cmulcr =
-      __CmulcrPtr.asFunction<_Dcomplex Function(_Dcomplex, double)>();
+  late final __CmulcrPtr = _lookup<ffi.NativeFunction<_Dcomplex Function(_Dcomplex, ffi.Double)>>('_Cmulcr');
+  late final __Cmulcr = __CmulcrPtr.asFunction<_Dcomplex Function(_Dcomplex, double)>();
 
   _Fcomplex _FCbuild(
     double _Re,
@@ -825,11 +732,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __FCbuildPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(ffi.Float, ffi.Float)>>(
-          '_FCbuild');
-  late final __FCbuild =
-      __FCbuildPtr.asFunction<_Fcomplex Function(double, double)>();
+  late final __FCbuildPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(ffi.Float, ffi.Float)>>('_FCbuild');
+  late final __FCbuild = __FCbuildPtr.asFunction<_Fcomplex Function(double, double)>();
 
   _Fcomplex _FCmulcc(
     _Fcomplex _X,
@@ -841,11 +745,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __FCmulccPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>>(
-          '_FCmulcc');
-  late final __FCmulcc =
-      __FCmulccPtr.asFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>();
+  late final __FCmulccPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>>('_FCmulcc');
+  late final __FCmulcc = __FCmulccPtr.asFunction<_Fcomplex Function(_Fcomplex, _Fcomplex)>();
 
   _Fcomplex _FCmulcr(
     _Fcomplex _X,
@@ -857,11 +758,8 @@ class TorrentLibrary {
     );
   }
 
-  late final __FCmulcrPtr =
-      _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, ffi.Float)>>(
-          '_FCmulcr');
-  late final __FCmulcr =
-      __FCmulcrPtr.asFunction<_Fcomplex Function(_Fcomplex, double)>();
+  late final __FCmulcrPtr = _lookup<ffi.NativeFunction<_Fcomplex Function(_Fcomplex, ffi.Float)>>('_FCmulcr');
+  late final __FCmulcr = __FCmulcrPtr.asFunction<_Fcomplex Function(_Fcomplex, double)>();
 
   Start_return Start(
     ffi.Pointer<ffi.Char> mcfg,
@@ -871,11 +769,8 @@ class TorrentLibrary {
     );
   }
 
-  late final _StartPtr =
-      _lookup<ffi.NativeFunction<Start_return Function(ffi.Pointer<ffi.Char>)>>(
-          'Start');
-  late final _Start =
-      _StartPtr.asFunction<Start_return Function(ffi.Pointer<ffi.Char>)>();
+  late final _StartPtr = _lookup<ffi.NativeFunction<Start_return Function(ffi.Pointer<ffi.Char>)>>('Start');
+  late final _Start = _StartPtr.asFunction<Start_return Function(ffi.Pointer<ffi.Char>)>();
 }
 
 typedef va_list = ffi.Pointer<ffi.Char>;

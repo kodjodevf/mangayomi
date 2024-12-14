@@ -48,23 +48,17 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                         child: Material(
                           child: GestureDetector(
                             onTap: () {
-                              context.push('/manga-reader/detail',
-                                  extra: manga.id);
+                              context.push('/manga-reader/detail', extra: manga.id);
                             },
                             child: Ink.image(
                               fit: BoxFit.cover,
                               width: 40,
                               height: 45,
                               image: manga.customCoverImage != null
-                                  ? MemoryImage(
-                                          manga.customCoverImage as Uint8List)
-                                      as ImageProvider
+                                  ? MemoryImage(manga.customCoverImage as Uint8List) as ImageProvider
                                   : CustomExtendedNetworkImageProvider(
-                                      toImgUrl(manga.customCoverFromTracker ??
-                                          manga.imageUrl!),
-                                      headers: ref.watch(headersProvider(
-                                          source: manga.source!,
-                                          lang: manga.lang!)),
+                                      toImgUrl(manga.customCoverFromTracker ?? manga.imageUrl!),
+                                      headers: ref.watch(headersProvider(source: manga.source!, lang: manga.lang!)),
                                     ),
                               child: InkWell(child: Container()),
                             ),
@@ -80,22 +74,14 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                             children: [
                               Text(manga.name!,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .color)),
+                                  style: TextStyle(fontSize: 14, color: Theme.of(context).textTheme.bodyLarge!.color)),
                               Text(chapter.name!,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontSize: 11,
                                       color: chapter.isRead ?? false
                                           ? Colors.grey
-                                          : Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge!
-                                              .color)),
+                                          : Theme.of(context).textTheme.bodyLarge!.color)),
                             ],
                           ),
                         ),

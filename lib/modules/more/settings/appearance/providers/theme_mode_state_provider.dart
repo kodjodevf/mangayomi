@@ -14,20 +14,18 @@ class ThemeModeState extends _$ThemeModeState {
   void setLightTheme() {
     final settings = isar.settings.getSync(227);
     state = false;
-    ref.read(flexSchemeColorStateProvider.notifier).setTheme(
-        ThemeAA.schemes[settings!.flexSchemeColorIndex!].light,
-        settings.flexSchemeColorIndex!);
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings..themeIsDark = state));
+    ref
+        .read(flexSchemeColorStateProvider.notifier)
+        .setTheme(ThemeAA.schemes[settings!.flexSchemeColorIndex!].light, settings.flexSchemeColorIndex!);
+    isar.writeTxnSync(() => isar.settings.putSync(settings..themeIsDark = state));
   }
 
   void setDarkTheme() {
     final settings = isar.settings.getSync(227);
     state = true;
-    ref.read(flexSchemeColorStateProvider.notifier).setTheme(
-        ThemeAA.schemes[settings!.flexSchemeColorIndex!].dark,
-        settings.flexSchemeColorIndex!);
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings..themeIsDark = state));
+    ref
+        .read(flexSchemeColorStateProvider.notifier)
+        .setTheme(ThemeAA.schemes[settings!.flexSchemeColorIndex!].dark, settings.flexSchemeColorIndex!);
+    isar.writeTxnSync(() => isar.settings.putSync(settings..themeIsDark = state));
   }
 }

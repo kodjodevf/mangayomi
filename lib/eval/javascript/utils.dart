@@ -1,6 +1,6 @@
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:js_packer/js_packer.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 import 'package:mangayomi/utils/log/log.dart';
 

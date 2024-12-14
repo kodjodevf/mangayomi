@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
@@ -26,17 +26,14 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = widget.source;
   late List<SourcePreference> sourcePreference =
-      getSourcePreference(source: source)
-          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
-          .toList();
+      getSourcePreference(source: source).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
 
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
-          title: Text(l10n.extension_detail),
-          leading: BackButton(onPressed: () => Navigator.pop(context, source))),
+          title: Text(l10n.extension_detail), leading: BackButton(onPressed: () => Navigator.pop(context, source))),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -44,8 +41,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.only(top: 20),
               child: Container(
                 decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
+                    color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(10)),
                 child: widget.source.iconUrl!.isEmpty
                     ? const Icon(Icons.source_outlined, size: 140)
@@ -69,8 +65,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.all(12),
               child: Text(
                 widget.source.name!,
-                style:
-                    const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -78,8 +73,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                    color: context.primaryColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10)),
+                    color: context.primaryColor.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -89,8 +83,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         children: [
                           Text(
                             widget.source.version!,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             l10n.version,
@@ -102,8 +95,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                         children: [
                           Text(
                             completeLanguageName(widget.source.lang!),
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             l10n.language,
@@ -124,19 +116,16 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
                         backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                         elevation: 0,
                         shadowColor: Colors.transparent),
                     onPressed: () async {
-                      final res =
-                          await context.push('/codeEditor', extra: source.id);
+                      final res = await context.push('/codeEditor', extra: source.id);
                       if (res != null && mounted) {
                         setState(() {
                           source = res as Source;
                           sourcePreference = getSourcePreference(source: source)
-                              .map((e) =>
-                                  getSourcePreferenceEntry(e.key!, source.id!))
+                              .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
                               .toList();
                         });
                       }
@@ -148,8 +137,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Text(
                             l10n.edit_code,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const Icon(Icons.code)
@@ -165,8 +153,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
                         backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                         elevation: 0,
                         shadowColor: Colors.transparent),
                     onPressed: () async {
@@ -177,8 +164,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         "Delete all cookies",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     )),
               ),
@@ -190,11 +176,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(0),
-                        side:
-                            BorderSide(color: context.primaryColor, width: 0.3),
+                        side: BorderSide(color: context.primaryColor, width: 0.3),
                         backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                         elevation: 0,
                         shadowColor: Colors.transparent),
                     onPressed: () {
@@ -205,8 +189,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                               title: Text(
                                 widget.source.name!,
                               ),
-                              content: Text(l10n
-                                  .uninstall_extension(widget.source.name!)),
+                              content: Text(l10n.uninstall_extension(widget.source.name!)),
                               actions: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -221,15 +204,13 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                     ),
                                     TextButton(
                                         onPressed: () {
-                                          final sourcePrefsIds = isar
-                                              .sourcePreferences
+                                          final sourcePrefsIds = isar.sourcePreferences
                                               .filter()
                                               .sourceIdEqualTo(source.id!)
                                               .findAllSync()
                                               .map((e) => e.id!)
                                               .toList();
-                                          final sourcePrefsStringIds = isar
-                                              .sourcePreferenceStringValues
+                                          final sourcePrefsStringIds = isar.sourcePreferenceStringValues
                                               .filter()
                                               .sourceIdEqualTo(source.id!)
                                               .findAllSync()
@@ -237,19 +218,15 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                               .toList();
                                           isar.writeTxnSync(() {
                                             if (source.isObsolete ?? false) {
-                                              isar.sources.deleteSync(
-                                                  widget.source.id!);
+                                              isar.sources.deleteSync(widget.source.id!);
                                             } else {
                                               isar.sources.putSync(widget.source
                                                 ..sourceCode = ""
                                                 ..isAdded = false
                                                 ..isPinned = false);
                                             }
-                                            isar.sourcePreferences
-                                                .deleteAllSync(sourcePrefsIds);
-                                            isar.sourcePreferenceStringValues
-                                                .deleteAllSync(
-                                                    sourcePrefsStringIds);
+                                            isar.sourcePreferences.deleteAllSync(sourcePrefsIds);
+                                            isar.sourcePreferenceStringValues.deleteAllSync(sourcePrefsStringIds);
                                           });
 
                                           Navigator.pop(ctx);
@@ -264,13 +241,11 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                     },
                     child: Text(
                       l10n.uninstall,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )),
               ),
             ),
-            SourcePreferenceWidget(
-                sourcePreference: sourcePreference, source: source)
+            SourcePreferenceWidget(sourcePreference: sourcePreference, source: source)
           ],
         ),
       ),

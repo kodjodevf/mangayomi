@@ -26,15 +26,13 @@ class MElement {
 
   String? get getDataSrc => _element?.getDataSrc;
 
-  List<MElement>? get children =>
-      _element?.children.map((e) => MElement(e)).toList();
+  List<MElement>? get children => _element?.children.map((e) => MElement(e)).toList();
 
   MElement? get parent => MElement(_element?.parent);
 
   MElement? get nextElementSibling => MElement(_element?.nextElementSibling);
 
-  MElement? get previousElementSibling =>
-      MElement(_element?.previousElementSibling);
+  MElement? get previousElementSibling => MElement(_element?.previousElementSibling);
 
   String? xpathFirst(String xpath) {
     return _element?.outerHtml == null ? null : _element?.xpathFirst(xpath);
@@ -45,17 +43,11 @@ class MElement {
   }
 
   List<MElement>? getElementsByClassName(String classNames) {
-    return _element
-        ?.getElementsByClassName(classNames)
-        .map((e) => MElement(e))
-        .toList();
+    return _element?.getElementsByClassName(classNames).map((e) => MElement(e)).toList();
   }
 
   List<MElement>? getElementsByTagName(String localNames) {
-    return _element
-        ?.getElementsByTagName(localNames)
-        .map((e) => MElement(e))
-        .toList();
+    return _element?.getElementsByTagName(localNames).map((e) => MElement(e)).toList();
   }
 
   List<MElement>? select(String selector) {

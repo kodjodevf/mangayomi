@@ -90,13 +90,8 @@ class RhttpClient {
       required rust.HttpHeaders headers,
       Uint8List? body,
       CancelToken? cancelToken}) async {
-    final response = await request(
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken);
+    final response =
+        await request(method: method, url: url, query: query, headers: headers, body: body, cancelToken: cancelToken);
     return response as HttpStreamResponse;
   }
 }

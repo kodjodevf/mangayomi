@@ -45,9 +45,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                       Column(
                         children: [
                           FlexThemeModeOptionButton(
-                            flexSchemeColor: isLight
-                                ? ThemeAA.schemes[index].light
-                                : ThemeAA.schemes[index].dark,
+                            flexSchemeColor: isLight ? ThemeAA.schemes[index].light : ThemeAA.schemes[index].dark,
                             selected: selected == index,
                             selectedBorder: BorderSide(
                               color: theme.primaryColorLight,
@@ -65,15 +63,11 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               });
                               isLight
                                   ? ref
-                                      .read(
-                                          flexSchemeColorStateProvider.notifier)
-                                      .setTheme(ThemeAA.schemes[selected].light,
-                                          selected)
+                                      .read(flexSchemeColorStateProvider.notifier)
+                                      .setTheme(ThemeAA.schemes[selected].light, selected)
                                   : ref
-                                      .read(
-                                          flexSchemeColorStateProvider.notifier)
-                                      .setTheme(ThemeAA.schemes[selected].dark,
-                                          selected);
+                                      .read(flexSchemeColorStateProvider.notifier)
+                                      .setTheme(ThemeAA.schemes[selected].dark, selected);
                             },
                             optionButtonPadding: EdgeInsets.zero,
                             optionButtonMargin: EdgeInsets.zero,
@@ -83,8 +77,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                           ),
                           Text(
                             ThemeAA.schemes[index].name,
-                            style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w300),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
                           )
                         ],
                       ),

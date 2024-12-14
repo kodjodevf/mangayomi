@@ -12,23 +12,16 @@ import 'package:mangayomi/utils/language.dart';
 class SourceListTile extends StatelessWidget {
   final bool isManga;
   final Source source;
-  const SourceListTile(
-      {super.key, required this.source, required this.isManga});
+  const SourceListTile({super.key, required this.source, required this.isManga});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        final sources = isar.sources
-            .filter()
-            .idIsNotNull()
-            .and()
-            .isMangaEqualTo(isManga)
-            .findAllSync();
+        final sources = isar.sources.filter().idIsNotNull().and().isMangaEqualTo(isManga).findAllSync();
         isar.writeTxnSync(() {
           for (var src in sources) {
-            isar.sources
-                .putSync(src..lastUsed = src.id == source.id ? true : false);
+            isar.sources.putSync(src..lastUsed = src.id == source.id ? true : false);
           }
         });
 
@@ -75,10 +68,8 @@ class SourceListTile extends StatelessWidget {
                 // final supportsLatest =  ref.watch(supportsLatestProvider(source: source));
                 // if (supportsLatest) {
                 return TextButton(
-                    style: const ButtonStyle(
-                        padding: WidgetStatePropertyAll(EdgeInsets.all(10))),
-                    onPressed: () =>
-                        context.push('/mangaHome', extra: (source, true)),
+                    style: const ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.all(10))),
+                    onPressed: () => context.push('/mangaHome', extra: (source, true)),
                     child: Text(context.l10n.latest));
                 // }
                 // return const SizedBox.shrink();
@@ -88,8 +79,7 @@ class SourceListTile extends StatelessWidget {
             IconButton(
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
-                  isar.writeTxnSync(() => isar.sources
-                      .putSync(source..isPinned = !source.isPinned!));
+                  isar.writeTxnSync(() => isar.sources.putSync(source..isPinned = !source.isPinned!));
                 },
                 icon: Icon(
                   Icons.push_pin_outlined,

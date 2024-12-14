@@ -37,10 +37,7 @@ class SettingsScreen extends StatelessWidget {
                 icon: Icons.download_outlined,
                 onTap: () => context.push('/downloads')),
             ListTileWidget(
-                title: l10n.tracking,
-                subtitle: "",
-                icon: Icons.sync_outlined,
-                onTap: () => context.push('/track')),
+                title: l10n.tracking, subtitle: "", icon: Icons.sync_outlined, onTap: () => context.push('/track')),
             ListTileWidget(
                 title: l10n.syncing,
                 subtitle: l10n.syncing_subtitle,

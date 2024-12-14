@@ -25,9 +25,7 @@ class AboutScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Image.asset(
                         "assets/app_icons/icon.png",
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? Colors.black
-                            : Colors.white,
+                        color: Theme.of(context).brightness == Brightness.light ? Colors.black : Colors.white,
                         fit: BoxFit.cover,
                         height: 100,
                       ),
@@ -47,8 +45,7 @@ class AboutScreen extends ConsumerWidget {
                         ),
                         ListTile(
                           onTap: () {
-                            ref.read(checkForUpdateProvider(
-                                context: context, manualUpdate: true));
+                            ref.read(checkForUpdateProvider(context: context, manualUpdate: true));
                           },
                           title: Text(l10n.check_for_update),
                         ),
@@ -69,14 +66,12 @@ class AboutScreen extends ConsumerWidget {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  _launchInBrowser(Uri.parse(
-                                      'https://github.com/kodjodevf/mangayomi'));
+                                  _launchInBrowser(Uri.parse('https://github.com/kodjodevf/mangayomi'));
                                 },
                                 icon: const Icon(FontAwesomeIcons.github)),
                             IconButton(
                                 onPressed: () {
-                                  _launchInBrowser(Uri.parse(
-                                      'https://discord.com/invite/EjfBuYahsP'));
+                                  _launchInBrowser(Uri.parse('https://discord.com/invite/EjfBuYahsP'));
                                 },
                                 icon: const Icon(FontAwesomeIcons.discord))
                           ],

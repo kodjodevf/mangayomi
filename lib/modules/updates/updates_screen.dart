@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
@@ -27,16 +27,14 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with TickerProviderStateMixin {
+class _UpdatesScreenState extends ConsumerState<UpdatesScreen> with TickerProviderStateMixin {
   late TabController _tabBarController;
   bool _isLoading = false;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
     });
-    botToast(context.l10n.updating_library,
-        fontSize: 13, second: 1600, alignY: !context.isTablet ? 0.85 : 1);
+    botToast(context.l10n.updating_library, fontSize: 13, second: 1600, alignY: !context.isTablet ? 0.85 : 1);
     final mangaList = isar.mangas
         .filter()
         .idIsNotNull()
@@ -48,8 +46,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
 
     for (var manga in mangaList) {
       try {
-        await ref.read(
-            updateMangaDetailProvider(mangaId: manga.id, isInit: false).future);
+        await ref.read(updateMangaDetailProvider(mangaId: manga.id, isInit: false).future);
       } catch (_) {}
       numbers++;
     }
@@ -123,15 +120,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                         _isSearch = true;
                       });
                     },
-                    icon: Icon(Icons.search_outlined,
-                        color: Theme.of(context).hintColor)),
+                    icon: Icon(Icons.search_outlined, color: Theme.of(context).hintColor)),
             IconButton(
                 splashRadius: 20,
                 onPressed: () {
                   _updateLibrary();
                 },
-                icon: Icon(Icons.refresh_outlined,
-                    color: Theme.of(context).hintColor)),
+                icon: Icon(Icons.refresh_outlined, color: Theme.of(context).hintColor)),
             IconButton(
                 splashRadius: 20,
                 onPressed: () {
@@ -160,10 +155,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                                       List<Update> updates = isar.updates
                                           .filter()
                                           .idIsNotNull()
-                                          .chapter((q) => q.manga((q) =>
-                                              q.isMangaEqualTo(
-                                                  _tabBarController.index ==
-                                                      0)))
+                                          .chapter(
+                                              (q) => q.manga((q) => q.isMangaEqualTo(_tabBarController.index == 0)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -182,8 +175,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                         );
                       });
                 },
-                icon: Icon(Icons.delete_sweep_outlined,
-                    color: Theme.of(context).hintColor)),
+                icon: Icon(Icons.delete_sweep_outlined, color: Theme.of(context).hintColor)),
           ],
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
@@ -197,14 +189,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: TabBarView(controller: _tabBarController, children: [
-            UpdateTab(
-                isManga: true,
-                query: _textEditingController.text,
-                isLoading: _isLoading),
-            UpdateTab(
-                isManga: false,
-                query: _textEditingController.text,
-                isLoading: _isLoading)
+            UpdateTab(isManga: true, query: _textEditingController.text, isLoading: _isLoading),
+            UpdateTab(isManga: false, query: _textEditingController.text, isLoading: _isLoading)
           ]),
         ),
       ),
@@ -216,11 +202,7 @@ class UpdateTab extends ConsumerStatefulWidget {
   final String query;
   final bool isManga;
   final bool isLoading;
-  const UpdateTab(
-      {required this.isManga,
-      required this.query,
-      required this.isLoading,
-      super.key});
+  const UpdateTab({required this.isManga, required this.query, required this.isLoading, super.key});
 
   @override
   ConsumerState<UpdateTab> createState() => _UpdateTabState();
@@ -230,8 +212,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final update =
-        ref.watch(getAllUpdateStreamProvider(isManga: widget.isManga));
+    final update = ref.watch(getAllUpdateStreamProvider(isManga: widget.isManga));
     return Scaffold(
         body: Stack(
       children: [
@@ -239,14 +220,10 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
           data: (data) {
             final entries = data
                 .where((element) => widget.query.isNotEmpty
-                    ? element.chapter.value!.manga.value!.name!
-                        .toLowerCase()
-                        .contains(widget.query.toLowerCase())
+                    ? element.chapter.value!.manga.value!.name!.toLowerCase().contains(widget.query.toLowerCase())
                     : true)
                 .toList();
-            final lastUpdatedList = data
-                .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
-                .toList();
+            final lastUpdatedList = data.map((e) => e.chapter.value!.manga.value!.lastUpdate!).toList();
             lastUpdatedList.sort((a, b) => a.compareTo(b));
             final lastUpdated = lastUpdatedList.firstOrNull;
             if (entries.isNotEmpty) {
@@ -254,28 +231,19 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
                 slivers: [
                   if (lastUpdated != null)
                     SliverPadding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 20),
+                      padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                       sliver: SliverList(
                           delegate: SliverChildListDelegate.fixed([
                         Text(
-                            l10n.library_last_updated(dateFormat(
-                                lastUpdated.toString(),
-                                ref: ref,
-                                context: context,
-                                showHOURorMINUTE: true)),
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: context.secondaryColor))
+                            l10n.library_last_updated(
+                                dateFormat(lastUpdated.toString(), ref: ref, context: context, showHOURorMINUTE: true)),
+                            style: TextStyle(fontStyle: FontStyle.italic, color: context.secondaryColor))
                       ])),
                     ),
                   SliverGroupedListView<Update, String>(
                     elements: entries,
                     groupBy: (element) => dateFormat(element.date!,
-                        context: context,
-                        ref: ref,
-                        forHistoryValue: true,
-                        useRelativeTimesTamps: false),
+                        context: context, ref: ref, forHistoryValue: true, useRelativeTimesTamps: false),
                     groupSeparatorBuilder: (String groupByValue) => Padding(
                       padding: const EdgeInsets.only(bottom: 8, left: 12),
                       child: Row(
@@ -291,11 +259,9 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
                     ),
                     itemBuilder: (context, element) {
                       final chapter = element.chapter.value!;
-                      return UpdateChapterListTileWidget(
-                          chapter: chapter, sourceExist: true);
+                      return UpdateChapterListTileWidget(chapter: chapter, sourceExist: true);
                     },
-                    itemComparator: (item1, item2) =>
-                        item1.date!.compareTo(item2.date!),
+                    itemComparator: (item1, item2) => item1.date!.compareTo(item2.date!),
                     order: GroupedListOrder.DESC,
                   ),
                 ],

@@ -1,46 +1,32 @@
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
-import 'package:mangayomi/eval/dart/model/m_pages.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_pages.dart';
 
 class $MPages implements MPages, $Instance {
   $MPages.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MPages'));
+  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MPages'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter(
-              'list',
-              BridgeTypeAnnotation(
-                  BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
-              false),
-          BridgeParameter(
-              'hasNextPage',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool),
-                  nullable: true),
-              true),
+        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
+          BridgeParameter('list', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MManga.$type])), false),
+          BridgeParameter('hasNextPage', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool), nullable: true), true),
         ]))
       },
       fields: {
         'list': BridgeFieldDef(
           BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
         ),
-        'hasNextPage': BridgeFieldDef(BridgeTypeAnnotation(
-            BridgeTypeRef(CoreTypes.bool),
-            nullable: true)),
+        'hasNextPage': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool), nullable: true)),
       },
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     List<$Value> list = args[0]!.$value;
-    return $MPages.wrap(MPages(
-        list: list.map((e) => e as MManga).toList(),
-        hasNextPage: args[1]?.$value ?? false));
+    return $MPages.wrap(MPages(list: list.map((e) => e as MManga).toList(), hasNextPage: args[1]?.$value ?? false));
   }
 
   @override

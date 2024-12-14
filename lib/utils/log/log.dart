@@ -2,12 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'dart:async';
 
 class Logger {
-  static final StreamController<(LoggerLevel, String, DateTime)>
-      _logStreamController =
+  static final StreamController<(LoggerLevel, String, DateTime)> _logStreamController =
       StreamController<(LoggerLevel, String, DateTime)>.broadcast();
 
-  static StreamController<(LoggerLevel, String, DateTime)>
-      get logStreamController => _logStreamController;
+  static StreamController<(LoggerLevel, String, DateTime)> get logStreamController => _logStreamController;
 
   static final List<(LoggerLevel, String, DateTime)> _logs = [];
 

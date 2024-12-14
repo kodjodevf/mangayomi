@@ -57,21 +57,9 @@ TrackStatus toTrackStatus(TrackStatus status, bool isManga, int syncId) {
 
 (String, String, Color) trackInfos(int id) {
   return switch (id) {
-    1 => (
-        "assets/trackers_icons/tracker_mal.webp",
-        "MyAnimeList",
-        const Color.fromRGBO(46, 81, 162, 1)
-      ),
-    2 => (
-        "assets/trackers_icons/tracker_anilist.webp",
-        "Anilist",
-        const Color.fromRGBO(51, 37, 50, 1)
-      ),
-    _ => (
-        "assets/trackers_icons/tracker_kitsu.webp",
-        "Kitsu",
-        const Color.fromRGBO(18, 25, 35, 1)
-      ),
+    1 => ("assets/trackers_icons/tracker_mal.webp", "MyAnimeList", const Color.fromRGBO(46, 81, 162, 1)),
+    2 => ("assets/trackers_icons/tracker_anilist.webp", "Anilist", const Color.fromRGBO(51, 37, 50, 1)),
+    _ => ("assets/trackers_icons/tracker_kitsu.webp", "Kitsu", const Color.fromRGBO(18, 25, 35, 1)),
   };
 }
 
@@ -79,5 +67,4 @@ String toImgUrl(String url) {
   return url.isEmpty ? _emptyImg : url;
 }
 
-const _emptyImg =
-    "https://upload.wikimedia.org/wikipedia/commons/1/12/White_background.png";
+const _emptyImg = "https://upload.wikimedia.org/wikipedia/commons/1/12/White_background.png";

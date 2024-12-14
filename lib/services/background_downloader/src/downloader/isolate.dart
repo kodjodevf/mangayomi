@@ -23,8 +23,7 @@ import 'upload_isolate.dart';
 
 /// global variables, unique to this isolate
 var bytesTotal = 0; // total bytes read in this download session
-var startByte =
-    0; // starting position within the original range, used for resume
+var startByte = 0; // starting position within the original range, used for resume
 var lastProgressUpdateTime = DateTime.fromMillisecondsSinceEpoch(0);
 var nextProgressUpdateTime = DateTime.fromMillisecondsSinceEpoch(0);
 var lastProgressUpdate = 0.0;
@@ -67,8 +66,7 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
     Map<String, dynamic> proxy,
     bool bypassTLSCertificateValidation
   ) = await messagesToIsolate.next;
-  DownloaderHttpClient.setHttpClient(
-      requestTimeout, proxy, bypassTLSCertificateValidation);
+  DownloaderHttpClient.setHttpClient(requestTimeout, proxy, bypassTLSCertificateValidation);
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     if (kDebugMode) {
@@ -90,14 +88,9 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
     await Future.delayed(const Duration(milliseconds: 0));
     await switch (task) {
       ParallelDownloadTask() => doParallelDownloadTask(
-          task,
-          filePath,
-          resumeData,
-          isResume,
-          requestTimeout ?? const Duration(seconds: 60),
-          sendPort),
-      DownloadTask() => doDownloadTask(task, filePath, resumeData, isResume,
-          requestTimeout ?? const Duration(seconds: 60), sendPort),
+          task, filePath, resumeData, isResume, requestTimeout ?? const Duration(seconds: 60), sendPort),
+      DownloadTask() =>
+        doDownloadTask(task, filePath, resumeData, isResume, requestTimeout ?? const Duration(seconds: 60), sendPort),
       UploadTask() => doUploadTask(task, filePath, sendPort),
       DataTask() => doDataTask(task, sendPort)
     };
@@ -111,8 +104,7 @@ Future<void> doTask((RootIsolateToken, SendPort) isolateArguments) async {
 ///
 /// Called as unawaited Future, which completes when the [messagesToIsolate]
 /// stream is closed
-Future<void> listenToIncomingMessages(
-    Task task, StreamQueue messagesToIsolate, SendPort sendPort) async {
+Future<void> listenToIncomingMessages(Task task, StreamQueue messagesToIsolate, SendPort sendPort) async {
   while (await messagesToIsolate.hasNext) {
     final message = await messagesToIsolate.next;
     switch (message) {
@@ -154,19 +146,14 @@ Future<void> listenToIncomingMessages(
 ///
 /// Note: does not flush or close any streams
 Future<TaskStatus> transferBytes(
-    Stream<List<int>> inStream,
-    StreamSink<List<int>> outStream,
-    int contentLength,
-    Task task,
-    SendPort sendPort,
+    Stream<List<int>> inStream, StreamSink<List<int>> outStream, int contentLength, Task task, SendPort sendPort,
     [Duration requestTimeout = const Duration(seconds: 60)]) async {
   if (contentLength == 0) {
     contentLength = -1;
   }
   var resultStatus = TaskStatus.complete;
   try {
-    await outStream
-        .addStream(inStream.timeout(requestTimeout, onTimeout: (sink) {
+    await outStream.addStream(inStream.timeout(requestTimeout, onTimeout: (sink) {
       taskException = TaskConnectionException('Connection timed out');
       resultStatus = TaskStatus.failed;
       sink.close(); // ends the stream
@@ -180,13 +167,10 @@ Future<TaskStatus> transferBytes(
         throw StateError('Paused');
       }
       bytesTotal += bytes.length;
-      final progress = min(
-          (bytesTotal + startByte).toDouble() / (contentLength + startByte),
-          0.999);
+      final progress = min((bytesTotal + startByte).toDouble() / (contentLength + startByte), 0.999);
       final now = DateTime.now();
       if (contentLength > 0 && shouldSendProgressUpdate(progress, now)) {
-        processProgressUpdateInIsolate(
-            task, progress, sendPort, contentLength + startByte);
+        processProgressUpdateInIsolate(task, progress, sendPort, contentLength + startByte);
         lastProgressUpdate = progress;
         nextProgressUpdateTime = now.add(const Duration(milliseconds: 500));
       }
@@ -207,8 +191,7 @@ Future<TaskStatus> transferBytes(
 ///
 /// Sends status update via the [sendPort], if requested
 /// If the task is finished, processes a final progressUpdate update
-void processStatusUpdateInIsolate(
-    Task task, TaskStatus status, SendPort sendPort) {
+void processStatusUpdateInIsolate(Task task, TaskStatus status, SendPort sendPort) {
   final retryNeeded = status == TaskStatus.failed && task.retriesRemaining > 0;
   // if task is in final state, process a final progressUpdate
   // A 'failed' progress update is only provided if
@@ -239,14 +222,10 @@ void processStatusUpdateInIsolate(
       'statusUpdate',
       task,
       status,
-      status == TaskStatus.failed
-          ? taskException ?? TaskException('None')
-          : null,
+      status == TaskStatus.failed ? taskException ?? TaskException('None') : null,
       status.isFinalState ? responseBody : null,
       status.isFinalState ? responseHeaders : null,
-      status == TaskStatus.complete || status == TaskStatus.notFound
-          ? responseStatusCode
-          : null,
+      status == TaskStatus.complete || status == TaskStatus.notFound ? responseStatusCode : null,
       status.isFinalState ? mimeType : null,
       status.isFinalState ? charSet : null,
     ));
@@ -256,9 +235,7 @@ void processStatusUpdateInIsolate(
 /// Processes a progress update for the [task]
 ///
 /// Sends progress update via the [sendPort], if requested
-void processProgressUpdateInIsolate(
-    Task task, double progress, SendPort sendPort,
-    [int expectedFileSize = -1]) {
+void processProgressUpdateInIsolate(Task task, double progress, SendPort sendPort, [int expectedFileSize = -1]) {
   if (task.providesProgressUpdates) {
     if (progress > 0 && progress < 1) {
       // calculate download speed and time remaining
@@ -271,9 +248,8 @@ void processProgressUpdateInIsolate(
       }
       final bytesSinceLastUpdate = bytesTotal - bytesTotalAtLastProgressUpdate;
       bytesTotalAtLastProgressUpdate = bytesTotal;
-      final currentNetworkSpeed = timeSinceLastUpdate.inHours > 0
-          ? -1.0
-          : bytesSinceLastUpdate / timeSinceLastUpdate.inMicroseconds;
+      final currentNetworkSpeed =
+          timeSinceLastUpdate.inHours > 0 ? -1.0 : bytesSinceLastUpdate / timeSinceLastUpdate.inMicroseconds;
       networkSpeed = switch (currentNetworkSpeed) {
         -1.0 => -1.0,
         _ when networkSpeed == -1.0 => currentNetworkSpeed,
@@ -283,24 +259,10 @@ void processProgressUpdateInIsolate(
       final timeRemaining = networkSpeed == -1.0 || expectedFileSize < 0
           ? const Duration(seconds: -1)
           : Duration(microseconds: (remainingBytes / networkSpeed).round());
-      sendPort.send((
-        'progressUpdate',
-        task,
-        progress,
-        expectedFileSize,
-        networkSpeed,
-        timeRemaining
-      ));
+      sendPort.send(('progressUpdate', task, progress, expectedFileSize, networkSpeed, timeRemaining));
     } else {
       // no download speed or time remaining
-      sendPort.send((
-        'progressUpdate',
-        task,
-        progress,
-        expectedFileSize,
-        -1.0,
-        const Duration(seconds: -1)
-      ));
+      sendPort.send(('progressUpdate', task, progress, expectedFileSize, -1.0, const Duration(seconds: -1)));
     }
   }
 }
@@ -310,8 +272,7 @@ void processProgressUpdateInIsolate(
 // in Kotlin and Swift are translations of the same code
 
 /// Returns the multipart entry for one field name/value pair
-String fieldEntry(String name, String value) =>
-    '--$boundary$lineFeed${headerForField(name, value)}$value$lineFeed';
+String fieldEntry(String name, String value) => '--$boundary$lineFeed${headerForField(name, value)}$value$lineFeed';
 
 /// Returns the header string for a field.
 ///
@@ -376,8 +337,7 @@ Future<String?> responseContent(http.StreamedResponse response) {
   try {
     return response.stream.bytesToString();
   } catch (e) {
-    log.fine(
-        'Could not read response content from httpResponseCode ${response.statusCode}: $e');
+    log.fine('Could not read response content from httpResponseCode ${response.statusCode}: $e');
     return Future.value(null);
   }
 }
@@ -385,6 +345,5 @@ Future<String?> responseContent(http.StreamedResponse response) {
 /// Returns true if [currentProgress] > [lastProgressUpdate] + threshold and
 /// [now] > [nextProgressUpdateTime]
 bool shouldSendProgressUpdate(double currentProgress, DateTime now) {
-  return currentProgress - lastProgressUpdate > 0.02 &&
-      now.isAfter(nextProgressUpdateTime);
+  return currentProgress - lastProgressUpdate > 0.02 && now.isAfter(nextProgressUpdateTime);
 }

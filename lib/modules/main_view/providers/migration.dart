@@ -11,20 +11,11 @@ part 'migration.g.dart';
 
 @riverpod
 Future<void> migration(Ref ref) async {
-  final chapters =
-      isar.chapters.filter().idIsNotNull().mangaIdIsNull().findAllSync();
-  final downloads =
-      isar.downloads.filter().idIsNotNull().mangaIdIsNull().findAllSync();
-  final histories = isar.historys
-      .filter()
-      .idIsNotNull()
-      .chapterIdIsNull()
-      .or()
-      .idIsNotNull()
-      .isMangaIsNull()
-      .findAllSync();
-  final tracks =
-      isar.tracks.filter().idIsNotNull().isMangaIsNull().findAllSync();
+  final chapters = isar.chapters.filter().idIsNotNull().mangaIdIsNull().findAllSync();
+  final downloads = isar.downloads.filter().idIsNotNull().mangaIdIsNull().findAllSync();
+  final histories =
+      isar.historys.filter().idIsNotNull().chapterIdIsNull().or().idIsNotNull().isMangaIsNull().findAllSync();
+  final tracks = isar.tracks.filter().idIsNotNull().isMangaIsNull().findAllSync();
 
   isar.writeTxnSync(() {
     //mangaId in chapter

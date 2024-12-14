@@ -48,13 +48,7 @@ class UpdatedChapter {
   bool? isRead;
   String? lastPageRead;
   bool? deleted;
-  UpdatedChapter(
-      {this.chapterId,
-      this.mangaId,
-      this.isBookmarked,
-      this.isRead,
-      this.lastPageRead,
-      this.deleted});
+  UpdatedChapter({this.chapterId, this.mangaId, this.isBookmarked, this.isRead, this.lastPageRead, this.deleted});
   UpdatedChapter.fromJson(Map<String, dynamic> json) {
     chapterId = json['chapterId'];
     mangaId = json['mangaId'];

@@ -30,39 +30,24 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: TextInputType.text,
       onChanged: (value) {
         if (name != controller.text) {
-          exist(entries
-              .where((element) => element.name == controller.text)
-              .toList()
-              .isNotEmpty);
+          exist(entries.where((element) => element.name == controller.text).toList().isNotEmpty);
         }
         val(value);
       },
       onFieldSubmitted: (s) {},
       decoration: InputDecoration(
-          helperText: isExist == true
-              ? l10n!.add_category_error_exist
-              : l10n!.category_name_required,
+          helperText: isExist == true ? l10n!.add_category_error_exist : l10n!.category_name_required,
           helperStyle: TextStyle(color: isExist == true ? Colors.red : null),
           isDense: true,
-          label: Text(l10n.name,
-              style: TextStyle(color: isExist == true ? Colors.red : null)),
+          label: Text(l10n.name, style: TextStyle(color: isExist == true ? Colors.red : null)),
           filled: true,
           fillColor: Colors.transparent,
           enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: isExist == true
-                      ? Colors.red
-                      : Theme.of(context).primaryColor)),
+              borderSide: BorderSide(color: isExist == true ? Colors.red : Theme.of(context).primaryColor)),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: isExist == true
-                      ? Colors.red
-                      : Theme.of(context).primaryColor)),
+              borderSide: BorderSide(color: isExist == true ? Colors.red : Theme.of(context).primaryColor)),
           border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: isExist == true
-                      ? Colors.red
-                      : Theme.of(context).primaryColor))),
+              borderSide: BorderSide(color: isExist == true ? Colors.red : Theme.of(context).primaryColor))),
     );
   }
 }
