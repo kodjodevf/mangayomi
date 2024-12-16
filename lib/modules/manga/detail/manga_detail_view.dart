@@ -519,9 +519,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final source = getSource(
                                           widget.manga!.lang!,
                                           widget.manga!.source!);
-                                      String url = source!.apiUrl!.isEmpty
-                                          ? widget.manga!.link!
-                                          : "${source.baseUrl}${widget.manga!.link!}";
+                                      String url = "${source?.baseUrl}${widget.manga!.link!}";
 
                                       Share.share(url);
                                     }
