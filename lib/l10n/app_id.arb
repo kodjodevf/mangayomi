@@ -333,5 +333,18 @@
     "or": "ATAU",
     "advanced": "Lanjutan",
     "use_native_http_client": "Gunakan klien http asli",
-    "use_native_http_client_info": "secara otomatis mendukung fitur platform seperti VPN, mendukung lebih banyak fitur HTTP seperti HTTP/3 dan penanganan pengalihan khusus"
+    "use_native_http_client_info": "secara otomatis mendukung fitur platform seperti VPN, mendukung lebih banyak fitur HTTP seperti HTTP/3 dan penanganan pengalihan khusus",
+    "unwatched": "Belum ditonton",
+    "last_watched": "Terakhir ditonton",
+    "unwatched_count": "Jumlah belum ditonton",
+    "latest_episode": "Episode terbaru",
+    "downloaded_episodes": "Episode yang diunduh",
+    "show_continue_watching_buttons": "Tampilkan tombol lanjut menonton",
+    "by_episode_number": "Menurut nomor episode",
+    "episode_number": "Nomor episode",
+    "total_episodes": "Total episode",
+    "next_episode": "Episode berikutnya",
+    "next_5_episodes": "5 episode berikutnya",
+    "next_10_episodes": "10 episode berikutnya",
+    "next_25_episodes": "25 episode berikutnya"
 }
