@@ -54,8 +54,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
       ..setBrightness(Brightness.dark)
       ..launch(widget.url)
       ..onClose.whenComplete(() {
-        timer.cancel();
-        Navigator.pop(context);
+        if (mounted) {
+          timer.cancel();
+          Navigator.pop(context);
+        }
       });
   }
 
