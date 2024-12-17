@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
@@ -27,12 +26,17 @@ class MainScreen extends ConsumerWidget {
 
   String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
     switch (languageCode) {
-      case 'de': return "Aktuali-\nsierungen";
+      case 'de':
+        return "Aktuali-\nsierungen";
       case 'es':
-      case 'es_419': return "Actuali-\nzaciones";
-      case 'it': return "Aggiorna-\nmenti";
-      case 'tr': return "Güncel-\nlemeler";
-      default: return defaultLabel;
+      case 'es_419':
+        return "Actuali-\nzaciones";
+      case 'it':
+        return "Aggiorna-\nmenti";
+      case 'tr':
+        return "Güncel-\nlemeler";
+      default:
+        return defaultLabel;
     }
   }
 
@@ -52,12 +56,10 @@ class MainScreen extends ConsumerWidget {
         bool isReadingScreen =
             location == '/mangareaderview' || location == '/animePlayerView';
         int currentIndex = switch (location) {
-          null || '/MangaLibrary' => 0,
-          '/AnimeLibrary' => 1,
-          '/updates' => 2,
-          '/history' => 3,
-          '/browse' => 4,
-          _ => 5,
+          null || '/browse/manga' => 0,
+          '/browse/anime' => 1,
+          '/extensions' => 2,
+          _ => 3,
         };
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
@@ -104,11 +106,9 @@ class MainScreen extends ConsumerWidget {
                               true => 0,
                               _ => switch (location) {
                                   null => 100,
-                                  != '/MangaLibrary' &&
-                                        != '/AnimeLibrary' &&
-                                        != '/history' &&
-                                        != '/updates' &&
-                                        != '/browse' &&
+                                  != '/browse/manga' &&
+                                        != '/browse/anime' &&
+                                        != '/extensions' &&
                                         != '/more' =>
                                     0,
                                   _ => 100,
@@ -147,41 +147,13 @@ class MainScreen extends ConsumerWidget {
                                                 child: Text(l10n.anime))),
                                         NavigationRailDestination(
                                             selectedIcon:
-                                                const Icon(Icons.new_releases),
-                                            icon: const Icon(
-                                                Icons.new_releases_outlined),
-                                            label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Stack(
-                                                  children: [
-                                                    Text(
-                                                      getHyphenatedUpdatesLabel(
-                                                        ref.watch(l10nLocaleStateProvider).languageCode,
-                                                        l10n.updates,
-                                                      ),
-                                                      textAlign: TextAlign.center,
-                                                    ),
-                                                  ],
-                                                ))),
-                                        NavigationRailDestination(
-                                            selectedIcon:
-                                                const Icon(Icons.history),
-                                            icon: const Icon(
-                                                Icons.history_outlined),
-                                            label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(l10n.history))),
-                                        NavigationRailDestination(
-                                            selectedIcon:
                                                 const Icon(Icons.explore),
                                             icon: const Icon(
                                                 Icons.explore_outlined),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
-                                                child: Text(l10n.browse))),
+                                                child: Text(l10n.extensions))),
                                         NavigationRailDestination(
                                             selectedIcon:
                                                 const Icon(Icons.more_horiz),
@@ -195,11 +167,9 @@ class MainScreen extends ConsumerWidget {
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
                                         final fn = switch (newIndex) {
-                                          0 => route.go('/MangaLibrary'),
-                                          1 => route.go('/AnimeLibrary'),
-                                          2 => route.go('/updates'),
-                                          3 => route.go('/history'),
-                                          4 => route.go('/browse'),
+                                          0 => route.go('/browse/manga'),
+                                          1 => route.go('/browse/anime'),
+                                          2 => route.go('/extensions'),
                                           _ => route.go('/more'),
                                         };
                                         fn;
@@ -207,10 +177,6 @@ class MainScreen extends ConsumerWidget {
                                     );
                                   }),
                                 ),
-                                Positioned(
-                                    right: 18,
-                                    top: 140,
-                                    child: _updatesTotalNumbers(ref)),
                                 Positioned(
                                     right: 18,
                                     top: 275,
@@ -231,11 +197,9 @@ class MainScreen extends ConsumerWidget {
                           true => 0,
                           _ => switch (location) {
                               null => null,
-                              != '/MangaLibrary' &&
-                                    != '/AnimeLibrary' &&
-                                    != '/history' &&
-                                    != '/updates' &&
-                                    != '/browse' &&
+                              != '/browse/manga' &&
+                                    != '/browse/anime' &&
+                                    != '/extensions' &&
                                     != '/more' =>
                                 0,
                               _ => null,
@@ -263,48 +227,30 @@ class MainScreen extends ConsumerWidget {
                                   icon: const Icon(
                                       Icons.video_collection_outlined),
                                   label: l10n.anime),
+                              NavigationDestination(
+                                  selectedIcon: const Icon(Icons.explore),
+                                  icon: const Icon(Icons.explore_outlined),
+                                  label: l10n.extensions),
                               Stack(
                                 children: [
                                   NavigationDestination(
                                       selectedIcon:
-                                          const Icon(Icons.new_releases),
-                                      icon: const Icon(
-                                          Icons.new_releases_outlined),
-                                      label: l10n.updates),
-                                  Positioned(
-                                      right: 14,
-                                      top: 3,
-                                      child: _updatesTotalNumbers(ref)),
-                                ],
-                              ),
-                              NavigationDestination(
-                                  selectedIcon: const Icon(Icons.history),
-                                  icon: const Icon(Icons.history_outlined),
-                                  label: l10n.history),
-                              Stack(
-                                children: [
-                                  NavigationDestination(
-                                      selectedIcon: const Icon(Icons.explore),
-                                      icon: const Icon(Icons.explore_outlined),
-                                      label: l10n.browse),
+                                          const Icon(Icons.more_horiz),
+                                      icon:
+                                          const Icon(Icons.more_horiz_outlined),
+                                      label: l10n.more),
                                   Positioned(
                                       right: 14,
                                       top: 3,
                                       child: _extensionUpdateTotalNumbers(ref)),
                                 ],
                               ),
-                              NavigationDestination(
-                                  selectedIcon: const Icon(Icons.more_horiz),
-                                  icon: const Icon(Icons.more_horiz_outlined),
-                                  label: l10n.more),
                             ],
                             onDestinationSelected: (newIndex) {
                               final fn = switch (newIndex) {
-                                0 => route.go('/MangaLibrary'),
-                                1 => route.go('/AnimeLibrary'),
-                                2 => route.go('/updates'),
-                                3 => route.go('/history'),
-                                4 => route.go('/browse'),
+                                0 => route.go('/browse/manga'),
+                                1 => route.go('/browse/anime'),
+                                2 => route.go('/extensions'),
                                 _ => route.go('/more'),
                               };
                               fn;
@@ -339,39 +285,6 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
-          return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 176, 46, 37)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
-        }
-        return Container();
-      });
-}
-
-Widget _updatesTotalNumbers(WidgetRef ref) {
-  return StreamBuilder(
-      stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!.where((element) {
-            if (!element.chapter.isLoaded) {
-              element.chapter.loadSync();
-            }
-            return !(element.chapter.value?.isRead ?? false);
-          }).toList();
           return entries.isEmpty
               ? Container()
               : Container(
