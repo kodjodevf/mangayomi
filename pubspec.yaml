@@ -78,6 +78,7 @@ dependencies:
       path: packages/desktop_webview_window
       ref: main
   screen_brightness: ^2.0.1
+  rhttp: ^0.9.8
 
 dependency_overrides:
   http: ^1.2.2
