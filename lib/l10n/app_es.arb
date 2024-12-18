@@ -333,5 +333,18 @@
     "or": "O",
     "advanced": "Avanzado",
     "use_native_http_client": "Utilizar cliente HTTP nativo",
-    "use_native_http_client_info": "admite automáticamente las características de la plataforma como VPNs, admite más características HTTP como HTTP/3 y manejo de redirección personalizada"
+    "use_native_http_client_info": "admite automáticamente las características de la plataforma como VPNs, admite más características HTTP como HTTP/3 y manejo de redirección personalizada",
+    "unwatched": "No visto",
+    "last_watched": "Visto por última vez",
+    "unwatched_count": "Número no visto",
+    "latest_episode": "Último episodio",
+    "downloaded_episodes": "Episodios descargados",
+    "show_continue_watching_buttons": "Mostrar botones de continuar viendo",
+    "by_episode_number": "Por número de episodio",
+    "episode_number": "Número de episodio",
+    "total_episodes": "Total de episodios",
+    "next_episode": "Siguiente episodio",
+    "next_5_episodes": "Siguientes 5 episodios",
+    "next_10_episodes": "Siguientes 10 episodios",
+    "next_25_episodes": "Siguientes 25 episodios"
 }

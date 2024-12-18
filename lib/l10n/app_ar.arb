@@ -333,5 +333,18 @@
     "or": "أو",
     "advanced": "متقدم",
     "use_native_http_client": "استخدام عميل HTTP الأصلي",
-    "use_native_http_client_info": "يدعم تلقائيًا ميزات المنصة مثل الشبكات الافتراضية الخاصة (VPNs)، ويدعم ميزات HTTP أكثر مثل HTTP/3 ومعالجة إعادة التوجيه المخصصة"
+    "use_native_http_client_info": "يدعم تلقائيًا ميزات المنصة مثل الشبكات الافتراضية الخاصة (VPNs)، ويدعم ميزات HTTP أكثر مثل HTTP/3 ومعالجة إعادة التوجيه المخصصة",
+    "unwatched": "لم يشاهد",
+    "last_watched": "آخر مشاهدة",
+    "unwatched_count": "عدد غير المشاهد",
+    "latest_episode": "الحلقة الأخيرة",
+    "downloaded_episodes": "الحلقات المحملة",
+    "show_continue_watching_buttons": "إظهار أزرار المتابعة",
+    "by_episode_number": "حسب رقم الحلقة",
+    "episode_number": "رقم الحلقة",
+    "total_episodes": "إجمالي الحلقات",
+    "next_episode": "الحلقة التالية",
+    "next_5_episodes": "الحلقات الخمس التالية",
+    "next_10_episodes": "العشر حلقات التالية",
+    "next_25_episodes": "الخمسة وعشرون حلقة التالية"
 }

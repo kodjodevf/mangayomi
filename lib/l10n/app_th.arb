@@ -335,5 +335,18 @@
   "or": "หรือ",
   "advanced": "ขั้นสูง",
   "use_native_http_client": "ใช้ไคลเอนต์ HTTP พื้นเมือง",
-  "use_native_http_client_info": "รองรับฟีเจอร์ของแพลตฟอร์มโดยอัตโนมัติ เช่น VPNs รองรับฟีเจอร์ HTTP มากขึ้น เช่น HTTP/3 และการจัดการการเปลี่ยนเส้นทางที่กำหนดเอง"
+  "use_native_http_client_info": "รองรับฟีเจอร์ของแพลตฟอร์มโดยอัตโนมัติ เช่น VPNs รองรับฟีเจอร์ HTTP มากขึ้น เช่น HTTP/3 และการจัดการการเปลี่ยนเส้นทางที่กำหนดเอง",
+  "unwatched": "ยังไม่ได้ดู",
+  "last_watched": "ดูครั้งสุดท้าย",
+  "unwatched_count": "จำนวนที่ยังไม่ได้ดู",
+  "latest_episode": "ตอนล่าสุด",
+  "downloaded_episodes": "ตอนที่ดาวน์โหลด",
+  "show_continue_watching_buttons": "แสดงปุ่มดูต่อไป",
+  "by_episode_number": "ตามหมายเลขตอน",
+  "episode_number": "หมายเลขตอน",
+  "total_episodes": "รวมตอน",
+  "next_episode": "ตอนถัดไป",
+  "next_5_episodes": "5 ตอนถัดไป",
+  "next_10_episodes": "10 ตอนถัดไป",
+  "next_25_episodes": "25 ตอนถัดไป"
 }

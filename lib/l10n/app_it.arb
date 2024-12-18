@@ -333,5 +333,18 @@
     "or": "O",
     "advanced": "Avanzate",
     "use_native_http_client": "Usa il client HTTP nativo",
-    "use_native_http_client_info": "Supporta automaticamente le funzionalità della piattaforma come le VPN, supporta più funzionalità HTTP come HTTP/3 e la gestione dei reindirizzamenti personalizzati."
+    "use_native_http_client_info": "Supporta automaticamente le funzionalità della piattaforma come le VPN, supporta più funzionalità HTTP come HTTP/3 e la gestione dei reindirizzamenti personalizzati.",
+    "unwatched": "Non guardato",
+    "last_watched": "Ultima visione",
+    "unwatched_count": "Conteggio non guardati",
+    "latest_episode": "Ultimo episodio",
+    "downloaded_episodes": "Episodi scaricati",
+    "show_continue_watching_buttons": "Mostra pulsanti continua a guardare",
+    "by_episode_number": "Per numero di episodio",
+    "episode_number": "Numero dell'episodio",
+    "total_episodes": "Episodi totali",
+    "next_episode": "Prossimo episodio",
+    "next_5_episodes": "Prossimi 5 episodi",
+    "next_10_episodes": "Prossimi 10 episodi",
+    "next_25_episodes": "Prossimi 25 episodi"
 }
