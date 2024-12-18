@@ -44,25 +44,26 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         .and()
         .isMangaEqualTo(_tabBarController.index == 0)
         .findAllSync();
-    
-    try {
-      await Future.wait(
-        mangaList.map((manga) async {
-          try {
-            await ref.read(
-              updateMangaDetailProvider(mangaId: manga.id, isInit: false).future,
-            );
-          } catch (e) {
-            debugPrint("Failed to update manga with ID ${manga.id}: $e");
-          }
-        }),
-      );
-    } finally {
-      BotToast.cleanAll();
-      setState(() {
-        _isLoading = false;
-      });
+    int numbers = 0;
+
+    for (var manga in mangaList) {
+      try {
+        await ref.read(
+            updateMangaDetailProvider(mangaId: manga.id, isInit: false).future);
+      } catch (_) {}
+      numbers++;
     }
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      if (mangaList.length == numbers) {
+        return false;
+      }
+      return true;
+    });
+    BotToast.cleanAll();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
