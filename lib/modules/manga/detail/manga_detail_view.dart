@@ -28,7 +28,7 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/get_source_baseurl.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -382,23 +382,32 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       return [
                                         PopupMenuItem<int>(
                                             value: 0,
-                                            child: Text(
-                                                widget.isManga ? context.l10n.next_chapter : context.l10n.next_episode)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_chapter
+                                                : context.l10n.next_episode)),
                                         PopupMenuItem<int>(
                                             value: 1,
-                                            child: Text(
-                                                widget.isManga ? context.l10n.next_5_chapters : context.l10n.next_5_episodes)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_5_chapters
+                                                : context
+                                                    .l10n.next_5_episodes)),
                                         PopupMenuItem<int>(
                                             value: 2,
-                                            child: Text(
-                                                widget.isManga ? context.l10n.next_10_chapters : context.l10n.next_10_episodes)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_10_chapters
+                                                : context
+                                                    .l10n.next_10_episodes)),
                                         PopupMenuItem<int>(
                                             value: 3,
-                                            child: Text(
-                                                widget.isManga ? context.l10n.next_25_chapters : context.l10n.next_25_episodes)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_25_chapters
+                                                : context
+                                                    .l10n.next_25_episodes)),
                                         PopupMenuItem<int>(
                                             value: 4,
-                                            child: Text(widget.isManga ? context.l10n.unread : context.l10n.unwatched)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.unread
+                                                : context.l10n.unwatched)),
                                       ];
                                     },
                                     onSelected: (value) {
@@ -519,8 +528,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final source = getSource(
                                           widget.manga!.lang!,
                                           widget.manga!.source!);
-                                      String url = "${source?.baseUrl}${widget.manga!.link!}";
-
+                                      final url =
+                                          "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
                                       Share.share(url);
                                     }
                                   }),
@@ -1184,7 +1193,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             RadioListTile(
               dense: true,
-              title: Text(widget.isManga ? l10n.chapter_number : l10n.episode_number),
+              title: Text(
+                  widget.isManga ? l10n.chapter_number : l10n.episode_number),
               value: "ej",
               groupValue: "e",
               selected: false,
@@ -1548,12 +1558,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   final manga = widget.manga!;
 
                   final source =
-                      getSource(widget.manga!.lang!, widget.manga!.source!)!;
-                  final baseUrl =
-                      ref.watch(sourceBaseUrlProvider(source: source));
-                  String url = widget.manga!.link!.startsWith('/')
-                      ? "$baseUrl${widget.manga!.link!}"
-                      : widget.manga!.link!;
+                      getSource(widget.manga!.lang!, widget.manga!.source!);
+                  final url =
+                      "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
 
                   Map<String, dynamic> data = {
                     'url': url,

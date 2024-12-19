@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -301,7 +302,8 @@ class _MangaChapterPageGalleryState
                         width: 35,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(6),
-                            color: context.secondaryColor.withValues(alpha: 0.4)),
+                            color:
+                                context.secondaryColor.withValues(alpha: 0.4)),
                       ),
                     ),
                     Row(
@@ -721,8 +723,9 @@ class _MangaChapterPageGalleryState
                                                         l10n.image_loading_error,
                                                         style: TextStyle(
                                                             color: Colors.white
-                                                                .withValues(alpha: 
-                                                                    0.7)),
+                                                                .withValues(
+                                                                    alpha:
+                                                                        0.7)),
                                                       ),
                                                       Padding(
                                                         padding:
@@ -1336,9 +1339,8 @@ class _MangaChapterPageGalleryState
                     onPressed: () async {
                       final manga = chapter.manga.value!;
                       final source = getSource(manga.lang!, manga.source!)!;
-                      String url = chapter.url!.startsWith('/')
-                          ? "${source.baseUrl}/${chapter.url!}"
-                          : chapter.url!;
+                      final url =
+                          "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
                       Map<String, dynamic> data = {
                         'url': url,
                         'sourceId': source.id.toString(),
