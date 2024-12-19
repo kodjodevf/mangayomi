@@ -335,5 +335,18 @@
     "or": "或",
     "advanced": "高级",
     "use_native_http_client": "使用本地 HTTP 客户端",
-    "use_native_http_client_info": "它自动支持平台特性，如 VPN，支持更多 HTTP 特性，如 HTTP/3 和自定义重定向处理"
+    "use_native_http_client_info": "它自动支持平台特性，如 VPN，支持更多 HTTP 特性，如 HTTP/3 和自定义重定向处理",
+    "unwatched": "未观看",
+    "last_watched": "上次观看",
+    "unwatched_count": "未观看计数",
+    "latest_episode": "最新一集",
+    "downloaded_episodes": "下载的剧集",
+    "show_continue_watching_buttons": "显示继续观看按钮",
+    "by_episode_number": "按集数",
+    "episode_number": "集数",
+    "total_episodes": "总集数",
+    "next_episode": "下一集",
+    "next_5_episodes": "接下来的 5 集",
+    "next_10_episodes": "接下来的 10 集",
+    "next_25_episodes": "接下来的 25 集"
 }

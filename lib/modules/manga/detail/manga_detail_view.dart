@@ -59,6 +59,7 @@ class MangaDetailView extends ConsumerStatefulWidget {
   final Manga? manga;
   final bool sourceExist;
   final Function(bool) checkForUpdate;
+  final bool isManga;
 
   const MangaDetailView(
       {super.key,
@@ -68,7 +69,8 @@ class MangaDetailView extends ConsumerStatefulWidget {
       this.action,
       required this.sourceExist,
       required this.manga,
-      required this.checkForUpdate});
+      required this.checkForUpdate,
+      required this.isManga});
 
   @override
   ConsumerState<MangaDetailView> createState() => _MangaDetailViewState();
@@ -381,22 +383,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         PopupMenuItem<int>(
                                             value: 0,
                                             child: Text(
-                                                context.l10n.next_chapter)),
+                                                widget.isManga ? context.l10n.next_chapter : context.l10n.next_episode)),
                                         PopupMenuItem<int>(
                                             value: 1,
                                             child: Text(
-                                                context.l10n.next_5_chapters)),
+                                                widget.isManga ? context.l10n.next_5_chapters : context.l10n.next_5_episodes)),
                                         PopupMenuItem<int>(
                                             value: 2,
                                             child: Text(
-                                                context.l10n.next_10_chapters)),
+                                                widget.isManga ? context.l10n.next_10_chapters : context.l10n.next_10_episodes)),
                                         PopupMenuItem<int>(
                                             value: 3,
                                             child: Text(
-                                                context.l10n.next_25_chapters)),
+                                                widget.isManga ? context.l10n.next_25_chapters : context.l10n.next_25_episodes)),
                                         PopupMenuItem<int>(
                                             value: 4,
-                                            child: Text(context.l10n.unread)),
+                                            child: Text(widget.isManga ? context.l10n.unread : context.l10n.unwatched)),
                                       ];
                                     },
                                     onSelected: (value) {
@@ -517,9 +519,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final source = getSource(
                                           widget.manga!.lang!,
                                           widget.manga!.source!);
-                                      String url = source!.apiUrl!.isEmpty
-                                          ? widget.manga!.link!
-                                          : "${source.baseUrl}${widget.manga!.link!}";
+                                      String url = "${source?.baseUrl}${widget.manga!.link!}";
 
                                       Share.share(url);
                                     }
@@ -987,7 +987,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         .update();
                   }),
             ListTileChapterFilter(
-                label: l10n.unread,
+                label: widget.isManga ? l10n.unread : l10n.unwatched,
                 type: ref.watch(chapterFilterUnreadStateProvider(
                     mangaId: widget.manga!.id!)),
                 onTap: () {
@@ -1184,7 +1184,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             RadioListTile(
               dense: true,
-              title: Text(l10n.chapter_number),
+              title: Text(widget.isManga ? l10n.chapter_number : l10n.episode_number),
               value: "ej",
               groupValue: "e",
               selected: false,
@@ -1201,7 +1201,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     if (index == 0) {
       return l10n.by_scanlator;
     } else if (index == 1) {
-      return l10n.by_chapter_number;
+      return widget.isManga ? l10n.by_chapter_number : l10n.by_episode_number;
     } else if (index == 2) {
       return l10n.by_upload_date;
     }

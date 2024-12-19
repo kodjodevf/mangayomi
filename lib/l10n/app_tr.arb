@@ -333,5 +333,18 @@
     "or": "VEYA",
     "advanced": "Gelişmiş",
     "use_native_http_client": "Yerel http istemcisini kullan",
-    "use_native_http_client_info": "otomatik olarak VPN'ler gibi platform özelliklerini destekler, HTTP/3 gibi daha fazla HTTP özelliğini ve özel yönlendirme işlemlerini destekler"
+    "use_native_http_client_info": "otomatik olarak VPN'ler gibi platform özelliklerini destekler, HTTP/3 gibi daha fazla HTTP özelliğini ve özel yönlendirme işlemlerini destekler",
+    "unwatched": "İzlenmemiş",
+    "last_watched": "Son İzlenen",
+    "unwatched_count": "İzlenmemiş Sayısı",
+    "latest_episode": "Son Bölüm",
+    "downloaded_episodes": "İndirilen Bölümler",
+    "show_continue_watching_buttons": "İzlemeye Devam Et Düğmelerini Göster",
+    "by_episode_number": "Bölüm Sayısına Göre",
+    "episode_number": "Bölüm Sayısı",
+    "total_episodes": "Toplam Bölümler",
+    "next_episode": "Sonraki Bölüm",
+    "next_5_episodes": "Sonraki 5 Bölüm",
+    "next_10_episodes": "Sonraki 10 Bölüm",
+    "next_25_episodes": "Sonraki 25 Bölüm"
 }
