@@ -35,11 +35,7 @@ class NovelReaderView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    chapter.manga.loadSync();
-    final source =
-        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
-    final htmlContent =
-        ref.watch(getHtmlContentProvider(source: source!, url: chapter.url!));
+    final htmlContent = ref.watch(getHtmlContentProvider(chapter: chapter));
 
     return NovelWebView(
       chapter: chapter,

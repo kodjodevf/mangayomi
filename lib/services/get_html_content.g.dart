@@ -6,7 +6,7 @@ part of 'get_html_content.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getHtmlContentHash() => r'1d7f76fb0f3b3cc9a5012746ec478269c0f0d5e0';
+String _$getHtmlContentHash() => r'709b68d8d590290081b409c22e402b7d1a7eec76';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,12 +40,10 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
 
   /// See also [getHtmlContent].
   GetHtmlContentProvider call({
-    required String url,
-    required Source source,
+    required Chapter chapter,
   }) {
     return GetHtmlContentProvider(
-      url: url,
-      source: source,
+      chapter: chapter,
     );
   }
 
@@ -54,8 +52,7 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
     covariant GetHtmlContentProvider provider,
   ) {
     return call(
-      url: provider.url,
-      source: provider.source,
+      chapter: provider.chapter,
     );
   }
 
@@ -78,13 +75,11 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
 class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
   /// See also [getHtmlContent].
   GetHtmlContentProvider({
-    required String url,
-    required Source source,
+    required Chapter chapter,
   }) : this._internal(
           (ref) => getHtmlContent(
             ref as GetHtmlContentRef,
-            url: url,
-            source: source,
+            chapter: chapter,
           ),
           from: getHtmlContentProvider,
           name: r'getHtmlContentProvider',
@@ -95,8 +90,7 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
           dependencies: GetHtmlContentFamily._dependencies,
           allTransitiveDependencies:
               GetHtmlContentFamily._allTransitiveDependencies,
-          url: url,
-          source: source,
+          chapter: chapter,
         );
 
   GetHtmlContentProvider._internal(
@@ -106,12 +100,10 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.url,
-    required this.source,
+    required this.chapter,
   }) : super.internal();
 
-  final String url;
-  final Source source;
+  final Chapter chapter;
 
   @override
   Override overrideWith(
@@ -126,8 +118,7 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        url: url,
-        source: source,
+        chapter: chapter,
       ),
     );
   }
@@ -139,16 +130,13 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
 
   @override
   bool operator ==(Object other) {
-    return other is GetHtmlContentProvider &&
-        other.url == url &&
-        other.source == source;
+    return other is GetHtmlContentProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -157,11 +145,8 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<String> {
-  /// The parameter `url` of this provider.
-  String get url;
-
-  /// The parameter `source` of this provider.
-  Source get source;
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
 }
 
 class _GetHtmlContentProviderElement
@@ -169,9 +154,7 @@ class _GetHtmlContentProviderElement
   _GetHtmlContentProviderElement(super.provider);
 
   @override
-  String get url => (origin as GetHtmlContentProvider).url;
-  @override
-  Source get source => (origin as GetHtmlContentProvider).source;
+  Chapter get chapter => (origin as GetHtmlContentProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
