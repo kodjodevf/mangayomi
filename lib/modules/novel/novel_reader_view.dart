@@ -36,13 +36,15 @@ class NovelReaderView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     chapter.manga.loadSync();
-    final source = getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
-    final htmlContent = ref.watch(getHtmlContentProvider(
-      source: source!,
-      url: chapter.url!
-    ));
+    final source =
+        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+    final htmlContent =
+        ref.watch(getHtmlContentProvider(source: source!, url: chapter.url!));
 
-    return NovelWebView(chapter: chapter, htmlContent: htmlContent,);
+    return NovelWebView(
+      chapter: chapter,
+      htmlContent: htmlContent,
+    );
   }
 }
 
@@ -181,23 +183,27 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             bottom: false,
             child: Column(
               children: [
-                Expanded(
-                  child: widget.htmlContent.when(
-                    data: (htmlContent) => SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Html(
-                      data: htmlContent,
-                      style: {
-                        "*": Style(
-                            backgroundColor: Colors.white,
-                            margin: Margins.all(5))
-                      },
-                      shrinkWrap: true,
-                    ),
-                  ), 
-                  loading: () => const Center(child: CircularProgressIndicator(),),
-                  error: (err, stack) => Center(child: Text(err.toString()),)),
-                ),
+                widget.htmlContent.when(
+                    data: (htmlContent) => Expanded(
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Html(
+                              data: htmlContent,
+                              style: {
+                                "*": Style(
+                                    backgroundColor: Colors.white,
+                                    margin: Margins.all(5))
+                              },
+                              shrinkWrap: true,
+                            ),
+                          ),
+                        ),
+                    loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                    error: (err, stack) => Center(
+                          child: Text(err.toString()),
+                        )),
                 _appBar(),
               ],
             ),
