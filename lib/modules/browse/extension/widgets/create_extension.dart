@@ -277,6 +277,12 @@ class TestSource extends MProvider {
     // TODO: implement
   }
   
+  // For novel html content
+  @override
+  Future<String> getHtmlContent(String url) async {
+    // TODO: implement
+  }
+  
   // For anime episode video list
   @override
   Future<List<MVideo>> getVideoList(String url) async {
@@ -334,6 +340,10 @@ class DefaultExtension extends MProvider {
     }
     async getDetail(url) {
         throw new Error("getDetail not implemented");
+    }
+    // For novel html content
+    async getHtmlContent(url) {
+        throw new Error("getHtmlContent not implemented");
     }
     // For anime episode video list
     async getVideoList(url) {

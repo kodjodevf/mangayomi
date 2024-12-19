@@ -102,6 +102,10 @@ class DartExtensionService {
     return await _executeLib().getVideoList(url);
   }
 
+  Future<String> getHtmlContent(String url) async {
+    return await _executeLib().getHtmlContent(url);
+  }
+
   List<dynamic> getFilterList() {
     return _executeLib()
         .getFilterList()

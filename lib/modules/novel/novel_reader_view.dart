@@ -11,7 +11,9 @@ import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/get_html_content.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -33,11 +35,14 @@ class NovelReaderView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(getChapterPagesProvider(
-      chapter: chapter,
-    )); // TODO fetch html body content
+    chapter.manga.loadSync();
+    final source = getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+    final htmlContent = ref.watch(getHtmlContentProvider(
+      source: source!,
+      url: chapter.url!
+    ));
 
-    return NovelWebView(chapter: chapter);
+    return NovelWebView(chapter: chapter, htmlContent: htmlContent,);
   }
 }
 
@@ -45,9 +50,11 @@ class NovelWebView extends ConsumerStatefulWidget {
   const NovelWebView({
     super.key,
     required this.chapter,
+    required this.htmlContent,
   });
 
   final Chapter chapter;
+  final AsyncValue<String> htmlContent;
 
   @override
   ConsumerState createState() {
@@ -57,8 +64,8 @@ class NovelWebView extends ConsumerStatefulWidget {
 
 class _NovelWebViewState extends ConsumerState<NovelWebView>
     with TickerProviderStateMixin {
-  late final ReaderController _readerController =
-      ref.read(readerControllerProvider(chapter: chapter).notifier);
+  late final NovelReaderController _readerController =
+      ref.read(novelReaderControllerProvider(chapter: chapter).notifier);
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
   @override
@@ -66,7 +73,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _readerController.setMangaHistoryUpdate();
     _readerController.checkAndSyncProgress();
     _rebuildDetail.close();
-    _autoScroll.value = false;
     clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);
@@ -77,12 +83,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     super.dispose();
   }
 
-  late final _autoScroll =
-      ValueNotifier(_readerController.autoScrollValues().$1);
-
   late Chapter chapter = widget.chapter;
-
-  final _failedToLoadImage = ValueNotifier<bool>(false);
 
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
@@ -91,7 +92,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     super.initState();
   }
 
-  late int pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   bool _isView = false;
@@ -182,9 +182,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             child: Column(
               children: [
                 Expanded(
-                  child: SingleChildScrollView(
+                  child: widget.htmlContent.when(
+                    data: (htmlContent) => SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     child: Html(
-                      data: """""",
+                      data: htmlContent,
                       style: {
                         "*": Style(
                             backgroundColor: Colors.white,
@@ -192,7 +194,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                       },
                       shrinkWrap: true,
                     ),
-                  ),
+                  ), 
+                  loading: () => const Center(child: CircularProgressIndicator(),),
+                  error: (err, stack) => Center(child: Text(err.toString()),)),
                 ),
                 _appBar(),
               ],

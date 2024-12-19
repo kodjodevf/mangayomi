@@ -46,7 +46,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
         ("search", 2),
         ("getDetail", 3),
         ("getPageList", 4),
-        ("getVideoList", 5)
+        ("getVideoList", 5),
+        ("getHtmlContent", 6)
       ];
 
   int _serviceIndex = 0;
@@ -204,7 +205,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                           }),
                         if (_serviceIndex == 3 ||
                             _serviceIndex == 4 ||
-                            _serviceIndex == 5)
+                            _serviceIndex == 5 ||
+                            _serviceIndex == 6)
                           _textEditing("Url", context, "ex: url of the entry",
                               (v) {
                             _url = v;
@@ -278,7 +280,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                                 .toList();
                                           }
                                           result = {"pages": result};
-                                        } else {
+                                        } else if (_serviceIndex == 5) {
                                           if (source!.sourceCodeLanguage ==
                                               SourceCodeLanguage.dart) {
                                             result =
@@ -293,6 +295,18 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                                     .getVideoList(_url))
                                                 .map((e) => e.toJson())
                                                 .toList();
+                                          }
+                                        } else {
+                                          if (source!.sourceCodeLanguage ==
+                                              SourceCodeLanguage.dart) {
+                                            result =
+                                                (await DartExtensionService(
+                                                        source)
+                                                    .getHtmlContent(_url));
+                                          } else {
+                                            result = (await JsExtensionService(
+                                                    source)
+                                                .getHtmlContent(_url));
                                           }
                                         }
                                         if (mounted) {

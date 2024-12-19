@@ -143,6 +143,14 @@ var extention = new DefaultExtension();
         .toList();
   }
 
+  Future<String> getHtmlContent(String url) async {
+    _init();
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.getHtmlContent(`$url`))')))
+        .stringResult;
+    return res;
+  }
+
   dynamic getFilterList() {
     _init();
     try {
