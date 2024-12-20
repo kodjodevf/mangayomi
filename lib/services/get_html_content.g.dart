@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'get_html_content.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'44f8aeae592a90e0c657da0263276997afbbe433';
+String _$getHtmlContentHash() => r'709b68d8d590290081b409c22e402b7d1a7eec76';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,33 +29,30 @@ class _SystemHash {
   }
 }
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+/// See also [getHtmlContent].
+@ProviderFor(getHtmlContent)
+const getHtmlContentProvider = GetHtmlContentFamily();
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<PageUrl>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
+/// See also [getHtmlContent].
+class GetHtmlContentFamily extends Family<AsyncValue<String>> {
+  /// See also [getHtmlContent].
+  const GetHtmlContentFamily();
 
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
+  /// See also [getHtmlContent].
+  GetHtmlContentProvider call({
     required Chapter chapter,
-    bool? useWifi,
   }) {
-    return DownloadChapterProvider(
+    return GetHtmlContentProvider(
       chapter: chapter,
-      useWifi: useWifi,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  GetHtmlContentProvider getProviderOverride(
+    covariant GetHtmlContentProvider provider,
   ) {
     return call(
       chapter: provider.chapter,
-      useWifi: provider.useWifi,
     );
   }
 
@@ -71,35 +68,32 @@ class DownloadChapterFamily extends Family<AsyncValue<List<PageUrl>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'getHtmlContentProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
+/// See also [getHtmlContent].
+class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
+  /// See also [getHtmlContent].
+  GetHtmlContentProvider({
     required Chapter chapter,
-    bool? useWifi,
   }) : this._internal(
-          (ref) => downloadChapter(
-            ref as DownloadChapterRef,
+          (ref) => getHtmlContent(
+            ref as GetHtmlContentRef,
             chapter: chapter,
-            useWifi: useWifi,
           ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          from: getHtmlContentProvider,
+          name: r'getHtmlContentProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$getHtmlContentHash,
+          dependencies: GetHtmlContentFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              GetHtmlContentFamily._allTransitiveDependencies,
           chapter: chapter,
-          useWifi: useWifi,
         );
 
-  DownloadChapterProvider._internal(
+  GetHtmlContentProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,48 +101,42 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.chapter,
-    required this.useWifi,
   }) : super.internal();
 
   final Chapter chapter;
-  final bool? useWifi;
 
   @override
   Override overrideWith(
-    FutureOr<List<PageUrl>> Function(DownloadChapterRef provider) create,
+    FutureOr<String> Function(GetHtmlContentRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: DownloadChapterProvider._internal(
-        (ref) => create(ref as DownloadChapterRef),
+      override: GetHtmlContentProvider._internal(
+        (ref) => create(ref as GetHtmlContentRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         chapter: chapter,
-        useWifi: useWifi,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<PageUrl>> createElement() {
-    return _DownloadChapterProviderElement(this);
+  AutoDisposeFutureProviderElement<String> createElement() {
+    return _GetHtmlContentProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is GetHtmlContentProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -156,23 +144,17 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<PageUrl>> {
+mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<String> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
-
-  /// The parameter `useWifi` of this provider.
-  bool? get useWifi;
 }
 
-class _DownloadChapterProviderElement
-    extends AutoDisposeFutureProviderElement<List<PageUrl>>
-    with DownloadChapterRef {
-  _DownloadChapterProviderElement(super.provider);
+class _GetHtmlContentProviderElement
+    extends AutoDisposeFutureProviderElement<String> with GetHtmlContentRef {
+  _GetHtmlContentProviderElement(super.provider);
 
   @override
-  Chapter get chapter => (origin as DownloadChapterProvider).chapter;
-  @override
-  bool? get useWifi => (origin as DownloadChapterProvider).useWifi;
+  Chapter get chapter => (origin as GetHtmlContentProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

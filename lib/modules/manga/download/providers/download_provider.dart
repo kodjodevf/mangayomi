@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:isar/isar.dart';
@@ -46,10 +47,16 @@ Future<List<PageUrl>> downloadChapter(
       : "";
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
 
-  final isManga = manga.isManga!;
+  final itemType = chapter.manga.value!.itemType;
+  final isManga = itemType == ItemType.manga;
+  final itemTypePath = itemType == ItemType.manga
+      ? "Manga"
+      : itemType == ItemType.anime
+          ? "Anime"
+          : "Novel";
   final pathSegments = [
     "downloads",
-    isManga ? "Manga" : "Anime",
+    itemTypePath,
     "${manga.source} (${manga.lang!.toUpperCase()})",
     manga.name!.replaceForbiddenCharacters('_'),
   ];

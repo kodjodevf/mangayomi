@@ -7,7 +7,7 @@ part of 'local_archive.dart';
 // **************************************************************************
 
 String _$importArchivesFromFileHash() =>
-    r'8be95f0947ab5247e3305a355a6f17f0aaecad00';
+    r'8e6e592c927ad080e93d54dac1144ef8637a7e52';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,12 +42,12 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue> {
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider call(
     Manga? mManga, {
-    required bool isManga,
+    required ItemType itemType,
     required bool init,
   }) {
     return ImportArchivesFromFileProvider(
       mManga,
-      isManga: isManga,
+      itemType: itemType,
       init: init,
     );
   }
@@ -58,7 +58,7 @@ class ImportArchivesFromFileFamily extends Family<AsyncValue> {
   ) {
     return call(
       provider.mManga,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       init: provider.init,
     );
   }
@@ -84,13 +84,13 @@ class ImportArchivesFromFileProvider
   /// See also [importArchivesFromFile].
   ImportArchivesFromFileProvider(
     Manga? mManga, {
-    required bool isManga,
+    required ItemType itemType,
     required bool init,
   }) : this._internal(
           (ref) => importArchivesFromFile(
             ref as ImportArchivesFromFileRef,
             mManga,
-            isManga: isManga,
+            itemType: itemType,
             init: init,
           ),
           from: importArchivesFromFileProvider,
@@ -103,7 +103,7 @@ class ImportArchivesFromFileProvider
           allTransitiveDependencies:
               ImportArchivesFromFileFamily._allTransitiveDependencies,
           mManga: mManga,
-          isManga: isManga,
+          itemType: itemType,
           init: init,
         );
 
@@ -115,12 +115,12 @@ class ImportArchivesFromFileProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mManga,
-    required this.isManga,
+    required this.itemType,
     required this.init,
   }) : super.internal();
 
   final Manga? mManga;
-  final bool isManga;
+  final ItemType itemType;
   final bool init;
 
   @override
@@ -137,7 +137,7 @@ class ImportArchivesFromFileProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mManga: mManga,
-        isManga: isManga,
+        itemType: itemType,
         init: init,
       ),
     );
@@ -152,7 +152,7 @@ class ImportArchivesFromFileProvider
   bool operator ==(Object other) {
     return other is ImportArchivesFromFileProvider &&
         other.mManga == mManga &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.init == init;
   }
 
@@ -160,7 +160,7 @@ class ImportArchivesFromFileProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mManga.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, init.hashCode);
 
     return _SystemHash.finish(hash);
@@ -173,8 +173,8 @@ mixin ImportArchivesFromFileRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `mManga` of this provider.
   Manga? get mManga;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `init` of this provider.
   bool get init;
@@ -188,7 +188,7 @@ class _ImportArchivesFromFileProviderElement
   @override
   Manga? get mManga => (origin as ImportArchivesFromFileProvider).mManga;
   @override
-  bool get isManga => (origin as ImportArchivesFromFileProvider).isManga;
+  ItemType get itemType => (origin as ImportArchivesFromFileProvider).itemType;
   @override
   bool get init => (origin as ImportArchivesFromFileProvider).init;
 }

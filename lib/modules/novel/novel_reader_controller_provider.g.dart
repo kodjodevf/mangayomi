@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'download_provider.dart';
+part of 'novel_reader_controller_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'44f8aeae592a90e0c657da0263276997afbbe433';
+String _$novelReaderControllerHash() =>
+    r'74ebbf38d60283d308646b59cfd5cfee07c85535';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,33 +30,39 @@ class _SystemHash {
   }
 }
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+abstract class _$NovelReaderController
+    extends BuildlessAutoDisposeNotifier<void> {
+  late final Chapter chapter;
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<List<PageUrl>>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
-
-  /// See also [downloadChapter].
-  DownloadChapterProvider call({
+  void build({
     required Chapter chapter,
-    bool? useWifi,
+  });
+}
+
+/// See also [NovelReaderController].
+@ProviderFor(NovelReaderController)
+const novelReaderControllerProvider = NovelReaderControllerFamily();
+
+/// See also [NovelReaderController].
+class NovelReaderControllerFamily extends Family<void> {
+  /// See also [NovelReaderController].
+  const NovelReaderControllerFamily();
+
+  /// See also [NovelReaderController].
+  NovelReaderControllerProvider call({
+    required Chapter chapter,
   }) {
-    return DownloadChapterProvider(
+    return NovelReaderControllerProvider(
       chapter: chapter,
-      useWifi: useWifi,
     );
   }
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
+  NovelReaderControllerProvider getProviderOverride(
+    covariant NovelReaderControllerProvider provider,
   ) {
     return call(
       chapter: provider.chapter,
-      useWifi: provider.useWifi,
     );
   }
 
@@ -71,35 +78,30 @@ class DownloadChapterFamily extends Family<AsyncValue<List<PageUrl>>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'downloadChapterProvider';
+  String? get name => r'novelReaderControllerProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
+/// See also [NovelReaderController].
+class NovelReaderControllerProvider
+    extends AutoDisposeNotifierProviderImpl<NovelReaderController, void> {
+  /// See also [NovelReaderController].
+  NovelReaderControllerProvider({
     required Chapter chapter,
-    bool? useWifi,
   }) : this._internal(
-          (ref) => downloadChapter(
-            ref as DownloadChapterRef,
-            chapter: chapter,
-            useWifi: useWifi,
-          ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
+          () => NovelReaderController()..chapter = chapter,
+          from: novelReaderControllerProvider,
+          name: r'novelReaderControllerProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
+                  : _$novelReaderControllerHash,
+          dependencies: NovelReaderControllerFamily._dependencies,
           allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
+              NovelReaderControllerFamily._allTransitiveDependencies,
           chapter: chapter,
-          useWifi: useWifi,
         );
 
-  DownloadChapterProvider._internal(
+  NovelReaderControllerProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,48 +109,50 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.chapter,
-    required this.useWifi,
   }) : super.internal();
 
   final Chapter chapter;
-  final bool? useWifi;
 
   @override
-  Override overrideWith(
-    FutureOr<List<PageUrl>> Function(DownloadChapterRef provider) create,
+  void runNotifierBuild(
+    covariant NovelReaderController notifier,
   ) {
+    return notifier.build(
+      chapter: chapter,
+    );
+  }
+
+  @override
+  Override overrideWith(NovelReaderController Function() create) {
     return ProviderOverride(
       origin: this,
-      override: DownloadChapterProvider._internal(
-        (ref) => create(ref as DownloadChapterRef),
+      override: NovelReaderControllerProvider._internal(
+        () => create()..chapter = chapter,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         chapter: chapter,
-        useWifi: useWifi,
       ),
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<PageUrl>> createElement() {
-    return _DownloadChapterProviderElement(this);
+  AutoDisposeNotifierProviderElement<NovelReaderController, void>
+      createElement() {
+    return _NovelReaderControllerProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi;
+    return other is NovelReaderControllerProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -156,23 +160,18 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<List<PageUrl>> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DownloadChapterRef on AutoDisposeFutureProviderRef<List<PageUrl>> {
+mixin NovelReaderControllerRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
-
-  /// The parameter `useWifi` of this provider.
-  bool? get useWifi;
 }
 
-class _DownloadChapterProviderElement
-    extends AutoDisposeFutureProviderElement<List<PageUrl>>
-    with DownloadChapterRef {
-  _DownloadChapterProviderElement(super.provider);
+class _NovelReaderControllerProviderElement
+    extends AutoDisposeNotifierProviderElement<NovelReaderController, void>
+    with NovelReaderControllerRef {
+  _NovelReaderControllerProviderElement(super.provider);
 
   @override
-  Chapter get chapter => (origin as DownloadChapterProvider).chapter;
-  @override
-  bool? get useWifi => (origin as DownloadChapterProvider).useWifi;
+  Chapter get chapter => (origin as NovelReaderControllerProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

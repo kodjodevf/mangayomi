@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -24,7 +25,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 4, vsync: this);
+    _tabBarController = TabController(length: 6, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -47,7 +48,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 4,
+      length: 6,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -75,8 +76,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   )
                 : Row(
                     children: [
-                      if (_tabBarController.index == 2 ||
-                          _tabBarController.index == 3)
+                      if (_tabBarController.index == 3 ||
+                          _tabBarController.index == 4 ||
+                          _tabBarController.index == 5)
                         IconButton(
                             onPressed: () {
                               context.push('/createExtension');
@@ -87,8 +89,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                           ? IconButton(
                               splashRadius: 20,
                               onPressed: () {
-                                if (_tabBarController.index != 1 &&
-                                    _tabBarController.index != 0) {
+                                if (_tabBarController.index != 0 &&
+                                    _tabBarController.index != 1 &&
+                                    _tabBarController.index != 2) {
                                   setState(() {
                                     _isSearch = true;
                                   });
@@ -101,7 +104,8 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                               },
                               icon: Icon(
                                   _tabBarController.index == 0 ||
-                                          _tabBarController.index == 1
+                                          _tabBarController.index == 1 ||
+                                          _tabBarController.index == 2
                                       ? Icons.travel_explore_rounded
                                       : Icons.search_rounded,
                                   color: Theme.of(context).hintColor))
@@ -116,18 +120,24 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   } else if (_tabBarController.index == 1) {
                     context.push('/sourceFilter', extra: false);
                   } else if (_tabBarController.index == 2) {
-                    _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: true);
+                    context.push('/sourceFilter', extra: false);
                   } else if (_tabBarController.index == 3) {
+                    _textEditingController.clear();
+                    context.push('/ExtensionLang', extra: false);
+                  } else if (_tabBarController.index == 4) {
+                    _textEditingController.clear();
+                    context.push('/ExtensionLang', extra: false);
+                  } else if (_tabBarController.index == 5) {
                     _textEditingController.clear();
                     context.push('/ExtensionLang', extra: false);
                   } else {}
                 },
                 icon: Icon(
-                    _tabBarController.index == 0 || _tabBarController.index == 1
+                    _tabBarController.index == 0 || _tabBarController.index == 1 || _tabBarController.index == 2
                         ? Icons.filter_list_sharp
-                        : _tabBarController.index == 2 ||
-                                _tabBarController.index == 3
+                        : _tabBarController.index == 3 ||
+                                _tabBarController.index == 4 ||
+                                _tabBarController.index == 5
                             ? Icons.translate_rounded
                             : Icons.help_outline_outlined,
                     color: Theme.of(context).hintColor)),
@@ -139,12 +149,13 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             tabs: [
               Tab(text: l10n.manga_sources),
               Tab(text: l10n.anime_sources),
+              Tab(text: l10n.novel_sources),
               Tab(
                 child: Row(
                   children: [
                     Text(l10n.manga_extensions),
                     const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, true)
+                    _extensionUpdateNumbers(ref, ItemType.manga)
                   ],
                 ),
               ),
@@ -153,7 +164,16 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   children: [
                     Text(l10n.anime_extensions),
                     const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, false)
+                    _extensionUpdateNumbers(ref, ItemType.anime)
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  children: [
+                    Text(l10n.novel_extensions),
+                    const SizedBox(width: 8),
+                    _extensionUpdateNumbers(ref, ItemType.novel)
                   ],
                 ),
               ),
@@ -163,24 +183,34 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
         ),
         body: TabBarView(controller: _tabBarController, children: [
           SourcesScreen(
-            isManga: true,
+            itemType: ItemType.manga,
             tabIndex: (index) {
               _tabBarController.animateTo(index);
             },
           ),
           SourcesScreen(
-            isManga: false,
+            itemType: ItemType.anime,
+            tabIndex: (index) {
+              _tabBarController.animateTo(index);
+            },
+          ),
+          SourcesScreen(
+            itemType: ItemType.novel,
             tabIndex: (index) {
               _tabBarController.animateTo(index);
             },
           ),
           ExtensionScreen(
             query: _textEditingController.text,
-            isManga: true,
+            itemType: ItemType.manga,
           ),
           ExtensionScreen(
             query: _textEditingController.text,
-            isManga: false,
+            itemType: ItemType.anime,
+          ),
+          ExtensionScreen(
+            query: _textEditingController.text,
+            itemType: ItemType.novel,
           ),
           // const MigrateScreen()
         ]),
@@ -189,14 +219,14 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   }
 }
 
-Widget _extensionUpdateNumbers(WidgetRef ref, bool isManga) {
+Widget _extensionUpdateNumbers(WidgetRef ref, ItemType itemType) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
           .idIsNotNull()
           .and()
           .isActiveEqualTo(true)
-          .isMangaEqualTo(isManga)
+          .itemTypeEqualTo(itemType)
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
