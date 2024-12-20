@@ -173,8 +173,11 @@ class LoggerInterceptor extends InterceptorContract {
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
   }) async {
-    Logger.add(LoggerLevel.info,
-        '----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}');
+    if (useLogger) {
+      Logger.add(LoggerLevel.info,
+          '----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}');
+    }
+
     return request;
   }
 
@@ -186,8 +189,10 @@ class LoggerInterceptor extends InterceptorContract {
       final cloudflare = [403, 503].contains(response.statusCode) &&
           ["cloudflare-nginx", "cloudflare"]
               .contains(response.headers["server"]);
-      Logger.add(LoggerLevel.info,
-          "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
+      if (useLogger) {
+        Logger.add(LoggerLevel.info,
+            "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
+      }
       if (cloudflare) {
         botToast("${response.statusCode} Failed to bypass Cloudflare",
             hasCloudFlare: cloudflare, url: response.request!.url.toString());

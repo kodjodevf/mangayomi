@@ -66,6 +66,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   final _scrollController = ScrollController();
   @override
   void initState() {
+    useLogger = true;
     _logStreamController.stream.asBroadcastStream().listen((event) async {
       _logsNotifier.value.add(event);
       try {
@@ -132,7 +133,9 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   @override
   void dispose() {
     super.dispose();
+    _logsNotifier.value.clear();
     _scrollController.dispose();
+    useLogger = false;
   }
 
   @override

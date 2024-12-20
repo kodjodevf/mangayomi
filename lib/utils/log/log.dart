@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
+bool useLogger = false;
+
 class Logger {
   static final StreamController<(LoggerLevel, String, DateTime)>
       _logStreamController =
