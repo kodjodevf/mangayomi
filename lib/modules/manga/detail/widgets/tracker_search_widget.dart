@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.d
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
   final bool isManga;
@@ -45,7 +46,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return KeyboardVisibilityProvider(
+      child: Material(
       color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
@@ -211,6 +213,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                 ),
               ),
             ),
+      ),
     );
   }
 }
