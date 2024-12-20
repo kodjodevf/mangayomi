@@ -102,18 +102,14 @@ Future<dynamic> updateMangaDetail(Ref ref,
       for (var i = 0; i < oldChapers.length; i++) {
         final oldChap = oldChapers[i];
         final newChap = chaps[i];
-        if (newChap.url != null &&
-            newChap.url!.isNotEmpty &&
-            newChap.url != oldChap.url &&
-            newChap.name == oldChap.name) {
-          oldChap.url = newChap.url;
-          oldChap.scanlator = newChap.scanlator;
-          ref
-              .read(changedItemsManagerProvider(managerId: 1).notifier)
-              .addUpdatedChapter(oldChap, false, false);
-          isar.chapters.putSync(oldChap);
-          oldChap.manga.saveSync();
-        }
+        oldChap.name = newChap.name;
+        oldChap.url = newChap.url;
+        oldChap.scanlator = newChap.scanlator;
+        ref
+            .read(changedItemsManagerProvider(managerId: 1).notifier)
+            .addUpdatedChapter(oldChap, false, false);
+        isar.chapters.putSync(oldChap);
+        oldChap.manga.saveSync();
       }
     }
   });

@@ -641,6 +641,7 @@ class ChapterFilterBookmarked {
 @embedded
 class ChapterPageurls {
   int? chapterId;
+  String? chapterUrl;
   List<String>? urls;
   List<String>? headers;
 

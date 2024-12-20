@@ -43,8 +43,9 @@ Future<GetChapterPagesModel> getChapterPages(
   final settings = isar.settings.getSync(227);
   List<ChapterPageurls>? chapterPageUrlsList =
       settings!.chapterPageUrlsList ?? [];
-  final isarPageUrls =
-      chapterPageUrlsList.where((element) => element.chapterId == chapter.id);
+  final isarPageUrls = chapterPageUrlsList
+      .where((element) => element.chapterId == chapter.id)
+      .firstOrNull;
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
@@ -55,16 +56,15 @@ Future<GetChapterPagesModel> getChapterPages(
   if (!chapter.manga.value!.isLocalArchive!) {
     final source =
         getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!)!;
-    if (isarPageUrls.isNotEmpty &&
-        isarPageUrls.first.urls != null &&
-        isarPageUrls.first.urls!.isNotEmpty) {
-      for (var i = 0; i < isarPageUrls.first.urls!.length; i++) {
+    if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
+        (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
+      for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
         Map<String, String>? headers;
-        if (isarPageUrls.first.headers?.isNotEmpty ?? false) {
-          headers = (jsonDecode(isarPageUrls.first.headers![i]) as Map?)
-              ?.toMapStringString;
+        if (isarPageUrls.headers?.isNotEmpty ?? false) {
+          headers =
+              (jsonDecode(isarPageUrls.headers![i]) as Map?)?.toMapStringString;
         }
-        pageUrls.add(PageUrl(isarPageUrls.first.urls![i], headers: headers));
+        pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
       }
     } else {
       pageUrls = await getExtensionService(source).getPageList(chapter.url!);
@@ -111,6 +111,7 @@ Future<GetChapterPagesModel> getChapterPages(
       chapterPageUrls.add(ChapterPageurls()
         ..chapterId = chapter.id
         ..urls = pageUrls.map((e) => e.url).toList()
+        ..chapterUrl = chapter.url
         ..headers = chapterPageHeaders.first != null
             ? chapterPageHeaders.map((e) => e.toString()).toList()
             : null);

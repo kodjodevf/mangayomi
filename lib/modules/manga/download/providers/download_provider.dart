@@ -94,6 +94,7 @@ Future<List<PageUrl>> downloadChapter(
     chapterPageUrls.add(ChapterPageurls()
       ..chapterId = chapter.id
       ..urls = pageUrls.map((e) => e.url).toList()
+      ..chapterUrl = chapter.url
       ..headers = chapterPageHeaders.first != null
           ? chapterPageHeaders.map((e) => e.toString()).toList()
           : null);

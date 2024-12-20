@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'dart:async';
@@ -173,9 +174,13 @@ class LoggerInterceptor extends InterceptorContract {
   Future<BaseRequest> interceptRequest({
     required BaseRequest request,
   }) async {
+    final content =
+        "----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}";
+    if (kDebugMode) {
+      print(content);
+    }
     if (useLogger) {
-      Logger.add(LoggerLevel.info,
-          '----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}');
+      Logger.add(LoggerLevel.info, content);
     }
 
     return request;
@@ -189,9 +194,13 @@ class LoggerInterceptor extends InterceptorContract {
       final cloudflare = [403, 503].contains(response.statusCode) &&
           ["cloudflare-nginx", "cloudflare"]
               .contains(response.headers["server"]);
+      final content =
+          "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}";
+      if (kDebugMode) {
+        print(content);
+      }
       if (useLogger) {
-        Logger.add(LoggerLevel.info,
-            "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}");
+        Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {
         botToast("${response.statusCode} Failed to bypass Cloudflare",
