@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -49,17 +49,12 @@ class MangaImageCardWidget extends ConsumerWidget {
               ),
               isComfortableGrid: isComfortableGrid,
               image: hasData && snapshot.data!.first.customCoverImage != null
-                  ? MemoryImage(
-                          snapshot.data!.first.customCoverImage as Uint8List)
-                      as ImageProvider
+                  ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List) as ImageProvider
                   : CustomExtendedNetworkImageProvider(
                       toImgUrl(hasData
-                          ? snapshot.data!.first.customCoverFromTracker ??
-                              snapshot.data!.first.imageUrl ??
-                              ""
+                          ? snapshot.data!.first.customCoverFromTracker ?? snapshot.data!.first.imageUrl ?? ""
                           : getMangaDetail!.imageUrl ?? ""),
-                      headers: ref.watch(headersProvider(
-                          source: source.name!, lang: source.lang!)),
+                      headers: ref.watch(headersProvider(source: source.name!, lang: source.lang!)),
                       cache: true,
                       cacheMaxAge: const Duration(days: 7)),
               onTap: () {
@@ -90,9 +85,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               },
               children: [
                 Container(
-                    color: hasData && snapshot.data!.first.favorite!
-                        ? Colors.black.withValues(alpha: 0.5)
-                        : null),
+                    color: hasData && snapshot.data!.first.favorite! ? Colors.black.withValues(alpha: 0.5) : null),
                 if (hasData && snapshot.data!.first.favorite!)
                   Positioned(
                     top: 0,
@@ -100,9 +93,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(4),
                       child: Container(
-                        decoration: BoxDecoration(
-                            color: context.primaryColor,
-                            borderRadius: BorderRadius.circular(5)),
+                        decoration: BoxDecoration(color: context.primaryColor, borderRadius: BorderRadius.circular(5)),
                         child: Padding(
                           padding: const EdgeInsets.all(4),
                           child: Icon(Icons.collections_bookmark_outlined,
@@ -111,9 +102,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                       ),
                     ),
                   ),
-                if (!isComfortableGrid)
-                  BottomTextWidget(
-                      isTorrent: source.isTorrent, text: getMangaDetail!.name!)
+                if (!isComfortableGrid) BottomTextWidget(isTorrent: source.isTorrent, text: getMangaDetail!.name!)
               ]);
         });
   }
@@ -125,10 +114,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
   final MManga? getMangaDetail;
 
   const MangaImageCardListTileWidget(
-      {required this.source,
-      super.key,
-      required this.isManga,
-      required this.getMangaDetail});
+      {required this.source, super.key, required this.isManga, required this.getMangaDetail});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -142,16 +128,12 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
         builder: (context, snapshot) {
           final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
           final image = hasData && snapshot.data!.first.customCoverImage != null
-              ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List)
-                  as ImageProvider
+              ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List) as ImageProvider
               : CustomExtendedNetworkImageProvider(
                   toImgUrl(hasData
-                      ? snapshot.data!.first.customCoverFromTracker ??
-                          snapshot.data!.first.imageUrl ??
-                          ""
+                      ? snapshot.data!.first.customCoverFromTracker ?? snapshot.data!.first.imageUrl ?? ""
                       : getMangaDetail!.imageUrl ?? ""),
-                  headers: ref.watch(headersProvider(
-                      source: source.name!, lang: source.lang!)),
+                  headers: ref.watch(headersProvider(source: source.name!, lang: source.lang!)),
                 );
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -196,18 +178,13 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(5),
                             color: Colors.transparent,
                             clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: Image(
-                                height: 55,
-                                width: 40,
-                                fit: BoxFit.cover,
-                                image: image),
+                            child: Image(height: 55, width: 40, fit: BoxFit.cover, image: image),
                           ),
                           Container(
                             height: 55,
                             width: 40,
-                            color: hasData && snapshot.data!.first.favorite!
-                                ? Colors.black.withValues(alpha: 0.5)
-                                : null,
+                            color:
+                                hasData && snapshot.data!.first.favorite! ? Colors.black.withValues(alpha: 0.5) : null,
                           ),
                         ],
                       ),
@@ -216,23 +193,19 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                       child: Text(
                         getMangaDetail!.name!,
                         maxLines: 2,
-                        style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            color: context.textColor),
+                        style: TextStyle(overflow: TextOverflow.ellipsis, color: context.textColor),
                       ),
                     ),
                     if (hasData && snapshot.data!.first.favorite!)
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          decoration: BoxDecoration(
-                              color: context.primaryColor,
-                              borderRadius: BorderRadius.circular(5)),
+                          decoration:
+                              BoxDecoration(color: context.primaryColor, borderRadius: BorderRadius.circular(5)),
                           child: Padding(
                             padding: const EdgeInsets.all(4),
                             child: Icon(Icons.collections_bookmark_outlined,
-                                size: 16,
-                                color: context.dynamicWhiteBlackColor),
+                                size: 16, color: context.dynamicWhiteBlackColor),
                           ),
                         ),
                       ),
@@ -271,33 +244,23 @@ Future<void> pushToMangaReaderDetail(
             lastUpdate: 0,
             isManga: isManga ?? true,
             artist: getManga.artist ?? '');
-    final empty = isar.mangas
-        .filter()
-        .langEqualTo(lang)
-        .nameEqualTo(manga.name)
-        .sourceEqualTo(manga.source)
-        .isEmptySync();
+    final empty =
+        isar.mangas.filter().langEqualTo(lang).nameEqualTo(manga.name).sourceEqualTo(manga.source).isEmptySync();
     if (empty) {
       isar.writeTxnSync(() {
         isar.mangas.putSync(manga);
       });
     }
 
-    mangaId = isar.mangas
-        .filter()
-        .langEqualTo(lang)
-        .nameEqualTo(manga.name)
-        .sourceEqualTo(manga.source)
-        .findFirstSync()!
-        .id!;
+    mangaId =
+        isar.mangas.filter().langEqualTo(lang).nameEqualTo(manga.name).sourceEqualTo(manga.source).findFirstSync()!.id!;
   } else {
     mangaId = archiveId;
   }
 
   final settings = isar.settings.getSync(227)!;
   final sortList = settings.sortChapterList ?? [];
-  final checkIfExist =
-      sortList.where((element) => element.mangaId == mangaId).toList();
+  final checkIfExist = sortList.where((element) => element.mangaId == mangaId).toList();
   if (checkIfExist.isEmpty) {
     isar.writeTxnSync(
       () {
@@ -318,10 +281,8 @@ Future<void> pushToMangaReaderDetail(
           chapterFilterUnreadList.add(sortChapter);
         }
         sortChapterList.add(SortChapter()..mangaId = mangaId);
-        chapterFilterBookmarkedList
-            .add(ChapterFilterBookmarked()..mangaId = mangaId);
-        chapterFilterDownloadedList
-            .add(ChapterFilterDownloaded()..mangaId = mangaId);
+        chapterFilterBookmarkedList.add(ChapterFilterBookmarked()..mangaId = mangaId);
+        chapterFilterDownloadedList.add(ChapterFilterDownloaded()..mangaId = mangaId);
         chapterFilterUnreadList.add(ChapterFilterUnread()..mangaId = mangaId);
         isar.settings.putSync(settings
           ..sortChapterList = sortChapterList

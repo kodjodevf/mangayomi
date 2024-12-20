@@ -94,15 +94,13 @@ class LocalStorePersistentStorage implements PersistentStorage {
   static const metaDataCollection = 'backgroundDownloaderDatabase';
 
   /// Stores [Map<String, dynamic>] formatted [document] in [collection] keyed under [identifier]
-  Future<void> store(Map<String, dynamic> document, String collection,
-      String identifier) async {
+  Future<void> store(Map<String, dynamic> document, String collection, String identifier) async {
     await _db.collection(collection).doc(identifier).set(document);
   }
 
   /// Returns [document] stored in [collection] under key [identifier]
   /// as a [Map<String, dynamic>], or null if not found
-  Future<Map<String, dynamic>?> retrieve(
-          String collection, String identifier) =>
+  Future<Map<String, dynamic>?> retrieve(String collection, String identifier) =>
       _db.collection(collection).doc(identifier).get();
 
   /// Returns all documents in collection as a [Map<String, dynamic>] keyed by the
@@ -127,43 +125,33 @@ class LocalStorePersistentStorage implements PersistentStorage {
 
   /// Returns possibly modified id, safe for storing in the localStore, or null
   /// if [id] is null
-  String? _safeIdOrNull(String? id) =>
-      id?.replaceAll(_illegalPathCharacters, '_');
+  String? _safeIdOrNull(String? id) => id?.replaceAll(_illegalPathCharacters, '_');
 
   @override
-  Future<void> removePausedTask(String? taskId) =>
-      remove(pausedTasksPath, _safeIdOrNull(taskId));
+  Future<void> removePausedTask(String? taskId) => remove(pausedTasksPath, _safeIdOrNull(taskId));
 
   @override
-  Future<void> removeResumeData(String? taskId) =>
-      remove(resumeDataPath, _safeIdOrNull(taskId));
+  Future<void> removeResumeData(String? taskId) => remove(resumeDataPath, _safeIdOrNull(taskId));
 
   @override
-  Future<void> removeTaskRecord(String? taskId) =>
-      remove(taskRecordsPath, _safeIdOrNull(taskId));
+  Future<void> removeTaskRecord(String? taskId) => remove(taskRecordsPath, _safeIdOrNull(taskId));
 
   @override
   Future<List<Task>> retrieveAllPausedTasks() async {
     final jsonMaps = await retrieveAll(pausedTasksPath);
-    return jsonMaps.values
-        .map((e) => Task.createFromJson(e))
-        .toList(growable: false);
+    return jsonMaps.values.map((e) => Task.createFromJson(e)).toList(growable: false);
   }
 
   @override
   Future<List<ResumeData>> retrieveAllResumeData() async {
     final jsonMaps = await retrieveAll(resumeDataPath);
-    return jsonMaps.values
-        .map((e) => ResumeData.fromJson(e))
-        .toList(growable: false);
+    return jsonMaps.values.map((e) => ResumeData.fromJson(e)).toList(growable: false);
   }
 
   @override
   Future<List<TaskRecord>> retrieveAllTaskRecords() async {
     final jsonMaps = await retrieveAll(taskRecordsPath);
-    return jsonMaps.values
-        .map((e) => TaskRecord.fromJson(e))
-        .toList(growable: false);
+    return jsonMaps.values.map((e) => TaskRecord.fromJson(e)).toList(growable: false);
   }
 
   @override
@@ -191,21 +179,18 @@ class LocalStorePersistentStorage implements PersistentStorage {
   }
 
   @override
-  Future<void> storePausedTask(Task task) =>
-      store(task.toJson(), pausedTasksPath, _safeId(task.taskId));
+  Future<void> storePausedTask(Task task) => store(task.toJson(), pausedTasksPath, _safeId(task.taskId));
 
   @override
   Future<void> storeResumeData(ResumeData resumeData) =>
       store(resumeData.toJson(), resumeDataPath, _safeId(resumeData.taskId));
 
   @override
-  Future<void> storeTaskRecord(TaskRecord record) =>
-      store(record.toJson(), taskRecordsPath, _safeId(record.taskId));
+  Future<void> storeTaskRecord(TaskRecord record) => store(record.toJson(), taskRecordsPath, _safeId(record.taskId));
 
   @override
   Future<(String, int)> get storedDatabaseVersion async {
-    final metaData =
-        await _db.collection(metaDataCollection).doc('metaData').get();
+    final metaData = await _db.collection(metaDataCollection).doc('metaData').get();
     return ('Localstore', (metaData?['version'] as num?)?.toInt() ?? 0);
   }
 
@@ -223,18 +208,13 @@ class LocalStorePersistentStorage implements PersistentStorage {
     if (storedVersion == currentVersion) {
       return;
     }
-    log.fine(
-        'Migrating $currentName database from version $storedVersion to $currentVersion');
+    log.fine('Migrating $currentName database from version $storedVersion to $currentVersion');
     switch (storedVersion) {
       case 0:
         // move files from docDir to supportDir
         final docDir = await getApplicationDocumentsDirectory();
         final supportDir = await getApplicationSupportDirectory();
-        for (String path in [
-          resumeDataPath,
-          pausedTasksPath,
-          taskRecordsPath
-        ]) {
+        for (String path in [resumeDataPath, pausedTasksPath, taskRecordsPath]) {
           try {
             final fromPath = join(docDir.path, path);
             if (await Directory(fromPath).exists()) {
@@ -256,10 +236,7 @@ class LocalStorePersistentStorage implements PersistentStorage {
       default:
         log.warning('Illegal starting version: $storedVersion');
     }
-    await _db
-        .collection(metaDataCollection)
-        .doc('metaData')
-        .set({'version': currentVersion});
+    await _db.collection(metaDataCollection).doc('metaData').set({'version': currentVersion});
   }
 }
 
@@ -269,8 +246,7 @@ abstract interface class PersistentStorageMigrator {
   ///
   /// If migration took place, returns the name of the migration option,
   /// otherwise returns null
-  Future<String?> migrate(
-      List<String> migrationOptions, PersistentStorage toStorage);
+  Future<String?> migrate(List<String> migrationOptions, PersistentStorage toStorage);
 }
 
 /// Migrates from [LocalStorePersistentStorage] to another [PersistentStorage]
@@ -300,16 +276,14 @@ class BasePersistentStorageMigrator implements PersistentStorageMigrator {
   /// This is the public interface to use in other [PersistentStorage]
   /// solutions.
   @override
-  Future<String?> migrate(
-      List<String> migrationOptions, PersistentStorage toStorage) async {
+  Future<String?> migrate(List<String> migrationOptions, PersistentStorage toStorage) async {
     for (var persistentStorageName in migrationOptions) {
       try {
         if (await migrateFrom(persistentStorageName, toStorage)) {
           return persistentStorageName;
         }
       } on Exception catch (e, stacktrace) {
-        log.warning(
-            'Error attempting to migrate from $persistentStorageName: $e\n$stacktrace');
+        log.warning('Error attempting to migrate from $persistentStorageName: $e\n$stacktrace');
       }
     }
     return null; // no migration
@@ -322,8 +296,7 @@ class BasePersistentStorageMigrator implements PersistentStorageMigrator {
   ///
   /// If extending the class, add your mapping from a migration option String
   /// to a _migrateFrom... method that does your migration.
-  Future<bool> migrateFrom(
-          String persistentStorageName, PersistentStorage toStorage) =>
+  Future<bool> migrateFrom(String persistentStorageName, PersistentStorage toStorage) =>
       switch (persistentStorageName.toLowerCase().replaceAll('_', '')) {
         'localstore' => migrateFromLocalStore(toStorage),
         _ => Future.value(false)
@@ -335,8 +308,7 @@ class BasePersistentStorageMigrator implements PersistentStorageMigrator {
   ///
   /// This is a generic migrator that copies from one storage to another, and
   /// is used by the _migrateFrom... methods
-  Future<bool> migrateFromPersistentStorage(
-      PersistentStorage fromStorage, PersistentStorage toStorage) async {
+  Future<bool> migrateFromPersistentStorage(PersistentStorage fromStorage, PersistentStorage toStorage) async {
     bool migratedSomething = false;
     await fromStorage.initialize();
     for (final pausedTask in await fromStorage.retrieveAllPausedTasks()) {

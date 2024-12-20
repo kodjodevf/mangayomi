@@ -3,25 +3,20 @@ import 'package:flutter/material.dart';
 
 class CircularProgressIndicatorAnimateRotate extends StatefulWidget {
   final double progress;
-  const CircularProgressIndicatorAnimateRotate(
-      {super.key, required this.progress});
+  const CircularProgressIndicatorAnimateRotate({super.key, required this.progress});
 
   @override
-  State<CircularProgressIndicatorAnimateRotate> createState() =>
-      _CircularProgressIndicatorAnimateRotateState();
+  State<CircularProgressIndicatorAnimateRotate> createState() => _CircularProgressIndicatorAnimateRotateState();
 }
 
-class _CircularProgressIndicatorAnimateRotateState
-    extends State<CircularProgressIndicatorAnimateRotate>
+class _CircularProgressIndicatorAnimateRotateState extends State<CircularProgressIndicatorAnimateRotate>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10))
-          ..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 10))..repeat();
   }
 
   @override

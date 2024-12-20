@@ -11,10 +11,8 @@ class ReaderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
-    final animatePageTransitions =
-        ref.watch(animatePageTransitionsStateProvider);
-    final doubleTapAnimationSpeed =
-        ref.watch(doubleTapAnimationSpeedStateProvider);
+    final animatePageTransitions = ref.watch(animatePageTransitionsStateProvider);
+    final doubleTapAnimationSpeed = ref.watch(doubleTapAnimationSpeedStateProvider);
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
     final scaleType = ref.watch(scaleTypeStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
@@ -47,17 +45,11 @@ class ReaderScreen extends ConsumerWidget {
                                   value: ReaderMode.values[index],
                                   groupValue: defaultReadingMode,
                                   onChanged: (value) {
-                                    ref
-                                        .read(defaultReadingModeStateProvider
-                                            .notifier)
-                                        .set(value!);
+                                    ref.read(defaultReadingModeStateProvider.notifier).set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
-                                    children: [
-                                      Text(getReaderModeName(
-                                          ReaderMode.values[index], context))
-                                    ],
+                                    children: [Text(getReaderModeName(ReaderMode.values[index], context))],
                                   ),
                                 );
                               },
@@ -72,8 +64,7 @@ class ReaderScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -108,18 +99,11 @@ class ReaderScreen extends ConsumerWidget {
                                   value: index,
                                   groupValue: doubleTapAnimationSpeed,
                                   onChanged: (value) {
-                                    ref
-                                        .read(
-                                            doubleTapAnimationSpeedStateProvider
-                                                .notifier)
-                                        .set(value!);
+                                    ref.read(doubleTapAnimationSpeedStateProvider.notifier).set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
-                                    children: [
-                                      Text(
-                                          getAnimationSpeedName(index, context))
-                                    ],
+                                    children: [Text(getAnimationSpeedName(index, context))],
                                   ),
                                 );
                               },
@@ -134,8 +118,7 @@ class ReaderScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -168,18 +151,11 @@ class ReaderScreen extends ConsumerWidget {
                                   value: BackgroundColor.values[index],
                                   groupValue: backgroundColor,
                                   onChanged: (value) {
-                                    ref
-                                        .read(backgroundColorStateProvider
-                                            .notifier)
-                                        .set(value!);
+                                    ref.read(backgroundColorStateProvider.notifier).set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
-                                    children: [
-                                      Text(getBackgroundColorName(
-                                          BackgroundColor.values[index],
-                                          context))
-                                    ],
+                                    children: [Text(getBackgroundColorName(BackgroundColor.values[index], context))],
                                   ),
                                 );
                               },
@@ -194,8 +170,7 @@ class ReaderScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -231,10 +206,7 @@ class ReaderScreen extends ConsumerWidget {
                                   value: numbers[index],
                                   groupValue: pagePreloadAmount,
                                   onChanged: (value) {
-                                    ref
-                                        .read(pagePreloadAmountStateProvider
-                                            .notifier)
-                                        .set(value!);
+                                    ref.read(pagePreloadAmountStateProvider.notifier).set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
@@ -253,8 +225,7 @@ class ReaderScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -289,16 +260,11 @@ class ReaderScreen extends ConsumerWidget {
                                   value: index,
                                   groupValue: scaleType.index,
                                   onChanged: (value) {
-                                    ref
-                                        .read(scaleTypeStateProvider.notifier)
-                                        .set(ScaleType.values[value!]);
+                                    ref.read(scaleTypeStateProvider.notifier).set(ScaleType.values[value!]);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
-                                    children: [
-                                      Text(getScaleTypeNames(context)[index]
-                                          .toString())
-                                    ],
+                                    children: [Text(getScaleTypeNames(context)[index].toString())],
                                   ),
                                 );
                               },
@@ -313,8 +279,7 @@ class ReaderScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -338,9 +303,7 @@ class ReaderScreen extends ConsumerWidget {
                 value: animatePageTransitions,
                 title: Text(context.l10n.animate_page_transitions),
                 onChanged: (value) {
-                  ref
-                      .read(animatePageTransitionsStateProvider.notifier)
-                      .set(value);
+                  ref.read(animatePageTransitionsStateProvider.notifier).set(value);
                 }),
             SwitchListTile(
                 value: cropBorders,
@@ -364,8 +327,7 @@ class ReaderScreen extends ConsumerWidget {
 String getReaderModeName(ReaderMode readerMode, BuildContext context) {
   return switch (readerMode) {
     ReaderMode.vertical => context.l10n.reading_mode_vertical,
-    ReaderMode.verticalContinuous =>
-      context.l10n.reading_mode_vertical_continuous,
+    ReaderMode.verticalContinuous => context.l10n.reading_mode_vertical_continuous,
     ReaderMode.ltr => context.l10n.reading_mode_left_to_right,
     ReaderMode.rtl => context.l10n.reading_mode_right_to_left,
     ReaderMode.horizontalContinuous => context.l10n.horizontal_continious,
@@ -373,8 +335,7 @@ String getReaderModeName(ReaderMode readerMode, BuildContext context) {
   };
 }
 
-String getBackgroundColorName(
-    BackgroundColor backgroundColor, BuildContext context) {
+String getBackgroundColorName(BackgroundColor backgroundColor, BuildContext context) {
   return switch (backgroundColor) {
     BackgroundColor.white => context.l10n.white,
     BackgroundColor.grey => context.l10n.grey,
@@ -392,8 +353,7 @@ Color? getBackgroundColor(BackgroundColor backgroundColor) {
   };
 }
 
-String getColorFilterBlendModeName(
-    ColorFilterBlendMode backgroundColor, BuildContext context) {
+String getColorFilterBlendModeName(ColorFilterBlendMode backgroundColor, BuildContext context) {
   return switch (backgroundColor) {
     ColorFilterBlendMode.none => context.l10n.blend_mode_default,
     ColorFilterBlendMode.multiply => context.l10n.blend_mode_multiply,
@@ -411,8 +371,7 @@ String getColorFilterBlendModeName(
   };
 }
 
-BlendMode? getColorFilterBlendMode(
-    ColorFilterBlendMode backgroundColor, BuildContext context) {
+BlendMode? getColorFilterBlendMode(ColorFilterBlendMode backgroundColor, BuildContext context) {
   return switch (backgroundColor) {
     ColorFilterBlendMode.none => null,
     ColorFilterBlendMode.multiply => BlendMode.multiply,

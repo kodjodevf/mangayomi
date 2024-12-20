@@ -83,14 +83,4 @@ class Track {
       };
 }
 
-enum TrackStatus {
-  reading,
-  completed,
-  onHold,
-  dropped,
-  planToRead,
-  rereading,
-  watching,
-  planToWatch,
-  reWatching
-}
+enum TrackStatus { reading, completed, onHold, dropped, planToRead, rereading, watching, planToWatch, reWatching }

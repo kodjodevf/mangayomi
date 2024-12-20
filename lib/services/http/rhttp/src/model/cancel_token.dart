@@ -16,7 +16,6 @@ class CancelToken {
 
   CancelToken();
 
-  
   void setRef(rust_lib.CancellationToken ref) {
     _ref.complete(ref);
   }

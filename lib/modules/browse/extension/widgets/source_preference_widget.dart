@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
@@ -9,8 +9,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 class SourcePreferenceWidget extends StatefulWidget {
   final List<SourcePreference> sourcePreference;
   final Source source;
-  const SourcePreferenceWidget(
-      {super.key, required this.sourcePreference, required this.source});
+  const SourcePreferenceWidget({super.key, required this.sourcePreference, required this.source});
 
   @override
   State<SourcePreferenceWidget> createState() => _SourcePreferenceWidgetState();
@@ -30,9 +29,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                 final pref = preference.editTextPreference!;
                 w = ListTile(
                   title: Text(pref.title!),
-                  subtitle: Text(pref.summary!,
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor)),
+                  subtitle: Text(pref.summary!, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                   onTap: () {
                     showDialog(
                         context: context,
@@ -52,9 +49,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                 final pref = preference.checkBoxPreference!;
                 w = CheckboxListTile(
                   title: Text(pref.title!),
-                  subtitle: Text(pref.summary!,
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor)),
+                  subtitle: Text(pref.summary!, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                   value: pref.value,
                   onChanged: (value) {
                     setState(() {
@@ -68,9 +63,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                 final pref = preference.switchPreferenceCompat!;
                 w = SwitchListTile(
                   title: Text(pref.title!),
-                  subtitle: Text(pref.summary!,
-                      style: TextStyle(
-                          fontSize: 11, color: context.secondaryColor)),
+                  subtitle: Text(pref.summary!, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                   value: pref.value!,
                   onChanged: (value) {
                     setState(() {
@@ -85,8 +78,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                 w = ListTile(
                     title: Text(pref.title!),
                     subtitle: Text(pref.entries![pref.valueIndex!],
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor)),
+                        style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                     onTap: () async {
                       final res = await showDialog(
                         context: context,
@@ -122,8 +114,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                     },
                                     child: Text(
                                       context.l10n.cancel,
-                                      style: TextStyle(
-                                          color: context.primaryColor),
+                                      style: TextStyle(color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -141,9 +132,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                 final pref = preference.multiSelectListPreference!;
                 w = ListTile(
                     title: Text(pref.title!),
-                    subtitle: Text(pref.summary!,
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor)),
+                    subtitle: Text(pref.summary!, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                     onTap: () {
                       List<String> indexList = [];
                       indexList.addAll(pref.values!);
@@ -162,27 +151,20 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                         itemBuilder: (context, index) {
                                           return ListTileChapterFilter(
                                               label: pref.entries![index],
-                                              type: indexList.contains(
-                                                      pref.entryValues![index])
-                                                  ? 1
-                                                  : 0,
+                                              type: indexList.contains(pref.entryValues![index]) ? 1 : 0,
                                               onTap: () {
-                                                if (indexList.contains(
-                                                    pref.entryValues![index])) {
+                                                if (indexList.contains(pref.entryValues![index])) {
                                                   setState(() {
-                                                    indexList.remove(pref
-                                                        .entryValues![index]);
+                                                    indexList.remove(pref.entryValues![index]);
                                                     pref.values = indexList;
                                                   });
                                                 } else {
                                                   setState(() {
-                                                    indexList.add(pref
-                                                        .entryValues![index]);
+                                                    indexList.add(pref.entryValues![index]);
                                                     pref.values = indexList;
                                                   });
                                                 }
-                                                setPreferenceSetting(
-                                                    preference, widget.source);
+                                                setPreferenceSetting(preference, widget.source);
                                               });
                                         },
                                       )),
@@ -196,8 +178,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                             },
                                             child: Text(
                                               context.l10n.cancel,
-                                              style: TextStyle(
-                                                  color: context.primaryColor),
+                                              style: TextStyle(color: context.primaryColor),
                                             )),
                                         TextButton(
                                             onPressed: () async {
@@ -205,8 +186,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                                             },
                                             child: Text(
                                               context.l10n.ok,
-                                              style: TextStyle(
-                                                  color: context.primaryColor),
+                                              style: TextStyle(color: context.primaryColor),
                                             )),
                                       ],
                                     )
@@ -231,11 +211,7 @@ class EditTextDialogWidget extends StatefulWidget {
   final String dialogMessage;
   final Function(String) onChanged;
   const EditTextDialogWidget(
-      {super.key,
-      required this.text,
-      required this.onChanged,
-      required this.dialogTitle,
-      required this.dialogMessage});
+      {super.key, required this.text, required this.onChanged, required this.dialogTitle, required this.dialogMessage});
 
   @override
   State<EditTextDialogWidget> createState() => _EditTextDialogWidgetState();
@@ -248,10 +224,7 @@ class _EditTextDialogWidgetState extends State<EditTextDialogWidget> {
     return AlertDialog(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.dialogTitle),
-          Text(widget.dialogMessage, style: const TextStyle(fontSize: 13))
-        ],
+        children: [Text(widget.dialogTitle), Text(widget.dialogMessage, style: const TextStyle(fontSize: 13))],
       ),
       content: Padding(
           padding: const EdgeInsets.only(top: 20),

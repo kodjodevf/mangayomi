@@ -12,8 +12,7 @@ class ImageViewPaged extends ConsumerWidget {
   final Function(UChapDataPreload data) onLongPressData;
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state)? onDoubleTap;
-  final GestureConfig Function(ExtendedImageState state)?
-      initGestureConfigHandler;
+  final GestureConfig Function(ExtendedImageState state)? initGestureConfigHandler;
   const ImageViewPaged({
     super.key,
     required this.data,

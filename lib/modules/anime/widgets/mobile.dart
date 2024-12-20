@@ -30,19 +30,16 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
       required this.videoStatekey});
 
   @override
-  ConsumerState<MobileControllerWidget> createState() =>
-      _MobileControllerWidgetState();
+  ConsumerState<MobileControllerWidget> createState() => _MobileControllerWidgetState();
 }
 
-class _MobileControllerWidgetState
-    extends ConsumerState<MobileControllerWidget> {
+class _MobileControllerWidgetState extends ConsumerState<MobileControllerWidget> {
   bool mount = true;
   bool visible = true;
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
   Color backdropColor = const Color(0x66000000);
   Timer? _timer;
-  late final skipDuration =
-      ref.watch(defaultDoubleTapToSkipLengthStateProvider);
+  late final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
   Timer? _brightnessTimer;
@@ -53,8 +50,7 @@ class _MobileControllerWidgetState
   // The default event stream in package:volume_controller is buggy.
   bool _volumeInterceptEventStream = false;
 
-  Offset _dragInitialDelta =
-      Offset.zero; // Initial position for horizontal drag
+  Offset _dragInitialDelta = Offset.zero; // Initial position for horizontal drag
   int swipeDuration = 0; // Duration to seek in video
   bool showSwipeDuration = false; // Whether to show the seek duration overlay
 
@@ -192,17 +188,15 @@ class _MobileControllerWidgetState
       setState(() {
         swipeDuration = seconds;
         showSwipeDuration = true;
-        _seekBarDeltaValueNotifier = Duration(
-            seconds: widget.videoController.player.state.position.inSeconds +
-                seconds);
+        _seekBarDeltaValueNotifier =
+            Duration(seconds: widget.videoController.player.state.position.inSeconds + seconds);
       });
     }
   }
 
   void onHorizontalDragEnd() {
     if (swipeDuration != 0) {
-      Duration newPosition = widget.videoController.player.state.position +
-          Duration(seconds: swipeDuration);
+      Duration newPosition = widget.videoController.player.state.position + Duration(seconds: swipeDuration);
       newPosition = newPosition.clamp(
         Duration.zero,
         widget.videoController.player.state.duration,
@@ -239,8 +233,7 @@ class _MobileControllerWidgetState
     Future.microtask(() async {
       try {
         _brightnessValue.value = await ScreenBrightness.instance.application;
-        ScreenBrightness.instance.onApplicationScreenBrightnessChanged
-            .listen((value) {
+        ScreenBrightness.instance.onApplicationScreenBrightnessChanged.listen((value) {
           if (mounted) {
             _brightnessValue.value = value;
           }
@@ -295,8 +288,7 @@ class _MobileControllerWidgetState
               : Positioned(
                   child: CustomSubtitleView(
                   controller: widget.videoController,
-                  configuration:
-                      SubtitleViewConfiguration(style: subtileTextStyle(ref)),
+                  configuration: SubtitleViewConfiguration(style: subtileTextStyle(ref)),
                 )),
         ),
         Focus(
@@ -337,9 +329,7 @@ class _MobileControllerWidgetState
                         onTap: onTap,
                         onDoubleTapDown: _handleTapDown,
                         onDoubleTap: () {
-                          if (_tapPosition != null &&
-                              _tapPosition!.dx >
-                                  MediaQuery.of(context).size.width / 2) {
+                          if (_tapPosition != null && _tapPosition!.dx > MediaQuery.of(context).size.width / 2) {
                             onDoubleTapSeekForward();
                           } else {
                             onDoubleTapSeekBackward();
@@ -355,19 +345,16 @@ class _MobileControllerWidgetState
                           final delta = e.delta.dy;
                           final Offset position = e.localPosition;
 
-                          if (position.dx <=
-                              MediaQuery.of(context).size.width / 2) {
+                          if (position.dx <= MediaQuery.of(context).size.width / 2) {
                             // Left side of screen swiped
 
-                            final brightness = _brightnessValue.value -
-                                delta / verticalGestureSensitivity;
+                            final brightness = _brightnessValue.value - delta / verticalGestureSensitivity;
                             final result = brightness.clamp(0.0, 1.0);
                             setBrightness(result);
                           } else {
                             // Right side of screen swiped
 
-                            final volume = _volumeValue.value -
-                                delta / verticalGestureSensitivity;
+                            final volume = _volumeValue.value - delta / verticalGestureSensitivity;
                             final result = volume.clamp(0.0, 1.0);
                             setVolume(result);
                           }
@@ -381,9 +368,7 @@ class _MobileControllerWidgetState
                       Padding(
                         padding: (
                             // Add padding in fullscreen!
-                            isFullscreen(context)
-                                ? MediaQuery.of(context).padding
-                                : EdgeInsets.zero),
+                            isFullscreen(context) ? MediaQuery.of(context).padding : EdgeInsets.zero),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -402,11 +387,8 @@ class _MobileControllerWidgetState
                                 duration: controlsTransitionDuration,
                                 child: Center(
                                   child: Row(
-                                      children: mobilePrimaryButtonBar(
-                                          context,
-                                          widget.videoStatekey,
-                                          widget.streamController,
-                                          widget.videoController)),
+                                      children: mobilePrimaryButtonBar(context, widget.videoStatekey,
+                                          widget.streamController, widget.videoController)),
                                 ),
                               ),
                             ),
@@ -452,9 +434,7 @@ class _MobileControllerWidgetState
               ),
               // // Double-Tap Seek Seek-Bar:
               if (!mount)
-                if (_mountSeekBackwardButton ||
-                    _mountSeekForwardButton ||
-                    showSwipeDuration)
+                if (_mountSeekBackwardButton || _mountSeekForwardButton || showSwipeDuration)
                   Column(
                     children: [
                       const Spacer(),
@@ -463,9 +443,8 @@ class _MobileControllerWidgetState
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 10),
-                            child: CustomSeekBar(
-                                delta: _seekBarDeltaValueNotifier,
-                                player: widget.videoController.player),
+                            child:
+                                CustomSeekBar(delta: _seekBarDeltaValueNotifier, player: widget.videoController.player),
                           ),
                         ],
                       ),
@@ -476,9 +455,7 @@ class _MobileControllerWidgetState
                 child: Padding(
                   padding: (
                       // Add padding in fullscreen!
-                      isFullscreen(context)
-                          ? MediaQuery.of(context).padding
-                          : EdgeInsets.zero),
+                      isFullscreen(context) ? MediaQuery.of(context).padding : EdgeInsets.zero),
                   child: Column(
                     children: [
                       Container(
@@ -526,8 +503,7 @@ class _MobileControllerWidgetState
                       curve: Curves.easeInOut,
                       opacity: value ? 1.0 : 0.0,
                       duration: controlsTransitionDuration,
-                      child: MediaIndicatorBuilder(
-                          value: _volumeValue, isVolumeIndicator: true)),
+                      child: MediaIndicatorBuilder(value: _volumeValue, isVolumeIndicator: true)),
                 ),
               ),
               // // Brightness Indicator.
@@ -538,8 +514,7 @@ class _MobileControllerWidgetState
                       curve: Curves.easeInOut,
                       opacity: value ? 1.0 : 0.0,
                       duration: controlsTransitionDuration,
-                      child: MediaIndicatorBuilder(
-                          value: _brightnessValue, isVolumeIndicator: false)),
+                      child: MediaIndicatorBuilder(value: _brightnessValue, isVolumeIndicator: false)),
                 ),
               ),
               // Seek Indicator.
@@ -548,8 +523,7 @@ class _MobileControllerWidgetState
                     duration: controlsTransitionDuration,
                     opacity: showSwipeDuration ? 1 : 0,
                     child: seekIndicatorTextWidget(
-                        Duration(seconds: swipeDuration),
-                        widget.videoController.player.state.position)),
+                        Duration(seconds: swipeDuration), widget.videoController.player.state.position)),
               ),
 
               // Double-Tap Seek Button(s):
@@ -580,28 +554,20 @@ class _MobileControllerWidgetState
                                 child: _BackwardSeekIndicator(
                                     onChanged: (value) {
                                       setState(() {
-                                        _seekBarDeltaValueNotifier = widget
-                                                .videoController
-                                                .player
-                                                .state
-                                                .position -
-                                            value;
+                                        _seekBarDeltaValueNotifier =
+                                            widget.videoController.player.state.position - value;
                                       });
                                     },
                                     onSubmitted: (value) {
                                       setState(() {
                                         _hideSeekBackwardButton = true;
                                       });
-                                      var result = widget.videoController.player
-                                              .state.position -
-                                          value;
+                                      var result = widget.videoController.player.state.position - value;
                                       result = result.clamp(
                                         Duration.zero,
-                                        widget.videoController.player.state
-                                            .duration,
+                                        widget.videoController.player.state.duration,
                                       );
-                                      widget.videoController.player
-                                          .seek(result);
+                                      widget.videoController.player.seek(result);
                                     },
                                     skipDuration: skipDuration),
                               )
@@ -630,28 +596,20 @@ class _MobileControllerWidgetState
                                 child: _ForwardSeekIndicator(
                                     onChanged: (value) {
                                       setState(() {
-                                        _seekBarDeltaValueNotifier = widget
-                                                .videoController
-                                                .player
-                                                .state
-                                                .position +
-                                            value;
+                                        _seekBarDeltaValueNotifier =
+                                            widget.videoController.player.state.position + value;
                                       });
                                     },
                                     onSubmitted: (value) {
                                       setState(() {
                                         _hideSeekForwardButton = true;
                                       });
-                                      var result = widget.videoController.player
-                                              .state.position +
-                                          value;
+                                      var result = widget.videoController.player.state.position + value;
                                       result = result.clamp(
                                         Duration.zero,
-                                        widget.videoController.player.state
-                                            .duration,
+                                        widget.videoController.player.state.duration,
                                       );
-                                      widget.videoController.player
-                                          .seek(result);
+                                      widget.videoController.player.seek(result);
                                     },
                                     skipDuration: skipDuration),
                               )
@@ -856,12 +814,10 @@ class CustomMaterialPlayOrPauseButton extends StatefulWidget {
   });
 
   @override
-  CustomMaterialPlayOrPauseButtonState createState() =>
-      CustomMaterialPlayOrPauseButtonState();
+  CustomMaterialPlayOrPauseButtonState createState() => CustomMaterialPlayOrPauseButtonState();
 }
 
-class CustomMaterialPlayOrPauseButtonState
-    extends State<CustomMaterialPlayOrPauseButton>
+class CustomMaterialPlayOrPauseButtonState extends State<CustomMaterialPlayOrPauseButton>
     with SingleTickerProviderStateMixin {
   late final animation = AnimationController(
     vsync: this,
@@ -915,11 +871,8 @@ class CustomMaterialPlayOrPauseButtonState
   }
 }
 
-List<Widget> mobilePrimaryButtonBar(
-    BuildContext context,
-    GlobalKey<VideoState> key,
-    AnimeStreamController streamController,
-    VideoController controller) {
+List<Widget> mobilePrimaryButtonBar(BuildContext context, GlobalKey<VideoState> key,
+    AnimeStreamController streamController, VideoController controller) {
   bool hasPrevEpisode = streamController.getEpisodeIndex().$1 + 1 !=
       streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
   bool hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
@@ -932,8 +885,7 @@ List<Widget> mobilePrimaryButtonBar(
               if (isFullScreen) {
                 key.currentState?.exitFullscreen();
               }
-              pushReplacementMangaReaderView(
-                  context: context, chapter: streamController.getPrevEpisode());
+              pushReplacementMangaReaderView(context: context, chapter: streamController.getPrevEpisode());
             }
           : null,
       icon: Icon(
@@ -957,8 +909,7 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      icon: Icon(Icons.skip_next,
-          size: 35, color: hasPrevEpisode ? Colors.white : Colors.grey),
+      icon: Icon(Icons.skip_next, size: 35, color: hasPrevEpisode ? Colors.white : Colors.grey),
     ),
     const Spacer(flex: 3)
   ];

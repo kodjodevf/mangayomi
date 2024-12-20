@@ -47,8 +47,7 @@ void main(List<String> args) async {
         'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
     final document = await getApplicationDocumentsDirectory();
     webViewEnvironment = await WebViewEnvironment.create(
-        settings: WebViewEnvironmentSettings(
-            userDataFolder: p.join(document.path, 'flutter_inappwebview')));
+        settings: WebViewEnvironmentSettings(userDataFolder: p.join(document.path, 'flutter_inappwebview')));
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();

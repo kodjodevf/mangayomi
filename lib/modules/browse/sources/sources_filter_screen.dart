@@ -38,8 +38,7 @@ class SourcesFilterScreen extends ConsumerWidget {
                     SliverGroupedListView<Source, String>(
                       elements: entries,
                       groupBy: (element) => element.lang!,
-                      groupSeparatorBuilder: (String groupByValue) =>
-                          SwitchListTile(
+                      groupSeparatorBuilder: (String groupByValue) => SwitchListTile(
                         value: entries
                             .where((element) =>
                                 element.lang!.toLowerCase() == groupByValue &&
@@ -50,24 +49,19 @@ class SourcesFilterScreen extends ConsumerWidget {
                           isar.writeTxnSync(() {
                             for (var source in entries) {
                               if (source.lang!.toLowerCase() == groupByValue) {
-                                isar.sources
-                                    .putSync(source..isActive = val == true);
+                                isar.sources.putSync(source..isActive = val == true);
                               }
                             }
                           });
                         },
                         title: Text(
                           completeLanguageName(groupByValue),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 13),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ),
                       itemBuilder: (context, Source element) {
                         if (entries
-                            .where((s) =>
-                                s.lang!.toLowerCase() == element.lang &&
-                                s.isActive! &&
-                                s.isManga == isManga)
+                            .where((s) => s.lang!.toLowerCase() == element.lang && s.isActive! && s.isManga == isManga)
                             .isEmpty) {
                           return Container();
                         }
@@ -76,9 +70,7 @@ class SourcesFilterScreen extends ConsumerWidget {
                             height: 37,
                             width: 37,
                             decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .secondaryHeaderColor
-                                    .withValues(alpha: 0.5),
+                                color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
                                 borderRadius: BorderRadius.circular(5)),
                             child: element.iconUrl!.isEmpty
                                 ? const Icon(Icons.source_outlined)
@@ -105,10 +97,8 @@ class SourcesFilterScreen extends ConsumerWidget {
                           title: Text(element.name!),
                         );
                       },
-                      groupComparator: (group1, group2) =>
-                          group1.compareTo(group2),
-                      itemComparator: (item1, item2) =>
-                          item1.name!.compareTo(item2.name!),
+                      groupComparator: (group1, group2) => group1.compareTo(group2),
+                      itemComparator: (item1, item2) => item1.name!.compareTo(item2.name!),
                       order: GroupedListOrder.ASC,
                     ),
                   ],

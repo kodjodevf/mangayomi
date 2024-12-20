@@ -6,7 +6,7 @@ part of 'backup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doBackUpHash() => r'd34a7d90280905e4505b71129655368fa4dcf2b1';
+String _$doBackUpHash() => r'1082dfee2a9c9e5655a04d027fde40c29d634a6d';
 
 /// Copied from Dart SDK
 class _SystemHash {

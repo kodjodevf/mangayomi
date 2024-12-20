@@ -6,12 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'isar_providers.g.dart';
 
 @riverpod
-Stream<List<Category>> getMangaCategorieStream(Ref ref,
-    {required bool isManga}) async* {
-  yield* isar.categorys
-      .filter()
-      .idIsNotNull()
-      .and()
-      .forMangaEqualTo(isManga)
-      .watch(fireImmediately: true);
+Stream<List<Category>> getMangaCategorieStream(Ref ref, {required bool isManga}) async* {
+  yield* isar.categorys.filter().idIsNotNull().and().forMangaEqualTo(isManga).watch(fireImmediately: true);
 }

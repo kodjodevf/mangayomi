@@ -31,8 +31,7 @@ class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
   void set(List<int> values) {
     final settings = isar.settings.getSync(227);
     state = values;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..backupFrequencyOptions = values));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..backupFrequencyOptions = values));
   }
 }
 
@@ -46,8 +45,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
   void set(String location) {
     final settings = isar.settings.getSync(227);
     state = (p.join(_storageProvider!.path, "backup"), location);
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..autoBackupLocation = location));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..autoBackupLocation = location));
   }
 
   Directory? _storageProvider;
@@ -58,9 +56,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
         : await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
     state = (
-      Platform.isIOS
-          ? _storageProvider!.path
-          : p.join(_storageProvider!.path, "backup"),
+      Platform.isIOS ? _storageProvider!.path : p.join(_storageProvider!.path, "backup"),
       settings!.autoBackupLocation ?? ""
     );
   }
@@ -73,8 +69,7 @@ Future<void> checkAndBackup(Ref ref) async {
     final backupFrequency = _duration(settings.backupFrequency);
     if (backupFrequency != null) {
       if (settings.startDatebackup != null) {
-        final startDatebackup =
-            DateTime.fromMillisecondsSinceEpoch(settings.startDatebackup!);
+        final startDatebackup = DateTime.fromMillisecondsSinceEpoch(settings.startDatebackup!);
         if (DateTime.now().isAfter(startDatebackup)) {
           _setBackupFrequency(settings.backupFrequency!);
           final storageProvider = StorageProvider();
@@ -82,9 +77,8 @@ Future<void> checkAndBackup(Ref ref) async {
           final defaulteDirectory = await storageProvider.getDefaultDirectory();
           final backupLocation = ref.watch(autoBackupLocationStateProvider).$2;
           Directory? backupDirectory;
-          backupDirectory = Directory(backupLocation.isEmpty
-              ? p.join(defaulteDirectory!.path, "backup")
-              : backupLocation);
+          backupDirectory =
+              Directory(backupLocation.isEmpty ? p.join(defaulteDirectory!.path, "backup") : backupLocation);
           if (Platform.isIOS) {
             backupDirectory = await (storageProvider.getIosBackupDirectory());
           }
@@ -92,9 +86,7 @@ Future<void> checkAndBackup(Ref ref) async {
             backupDirectory.create();
           }
           ref.watch(doBackUpProvider(
-              list: ref.watch(backupFrequencyOptionsStateProvider),
-              path: backupDirectory.path,
-              context: null));
+              list: ref.watch(backupFrequencyOptionsStateProvider), path: backupDirectory.path, context: null));
         }
       }
     }

@@ -6,7 +6,7 @@ part of 'get_popular.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getPopularHash() => r'2db0191dd013043970cfac2153e22054b0927ad1';
+String _$getPopularHash() => r'02291ff9c3eba594b2344b853c34b2cea7be491b';
 
 /// Copied from Dart SDK
 class _SystemHash {

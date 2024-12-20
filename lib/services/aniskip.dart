@@ -10,8 +10,7 @@ class AniSkip extends _$AniSkip {
   @override
   void build() {}
 
-  Future<List<Results>?> getResult(
-      (int, int) id, int episodeNumber, double episodeLength) async {
+  Future<List<Results>?> getResult((int, int) id, int episodeNumber, double episodeLength) async {
     try {
       final malId = await _getMalId(id);
 
@@ -56,8 +55,7 @@ class AniSkipResponse {
   factory AniSkipResponse.fromJson(Map<String, dynamic> json) {
     return AniSkipResponse(
       found: json['found'],
-      results:
-          (json['results'] as List?)?.map((e) => Results.fromJson(e)).toList(),
+      results: (json['results'] as List?)?.map((e) => Results.fromJson(e)).toList(),
       message: json['message'],
       statusCode: json['statusCode'],
     );

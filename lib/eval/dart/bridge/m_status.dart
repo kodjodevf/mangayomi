@@ -3,18 +3,14 @@ import 'package:dart_eval/stdlib/core.dart';
 import 'package:mangayomi/models/manga.dart';
 
 class $MStatus implements $Instance {
-  static $MStatus $wrap(Runtime runtime, $Value? target, List<$Value?> args) =>
-      $MStatus.wrap(args[0]!.$value);
-  static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MStatus'));
-  static const $declaration = BridgeEnumDef($type, values: [
-    'ongoing',
-    'completed',
-    'canceled',
-    'unknown',
-    'onHiatus',
-    'publishingFinished'
-  ], methods: {}, getters: {}, setters: {}, fields: {});
+  static $MStatus $wrap(Runtime runtime, $Value? target, List<$Value?> args) => $MStatus.wrap(args[0]!.$value);
+  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MStatus'));
+  static const $declaration = BridgeEnumDef($type,
+      values: ['ongoing', 'completed', 'canceled', 'unknown', 'onHiatus', 'publishingFinished'],
+      methods: {},
+      getters: {},
+      setters: {},
+      fields: {});
   static final $values = Status.values.asNameMap().map(
         (key, value) => MapEntry(key, $MStatus.wrap(value)),
       );

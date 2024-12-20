@@ -1,4 +1,4 @@
-import 'package:mangayomi/eval/dart/model/m_manga.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 
 class MPages {
   List<MManga> list;
@@ -7,9 +7,7 @@ class MPages {
 
   factory MPages.fromJson(Map<String, dynamic> json) {
     return MPages(
-        list: json['list'] != null
-            ? (json['list'] as List).map((e) => MManga.fromJson(e)).toList()
-            : [],
+        list: json['list'] != null ? (json['list'] as List).map((e) => MManga.fromJson(e)).toList() : [],
         hasNextPage: json['hasNextPage']);
   }
 

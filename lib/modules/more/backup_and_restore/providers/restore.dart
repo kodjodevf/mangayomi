@@ -3,8 +3,8 @@ import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -29,40 +29,21 @@ part 'restore.g.dart';
 void doRestore(Ref ref, {required String path, required BuildContext context}) {
   final inputStream = InputFileStream(path);
   final archive = ZipDecoder().decodeStream(inputStream);
-  final backup = jsonDecode(utf8.decode(archive.files.first.content))
-      as Map<String, dynamic>;
+  final backup = jsonDecode(utf8.decode(archive.files.first.content)) as Map<String, dynamic>;
   if (backup['version'] == "1") {
     try {
-      final manga =
-          (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-      final chapters = (backup["chapters"] as List?)
-          ?.map((e) => Chapter.fromJson(e))
-          .toList();
-      final categories = (backup["categories"] as List?)
-          ?.map((e) => Category.fromJson(e))
-          .toList();
-      final track =
-          (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-      final trackPreferences = (backup["trackPreferences"] as List?)
-          ?.map((e) => TrackPreference.fromJson(e))
-          .toList();
-      final history = (backup["history"] as List?)
-          ?.map((e) => History.fromJson(e))
-          .toList();
-      final downloads = (backup["downloads"] as List?)
-          ?.map((e) => Download.fromJson(e))
-          .toList();
-      final settings = (backup["settings"] as List?)
-          ?.map((e) => Settings.fromJson(e))
-          .toList();
-      final extensions = (backup["extensions"] as List?)
-          ?.map((e) => Source.fromJson(e))
-          .toList();
-      final extensionsPref = (backup["extensions_preferences"] as List?)
-          ?.map((e) => SourcePreference.fromJson(e))
-          .toList();
-      final updates =
-          (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+      final manga = (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
+      final chapters = (backup["chapters"] as List?)?.map((e) => Chapter.fromJson(e)).toList();
+      final categories = (backup["categories"] as List?)?.map((e) => Category.fromJson(e)).toList();
+      final track = (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
+      final trackPreferences = (backup["trackPreferences"] as List?)?.map((e) => TrackPreference.fromJson(e)).toList();
+      final history = (backup["history"] as List?)?.map((e) => History.fromJson(e)).toList();
+      final downloads = (backup["downloads"] as List?)?.map((e) => Download.fromJson(e)).toList();
+      final settings = (backup["settings"] as List?)?.map((e) => Settings.fromJson(e)).toList();
+      final extensions = (backup["extensions"] as List?)?.map((e) => Source.fromJson(e)).toList();
+      final extensionsPref =
+          (backup["extensions_preferences"] as List?)?.map((e) => SourcePreference.fromJson(e)).toList();
+      final updates = (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
 
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
@@ -102,13 +83,10 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
 
             isar.updates.clearSync();
             if (updates != null) {
-              final tempChapters =
-                  isar.chapters.filter().idIsNotNull().findAllSync().toList();
+              final tempChapters = isar.chapters.filter().idIsNotNull().findAllSync().toList();
               for (var update in updates) {
                 final matchingChapter = tempChapters
-                    .where((chapter) =>
-                        chapter.mangaId == update.mangaId &&
-                        chapter.name == update.chapterName)
+                    .where((chapter) => chapter.mangaId == update.mangaId && chapter.name == update.chapterName)
                     .firstOrNull;
                 if (matchingChapter != null) {
                   isar.updates.putSync(update..chapter.value = matchingChapter);
@@ -161,8 +139,7 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
         animationReverseDuration: const Duration(milliseconds: 200),
         duration: const Duration(seconds: 5),
         backButtonBehavior: BackButtonBehavior.none,
-        leading: (_) =>
-            Image.asset('assets/app_icons/icon-red.png', height: 40),
+        leading: (_) => Image.asset('assets/app_icons/icon-red.png', height: 40),
         title: (_) => const Text(
               "Backup restored!",
               style: TextStyle(fontWeight: FontWeight.bold),

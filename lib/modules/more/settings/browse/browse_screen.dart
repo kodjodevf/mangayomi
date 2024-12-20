@@ -9,10 +9,8 @@ class BrowseSScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onlyIncludePinnedSource =
-        ref.watch(onlyIncludePinnedSourceStateProvider);
-    final checkForExtensionUpdates =
-        ref.watch(checkForExtensionsUpdateStateProvider);
+    final onlyIncludePinnedSource = ref.watch(onlyIncludePinnedSourceStateProvider);
+    final checkForExtensionUpdates = ref.watch(checkForExtensionsUpdateStateProvider);
     final autoUpdateExtensions = ref.watch(autoUpdateExtensionsStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
@@ -30,9 +28,7 @@ class BrowseSScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.extensions,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.extensions, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -40,22 +36,16 @@ class BrowseSScreen extends ConsumerWidget {
                       value: checkForExtensionUpdates,
                       title: Text(l10n.check_for_extension_updates),
                       onChanged: (value) {
-                        ref
-                            .read(
-                                checkForExtensionsUpdateStateProvider.notifier)
-                            .set(value);
+                        ref.read(checkForExtensionsUpdateStateProvider.notifier).set(value);
                       }),
                   if (checkForExtensionUpdates)
                     SwitchListTile(
                         value: autoUpdateExtensions,
                         title: Text(l10n.auto_extensions_updates),
                         subtitle: Text(l10n.auto_extensions_updates_subtitle,
-                            style: TextStyle(
-                                fontSize: 11, color: context.secondaryColor)),
+                            style: TextStyle(fontSize: 11, color: context.secondaryColor)),
                         onChanged: (value) {
-                          ref
-                              .read(autoUpdateExtensionsStateProvider.notifier)
-                              .set(value);
+                          ref.read(autoUpdateExtensionsStateProvider.notifier).set(value);
                         }),
                 ],
               ),
@@ -68,9 +58,7 @@ class BrowseSScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.global_search,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(l10n.global_search, style: TextStyle(fontSize: 13, color: context.primaryColor)),
                       ],
                     ),
                   ),
@@ -78,9 +66,7 @@ class BrowseSScreen extends ConsumerWidget {
                       value: onlyIncludePinnedSource,
                       title: Text(l10n.only_include_pinned_sources),
                       onChanged: (value) {
-                        ref
-                            .read(onlyIncludePinnedSourceStateProvider.notifier)
-                            .set(value);
+                        ref.read(onlyIncludePinnedSourceStateProvider.notifier).set(value);
                       }),
                 ],
               ),

@@ -67,11 +67,9 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
   _listener() {
     final router = GoRouter.of(context);
     router.routerDelegate.addListener(() {
-      final RouteMatch lastMatch =
-          router.routerDelegate.currentConfiguration.last;
-      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
-          ? lastMatch.matches
-          : router.routerDelegate.currentConfiguration;
+      final RouteMatch lastMatch = router.routerDelegate.currentConfiguration.last;
+      final RouteMatchList matchList =
+          lastMatch is ImperativeRouteMatch ? lastMatch.matches : router.routerDelegate.currentConfiguration;
       state = matchList.uri.toString();
     });
   }
@@ -79,72 +77,70 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
 
 class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
-        ShellRoute(
-            builder: (context, state, child) => MainScreen(child: child),
-            routes: [
-              GoRoute(
-                name: "MangaLibrary",
-                path: '/MangaLibrary',
-                builder: (context, state) => const LibraryScreen(
-                  isManga: true,
-                ),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const LibraryScreen(
-                    isManga: true,
-                  ),
-                ),
+        ShellRoute(builder: (context, state, child) => MainScreen(child: child), routes: [
+          GoRoute(
+            name: "MangaLibrary",
+            path: '/MangaLibrary',
+            builder: (context, state) => const LibraryScreen(
+              isManga: true,
+            ),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const LibraryScreen(
+                isManga: true,
               ),
-              GoRoute(
-                name: "AnimeLibrary",
-                path: '/AnimeLibrary',
-                builder: (context, state) => const LibraryScreen(
-                  isManga: false,
-                ),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const LibraryScreen(
-                    isManga: false,
-                  ),
-                ),
+            ),
+          ),
+          GoRoute(
+            name: "AnimeLibrary",
+            path: '/AnimeLibrary',
+            builder: (context, state) => const LibraryScreen(
+              isManga: false,
+            ),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const LibraryScreen(
+                isManga: false,
               ),
-              GoRoute(
-                name: "history",
-                path: '/history',
-                builder: (context, state) => const HistoryScreen(),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const HistoryScreen(),
-                ),
-              ),
-              GoRoute(
-                name: "updates",
-                path: '/updates',
-                builder: (context, state) => const UpdatesScreen(),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const UpdatesScreen(),
-                ),
-              ),
-              GoRoute(
-                name: "browse",
-                path: '/browse',
-                builder: (context, state) => const BrowseScreen(),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const BrowseScreen(),
-                ),
-              ),
-              GoRoute(
-                name: "more",
-                path: '/more',
-                builder: (context, state) => const MoreScreen(),
-                pageBuilder: (context, state) => transitionPage(
-                  key: state.pageKey,
-                  child: const MoreScreen(),
-                ),
-              ),
-            ]),
+            ),
+          ),
+          GoRoute(
+            name: "history",
+            path: '/history',
+            builder: (context, state) => const HistoryScreen(),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const HistoryScreen(),
+            ),
+          ),
+          GoRoute(
+            name: "updates",
+            path: '/updates',
+            builder: (context, state) => const UpdatesScreen(),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const UpdatesScreen(),
+            ),
+          ),
+          GoRoute(
+            name: "browse",
+            path: '/browse',
+            builder: (context, state) => const BrowseScreen(),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const BrowseScreen(),
+            ),
+          ),
+          GoRoute(
+            name: "more",
+            path: '/more',
+            builder: (context, state) => const MoreScreen(),
+            pageBuilder: (context, state) => transitionPage(
+              key: state.pageKey,
+              child: const MoreScreen(),
+            ),
+          ),
+        ]),
         GoRoute(
             path: "/mangaHome",
             name: "mangaHome",
@@ -551,9 +547,7 @@ class RouterNotifier extends ChangeNotifier {
 }
 
 Page transitionPage({required LocalKey key, required child}) {
-  return Platform.isIOS
-      ? CupertinoPage(key: key, child: child)
-      : CustomTransition(child: child, key: key);
+  return Platform.isIOS ? CupertinoPage(key: key, child: child) : CustomTransition(child: child, key: key);
 }
 
 class CustomTransition extends CustomTransitionPage {

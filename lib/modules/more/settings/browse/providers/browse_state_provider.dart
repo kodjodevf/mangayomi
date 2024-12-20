@@ -13,8 +13,7 @@ class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..onlyIncludePinnedSources = value));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..onlyIncludePinnedSources = value));
   }
 }
 
@@ -28,8 +27,7 @@ class AutoUpdateExtensionsState extends _$AutoUpdateExtensionsState {
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..autoExtensionsUpdates = value));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..autoExtensionsUpdates = value));
   }
 }
 
@@ -43,7 +41,6 @@ class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..checkForExtensionUpdates = value));
+    isar.writeTxnSync(() => isar.settings.putSync(settings!..checkForExtensionUpdates = value));
   }
 }

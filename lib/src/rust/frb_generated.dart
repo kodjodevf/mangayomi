@@ -10,7 +10,8 @@ import 'api/rhttp/http.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
-import 'frb_generated.io.dart';
+import 'frb_generated.io.dart'
+    if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'lib.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
@@ -744,7 +745,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dco_decode_list_prim_u_8_strict(raw[1]),
         );
       case 2:
-        return const HttpResponseBody_Stream();
+        return HttpResponseBody_Stream();
       default:
         throw Exception("unreachable");
     }
@@ -895,7 +896,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return const RedirectSettings_NoRedirect();
+        return RedirectSettings_NoRedirect();
       case 1:
         return RedirectSettings_LimitedRedirects(
           dco_decode_i_32(raw[1]),
@@ -910,11 +911,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
       case 0:
-        return const RhttpError_RhttpCancelError();
+        return RhttpError_RhttpCancelError();
       case 1:
-        return const RhttpError_RhttpTimeoutError();
+        return RhttpError_RhttpTimeoutError();
       case 2:
-        return const RhttpError_RhttpRedirectError();
+        return RhttpError_RhttpRedirectError();
       case 3:
         return RhttpError_RhttpStatusCodeError(
           dco_decode_u_16(raw[1]),
@@ -1242,7 +1243,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_field0 = sse_decode_list_prim_u_8_strict(deserializer);
         return HttpResponseBody_Bytes(var_field0);
       case 2:
-        return const HttpResponseBody_Stream();
+        return HttpResponseBody_Stream();
       default:
         throw UnimplementedError('');
     }
@@ -1469,7 +1470,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
-        return const RedirectSettings_NoRedirect();
+        return RedirectSettings_NoRedirect();
       case 1:
         var var_field0 = sse_decode_i_32(deserializer);
         return RedirectSettings_LimitedRedirects(var_field0);
@@ -1485,11 +1486,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var tag_ = sse_decode_i_32(deserializer);
     switch (tag_) {
       case 0:
-        return const RhttpError_RhttpCancelError();
+        return RhttpError_RhttpCancelError();
       case 1:
-        return const RhttpError_RhttpTimeoutError();
+        return RhttpError_RhttpTimeoutError();
       case 2:
-        return const RhttpError_RhttpRedirectError();
+        return RhttpError_RhttpRedirectError();
       case 3:
         var var_field0 = sse_decode_u_16(deserializer);
         var var_field1 = sse_decode_list_record_string_string(deserializer);

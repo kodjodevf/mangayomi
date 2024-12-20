@@ -49,10 +49,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                         : downloadLocationState.$2,
                                     groupValue: downloadLocationState.$1,
                                     onChanged: (value) {
-                                      ref
-                                          .read(downloadLocationStateProvider
-                                              .notifier)
-                                          .set("");
+                                      ref.read(downloadLocationStateProvider.notifier).set("");
                                       Navigator.pop(context);
                                     },
                                     title: Text(downloadLocationState.$1)),
@@ -64,14 +61,10 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                         : downloadLocationState.$2,
                                     groupValue: downloadLocationState.$2,
                                     onChanged: (value) async {
-                                      String? result = await FilePicker.platform
-                                          .getDirectoryPath();
+                                      String? result = await FilePicker.platform.getDirectoryPath();
 
                                       if (result != null) {
-                                        ref
-                                            .read(downloadLocationStateProvider
-                                                .notifier)
-                                            .set(result);
+                                        ref.read(downloadLocationStateProvider.notifier).set(result);
                                       } else {}
                                       if (!context.mounted) return;
                                       Navigator.pop(context);
@@ -89,8 +82,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                                   },
                                   child: Text(
                                     l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
+                                    style: TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -100,9 +92,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               },
               title: Text(l10n.download_location),
               subtitle: Text(
-                downloadLocationState.$2.isEmpty
-                    ? downloadLocationState.$1
-                    : downloadLocationState.$2,
+                downloadLocationState.$2.isEmpty ? downloadLocationState.$1 : downloadLocationState.$2,
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),

@@ -58,19 +58,15 @@ class LibraryListViewWidget extends StatelessWidget {
                       lang: entry.lang!,
                       mangaM: entry,
                       source: entry.source!);
-                  ref.invalidate(getAllMangaWithoutCategoriesStreamProvider(
-                      isManga: entry.isManga));
-                  ref.invalidate(getAllMangaStreamProvider(
-                      categoryId: null, isManga: entry.isManga));
+                  ref.invalidate(getAllMangaWithoutCategoriesStreamProvider(isManga: entry.isManga));
+                  ref.invalidate(getAllMangaStreamProvider(categoryId: null, isManga: entry.isManga));
                 }
               },
               onLongPress: () {
                 if (!isLongPressed) {
                   ref.read(mangasListStateProvider.notifier).update(entry);
 
-                  ref
-                      .read(isLongPressedMangaStateProvider.notifier)
-                      .update(!isLongPressed);
+                  ref.read(isLongPressedMangaStateProvider.notifier).update(!isLongPressed);
                 } else {
                   ref.read(mangasListStateProvider.notifier).update(entry);
                 }
@@ -79,24 +75,19 @@ class LibraryListViewWidget extends StatelessWidget {
                 if (!isLongPressed) {
                   ref.read(mangasListStateProvider.notifier).update(entry);
 
-                  ref
-                      .read(isLongPressedMangaStateProvider.notifier)
-                      .update(!isLongPressed);
+                  ref.read(isLongPressedMangaStateProvider.notifier).update(!isLongPressed);
                 } else {
                   ref.read(mangasListStateProvider.notifier).update(entry);
                 }
               },
               child: Container(
-                color: mangaIdsList.contains(entry.id)
-                    ? context.primaryColor.withValues(alpha: 0.4)
-                    : Colors.transparent,
+                color:
+                    mangaIdsList.contains(entry.id) ? context.primaryColor.withValues(alpha: 0.4) : Colors.transparent,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   child: Container(
                     height: 45,
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -111,21 +102,16 @@ class LibraryListViewWidget extends StatelessWidget {
                                     width: 40,
                                     height: 45,
                                     image: entry.customCoverImage != null
-                                        ? MemoryImage(entry.customCoverImage
-                                            as Uint8List) as ImageProvider
+                                        ? MemoryImage(entry.customCoverImage as Uint8List) as ImageProvider
                                         : CustomExtendedNetworkImageProvider(
-                                            toImgUrl(
-                                                entry.customCoverFromTracker ??
-                                                    entry.imageUrl!),
-                                            headers: ref.watch(headersProvider(
-                                                source: entry.source!,
-                                                lang: entry.lang!)),
+                                            toImgUrl(entry.customCoverFromTracker ?? entry.imageUrl!),
+                                            headers:
+                                                ref.watch(headersProvider(source: entry.source!, lang: entry.lang!)),
                                           ),
                                     child: InkWell(
                                         child: Container(
                                       color: mangaIdsList.contains(entry.id)
-                                          ? context.primaryColor
-                                              .withValues(alpha: 0.4)
+                                          ? context.primaryColor.withValues(alpha: 0.4)
                                           : Colors.transparent,
                                     )),
                                   ),
@@ -133,8 +119,7 @@ class LibraryListViewWidget extends StatelessWidget {
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: Text(entry.name!),
                                 ),
                               )
@@ -144,9 +129,8 @@ class LibraryListViewWidget extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(5),
                           child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(3),
-                                color: context.primaryColor),
+                            decoration:
+                                BoxDecoration(borderRadius: BorderRadius.circular(3), color: context.primaryColor),
                             child: SizedBox(
                               height: 22,
                               child: Row(
@@ -155,13 +139,11 @@ class LibraryListViewWidget extends StatelessWidget {
                                     Container(
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(3),
-                                            bottomLeft: Radius.circular(3)),
+                                            topLeft: Radius.circular(3), bottomLeft: Radius.circular(3)),
                                         color: Theme.of(context).hintColor,
                                       ),
                                       child: const Padding(
-                                        padding:
-                                            EdgeInsets.only(left: 3, right: 3),
+                                        padding: EdgeInsets.only(left: 3, right: 3),
                                         child: Text(
                                           "Local",
                                           style: TextStyle(color: Colors.white),
@@ -175,20 +157,14 @@ class LibraryListViewWidget extends StatelessWidget {
                                         builder: (context, ref, child) {
                                           List nbrDown = [];
                                           isar.txnSync(() {
-                                            for (var i = 0;
-                                                i < entry.chapters.length;
-                                                i++) {
+                                            for (var i = 0; i < entry.chapters.length; i++) {
                                               final entries = isar.downloads
                                                   .filter()
                                                   .idIsNotNull()
-                                                  .chapterIdEqualTo(entry
-                                                      .chapters
-                                                      .toList()[i]
-                                                      .id)
+                                                  .chapterIdEqualTo(entry.chapters.toList()[i].id)
                                                   .findAllSync();
 
-                                              if (entries.isNotEmpty &&
-                                                  entries.first.isDownload!) {
+                                              if (entries.isNotEmpty && entries.first.isDownload!) {
                                                 nbrDown.add(entries.first);
                                               }
                                             }
@@ -196,22 +172,15 @@ class LibraryListViewWidget extends StatelessWidget {
                                           if (nbrDown.isNotEmpty) {
                                             return Container(
                                               decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(3),
-                                                        bottomLeft:
-                                                            Radius.circular(3)),
-                                                color:
-                                                    Theme.of(context).hintColor,
+                                                borderRadius: const BorderRadius.only(
+                                                    topLeft: Radius.circular(3), bottomLeft: Radius.circular(3)),
+                                                color: Theme.of(context).hintColor,
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 3, right: 3),
+                                                padding: const EdgeInsets.only(left: 3, right: 3),
                                                 child: Text(
                                                   nbrDown.length.toString(),
-                                                  style: const TextStyle(
-                                                      color: Colors.white),
+                                                  style: const TextStyle(color: Colors.white),
                                                 ),
                                               ),
                                             );
@@ -225,8 +194,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                     padding: const EdgeInsets.only(right: 3),
                                     child: Text(
                                       entry.chapters.length.toString(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                   ),
                                   if (language && entry.lang!.isNotEmpty)
@@ -235,17 +203,14 @@ class LibraryListViewWidget extends StatelessWidget {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius: const BorderRadius.only(
-                                              topRight: Radius.circular(3),
-                                              bottomRight: Radius.circular(3)),
+                                              topRight: Radius.circular(3), bottomRight: Radius.circular(3)),
                                           color: Theme.of(context).hintColor,
                                         ),
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 3, right: 3),
+                                          padding: const EdgeInsets.only(left: 3, right: 3),
                                           child: Text(
                                             entry.lang!.toUpperCase(),
-                                            style: const TextStyle(
-                                                color: Colors.white),
+                                            style: const TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       ),
@@ -263,18 +228,13 @@ class LibraryListViewWidget extends StatelessWidget {
                                     .filter()
                                     .idIsNotNull()
                                     .and()
-                                    .chapter((q) => q.manga((q) =>
-                                        q.isMangaEqualTo(entry.isManga!)))
+                                    .chapter((q) => q.manga((q) => q.isMangaEqualTo(entry.isManga!)))
                                     .watch(fireImmediately: true),
                                 builder: (context, snapshot) {
-                                  if (snapshot.hasData &&
-                                      snapshot.data!.isNotEmpty) {
-                                    final incognitoMode =
-                                        ref.watch(incognitoModeStateProvider);
-                                    final entries = snapshot.data!
-                                        .where((element) =>
-                                            element.mangaId == entry.id)
-                                        .toList();
+                                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                                    final incognitoMode = ref.watch(incognitoModeStateProvider);
+                                    final entries =
+                                        snapshot.data!.where((element) => element.mangaId == entry.id).toList();
                                     if (entries.isNotEmpty && !incognitoMode) {
                                       final chap = entries.first.chapter.value!;
                                       return GestureDetector(
@@ -283,10 +243,8 @@ class LibraryListViewWidget extends StatelessWidget {
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            color: context.primaryColor
-                                                .withValues(alpha: 0.9),
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: context.primaryColor.withValues(alpha: 0.9),
                                           ),
                                           child: const Padding(
                                               padding: EdgeInsets.all(7),
@@ -300,19 +258,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                     }
                                     return GestureDetector(
                                       onTap: () {
-                                        entry.chapters
-                                            .toList()
-                                            .reversed
-                                            .toList()
-                                            .last
-                                            .pushToReaderView(context);
+                                        entry.chapters.toList().reversed.toList().last.pushToReaderView(context);
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: context.primaryColor
-                                              .withValues(alpha: 0.9),
+                                          borderRadius: BorderRadius.circular(5),
+                                          color: context.primaryColor.withValues(alpha: 0.9),
                                         ),
                                         child: const Padding(
                                             padding: EdgeInsets.all(7),
@@ -326,18 +277,12 @@ class LibraryListViewWidget extends StatelessWidget {
                                   }
                                   return GestureDetector(
                                     onTap: () {
-                                      entry.chapters
-                                          .toList()
-                                          .reversed
-                                          .toList()
-                                          .last
-                                          .pushToReaderView(context);
+                                      entry.chapters.toList().reversed.toList().last.pushToReaderView(context);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(5),
-                                        color: context.primaryColor
-                                            .withValues(alpha: 0.9),
+                                        color: context.primaryColor.withValues(alpha: 0.9),
                                       ),
                                       child: const Padding(
                                           padding: EdgeInsets.all(7),

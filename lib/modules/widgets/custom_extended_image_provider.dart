@@ -10,11 +10,9 @@ import 'package:http_client_helper/http_client_helper.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:extended_image_library/src/network/extended_network_image_provider.dart'
-    as image_provider;
+import 'package:extended_image_library/src/network/extended_network_image_provider.dart' as image_provider;
 
-class CustomExtendedNetworkImageProvider
-    extends ImageProvider<image_provider.ExtendedNetworkImageProvider>
+class CustomExtendedNetworkImageProvider extends ImageProvider<image_provider.ExtendedNetworkImageProvider>
     with ExtendedImageProvider<image_provider.ExtendedNetworkImageProvider>
     implements image_provider.ExtendedNetworkImageProvider {
   /// Creates an object that fetches the image at the given URL.
@@ -106,8 +104,7 @@ class CustomExtendedNetworkImageProvider
     // Ownership of this controller is handed off to [_loadAsync]; it is that
     // method's responsibility to close the controller's stream when the image
     // has been loaded or an error is thrown.
-    final StreamController<ImageChunkEvent> chunkEvents =
-        StreamController<ImageChunkEvent>();
+    final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
 
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(
@@ -121,16 +118,14 @@ class CustomExtendedNetworkImageProvider
       informationCollector: () {
         return <DiagnosticsNode>[
           DiagnosticsProperty<ImageProvider>('Image provider', this),
-          DiagnosticsProperty<image_provider.ExtendedNetworkImageProvider>(
-              'Image key', key),
+          DiagnosticsProperty<image_provider.ExtendedNetworkImageProvider>('Image key', key),
         ];
       },
     );
   }
 
   @override
-  Future<CustomExtendedNetworkImageProvider> obtainKey(
-      ImageConfiguration configuration) {
+  Future<CustomExtendedNetworkImageProvider> obtainKey(ImageConfiguration configuration) {
     return SynchronousFuture<CustomExtendedNetworkImageProvider>(this);
   }
 
@@ -190,10 +185,8 @@ class CustomExtendedNetworkImageProvider
     StreamController<ImageChunkEvent>? chunkEvents,
     String md5Key,
   ) async {
-    final Directory cacheImagesDirectory = Directory(join(
-        (await getTemporaryDirectory()).path,
-        'Mangayomi',
-        imageCacheFolderName ?? 'cacheimagecover'));
+    final Directory cacheImagesDirectory =
+        Directory(join((await getTemporaryDirectory()).path, 'Mangayomi', imageCacheFolderName ?? 'cacheimagecover'));
     Uint8List? data;
     // exist, try to find cache image file
     if (cacheImagesDirectory.existsSync()) {
@@ -249,8 +242,7 @@ class CustomExtendedNetworkImageProvider
           try {
             received += chunk.length;
             if (chunkEvents != null) {}
-            chunkEvents!.add(ImageChunkEvent(
-                cumulativeBytesLoaded: received, expectedTotalBytes: total));
+            chunkEvents!.add(ImageChunkEvent(cumulativeBytesLoaded: received, expectedTotalBytes: total));
           } catch (e) {
             if (kDebugMode) {
               print(e);
@@ -262,8 +254,7 @@ class CustomExtendedNetworkImageProvider
       }
 
       if (bytes.isEmpty) {
-        return Future<Uint8List>.error(
-            StateError('NetworkImage is an empty file: $resolved'));
+        return Future<Uint8List>.error(StateError('NetworkImage is an empty file: $resolved'));
       }
 
       return Uint8List.fromList(bytes);
@@ -286,13 +277,9 @@ class CustomExtendedNetworkImageProvider
     var request = Request('GET', resolved);
     request.headers.addAll(headers ?? {});
 
-    StreamedResponse response =
-        await MClient.init(showCloudFlareError: showCloudFlareError)
-            .send(request);
+    StreamedResponse response = await MClient.init(showCloudFlareError: showCloudFlareError).send(request);
     if (response.statusCode != 200) {
-      final res = await MClient.init(
-              reqcopyWith: {'useDartHttpClient': true},
-              showCloudFlareError: showCloudFlareError)
+      final res = await MClient.init(reqcopyWith: {'useDartHttpClient': true}, showCloudFlareError: showCloudFlareError)
           .send(response.request!);
       return res;
     }

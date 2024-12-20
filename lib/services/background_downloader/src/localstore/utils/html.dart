@@ -17,8 +17,7 @@ class Utils implements UtilsImpl {
   }
 
   @override
-  Future<Map<String, dynamic>?> get(String path,
-      [bool? isCollection = false, List<List>? conditions]) async {
+  Future<Map<String, dynamic>?> get(String path, [bool? isCollection = false, List<List>? conditions]) async {
     // Fetch the documents for this collection
     if (isCollection != null && isCollection == true) {
       var dataCol = html.window.localStorage.entries.singleWhere(
@@ -82,8 +81,7 @@ class Utils implements UtilsImpl {
   Stream<Map<String, dynamic>> stream(String path, [List<List>? conditions]) {
     // ignore: close_sinks
     final storage = _storageCache[path] ??
-        _storageCache.putIfAbsent(
-            path, () => StreamController<Map<String, dynamic>>.broadcast());
+        _storageCache.putIfAbsent(path, () => StreamController<Map<String, dynamic>>.broadcast());
 
     _initStream(storage, path);
     return storage.stream;
@@ -104,8 +102,7 @@ class Utils implements UtilsImpl {
     }
   }
 
-  void _initStream(
-      StreamController<Map<String, dynamic>> storage, String path) {
+  void _initStream(StreamController<Map<String, dynamic>> storage, String path) {
     var dataCol = html.window.localStorage.entries.singleWhere(
       (e) => e.key == path,
       orElse: () => const MapEntry('', ''),
@@ -171,8 +168,7 @@ class Utils implements UtilsImpl {
       }
       // ignore: close_sinks
       final storage = _storageCache[key] ??
-          _storageCache.putIfAbsent(
-              key, () => StreamController<Map<String, dynamic>>.broadcast());
+          _storageCache.putIfAbsent(key, () => StreamController<Map<String, dynamic>>.broadcast());
 
       storage.sink.add(data);
     } catch (error) {
