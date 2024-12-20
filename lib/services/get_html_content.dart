@@ -20,5 +20,8 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
   } else {
     html = await JsExtensionService(source).getHtmlContent(chapter.url!);
   }
-  return html;
+  return '''<div id="readerViewContent"><div style="padding: 2em;">${html.substring(1, html.length - 1)}</div></div>'''
+      .replaceAll("\\n", "")
+      .replaceAll("\\t", "")
+      .replaceAll("\\", "");
 }

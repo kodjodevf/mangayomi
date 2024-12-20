@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -19,10 +20,9 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -179,27 +179,54 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             bottom: false,
             child: Stack(
               children: [
-                widget.htmlContent.when(
-                    data: (htmlContent) => Expanded(
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: Html(
-                              data: htmlContent,
-                              style: {
-                                "*": Style(
-                                    backgroundColor: Colors.white,
-                                    margin: Margins.all(5))
-                              },
-                              shrinkWrap: true,
-                            ),
-                          ),
-                        ),
-                    loading: () => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                    error: (err, stack) => Center(
-                          child: Text(err.toString()),
-                        )),
+                Row(
+                  children: [
+                    widget.htmlContent.when(
+                        data: (htmlContent) {
+                          return Expanded(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: HtmlWidget(
+                                  htmlContent,
+                                  customStylesBuilder: (element) {
+                                    switch (backgroundColor) {
+                                      case BackgroundColor.black:
+                                        return {
+                                          'background-color': 'black',
+                                        };
+                                      default:
+                                        return {
+                                          'background-color': '#F0F0F0',
+                                        };
+                                    }
+                                  },
+                                  onTapUrl: (url) {
+                                    print('tapped $url');
+                                    return true;
+                                  },
+                                  renderMode: RenderMode.column,
+                                  textStyle: TextStyle(
+                                      color: backgroundColor ==
+                                              BackgroundColor.white
+                                          ? Colors.black
+                                          : Colors.white,
+                                      //fontFamily: "Times New Roman",
+                                      //fontFamilyFallback: ["Times", "serif"],
+                                      fontSize: 14),
+                                ),
+                              ),
+                            );},
+                        loading: () => const Expanded(
+                                child: Center(
+                              child: CircularProgressIndicator(),
+                            )),
+                        error: (err, stack) => Center(
+                              child: Text(err.toString()),
+                            )),
+                  ],
+                ),
+                _gestureRightLeft(),
+                _gestureTopBottom(),
                 _appBar(),
               ],
             ),
@@ -334,6 +361,84 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
     }
+  }
+
+  Widget _gestureRightLeft() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return Row(
+          children: [
+            /// left region
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+              ),
+            ),
+
+            /// center region
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+              ),
+            ),
+
+            /// right region
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _gestureTopBottom() {
+    return Consumer(
+      builder: (context, ref, child) {
+        return Column(
+          children: [
+            /// top region
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+              ),
+            ),
+
+            /// center region
+            const Expanded(flex: 5, child: SizedBox.shrink()),
+
+            /// bottom region
+            Expanded(
+              flex: 2,
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () {
+                  _isViewFunction();
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
