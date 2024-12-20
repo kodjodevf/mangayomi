@@ -7,7 +7,11 @@ class MangasCardSelector extends StatelessWidget {
   final bool selected;
   final VoidCallback onPressed;
   const MangasCardSelector(
-      {super.key, required this.text, required this.icon, required this.selected, required this.onPressed});
+      {super.key,
+      required this.text,
+      required this.icon,
+      required this.selected,
+      required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,8 @@ class MangasCardSelector extends StatelessWidget {
             padding: const EdgeInsets.all(0),
             side: BorderSide(width: 0.6, color: context.primaryColor),
             backgroundColor: selected ? context.primaryColor : null,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
           ),
           onPressed: onPressed,
           child: Padding(

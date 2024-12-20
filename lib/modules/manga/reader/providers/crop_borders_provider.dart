@@ -10,7 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'crop_borders_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<Uint8List?> cropBorders(Ref ref, {required UChapDataPreload data, required bool cropBorder}) async {
+Future<Uint8List?> cropBorders(Ref ref,
+    {required UChapDataPreload data, required bool cropBorder}) async {
   Uint8List? imageBytes;
 
   if (cropBorder) {

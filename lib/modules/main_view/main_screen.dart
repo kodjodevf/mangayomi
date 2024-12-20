@@ -54,7 +54,8 @@ class MainScreen extends ConsumerWidget {
         final location = ref.watch(
           routerCurrentLocationStateProvider(context),
         );
-        bool isReadingScreen = location == '/mangareaderview' || location == '/animePlayerView';
+        bool isReadingScreen =
+            location == '/mangareaderview' || location == '/animePlayerView';
         int currentIndex = switch (location) {
           null || '/MangaLibrary' => 0,
           '/AnimeLibrary' => 1,
@@ -122,7 +123,9 @@ class MainScreen extends ConsumerWidget {
                               children: [
                                 NavigationRailTheme(
                                   data: NavigationRailThemeData(
-                                    indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                    indicatorShape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
                                   ),
                                   child: Builder(builder: (context) {
                                     return NavigationRail(
@@ -130,46 +133,73 @@ class MainScreen extends ConsumerWidget {
                                       useIndicator: true,
                                       destinations: [
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.collections_bookmark),
-                                            icon: const Icon(Icons.collections_bookmark_outlined),
+                                            selectedIcon: const Icon(
+                                                Icons.collections_bookmark),
+                                            icon: const Icon(Icons
+                                                .collections_bookmark_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5), child: Text(l10n.manga))),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.manga))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.video_collection),
-                                            icon: const Icon(Icons.video_collection_outlined),
+                                            selectedIcon: const Icon(
+                                                Icons.video_collection),
+                                            icon: const Icon(Icons
+                                                .video_collection_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5), child: Text(l10n.anime))),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.anime))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.new_releases),
-                                            icon: const Icon(Icons.new_releases_outlined),
+                                            selectedIcon:
+                                                const Icon(Icons.new_releases),
+                                            icon: const Icon(
+                                                Icons.new_releases_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
                                                 child: Stack(
                                                   children: [
                                                     Text(
                                                       getHyphenatedUpdatesLabel(
-                                                        ref.watch(l10nLocaleStateProvider).languageCode,
+                                                        ref
+                                                            .watch(
+                                                                l10nLocaleStateProvider)
+                                                            .languageCode,
                                                         l10n.updates,
                                                       ),
-                                                      textAlign: TextAlign.center,
+                                                      textAlign:
+                                                          TextAlign.center,
                                                     ),
                                                   ],
                                                 ))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.history),
-                                            icon: const Icon(Icons.history_outlined),
+                                            selectedIcon:
+                                                const Icon(Icons.history),
+                                            icon: const Icon(
+                                                Icons.history_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5), child: Text(l10n.history))),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.history))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.explore),
-                                            icon: const Icon(Icons.explore_outlined),
+                                            selectedIcon:
+                                                const Icon(Icons.explore),
+                                            icon: const Icon(
+                                                Icons.explore_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5), child: Text(l10n.browse))),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.browse))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(Icons.more_horiz),
-                                            icon: const Icon(Icons.more_horiz_outlined),
+                                            selectedIcon:
+                                                const Icon(Icons.more_horiz),
+                                            icon: const Icon(
+                                                Icons.more_horiz_outlined),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(top: 5), child: Text(l10n.more))),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.more))),
                                       ],
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
@@ -186,8 +216,14 @@ class MainScreen extends ConsumerWidget {
                                     );
                                   }),
                                 ),
-                                Positioned(right: 18, top: 140, child: _updatesTotalNumbers(ref)),
-                                Positioned(right: 18, top: 275, child: _extensionUpdateTotalNumbers(ref)),
+                                Positioned(
+                                    right: 18,
+                                    top: 140,
+                                    child: _updatesTotalNumbers(ref)),
+                                Positioned(
+                                    right: 18,
+                                    top: 275,
+                                    child: _extensionUpdateTotalNumbers(ref)),
                               ],
                             ),
                           ),
@@ -216,27 +252,38 @@ class MainScreen extends ConsumerWidget {
                         },
                         child: NavigationBarTheme(
                           data: NavigationBarThemeData(
-                            indicatorShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                            indicatorShape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)),
                           ),
                           child: NavigationBar(
-                            animationDuration: const Duration(milliseconds: 500),
+                            animationDuration:
+                                const Duration(milliseconds: 500),
                             selectedIndex: currentIndex,
                             destinations: [
                               NavigationDestination(
-                                  selectedIcon: const Icon(Icons.collections_bookmark),
-                                  icon: const Icon(Icons.collections_bookmark_outlined),
+                                  selectedIcon:
+                                      const Icon(Icons.collections_bookmark),
+                                  icon: const Icon(
+                                      Icons.collections_bookmark_outlined),
                                   label: l10n.manga),
                               NavigationDestination(
-                                  selectedIcon: const Icon(Icons.video_collection),
-                                  icon: const Icon(Icons.video_collection_outlined),
+                                  selectedIcon:
+                                      const Icon(Icons.video_collection),
+                                  icon: const Icon(
+                                      Icons.video_collection_outlined),
                                   label: l10n.anime),
                               Stack(
                                 children: [
                                   NavigationDestination(
-                                      selectedIcon: const Icon(Icons.new_releases),
-                                      icon: const Icon(Icons.new_releases_outlined),
+                                      selectedIcon:
+                                          const Icon(Icons.new_releases),
+                                      icon: const Icon(
+                                          Icons.new_releases_outlined),
                                       label: l10n.updates),
-                                  Positioned(right: 14, top: 3, child: _updatesTotalNumbers(ref)),
+                                  Positioned(
+                                      right: 14,
+                                      top: 3,
+                                      child: _updatesTotalNumbers(ref)),
                                 ],
                               ),
                               NavigationDestination(
@@ -249,7 +296,10 @@ class MainScreen extends ConsumerWidget {
                                       selectedIcon: const Icon(Icons.explore),
                                       icon: const Icon(Icons.explore_outlined),
                                       label: l10n.browse),
-                                  Positioned(right: 14, top: 3, child: _extensionUpdateTotalNumbers(ref)),
+                                  Positioned(
+                                      right: 14,
+                                      top: 3,
+                                      child: _extensionUpdateTotalNumbers(ref)),
                                 ],
                               ),
                               NavigationDestination(
@@ -286,21 +336,32 @@ class MainScreen extends ConsumerWidget {
 
 Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
   return StreamBuilder(
-      stream: isar.sources.filter().idIsNotNull().and().isActiveEqualTo(true).watch(fireImmediately: true),
+      stream: isar.sources
+          .filter()
+          .idIsNotNull()
+          .and()
+          .isActiveEqualTo(true)
+          .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries =
-              snapshot.data!.where((element) => compareVersions(element.version!, element.versionLast!) < 0).toList();
+          final entries = snapshot.data!
+              .where((element) =>
+                  compareVersions(element.version!, element.versionLast!) < 0)
+              .toList();
           return entries.isEmpty
               ? Container()
               : Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), color: const Color.fromARGB(255, 176, 46, 37)),
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color.fromARGB(255, 176, 46, 37)),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                     child: Text(
                       entries.length.toString(),
-                      style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall!.color),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).textTheme.bodySmall!.color),
                     ),
                   ),
                 );
@@ -324,12 +385,16 @@ Widget _updatesTotalNumbers(WidgetRef ref) {
               ? Container()
               : Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10), color: const Color.fromARGB(255, 176, 46, 37)),
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color.fromARGB(255, 176, 46, 37)),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
                     child: Text(
                       entries.length.toString(),
-                      style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall!.color),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Theme.of(context).textTheme.bodySmall!.color),
                     ),
                   ),
                 );

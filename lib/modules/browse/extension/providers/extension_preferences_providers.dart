@@ -5,8 +5,11 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 
 void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
-  final sourcePref =
-      isar.sourcePreferences.filter().sourceIdEqualTo(source.id).keyEqualTo(sourcePreference.key).findFirstSync();
+  final sourcePref = isar.sourcePreferences
+      .filter()
+      .sourceIdEqualTo(source.id)
+      .keyEqualTo(sourcePreference.key)
+      .findFirstSync();
   isar.writeTxnSync(() {
     if (sourcePref != null) {
       isar.sourcePreferences.putSync(sourcePreference);
@@ -33,21 +36,30 @@ getPreferenceValue(int sourceId, String key) {
 }
 
 SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
-  SourcePreference? sourcePreference =
-      isar.sourcePreferences.filter().sourceIdEqualTo(sourceId).keyEqualTo(key).findFirstSync();
+  SourcePreference? sourcePreference = isar.sourcePreferences
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
   if (sourcePreference == null) {
     final source = isar.sources.getSync(sourceId)!;
-    sourcePreference = getSourcePreference(source: source)
-        .firstWhere((element) => element.key == key, orElse: () => throw "Error when getting source preference");
+    sourcePreference = getSourcePreference(source: source).firstWhere(
+        (element) => element.key == key,
+        orElse: () => throw "Error when getting source preference");
     setPreferenceSetting(sourcePreference, source);
   }
 
   return sourcePreference;
 }
 
-String getSourcePreferenceStringValue(int sourceId, String key, String defaultValue) {
-  SourcePreferenceStringValue? sourcePreferenceStringValue =
-      isar.sourcePreferenceStringValues.filter().sourceIdEqualTo(sourceId).keyEqualTo(key).findFirstSync();
+String getSourcePreferenceStringValue(
+    int sourceId, String key, String defaultValue) {
+  SourcePreferenceStringValue? sourcePreferenceStringValue = isar
+      .sourcePreferenceStringValues
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
   if (sourcePreferenceStringValue == null) {
     setSourcePreferenceStringValue(sourceId, key, defaultValue);
     return defaultValue;
@@ -57,8 +69,11 @@ String getSourcePreferenceStringValue(int sourceId, String key, String defaultVa
 }
 
 void setSourcePreferenceStringValue(int sourceId, String key, String value) {
-  final sourcePref =
-      isar.sourcePreferenceStringValues.filter().sourceIdEqualTo(sourceId).keyEqualTo(key).findFirstSync();
+  final sourcePref = isar.sourcePreferenceStringValues
+      .filter()
+      .sourceIdEqualTo(sourceId)
+      .keyEqualTo(key)
+      .findFirstSync();
   isar.writeTxnSync(() {
     if (sourcePref != null) {
       isar.sourcePreferenceStringValues.putSync(sourcePref..value = value);

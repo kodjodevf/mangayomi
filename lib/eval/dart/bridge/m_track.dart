@@ -5,7 +5,8 @@ import 'package:mangayomi/models/video.dart';
 class $MTrack implements Track, $Instance {
   $MTrack.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MTrack'));
+  static const $type = BridgeTypeRef(
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MTrack'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
@@ -15,8 +16,10 @@ class $MTrack implements Track, $Instance {
       },
       // Specify class fields
       fields: {
-        'file': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'label': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'file': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'label': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
       },
       wrap: true);
 

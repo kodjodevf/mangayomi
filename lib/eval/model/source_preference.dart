@@ -27,11 +27,15 @@ class SourcePreference {
         'id': id,
         'sourceId': sourceId,
         'key': key,
-        if (checkBoxPreference != null) 'checkBoxPreference': checkBoxPreference!.toJson(),
-        if (switchPreferenceCompat != null) 'switchPreferenceCompat': switchPreferenceCompat!.toJson(),
+        if (checkBoxPreference != null)
+          'checkBoxPreference': checkBoxPreference!.toJson(),
+        if (switchPreferenceCompat != null)
+          'switchPreferenceCompat': switchPreferenceCompat!.toJson(),
         if (listPreference != null) 'listPreference': listPreference!.toJson(),
-        if (multiSelectListPreference != null) 'multiSelectListPreference': multiSelectListPreference!.toJson(),
-        if (editTextPreference != null) 'editTextPreference': editTextPreference!.toJson()
+        if (multiSelectListPreference != null)
+          'multiSelectListPreference': multiSelectListPreference!.toJson(),
+        if (editTextPreference != null)
+          'editTextPreference': editTextPreference!.toJson()
       };
 
   factory SourcePreference.fromJson(Map<String, dynamic> json) {
@@ -39,17 +43,22 @@ class SourcePreference {
         id: json['id'] ?? Isar.autoIncrement,
         sourceId: json['sourceId'],
         key: json['key'],
-        checkBoxPreference:
-            json['checkBoxPreference'] != null ? CheckBoxPreference.fromJson(json['checkBoxPreference']) : null,
+        checkBoxPreference: json['checkBoxPreference'] != null
+            ? CheckBoxPreference.fromJson(json['checkBoxPreference'])
+            : null,
         switchPreferenceCompat: json['switchPreferenceCompat'] != null
             ? SwitchPreferenceCompat.fromJson(json['switchPreferenceCompat'])
             : null,
-        listPreference: json['listPreference'] != null ? ListPreference.fromJson(json['listPreference']) : null,
-        multiSelectListPreference: json['multiSelectListPreference'] != null
-            ? MultiSelectListPreference.fromJson(json['multiSelectListPreference'])
+        listPreference: json['listPreference'] != null
+            ? ListPreference.fromJson(json['listPreference'])
             : null,
-        editTextPreference:
-            json['editTextPreference'] != null ? EditTextPreference.fromJson(json['editTextPreference']) : null);
+        multiSelectListPreference: json['multiSelectListPreference'] != null
+            ? MultiSelectListPreference.fromJson(
+                json['multiSelectListPreference'])
+            : null,
+        editTextPreference: json['editTextPreference'] != null
+            ? EditTextPreference.fromJson(json['editTextPreference'])
+            : null);
   }
 }
 
@@ -61,10 +70,12 @@ class CheckBoxPreference {
 
   CheckBoxPreference({this.title, this.summary, this.value});
 
-  Map<String, dynamic> toJson() => {'title': title, 'summary': summary, 'value': value};
+  Map<String, dynamic> toJson() =>
+      {'title': title, 'summary': summary, 'value': value};
 
   factory CheckBoxPreference.fromJson(Map<String, dynamic> json) {
-    return CheckBoxPreference(title: json['title'], summary: json['summary'], value: json['value']);
+    return CheckBoxPreference(
+        title: json['title'], summary: json['summary'], value: json['value']);
   }
 }
 
@@ -76,10 +87,12 @@ class SwitchPreferenceCompat {
 
   SwitchPreferenceCompat({this.title, this.summary, this.value});
 
-  Map<String, dynamic> toJson() => {'title': title, 'summary': summary, 'value': value};
+  Map<String, dynamic> toJson() =>
+      {'title': title, 'summary': summary, 'value': value};
 
   factory SwitchPreferenceCompat.fromJson(Map<String, dynamic> json) {
-    return SwitchPreferenceCompat(title: json['title'], summary: json['summary'], value: json['value']);
+    return SwitchPreferenceCompat(
+        title: json['title'], summary: json['summary'], value: json['value']);
   }
 }
 
@@ -91,10 +104,20 @@ class ListPreference {
   List<String>? entries;
   List<String>? entryValues;
 
-  ListPreference({this.title, this.summary, this.valueIndex, this.entries, this.entryValues});
+  ListPreference(
+      {this.title,
+      this.summary,
+      this.valueIndex,
+      this.entries,
+      this.entryValues});
 
-  Map<String, dynamic> toJson() =>
-      {'title': title, 'summary': summary, 'valueIndex': valueIndex, 'entries': entries, 'entryValues': entryValues};
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'summary': summary,
+        'valueIndex': valueIndex,
+        'entries': entries,
+        'entryValues': entryValues
+      };
 
   factory ListPreference.fromJson(Map<String, dynamic> json) {
     return ListPreference(
@@ -114,7 +137,8 @@ class MultiSelectListPreference {
   List<String>? entryValues;
   List<String>? values;
 
-  MultiSelectListPreference({this.title, this.summary, this.entries, this.entryValues, this.values});
+  MultiSelectListPreference(
+      {this.title, this.summary, this.entries, this.entryValues, this.values});
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -143,7 +167,13 @@ class EditTextPreference {
   String? dialogMessage;
   String? text;
 
-  EditTextPreference({this.title, this.summary, this.value, this.dialogTitle, this.dialogMessage, this.text});
+  EditTextPreference(
+      {this.title,
+      this.summary,
+      this.value,
+      this.dialogTitle,
+      this.dialogMessage,
+      this.text});
 
   Map<String, dynamic> toJson() => {
         'title': title,
@@ -173,5 +203,6 @@ class SourcePreferenceStringValue {
   String? key;
   String? value;
 
-  SourcePreferenceStringValue({this.id = Isar.autoIncrement, this.sourceId, this.key, this.value});
+  SourcePreferenceStringValue(
+      {this.id = Isar.autoIncrement, this.sourceId, this.key, this.value});
 }

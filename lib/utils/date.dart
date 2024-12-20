@@ -16,8 +16,9 @@ String dateFormat(String? timestamp,
   final locale = currentLocale(context);
   final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
   final dateFrmt = ref.watch(dateFormatStateProvider);
-  final dateTime =
-      stringDate != null ? DateTime.parse(stringDate) : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
+  final dateTime = stringDate != null
+      ? DateTime.parse(stringDate)
+      : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
   stringDate = null;
   final date = DateTime(dateTime.year, dateTime.month, dateTime.day);
   if (stringDate == null) {
@@ -30,7 +31,8 @@ String dateFormat(String? timestamp,
     final fiveDaysAgo = DateTime(now.year, now.month, now.day - 5);
     final sixDaysAgo = DateTime(now.year, now.month, now.day - 6);
     final aWeekAgo = DateTime(now.year, now.month, now.day - 7);
-    final formatter = DateFormat(dateFormat.isEmpty ? dateFrmt : dateFormat, locale.toLanguageTag());
+    final formatter = DateFormat(
+        dateFormat.isEmpty ? dateFrmt : dateFormat, locale.toLanguageTag());
 
     if (date == today && useRelativeTimesTamps && relativeTimestamps != 0) {
       if (showHOURorMINUTE) {
@@ -50,7 +52,9 @@ String dateFormat(String? timestamp,
       }
 
       return l10n.today;
-    } else if (date == yesterday && useRelativeTimesTamps && relativeTimestamps != 0) {
+    } else if (date == yesterday &&
+        useRelativeTimesTamps &&
+        relativeTimestamps != 0) {
       return l10n.yesterday;
     } else if (useRelativeTimesTamps && relativeTimestamps == 2) {
       if (date.isAfter(twoDaysAgo) ||
@@ -68,7 +72,9 @@ String dateFormat(String? timestamp,
         };
       }
     }
-    return forHistoryValue ? DateTime(dateTime.year, dateTime.month, dateTime.day).toString() : formatter.format(date);
+    return forHistoryValue
+        ? DateTime(dateTime.year, dateTime.month, dateTime.day).toString()
+        : formatter.format(date);
   }
   return date.toString();
 }
@@ -80,7 +86,14 @@ String dateFormatHour(String timestamp, BuildContext context) {
   return DateFormat.Hm(locale.toLanguageTag()).format(dateTime);
 }
 
-List<String> dateFormatsList = ["M/d/y", "MM/dd/yy", "dd/MM/yy", "yyyy-MM-dd", "dd MMM yyyy", "MMM dd, yyyy"];
+List<String> dateFormatsList = [
+  "M/d/y",
+  "MM/dd/yy",
+  "dd/MM/yy",
+  "yyyy-MM-dd",
+  "dd MMM yyyy",
+  "MMM dd, yyyy"
+];
 
 List<String> relativeTimestampsList(BuildContext context) {
   final l10n = l10nLocalizations(context)!;

@@ -9,7 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'isar_providers.g.dart';
 
 @riverpod
-Stream<List<History>> getAllHistoryStream(Ref ref, {required bool isManga}) async* {
+Stream<List<History>> getAllHistoryStream(Ref ref,
+    {required bool isManga}) async* {
   yield* isar.historys
       .filter()
       .idIsNotNull()
@@ -19,7 +20,8 @@ Stream<List<History>> getAllHistoryStream(Ref ref, {required bool isManga}) asyn
 }
 
 @riverpod
-Stream<List<Update>> getAllUpdateStream(Ref ref, {required bool isManga}) async* {
+Stream<List<Update>> getAllUpdateStream(Ref ref,
+    {required bool isManga}) async* {
   yield* isar.updates
       .filter()
       .idIsNotNull()

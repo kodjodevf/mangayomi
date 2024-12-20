@@ -27,20 +27,24 @@ class MyAnimeList extends _$MyAnimeList {
   void build({required int syncId, required bool? isManga}) {}
 
   Future<bool?> login() async {
-    final callbackUrlScheme = (Platform.isWindows || Platform.isLinux) ? 'http://localhost:43824' : 'mangayomi';
+    final callbackUrlScheme = (Platform.isWindows || Platform.isLinux)
+        ? 'http://localhost:43824'
+        : 'mangayomi';
     final loginUrl = _authUrl();
 
     try {
-      final uri = await FlutterWebAuth2.authenticate(url: loginUrl, callbackUrlScheme: callbackUrlScheme);
+      final uri = await FlutterWebAuth2.authenticate(
+          url: loginUrl, callbackUrlScheme: callbackUrlScheme);
       final queryParams = Uri.parse(uri).queryParameters;
       if (queryParams['code'] == null) return null;
 
       final oAuth = await _getOAuth(queryParams['code']!);
       final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>);
       final username = await _getUserName(mALOAuth.accessToken!);
-      ref
-          .read(tracksProvider(syncId: syncId).notifier)
-          .login(TrackPreference(syncId: syncId, username: username, oAuth: jsonEncode(mALOAuth.toJson())));
+      ref.read(tracksProvider(syncId: syncId).notifier).login(TrackPreference(
+          syncId: syncId,
+          username: username,
+          oAuth: jsonEncode(mALOAuth.toJson())));
 
       return true;
     } catch (_) {
@@ -50,7 +54,8 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<String> _getAccesToken() async {
     final track = ref.watch(tracksProvider(syncId: syncId));
-    final mALOAuth = OAuth.fromJson(jsonDecode(track!.oAuth!) as Map<String, dynamic>);
+    final mALOAuth =
+        OAuth.fromJson(jsonDecode(track!.oAuth!) as Map<String, dynamic>);
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
       final params = {
@@ -58,12 +63,16 @@ class MyAnimeList extends _$MyAnimeList {
         'grant_type': 'refresh_token',
         'refresh_token': mALOAuth.refreshToken,
       };
-      final response = await http.post(Uri.parse('$baseOAuthUrl/token'), body: params);
-      final oAuth = OAuth.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      final response =
+          await http.post(Uri.parse('$baseOAuthUrl/token'), body: params);
+      final oAuth =
+          OAuth.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
       final username = await _getUserName(oAuth.accessToken!);
-      ref
-          .read(tracksProvider(syncId: syncId).notifier)
-          .login(TrackPreference(syncId: syncId, username: username, prefs: "", oAuth: jsonEncode(oAuth.toJson())));
+      ref.read(tracksProvider(syncId: syncId).notifier).login(TrackPreference(
+          syncId: syncId,
+          username: username,
+          prefs: "",
+          oAuth: jsonEncode(oAuth.toJson())));
       return oAuth.accessToken!;
     }
     return mALOAuth.accessToken!;
@@ -71,30 +80,39 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<List<TrackSearch>> search(String query) async {
     final accessToken = await _getAccesToken();
-    final url = Uri.parse(isManga! ? '$baseApiUrl/manga' : '$baseApiUrl/anime').replace(queryParameters: {
+    final url = Uri.parse(isManga! ? '$baseApiUrl/manga' : '$baseApiUrl/anime')
+        .replace(queryParameters: {
       'q': query.trim(),
       'nsfw': 'true',
     });
-    final result = await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
+    final result =
+        await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
-    List<int> mangaIds = res['data'] == null ? [] : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
+    List<int> mangaIds = res['data'] == null
+        ? []
+        : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
     List<TrackSearch> trackSearchResult = [];
     for (var mangaId in mangaIds) {
-      final trackSearch =
-          isManga! ? await getMangaDetails(mangaId, accessToken) : await getAnimeDetails(mangaId, accessToken);
+      final trackSearch = isManga!
+          ? await getMangaDetails(mangaId, accessToken)
+          : await getAnimeDetails(mangaId, accessToken);
       trackSearchResult.add(trackSearch);
     }
 
-    return trackSearchResult.where((element) => !element.publishingType!.contains("novel")).toList();
+    return trackSearchResult
+        .where((element) => !element.publishingType!.contains("novel"))
+        .toList();
   }
 
   Future<TrackSearch> getMangaDetails(int id, String accessToken) async {
     final url = Uri.parse('$baseApiUrl/manga/$id').replace(queryParameters: {
-      'fields': 'id,title,synopsis,num_chapters,main_picture,status,media_type,start_date',
+      'fields':
+          'id,title,synopsis,num_chapters,main_picture,status,media_type,start_date',
     });
 
-    final result = await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
+    final result =
+        await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
     return TrackSearch(
@@ -111,10 +129,12 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<TrackSearch> getAnimeDetails(int id, String accessToken) async {
     final url = Uri.parse('$baseApiUrl/anime/$id').replace(queryParameters: {
-      'fields': 'id,title,synopsis,num_episodes,main_picture,status,media_type,start_date',
+      'fields':
+          'id,title,synopsis,num_episodes,main_picture,status,media_type,start_date',
     });
 
-    final result = await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
+    final result =
+        await http.get(url, headers: {'Authorization': 'Bearer $accessToken'});
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
     return TrackSearch(
@@ -132,7 +152,8 @@ class MyAnimeList extends _$MyAnimeList {
   String _convertToIsoDate(int? epochTime) {
     String date = "";
     try {
-      date = DateFormat("yyyy-MM-dd", "en_US").format(DateTime.fromMillisecondsSinceEpoch(epochTime!));
+      date = DateFormat("yyyy-MM-dd", "en_US")
+          .format(DateTime.fromMillisecondsSinceEpoch(epochTime!));
     } catch (_) {}
     return date;
   }
@@ -214,30 +235,36 @@ class MyAnimeList extends _$MyAnimeList {
       'code_verifier': codeVerifier,
       'grant_type': 'authorization_code',
     };
-    final response = await http.post(Uri.parse('$baseOAuthUrl/token'), body: params);
+    final response =
+        await http.post(Uri.parse('$baseOAuthUrl/token'), body: params);
     return jsonDecode(response.body);
   }
 
   Future<String> _getUserName(String accessToken) async {
-    final response =
-        await http.get(Uri.parse('$baseApiUrl/users/@me'), headers: {'Authorization': 'Bearer $accessToken'});
+    final response = await http.get(Uri.parse('$baseApiUrl/users/@me'),
+        headers: {'Authorization': 'Bearer $accessToken'});
     return jsonDecode(response.body)['name'];
   }
 
   Future<Track> findManga(Track track) async {
     final accessToken = await _getAccesToken();
-    final uri = Uri.parse(isManga! ? '$baseApiUrl/manga/${track.mediaId}' : '$baseApiUrl/anime/${track.mediaId}')
+    final uri = Uri.parse(isManga!
+            ? '$baseApiUrl/manga/${track.mediaId}'
+            : '$baseApiUrl/anime/${track.mediaId}')
         .replace(queryParameters: {
       'fields': isManga!
           ? 'num_chapters,my_list_status{start_date,finish_date}'
           : 'num_episodes,my_list_status{start_date,finish_date}',
     });
-    final response = await http.get(uri, headers: {'Authorization': 'Bearer $accessToken'});
+    final response =
+        await http.get(uri, headers: {'Authorization': 'Bearer $accessToken'});
     final mJson = jsonDecode(response.body);
-    track.totalChapter = isManga! ? mJson['num_chapters'] ?? 0 : mJson['num_episodes'] ?? 0;
+    track.totalChapter =
+        isManga! ? mJson['num_chapters'] ?? 0 : mJson['num_episodes'] ?? 0;
     if (mJson['my_list_status'] != null) {
-      track =
-          isManga! ? _parseMangaItem(mJson["my_list_status"], track) : _parseAnimeItem(mJson["my_list_status"], track);
+      track = isManga!
+          ? _parseMangaItem(mJson["my_list_status"], track)
+          : _parseAnimeItem(mJson["my_list_status"], track);
     } else {
       track = isManga! ? await updateManga(track) : await updateAnime(track);
     }
@@ -246,7 +273,9 @@ class MyAnimeList extends _$MyAnimeList {
 
   Track _parseMangaItem(Map<String, dynamic> mJson, Track track) {
     bool isRereading = mJson["is_rereading"] ?? false;
-    track.status = isRereading ? TrackStatus.rereading : _getMALTrackStatusManga(mJson["status"]);
+    track.status = isRereading
+        ? TrackStatus.rereading
+        : _getMALTrackStatusManga(mJson["status"]);
     track.lastChapterRead = int.parse(mJson["num_chapters_read"].toString());
     track.score = int.parse(mJson["score"].toString());
     track.startedReadingDate = _parseDate(mJson["start_date"]);
@@ -256,7 +285,9 @@ class MyAnimeList extends _$MyAnimeList {
 
   Track _parseAnimeItem(Map<String, dynamic> mJson, Track track) {
     bool isReWatching = mJson["is_rewatching"] ?? false;
-    track.status = isReWatching ? TrackStatus.reWatching : _getMALTrackStatusAnime(mJson["status"]);
+    track.status = isReWatching
+        ? TrackStatus.reWatching
+        : _getMALTrackStatusAnime(mJson["status"]);
     track.lastChapterRead = int.parse(mJson["num_episodes_watched"].toString());
     track.score = int.parse(mJson["score"].toString());
     track.startedReadingDate = _parseDate(mJson["start_date"]);
@@ -274,14 +305,18 @@ class MyAnimeList extends _$MyAnimeList {
   Future<Track> updateAnime(Track track) async {
     final accessToken = await _getAccesToken();
     final formBody = {
-      'status': (toMyAnimeListStatusAnime(track.status) ?? 'watching').toString(),
+      'status':
+          (toMyAnimeListStatusAnime(track.status) ?? 'watching').toString(),
       'is_rewatching': (track.status == TrackStatus.reWatching).toString(),
       'score': track.score.toString(),
       'num_watched_episodes': track.lastChapterRead.toString(),
-      if (track.startedReadingDate != null) 'start_date': _convertToIsoDate(track.startedReadingDate),
-      if (track.finishedReadingDate != null) 'finish_date': _convertToIsoDate(track.finishedReadingDate)
+      if (track.startedReadingDate != null)
+        'start_date': _convertToIsoDate(track.startedReadingDate),
+      if (track.finishedReadingDate != null)
+        'finish_date': _convertToIsoDate(track.finishedReadingDate)
     };
-    final request = Request('PUT', Uri.parse('$baseApiUrl/anime/${track.mediaId}/my_list_status'));
+    final request = Request(
+        'PUT', Uri.parse('$baseApiUrl/anime/${track.mediaId}/my_list_status'));
     request.bodyFields = formBody;
     request.headers.addAll({'Authorization': 'Bearer $accessToken'});
     final response = await Client().send(request);
@@ -292,14 +327,18 @@ class MyAnimeList extends _$MyAnimeList {
   Future<Track> updateManga(Track track) async {
     final accessToken = await _getAccesToken();
     final formBody = {
-      'status': (toMyAnimeListStatusManga(track.status) ?? 'reading').toString(),
+      'status':
+          (toMyAnimeListStatusManga(track.status) ?? 'reading').toString(),
       'is_rereading': (track.status == TrackStatus.rereading).toString(),
       'score': track.score.toString(),
       'num_chapters_read': track.lastChapterRead.toString(),
-      if (track.startedReadingDate != null) 'start_date': _convertToIsoDate(track.startedReadingDate),
-      if (track.finishedReadingDate != null) 'finish_date': _convertToIsoDate(track.finishedReadingDate)
+      if (track.startedReadingDate != null)
+        'start_date': _convertToIsoDate(track.startedReadingDate),
+      if (track.finishedReadingDate != null)
+        'finish_date': _convertToIsoDate(track.finishedReadingDate)
     };
-    final request = Request('PUT', Uri.parse('$baseApiUrl/manga/${track.mediaId}/my_list_status'));
+    final request = Request(
+        'PUT', Uri.parse('$baseApiUrl/manga/${track.mediaId}/my_list_status'));
     request.bodyFields = formBody;
     request.headers.addAll({'Authorization': 'Bearer $accessToken'});
     final response = await Client().send(request);

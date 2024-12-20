@@ -19,7 +19,8 @@ class RhttpCancelException extends RhttpException {
   const RhttpCancelException(super.request);
 
   @override
-  String toString() => '[$runtimeType] Request was canceled. URL: ${request.url}';
+  String toString() =>
+      '[$runtimeType] Request was canceled. URL: ${request.url}';
 }
 
 /// An exception thrown when a request times out.
@@ -63,7 +64,8 @@ class RhttpStatusCodeException extends RhttpException {
   }) : super(request);
 
   @override
-  String toString() => '[$runtimeType] Status code: $statusCode. URL: ${request.url}';
+  String toString() =>
+      '[$runtimeType] Status code: $statusCode. URL: ${request.url}';
 }
 
 /// An exception thrown when the server's certificate is invalid.
@@ -77,7 +79,8 @@ class RhttpInvalidCertificateException extends RhttpException {
   }) : super(request);
 
   @override
-  String toString() => '[$runtimeType] Invalid certificate. $message URL: ${request.url}';
+  String toString() =>
+      '[$runtimeType] Invalid certificate. $message URL: ${request.url}';
 }
 
 /// An exception thrown when a connection error occurs.
@@ -88,7 +91,8 @@ class RhttpConnectionException extends RhttpException {
   const RhttpConnectionException(super.request, this.message);
 
   @override
-  String toString() => '[$runtimeType] Connection error. URL: ${request.url} ($message)';
+  String toString() =>
+      '[$runtimeType] Connection error. URL: ${request.url} ($message)';
 }
 
 /// An exception thrown a request is made with an invalid client.
@@ -96,7 +100,8 @@ class RhttpClientDisposedException extends RhttpException {
   const RhttpClientDisposedException(super.request);
 
   @override
-  String toString() => '[$runtimeType] Client is already disposed. URL: ${request.url}';
+  String toString() =>
+      '[$runtimeType] Client is already disposed. URL: ${request.url}';
 }
 
 /// An exception thrown by an interceptor.
@@ -136,8 +141,10 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
         rust_http.HttpResponseBody_Stream() => null,
       },
     ),
-    rhttpInvalidCertificateError: (message) => RhttpInvalidCertificateException(request: request, message: message),
-    rhttpConnectionError: (message) => RhttpConnectionException(request, message),
+    rhttpInvalidCertificateError: (message) =>
+        RhttpInvalidCertificateException(request: request, message: message),
+    rhttpConnectionError: (message) =>
+        RhttpConnectionException(request, message),
     rhttpUnknownError: (message) => RhttpUnknownException(request, message),
   );
 }

@@ -7,7 +7,9 @@ class MPages {
 
   factory MPages.fromJson(Map<String, dynamic> json) {
     return MPages(
-        list: json['list'] != null ? (json['list'] as List).map((e) => MManga.fromJson(e)).toList() : [],
+        list: json['list'] != null
+            ? (json['list'] as List).map((e) => MManga.fromJson(e)).toList()
+            : [],
         hasNextPage: json['hasNextPage']);
   }
 

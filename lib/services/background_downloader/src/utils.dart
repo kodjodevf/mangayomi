@@ -11,7 +11,8 @@ final _log = Logger('FileDownloader');
 
 /// Return url String composed of the [url] and the
 /// [urlQueryParameters], if given
-String urlWithQueryParameters(String url, Map<String, String>? urlQueryParameters) {
+String urlWithQueryParameters(
+    String url, Map<String, String>? urlQueryParameters) {
   if (urlQueryParameters == null || urlQueryParameters.isEmpty) {
     return url;
   }
@@ -40,7 +41,9 @@ String urlWithQueryParameters(String url, Map<String, String>? urlQueryParameter
 /// the [task] headers
 int getContentLength(Map<String, String> responseHeaders, Task task) {
   // if response provides contentLength, return it
-  final contentLength = int.tryParse(responseHeaders['Content-Length'] ?? responseHeaders['content-length'] ?? '-1');
+  final contentLength = int.tryParse(responseHeaders['Content-Length'] ??
+      responseHeaders['content-length'] ??
+      '-1');
   if (contentLength != null && contentLength != -1) {
     return contentLength;
   }
@@ -49,14 +52,18 @@ int getContentLength(Map<String, String> responseHeaders, Task task) {
   final taskRange = parseRange(taskRangeHeader);
   if (taskRange.$2 != null) {
     var rangeLength = taskRange.$2! - taskRange.$1 + 1;
-    _log.finest('TaskId ${task.taskId} contentLength set to $rangeLength based on Range header');
+    _log.finest(
+        'TaskId ${task.taskId} contentLength set to $rangeLength based on Range header');
     return rangeLength;
   }
   // try extracting it from a special "Known-Content-Length" header
-  var knownLength =
-      int.tryParse(task.headers['Known-Content-Length'] ?? task.headers['known-content-length'] ?? '-1') ?? -1;
+  var knownLength = int.tryParse(task.headers['Known-Content-Length'] ??
+          task.headers['known-content-length'] ??
+          '-1') ??
+      -1;
   if (knownLength != -1) {
-    _log.finest('TaskId ${task.taskId} contentLength set to $knownLength based on Known-Content-Length header');
+    _log.finest(
+        'TaskId ${task.taskId} contentLength set to $knownLength based on Known-Content-Length header');
   } else {
     _log.finest('TaskId ${task.taskId} contentLength undetermined');
   }
@@ -74,7 +81,8 @@ int getContentLength(Map<String, String> responseHeaders, Task task) {
 /// The server-suggested filename is obtained from the  [responseHeaders] entry
 /// "Content-Disposition" according to RFC6266, or the last path segment of the
 /// URL, or leaves the filename unchanged
-Future<DownloadTask> taskWithSuggestedFilename(DownloadTask task, Map<String, String> responseHeaders, bool unique) {
+Future<DownloadTask> taskWithSuggestedFilename(
+    DownloadTask task, Map<String, String> responseHeaders, bool unique) {
   /// Returns [DownloadTask] with a filename similar to the one
   /// supplied, but unused.
   ///
@@ -90,7 +98,8 @@ Future<DownloadTask> taskWithSuggestedFilename(DownloadTask task, Map<String, St
     var filePath = await newTask.filePath();
     var exists = await File(filePath).exists();
     while (exists) {
-      final extension = extensionRegEx.firstMatch(newTask.filename)?.group(0) ?? '';
+      final extension =
+          extensionRegEx.firstMatch(newTask.filename)?.group(0) ?? '';
       final match = sequenceRegEx.firstMatch(newTask.filename);
       final newSequence = int.parse(match?.group(1) ?? "0") + 1;
       final newFilename = match == null
@@ -105,22 +114,32 @@ Future<DownloadTask> taskWithSuggestedFilename(DownloadTask task, Map<String, St
 
   // start of main function
   try {
-    final disposition =
-        responseHeaders.entries.firstWhere((element) => element.key.toLowerCase() == 'content-disposition').value;
+    final disposition = responseHeaders.entries
+        .firstWhere(
+            (element) => element.key.toLowerCase() == 'content-disposition')
+        .value;
     // Try filename*=UTF-8'language'"encodedFilename"
-    final encodedFilenameRegEx = RegExp('filename\\*=\\s*([^\']+)\'([^\']*)\'"?([^"]+)"?', caseSensitive: false);
+    final encodedFilenameRegEx = RegExp(
+        'filename\\*=\\s*([^\']+)\'([^\']*)\'"?([^"]+)"?',
+        caseSensitive: false);
     var match = encodedFilenameRegEx.firstMatch(disposition);
-    if (match != null && match.group(1)?.isNotEmpty == true && match.group(3)?.isNotEmpty == true) {
+    if (match != null &&
+        match.group(1)?.isNotEmpty == true &&
+        match.group(3)?.isNotEmpty == true) {
       try {
-        final suggestedFilename =
-            match.group(1)?.toUpperCase() == 'UTF-8' ? Uri.decodeComponent(match.group(3)!) : match.group(3)!;
-        return uniqueFilename(task.copyWith(filename: suggestedFilename), unique);
+        final suggestedFilename = match.group(1)?.toUpperCase() == 'UTF-8'
+            ? Uri.decodeComponent(match.group(3)!)
+            : match.group(3)!;
+        return uniqueFilename(
+            task.copyWith(filename: suggestedFilename), unique);
       } on ArgumentError {
-        _log.finest('Could not interpret suggested filename (UTF-8 url encoded) ${match.group(3)}');
+        _log.finest(
+            'Could not interpret suggested filename (UTF-8 url encoded) ${match.group(3)}');
       }
     }
     // Try filename="filename"
-    final plainFilenameRegEx = RegExp(r'filename=\s*"?([^"]+)"?.*$', caseSensitive: false);
+    final plainFilenameRegEx =
+        RegExp(r'filename=\s*"?([^"]+)"?.*$', caseSensitive: false);
     match = plainFilenameRegEx.firstMatch(disposition);
     if (match != null && match.group(1)?.isNotEmpty == true) {
       return uniqueFilename(task.copyWith(filename: match.group(1)), unique);

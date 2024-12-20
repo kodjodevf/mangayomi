@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
@@ -158,10 +158,10 @@ class BackupAndRestore extends ConsumerWidget {
                                   onPressed: () async {
                                     try {
                                       FilePickerResult? result =
-                                          await FilePicker.platform
-                                              .pickFiles(allowMultiple: false, 
-                                                  type: FileType.custom, 
-                                                  allowedExtensions: ["backup"]);
+                                          await FilePicker.platform.pickFiles(
+                                              allowMultiple: false,
+                                              type: FileType.custom,
+                                              allowedExtensions: ["backup"]);
 
                                       if (result != null && context.mounted) {
                                         ref.watch(doRestoreProvider(

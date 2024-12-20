@@ -6,30 +6,44 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 class $CheckBoxPreference implements SourcePreference, $Instance {
   $CheckBoxPreference.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'CheckBoxPreference'));
+  static const $type = BridgeTypeRef(BridgeTypeSpec(
+      'package:mangayomi/bridge_lib.dart', 'CheckBoxPreference'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('key', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('title', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('summary', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), false),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('title',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('summary',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('value',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), false),
+            ]))
       },
       fields: {
-        'key': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'title': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'summary': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
+        'key': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'title': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'summary': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'value':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
       },
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $CheckBoxPreference.wrap(SourcePreference(
         key: args[0]!.$value,
-        checkBoxPreference:
-            CheckBoxPreference(title: args[1]!.$value, summary: args[2]!.$value, value: args[3]!.$value)));
+        checkBoxPreference: CheckBoxPreference(
+            title: args[1]!.$value,
+            summary: args[2]!.$value,
+            value: args[3]!.$value)));
   }
 
   @override
@@ -78,10 +92,12 @@ class $CheckBoxPreference implements SourcePreference, $Instance {
   ListPreference? get listPreference => $value.listPreference;
 
   @override
-  MultiSelectListPreference? get multiSelectListPreference => $value.multiSelectListPreference;
+  MultiSelectListPreference? get multiSelectListPreference =>
+      $value.multiSelectListPreference;
 
   @override
-  SwitchPreferenceCompat? get switchPreferenceCompat => $value.switchPreferenceCompat;
+  SwitchPreferenceCompat? get switchPreferenceCompat =>
+      $value.switchPreferenceCompat;
 
   @override
   Id? get id => $value.id;
@@ -108,7 +124,8 @@ class $CheckBoxPreference implements SourcePreference, $Instance {
   set listPreference(ListPreference? listPreference) {}
 
   @override
-  set multiSelectListPreference(MultiSelectListPreference? multiSelectListPreference) {}
+  set multiSelectListPreference(
+      MultiSelectListPreference? multiSelectListPreference) {}
 
   @override
   set sourceId(int? sourceId) {}
@@ -125,30 +142,44 @@ class $CheckBoxPreference implements SourcePreference, $Instance {
 class $SwitchPreferenceCompat implements SourcePreference, $Instance {
   $SwitchPreferenceCompat.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SwitchPreferenceCompat'));
+  static const $type = BridgeTypeRef(BridgeTypeSpec(
+      'package:mangayomi/bridge_lib.dart', 'SwitchPreferenceCompat'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('key', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('title', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('summary', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), false),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('title',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('summary',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('value',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), false),
+            ]))
       },
       fields: {
-        'key': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'title': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'summary': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
+        'key': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'title': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'summary': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'value':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
       },
       wrap: true);
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $SwitchPreferenceCompat.wrap(SourcePreference(
         key: args[0]!.$value,
-        switchPreferenceCompat:
-            SwitchPreferenceCompat(title: args[1]!.$value, summary: args[2]!.$value, value: args[3]!.$value)));
+        switchPreferenceCompat: SwitchPreferenceCompat(
+            title: args[1]!.$value,
+            summary: args[2]!.$value,
+            value: args[3]!.$value)));
   }
 
   @override
@@ -197,10 +228,12 @@ class $SwitchPreferenceCompat implements SourcePreference, $Instance {
   ListPreference? get listPreference => $value.listPreference;
 
   @override
-  MultiSelectListPreference? get multiSelectListPreference => $value.multiSelectListPreference;
+  MultiSelectListPreference? get multiSelectListPreference =>
+      $value.multiSelectListPreference;
 
   @override
-  SwitchPreferenceCompat? get switchPreferenceCompat => $value.switchPreferenceCompat;
+  SwitchPreferenceCompat? get switchPreferenceCompat =>
+      $value.switchPreferenceCompat;
 
   @override
   Id? get id => $value.id;
@@ -227,7 +260,8 @@ class $SwitchPreferenceCompat implements SourcePreference, $Instance {
   set listPreference(ListPreference? listPreference) {}
 
   @override
-  set multiSelectListPreference(MultiSelectListPreference? multiSelectListPreference) {}
+  set multiSelectListPreference(
+      MultiSelectListPreference? multiSelectListPreference) {}
 
   @override
   set sourceId(int? sourceId) {}
@@ -244,30 +278,48 @@ class $SwitchPreferenceCompat implements SourcePreference, $Instance {
 class $ListPreference implements SourcePreference, $Instance {
   $ListPreference.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'ListPreference'));
+  static const $type = BridgeTypeRef(
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'ListPreference'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('key', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('title', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('summary', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('valueIndex', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-          BridgeParameter(
-              'entries', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])), false),
-          BridgeParameter('entryValues',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])), false),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('title',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('summary',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('valueIndex',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
+              BridgeParameter(
+                  'entries',
+                  BridgeTypeAnnotation(BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                  false),
+              BridgeParameter(
+                  'entryValues',
+                  BridgeTypeAnnotation(BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                  false),
+            ]))
       },
       fields: {
-        'key': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'title': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'summary': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'valueIndex': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
-        'entries':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
-        'entryValues':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
+        'key': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'title': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'summary': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'valueIndex':
+            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
+        'entries': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
+        'entryValues': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
       },
       wrap: true);
 
@@ -278,8 +330,12 @@ class $ListPreference implements SourcePreference, $Instance {
             title: args[1]!.$value,
             summary: args[2]!.$value,
             valueIndex: args[3]!.$value,
-            entries: (args[4]!.$value as List).map((e) => (e is $Value ? e.$reified : e).toString()).toList(),
-            entryValues: (args[5]!.$value as List).map((e) => (e is $Value ? e.$reified : e).toString()).toList())));
+            entries: (args[4]!.$value as List)
+                .map((e) => (e is $Value ? e.$reified : e).toString())
+                .toList(),
+            entryValues: (args[5]!.$value as List)
+                .map((e) => (e is $Value ? e.$reified : e).toString())
+                .toList())));
   }
 
   @override
@@ -332,10 +388,12 @@ class $ListPreference implements SourcePreference, $Instance {
   ListPreference? get listPreference => $value.listPreference;
 
   @override
-  MultiSelectListPreference? get multiSelectListPreference => $value.multiSelectListPreference;
+  MultiSelectListPreference? get multiSelectListPreference =>
+      $value.multiSelectListPreference;
 
   @override
-  SwitchPreferenceCompat? get switchPreferenceCompat => $value.switchPreferenceCompat;
+  SwitchPreferenceCompat? get switchPreferenceCompat =>
+      $value.switchPreferenceCompat;
 
   @override
   Id? get id => $value.id;
@@ -362,7 +420,8 @@ class $ListPreference implements SourcePreference, $Instance {
   set listPreference(ListPreference? listPreference) {}
 
   @override
-  set multiSelectListPreference(MultiSelectListPreference? multiSelectListPreference) {}
+  set multiSelectListPreference(
+      MultiSelectListPreference? multiSelectListPreference) {}
 
   @override
   set sourceId(int? sourceId) {}
@@ -379,32 +438,51 @@ class $ListPreference implements SourcePreference, $Instance {
 class $MultiSelectListPreference implements SourcePreference, $Instance {
   $MultiSelectListPreference.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MultiSelectListPreference'));
+  static const $type = BridgeTypeRef(BridgeTypeSpec(
+      'package:mangayomi/bridge_lib.dart', 'MultiSelectListPreference'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('key', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('title', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('summary', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter(
-              'entries', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])), false),
-          BridgeParameter('entryValues',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])), false),
-          BridgeParameter(
-              'values', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])), false),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('title',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('summary',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter(
+                  'entries',
+                  BridgeTypeAnnotation(BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                  false),
+              BridgeParameter(
+                  'entryValues',
+                  BridgeTypeAnnotation(BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                  false),
+              BridgeParameter(
+                  'values',
+                  BridgeTypeAnnotation(BridgeTypeRef(
+                      CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                  false),
+            ]))
       },
       fields: {
-        'key': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'title': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'summary': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'entries':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
-        'entryValues':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
-        'values':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
+        'key': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'title': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'summary': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'entries': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
+        'entryValues': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
+        'values': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]))),
       },
       wrap: true);
 
@@ -414,9 +492,15 @@ class $MultiSelectListPreference implements SourcePreference, $Instance {
         multiSelectListPreference: MultiSelectListPreference(
             title: args[1]!.$value,
             summary: args[2]!.$value,
-            entries: (args[3]!.$value as List).map((e) => (e is $Value ? e.$reified : e).toString()).toList(),
-            entryValues: (args[4]!.$value as List).map((e) => (e is $Value ? e.$reified : e).toString()).toList(),
-            values: (args[5]!.$value as List).map((e) => (e is $Value ? e.$reified : e).toString()).toList())));
+            entries: (args[3]!.$value as List)
+                .map((e) => (e is $Value ? e.$reified : e).toString())
+                .toList(),
+            entryValues: (args[4]!.$value as List)
+                .map((e) => (e is $Value ? e.$reified : e).toString())
+                .toList(),
+            values: (args[5]!.$value as List)
+                .map((e) => (e is $Value ? e.$reified : e).toString())
+                .toList())));
   }
 
   @override
@@ -469,10 +553,12 @@ class $MultiSelectListPreference implements SourcePreference, $Instance {
   ListPreference? get listPreference => $value.listPreference;
 
   @override
-  MultiSelectListPreference? get multiSelectListPreference => $value.multiSelectListPreference;
+  MultiSelectListPreference? get multiSelectListPreference =>
+      $value.multiSelectListPreference;
 
   @override
-  SwitchPreferenceCompat? get switchPreferenceCompat => $value.switchPreferenceCompat;
+  SwitchPreferenceCompat? get switchPreferenceCompat =>
+      $value.switchPreferenceCompat;
 
   @override
   Id? get id => $value.id;
@@ -499,7 +585,8 @@ class $MultiSelectListPreference implements SourcePreference, $Instance {
   set listPreference(ListPreference? listPreference) {}
 
   @override
-  set multiSelectListPreference(MultiSelectListPreference? multiSelectListPreference) {}
+  set multiSelectListPreference(
+      MultiSelectListPreference? multiSelectListPreference) {}
 
   @override
   set sourceId(int? sourceId) {}
@@ -516,28 +603,46 @@ class $MultiSelectListPreference implements SourcePreference, $Instance {
 class $EditTextPreference implements SourcePreference, $Instance {
   $EditTextPreference.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'EditTextPreference'));
+  static const $type = BridgeTypeRef(BridgeTypeSpec(
+      'package:mangayomi/bridge_lib.dart', 'EditTextPreference'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('key', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('title', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('summary', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('dialogTitle', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('dialogMessage', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('text', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('key',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('title',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('summary',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('value',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('dialogTitle',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('dialogMessage',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('text',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ]))
       },
       fields: {
-        'key': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'title': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'summary': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'dialogTitle': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'dialogMessage': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'text': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'key': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'title': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'summary': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'value': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'dialogTitle': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'dialogMessage': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'text': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
       },
       wrap: true);
 
@@ -605,10 +710,12 @@ class $EditTextPreference implements SourcePreference, $Instance {
   ListPreference? get listPreference => $value.listPreference;
 
   @override
-  MultiSelectListPreference? get multiSelectListPreference => $value.multiSelectListPreference;
+  MultiSelectListPreference? get multiSelectListPreference =>
+      $value.multiSelectListPreference;
 
   @override
-  SwitchPreferenceCompat? get switchPreferenceCompat => $value.switchPreferenceCompat;
+  SwitchPreferenceCompat? get switchPreferenceCompat =>
+      $value.switchPreferenceCompat;
 
   @override
   Id? get id => $value.id;
@@ -635,7 +742,8 @@ class $EditTextPreference implements SourcePreference, $Instance {
   set listPreference(ListPreference? listPreference) {}
 
   @override
-  set multiSelectListPreference(MultiSelectListPreference? multiSelectListPreference) {}
+  set multiSelectListPreference(
+      MultiSelectListPreference? multiSelectListPreference) {}
 
   @override
   set sourceId(int? sourceId) {}

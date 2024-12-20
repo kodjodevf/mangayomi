@@ -15,7 +15,8 @@ class TrackingDetail extends StatefulWidget {
   State<TrackingDetail> createState() => _TrackingDetailState();
 }
 
-class _TrackingDetailState extends State<TrackingDetail> with TickerProviderStateMixin {
+class _TrackingDetailState extends State<TrackingDetail>
+    with TickerProviderStateMixin {
   late TabController _tabBarController;
   @override
   void initState() {
@@ -35,7 +36,9 @@ class _TrackingDetailState extends State<TrackingDetail> with TickerProviderStat
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Text(widget.trackerPref.syncId == -1 ? 'Local' : trackInfos(widget.trackerPref.syncId!).$2),
+          title: Text(widget.trackerPref.syncId == -1
+              ? 'Local'
+              : trackInfos(widget.trackerPref.syncId!).$2),
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
@@ -80,10 +83,14 @@ class TrackingTab extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final mediaId = mediaIds[index];
-                final track = trackRes.firstWhere((element) => element.mediaId == mediaId);
+                final track = trackRes
+                    .firstWhere((element) => element.mediaId == mediaId);
                 return ExpansionTile(
                   title: Text(track.title!),
-                  children: [TrackingWidget(isManga: isManga, syncId: syncId, mediaId: mediaId!)],
+                  children: [
+                    TrackingWidget(
+                        isManga: isManga, syncId: syncId, mediaId: mediaId!)
+                  ],
                 );
               },
               separatorBuilder: (_, index) {
@@ -99,7 +106,11 @@ class TrackingWidget extends StatelessWidget {
   final int syncId;
   final bool isManga;
   final int mediaId;
-  const TrackingWidget({super.key, required this.mediaId, required this.isManga, required this.syncId});
+  const TrackingWidget(
+      {super.key,
+      required this.mediaId,
+      required this.isManga,
+      required this.syncId});
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +125,10 @@ class TrackingWidget extends StatelessWidget {
           List<Track>? trackRes = [];
           List<Track> res = snapshot.data ?? [];
           for (var track in res) {
-            if (!trackRes.map((e) => e.mediaId).toList().contains(track.mediaId)) {
+            if (!trackRes
+                .map((e) => e.mediaId)
+                .toList()
+                .contains(track.mediaId)) {
               trackRes.add(track);
             }
           }

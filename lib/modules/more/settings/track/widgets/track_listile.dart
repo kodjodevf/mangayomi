@@ -11,18 +11,26 @@ class TrackListile extends ConsumerWidget {
   final int id;
   final List<TrackPreference> entries;
   final String? text;
-  const TrackListile({super.key, required this.onTap, required this.id, required this.entries, this.text});
+  const TrackListile(
+      {super.key,
+      required this.onTap,
+      required this.id,
+      required this.entries,
+      this.text});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool isLogged = entries.where((element) => element.syncId == id).isNotEmpty;
+    final bool isLogged =
+        entries.where((element) => element.syncId == id).isNotEmpty;
     final l10n = l10nLocalizations(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         leading: Container(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: trackInfos(id).$3),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: trackInfos(id).$3),
           width: 60,
           height: 70,
           child: Image.asset(
@@ -54,25 +62,34 @@ class TrackListile extends ConsumerWidget {
                                       shadowColor: Colors.transparent,
                                       surfaceTintColor: Colors.transparent,
                                       shape: RoundedRectangleBorder(
-                                          side: BorderSide(color: context.secondaryColor),
-                                          borderRadius: BorderRadius.circular(20))),
+                                          side: BorderSide(
+                                              color: context.secondaryColor),
+                                          borderRadius:
+                                              BorderRadius.circular(20))),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     l10n.cancel,
-                                    style: TextStyle(color: context.secondaryColor),
+                                    style: TextStyle(
+                                        color: context.secondaryColor),
                                   )),
                               const SizedBox(width: 15),
                               ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red.withValues(alpha: 0.7)),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Colors.red.withValues(alpha: 0.7)),
                                   onPressed: () {
-                                    ref.read(tracksProvider(syncId: id).notifier).logout();
+                                    ref
+                                        .read(
+                                            tracksProvider(syncId: id).notifier)
+                                        .logout();
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     l10n.log_out,
-                                    style: TextStyle(color: context.secondaryColor),
+                                    style: TextStyle(
+                                        color: context.secondaryColor),
                                   )),
                             ],
                           )

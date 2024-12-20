@@ -5,11 +5,14 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class StreamTapeExtractor {
-  Future<List<Video>> videosFromUrl(String url, {String quality = "StreamTape"}) async {
-    final InterceptedClient client = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  Future<List<Video>> videosFromUrl(String url,
+      {String quality = "StreamTape"}) async {
+    final InterceptedClient client =
+        MClient.init(reqcopyWith: {'useDartHttpClient': true});
     try {
       const baseUrl = "https://streamtape.com/e/";
-      final newUrl = !url.startsWith(baseUrl) ? "$baseUrl${url.split("/")[4]}" : url;
+      final newUrl =
+          !url.startsWith(baseUrl) ? "$baseUrl${url.split("/")[4]}" : url;
 
       final response = await client.get(Uri.parse(newUrl));
       final document = parse(response.body);
@@ -25,7 +28,8 @@ class StreamTapeExtractor {
         return [];
       }
       script = scri.first.split("$targetLine.innerHTML = '").last;
-      final videoUrl = "https:${script.substringBefore("'")}${script.substringAfter("+ ('xcd").substringBefore("'")}";
+      final videoUrl =
+          "https:${script.substringBefore("'")}${script.substringAfter("+ ('xcd").substringBefore("'")}";
 
       return [Video(videoUrl, quality, videoUrl)];
     } catch (_) {

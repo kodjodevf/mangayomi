@@ -4,7 +4,8 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 
 extension ChapterExtension on Chapter {
-  Future<void> pushToReaderView(BuildContext context, {bool ignoreIsRead = false}) async {
+  Future<void> pushToReaderView(BuildContext context,
+      {bool ignoreIsRead = false}) async {
     if (ignoreIsRead || !isRead!) {
       await pushMangaReaderView(context: context, chapter: this);
     } else {

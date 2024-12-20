@@ -16,19 +16,20 @@ class ColorFilterWidget extends ConsumerWidget {
     final colorFilterBlendMode = ref.watch(colorFilterBlendModeStateProvider);
     return Container(
       foregroundDecoration: BoxDecoration(
-        backgroundBlendMode: getColorFilterBlendMode(colorFilterBlendMode, context),
+        backgroundBlendMode:
+            getColorFilterBlendMode(colorFilterBlendMode, context),
         color: customColorFilter == null
             ? Colors.transparent
-            : Color.fromARGB(
-                customColorFilter.a ?? 0, customColorFilter.r ?? 0, customColorFilter.g ?? 0, customColorFilter.b ?? 0),
+            : Color.fromARGB(customColorFilter.a ?? 0, customColorFilter.r ?? 0,
+                customColorFilter.g ?? 0, customColorFilter.b ?? 0),
       ),
       child: child,
     );
   }
 }
 
-Widget customColorFilterListTile(
-    String label, int value, void Function((double, bool, String))? onChanged, BuildContext context) {
+Widget customColorFilterListTile(String label, int value,
+    void Function((double, bool, String))? onChanged, BuildContext context) {
   final color = switch (label) {
     "a" => Color.fromARGB(value, 255, 255, 255),
     "r" => Color.fromARGB(255, value, 0, 0),
@@ -47,14 +48,17 @@ Widget customColorFilterListTile(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(label.toUpperCase(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                Text(label.toUpperCase(),
+                    style: const TextStyle(
+                        fontSize: 17, fontWeight: FontWeight.bold)),
                 Container(
                   height: 25,
                   width: 25,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: color,
-                      border: Border.all(width: 2, color: context.dynamicWhiteBlackColor)),
+                      border: Border.all(
+                          width: 2, color: context.dynamicWhiteBlackColor)),
                 )
               ],
             ),
@@ -64,7 +68,8 @@ Widget customColorFilterListTile(
           child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                   trackHeight: context.isDesktop ? null : 3,
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0)),
+                  overlayShape:
+                      const RoundSliderOverlayShape(overlayRadius: 5.0)),
               child: Slider(
                 min: 0.0,
                 max: 255,
@@ -83,8 +88,8 @@ Widget customColorFilterListTile(
   );
 }
 
-Widget rgbaFilterWidget(
-    int a, int r, int g, int b, void Function((double, bool, String))? onChanged, BuildContext context) {
+Widget rgbaFilterWidget(int a, int r, int g, int b,
+    void Function((double, bool, String))? onChanged, BuildContext context) {
   return Column(children: [
     customColorFilterListTile("r", r, onChanged, context),
     customColorFilterListTile("g", g, onChanged, context),

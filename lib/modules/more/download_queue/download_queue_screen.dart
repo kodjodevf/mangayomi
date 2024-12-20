@@ -16,7 +16,8 @@ class DownloadQueueScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context);
     return StreamBuilder(
-      stream: isar.downloads.filter().idIsNotNull().watch(fireImmediately: true),
+      stream:
+          isar.downloads.filter().idIsNotNull().watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final entries = snapshot.data!
@@ -37,11 +38,15 @@ class DownloadQueueScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 3),
                     child: Container(
-                      decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(20), color: Theme.of(context).focusColor),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Theme.of(context).focusColor),
                       child: Text(
                         allQueueLength.toString(),
-                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall!.color),
+                        style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                Theme.of(context).textTheme.bodySmall!.color),
                       ),
                     ),
                   ),
@@ -50,10 +55,13 @@ class DownloadQueueScreen extends ConsumerWidget {
             ),
             body: GroupedListView<Download, String>(
               elements: entries,
-              groupBy: (element) => element.chapter.value?.manga.value?.source ?? "",
+              groupBy: (element) =>
+                  element.chapter.value?.manga.value?.source ?? "",
               groupSeparatorBuilder: (String groupByValue) {
                 final sourceQueueLength = entries
-                    .where((element) => (element.chapter.value?.manga.value?.source ?? "") == groupByValue)
+                    .where((element) =>
+                        (element.chapter.value?.manga.value?.source ?? "") ==
+                        groupByValue)
                     .toList()
                     .length;
                 return Padding(
@@ -79,7 +87,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  element.chapter.value?.manga.value?.name ?? "",
+                                  element.chapter.value?.manga.value?.name ??
+                                      "",
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
@@ -102,7 +111,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                                   begin: 0,
                                   end: element.succeeded! / element.total!,
                                 ),
-                                builder: (context, value, _) => LinearProgressIndicator(
+                                builder: (context, value, _) =>
+                                    LinearProgressIndicator(
                                       value: value,
                                     )),
                           ],
@@ -115,17 +125,25 @@ class DownloadQueueScreen extends ConsumerWidget {
                           child: const Icon(Icons.more_vert),
                           onSelected: (value) async {
                             if (value.toString() == 'Cancel') {
-                              final taskIds = (isar.settings.getSync(227)!.chapterPageUrlsList ?? [])
-                                      .where((e) => e.chapterId == element.chapterId!)
+                              final taskIds = (isar.settings
+                                              .getSync(227)!
+                                              .chapterPageUrlsList ??
+                                          [])
+                                      .where((e) =>
+                                          e.chapterId == element.chapterId!)
                                       .map((e) => e.urls)
                                       .firstOrNull ??
                                   [];
-                              FileDownloader().cancelTasksWithIds(taskIds).then((value) async {
-                                await Future.delayed(const Duration(seconds: 1));
+                              FileDownloader()
+                                  .cancelTasksWithIds(taskIds)
+                                  .then((value) async {
+                                await Future.delayed(
+                                    const Duration(seconds: 1));
                                 isar.writeTxnSync(() {
                                   int id = isar.downloads
                                       .filter()
-                                      .chapterIdEqualTo(element.chapter.value!.id)
+                                      .chapterIdEqualTo(
+                                          element.chapter.value!.id)
                                       .findFirstSync()!
                                       .id!;
                                   isar.downloads.deleteSync(id);
@@ -134,27 +152,38 @@ class DownloadQueueScreen extends ConsumerWidget {
                             } else if (value.toString() == 'CancelAll') {
                               final chapterIds = entries
                                   .where((e) =>
-                                      e.chapter.value?.manga.value?.name == element.chapter.value?.manga.value?.name &&
+                                      e.chapter.value?.manga.value?.name ==
+                                          element.chapter.value?.manga.value
+                                              ?.name &&
                                       e.chapter.value?.manga.value?.source ==
-                                          element.chapter.value?.manga.value?.source)
+                                          element.chapter.value?.manga.value
+                                              ?.source)
                                   .map((e) => e.chapterId)
                                   .toList();
                               for (var chapterId in chapterIds) {
-                                final taskIds = (isar.settings.getSync(227)!.chapterPageUrlsList ?? [])
+                                final taskIds = (isar.settings
+                                                .getSync(227)!
+                                                .chapterPageUrlsList ??
+                                            [])
                                         .where((e) => e.chapterId == chapterId!)
                                         .map((e) => e.urls)
                                         .firstOrNull ??
                                     [];
-                                await FileDownloader().cancelTasksWithIds(taskIds);
+                                await FileDownloader()
+                                    .cancelTasksWithIds(taskIds);
                                 Future.delayed(const Duration(seconds: 2)).then(
                                   (value) {
-                                    final chapterD =
-                                        isar.downloads.filter().chapterIdEqualTo(chapterId).findFirstSync();
+                                    final chapterD = isar.downloads
+                                        .filter()
+                                        .chapterIdEqualTo(chapterId)
+                                        .findFirstSync();
                                     if (chapterD != null) {
-                                      final verifyId = isar.downloads.getSync(chapterD.id!);
+                                      final verifyId =
+                                          isar.downloads.getSync(chapterD.id!);
                                       isar.writeTxnSync(() {
                                         if (verifyId != null) {
-                                          isar.downloads.deleteSync(chapterD.id!);
+                                          isar.downloads
+                                              .deleteSync(chapterD.id!);
                                         }
                                       });
                                     }
@@ -164,8 +193,11 @@ class DownloadQueueScreen extends ConsumerWidget {
                             }
                           },
                           itemBuilder: (context) => [
-                            PopupMenuItem(value: 'Cancel', child: Text(l10n.cancel)),
-                            PopupMenuItem(value: 'CancelAll', child: Text(l10n.cancel_all_for_this_series)),
+                            PopupMenuItem(
+                                value: 'Cancel', child: Text(l10n.cancel)),
+                            PopupMenuItem(
+                                value: 'CancelAll',
+                                child: Text(l10n.cancel_all_for_this_series)),
                           ],
                         ),
                       )
@@ -173,8 +205,9 @@ class DownloadQueueScreen extends ConsumerWidget {
                   ),
                 );
               },
-              itemComparator: (item1, item2) => (item1.chapter.value?.manga.value?.source ?? "")
-                  .compareTo(item2.chapter.value?.manga.value?.source ?? ""),
+              itemComparator: (item1, item2) =>
+                  (item1.chapter.value?.manga.value?.source ?? "").compareTo(
+                      item2.chapter.value?.manga.value?.source ?? ""),
               order: GroupedListOrder.DESC,
             ),
           );

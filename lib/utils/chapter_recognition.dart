@@ -1,7 +1,8 @@
 class ChapterRecognition {
   final _numberPattern = r"([0-9]+)(\.[0-9]+)?(\.?[a-z]+)?";
 
-  final _unwanted = RegExp(r"\b(?:v|ver|vol|version|volume|season|s)[^a-z]?[0-9]+");
+  final _unwanted =
+      RegExp(r"\b(?:v|ver|vol|version|volume|season|s)[^a-z]?[0-9]+");
 
   final _unwantedWhiteSpace = RegExp(r"\s(?=extra|special|omake)");
 

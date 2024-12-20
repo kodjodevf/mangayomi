@@ -41,7 +41,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     return textPainter.size;
   }
 
-  double calculateDynamicButtonWidth(String text, TextStyle textStyle, double padding) {
+  double calculateDynamicButtonWidth(
+      String text, TextStyle textStyle, double padding) {
     final textSize = measureText(text, textStyle);
     return textSize.width + padding;
   }
@@ -57,20 +58,28 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
           final isExtended = ref.watch(isExtendedStateProvider);
           return ref.watch(isLongPressedStateProvider) == true
               ? Container()
-              : chaptersList.isNotEmpty && chaptersList.where((element) => !element.isRead!).toList().isNotEmpty
+              : chaptersList.isNotEmpty &&
+                      chaptersList
+                          .where((element) => !element.isRead!)
+                          .toList()
+                          .isNotEmpty
                   ? StreamBuilder(
                       stream: isar.historys
                           .filter()
                           .idIsNotNull()
                           .and()
-                          .chapter((q) => q.manga((q) => q.isMangaEqualTo(widget.manga.isManga!)))
+                          .chapter((q) => q.manga(
+                              (q) => q.isMangaEqualTo(widget.manga.isManga!)))
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
-                        String buttonLabel = widget.manga.isManga! ? l10n.read : l10n.watch;
+                        String buttonLabel =
+                            widget.manga.isManga! ? l10n.read : l10n.watch;
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                          final incognitoMode = ref.watch(incognitoModeStateProvider);
+                          final incognitoMode =
+                              ref.watch(incognitoModeStateProvider);
                           final entries = snapshot.data!
-                              .where((element) => element.mangaId == widget.manga.id)
+                              .where((element) =>
+                                  element.mangaId == widget.manga.id)
                               .toList()
                               .reversed
                               .toList();
@@ -83,8 +92,12 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               onPressed: () {
                                 chap.pushToReaderView(context);
                               },
-                              textWidth: measureText(l10n.resume, Theme.of(context).textTheme.labelLarge!).width,
-                              width: calculateDynamicButtonWidth(l10n.resume, Theme.of(context).textTheme.labelLarge!,
+                              textWidth: measureText(l10n.resume,
+                                      Theme.of(context).textTheme.labelLarge!)
+                                  .width,
+                              width: calculateDynamicButtonWidth(
+                                  l10n.resume,
+                                  Theme.of(context).textTheme.labelLarge!,
                                   50), // 50 Padding, else RenderFlex overflow Exception
                             );
                           }
@@ -92,10 +105,19 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             isExtended: !isExtended,
                             label: buttonLabel,
                             onPressed: () {
-                              widget.manga.chapters.toList().reversed.toList().last.pushToReaderView(context);
+                              widget.manga.chapters
+                                  .toList()
+                                  .reversed
+                                  .toList()
+                                  .last
+                                  .pushToReaderView(context);
                             },
-                            textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
-                            width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!,
+                            textWidth: measureText(buttonLabel,
+                                    Theme.of(context).textTheme.labelLarge!)
+                                .width,
+                            width: calculateDynamicButtonWidth(
+                                buttonLabel,
+                                Theme.of(context).textTheme.labelLarge!,
                                 50), // 50 Padding, else RenderFlex overflow Exception
                           );
                         }
@@ -103,10 +125,19 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           isExtended: !isExtended,
                           label: buttonLabel,
                           onPressed: () {
-                            widget.manga.chapters.toList().reversed.toList().last.pushToReaderView(context);
+                            widget.manga.chapters
+                                .toList()
+                                .reversed
+                                .toList()
+                                .last
+                                .pushToReaderView(context);
                           },
-                          textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
-                          width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!,
+                          textWidth: measureText(buttonLabel,
+                                  Theme.of(context).textTheme.labelLarge!)
+                              .width,
+                          width: calculateDynamicButtonWidth(
+                              buttonLabel,
+                              Theme.of(context).textTheme.labelLarge!,
                               50), // 50 Padding, else RenderFlex overflow Exception
                         );
                       },
@@ -155,7 +186,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
             ? SizedBox(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).scaffoldBackgroundColor, elevation: 0),
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      elevation: 0),
                   onPressed: () {
                     final model = widget.manga;
                     isar.writeTxnSync(() {
@@ -183,8 +216,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 ),
               )
             : ElevatedButton(
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: Theme.of(context).scaffoldBackgroundColor, elevation: 0),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    elevation: 0),
                 onPressed: () {
                   final checkCategoryList = isar.categorys
                       .filter()
@@ -215,7 +249,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     ),
                     Text(
                       l10n.add_to_library,
-                      style: TextStyle(color: context.secondaryColor, fontSize: 11),
+                      style: TextStyle(
+                          color: context.secondaryColor, fontSize: 11),
                       textAlign: TextAlign.center,
                     )
                   ],
@@ -264,14 +299,17 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 label: entries[index].name!,
                                 onTap: () {
                                   setState(() {
-                                    if (categoryIds.contains(entries[index].id)) {
+                                    if (categoryIds
+                                        .contains(entries[index].id)) {
                                       categoryIds.remove(entries[index].id);
                                     } else {
                                       categoryIds.add(entries[index].id!);
                                     }
                                   });
                                 },
-                                type: categoryIds.contains(entries[index].id) ? 1 : 0,
+                                type: categoryIds.contains(entries[index].id)
+                                    ? 1
+                                    : 0,
                               );
                             },
                           );
@@ -285,7 +323,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     children: [
                       TextButton(
                           onPressed: () {
-                            context.push("/categories", extra: (true, widget.manga.isManga! ? 0 : 1));
+                            context.push("/categories",
+                                extra: (true, widget.manga.isManga! ? 0 : 1));
                             Navigator.pop(context);
                           },
                           child: Text(l10n.edit)),
@@ -305,7 +344,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 isar.writeTxnSync(() {
                                   model.favorite = true;
                                   model.categories = categoryIds;
-                                  model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                                  model.dateAdded =
+                                      DateTime.now().millisecondsSinceEpoch;
                                   isar.mangas.putSync(model);
                                 });
                                 if (mounted) {

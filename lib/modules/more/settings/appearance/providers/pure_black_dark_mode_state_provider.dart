@@ -13,6 +13,7 @@ class PureBlackDarkModeState extends _$PureBlackDarkModeState {
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() => isar.settings.putSync(settings!..pureBlackDarkMode = value));
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..pureBlackDarkMode = value));
   }
 }

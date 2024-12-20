@@ -134,7 +134,8 @@ typedef TaskProgressCallback = void Function(TaskProgressUpdate update);
 
 /// Signature for function you can register to be called when a notification
 /// is tapped by the user
-typedef TaskNotificationTapCallback = void Function(Task task, NotificationType notificationType);
+typedef TaskNotificationTapCallback = void Function(
+    Task task, NotificationType notificationType);
 
 /// Signature for a function you can provide to the [downloadBatch] or
 /// [uploadBatch] that will be called upon completion of each task
@@ -153,14 +154,18 @@ class Batch {
   Batch(this.tasks, this.batchProgressCallback);
 
   /// Returns an Iterable with successful tasks in this batch
-  Iterable<Task> get succeeded =>
-      results.entries.where((entry) => entry.value == TaskStatus.complete).map((e) => e.key);
+  Iterable<Task> get succeeded => results.entries
+      .where((entry) => entry.value == TaskStatus.complete)
+      .map((e) => e.key);
 
   /// Returns the number of successful tasks in this batch
-  int get numSucceeded => results.values.where((result) => result == TaskStatus.complete).length;
+  int get numSucceeded =>
+      results.values.where((result) => result == TaskStatus.complete).length;
 
   /// Returns an Iterable with failed tasks in this batch
-  Iterable<Task> get failed => results.entries.where((entry) => entry.value != TaskStatus.complete).map((e) => e.key);
+  Iterable<Task> get failed => results.entries
+      .where((entry) => entry.value != TaskStatus.complete)
+      .map((e) => e.key);
 
   /// Returns the number of failed downloads in this batch
   int get numFailed => results.values.length - numSucceeded;
@@ -178,7 +183,8 @@ sealed class TaskUpdate {
   const TaskUpdate(this.task);
 
   /// Create object from [json]
-  TaskUpdate.fromJson(Map<String, dynamic> json) : task = Task.createFromJson(json['task'] ?? json);
+  TaskUpdate.fromJson(Map<String, dynamic> json)
+      : task = Task.createFromJson(json['task'] ?? json);
 
   /// Return JSON Map representing object
   Map<String, dynamic> toJson() => {'task': task.toJson()};
@@ -200,21 +206,31 @@ class TaskStatusUpdate extends TaskUpdate {
   final String? charSet; // derived from Content-Type header
 
   const TaskStatusUpdate(super.task, this.status,
-      [this.exception, this.responseBody, this.responseHeaders, this.responseStatusCode, this.mimeType, this.charSet]);
+      [this.exception,
+      this.responseBody,
+      this.responseHeaders,
+      this.responseStatusCode,
+      this.mimeType,
+      this.charSet]);
 
   /// Create object from [json]
   TaskStatusUpdate.fromJson(super.json)
       : status = TaskStatus.values[(json['taskStatus'] as num?)?.toInt() ?? 0],
-        exception = json['exception'] != null ? TaskException.fromJson(json['exception']) : null,
+        exception = json['exception'] != null
+            ? TaskException.fromJson(json['exception'])
+            : null,
         responseBody = json['responseBody'],
-        responseHeaders = json['responseHeaders'] != null ? Map.from(json['responseHeaders']) : null,
+        responseHeaders = json['responseHeaders'] != null
+            ? Map.from(json['responseHeaders'])
+            : null,
         responseStatusCode = (json['responseStatusCode'] as num?)?.toInt(),
         mimeType = json['mimeType'],
         charSet = json['charSet'],
         super.fromJson();
 
   /// Create object from [jsonString]
-  factory TaskStatusUpdate.fromJsonString(String jsonString) => TaskStatusUpdate.fromJson(jsonDecode(jsonString));
+  factory TaskStatusUpdate.fromJsonString(String jsonString) =>
+      TaskStatusUpdate.fromJson(jsonDecode(jsonString));
 
   /// Return JSON Map representing object
   @override
@@ -273,18 +289,22 @@ class TaskProgressUpdate extends TaskUpdate {
   final Duration timeRemaining;
 
   const TaskProgressUpdate(super.task, this.progress,
-      [this.expectedFileSize = -1, this.networkSpeed = -1, this.timeRemaining = const Duration(seconds: -1)]);
+      [this.expectedFileSize = -1,
+      this.networkSpeed = -1,
+      this.timeRemaining = const Duration(seconds: -1)]);
 
   /// Create object from [json]
   TaskProgressUpdate.fromJson(super.json)
       : progress = (json['progress'] as num?)?.toDouble() ?? progressFailed,
         expectedFileSize = (json['expectedFileSize'] as num?)?.toInt() ?? -1,
         networkSpeed = (json['networkSpeed'] as num?)?.toDouble() ?? -1,
-        timeRemaining = Duration(seconds: (json['timeRemaining'] as num?)?.toInt() ?? -1),
+        timeRemaining =
+            Duration(seconds: (json['timeRemaining'] as num?)?.toInt() ?? -1),
         super.fromJson();
 
   /// Create object from [jsonString]
-  factory TaskProgressUpdate.fromJsonString(String jsonString) => TaskProgressUpdate.fromJson(jsonDecode(jsonString));
+  factory TaskProgressUpdate.fromJsonString(String jsonString) =>
+      TaskProgressUpdate.fromJson(jsonDecode(jsonString));
 
   /// Return JSON Map representing object
   @override
@@ -344,7 +364,8 @@ class ResumeData {
   final int requiredStartByte;
   final String? eTag;
 
-  const ResumeData(this.task, this.data, [this.requiredStartByte = 0, this.eTag]);
+  const ResumeData(this.task, this.data,
+      [this.requiredStartByte = 0, this.eTag]);
 
   /// Create object from [json]
   ResumeData.fromJson(Map<String, dynamic> json)
@@ -354,11 +375,16 @@ class ResumeData {
         eTag = json['eTag'] as String?;
 
   /// Create object from [jsonString]
-  factory ResumeData.fromJsonString(String jsonString) => ResumeData.fromJson(jsonDecode(jsonString));
+  factory ResumeData.fromJsonString(String jsonString) =>
+      ResumeData.fromJson(jsonDecode(jsonString));
 
   /// Return JSON Map representing object
-  Map<String, dynamic> toJson() =>
-      {'task': task.toJson(), 'data': data, 'requiredStartByte': requiredStartByte, 'eTag': eTag};
+  Map<String, dynamic> toJson() => {
+        'task': task.toJson(),
+        'data': data,
+        'requiredStartByte': requiredStartByte,
+        'eTag': eTag
+      };
 
   String get taskId => task.taskId;
 
@@ -376,7 +402,11 @@ class ResumeData {
           eTag == other.eTag;
 
   @override
-  int get hashCode => task.hashCode ^ data.hashCode ^ requiredStartByte.hashCode ^ (eTag?.hashCode ?? 0);
+  int get hashCode =>
+      task.hashCode ^
+      data.hashCode ^
+      requiredStartByte.hashCode ^
+      (eTag?.hashCode ?? 0);
 }
 
 /// Types of undelivered data that can be requested
@@ -470,7 +500,8 @@ final class TaskNotificationConfig {
       this.progressBar = false,
       this.tapOpensFile = false,
       this.groupNotificationId = ''}) {
-    assert(running != null || complete != null || error != null || paused != null,
+    assert(
+        running != null || complete != null || error != null || paused != null,
         'At least one notification must be set');
   }
 
@@ -514,9 +545,11 @@ final class Config {
   static const resourceTimeout = 'resourceTimeout';
   static const checkAvailableSpace = 'checkAvailableSpace';
   static const proxy = 'proxy';
-  static const bypassTLSCertificateValidation = 'bypassTLSCertificateValidation';
+  static const bypassTLSCertificateValidation =
+      'bypassTLSCertificateValidation';
   static const runInForeground = 'runInForeground';
-  static const runInForegroundIfFileLargerThan = 'runInForegroundIfFileLargerThan';
+  static const runInForegroundIfFileLargerThan =
+      'runInForegroundIfFileLargerThan';
   static const localize = 'localize';
   static const useCacheDir = 'useCacheDir';
   static const useExternalStorage = 'useExternalStorage';
@@ -531,7 +564,8 @@ final class Config {
   ///
   /// The int equivalent is used in communication with the native downloader
   static int argToInt(String argument) {
-    final value = {Config.always: 0, Config.whenAble: -2, Config.never: -1}[argument];
+    final value =
+        {Config.always: 0, Config.whenAble: -2, Config.never: -1}[argument];
     if (value == null) {
       throw ArgumentError('Argument $argument cannot be converted to int');
     }

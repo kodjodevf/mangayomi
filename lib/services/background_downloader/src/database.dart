@@ -35,28 +35,37 @@ interface class Database {
   /// Optionally, specify a [group] to filter by
   Future<List<TaskRecord>> allRecords({String? group}) async {
     final allRecords = await _storage.retrieveAllTaskRecords();
-    return group == null ? allRecords.toList() : allRecords.where((element) => element.group == group).toList();
+    return group == null
+        ? allRecords.toList()
+        : allRecords.where((element) => element.group == group).toList();
   }
 
   /// Returns all [TaskRecord] older than [age]
   ///
   /// Optionally, specify a [group] to filter by
-  Future<List<TaskRecord>> allRecordsOlderThan(Duration age, {String? group}) async {
+  Future<List<TaskRecord>> allRecordsOlderThan(Duration age,
+      {String? group}) async {
     final allRecordsInGroup = await allRecords(group: group);
     final now = DateTime.now();
-    return allRecordsInGroup.where((record) => now.difference(record.task.creationTime) > age).toList();
+    return allRecordsInGroup
+        .where((record) => now.difference(record.task.creationTime) > age)
+        .toList();
   }
 
   /// Returns all [TaskRecord] with [TaskStatus] [status]
   ///
   /// Optionally, specify a [group] to filter by
-  Future<List<TaskRecord>> allRecordsWithStatus(TaskStatus status, {String? group}) async {
+  Future<List<TaskRecord>> allRecordsWithStatus(TaskStatus status,
+      {String? group}) async {
     final allRecordsInGroup = await allRecords(group: group);
-    return allRecordsInGroup.where((record) => record.status == status).toList();
+    return allRecordsInGroup
+        .where((record) => record.status == status)
+        .toList();
   }
 
   /// Return [TaskRecord] for this [taskId] or null if not found
-  Future<TaskRecord?> recordForId(String taskId) => _storage.retrieveTaskRecord(taskId);
+  Future<TaskRecord?> recordForId(String taskId) =>
+      _storage.retrieveTaskRecord(taskId);
 
   /// Return list of [TaskRecord] corresponding to the [taskIds]
   ///
@@ -82,11 +91,13 @@ interface class Database {
       return;
     }
     final allRecordsInGroup = await allRecords(group: group);
-    await deleteRecordsWithIds(allRecordsInGroup.map((record) => record.taskId));
+    await deleteRecordsWithIds(
+        allRecordsInGroup.map((record) => record.taskId));
   }
 
   /// Delete record with this [taskId]
-  Future<void> deleteRecordWithId(String taskId) => deleteRecordsWithIds([taskId]);
+  Future<void> deleteRecordWithId(String taskId) =>
+      deleteRecordsWithIds([taskId]);
 
   /// Delete records with these [taskIds]
   Future<void> deleteRecordsWithIds(Iterable<String> taskIds) async {
@@ -99,7 +110,8 @@ interface class Database {
   ///
   /// This is used by the [FileDownloader] to track tasks, and should not
   /// normally be used by the user of this package
-  Future<void> updateRecord(TaskRecord record) async => _storage.storeTaskRecord(record);
+  Future<void> updateRecord(TaskRecord record) async =>
+      _storage.storeTaskRecord(record);
 }
 
 /// Record containing task, task status and task progress.
@@ -113,7 +125,8 @@ final class TaskRecord {
   final int expectedFileSize;
   final TaskException? exception;
 
-  TaskRecord(this.task, this.status, this.progress, this.expectedFileSize, [this.exception]);
+  TaskRecord(this.task, this.status, this.progress, this.expectedFileSize,
+      [this.exception]);
 
   /// Returns the group collection this record is stored under, which is
   /// the [task]'s [Task.group]
@@ -125,10 +138,13 @@ final class TaskRecord {
   /// Create [TaskRecord] from [json]
   TaskRecord.fromJson(Map<String, dynamic> json)
       : task = Task.createFromJson(json),
-        status = TaskStatus.values[(json['status'] as num?)?.toInt() ?? TaskStatus.failed.index],
+        status = TaskStatus.values[
+            (json['status'] as num?)?.toInt() ?? TaskStatus.failed.index],
         progress = (json['progress'] as num?)?.toDouble() ?? progressFailed,
         expectedFileSize = (json['expectedFileSize'] as num?)?.toInt() ?? -1,
-        exception = json['exception'] == null ? null : TaskException.fromJson(json['exception']);
+        exception = json['exception'] == null
+            ? null
+            : TaskException.fromJson(json['exception']);
 
   /// Returns JSON map representation of this [TaskRecord]
   ///
@@ -144,12 +160,17 @@ final class TaskRecord {
   }
 
   /// Copy with optional replacements. [exception] is always copied
-  TaskRecord copyWith({Task? task, TaskStatus? status, double? progress, int? expectedFileSize}) => TaskRecord(
-      task ?? this.task,
-      status ?? this.status,
-      progress ?? this.progress,
-      expectedFileSize ?? this.expectedFileSize,
-      exception);
+  TaskRecord copyWith(
+          {Task? task,
+          TaskStatus? status,
+          double? progress,
+          int? expectedFileSize}) =>
+      TaskRecord(
+          task ?? this.task,
+          status ?? this.status,
+          progress ?? this.progress,
+          expectedFileSize ?? this.expectedFileSize,
+          exception);
 
   @override
   String toString() {
@@ -169,5 +190,6 @@ final class TaskRecord {
           exception == other.exception;
 
   @override
-  int get hashCode => task.hashCode ^ status.hashCode ^ progress.hashCode ^ exception.hashCode;
+  int get hashCode =>
+      task.hashCode ^ status.hashCode ^ progress.hashCode ^ exception.hashCode;
 }

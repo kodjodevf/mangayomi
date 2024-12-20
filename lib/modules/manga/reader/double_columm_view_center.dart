@@ -27,14 +27,17 @@ class DoubleColummView extends StatefulWidget {
   State<DoubleColummView> createState() => _DoubleColummViewState();
 }
 
-class _DoubleColummViewState extends State<DoubleColummView> with TickerProviderStateMixin {
+class _DoubleColummViewState extends State<DoubleColummView>
+    with TickerProviderStateMixin {
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
   Alignment _scalePosition = Alignment.center;
   final PhotoViewController _photoViewController = PhotoViewController();
-  final PhotoViewScaleStateController _photoViewScaleStateController = PhotoViewScaleStateController();
+  final PhotoViewScaleStateController _photoViewScaleStateController =
+      PhotoViewScaleStateController();
   Duration? _doubleTapAnimationDuration() {
-    int doubleTapAnimationValue = isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
+    int doubleTapAnimationValue =
+        isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
     if (doubleTapAnimationValue == 0) {
       return const Duration(milliseconds: 10);
     } else if (doubleTapAnimationValue == 1) {
@@ -43,7 +46,8 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
     return const Duration(milliseconds: 200);
   }
 
-  void _onScaleEnd(BuildContext context, ScaleEndDetails details, PhotoViewControllerValue controllerValue) {
+  void _onScaleEnd(BuildContext context, ScaleEndDetails details,
+      PhotoViewControllerValue controllerValue) {
     if (controllerValue.scale! < 1) {
       _photoViewScaleStateController.reset();
     }
@@ -52,15 +56,16 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
   double get pixelRatio => View.of(context).devicePixelRatio;
   Size get size => View.of(context).physicalSize / pixelRatio;
   Alignment _computeAlignmentByTapOffset(Offset offset) {
-    return Alignment(
-        (offset.dx - size.width / 2) / (size.width / 2), (offset.dy - size.height / 2) / (size.height / 2));
+    return Alignment((offset.dx - size.width / 2) / (size.width / 2),
+        (offset.dy - size.height / 2) / (size.height / 2));
   }
 
   @override
   void initState() {
-    _scaleAnimationController = AnimationController(duration: _doubleTapAnimationDuration(), vsync: this);
-    _animation =
-        Tween(begin: 1.0, end: 2.0).animate(CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
+    _scaleAnimationController = AnimationController(
+        duration: _doubleTapAnimationDuration(), vsync: this);
+    _animation = Tween(begin: 1.0, end: 2.0).animate(
+        CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController));
     _animation.addListener(() {
       _photoViewController.scale = _animation.value;
     });
@@ -122,32 +127,42 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                       child: ImageViewPaged(
                         data: widget.datas[0]!,
                         loadStateChanged: (state) {
-                          if (state.extendedImageLoadState == LoadState.loading) {
-                            final ImageChunkEvent? loadingProgress = state.loadingProgress;
-                            final double progress = loadingProgress?.expectedTotalBytes != null
-                                ? loadingProgress!.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                : 0;
+                          if (state.extendedImageLoadState ==
+                              LoadState.loading) {
+                            final ImageChunkEvent? loadingProgress =
+                                state.loadingProgress;
+                            final double progress =
+                                loadingProgress?.expectedTotalBytes != null
+                                    ? loadingProgress!.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : 0;
                             return Container(
                               color: getBackgroundColor(widget.backgroundColor),
                               height: context.height(0.8),
-                              child: CircularProgressIndicatorAnimateRotate(progress: progress),
+                              child: CircularProgressIndicatorAnimateRotate(
+                                  progress: progress),
                             );
                           }
-                          if (state.extendedImageLoadState == LoadState.completed) {
+                          if (state.extendedImageLoadState ==
+                              LoadState.completed) {
                             widget.isFailedToLoadImage(false);
                             return Image(image: state.imageProvider);
                           }
-                          if (state.extendedImageLoadState == LoadState.failed) {
+                          if (state.extendedImageLoadState ==
+                              LoadState.failed) {
                             widget.isFailedToLoadImage(true);
                             return Container(
-                                color: getBackgroundColor(widget.backgroundColor),
+                                color:
+                                    getBackgroundColor(widget.backgroundColor),
                                 height: context.height(0.8),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       l10n.image_loading_error,
-                                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                                      style: TextStyle(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.7)),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -162,9 +177,14 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: context.primaryColor, borderRadius: BorderRadius.circular(30)),
+                                                color: context.primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(30)),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 16),
                                               child: Text(
                                                 l10n.retry,
                                               ),
@@ -176,7 +196,8 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                           }
                           return null;
                         },
-                        onLongPressData: (datas) => widget.onLongPressData.call(datas),
+                        onLongPressData: (datas) =>
+                            widget.onLongPressData.call(datas),
                       ),
                     ),
                   // if (widget.datas[1] != null) const SizedBox(width: 10),
@@ -185,32 +206,42 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                       child: ImageViewPaged(
                         data: widget.datas[1]!,
                         loadStateChanged: (state) {
-                          if (state.extendedImageLoadState == LoadState.loading) {
-                            final ImageChunkEvent? loadingProgress = state.loadingProgress;
-                            final double progress = loadingProgress?.expectedTotalBytes != null
-                                ? loadingProgress!.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                : 0;
+                          if (state.extendedImageLoadState ==
+                              LoadState.loading) {
+                            final ImageChunkEvent? loadingProgress =
+                                state.loadingProgress;
+                            final double progress =
+                                loadingProgress?.expectedTotalBytes != null
+                                    ? loadingProgress!.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : 0;
                             return Container(
                               color: getBackgroundColor(widget.backgroundColor),
                               height: context.height(0.8),
-                              child: CircularProgressIndicatorAnimateRotate(progress: progress),
+                              child: CircularProgressIndicatorAnimateRotate(
+                                  progress: progress),
                             );
                           }
-                          if (state.extendedImageLoadState == LoadState.completed) {
+                          if (state.extendedImageLoadState ==
+                              LoadState.completed) {
                             widget.isFailedToLoadImage(false);
                             return Image(image: state.imageProvider);
                           }
-                          if (state.extendedImageLoadState == LoadState.failed) {
+                          if (state.extendedImageLoadState ==
+                              LoadState.failed) {
                             widget.isFailedToLoadImage(true);
                             return Container(
-                                color: getBackgroundColor(widget.backgroundColor),
+                                color:
+                                    getBackgroundColor(widget.backgroundColor),
                                 height: context.height(0.8),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       l10n.image_loading_error,
-                                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
+                                      style: TextStyle(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.7)),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -225,9 +256,14 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: context.primaryColor, borderRadius: BorderRadius.circular(30)),
+                                                color: context.primaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(30)),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 16),
                                               child: Text(
                                                 l10n.retry,
                                               ),
@@ -239,7 +275,8 @@ class _DoubleColummViewState extends State<DoubleColummView> with TickerProvider
                           }
                           return null;
                         },
-                        onLongPressData: (datas) => widget.onLongPressData.call(datas),
+                        onLongPressData: (datas) =>
+                            widget.onLongPressData.call(datas),
                       ),
                     ),
                 ],

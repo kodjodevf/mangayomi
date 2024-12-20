@@ -12,10 +12,11 @@ class CryptoAES {
       final key = encrypt.Key(keyndIV.$1);
       final iv = encrypt.IV(keyndIV.$2);
 
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
+      final encrypter = encrypt.Encrypter(
+          encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
       final encrypted = encrypter.encrypt(plainText.trim(), iv: iv);
-      Uint8List encryptedBytesWithSalt =
-          Uint8List.fromList(createUint8ListFromString("Salted__") + salt + encrypted.bytes);
+      Uint8List encryptedBytesWithSalt = Uint8List.fromList(
+          createUint8ListFromString("Salted__") + salt + encrypted.bytes);
       return base64.encode(encryptedBytesWithSalt);
     } catch (error) {
       rethrow;
@@ -26,21 +27,25 @@ class CryptoAES {
     try {
       Uint8List encryptedBytesWithSalt = base64.decode(encrypted.trim());
 
-      Uint8List encryptedBytes = encryptedBytesWithSalt.sublist(16, encryptedBytesWithSalt.length);
+      Uint8List encryptedBytes =
+          encryptedBytesWithSalt.sublist(16, encryptedBytesWithSalt.length);
       final salt = encryptedBytesWithSalt.sublist(8, 16);
       var keyndIV = deriveKeyAndIV(passphrase.trim(), salt);
       final key = encrypt.Key(keyndIV.$1);
       final iv = encrypt.IV(keyndIV.$2);
 
-      final encrypter = encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
-      final decrypted = encrypter.decrypt64(base64.encode(encryptedBytes), iv: iv);
+      final encrypter = encrypt.Encrypter(
+          encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: "PKCS7"));
+      final decrypted =
+          encrypter.decrypt64(base64.encode(encryptedBytes), iv: iv);
       return decrypted;
     } catch (error) {
       rethrow;
     }
   }
 
-  static (Uint8List, Uint8List) deriveKeyAndIV(String passphrase, Uint8List salt) {
+  static (Uint8List, Uint8List) deriveKeyAndIV(
+      String passphrase, Uint8List salt) {
     var password = createUint8ListFromString(passphrase);
     Uint8List concatenatedHashes = Uint8List(0);
     Uint8List currentHash = Uint8List(0);

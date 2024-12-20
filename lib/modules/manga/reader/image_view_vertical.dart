@@ -40,7 +40,8 @@ class ImageViewVertical extends ConsumerWidget {
           if (state.extendedImageLoadState == LoadState.loading) {
             final ImageChunkEvent? loadingProgress = state.loadingProgress;
             final double progress = loadingProgress?.expectedTotalBytes != null
-                ? loadingProgress!.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                ? loadingProgress!.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
                 : 0;
             return Container(
               color: Colors.black,
@@ -59,7 +60,8 @@ class ImageViewVertical extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(context.l10n.image_loading_error,
-                        style: TextStyle(color: Colors.white.withValues(alpha: 0.7))),
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7))),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
@@ -72,10 +74,12 @@ class ImageViewVertical extends ConsumerWidget {
                             failedToLoadImage(false);
                           },
                           child: Container(
-                            decoration:
-                                BoxDecoration(color: context.primaryColor, borderRadius: BorderRadius.circular(30)),
+                            decoration: BoxDecoration(
+                                color: context.primaryColor,
+                                borderRadius: BorderRadius.circular(30)),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
                               child: Text(
                                 context.l10n.retry,
                               ),

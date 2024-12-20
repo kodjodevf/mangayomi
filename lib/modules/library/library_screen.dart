@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -1115,7 +1115,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             type: fromLibList.isNotEmpty ? 1 : 0,
                           ),
                           ListTileChapterFilter(
-                            label: widget.isManga ? l10n.downloaded_chapters : l10n.downloaded_episodes,
+                            label: widget.isManga
+                                ? l10n.downloaded_chapters
+                                : l10n.downloaded_episodes,
                             onTap: () {
                               setState(() {
                                 if (downloadedChapsList == mangaIdsList) {
@@ -1516,7 +1518,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 child: Column(
                   children: [
                     ListTileChapterFilter(
-                        label: widget.isManga ? l10n.downloaded_chapters : l10n.downloaded_episodes,
+                        label: widget.isManga
+                            ? l10n.downloaded_chapters
+                            : l10n.downloaded_episodes,
                         type: downloadedChapter ? 1 : 0,
                         onTap: () {
                           ref
@@ -1549,7 +1553,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               .set(!localSource);
                         }),
                     ListTileChapterFilter(
-                        label: widget.isManga ? l10n.show_continue_reading_buttons : l10n.show_continue_watching_buttons,
+                        label: widget.isManga
+                            ? l10n.show_continue_reading_buttons
+                            : l10n.show_continue_watching_buttons,
                         type: continueReaderBtn ? 1 : 0,
                         onTap: () {
                           ref
@@ -1648,7 +1654,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: AppBar(
                     title: Text(mangaIdsList.length.toString()),
-                    backgroundColor: context.primaryColor.withValues(alpha: 0.2),
+                    backgroundColor:
+                        context.primaryColor.withValues(alpha: 0.2),
                     leading: IconButton(
                         onPressed: () {
                           ref.read(mangasListStateProvider.notifier).clear();

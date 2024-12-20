@@ -7,7 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'isar_providers.g.dart';
 
 @riverpod
-Stream<List<Manga>> getAllMangaStream(Ref ref, {required int? categoryId, required bool? isManga}) async* {
+Stream<List<Manga>> getAllMangaStream(Ref ref,
+    {required int? categoryId, required bool? isManga}) async* {
   yield* categoryId == null
       ? isar.mangas
           .filter()
@@ -28,7 +29,8 @@ Stream<List<Manga>> getAllMangaStream(Ref ref, {required int? categoryId, requir
 }
 
 @riverpod
-Stream<List<Manga>> getAllMangaWithoutCategoriesStream(Ref ref, {required bool? isManga}) async* {
+Stream<List<Manga>> getAllMangaWithoutCategoriesStream(Ref ref,
+    {required bool? isManga}) async* {
   yield* isar.mangas
       .filter()
       .idIsNotNull()
@@ -47,5 +49,10 @@ Stream<List<Manga>> getAllMangaWithoutCategoriesStream(Ref ref, {required bool? 
 
 @riverpod
 Stream<List<Settings>> getSettingsStream(Ref ref) async* {
-  yield* isar.settings.filter().idIsNotNull().and().idEqualTo(227).watch(fireImmediately: true);
+  yield* isar.settings
+      .filter()
+      .idIsNotNull()
+      .and()
+      .idEqualTo(227)
+      .watch(fireImmediately: true);
 }

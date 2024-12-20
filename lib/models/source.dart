@@ -115,7 +115,8 @@ class Source {
     additionalParams = json['additionalParams'] ?? "";
     isObsolete = json['isObsolete'];
     isLocal = json['isLocal'];
-    sourceCodeLanguage = SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
+    sourceCodeLanguage =
+        SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
   }
 
   Map<String, dynamic> toJson() => {

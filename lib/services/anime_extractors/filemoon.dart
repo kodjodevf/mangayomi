@@ -7,9 +7,11 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
 
 class FilemoonExtractor {
-  final InterceptedClient client = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  final InterceptedClient client =
+      MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
-  Future<List<Video>> videosFromUrl(String url, String prefix, String suffix) async {
+  Future<List<Video>> videosFromUrl(
+      String url, String prefix, String suffix) async {
     prefix = prefix.isEmpty ? "Filemoon " : prefix;
     try {
       final videoHeaders = {
@@ -18,11 +20,15 @@ class FilemoonExtractor {
       };
       final response = await client.get(Uri.parse(url));
 
-      final jsEval = xpathSelector(response.body).queryXPath('//script[contains(text(), "eval")]/text()').attr;
+      final jsEval = xpathSelector(response.body)
+          .queryXPath('//script[contains(text(), "eval")]/text()')
+          .attr;
 
       final unpacked = JSPacker(jsEval!).unpack() ?? "";
 
-      final masterUrl = unpacked.isNotEmpty ? unpacked.substringAfter('{file:"').substringBefore('"}') : '';
+      final masterUrl = unpacked.isNotEmpty
+          ? unpacked.substringAfter('{file:"').substringBefore('"}')
+          : '';
 
       if (masterUrl.isEmpty) {
         return [];
@@ -32,7 +38,8 @@ class FilemoonExtractor {
           unpacked.substringAfter("""fetch('", """).substringBefore("""').""");
       if (subUrl.isNotEmpty) {
         try {
-          final subResponse = await client.get(Uri.parse(subUrl), headers: videoHeaders);
+          final subResponse =
+              await client.get(Uri.parse(subUrl), headers: videoHeaders);
           final subList = jsonDecode(subResponse.body) as List;
           for (var item in subList) {
             subtitleTracks.add(Track(file: item["file"], label: item["label"]));
@@ -47,7 +54,8 @@ class FilemoonExtractor {
       final playlists = masterPlaylist.split(separator).sublist(1);
 
       return playlists.map((playlist) {
-        final resolution = '${playlist.substringAfter('RESOLUTION=').substringAfter('x').substringBefore(',').trim()}p';
+        final resolution =
+            '${playlist.substringAfter('RESOLUTION=').substringAfter('x').substringBefore(',').trim()}p';
         final videoUrl = playlist.split('\n')[1].trim();
 
         return Video(videoUrl, "$prefix - $resolution $suffix", videoUrl,

@@ -33,6 +33,11 @@ class History {
     mangaId = json['mangaId'];
   }
 
-  Map<String, dynamic> toJson() =>
-      {'chapterId': chapterId, 'date': date, 'id': id, 'isManga': isManga, 'mangaId': mangaId};
+  Map<String, dynamic> toJson() => {
+        'chapterId': chapterId,
+        'date': date,
+        'id': id,
+        'isManga': isManga,
+        'mangaId': mangaId
+      };
 }

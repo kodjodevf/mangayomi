@@ -34,7 +34,10 @@ class Chunk {
         task = DownloadTask(
             url: url,
             filename: filename,
-            headers: {...parentTask.headers, 'Range': 'bytes=$fromByte-$toByte'},
+            headers: {
+              ...parentTask.headers,
+              'Range': 'bytes=$fromByte-$toByte'
+            },
             baseDirectory: BaseDirectory.temporary,
             group: BaseDownloader.chunkGroup,
             updates: updatesBasedOnParent(parentTask),
@@ -42,7 +45,11 @@ class Chunk {
             allowPause: parentTask.allowPause,
             priority: parentTask.priority,
             requiresWiFi: parentTask.requiresWiFi,
-            metaData: jsonEncode({'parentTaskId': parentTask.taskId, 'from': fromByte, 'to': toByte})) {
+            metaData: jsonEncode({
+              'parentTaskId': parentTask.taskId,
+              'from': fromByte,
+              'to': toByte
+            })) {
     status = TaskStatus.enqueued;
     progress = 0;
   }
@@ -76,21 +83,28 @@ class Chunk {
       };
 
   /// Return the parentTaskId embedded in the metaData of a chunkTask
-  static String getParentTaskId(Task task) => jsonDecode(task.metaData)['parentTaskId'] as String;
+  static String getParentTaskId(Task task) =>
+      jsonDecode(task.metaData)['parentTaskId'] as String;
 
   /// Return [Updates] that is based on the [parentTask]
-  static Updates updatesBasedOnParent(Task parentTask) => switch (parentTask.updates) {
+  static Updates updatesBasedOnParent(Task parentTask) =>
+      switch (parentTask.updates) {
         Updates.none || Updates.status => Updates.status,
-        Updates.progress || Updates.statusAndProgress => Updates.statusAndProgress
+        Updates.progress ||
+        Updates.statusAndProgress =>
+          Updates.statusAndProgress
       };
 }
 
 /// Resume all chunk tasks associated with this [task], and
 /// return true if successful, otherwise cancels this [task]
 /// which will also cancel all chunk tasks
-Future<bool> resumeChunkTasks(ParallelDownloadTask task, ResumeData resumeData) async {
-  final chunks = List<Chunk>.from(jsonDecode(resumeData.data, reviver: Chunk.listReviver));
-  final results = await Future.wait(chunks.map((chunk) => FileDownloader().resume(chunk.task)));
+Future<bool> resumeChunkTasks(
+    ParallelDownloadTask task, ResumeData resumeData) async {
+  final chunks =
+      List<Chunk>.from(jsonDecode(resumeData.data, reviver: Chunk.listReviver));
+  final results = await Future.wait(
+      chunks.map((chunk) => FileDownloader().resume(chunk.task)));
   if (results.any((result) => result == false)) {
     // cancel [ParallelDownloadTask] if any resume did not succeed.
     // this will also cancel all chunk tasks

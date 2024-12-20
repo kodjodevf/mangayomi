@@ -26,7 +26,8 @@ class DartExtensionService implements ExtensionService {
 
     final runtime = runtimeEval(bytecode);
 
-    return runtime.executeLib('package:mangayomi/main.dart', 'main', [$MSource.wrap(source.toMSource())]) as MProvider;
+    return runtime.executeLib('package:mangayomi/main.dart', 'main',
+        [$MSource.wrap(source.toMSource())]) as MProvider;
   }
 
   @override
@@ -103,7 +104,9 @@ class DartExtensionService implements ExtensionService {
   @override
   Future<List<PageUrl>> getPageList(String url) async {
     return (await _executeLib().getPageList(url))
-        .map((e) => e is String ? PageUrl(e.toString().trim()) : PageUrl.fromJson((e as Map).toMapStringDynamic!))
+        .map((e) => e is String
+            ? PageUrl(e.toString().trim())
+            : PageUrl.fromJson((e as Map).toMapStringDynamic!))
         .toList();
   }
 
@@ -117,7 +120,10 @@ class DartExtensionService implements ExtensionService {
     List<dynamic> list;
 
     try {
-      list = _executeLib().getFilterList().map((e) => e is $Value ? e.$reified : e).toList();
+      list = _executeLib()
+          .getFilterList()
+          .map((e) => e is $Value ? e.$reified : e)
+          .toList();
     } catch (_) {
       list = [];
     }

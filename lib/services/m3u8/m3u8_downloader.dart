@@ -20,7 +20,10 @@ class M3u8Downloader {
   final String m3u8Url;
   final String downloadDir;
   final Map<String, String>? headers;
-  M3u8Downloader({required this.m3u8Url, required this.downloadDir, required this.headers});
+  M3u8Downloader(
+      {required this.m3u8Url,
+      required this.downloadDir,
+      required this.headers});
 
   Future<(List<TsInfo>, Uint8List?, Uint8List?, int?)> getTsList() async {
     Uint8List? key;
@@ -58,7 +61,8 @@ class M3u8Downloader {
   Future<String> _getM3u8Body(
     String url,
   ) async {
-    final response = await MClient.httpClient().get(Uri.parse(url), headers: headers);
+    final response =
+        await MClient.httpClient().get(Uri.parse(url), headers: headers);
     if (response.statusCode == 200) {
       return response.body;
     } else {
@@ -73,7 +77,9 @@ class M3u8Downloader {
     for (final line in lines) {
       if (!line.startsWith("#") && line.isNotEmpty) {
         index++;
-        final tsUrl = line.startsWith("http") ? line : "$host/${line.replaceFirst("/", "")}";
+        final tsUrl = line.startsWith("http")
+            ? line
+            : "$host/${line.replaceFirst("/", "")}";
         tsList.add(TsInfo("TS_$index", tsUrl));
       }
     }
@@ -88,7 +94,8 @@ class M3u8Downloader {
       if (line.contains("#EXT-X-KEY")) {
         final (keyUrl, iv) = _extractKeyAttributes(line, m3u8Host);
         if (keyUrl != null) {
-          final response = await MClient.httpClient().get(Uri.parse(keyUrl), headers: headers);
+          final response = await MClient.httpClient()
+              .get(Uri.parse(keyUrl), headers: headers);
           if (response.statusCode == 200) {
             return (response.bodyBytes, iv);
           }
@@ -101,8 +108,9 @@ class M3u8Downloader {
   }
 
   (String?, String?) _extractKeyAttributes(String content, String host) {
-    final keyPattern =
-        RegExp(r'#EXT-X-KEY:METHOD=AES-128(?:,URI="([^"]+)")?(?:,IV=0x([A-F0-9]+))?', caseSensitive: false);
+    final keyPattern = RegExp(
+        r'#EXT-X-KEY:METHOD=AES-128(?:,URI="([^"]+)")?(?:,IV=0x([A-F0-9]+))?',
+        caseSensitive: false);
     final match = keyPattern.firstMatch(content);
 
     String? uri = match?.group(1);
@@ -116,16 +124,19 @@ class M3u8Downloader {
     return (uri, iv);
   }
 
-  Uint8List _aesDecrypt(int sequence, Uint8List encrypted, Uint8List key, {Uint8List? iv}) {
+  Uint8List _aesDecrypt(int sequence, Uint8List encrypted, Uint8List key,
+      {Uint8List? iv}) {
     if (iv == null) {
       iv = Uint8List(16);
       ByteData.view(iv.buffer).setUint64(8, sequence);
     }
 
-    final encrypter = encrypt.Encrypter(encrypt.AES(encrypt.Key(key), mode: encrypt.AESMode.cbc));
+    final encrypter = encrypt.Encrypter(
+        encrypt.AES(encrypt.Key(key), mode: encrypt.AESMode.cbc));
 
     try {
-      final decrypted = encrypter.decryptBytes(encrypt.Encrypted(encrypted), iv: encrypt.IV(iv));
+      final decrypted = encrypter.decryptBytes(encrypt.Encrypted(encrypted),
+          iv: encrypt.IV(iv));
 
       return Uint8List.fromList(decrypted);
     } catch (e) {
@@ -154,8 +165,9 @@ class M3u8Downloader {
           tsPathList.add(entity.path);
         }
       }
-      tsPathList.sort((a, b) => int.parse(a.substringAfter("TS_").substringBefore("."))
-          .compareTo(int.parse(b.substringAfter("TS_").substringBefore("."))));
+      tsPathList.sort((a, b) =>
+          int.parse(a.substringAfter("TS_").substringBefore(".")).compareTo(
+              int.parse(b.substringAfter("TS_").substringBefore("."))));
       for (var path in tsPathList) {
         final bytes = await File(path).readAsBytes();
         outFile.add(bytes);
@@ -166,12 +178,15 @@ class M3u8Downloader {
     });
   }
 
-  Future<void> processBytes(File newFile, Uint8List? tsKey, Uint8List? tsIv, int? m3u8Sequence) async {
+  Future<void> processBytes(File newFile, Uint8List? tsKey, Uint8List? tsIv,
+      int? m3u8Sequence) async {
     await Isolate.run(() async {
       Uint8List bytes = await newFile.readAsBytes();
       if (tsKey != null) {
-        final index = int.parse(newFile.path.substringAfter("TS_").substringBefore("."));
-        bytes = _aesDecrypt((m3u8Sequence ?? 1) + (index - 1), bytes, tsKey, iv: tsIv);
+        final index =
+            int.parse(newFile.path.substringAfter("TS_").substringBefore("."));
+        bytes = _aesDecrypt((m3u8Sequence ?? 1) + (index - 1), bytes, tsKey,
+            iv: tsIv);
       }
 
       await newFile.writeAsBytes(bytes);

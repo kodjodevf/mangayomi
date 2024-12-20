@@ -6,7 +6,8 @@ import 'package:mangayomi/models/video.dart';
 class $MVideo implements Video, $Instance {
   $MVideo.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MVideo'));
+  static const $type = BridgeTypeRef(
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MVideo'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
@@ -16,14 +17,22 @@ class $MVideo implements Video, $Instance {
       },
       // Specify class fields
       fields: {
-        'url': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'quality': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'originalUrl': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'url': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'quality': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'originalUrl': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
         'headers': BridgeFieldDef(BridgeTypeAnnotation(
-            BridgeTypeRef(CoreTypes.map, [BridgeTypeRef(CoreTypes.string), BridgeTypeRef(CoreTypes.string)]),
+            BridgeTypeRef(CoreTypes.map, [
+              BridgeTypeRef(CoreTypes.string),
+              BridgeTypeRef(CoreTypes.string)
+            ]),
             nullable: true)),
-        'subtitles': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
-        'audios': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
+        'subtitles': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
+        'audios': BridgeFieldDef(BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MTrack.$type]))),
       },
       wrap: true);
 
@@ -51,9 +60,13 @@ class $MVideo implements Video, $Instance {
       case 'headers':
         return $Map.wrap($value.headers ?? {});
       case 'subtitles':
-        return $List.wrap($value.subtitles!.map((e) => $MTrack.wrap(Track(file: e.file, label: e.label))).toList());
+        return $List.wrap($value.subtitles!
+            .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
+            .toList());
       case 'audios':
-        return $List.wrap($value.audios!.map((e) => $MTrack.wrap(Track(file: e.file, label: e.label))).toList());
+        return $List.wrap($value.audios!
+            .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
+            .toList());
 
       default:
         return _superclass.$getProperty(runtime, identifier);
@@ -73,12 +86,17 @@ class $MVideo implements Video, $Instance {
       case 'originalUrl':
         $value.originalUrl = value.$reified;
       case 'headers':
-        $value.headers = (value.$reified as Map).map((key, value) => MapEntry(key.toString(), value.toString()));
+        $value.headers = (value.$reified as Map)
+            .map((key, value) => MapEntry(key.toString(), value.toString()));
       case 'subtitles':
-        $value.subtitles = (value.$reified as List).map((e) => Track(file: e.file, label: e.label)).toList();
+        $value.subtitles = (value.$reified as List)
+            .map((e) => Track(file: e.file, label: e.label))
+            .toList();
 
       case 'audios':
-        $value.audios = (value.$reified as List).map((e) => Track(file: e.file, label: e.label)).toList();
+        $value.audios = (value.$reified as List)
+            .map((e) => Track(file: e.file, label: e.label))
+            .toList();
 
       default:
         _superclass.$setProperty(runtime, identifier, value);

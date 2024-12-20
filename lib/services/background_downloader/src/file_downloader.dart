@@ -72,9 +72,15 @@ interface class FileDownloader {
   /// Please see [CONFIG.md](https://github.com/781flyingdutchman/background_downloader/blob/main/CONFIG.md)
   /// for more information
   Future<List<(String, String)>> configure(
-          {dynamic globalConfig, dynamic androidConfig, dynamic iOSConfig, dynamic desktopConfig}) =>
+          {dynamic globalConfig,
+          dynamic androidConfig,
+          dynamic iOSConfig,
+          dynamic desktopConfig}) =>
       _downloader.configure(
-          globalConfig: globalConfig, androidConfig: androidConfig, iOSConfig: iOSConfig, desktopConfig: desktopConfig);
+          globalConfig: globalConfig,
+          androidConfig: androidConfig,
+          iOSConfig: iOSConfig,
+          desktopConfig: desktopConfig);
 
   /// Register status or progress callbacks to monitor download progress, and
   /// [TaskNotificationTapCallback] to respond to user tapping a notification.
@@ -104,7 +110,10 @@ interface class FileDownloader {
       TaskStatusCallback? taskStatusCallback,
       TaskProgressCallback? taskProgressCallback,
       TaskNotificationTapCallback? taskNotificationTapCallback}) {
-    assert(taskStatusCallback != null || taskProgressCallback != null || taskNotificationTapCallback != null,
+    assert(
+        taskStatusCallback != null ||
+            taskProgressCallback != null ||
+            taskNotificationTapCallback != null,
         'Must provide at least one callback');
     if (taskStatusCallback != null) {
       _downloader.groupStatusCallbacks[group] = taskStatusCallback;
@@ -113,7 +122,8 @@ interface class FileDownloader {
       _downloader.groupProgressCallbacks[group] = taskProgressCallback;
     }
     if (taskNotificationTapCallback != null) {
-      _downloader.groupNotificationTapCallbacks[group] = taskNotificationTapCallback;
+      _downloader.groupNotificationTapCallbacks[group] =
+          taskNotificationTapCallback;
     }
     return this;
   }
@@ -123,7 +133,8 @@ interface class FileDownloader {
   ///
   /// [group] defaults to the [FileDownloader.defaultGroup]
   /// If [callback] is null, all callbacks for the [group] are unregistered
-  FileDownloader unregisterCallbacks({String group = defaultGroup, Function? callback}) {
+  FileDownloader unregisterCallbacks(
+      {String group = defaultGroup, Function? callback}) {
     if (callback != null) {
       // remove specific callback
       if (_downloader.groupStatusCallbacks[group] == callback) {
@@ -148,10 +159,12 @@ interface class FileDownloader {
   ///
   /// Every [TaskQueue] will receive [TaskQueue.taskFinished] for
   /// every task that has reached a final state
-  void addTaskQueue(TaskQueue taskQueue) => _downloader.taskQueues.add(taskQueue);
+  void addTaskQueue(TaskQueue taskQueue) =>
+      _downloader.taskQueues.add(taskQueue);
 
   /// Removes [taskQueue] and return true if successful
-  bool removeTaskQueue(TaskQueue taskQueue) => _downloader.taskQueues.remove(taskQueue);
+  bool removeTaskQueue(TaskQueue taskQueue) =>
+      _downloader.taskQueues.remove(taskQueue);
 
   /// List of connected [TaskQueue]s
   List<TaskQueue> get taskQueues => _downloader.taskQueues;
@@ -282,7 +295,9 @@ interface class FileDownloader {
           void Function(Duration)? onElapsedTime,
           Duration? elapsedTimeInterval}) =>
       _downloader.enqueueAndAwait(task,
-          onStatus: onStatus, onElapsedTime: onElapsedTime, elapsedTimeInterval: elapsedTimeInterval);
+          onStatus: onStatus,
+          onElapsedTime: onElapsedTime,
+          elapsedTimeInterval: elapsedTimeInterval);
 
   /// Enqueues a list of files to download and returns when all downloads
   /// have finished (successfully or otherwise). The returned value is a
@@ -386,8 +401,12 @@ interface class FileDownloader {
   ///
   /// This method acts on a [group] of tasks. If omitted, the [defaultGroup]
   /// is used, which is the group used when you [enqueue] a task
-  Future<List<String>> allTaskIds({String group = defaultGroup, bool includeTasksWaitingToRetry = true}) async =>
-      (await allTasks(group: group, includeTasksWaitingToRetry: includeTasksWaitingToRetry))
+  Future<List<String>> allTaskIds(
+          {String group = defaultGroup,
+          bool includeTasksWaitingToRetry = true}) async =>
+      (await allTasks(
+              group: group,
+              includeTasksWaitingToRetry: includeTasksWaitingToRetry))
           .map((task) => task.taskId)
           .toList();
 
@@ -398,7 +417,9 @@ interface class FileDownloader {
   ///
   /// This method acts on a [group] of tasks. If omitted, the [defaultGroup]
   /// is used, which is the group used when you [enqueue] a task.
-  Future<List<Task>> allTasks({String group = defaultGroup, bool includeTasksWaitingToRetry = true}) =>
+  Future<List<Task>> allTasks(
+          {String group = defaultGroup,
+          bool includeTasksWaitingToRetry = true}) =>
       _downloader.allTasks(group, includeTasksWaitingToRetry);
 
   /// Returns true if tasks in this [group] are finished
@@ -418,8 +439,11 @@ interface class FileDownloader {
   /// Calling [tasksFinished] while passing that just-finished task will ensure
   /// a proper test in that situation.
   Future<bool> tasksFinished(
-      {String group = defaultGroup, bool includeTasksWaitingToRetry = true, String? ignoreTaskId}) async {
-    final tasksInProgress = await allTasks(group: group, includeTasksWaitingToRetry: includeTasksWaitingToRetry);
+      {String group = defaultGroup,
+      bool includeTasksWaitingToRetry = true,
+      String? ignoreTaskId}) async {
+    final tasksInProgress = await allTasks(
+        group: group, includeTasksWaitingToRetry: includeTasksWaitingToRetry);
     if (ignoreTaskId != null) {
       tasksInProgress.removeWhere((task) => task.taskId == ignoreTaskId);
     }
@@ -430,7 +454,8 @@ interface class FileDownloader {
   ///
   /// Every canceled task wil emit a [TaskStatus.canceled] update to
   /// the registered callback, if requested
-  Future<bool> cancelTasksWithIds(List<String> taskIds) => _downloader.cancelTasksWithIds(taskIds);
+  Future<bool> cancelTasksWithIds(List<String> taskIds) =>
+      _downloader.cancelTasksWithIds(taskIds);
 
   /// Cancel this task
   ///
@@ -462,7 +487,8 @@ interface class FileDownloader {
   /// listener or callbacks, and call [trackTasks] for each group.
   ///
   /// Returns the [FileDownloader] for easy chaining
-  Future<FileDownloader> trackTasksInGroup(String group, {bool markDownloadedComplete = true}) async {
+  Future<FileDownloader> trackTasksInGroup(String group,
+      {bool markDownloadedComplete = true}) async {
     await _downloader.trackTasks(group, markDownloadedComplete);
     return this;
   }
@@ -483,7 +509,8 @@ interface class FileDownloader {
   /// listener or callbacks, and call [trackTasks].
   ///
   /// Returns the [FileDownloader] for easy chaining
-  Future<FileDownloader> trackTasks({bool markDownloadedComplete = true}) async {
+  Future<FileDownloader> trackTasks(
+      {bool markDownloadedComplete = true}) async {
     await _downloader.trackTasks(null, markDownloadedComplete);
     return this;
   }
@@ -493,7 +520,8 @@ interface class FileDownloader {
   /// and have not yet reached the callbacks or listener
   ///
   /// Calling this method multiple times has no effect.
-  Future<void> resumeFromBackground() => _downloader.retrieveLocallyStoredData();
+  Future<void> resumeFromBackground() =>
+      _downloader.retrieveLocallyStoredData();
 
   /// Returns true if task can be resumed on pause
   ///
@@ -534,11 +562,13 @@ interface class FileDownloader {
   /// with the new setting.
   /// Reschedules running tasks if [rescheduleRunningTasks] is true,
   /// otherwise leaves those running with their prior setting
-  Future<bool> requireWiFi(RequireWiFi requirement, {final rescheduleRunningTasks = true}) =>
+  Future<bool> requireWiFi(RequireWiFi requirement,
+          {final rescheduleRunningTasks = true}) =>
       _downloader.requireWiFi(requirement, rescheduleRunningTasks);
 
   /// Returns the current global setting for requiring WiFi
-  Future<RequireWiFi> getRequireWiFiSetting() => _downloader.getRequireWiFiSetting();
+  Future<RequireWiFi> getRequireWiFiSetting() =>
+      _downloader.getRequireWiFiSetting();
 
   /// Configure notification for a single task
   ///
@@ -778,7 +808,8 @@ interface class FileDownloader {
     String directory = '',
     String? mimeType,
   }) async =>
-      moveFileToSharedStorage(await task.filePath(), destination, directory: directory, mimeType: mimeType);
+      moveFileToSharedStorage(await task.filePath(), destination,
+          directory: directory, mimeType: mimeType);
 
   /// Move the file represented by [filePath] to a shared storage
   /// [destination] and potentially a [directory] within that destination. If
@@ -805,7 +836,8 @@ interface class FileDownloader {
     String directory = '',
     String? mimeType,
   }) async =>
-      _downloader.moveToSharedStorage(filePath, destination, directory, mimeType);
+      _downloader.moveToSharedStorage(
+          filePath, destination, directory, mimeType);
 
   /// Returns the filePath to the file represented by [filePath] in shared
   /// storage [destination] and potentially a [directory] within that
@@ -817,7 +849,9 @@ interface class FileDownloader {
   /// on iOS for .images and .video
   ///
   /// Platform-dependent, not consistent across all platforms
-  Future<String?> pathInSharedStorage(String filePath, SharedStorage destination, {String directory = ''}) async =>
+  Future<String?> pathInSharedStorage(
+          String filePath, SharedStorage destination,
+          {String directory = ''}) async =>
       _downloader.pathInSharedStorage(filePath, destination, directory);
 
   /// Open the file represented by [task] or [filePath] using the application
@@ -829,7 +863,8 @@ interface class FileDownloader {
   /// Returns true if an application was launched successfully
   Future<bool> openFile({Task? task, String? filePath, String? mimeType}) {
     assert(task != null || filePath != null, 'Task or filePath must be set');
-    assert(!(task != null && filePath != null), 'Either task or filePath must be set, not both');
+    assert(!(task != null && filePath != null),
+        'Either task or filePath must be set, not both');
     return _downloader.openFile(task, filePath, mimeType);
   }
 
@@ -855,25 +890,33 @@ interface class FileDownloader {
 ///
 /// This function is run on an Isolate to ensure performance on the main
 /// Isolate is not affected
-Future<http.Response> _doRequest((Request, Duration?, Map<String, dynamic>, bool) params) async {
-  final (request, requestTimeout, proxy, bypassTLSCertificateValidation) = params;
+Future<http.Response> _doRequest(
+    (Request, Duration?, Map<String, dynamic>, bool) params) async {
+  final (request, requestTimeout, proxy, bypassTLSCertificateValidation) =
+      params;
 
-  DownloaderHttpClient.setHttpClient(requestTimeout, proxy, bypassTLSCertificateValidation);
+  DownloaderHttpClient.setHttpClient(
+      requestTimeout, proxy, bypassTLSCertificateValidation);
 
   final client = DownloaderHttpClient.httpClient;
-  var response = http.Response('', 499, reasonPhrase: 'Not attempted'); // dummy to start with
+  var response = http.Response('', 499,
+      reasonPhrase: 'Not attempted'); // dummy to start with
   while (request.retriesRemaining >= 0) {
     try {
       response = await switch (request.httpRequestMethod) {
         'GET' => client.get(Uri.parse(request.url), headers: request.headers),
-        'POST' => client.post(Uri.parse(request.url), headers: request.headers, body: request.post),
+        'POST' => client.post(Uri.parse(request.url),
+            headers: request.headers, body: request.post),
         'HEAD' => client.head(Uri.parse(request.url), headers: request.headers),
         'PUT' => client.put(Uri.parse(request.url), headers: request.headers),
-        'DELETE' => client.delete(Uri.parse(request.url), headers: request.headers),
-        'PATCH' => client.patch(Uri.parse(request.url), headers: request.headers),
+        'DELETE' =>
+          client.delete(Uri.parse(request.url), headers: request.headers),
+        'PATCH' =>
+          client.patch(Uri.parse(request.url), headers: request.headers),
         _ => Future.value(response)
       };
-      if ([200, 201, 202, 203, 204, 205, 206, 404].contains(response.statusCode)) {
+      if ([200, 201, 202, 203, 204, 205, 206, 404]
+          .contains(response.statusCode)) {
         return response;
       }
     } catch (e) {
@@ -884,7 +927,8 @@ Future<http.Response> _doRequest((Request, Duration?, Map<String, dynamic>, bool
     if (request.retriesRemaining < 0) {
       return response; // final response with error
     }
-    final waitTime = Duration(seconds: pow(2, (request.retries - request.retriesRemaining)).toInt());
+    final waitTime = Duration(
+        seconds: pow(2, (request.retries - request.retriesRemaining)).toInt());
     await Future.delayed(waitTime);
   }
   throw ArgumentError('Request to ${request.url} had no retries remaining');

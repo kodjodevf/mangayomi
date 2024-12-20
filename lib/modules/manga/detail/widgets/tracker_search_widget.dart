@@ -11,10 +11,12 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
   final bool isManga;
   final Track track;
-  const TrackerWidgetSearch({required this.isManga, required this.track, super.key});
+  const TrackerWidgetSearch(
+      {required this.isManga, required this.track, super.key});
 
   @override
-  ConsumerState<TrackerWidgetSearch> createState() => _TrackerWidgetSearchState();
+  ConsumerState<TrackerWidgetSearch> createState() =>
+      _TrackerWidgetSearchState();
 }
 
 class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
@@ -28,7 +30,10 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   late List<TrackSearch>? tracks = [];
   _init() async {
     await Future.delayed(const Duration(microseconds: 100));
-    tracks = await ref.read(trackStateProvider(track: widget.track, isManga: widget.isManga).notifier).search(query);
+    tracks = await ref
+        .read(trackStateProvider(track: widget.track, isManga: widget.isManga)
+            .notifier)
+        .search(query);
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -42,7 +47,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+      borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: _isLoading
           ? const ProgressCenter()
@@ -66,41 +72,50 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                               child: Column(
                                 children: [
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Material(
                                         borderRadius: BorderRadius.circular(5),
                                         color: Colors.transparent,
-                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                        clipBehavior:
+                                            Clip.antiAliasWithSaveLayer,
                                         child: Ink.image(
                                           height: 120,
                                           width: 80,
                                           fit: BoxFit.cover,
-                                          image: CustomExtendedNetworkImageProvider(tracks![index].coverUrl!),
+                                          image:
+                                              CustomExtendedNetworkImageProvider(
+                                                  tracks![index].coverUrl!),
                                         ),
                                       ),
                                       const SizedBox(
                                         width: 10,
                                       ),
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             width: context.width(0.6),
                                             child: Text(
                                               tracks![index].title!,
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           Row(
                                             children: [
                                               const Text(
                                                 "Type : ",
-                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12),
                                               ),
                                               Text(
                                                 tracks![index].publishingType!,
-                                                style: const TextStyle(fontSize: 12),
+                                                style: const TextStyle(
+                                                    fontSize: 12),
                                               ),
                                             ],
                                           ),
@@ -108,11 +123,15 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             children: [
                                               const Text(
                                                 "Status : ",
-                                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12),
                                               ),
                                               Text(
-                                                tracks![index].publishingStatus!,
-                                                style: const TextStyle(fontSize: 12),
+                                                tracks![index]
+                                                    .publishingStatus!,
+                                                style: const TextStyle(
+                                                    fontSize: 12),
                                               ),
                                             ],
                                           ),
@@ -153,7 +172,10 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                             _isLoading = true;
                           });
                           tracks = await ref
-                              .read(trackStateProvider(track: widget.track, isManga: widget.isManga).notifier)
+                              .read(trackStateProvider(
+                                      track: widget.track,
+                                      isManga: widget.isManga)
+                                  .notifier)
                               .search(d.trim());
                           if (mounted) {
                             setState(() {
@@ -173,12 +195,16 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                     },
                                     icon: const Icon(Icons.clear)),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: context.primaryColor),
+                              borderSide:
+                                  BorderSide(color: context.primaryColor),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: context.primaryColor),
+                              borderSide:
+                                  BorderSide(color: context.primaryColor),
                             ),
-                            border: OutlineInputBorder(borderSide: BorderSide(color: context.primaryColor))),
+                            border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: context.primaryColor))),
                       ),
                     ),
                   ],
@@ -189,7 +215,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   }
 }
 
-trackersSearchraggableMenu(BuildContext context, {required Track track, required bool isManga}) async {
+trackersSearchraggableMenu(BuildContext context,
+    {required Track track, required bool isManga}) async {
   return await DraggableMenu.open(
       context,
       DraggableMenu(
@@ -199,7 +226,9 @@ trackersSearchraggableMenu(BuildContext context, {required Track track, required
               barItem: Container(
                 decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
                 child: Column(
                   children: [
                     Row(

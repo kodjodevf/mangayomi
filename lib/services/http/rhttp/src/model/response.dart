@@ -67,7 +67,8 @@ HttpResponse parseHttpResponse(
   rust.HttpResponse response, {
   Stream<Uint8List>? bodyStream,
 }) {
-  assert((response.body is rust.HttpResponseBody_Stream && bodyStream != null) ||
+  assert((response.body is rust.HttpResponseBody_Stream &&
+          bodyStream != null) ||
       (response.body is! rust.HttpResponseBody_Stream && bodyStream == null));
 
   return HttpStreamResponse(

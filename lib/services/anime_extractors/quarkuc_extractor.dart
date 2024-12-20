@@ -21,7 +21,8 @@ class QuarkUcExtractor {
   String? saveDirId;
   final String saveDirName = 'TV';
 
-  Future<void> initCloudDrive(String cookie, CloudDriveType cloudDriveType) async {
+  Future<void> initCloudDrive(
+      String cookie, CloudDriveType cloudDriveType) async {
     this.cookie = cookie;
     this.cloudDriveType = cloudDriveType;
     if (cloudDriveType == CloudDriveType.quark) {
@@ -55,11 +56,14 @@ class QuarkUcExtractor {
     }
   }
 
-  Future<Map<String, dynamic>> api(String url, dynamic data, String method) async {
-    InterceptedClient client = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  Future<Map<String, dynamic>> api(
+      String url, dynamic data, String method) async {
+    InterceptedClient client =
+        MClient.init(reqcopyWith: {'useDartHttpClient': true});
     late Response resp;
     if (method != "get") {
-      resp = await client.post(Uri.parse(apiUrl + url), body: jsonEncode(data), headers: getHeaders());
+      resp = await client.post(Uri.parse(apiUrl + url),
+          body: jsonEncode(data), headers: getHeaders());
     } else {
       resp = await client.get(Uri.parse(apiUrl + url), headers: getHeaders());
     }
@@ -68,11 +72,13 @@ class QuarkUcExtractor {
           .split(';;;')
           .join()
           .split(';')
-          .firstWhere((element) => element.startsWith('__puus='), orElse: () => '');
+          .firstWhere((element) => element.startsWith('__puus='),
+              orElse: () => '');
       if (puus.isNotEmpty) {
         final newPuus = puus.split('=')[1];
         if (cookie.contains('__puus=')) {
-          cookie = cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
+          cookie =
+              cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
         }
       }
     }
@@ -116,8 +122,13 @@ class QuarkUcExtractor {
     }
   }
 
-  Future<List<dynamic>> listFile(int shareIndex, Map<String, String> shareData, List<dynamic> videos,
-      List<dynamic> subtitles, String shareId, String folderId,
+  Future<List<dynamic>> listFile(
+      int shareIndex,
+      Map<String, String> shareData,
+      List<dynamic> videos,
+      List<dynamic> subtitles,
+      String shareId,
+      String folderId,
       {int page = 1}) async {
     const int prePage = 200;
     final listData = await api(
@@ -134,17 +145,23 @@ class QuarkUcExtractor {
       } else if (item['file'] == true && item['obj_category'] == 'video') {
         if (item['size'] < 1024 * 1024 * 5) continue;
         item['stoken'] = shareTokenCache[shareData['shareId']]['stoken'];
-        videos.add(Item.objectFrom(item, shareData['shareId']!, shareIndex, cloudDriveType));
-      } else if (item['type'] == 'file' && subtitleExts.any((x) => item['file_name'].endsWith(x))) {
-        subtitles.add(Item.objectFrom(item, shareData['shareId']!, shareIndex, cloudDriveType));
+        videos.add(Item.objectFrom(
+            item, shareData['shareId']!, shareIndex, cloudDriveType));
+      } else if (item['type'] == 'file' &&
+          subtitleExts.any((x) => item['file_name'].endsWith(x))) {
+        subtitles.add(Item.objectFrom(
+            item, shareData['shareId']!, shareIndex, cloudDriveType));
       }
     }
     if (page < (listData['metadata']['_total'] / prePage).ceil()) {
-      final nextItems = await listFile(shareIndex, shareData, videos, subtitles, shareId, folderId, page: page + 1);
+      final nextItems = await listFile(
+          shareIndex, shareData, videos, subtitles, shareId, folderId,
+          page: page + 1);
       items.addAll(nextItems);
     }
     for (final dir in subDir) {
-      final subItems = await listFile(shareIndex, shareData, videos, subtitles, shareId, dir['fid']);
+      final subItems = await listFile(
+          shareIndex, shareData, videos, subtitles, shareId, dir['fid']);
       items.addAll(subItems);
     }
     return items;
@@ -161,16 +178,21 @@ class QuarkUcExtractor {
       }
     }
     final bestMatch = results[bestMatchIndex];
-    return {'allLCS': results, 'bestMatch': bestMatch, 'bestMatchIndex': bestMatchIndex};
+    return {
+      'allLCS': results,
+      'bestMatch': bestMatch,
+      'bestMatchIndex': bestMatchIndex
+    };
   }
 
-  Future<void> getFilesByShareUrl(
-      int shareIndex, dynamic shareInfo, List<dynamic> videos, List<dynamic> subtitles) async {
+  Future<void> getFilesByShareUrl(int shareIndex, dynamic shareInfo,
+      List<dynamic> videos, List<dynamic> subtitles) async {
     final shareData = shareInfo is String ? getShareData(shareInfo) : shareInfo;
     if (shareData == null) return;
     await getShareToken(shareData);
     if (!shareTokenCache.containsKey(shareData['shareId'])) return;
-    await listFile(shareIndex, shareData, videos, subtitles, shareData['shareId']!, shareData['folderId']!);
+    await listFile(shareIndex, shareData, videos, subtitles,
+        shareData['shareId']!, shareData['folderId']!);
     if (subtitles.isNotEmpty) {
       for (var item in videos) {
         var matchSubtitle = findBestLCS(item, subtitles as List<Item>);
@@ -186,9 +208,13 @@ class QuarkUcExtractor {
   }
 
   Future<void> clearSaveDir() async {
-    final listData =
-        await api('file/sort?$pr&pdir_fid=$saveDirId&_page=1&_size=200&_sort=file_type:asc,updated_at:desc', {}, 'get');
-    if (listData['data'] != null && listData['data']['list'] != null && listData['data']['list'].isNotEmpty) {
+    final listData = await api(
+        'file/sort?$pr&pdir_fid=$saveDirId&_page=1&_size=200&_sort=file_type:asc,updated_at:desc',
+        {},
+        'get');
+    if (listData['data'] != null &&
+        listData['data']['list'] != null &&
+        listData['data']['list'].isNotEmpty) {
       await api(
           'file/delete?$pr',
           {
@@ -205,8 +231,10 @@ class QuarkUcExtractor {
       if (clean) await clearSaveDir();
       return;
     }
-    final listData =
-        await api('file/sort?$pr&pdir_fid=0&_page=1&_size=200&_sort=file_type:asc,updated_at:desc', {}, 'get');
+    final listData = await api(
+        'file/sort?$pr&pdir_fid=0&_page=1&_size=200&_sort=file_type:asc,updated_at:desc',
+        {},
+        'get');
     if (listData['data'] != null && listData['data']['list'] != null) {
       for (final item in listData['data']['list']) {
         if (item['file_name'] == saveDirName) {
@@ -232,7 +260,8 @@ class QuarkUcExtractor {
     }
   }
 
-  Future<String?> save(String shareId, String stoken, String fileId, String fileToken, bool clean) async {
+  Future<String?> save(String shareId, String stoken, String fileId,
+      String fileToken, bool clean) async {
     await createSaveDir(clean);
     if (clean) {
       this.clean();
@@ -249,7 +278,8 @@ class QuarkUcExtractor {
           'fid_token_list': [fileToken],
           'to_pdir_fid': saveDirId,
           'pwd_id': shareId,
-          'stoken': stoken.isNotEmpty ? stoken : shareTokenCache[shareId]['stoken'],
+          'stoken':
+              stoken.isNotEmpty ? stoken : shareTokenCache[shareId]['stoken'],
           'pdir_fid': '0',
           'scene': 'link',
         },
@@ -257,7 +287,10 @@ class QuarkUcExtractor {
     if (saveResult['data'] != null && saveResult['data']['task_id'] != null) {
       var retry = 0;
       while (true) {
-        final taskResult = await api('task?$pr&task_id=${saveResult['data']['task_id']}&retry_index=$retry', {}, 'get');
+        final taskResult = await api(
+            'task?$pr&task_id=${saveResult['data']['task_id']}&retry_index=$retry',
+            {},
+            'get');
         if (taskResult['data'] != null &&
             taskResult['data']['save_as'] != null &&
             taskResult['data']['save_as']['save_as_top_fids'] != null &&
@@ -272,8 +305,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<String?> getLiveTranscoding(
-      String shareId, String stoken, String fileId, String fileToken, String quality) async {
+  Future<String?> getLiveTranscoding(String shareId, String stoken,
+      String fileId, String fileToken, String quality) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
       if (saveFileId == null) return null;
@@ -287,7 +320,8 @@ class QuarkUcExtractor {
           'supports': 'fmp4',
         },
         'post');
-    if (transcoding['data'] != null && transcoding['data']['video_list'] != null) {
+    if (transcoding['data'] != null &&
+        transcoding['data']['video_list'] != null) {
       for (final video in transcoding['data']['video_list']) {
         if (video['resolution'] == quality) {
           return video['video_info']['url'];
@@ -299,8 +333,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<Map<String, dynamic>?> getDownload(
-      String shareId, String stoken, String fileId, String fileToken, bool clean) async {
+  Future<Map<String, dynamic>?> getDownload(String shareId, String stoken,
+      String fileId, String fileToken, bool clean) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, clean);
       if (saveFileId == null) return null;
@@ -318,7 +352,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<List<Map<String, String>>> videoFilesFromUrl(List<String> shareUrlList, {String typeName = "电影"}) async {
+  Future<List<Map<String, String>>> videoFilesFromUrl(List<String> shareUrlList,
+      {String typeName = "电影"}) async {
     List<dynamic> videoItems = [];
     List<dynamic> subItems = [];
 
@@ -336,8 +371,8 @@ class QuarkUcExtractor {
     return await getVodFile(videoItems, subItems, typeName);
   }
 
-  Future<List<Map<String, String>>> getVodFile(
-      List<dynamic> videoItemList, List<dynamic> subItemList, String typeName) async {
+  Future<List<Map<String, String>>> getVodFile(List<dynamic> videoItemList,
+      List<dynamic> subItemList, String typeName) async {
     if (videoItemList.isEmpty) {
       return [];
     }
@@ -370,24 +405,30 @@ class QuarkUcExtractor {
       var headers = getHeaders();
       headers.remove('Host');
       headers.remove('Content-Type');
-      String? url = (await getDownload(shareId, stoken, fileId, fileToken, true))?['download_url'];
+      String? url = (await getDownload(
+          shareId, stoken, fileId, fileToken, true))?['download_url'];
       if (url != null) {
         videos.add(Video(url, "原画", url, headers: headers));
       }
     } else {
-      String? originalUrl = (await getLiveTranscoding(shareId, stoken, fileId, fileToken, "4k")) ??
-          (await getLiveTranscoding(shareId, stoken, fileId, fileToken, 'super'));
+      String? originalUrl = (await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, "4k")) ??
+          (await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, 'super'));
       var headers = getHeaders();
       headers.remove('Host');
       headers.remove('Content-Type');
       for (String quality in qualities) {
         if (quality == "原画") {
-          String? url = (await getDownload(shareId, stoken, fileId, fileToken, true))?['download_url'];
+          String? url = (await getDownload(
+              shareId, stoken, fileId, fileToken, true))?['download_url'];
           if (url != null) {
-            videos.add(Video(url, quality, originalUrl ?? '', headers: headers));
+            videos
+                .add(Video(url, quality, originalUrl ?? '', headers: headers));
           }
         } else {
-          String? url = await getLiveTranscoding(shareId, stoken, fileId, fileToken, quality);
+          String? url = await getLiveTranscoding(
+              shareId, stoken, fileId, fileToken, quality);
           if (url != null) {
             videos.add(Video(
               url,
@@ -408,7 +449,8 @@ class QuarkUcExtractor {
         if (subParts.length == 3) {
           String subName = subParts[0];
           String subFileId = subParts[2];
-          var subDownload = await getDownload(shareId, stoken, subFileId, '', true);
+          var subDownload =
+              await getDownload(shareId, stoken, subFileId, '', true);
           String? subUrl = subDownload?['download_url'];
           if (subUrl != null) {
             subtitles.add(Track(file: subUrl, label: subName));
@@ -432,7 +474,8 @@ class QuarkUcExtractor {
     }
     String subStr = "";
     for (var item in subItemList) {
-      subStr += "+${removeExt(item.getName())}@@@${item.getFileExtension()}@@@${item.getFileId()}";
+      subStr +=
+          "+${removeExt(item.getName())}@@@${item.getFileExtension()}@@@${item.getFileId()}";
     }
     return subStr;
   }
@@ -513,7 +556,8 @@ class Item {
   dynamic subtitle;
   late CloudDriveType cloudDriveType;
 
-  static Item objectFrom(Map<String, dynamic> itemJson, String shareId, int shareIndex, CloudDriveType cloudDriveType) {
+  static Item objectFrom(Map<String, dynamic> itemJson, String shareId,
+      int shareIndex, CloudDriveType cloudDriveType) {
     Item item = Item();
     item.fileId = itemJson['fid'] ?? "";
     item.shareId = shareId;
@@ -556,7 +600,8 @@ class Item {
   }
 
   String getDisplayName(String typeName) {
-    String drivePrefix = cloudDriveType == CloudDriveType.quark ? '[quark]' : '[uc]';
+    String drivePrefix =
+        cloudDriveType == CloudDriveType.quark ? '[quark]' : '[uc]';
     String displayName = getName();
     if (typeName == "电视剧") {
       List<String> replaceNameList = ["4k", "4K"];
@@ -565,8 +610,13 @@ class Item {
       for (String replaceName in replaceNameList) {
         displayName = displayName.replaceAll(replaceName, "");
       }
-      displayName = RegExp(r'\.S01E(.*?)\.').firstMatch(displayName)?.group(1) ?? displayName;
-      final numbers = RegExp(r'\d+').allMatches(displayName).map((m) => m.group(0)).toList();
+      displayName =
+          RegExp(r'\.S01E(.*?)\.').firstMatch(displayName)?.group(1) ??
+              displayName;
+      final numbers = RegExp(r'\d+')
+          .allMatches(displayName)
+          .map((m) => m.group(0))
+          .toList();
       if (numbers.isNotEmpty) {
         displayName = numbers[0]!;
       }

@@ -21,7 +21,8 @@ class Deobfuscator {
         evaluatedString.write('.');
 
         if (inputString[closingIndex + 1] == '[') {
-          final skippingIndex = getMatchingBracketIndex(closingIndex + 1, inputString);
+          final skippingIndex =
+              getMatchingBracketIndex(closingIndex + 1, inputString);
           idx = skippingIndex + 1;
           continue;
         }

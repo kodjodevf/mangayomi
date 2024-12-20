@@ -10,11 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'local_archive.g.dart';
 
 @riverpod
-Future importArchivesFromFile(Ref ref, Manga? mManga, {required bool isManga, required bool init}) async {
+Future importArchivesFromFile(Ref ref, Manga? mManga,
+    {required bool isManga, required bool init}) async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: isManga ? ['cbz', 'zip'] : ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv']);
+      allowedExtensions: isManga
+          ? ['cbz', 'zip']
+          : ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv']);
   if (result != null) {
     final dateNow = DateTime.now().millisecondsSinceEpoch;
     final manga = mManga ??
@@ -36,8 +39,9 @@ Future importArchivesFromFile(Ref ref, Manga? mManga, {required bool isManga, re
           artist: '',
         );
     for (var file in result.files.reversed.toList()) {
-      (String, LocalExtensionType, Uint8List, String)? data =
-          isManga ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future) : null;
+      (String, LocalExtensionType, Uint8List, String)? data = isManga
+          ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future)
+          : null;
       String name = _getName(file.path!);
 
       if (init) {
@@ -46,9 +50,11 @@ Future importArchivesFromFile(Ref ref, Manga? mManga, {required bool isManga, re
 
       isar.writeTxnSync(() {
         isar.mangas.putSync(manga);
-        final chapters =
-            Chapter(name: isManga ? data!.$1 : name, archivePath: isManga ? data!.$4 : file.path, mangaId: manga.id)
-              ..manga.value = manga;
+        final chapters = Chapter(
+            name: isManga ? data!.$1 : name,
+            archivePath: isManga ? data!.$4 : file.path,
+            mangaId: manga.id)
+          ..manga.value = manga;
         isar.chapters.putSync(chapters);
         chapters.manga.saveSync();
       });
@@ -58,10 +64,6 @@ Future importArchivesFromFile(Ref ref, Manga? mManga, {required bool isManga, re
 }
 
 String _getName(String path) {
-  return path
-      .split('/')
-      .last
-      .split("\\")
-      .last
-      .replaceAll(RegExp(r'\.(mp4|mov|avi|flv|wmv|mpeg|mkv|cbz|zip|cbt|tar)'), '');
+  return path.split('/').last.split("\\").last.replaceAll(
+      RegExp(r'\.(mp4|mov|avi|flv|wmv|mpeg|mkv|cbz|zip|cbt|tar)'), '');
 }

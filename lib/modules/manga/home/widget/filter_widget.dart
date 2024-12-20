@@ -5,7 +5,8 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 class FilterWidget extends StatelessWidget {
   final List<dynamic> filterList;
   final Function(List<dynamic>) onChanged;
-  const FilterWidget({super.key, required this.onChanged, required this.filterList});
+  const FilterWidget(
+      {super.key, required this.onChanged, required this.filterList});
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +84,18 @@ class FilterWidget extends StatelessWidget {
               final selected = filterState.values[filterState.state.index] == e;
               return ListTile(
                 dense: true,
-                leading: Icon(ascending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                leading: Icon(
+                    ascending
+                        ? Icons.arrow_upward_rounded
+                        : Icons.arrow_downward_rounded,
                     color: selected ? null : Colors.transparent),
                 title: Text(e.name),
                 onTap: () {
                   if (selected) {
                     filterState.state.ascending = !ascending;
                   } else {
-                    filterState.state.index = filterState.values.indexWhere((element) => element == e);
+                    filterState.state.index = filterState.values
+                        .indexWhere((element) => element == e);
                   }
                   filterList[idx] = filterState;
                   onChanged(filterList);
@@ -113,20 +118,24 @@ class FilterWidget extends StatelessWidget {
                 Expanded(
                   child: DropdownButtonHideUnderline(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 25),
                       child: DropdownButton(
                         icon: const Icon(Icons.keyboard_arrow_down),
                         isExpanded: true,
                         value: filterState.values[filterState.state],
-                        hint: Text(filterState.name, style: const TextStyle(fontSize: 13)),
+                        hint: Text(filterState.name,
+                            style: const TextStyle(fontSize: 13)),
                         items: filterState.values
                             .map((e) => DropdownMenuItem(
                                   value: e,
-                                  child: Text(e.name, style: const TextStyle(fontSize: 13)),
+                                  child: Text(e.name,
+                                      style: const TextStyle(fontSize: 13)),
                                 ))
                             .toList(),
                         onChanged: (value) {
-                          filterState.state = filterState.values.indexWhere((element) => element == value);
+                          filterState.state = filterState.values
+                              .indexWhere((element) => element == value);
                           onChanged(filterList);
                         },
                       ),
@@ -147,10 +156,15 @@ class SeachFormTextFieldWidget extends StatefulWidget {
   final String labelText;
   final String text;
   final Function(String) onChanged;
-  const SeachFormTextFieldWidget({super.key, required this.text, required this.onChanged, required this.labelText});
+  const SeachFormTextFieldWidget(
+      {super.key,
+      required this.text,
+      required this.onChanged,
+      required this.labelText});
 
   @override
-  State<SeachFormTextFieldWidget> createState() => _SeachFormTextFieldWidgetState();
+  State<SeachFormTextFieldWidget> createState() =>
+      _SeachFormTextFieldWidgetState();
 }
 
 class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {

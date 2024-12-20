@@ -5,23 +5,35 @@ import 'package:mangayomi/eval/model/m_chapter.dart';
 class $MChapter implements MChapter, $Instance {
   $MChapter.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MChapter'));
+  static const $type = BridgeTypeRef(
+      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MChapter'));
 
   static const $declaration = BridgeClassDef(BridgeClassType($type),
       constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [], namedParams: [
-          BridgeParameter('name', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('url', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('dateUpload', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('scanlator', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-        ]))
+        '': BridgeConstructorDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation($type),
+            params: [],
+            namedParams: [
+              BridgeParameter('name',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('url',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('dateUpload',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+              BridgeParameter('scanlator',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
+            ]))
       },
       // Specify class fields
       fields: {
-        'name': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'url': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'dateUpload': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'scanlator': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'name': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'url': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'dateUpload': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
+        'scanlator': BridgeFieldDef(
+            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
       },
       wrap: true);
 
@@ -102,5 +114,10 @@ class $MChapter implements MChapter, $Instance {
   set scanlator(String? scanlator) {}
 
   @override
-  Map<String, dynamic> toJson() => {'name': name, 'url': url, 'dateUpload': dateUpload, 'scanlator': scanlator};
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'url': url,
+        'dateUpload': dateUpload,
+        'scanlator': scanlator
+      };
 }

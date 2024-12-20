@@ -11,8 +11,10 @@ class PlayerScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
-    final defaultSkipIntroLength = ref.watch(defaultSkipIntroLengthStateProvider);
-    final defaultDoubleTapToSkipLength = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
+    final defaultSkipIntroLength =
+        ref.watch(defaultSkipIntroLengthStateProvider);
+    final defaultDoubleTapToSkipLength =
+        ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     final defaultPlayBackSpeed = ref.watch(defaultPlayBackSpeedStateProvider);
     final enableAniSkip = ref.watch(enableAniSkipStateProvider);
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
@@ -46,7 +48,10 @@ class PlayerScreen extends ConsumerWidget {
                                   value: values[index],
                                   groupValue: markEpisodeAsSeenType,
                                   onChanged: (value) {
-                                    ref.read(markEpisodeAsSeenTypeStateProvider.notifier).set(value!);
+                                    ref
+                                        .read(markEpisodeAsSeenTypeStateProvider
+                                            .notifier)
+                                        .set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
@@ -65,7 +70,8 @@ class PlayerScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -100,7 +106,8 @@ class PlayerScreen extends ConsumerWidget {
                                   step: 1,
                                   haptics: true,
                                   textMapper: (numberText) => "${numberText}s",
-                                  onChanged: (value) => setState(() => currentIntValue = value),
+                                  onChanged: (value) =>
+                                      setState(() => currentIntValue = value),
                                 ),
                               ],
                             ),
@@ -116,16 +123,22 @@ class PlayerScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                               TextButton(
                                   onPressed: () async {
-                                    ref.read(defaultSkipIntroLengthStateProvider.notifier).set(currentIntValue);
+                                    ref
+                                        .read(
+                                            defaultSkipIntroLengthStateProvider
+                                                .notifier)
+                                        .set(currentIntValue);
                                     Navigator.pop(context);
                                   },
                                   child: Text(
                                     context.l10n.ok,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -146,7 +159,8 @@ class PlayerScreen extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(context.l10n.default_skip_forward_skip_length),
+                        title:
+                            Text(context.l10n.default_skip_forward_skip_length),
                         content: SizedBox(
                             width: context.width(0.8),
                             child: ListView.builder(
@@ -159,7 +173,11 @@ class PlayerScreen extends ConsumerWidget {
                                   value: values[index],
                                   groupValue: defaultDoubleTapToSkipLength,
                                   onChanged: (value) {
-                                    ref.read(defaultDoubleTapToSkipLengthStateProvider.notifier).set(value!);
+                                    ref
+                                        .read(
+                                            defaultDoubleTapToSkipLengthStateProvider
+                                                .notifier)
+                                        .set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
@@ -178,7 +196,8 @@ class PlayerScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -212,7 +231,10 @@ class PlayerScreen extends ConsumerWidget {
                                   value: values[index],
                                   groupValue: defaultPlayBackSpeed,
                                   onChanged: (value) {
-                                    ref.read(defaultPlayBackSpeedStateProvider.notifier).set(value!);
+                                    ref
+                                        .read(defaultPlayBackSpeedStateProvider
+                                            .notifier)
+                                        .set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
@@ -231,7 +253,8 @@ class PlayerScreen extends ConsumerWidget {
                                   },
                                   child: Text(
                                     context.l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -258,13 +281,15 @@ class PlayerScreen extends ConsumerWidget {
                 ),
               ),
               subtitle: Text(context.l10n.aniskip_requires_info,
-                  style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+                  style:
+                      TextStyle(fontSize: 11, color: context.secondaryColor)),
             ),
             SwitchListTile(
                 value: useLibass,
                 title: Text(context.l10n.use_libass),
-                subtitle:
-                    Text(context.l10n.use_libass_info, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+                subtitle: Text(context.l10n.use_libass_info,
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor)),
                 onChanged: (value) {
                   ref.read(useLibassStateProvider.notifier).set(value);
                 }),
@@ -277,7 +302,8 @@ class PlayerScreen extends ConsumerWidget {
                   onChanged: (_) {},
                 ),
               ),
-              onExpansionChanged: (value) => ref.read(enableAniSkipStateProvider.notifier).set(value),
+              onExpansionChanged: (value) =>
+                  ref.read(enableAniSkipStateProvider.notifier).set(value),
               children: [
                 SwitchListTile(
                     value: enableAutoSkip,
@@ -292,7 +318,8 @@ class PlayerScreen extends ConsumerWidget {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(context.l10n.default_playback_speed_length),
+                            title: Text(
+                                context.l10n.default_playback_speed_length),
                             content: SizedBox(
                                 width: context.width(0.8),
                                 child: ListView.builder(
@@ -305,7 +332,11 @@ class PlayerScreen extends ConsumerWidget {
                                       value: values[index],
                                       groupValue: aniSkipTimeoutLength,
                                       onChanged: (value) {
-                                        ref.read(aniSkipTimeoutLengthStateProvider.notifier).set(value!);
+                                        ref
+                                            .read(
+                                                aniSkipTimeoutLengthStateProvider
+                                                    .notifier)
+                                            .set(value!);
                                         Navigator.pop(context);
                                       },
                                       title: Row(
@@ -324,7 +355,8 @@ class PlayerScreen extends ConsumerWidget {
                                       },
                                       child: Text(
                                         context.l10n.cancel,
-                                        style: TextStyle(color: context.primaryColor),
+                                        style: TextStyle(
+                                            color: context.primaryColor),
                                       )),
                                 ],
                               )
@@ -335,7 +367,8 @@ class PlayerScreen extends ConsumerWidget {
                   title: Text(context.l10n.aniskip_button_timeout),
                   subtitle: Text(
                     "${aniSkipTimeoutLength}s",
-                    style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor),
                   ),
                 ),
               ],
@@ -344,7 +377,8 @@ class PlayerScreen extends ConsumerWidget {
                 value: fullScreenPlayer,
                 title: Text(context.l10n.full_screen_player),
                 subtitle: Text(context.l10n.full_screen_player_info,
-                    style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+                    style:
+                        TextStyle(fontSize: 11, color: context.secondaryColor)),
                 onChanged: (value) {
                   ref.read(fullScreenPlayerStateProvider.notifier).set(value);
                 }),

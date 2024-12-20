@@ -35,13 +35,15 @@ final class CollectionRef implements CollectionRefImpl {
     List<List>? conditions,
   ]) {
     final key = _buildPath(parent?.path, id, delegate?.id);
-    final collectionRef = _cache.putIfAbsent(key, () => CollectionRef._(id, parent, delegate, conditions));
+    final collectionRef = _cache.putIfAbsent(
+        key, () => CollectionRef._(id, parent, delegate, conditions));
     collectionRef._conditions = conditions;
     return collectionRef;
   }
 
   static String _buildPath(String? parentPath, String path, String? docId) {
-    final docPath = ((docId != null && parentPath != null) ? '$docId.collection' : '');
+    final docPath =
+        ((docId != null && parentPath != null) ? '$docId.collection' : '');
     final pathSep = p.separator;
     return '${parentPath ?? ''}$docPath$pathSep$path$pathSep';
   }
@@ -58,8 +60,10 @@ final class CollectionRef implements CollectionRefImpl {
 
   @override
   DocumentRef doc([String? id]) {
-    id ??=
-        int.parse('${Random().nextInt(1000000000)}${Random().nextInt(1000000000)}').toRadixString(35).substring(0, 9);
+    id ??= int.parse(
+            '${Random().nextInt(1000000000)}${Random().nextInt(1000000000)}')
+        .toRadixString(35)
+        .substring(0, 9);
     return DocumentRef(id, this);
   }
 

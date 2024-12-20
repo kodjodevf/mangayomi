@@ -10,7 +10,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'headers.g.dart';
 
 @riverpod
-Map<String, String> headers(Ref ref, {required String source, required String lang}) {
+Map<String, String> headers(Ref ref,
+    {required String source, required String lang}) {
   final mSource = getSource(lang, source);
 
   Map<String, String> headers = {};

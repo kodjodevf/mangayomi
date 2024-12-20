@@ -61,39 +61,64 @@ class MEvalPlugin extends EvalPlugin {
 
   @override
   void configureForRuntime(Runtime runtime) {
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MProvider.', $MProvider.$construct,
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'MProvider.', $MProvider.$construct,
         isBridge: true);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MChapter.', $MChapter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MManga.', $MManga.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MPages.', $MPages.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MSource.', $MSource.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MVideo.', $MVideo.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MTrack.', $MTrack.$new);
-    runtime.registerBridgeEnumValues('package:mangayomi/bridge_lib.dart', 'MStatus', $MStatus.$values);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MChapter.', $MChapter.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MManga.', $MManga.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MPages.', $MPages.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MSource.', $MSource.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MVideo.', $MVideo.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MTrack.', $MTrack.$new);
+    runtime.registerBridgeEnumValues(
+        'package:mangayomi/bridge_lib.dart', 'MStatus', $MStatus.$values);
     //Filter
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'FilterList.', $FilterList.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'SelectFilter.', $SelectFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'SeparatorFilter.', $SeparatorFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'HeaderFilter.', $HeaderFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'TextFilter.', $TextFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'SortFilter.', $SortFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'TriStateFilter.', $TriStateFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'GroupFilter.', $GroupFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'CheckBoxFilter.', $CheckBoxFilter.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'SortState.', $SortState.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'SelectFilterOption.', $SelectFilterOption.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'FilterList.', $FilterList.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'SelectFilter.', $SelectFilter.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'SeparatorFilter.', $SeparatorFilter.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'HeaderFilter.', $HeaderFilter.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'TextFilter.', $TextFilter.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'SortFilter.', $SortFilter.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'TriStateFilter.', $TriStateFilter.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'GroupFilter.', $GroupFilter.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'CheckBoxFilter.', $CheckBoxFilter.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'SortState.', $SortState.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'SelectFilterOption.', $SelectFilterOption.$new);
     //Sources preferences
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'CheckBoxPreference.', $CheckBoxPreference.$new);
-    runtime.registerBridgeFunc(
-        'package:mangayomi/bridge_lib.dart', 'SwitchPreferenceCompat.', $SwitchPreferenceCompat.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'ListPreference.', $ListPreference.$new);
-    runtime.registerBridgeFunc(
-        'package:mangayomi/bridge_lib.dart', 'MultiSelectListPreference.', $MultiSelectListPreference.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'EditTextPreference.', $EditTextPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'CheckBoxPreference.', $CheckBoxPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'SwitchPreferenceCompat.', $SwitchPreferenceCompat.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'ListPreference.', $ListPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'MultiSelectListPreference.', $MultiSelectListPreference.$new);
+    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart',
+        'EditTextPreference.', $EditTextPreference.$new);
     //DOM HTML
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MElement.', $MElement.$new);
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'MDocument.', $MDocument.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MElement.', $MElement.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'MDocument.', $MDocument.$new);
     //HTTP CLIENT
-    runtime.registerBridgeFunc('package:mangayomi/bridge_lib.dart', 'Client.', $Client.$new);
+    runtime.registerBridgeFunc(
+        'package:mangayomi/bridge_lib.dart', 'Client.', $Client.$new);
   }
 }

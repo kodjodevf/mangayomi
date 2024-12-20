@@ -38,10 +38,15 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
 
   _init() async {
     await Future.delayed(const Duration(microseconds: 100));
-    final findManga =
-        await ref.read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga).notifier).findManga();
+    final findManga = await ref
+        .read(
+            trackStateProvider(track: widget.trackRes, isManga: widget.isManga)
+                .notifier)
+        .findManga();
     if (mounted) {
-      ref.read(tracksProvider(syncId: widget.syncId).notifier).updateTrackManga(findManga!, widget.isManga);
+      ref
+          .read(tracksProvider(syncId: widget.syncId).notifier)
+          .updateTrackManga(findManga!, widget.isManga);
     }
   }
 
@@ -51,7 +56,9 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
     final l10nLocale = ref.watch(l10nLocaleStateProvider);
     return Container(
       decoration: BoxDecoration(
-          color: context.isLight ? Theme.of(context).scaffoldBackgroundColor : Colors.black,
+          color: context.isLight
+              ? Theme.of(context).scaffoldBackgroundColor
+              : Colors.black,
           borderRadius: BorderRadius.circular(20)),
       child: Column(
         children: [
@@ -59,10 +66,12 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
             children: [
               if (!widget.hide)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   child: Container(
-                    decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(10), color: trackInfos(widget.syncId).$3),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: trackInfos(widget.syncId).$3),
                     width: 50,
                     height: 45,
                     child: Image.asset(
@@ -74,16 +83,22 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
               Expanded(
                 child: _elevatedButton(
                   context,
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20)),
+                  borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20)),
                   onPressed: !widget.hide
                       ? () async {
-                          final trackSearch =
-                              await trackersSearchraggableMenu(context, isManga: widget.isManga, track: widget.trackRes)
-                                  as TrackSearch?;
+                          final trackSearch = await trackersSearchraggableMenu(
+                              context,
+                              isManga: widget.isManga,
+                              track: widget.trackRes) as TrackSearch?;
                           if (trackSearch != null) {
                             await ref
-                                .read(trackStateProvider(track: null, isManga: widget.isManga).notifier)
-                                .setTrackSearch(trackSearch, widget.mangaId, widget.syncId);
+                                .read(trackStateProvider(
+                                        track: null, isManga: widget.isManga)
+                                    .notifier)
+                                .setTrackSearch(
+                                    trackSearch, widget.mangaId, widget.syncId);
                           }
                         }
                       : null,
@@ -95,7 +110,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                           child: Text(
                             widget.trackRes.title!,
                             style: TextStyle(
-                                color: Theme.of(context).textTheme.bodyMedium!.color,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .color,
                                 overflow: TextOverflow.ellipsis,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
@@ -105,7 +123,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       ),
                       IconButton(
                           onPressed: () {
-                            ref.read(tracksProvider(syncId: widget.syncId).notifier).deleteTrackManga(widget.trackRes);
+                            ref
+                                .read(tracksProvider(syncId: widget.syncId)
+                                    .notifier)
+                                .deleteTrackManga(widget.trackRes);
                           },
                           icon: const Icon(Icons.cancel_outlined))
                     ],
@@ -130,29 +151,39 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: ref
-                                    .read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga).notifier)
+                                    .read(trackStateProvider(
+                                            track: widget.trackRes,
+                                            isManga: widget.isManga)
+                                        .notifier)
                                     .getStatusList()
                                     .length,
                                 itemBuilder: (context, index) {
                                   final status = ref
-                                      .read(
-                                          trackStateProvider(track: widget.trackRes, isManga: widget.isManga).notifier)
+                                      .read(trackStateProvider(
+                                              track: widget.trackRes,
+                                              isManga: widget.isManga)
+                                          .notifier)
                                       .getStatusList()[index];
                                   return RadioListTile(
                                     dense: true,
                                     contentPadding: const EdgeInsets.all(0),
                                     value: status,
-                                    groupValue:
-                                        toTrackStatus(widget.trackRes.status, widget.isManga, widget.trackRes.syncId!),
+                                    groupValue: toTrackStatus(
+                                        widget.trackRes.status,
+                                        widget.isManga,
+                                        widget.trackRes.syncId!),
                                     onChanged: (value) {
                                       ref
                                           .read(trackStateProvider(
-                                                  track: widget.trackRes..status = status, isManga: widget.isManga)
+                                                  track: widget.trackRes
+                                                    ..status = status,
+                                                  isManga: widget.isManga)
                                               .notifier)
                                           .updateManga();
                                       Navigator.pop(context);
                                     },
-                                    title: Text(getTrackStatus(status, context)),
+                                    title:
+                                        Text(getTrackStatus(status, context)),
                                   );
                                 },
                               )),
@@ -166,7 +197,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     },
                                     child: Text(
                                       l10n.cancel,
-                                      style: TextStyle(color: context.primaryColor),
+                                      style: TextStyle(
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -175,7 +207,9 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                       });
                 },
                     text: getTrackStatus(
-                        toTrackStatus(widget.trackRes.status, widget.isManga, widget.trackRes.syncId!), context)),
+                        toTrackStatus(widget.trackRes.status, widget.isManga,
+                            widget.trackRes.syncId!),
+                        context)),
               ),
               Expanded(
                 child: _elevatedButton(context, onPressed: () {
@@ -196,10 +230,13 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                   NumberPicker(
                                     value: currentIntValue,
                                     minValue: 0,
-                                    maxValue: widget.trackRes.totalChapter != 0 ? widget.trackRes.totalChapter! : 10000,
+                                    maxValue: widget.trackRes.totalChapter != 0
+                                        ? widget.trackRes.totalChapter!
+                                        : 10000,
                                     step: 1,
                                     haptics: true,
-                                    onChanged: (value) => setState(() => currentIntValue = value),
+                                    onChanged: (value) =>
+                                        setState(() => currentIntValue = value),
                                   ),
                                 ],
                               ),
@@ -215,13 +252,16 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     },
                                     child: Text(
                                       l10n.cancel,
-                                      style: TextStyle(color: context.primaryColor),
+                                      style: TextStyle(
+                                          color: context.primaryColor),
                                     )),
                                 TextButton(
                                     onPressed: () async {
                                       ref
                                           .read(trackStateProvider(
-                                                  track: widget.trackRes..lastChapterRead = currentIntValue,
+                                                  track: widget.trackRes
+                                                    ..lastChapterRead =
+                                                        currentIntValue,
                                                   isManga: widget.isManga)
                                               .notifier)
                                           .updateManga();
@@ -229,7 +269,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     },
                                     child: Text(
                                       l10n.ok,
-                                      style: TextStyle(color: context.primaryColor),
+                                      style: TextStyle(
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -261,21 +302,28 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     value: currentIntValue,
                                     minValue: 0,
                                     maxValue: ref
-                                        .read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga)
+                                        .read(trackStateProvider(
+                                                track: widget.trackRes,
+                                                isManga: widget.isManga)
                                             .notifier)
                                         .getScoreMaxValue(),
                                     textMapper: (numberText) {
                                       return ref
-                                          .read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga)
+                                          .read(trackStateProvider(
+                                                  track: widget.trackRes,
+                                                  isManga: widget.isManga)
                                               .notifier)
                                           .getTextMapper(numberText);
                                     },
                                     step: ref
-                                        .read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga)
+                                        .read(trackStateProvider(
+                                                track: widget.trackRes,
+                                                isManga: widget.isManga)
                                             .notifier)
                                         .getScoreStep(),
                                     haptics: true,
-                                    onChanged: (value) => setState(() => currentIntValue = value),
+                                    onChanged: (value) =>
+                                        setState(() => currentIntValue = value),
                                   ),
                                 ],
                               ),
@@ -291,13 +339,15 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     },
                                     child: Text(
                                       l10n.cancel,
-                                      style: TextStyle(color: context.primaryColor),
+                                      style: TextStyle(
+                                          color: context.primaryColor),
                                     )),
                                 TextButton(
                                     onPressed: () async {
                                       ref
                                           .read(trackStateProvider(
-                                                  track: widget.trackRes..score = currentIntValue,
+                                                  track: widget.trackRes
+                                                    ..score = currentIntValue,
                                                   isManga: widget.isManga)
                                               .notifier)
                                           .updateManga();
@@ -305,7 +355,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     },
                                     child: Text(
                                       l10n.ok,
-                                      style: TextStyle(color: context.primaryColor),
+                                      style: TextStyle(
+                                          color: context.primaryColor),
                                     )),
                               ],
                             )
@@ -315,7 +366,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                 },
                     text: widget.trackRes.score != 0
                         ? ref
-                            .read(trackStateProvider(track: widget.trackRes, isManga: widget.isManga).notifier)
+                            .read(trackStateProvider(
+                                    track: widget.trackRes,
+                                    isManga: widget.isManga)
+                                .notifier)
                             .displayScore(widget.trackRes.score!)
                         : l10n!.score),
               )
@@ -324,8 +378,9 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
           Row(
             children: [
               Expanded(
-                child: _elevatedButton(context, borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20)),
-                    onPressed: () async {
+                child: _elevatedButton(context,
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20)), onPressed: () async {
                   DateTime? newDate = await showDatePicker(
                       helpText: l10n!.start_date,
                       locale: l10nLocale,
@@ -336,20 +391,27 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                   if (newDate == null) return;
                   ref
                       .read(trackStateProvider(
-                              track: widget.trackRes..startedReadingDate = newDate.millisecondsSinceEpoch,
+                              track: widget.trackRes
+                                ..startedReadingDate =
+                                    newDate.millisecondsSinceEpoch,
                               isManga: widget.isManga)
                           .notifier)
                       .updateManga();
                 },
                     text: widget.trackRes.startedReadingDate != null &&
-                            widget.trackRes.startedReadingDate! > DateTime(1970).millisecondsSinceEpoch
-                        ? dateFormat(widget.trackRes.startedReadingDate.toString(),
-                            ref: ref, useRelativeTimesTamps: false, context: context)
+                            widget.trackRes.startedReadingDate! >
+                                DateTime(1970).millisecondsSinceEpoch
+                        ? dateFormat(
+                            widget.trackRes.startedReadingDate.toString(),
+                            ref: ref,
+                            useRelativeTimesTamps: false,
+                            context: context)
                         : l10n!.start_date),
               ),
               Expanded(
-                child: _elevatedButton(context, borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20)),
-                    onPressed: () async {
+                child: _elevatedButton(context,
+                    borderRadius: const BorderRadius.only(
+                        bottomRight: Radius.circular(20)), onPressed: () async {
                   DateTime? newDate = await showDatePicker(
                       helpText: l10n!.finish_date,
                       locale: l10nLocale,
@@ -360,15 +422,21 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                   if (newDate == null) return;
                   ref
                       .read(trackStateProvider(
-                              track: widget.trackRes..finishedReadingDate = newDate.millisecondsSinceEpoch,
+                              track: widget.trackRes
+                                ..finishedReadingDate =
+                                    newDate.millisecondsSinceEpoch,
                               isManga: widget.isManga)
                           .notifier)
                       .updateManga();
                 },
                     text: widget.trackRes.finishedReadingDate != null &&
-                            widget.trackRes.finishedReadingDate! > DateTime(1970).millisecondsSinceEpoch
-                        ? dateFormat(widget.trackRes.finishedReadingDate.toString(),
-                            ref: ref, useRelativeTimesTamps: false, context: context)
+                            widget.trackRes.finishedReadingDate! >
+                                DateTime(1970).millisecondsSinceEpoch
+                        ? dateFormat(
+                            widget.trackRes.finishedReadingDate.toString(),
+                            ref: ref,
+                            useRelativeTimesTamps: false,
+                            context: context)
                         : l10n!.finish_date),
               )
             ],
@@ -380,20 +448,32 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
 }
 
 Widget _elevatedButton(BuildContext context,
-    {required Function()? onPressed, String text = "", Widget? child, BorderRadiusGeometry? borderRadius}) {
+    {required Function()? onPressed,
+    String text = "",
+    Widget? child,
+    BorderRadiusGeometry? borderRadius}) {
   return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: context.isLight ? Theme.of(context).scaffoldBackgroundColor : Colors.black,
+          backgroundColor: context.isLight
+              ? Theme.of(context).scaffoldBackgroundColor
+              : Colors.black,
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-              side: BorderSide(width: 0, color: context.secondaryColor.withValues(alpha: 0.1)),
+              side: BorderSide(
+                  width: 0,
+                  color: context.secondaryColor.withValues(alpha: 0.1)),
               borderRadius: borderRadius ?? BorderRadius.circular(0))),
       onPressed: onPressed,
       child: child ??
           Text(
             text,
-            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.9)),
+            style: TextStyle(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .color!
+                    .withValues(alpha: 0.9)),
           ));
 }
