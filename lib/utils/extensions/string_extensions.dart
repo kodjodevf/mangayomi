@@ -40,6 +40,18 @@ extension StringExtensions on String {
     return replaceAll(RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)'), source);
   }
 
+  String get getUrlWithoutDomain {
+    final uri = Uri.parse(replaceAll(' ', '%20'));
+    String out = uri.path;
+    if (uri.query.isNotEmpty) {
+      out += '?${uri.query}';
+    }
+    if (uri.fragment.isNotEmpty) {
+      out += '#${uri.fragment}';
+    }
+    return out;
+  }
+
   bool isMediaVideo() {
     return ["3gp", "avi", "mpg", "mpeg", "webm", "ogg", "flv", "m4v", "mvp", "mp4", "wmv", "mkv", "mov"]
         .any((extension) => toLowerCase().endsWith(extension));

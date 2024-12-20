@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/dart/model/m_bridge.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
@@ -17,7 +17,8 @@ class BackupAndRestore extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final backupFrequency = ref.watch(backupFrequencyStateProvider);
-    final backupFrequencyOptions = ref.watch(backupFrequencyOptionsStateProvider);
+    final backupFrequencyOptions =
+        ref.watch(backupFrequencyOptionsStateProvider);
     final autoBackupLocation = ref.watch(autoBackupLocationStateProvider);
     ref.read(autoBackupLocationStateProvider.notifier).refresh();
 
@@ -73,24 +74,32 @@ class BackupAndRestore extends ConsumerWidget {
                                       },
                                       child: Text(
                                         l10n.cancel,
-                                        style: TextStyle(color: context.primaryColor),
+                                        style: TextStyle(
+                                            color: context.primaryColor),
                                       )),
                                   TextButton(
                                       onPressed: () async {
                                         String? result;
                                         if (Platform.isIOS) {
-                                          result = (await StorageProvider().getIosBackupDirectory())!.path;
+                                          result = (await StorageProvider()
+                                                  .getIosBackupDirectory())!
+                                              .path;
                                         } else {
-                                          result = await FilePicker.platform.getDirectoryPath();
+                                          result = await FilePicker.platform
+                                              .getDirectoryPath();
                                         }
 
                                         if (result != null && context.mounted) {
-                                          ref.watch(doBackUpProvider(list: indexList, path: result, context: context));
+                                          ref.watch(doBackUpProvider(
+                                              list: indexList,
+                                              path: result,
+                                              context: context));
                                         }
                                       },
                                       child: Text(
                                         l10n.ok,
-                                        style: TextStyle(color: context.primaryColor),
+                                        style: TextStyle(
+                                            color: context.primaryColor),
                                       )),
                                 ],
                               )
@@ -120,12 +129,15 @@ class BackupAndRestore extends ConsumerWidget {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.info_outline_rounded, color: context.secondaryColor),
+                                    Icon(Icons.info_outline_rounded,
+                                        color: context.secondaryColor),
                                   ],
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 5),
-                                  child: Text(l10n.restore_backup_warning_title),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child:
+                                      Text(l10n.restore_backup_warning_title),
                                 ),
                               ],
                             )),
@@ -139,16 +151,22 @@ class BackupAndRestore extends ConsumerWidget {
                                   },
                                   child: Text(
                                     l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                               TextButton(
                                   onPressed: () async {
                                     try {
                                       FilePickerResult? result =
-                                          await FilePicker.platform.pickFiles(allowMultiple: false);
+                                          await FilePicker.platform
+                                              .pickFiles(allowMultiple: false, 
+                                                  type: FileType.custom, 
+                                                  allowedExtensions: ["backup"]);
 
                                       if (result != null && context.mounted) {
-                                        ref.watch(doRestoreProvider(path: result.files.first.path!, context: context));
+                                        ref.watch(doRestoreProvider(
+                                            path: result.files.first.path!,
+                                            context: context));
                                       }
                                       if (!context.mounted) return;
                                       Navigator.pop(context);
@@ -159,7 +177,8 @@ class BackupAndRestore extends ConsumerWidget {
                                   },
                                   child: Text(
                                     l10n.ok,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -177,7 +196,9 @@ class BackupAndRestore extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
               child: Row(
                 children: [
-                  Text(l10n.automatic_backups, style: TextStyle(fontSize: 13, color: context.primaryColor)),
+                  Text(l10n.automatic_backups,
+                      style:
+                          TextStyle(fontSize: 13, color: context.primaryColor)),
                 ],
               ),
             ),
@@ -201,7 +222,10 @@ class BackupAndRestore extends ConsumerWidget {
                                   value: index,
                                   groupValue: backupFrequency,
                                   onChanged: (value) {
-                                    ref.read(backupFrequencyStateProvider.notifier).set(value!);
+                                    ref
+                                        .read(backupFrequencyStateProvider
+                                            .notifier)
+                                        .set(value!);
                                     Navigator.pop(context);
                                   },
                                   title: Row(
@@ -220,7 +244,8 @@ class BackupAndRestore extends ConsumerWidget {
                                   },
                                   child: Text(
                                     l10n.cancel,
-                                    style: TextStyle(color: context.primaryColor),
+                                    style:
+                                        TextStyle(color: context.primaryColor),
                                   )),
                             ],
                           )
@@ -240,12 +265,16 @@ class BackupAndRestore extends ConsumerWidget {
                   String? result = await FilePicker.platform.getDirectoryPath();
 
                   if (result != null) {
-                    ref.read(autoBackupLocationStateProvider.notifier).set(result);
+                    ref
+                        .read(autoBackupLocationStateProvider.notifier)
+                        .set(result);
                   }
                 },
                 title: Text(l10n.backup_location),
                 subtitle: Text(
-                  autoBackupLocation.$2.isEmpty ? autoBackupLocation.$1 : autoBackupLocation.$2,
+                  autoBackupLocation.$2.isEmpty
+                      ? autoBackupLocation.$1
+                      : autoBackupLocation.$2,
                   style: TextStyle(fontSize: 11, color: context.secondaryColor),
                 ),
               ),
@@ -295,16 +324,22 @@ class BackupAndRestore extends ConsumerWidget {
                                       },
                                       child: Text(
                                         l10n.cancel,
-                                        style: TextStyle(color: context.primaryColor),
+                                        style: TextStyle(
+                                            color: context.primaryColor),
                                       )),
                                   TextButton(
                                       onPressed: () async {
-                                        ref.read(backupFrequencyOptionsStateProvider.notifier).set(indexList);
+                                        ref
+                                            .read(
+                                                backupFrequencyOptionsStateProvider
+                                                    .notifier)
+                                            .set(indexList);
                                         Navigator.pop(context);
                                       },
                                       child: Text(
                                         l10n.ok,
-                                        style: TextStyle(color: context.primaryColor),
+                                        style: TextStyle(
+                                            color: context.primaryColor),
                                       )),
                                 ],
                               )
@@ -325,12 +360,14 @@ class BackupAndRestore extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, color: context.secondaryColor),
+                    Icon(Icons.info_outline_rounded,
+                        color: context.secondaryColor),
                   ],
                 ),
               ),
               subtitle: Text(l10n.backup_and_restore_warning_info,
-                  style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+                  style:
+                      TextStyle(fontSize: 11, color: context.secondaryColor)),
             )
           ],
         ),
@@ -354,5 +391,12 @@ List<String> _getList(BuildContext context) {
 
 List<String> _getBackupFrequencyList(BuildContext context) {
   final l10n = l10nLocalizations(context)!;
-  return [l10n.off, l10n.every_6_hours, l10n.every_12_hours, l10n.daily, l10n.every_2_days, l10n.weekly];
+  return [
+    l10n.off,
+    l10n.every_6_hours,
+    l10n.every_12_hours,
+    l10n.daily,
+    l10n.every_2_days,
+    l10n.weekly
+  ];
 }

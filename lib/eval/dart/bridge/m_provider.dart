@@ -17,6 +17,7 @@ import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
 class $MProvider extends MProvider with $Bridge<MProvider> {
@@ -478,15 +479,7 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
           return $Future.wrap(runtime.evaluateAsync(args[0]!.$reified).then((value) => $String(value.stringResult)));
         }),
       'getUrlWithoutDomain' => $Function((_, __, List<$Value?> args) {
-          final uri = Uri.parse(args[0]!.$value.replaceAll(' ', '%20'));
-          String out = uri.path;
-          if (uri.query.isNotEmpty) {
-            out += '?${uri.query}';
-          }
-          if (uri.fragment.isNotEmpty) {
-            out += '#${uri.fragment}';
-          }
-          return $String(out);
+          return $String((args[0]!.$value as String).getUrlWithoutDomain);
         }),
       'parseHtml' => $Function((_, __, List<$Value?> args) {
           final res = MBridge.parsHtml(args[0]!.$reified);
