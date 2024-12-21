@@ -135,10 +135,6 @@ class Settings {
 
   List<int>? backupFrequencyOptions;
 
-  bool? syncOnAppLaunch;
-
-  bool? syncAfterReading;
-
   String? autoBackupLocation;
 
   bool? usePageTapZones;
@@ -276,8 +272,6 @@ class Settings {
       this.personalPageModeList,
       this.backupFrequency,
       this.backupFrequencyOptions,
-      this.syncOnAppLaunch,
-      this.syncAfterReading,
       this.autoBackupLocation,
       this.startDatebackup,
       this.usePageTapZones = true,
@@ -436,8 +430,6 @@ class Settings {
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
     backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
-    syncOnAppLaunch = json['syncOnAppLaunch'];
-    syncAfterReading = json['syncAfterReading'];
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
@@ -559,8 +551,6 @@ class Settings {
         'userAgent': userAgent,
         'backupFrequency': backupFrequency,
         'backupFrequencyOptions': backupFrequencyOptions,
-        'syncOnAppLaunch': syncOnAppLaunch,
-        'syncAfterReading': syncAfterReading,
         'autoBackupLocation': autoBackupLocation,
         'startDatebackup': startDatebackup,
         'usePageTapZones': usePageTapZones,

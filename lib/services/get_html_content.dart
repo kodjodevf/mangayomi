@@ -23,5 +23,5 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
   return '''<div id="readerViewContent"><div style="padding: 2em;">${html.substring(1, html.length - 1)}</div></div>'''
       .replaceAll("\\n", "")
       .replaceAll("\\t", "")
-      .replaceAll("\\", "");
+      .replaceAll("\\\"", "\"");
 }

@@ -7,7 +7,7 @@ part of 'anime_player_controller_provider.dart';
 // **************************************************************************
 
 String _$animeStreamControllerHash() =>
-    r'd3ec7fe7ac2af84393b128e430fd2f5b9224ed14';
+    r'57ebd35f033d51fd213763173c26cd887f5c42d7';
 
 /// Copied from Dart SDK
 class _SystemHash {

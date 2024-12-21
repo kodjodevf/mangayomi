@@ -10,9 +10,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
-import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'novel_reader_controller_provider.g.dart';
@@ -81,10 +79,16 @@ class NovelReaderController extends _$NovelReaderController {
     });
   }
 
-  void checkAndSyncProgress() {
-    final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
-    if (syncAfterReading) {
-      ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(true);
+  void setChapterOffset(double newOffset, double maxOffset, bool save) {
+    if (incognitoMode) return;
+    final isRead = (newOffset / (maxOffset != 0 ? maxOffset : 1)) >= 0.9;
+    if (isRead || save) {
+      final ch = chapter;
+      isar.writeTxnSync(() {
+        ch.isRead = isRead;
+        ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0).toString();
+        isar.chapters.putSync(ch);
+      });
     }
   }
 
@@ -94,9 +98,6 @@ class NovelReaderController extends _$NovelReaderController {
     final chap = chapter;
     isar.writeTxnSync(() {
       chap.isBookmarked = !isBookmarked;
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .addUpdatedChapter(chap, false, false);
       isar.chapters.putSync(chap);
     });
   }
