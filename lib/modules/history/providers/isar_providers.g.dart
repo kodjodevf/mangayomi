@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getAllHistoryStreamHash() =>
-    r'53b3a7837efab9e7d2808930e5070dbd788c59f8';
+    r'42048cb03035be55b52fc501fb2309cdb2acfcb8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -41,10 +41,10 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
 
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider call({
-    required bool isManga,
+    required ItemType itemType,
   }) {
     return GetAllHistoryStreamProvider(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -53,7 +53,7 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
     covariant GetAllHistoryStreamProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -77,11 +77,11 @@ class GetAllHistoryStreamProvider
     extends AutoDisposeStreamProvider<List<History>> {
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider({
-    required bool isManga,
+    required ItemType itemType,
   }) : this._internal(
           (ref) => getAllHistoryStream(
             ref as GetAllHistoryStreamRef,
-            isManga: isManga,
+            itemType: itemType,
           ),
           from: getAllHistoryStreamProvider,
           name: r'getAllHistoryStreamProvider',
@@ -92,7 +92,7 @@ class GetAllHistoryStreamProvider
           dependencies: GetAllHistoryStreamFamily._dependencies,
           allTransitiveDependencies:
               GetAllHistoryStreamFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   GetAllHistoryStreamProvider._internal(
@@ -102,10 +102,10 @@ class GetAllHistoryStreamProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
@@ -120,7 +120,7 @@ class GetAllHistoryStreamProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -132,13 +132,13 @@ class GetAllHistoryStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllHistoryStreamProvider && other.isManga == isManga;
+    return other is GetAllHistoryStreamProvider && other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -147,8 +147,8 @@ class GetAllHistoryStreamProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin GetAllHistoryStreamRef on AutoDisposeStreamProviderRef<List<History>> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _GetAllHistoryStreamProviderElement
@@ -157,11 +157,11 @@ class _GetAllHistoryStreamProviderElement
   _GetAllHistoryStreamProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as GetAllHistoryStreamProvider).isManga;
+  ItemType get itemType => (origin as GetAllHistoryStreamProvider).itemType;
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'01f77807c8be11f471b6acee6e7bc358ce600a65';
+    r'6a20f8feba3010c2ab7a80560f7a7f6cf10c7366';
 
 /// See also [getAllUpdateStream].
 @ProviderFor(getAllUpdateStream)
@@ -174,10 +174,10 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
 
   /// See also [getAllUpdateStream].
   GetAllUpdateStreamProvider call({
-    required bool isManga,
+    required ItemType itemType,
   }) {
     return GetAllUpdateStreamProvider(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -186,7 +186,7 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
     covariant GetAllUpdateStreamProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -210,11 +210,11 @@ class GetAllUpdateStreamProvider
     extends AutoDisposeStreamProvider<List<Update>> {
   /// See also [getAllUpdateStream].
   GetAllUpdateStreamProvider({
-    required bool isManga,
+    required ItemType itemType,
   }) : this._internal(
           (ref) => getAllUpdateStream(
             ref as GetAllUpdateStreamRef,
-            isManga: isManga,
+            itemType: itemType,
           ),
           from: getAllUpdateStreamProvider,
           name: r'getAllUpdateStreamProvider',
@@ -225,7 +225,7 @@ class GetAllUpdateStreamProvider
           dependencies: GetAllUpdateStreamFamily._dependencies,
           allTransitiveDependencies:
               GetAllUpdateStreamFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   GetAllUpdateStreamProvider._internal(
@@ -235,10 +235,10 @@ class GetAllUpdateStreamProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
@@ -253,7 +253,7 @@ class GetAllUpdateStreamProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -265,13 +265,13 @@ class GetAllUpdateStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllUpdateStreamProvider && other.isManga == isManga;
+    return other is GetAllUpdateStreamProvider && other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -280,8 +280,8 @@ class GetAllUpdateStreamProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin GetAllUpdateStreamRef on AutoDisposeStreamProviderRef<List<Update>> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _GetAllUpdateStreamProviderElement
@@ -290,7 +290,7 @@ class _GetAllUpdateStreamProviderElement
   _GetAllUpdateStreamProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as GetAllUpdateStreamProvider).isManga;
+  ItemType get itemType => (origin as GetAllUpdateStreamProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

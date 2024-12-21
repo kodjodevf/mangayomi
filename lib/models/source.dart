@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
+import 'package:mangayomi/models/manga.dart';
 part 'source.g.dart';
 
 @collection
@@ -49,6 +50,9 @@ class Source {
 
   bool? isManga;
 
+  @enumerated
+  late ItemType itemType;
+
   String? appMinVerReq;
 
   String? additionalParams;
@@ -83,6 +87,7 @@ class Source {
       this.sourceCode = '',
       this.headers = '',
       this.isManga = true,
+      this.itemType = ItemType.manga,
       this.appMinVerReq = "",
       this.additionalParams = "",
       this.isLocal = false,
@@ -102,6 +107,7 @@ class Source {
     isAdded = json['isAdded'];
     isFullData = json['isFullData'];
     isManga = json['isManga'];
+    itemType = ItemType.values[json['itemType'] ?? 0];
     isNsfw = json['isNsfw'];
     isPinned = json['isPinned'];
     lang = json['lang'];
@@ -133,6 +139,7 @@ class Source {
         'isAdded': isAdded,
         'isFullData': isFullData,
         'isManga': isManga,
+        'itemType': itemType,
         'isNsfw': isNsfw,
         'isPinned': isPinned,
         'lang': lang,

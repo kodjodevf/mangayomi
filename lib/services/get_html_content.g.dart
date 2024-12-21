@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sync_server.dart';
+part of 'get_html_content.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncServerHash() => r'db0f27093c2e76d4158b7af7960359c54c9a00b2';
+String _$getHtmlContentHash() => r'0c964239912b7f93bfb4c80a47f7266ff1ae3f5e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,38 +29,30 @@ class _SystemHash {
   }
 }
 
-abstract class _$SyncServer extends BuildlessAutoDisposeNotifier<void> {
-  late final int syncId;
+/// See also [getHtmlContent].
+@ProviderFor(getHtmlContent)
+const getHtmlContentProvider = GetHtmlContentFamily();
 
-  void build({
-    required int syncId,
-  });
-}
+/// See also [getHtmlContent].
+class GetHtmlContentFamily extends Family<AsyncValue<String>> {
+  /// See also [getHtmlContent].
+  const GetHtmlContentFamily();
 
-/// See also [SyncServer].
-@ProviderFor(SyncServer)
-const syncServerProvider = SyncServerFamily();
-
-/// See also [SyncServer].
-class SyncServerFamily extends Family<void> {
-  /// See also [SyncServer].
-  const SyncServerFamily();
-
-  /// See also [SyncServer].
-  SyncServerProvider call({
-    required int syncId,
+  /// See also [getHtmlContent].
+  GetHtmlContentProvider call({
+    required Chapter chapter,
   }) {
-    return SyncServerProvider(
-      syncId: syncId,
+    return GetHtmlContentProvider(
+      chapter: chapter,
     );
   }
 
   @override
-  SyncServerProvider getProviderOverride(
-    covariant SyncServerProvider provider,
+  GetHtmlContentProvider getProviderOverride(
+    covariant GetHtmlContentProvider provider,
   ) {
     return call(
-      syncId: provider.syncId,
+      chapter: provider.chapter,
     );
   }
 
@@ -76,80 +68,75 @@ class SyncServerFamily extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'syncServerProvider';
+  String? get name => r'getHtmlContentProvider';
 }
 
-/// See also [SyncServer].
-class SyncServerProvider
-    extends AutoDisposeNotifierProviderImpl<SyncServer, void> {
-  /// See also [SyncServer].
-  SyncServerProvider({
-    required int syncId,
+/// See also [getHtmlContent].
+class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
+  /// See also [getHtmlContent].
+  GetHtmlContentProvider({
+    required Chapter chapter,
   }) : this._internal(
-          () => SyncServer()..syncId = syncId,
-          from: syncServerProvider,
-          name: r'syncServerProvider',
+          (ref) => getHtmlContent(
+            ref as GetHtmlContentRef,
+            chapter: chapter,
+          ),
+          from: getHtmlContentProvider,
+          name: r'getHtmlContentProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$syncServerHash,
-          dependencies: SyncServerFamily._dependencies,
+                  : _$getHtmlContentHash,
+          dependencies: GetHtmlContentFamily._dependencies,
           allTransitiveDependencies:
-              SyncServerFamily._allTransitiveDependencies,
-          syncId: syncId,
+              GetHtmlContentFamily._allTransitiveDependencies,
+          chapter: chapter,
         );
 
-  SyncServerProvider._internal(
+  GetHtmlContentProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.syncId,
+    required this.chapter,
   }) : super.internal();
 
-  final int syncId;
+  final Chapter chapter;
 
   @override
-  void runNotifierBuild(
-    covariant SyncServer notifier,
+  Override overrideWith(
+    FutureOr<String> Function(GetHtmlContentRef provider) create,
   ) {
-    return notifier.build(
-      syncId: syncId,
-    );
-  }
-
-  @override
-  Override overrideWith(SyncServer Function() create) {
     return ProviderOverride(
       origin: this,
-      override: SyncServerProvider._internal(
-        () => create()..syncId = syncId,
+      override: GetHtmlContentProvider._internal(
+        (ref) => create(ref as GetHtmlContentRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        syncId: syncId,
+        chapter: chapter,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<SyncServer, void> createElement() {
-    return _SyncServerProviderElement(this);
+  AutoDisposeFutureProviderElement<String> createElement() {
+    return _GetHtmlContentProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SyncServerProvider && other.syncId == syncId;
+    return other is GetHtmlContentProvider && other.chapter == chapter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, syncId.hashCode);
+    hash = _SystemHash.combine(hash, chapter.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -157,18 +144,17 @@ class SyncServerProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin SyncServerRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `syncId` of this provider.
-  int get syncId;
+mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<String> {
+  /// The parameter `chapter` of this provider.
+  Chapter get chapter;
 }
 
-class _SyncServerProviderElement
-    extends AutoDisposeNotifierProviderElement<SyncServer, void>
-    with SyncServerRef {
-  _SyncServerProviderElement(super.provider);
+class _GetHtmlContentProviderElement
+    extends AutoDisposeFutureProviderElement<String> with GetHtmlContentRef {
+  _GetHtmlContentProviderElement(super.provider);
 
   @override
-  int get syncId => (origin as SyncServerProvider).syncId;
+  Chapter get chapter => (origin as GetHtmlContentProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

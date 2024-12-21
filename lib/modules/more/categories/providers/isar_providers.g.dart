@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getMangaCategorieStreamHash() =>
-    r'97e90977f4696eedcf597c655a40dd6ccd47ed37';
+    r'1dcf15018a6467eef7a26c1728b9e531ebd984d0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -41,10 +41,10 @@ class GetMangaCategorieStreamFamily extends Family<AsyncValue<List<Category>>> {
 
   /// See also [getMangaCategorieStream].
   GetMangaCategorieStreamProvider call({
-    required bool isManga,
+    required ItemType itemType,
   }) {
     return GetMangaCategorieStreamProvider(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -53,7 +53,7 @@ class GetMangaCategorieStreamFamily extends Family<AsyncValue<List<Category>>> {
     covariant GetMangaCategorieStreamProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -77,11 +77,11 @@ class GetMangaCategorieStreamProvider
     extends AutoDisposeStreamProvider<List<Category>> {
   /// See also [getMangaCategorieStream].
   GetMangaCategorieStreamProvider({
-    required bool isManga,
+    required ItemType itemType,
   }) : this._internal(
           (ref) => getMangaCategorieStream(
             ref as GetMangaCategorieStreamRef,
-            isManga: isManga,
+            itemType: itemType,
           ),
           from: getMangaCategorieStreamProvider,
           name: r'getMangaCategorieStreamProvider',
@@ -92,7 +92,7 @@ class GetMangaCategorieStreamProvider
           dependencies: GetMangaCategorieStreamFamily._dependencies,
           allTransitiveDependencies:
               GetMangaCategorieStreamFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   GetMangaCategorieStreamProvider._internal(
@@ -102,10 +102,10 @@ class GetMangaCategorieStreamProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
@@ -120,7 +120,7 @@ class GetMangaCategorieStreamProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -132,13 +132,14 @@ class GetMangaCategorieStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetMangaCategorieStreamProvider && other.isManga == isManga;
+    return other is GetMangaCategorieStreamProvider &&
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -148,8 +149,8 @@ class GetMangaCategorieStreamProvider
 // ignore: unused_element
 mixin GetMangaCategorieStreamRef
     on AutoDisposeStreamProviderRef<List<Category>> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _GetMangaCategorieStreamProviderElement
@@ -158,7 +159,7 @@ class _GetMangaCategorieStreamProviderElement
   _GetMangaCategorieStreamProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as GetMangaCategorieStreamProvider).isManga;
+  ItemType get itemType => (origin as GetMangaCategorieStreamProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

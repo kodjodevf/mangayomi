@@ -55,14 +55,15 @@ class MainScreen extends ConsumerWidget {
           routerCurrentLocationStateProvider(context),
         );
         bool isReadingScreen =
-            location == '/mangareaderview' || location == '/animePlayerView';
+            location == '/mangaReaderView' || location == '/animePlayerView' || location == '/novelReaderView';
         int currentIndex = switch (location) {
           null || '/MangaLibrary' => 0,
           '/AnimeLibrary' => 1,
-          '/updates' => 2,
-          '/history' => 3,
-          '/browse' => 4,
-          _ => 5,
+          '/NovelLibrary' => 2,
+          '/updates' => 3,
+          '/history' => 4,
+          '/browse' => 5,
+          _ => 6,
         };
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
@@ -111,6 +112,7 @@ class MainScreen extends ConsumerWidget {
                                   null => 100,
                                   != '/MangaLibrary' &&
                                         != '/AnimeLibrary' &&
+                                        != '/NovelLibrary' &&
                                         != '/history' &&
                                         != '/updates' &&
                                         != '/browse' &&
@@ -150,6 +152,15 @@ class MainScreen extends ConsumerWidget {
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
                                                 child: Text(l10n.anime))),
+                                        NavigationRailDestination(
+                                            selectedIcon: const Icon(
+                                                Icons.local_library),
+                                            icon: const Icon(Icons
+                                                .local_library_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.novel))),
                                         NavigationRailDestination(
                                             selectedIcon:
                                                 const Icon(Icons.new_releases),
@@ -206,9 +217,10 @@ class MainScreen extends ConsumerWidget {
                                         final fn = switch (newIndex) {
                                           0 => route.go('/MangaLibrary'),
                                           1 => route.go('/AnimeLibrary'),
-                                          2 => route.go('/updates'),
-                                          3 => route.go('/history'),
-                                          4 => route.go('/browse'),
+                                          2 => route.go('/NovelLibrary'),
+                                          3 => route.go('/updates'),
+                                          4 => route.go('/history'),
+                                          5 => route.go('/browse'),
                                           _ => route.go('/more'),
                                         };
                                         fn;
@@ -242,6 +254,7 @@ class MainScreen extends ConsumerWidget {
                               null => null,
                               != '/MangaLibrary' &&
                                     != '/AnimeLibrary' &&
+                                    != '/NovelLibrary' &&
                                     != '/history' &&
                                     != '/updates' &&
                                     != '/browse' &&
@@ -272,6 +285,12 @@ class MainScreen extends ConsumerWidget {
                                   icon: const Icon(
                                       Icons.video_collection_outlined),
                                   label: l10n.anime),
+                              NavigationDestination(
+                                  selectedIcon:
+                                      const Icon(Icons.local_library),
+                                  icon: const Icon(
+                                      Icons.local_library_outlined),
+                                  label: l10n.novel),
                               Stack(
                                 children: [
                                   NavigationDestination(
@@ -311,9 +330,10 @@ class MainScreen extends ConsumerWidget {
                               final fn = switch (newIndex) {
                                 0 => route.go('/MangaLibrary'),
                                 1 => route.go('/AnimeLibrary'),
-                                2 => route.go('/updates'),
-                                3 => route.go('/history'),
-                                4 => route.go('/browse'),
+                                2 => route.go('/NovelLibrary'),
+                                3 => route.go('/updates'),
+                                4 => route.go('/history'),
+                                5 => route.go('/browse'),
                                 _ => route.go('/more'),
                               };
                               fn;
