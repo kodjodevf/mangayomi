@@ -43,6 +43,18 @@ extension StringExtensions on String {
         source);
   }
 
+  String get getUrlWithoutDomain {
+    final uri = Uri.parse(replaceAll(' ', '%20'));
+    String out = uri.path;
+    if (uri.query.isNotEmpty) {
+      out += '?${uri.query}';
+    }
+    if (uri.fragment.isNotEmpty) {
+      out += '#${uri.fragment}';
+    }
+    return out;
+  }
+
   bool isMediaVideo() {
     return [
       "3gp",

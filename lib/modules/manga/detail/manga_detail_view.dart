@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -28,7 +28,7 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/get_source_baseurl.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -59,6 +59,7 @@ class MangaDetailView extends ConsumerStatefulWidget {
   final Manga? manga;
   final bool sourceExist;
   final Function(bool) checkForUpdate;
+  final bool isManga;
 
   const MangaDetailView(
       {super.key,
@@ -68,7 +69,8 @@ class MangaDetailView extends ConsumerStatefulWidget {
       this.action,
       required this.sourceExist,
       required this.manga,
-      required this.checkForUpdate});
+      required this.checkForUpdate,
+      required this.isManga});
 
   @override
   ConsumerState<MangaDetailView> createState() => _MangaDetailViewState();
@@ -380,23 +382,32 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       return [
                                         PopupMenuItem<int>(
                                             value: 0,
-                                            child: Text(
-                                                context.l10n.next_chapter)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_chapter
+                                                : context.l10n.next_episode)),
                                         PopupMenuItem<int>(
                                             value: 1,
-                                            child: Text(
-                                                context.l10n.next_5_chapters)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_5_chapters
+                                                : context
+                                                    .l10n.next_5_episodes)),
                                         PopupMenuItem<int>(
                                             value: 2,
-                                            child: Text(
-                                                context.l10n.next_10_chapters)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_10_chapters
+                                                : context
+                                                    .l10n.next_10_episodes)),
                                         PopupMenuItem<int>(
                                             value: 3,
-                                            child: Text(
-                                                context.l10n.next_25_chapters)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.next_25_chapters
+                                                : context
+                                                    .l10n.next_25_episodes)),
                                         PopupMenuItem<int>(
                                             value: 4,
-                                            child: Text(context.l10n.unread)),
+                                            child: Text(widget.isManga
+                                                ? context.l10n.unread
+                                                : context.l10n.unwatched)),
                                       ];
                                     },
                                     onSelected: (value) {
@@ -517,10 +528,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final source = getSource(
                                           widget.manga!.lang!,
                                           widget.manga!.source!);
-                                      String url = source!.apiUrl!.isEmpty
-                                          ? widget.manga!.link!
-                                          : "${source.baseUrl}${widget.manga!.link!}";
-
+                                      final url =
+                                          "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
                                       Share.share(url);
                                     }
                                   }),
@@ -987,7 +996,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         .update();
                   }),
             ListTileChapterFilter(
-                label: l10n.unread,
+                label: widget.isManga ? l10n.unread : l10n.unwatched,
                 type: ref.watch(chapterFilterUnreadStateProvider(
                     mangaId: widget.manga!.id!)),
                 onTap: () {
@@ -1184,7 +1193,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             RadioListTile(
               dense: true,
-              title: Text(l10n.chapter_number),
+              title: Text(
+                  widget.isManga ? l10n.chapter_number : l10n.episode_number),
               value: "ej",
               groupValue: "e",
               selected: false,
@@ -1201,7 +1211,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     if (index == 0) {
       return l10n.by_scanlator;
     } else if (index == 1) {
-      return l10n.by_chapter_number;
+      return widget.isManga ? l10n.by_chapter_number : l10n.by_episode_number;
     } else if (index == 2) {
       return l10n.by_upload_date;
     }
@@ -1548,12 +1558,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   final manga = widget.manga!;
 
                   final source =
-                      getSource(widget.manga!.lang!, widget.manga!.source!)!;
-                  final baseUrl =
-                      ref.watch(sourceBaseUrlProvider(source: source));
-                  String url = widget.manga!.link!.startsWith('/')
-                      ? "$baseUrl${widget.manga!.link!}"
-                      : widget.manga!.link!;
+                      getSource(widget.manga!.lang!, widget.manga!.source!);
+                  final url =
+                      "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
 
                   Map<String, dynamic> data = {
                     'url': url,

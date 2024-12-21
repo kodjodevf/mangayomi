@@ -4,8 +4,7 @@ class OAuth {
   String? accessToken;
   String? refreshToken;
 
-  OAuth(
-      {this.tokenType, this.expiresIn, this.accessToken, this.refreshToken});
+  OAuth({this.tokenType, this.expiresIn, this.accessToken, this.refreshToken});
 
   OAuth.fromJson(Map<String, dynamic> json) {
     tokenType = json['token_type'];

@@ -14,8 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'sync_providers.g.dart';
 
 @riverpod
-void addUpdatedChapterIndependent(Ref ref,
-    Chapter chapter, bool deleted, bool txn) {
+void addUpdatedChapterIndependent(
+    Ref ref, Chapter chapter, bool deleted, bool txn) {
   final changedItems = isar.changedItems.getSync(1) ?? ChangedItems();
   bool updated = false;
   changedItems.updatedChapters = changedItems.updatedChapters?.map((e) {

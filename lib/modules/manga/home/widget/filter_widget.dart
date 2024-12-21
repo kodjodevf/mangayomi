@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/eval/dart/model/filter.dart';
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class FilterWidget extends StatelessWidget {

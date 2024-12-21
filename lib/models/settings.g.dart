@@ -11674,13 +11674,18 @@ const ChapterPageurlsSchema = Schema(
       name: r'chapterId',
       type: IsarType.long,
     ),
-    r'headers': PropertySchema(
+    r'chapterUrl': PropertySchema(
       id: 1,
+      name: r'chapterUrl',
+      type: IsarType.string,
+    ),
+    r'headers': PropertySchema(
+      id: 2,
       name: r'headers',
       type: IsarType.stringList,
     ),
     r'urls': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'urls',
       type: IsarType.stringList,
     )
@@ -11697,6 +11702,12 @@ int _chapterPageurlsEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.chapterUrl;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final list = object.headers;
     if (list != null) {
@@ -11731,8 +11742,9 @@ void _chapterPageurlsSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.chapterId);
-  writer.writeStringList(offsets[1], object.headers);
-  writer.writeStringList(offsets[2], object.urls);
+  writer.writeString(offsets[1], object.chapterUrl);
+  writer.writeStringList(offsets[2], object.headers);
+  writer.writeStringList(offsets[3], object.urls);
 }
 
 ChapterPageurls _chapterPageurlsDeserialize(
@@ -11743,9 +11755,10 @@ ChapterPageurls _chapterPageurlsDeserialize(
 ) {
   final object = ChapterPageurls(
     chapterId: reader.readLongOrNull(offsets[0]),
-    urls: reader.readStringList(offsets[2]),
+    urls: reader.readStringList(offsets[3]),
   );
-  object.headers = reader.readStringList(offsets[1]);
+  object.chapterUrl = reader.readStringOrNull(offsets[1]);
+  object.headers = reader.readStringList(offsets[2]);
   return object;
 }
 
@@ -11759,8 +11772,10 @@ P _chapterPageurlsDeserializeProp<P>(
     case 0:
       return (reader.readLongOrNull(offset)) as P;
     case 1:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readStringList(offset)) as P;
+    case 3:
       return (reader.readStringList(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -11839,6 +11854,160 @@ extension ChapterPageurlsQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'chapterUrl',
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'chapterUrl',
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'chapterUrl',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'chapterUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'chapterUrl',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'chapterUrl',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<ChapterPageurls, ChapterPageurls, QAfterFilterCondition>
+      chapterUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'chapterUrl',
+        value: '',
       ));
     });
   }

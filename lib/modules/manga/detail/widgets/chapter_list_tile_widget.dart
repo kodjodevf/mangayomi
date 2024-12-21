@@ -34,8 +34,9 @@ class ChapterListTileWidget extends ConsumerWidget {
                 ? Colors.black.withValues(alpha: 0.4)
                 : Colors.white.withValues(alpha: 0.3)
             : null,
-        selectedColor:
-            chapter.isRead! ? Colors.white.withValues(alpha: 0.3) : Colors.white,
+        selectedColor: chapter.isRead!
+            ? Colors.white.withValues(alpha: 0.3)
+            : Colors.white,
         onLongPress: () {
           if (!isLongPressed) {
             ref.read(chaptersListStateProvider.notifier).update(chapter);

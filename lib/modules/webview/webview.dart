@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,15 +23,16 @@ class MangaWebView extends ConsumerStatefulWidget {
 }
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
+  late final MyInAppBrowser browser;
   double _progress = 0;
-  bool isNotDesktop = false;
+  bool isNotWebviewWindow = false;
   @override
   void initState() {
-    if (Platform.isLinux) {
+    if (Platform.isLinux || Platform.isWindows) {
       _runWebViewDesktop();
     } else {
       setState(() {
-        isNotDesktop = true;
+        isNotWebviewWindow = true;
       });
     }
     super.initState();
@@ -38,25 +40,59 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   Webview? _desktopWebview;
   _runWebViewDesktop() async {
-    _desktopWebview = await WebviewWindow.create();
+    if (Platform.isLinux) {
+      _desktopWebview = await WebviewWindow.create();
 
-    final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      try {
-        final cookieList = await _desktopWebview!.getAllCookies();
-        final ua =
-            await _desktopWebview!.evaluateJavaScript("navigator.userAgent") ??
-                "";
-        final cookie = cookieList.map((e) => "${e.name}=${e.value}").join(";");
-        await MClient.setCookie(_url, ua, null, cookie: cookie);
-      } catch (_) {}
-    });
-    _desktopWebview!
-      ..setBrightness(Brightness.dark)
-      ..launch(widget.url)
-      ..onClose.whenComplete(() {
-        timer.cancel();
-        Navigator.pop(context);
+      final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+        try {
+          final cookieList = await _desktopWebview!.getAllCookies();
+          final ua = await _desktopWebview!
+                  .evaluateJavaScript("navigator.userAgent") ??
+              "";
+          final cookie =
+              cookieList.map((e) => "${e.name}=${e.value}").join(";");
+          await MClient.setCookie(_url, ua, null, cookie: cookie);
+        } catch (_) {}
       });
+      _desktopWebview!
+        ..setBrightness(Brightness.dark)
+        ..launch(widget.url)
+        ..onClose.whenComplete(() {
+          timer.cancel();
+          Navigator.pop(context);
+        });
+    } else {
+      browser = MyInAppBrowser(
+        context: context,
+        controller: (controller) {
+          _webViewController = controller;
+        },
+        onProgress: (progress) async {
+          final canGoback = await _webViewController?.canGoBack();
+          final canGoForward = await _webViewController?.canGoForward();
+          final title = await _webViewController?.getTitle();
+          final url = await _webViewController?.getUrl();
+          if (mounted) {
+            setState(() {
+              _progress = progress / 100;
+              _url = url.toString();
+              _title = title!;
+              _canGoback = canGoback ?? false;
+              _canGoForward = canGoForward ?? false;
+            });
+          }
+        },
+      );
+      await browser.openUrlRequest(
+        urlRequest: URLRequest(url: WebUri(widget.url)),
+        settings: InAppBrowserClassSettings(
+          browserSettings: InAppBrowserSettings(
+              presentationStyle: ModalPresentationStyle.POPOVER),
+          webViewSettings: InAppWebViewSettings(
+              isInspectable: kDebugMode, useShouldOverrideUrlLoading: true),
+        ),
+      );
+    }
   }
 
   InAppWebViewController? _webViewController;
@@ -67,7 +103,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
-    return !isNotDesktop
+    return (!isNotWebviewWindow && Platform.isLinux)
         ? Scaffold(
             appBar: AppBar(
               title: Text(
@@ -79,6 +115,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               leading: IconButton(
                   onPressed: () {
                     _desktopWebview!.close();
+
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.close)),
@@ -119,6 +156,12 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               ),
                               leading: IconButton(
                                   onPressed: () {
+                                    if (Platform.isWindows) {
+                                      if (browser.isOpened()) {
+                                        browser.close();
+                                        browser.dispose();
+                                      }
+                                    }
                                     Navigator.pop(context);
                                   },
                                   icon: const Icon(Icons.close)),
@@ -176,82 +219,129 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                     _progress < 1.0
                         ? LinearProgressIndicator(value: _progress)
                         : Container(),
-                    Expanded(
-                      child: InAppWebView(
-                        webViewEnvironment: webViewEnvironment,
-                        onWebViewCreated: (controller) async {
-                          _webViewController = controller;
-                        },
-                        onLoadStart: (controller, url) async {
-                          setState(() {
-                            _url = url.toString();
-                          });
-                        },
-                        shouldOverrideUrlLoading:
-                            (controller, navigationAction) async {
-                          var uri = navigationAction.request.url!;
-
-                          if (![
-                            "http",
-                            "https",
-                            "file",
-                            "chrome",
-                            "data",
-                            "javascript",
-                            "about"
-                          ].contains(uri.scheme)) {
-                            if (await canLaunchUrl(uri)) {
-                              // Launch the App
-                              await launchUrl(
-                                uri,
-                              );
-                              // and cancel the request
-                              return NavigationActionPolicy.CANCEL;
+                    if (!Platform.isWindows)
+                      Expanded(
+                        child: InAppWebView(
+                          webViewEnvironment: webViewEnvironment,
+                          onWebViewCreated: (controller) async {
+                            _webViewController = controller;
+                          },
+                          onLoadStart: (controller, url) async {
+                            setState(() {
+                              _url = url.toString();
+                            });
+                          },
+                          shouldOverrideUrlLoading:
+                              (controller, navigationAction) async {
+                            var uri = navigationAction.request.url!;
+                            if (![
+                              "http",
+                              "https",
+                              "file",
+                              "chrome",
+                              "data",
+                              "javascript",
+                              "about"
+                            ].contains(uri.scheme)) {
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri);
+                                return NavigationActionPolicy.CANCEL;
+                              }
                             }
-                          }
-
-                          return NavigationActionPolicy.ALLOW;
-                        },
-                        onLoadStop: (controller, url) async {
-                          if (mounted) {
-                            setState(() {
-                              _url = url.toString();
-                            });
-                          }
-                        },
-                        onProgressChanged: (controller, progress) async {
-                          if (mounted) {
-                            setState(() {
-                              _progress = progress / 100;
-                            });
-                          }
-                        },
-                        onUpdateVisitedHistory:
-                            (controller, url, isReload) async {
-                          final ua = await controller.evaluateJavascript(
-                                  source: "navigator.userAgent") ??
-                              "";
-                          await MClient.setCookie(
-                              url.toString(), ua, controller);
-                          final canGoback = await controller.canGoBack();
-                          final canGoForward = await controller.canGoForward();
-                          final title = await controller.getTitle();
-                          if (mounted) {
-                            setState(() {
-                              _url = url.toString();
-                              _title = title!;
-                              _canGoback = canGoback;
-                              _canGoForward = canGoForward;
-                            });
-                          }
-                        },
-                        initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                            return NavigationActionPolicy.ALLOW;
+                          },
+                          onLoadStop: (controller, url) async {
+                            if (mounted) {
+                              setState(() {
+                                _url = url.toString();
+                              });
+                            }
+                          },
+                          onProgressChanged: (controller, progress) async {
+                            if (mounted) {
+                              setState(() {
+                                _progress = progress / 100;
+                              });
+                            }
+                          },
+                          onUpdateVisitedHistory:
+                              (controller, url, isReload) async {
+                            final ua = await controller.evaluateJavascript(
+                                    source: "navigator.userAgent") ??
+                                "";
+                            await MClient.setCookie(
+                                url.toString(), ua, controller);
+                            final canGoback = await controller.canGoBack();
+                            final canGoForward =
+                                await controller.canGoForward();
+                            final title = await controller.getTitle();
+                            if (mounted) {
+                              setState(() {
+                                _url = url.toString();
+                                _title = title!;
+                                _canGoback = canGoback;
+                                _canGoForward = canGoForward;
+                              });
+                            }
+                          },
+                          initialUrlRequest:
+                              URLRequest(url: WebUri(widget.url)),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
           );
+  }
+}
+
+class MyInAppBrowser extends InAppBrowser {
+  BuildContext context;
+  void Function(InAppWebViewController) controller;
+  void Function(int) onProgress;
+  MyInAppBrowser(
+      {required this.context,
+      required this.controller,
+      required this.onProgress})
+      : super(webViewEnvironment: webViewEnvironment);
+
+  @override
+  Future onBrowserCreated() async {
+    controller.call(webViewController!);
+  }
+
+  @override
+  void onProgressChanged(progress) {
+    onProgress.call(progress);
+  }
+
+  @override
+  void onExit() {
+    Navigator.pop(context);
+  }
+
+  @override
+  void onLoadStop(url) async {
+    if (webViewController != null) {
+      final ua = await webViewController!
+              .evaluateJavascript(source: "navigator.userAgent") ??
+          "";
+      await MClient.setCookie(url.toString(), ua, webViewController);
+    }
+  }
+
+  @override
+  Future<NavigationActionPolicy> shouldOverrideUrlLoading(
+      navigationAction) async {
+    var uri = navigationAction.request.url!;
+    if (!["http", "https", "file", "chrome", "data", "javascript", "about"]
+        .contains(uri.scheme)) {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+        return NavigationActionPolicy.CANCEL;
+      }
+    }
+    return NavigationActionPolicy.ALLOW;
   }
 }

@@ -33,7 +33,6 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 }
 
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
-
   Size measureText(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
@@ -42,7 +41,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     return textPainter.size;
   }
 
-  double calculateDynamicButtonWidth(String text, TextStyle textStyle, double padding) {
+  double calculateDynamicButtonWidth(
+      String text, TextStyle textStyle, double padding) {
     final textSize = measureText(text, textStyle);
     return textSize.width + padding;
   }
@@ -72,7 +72,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               (q) => q.isMangaEqualTo(widget.manga.isManga!)))
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
-                        String buttonLabel = widget.manga.isManga! ? l10n.read : l10n.watch;
+                        String buttonLabel =
+                            widget.manga.isManga! ? l10n.read : l10n.watch;
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           final incognitoMode =
                               ref.watch(incognitoModeStateProvider);
@@ -91,8 +92,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               onPressed: () {
                                 chap.pushToReaderView(context);
                               },
-                              textWidth: measureText(l10n.resume, Theme.of(context).textTheme.labelLarge!).width,
-                              width: calculateDynamicButtonWidth(l10n.resume, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
+                              textWidth: measureText(l10n.resume,
+                                      Theme.of(context).textTheme.labelLarge!)
+                                  .width,
+                              width: calculateDynamicButtonWidth(
+                                  l10n.resume,
+                                  Theme.of(context).textTheme.labelLarge!,
+                                  50), // 50 Padding, else RenderFlex overflow Exception
                             );
                           }
                           return CustomFloatingActionBtn(
@@ -106,8 +112,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                   .last
                                   .pushToReaderView(context);
                             },
-                            textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
-                            width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
+                            textWidth: measureText(buttonLabel,
+                                    Theme.of(context).textTheme.labelLarge!)
+                                .width,
+                            width: calculateDynamicButtonWidth(
+                                buttonLabel,
+                                Theme.of(context).textTheme.labelLarge!,
+                                50), // 50 Padding, else RenderFlex overflow Exception
                           );
                         }
                         return CustomFloatingActionBtn(
@@ -121,8 +132,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                                 .last
                                 .pushToReaderView(context);
                           },
-                          textWidth: measureText(buttonLabel, Theme.of(context).textTheme.labelLarge!).width,
-                          width: calculateDynamicButtonWidth(buttonLabel, Theme.of(context).textTheme.labelLarge!, 50), // 50 Padding, else RenderFlex overflow Exception
+                          textWidth: measureText(buttonLabel,
+                                  Theme.of(context).textTheme.labelLarge!)
+                              .width,
+                          width: calculateDynamicButtonWidth(
+                              buttonLabel,
+                              Theme.of(context).textTheme.labelLarge!,
+                              50), // 50 Padding, else RenderFlex overflow Exception
                         );
                       },
                     )
@@ -246,6 +262,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         },
         sourceExist: widget.sourceExist,
         checkForUpdate: widget.checkForUpdate,
+        isManga: widget.manga.isManga!,
       ),
     );
   }

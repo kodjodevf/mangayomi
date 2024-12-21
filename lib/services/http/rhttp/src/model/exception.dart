@@ -126,7 +126,6 @@ class RhttpUnknownException extends RhttpException {
   String toString() => '[$runtimeType] $message';
 }
 
-
 RhttpException parseError(HttpRequest request, rust.RhttpError error) {
   return error.when(
     rhttpCancelError: () => RhttpCancelException(request),

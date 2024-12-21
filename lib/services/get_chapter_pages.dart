@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:mangayomi/eval/dart/service.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
-import 'package:mangayomi/eval/javascript/service.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -45,8 +43,9 @@ Future<GetChapterPagesModel> getChapterPages(
   final settings = isar.settings.getSync(227);
   List<ChapterPageurls>? chapterPageUrlsList =
       settings!.chapterPageUrlsList ?? [];
-  final isarPageUrls =
-      chapterPageUrlsList.where((element) => element.chapterId == chapter.id);
+  final isarPageUrls = chapterPageUrlsList
+      .where((element) => element.chapterId == chapter.id)
+      .firstOrNull;
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
@@ -57,23 +56,18 @@ Future<GetChapterPagesModel> getChapterPages(
   if (!chapter.manga.value!.isLocalArchive!) {
     final source =
         getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!)!;
-    if (isarPageUrls.isNotEmpty &&
-        isarPageUrls.first.urls != null &&
-        isarPageUrls.first.urls!.isNotEmpty) {
-      for (var i = 0; i < isarPageUrls.first.urls!.length; i++) {
+    if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
+        (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
+      for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
         Map<String, String>? headers;
-        if (isarPageUrls.first.headers?.isNotEmpty ?? false) {
-          headers = (jsonDecode(isarPageUrls.first.headers![i]) as Map?)
-              ?.toMapStringString;
+        if (isarPageUrls.headers?.isNotEmpty ?? false) {
+          headers =
+              (jsonDecode(isarPageUrls.headers![i]) as Map?)?.toMapStringString;
         }
-        pageUrls.add(PageUrl(isarPageUrls.first.urls![i], headers: headers));
+        pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
       }
     } else {
-      if (source.sourceCodeLanguage == SourceCodeLanguage.dart) {
-        pageUrls = await DartExtensionService(source).getPageList(chapter.url!);
-      } else {
-        pageUrls = await JsExtensionService(source).getPageList(chapter.url!);
-      }
+      pageUrls = await getExtensionService(source).getPageList(chapter.url!);
     }
   }
 
@@ -117,6 +111,7 @@ Future<GetChapterPagesModel> getChapterPages(
       chapterPageUrls.add(ChapterPageurls()
         ..chapterId = chapter.id
         ..urls = pageUrls.map((e) => e.url).toList()
+        ..chapterUrl = chapter.url
         ..headers = chapterPageHeaders.first != null
             ? chapterPageHeaders.map((e) => e.toString()).toList()
             : null);

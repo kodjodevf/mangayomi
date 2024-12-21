@@ -207,7 +207,7 @@ class AppearanceScreen extends ConsumerWidget {
                                               .toList();
                                           return Flexible(
                                             child: Scrollbar(
-              interactive: true,
+                                              interactive: true,
                                               thickness: 12,
                                               radius: const Radius.circular(10),
                                               controller: controller,

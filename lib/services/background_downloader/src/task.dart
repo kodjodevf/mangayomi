@@ -688,7 +688,6 @@ final class DownloadTask extends Task {
   ///
   /// The suggested filename is obtained by making a HEAD request to the url
   /// represented by the [DownloadTask], including urlQueryParameters and headers
-  
 
   /// Constant used with `filename` field to indicate server suggestion requested
   static const suggestedFilename = '?';

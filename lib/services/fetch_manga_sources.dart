@@ -5,8 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'fetch_manga_sources.g.dart';
 
 @riverpod
-Future fetchMangaSourcesList(Ref ref,
-    {int? id, required reFresh}) async {
+Future fetchMangaSourcesList(Ref ref, {int? id, required reFresh}) async {
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     await fetchSourcesList(
         sourcesIndexUrl:

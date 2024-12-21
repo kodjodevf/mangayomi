@@ -185,7 +185,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                                       .notifier)
                                                                   .addDeletedCategoryAsync(
                                                                       _entries[
-                                                                          index], false);
+                                                                          index],
+                                                                      false);
                                                               await isar
                                                                   .categorys
                                                                   .delete(_entries[

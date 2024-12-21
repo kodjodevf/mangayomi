@@ -82,11 +82,12 @@ class SortChapterState extends _$SortChapterState {
   @override
   SortChapter build({required int mangaId}) {
     return isar.settings
-        .getSync(227)!
-        .sortChapterList!
-        .where((element) => element.mangaId == mangaId)
-        .toList()
-        .firstOrNull ?? SortChapter(
+            .getSync(227)!
+            .sortChapterList!
+            .where((element) => element.mangaId == mangaId)
+            .toList()
+            .firstOrNull ??
+        SortChapter(
           mangaId: mangaId,
           index: 1,
           reverse: false,
@@ -133,14 +134,15 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
 
   int getType() {
     return (isar.settings
-        .getSync(227)!
-        .chapterFilterDownloadedList!
-        .where((element) => element.mangaId == mangaId)
-        .toList()
-        .firstOrNull ?? ChapterFilterDownloaded(
-          mangaId: mangaId,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterDownloadedList!
+                .where((element) => element.mangaId == mangaId)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterDownloaded(
+              mangaId: mangaId,
+              type: 0,
+            ))
         .type!;
   }
 
@@ -185,14 +187,15 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
 
   int getType() {
     return (isar.settings
-        .getSync(227)!
-        .chapterFilterUnreadList!
-        .where((element) => element.mangaId == mangaId)
-        .toList()
-        .firstOrNull ?? ChapterFilterUnread(
-          mangaId: mangaId,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterUnreadList!
+                .where((element) => element.mangaId == mangaId)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterUnread(
+              mangaId: mangaId,
+              type: 0,
+            ))
         .type!;
   }
 
@@ -236,14 +239,15 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
 
   int getType() {
     return (isar.settings
-        .getSync(227)!
-        .chapterFilterBookmarkedList!
-        .where((element) => element.mangaId == mangaId)
-        .toList()
-        .firstOrNull ?? ChapterFilterBookmarked(
-          mangaId: mangaId,
-          type: 0,
-        ))
+                .getSync(227)!
+                .chapterFilterBookmarkedList!
+                .where((element) => element.mangaId == mangaId)
+                .toList()
+                .firstOrNull ??
+            ChapterFilterBookmarked(
+              mangaId: mangaId,
+              type: 0,
+            ))
         .type!;
   }
 

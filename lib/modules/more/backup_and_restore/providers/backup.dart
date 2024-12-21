@@ -4,7 +4,7 @@ import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -144,16 +144,18 @@ void doBackUp(Ref ref,
               "Backup created!",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-        trailing: Platform.isLinux ? null : // Don't show share button on Linux, as there is no share-feature
+        trailing: Platform.isLinux
+            ? null
+            : // Don't show share button on Linux, as there is no share-feature
             (_) => UnconstrainedBox(
-              alignment: Alignment.topLeft,
-              child: ElevatedButton(
-                  onPressed: () {
-                    Share.shareXFiles([XFile(p.join(path, "$name.backup"))],
-                        text: "$name.backup");
-                  },
-                  child: Text(context.l10n.share)),
-            ),
+                  alignment: Alignment.topLeft,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Share.shareXFiles([XFile(p.join(path, "$name.backup"))],
+                            text: "$name.backup");
+                      },
+                      child: Text(context.l10n.share)),
+                ),
         enableSlideOff: true,
         onlyOne: true,
         crossPage: true);

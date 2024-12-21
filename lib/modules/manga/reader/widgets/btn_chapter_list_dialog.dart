@@ -102,15 +102,18 @@ class _ChapterListTileState extends State<ChapterListTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: widget.currentChap ? context.primaryColor.withValues(alpha: 0.3) : null,
+      color: widget.currentChap
+          ? context.primaryColor.withValues(alpha: 0.3)
+          : null,
       child: ListTile(
         textColor: chapter.isRead!
             ? context.isLight
                 ? Colors.black.withValues(alpha: 0.4)
                 : Colors.white.withValues(alpha: 0.3)
             : null,
-        selectedColor:
-            chapter.isRead! ? Colors.white.withValues(alpha: 0.3) : Colors.white,
+        selectedColor: chapter.isRead!
+            ? Colors.white.withValues(alpha: 0.3)
+            : Colors.white,
         onTap: () async {
           if (!widget.currentChap) {
             Navigator.pop(context);

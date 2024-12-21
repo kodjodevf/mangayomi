@@ -1,7 +1,7 @@
 import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed_items.dart';
 import 'package:mangayomi/models/update.dart';
@@ -40,7 +40,9 @@ class SyncServer extends _$SyncServer {
 
   Future<(bool, String)> login(AppLocalizations l10n, String server,
       String username, String password) async {
-    server = server[server.length - 1] == '/' ? server.substring(0, server.length - 1) : server;
+    server = server[server.length - 1] == '/'
+        ? server.substring(0, server.length - 1)
+        : server;
     try {
       var response = await http.post(
         Uri.parse('$server$_loginUrl'),
@@ -323,8 +325,9 @@ class SyncServer extends _$SyncServer {
         final history = (backup["history"] as List?)
             ?.map((e) => History.fromJson(e))
             .toList();
-        final updates =
-            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+        final updates = (backup["updates"] as List?)
+            ?.map((e) => Update.fromJson(e))
+            .toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -362,7 +365,8 @@ class SyncServer extends _$SyncServer {
                           chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
-                    isar.updates.putSync(update..chapter.value = matchingChapter);
+                    isar.updates
+                        .putSync(update..chapter.value = matchingChapter);
                     update.chapter.saveSync();
                   }
                 }
@@ -417,8 +421,9 @@ class SyncServer extends _$SyncServer {
         final extensionsPref = (backup["extensions_preferences"] as List?)
             ?.map((e) => SourcePreference.fromJson(e))
             .toList();
-        final updates =
-            (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+        final updates = (backup["updates"] as List?)
+            ?.map((e) => Update.fromJson(e))
+            .toList();
 
         isar.writeTxnSync(() {
           isar.mangas.clearSync();
@@ -456,7 +461,8 @@ class SyncServer extends _$SyncServer {
                           chapter.name == update.chapterName)
                       .firstOrNull;
                   if (matchingChapter != null) {
-                    isar.updates.putSync(update..chapter.value = matchingChapter);
+                    isar.updates
+                        .putSync(update..chapter.value = matchingChapter);
                     update.chapter.saveSync();
                   }
                 }

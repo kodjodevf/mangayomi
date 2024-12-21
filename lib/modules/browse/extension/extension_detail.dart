@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_bridge.dart';
-import 'package:mangayomi/eval/dart/model/source_preference.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
@@ -44,8 +44,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.only(top: 20),
               child: Container(
                 decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
+                    color: Theme.of(context)
+                        .secondaryHeaderColor
+                        .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(10)),
                 child: widget.source.iconUrl!.isEmpty
                     ? const Icon(Icons.source_outlined, size: 140)

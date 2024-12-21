@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/model/m_source.dart';
+import 'package:mangayomi/eval/model/m_source.dart';
 part 'source.g.dart';
 
 @collection

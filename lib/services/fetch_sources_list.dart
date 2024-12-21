@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
-import 'package:mangayomi/eval/dart/service.dart';
-import 'package:mangayomi/eval/javascript/service.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -31,7 +30,9 @@ Future<void> fetchSourcesList(
               if (id == source.id) {
                 final sourc = isar.sources.getSync(id)!;
                 final req = await http.get(Uri.parse(source.sourceCodeUrl!));
-                final headers = getSourceHeaders(source..sourceCode = req.body);
+                final headers =
+                    getExtensionService(source..sourceCode = req.body)
+                        .getHeaders();
                 isar.writeTxnSync(() {
                   isar.sources.putSync(sourc
                     ..headers = jsonEncode(headers)
@@ -65,12 +66,13 @@ Future<void> fetchSourcesList(
               final sourc = isar.sources.getSync(source.id!)!;
               if (sourc.isAdded!) {
                 if (compareVersions(sourc.version!, source.version!) < 0) {
-                  // log("update aivalable auto update");
+                  // log("update available auto update");
                   if (ref.watch(autoUpdateExtensionsStateProvider)) {
                     final req =
                         await http.get(Uri.parse(source.sourceCodeUrl!));
                     final headers =
-                        getSourceHeaders(source..sourceCode = req.body);
+                        getExtensionService(source..sourceCode = req.body)
+                            .getHeaders();
                     isar.writeTxnSync(() {
                       isar.sources.putSync(sourc
                         ..headers = jsonEncode(headers)
@@ -195,14 +197,4 @@ int compareVersions(String version1, String version2) {
   }
 
   return 0;
-}
-
-Map<String, String> getSourceHeaders(Source source) {
-  Map<String, String> headers = {};
-  if (source.sourceCodeLanguage == SourceCodeLanguage.javascript) {
-    headers = JsExtensionService(source).getHeaders(source.baseUrl ?? "");
-  } else {
-    headers = DartExtensionService(source).getHeaders();
-  }
-  return headers;
 }

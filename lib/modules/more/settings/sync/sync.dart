@@ -141,7 +141,9 @@ class SyncScreen extends ConsumerWidget {
                                     },
                               icon: Icon(
                                 Icons.sync,
-                                color: !isLogged ? context.secondaryColor : context.primaryColor,
+                                color: !isLogged
+                                    ? context.secondaryColor
+                                    : context.primaryColor,
                               )),
                           Text(l10n.sync_button_sync),
                         ],
@@ -196,9 +198,10 @@ class SyncScreen extends ConsumerWidget {
                                                     ElevatedButton(
                                                         style: ElevatedButton
                                                             .styleFrom(
-                                                                backgroundColor:
-                                                                    Colors.red
-                                                                        .withValues(alpha: 
+                                                                backgroundColor: Colors
+                                                                    .red
+                                                                    .withValues(
+                                                                        alpha:
                                                                             0.7)),
                                                         onPressed: () {
                                                           ref
@@ -226,7 +229,9 @@ class SyncScreen extends ConsumerWidget {
                                     },
                               icon: Icon(
                                 Icons.cloud_upload_outlined,
-                                color: !isLogged ? context.secondaryColor : context.primaryColor,
+                                color: !isLogged
+                                    ? context.secondaryColor
+                                    : context.primaryColor,
                               )),
                           Text(l10n.sync_button_upload),
                         ],
@@ -281,9 +286,10 @@ class SyncScreen extends ConsumerWidget {
                                                     ElevatedButton(
                                                         style: ElevatedButton
                                                             .styleFrom(
-                                                                backgroundColor:
-                                                                    Colors.red
-                                                                        .withValues(alpha: 
+                                                                backgroundColor: Colors
+                                                                    .red
+                                                                    .withValues(
+                                                                        alpha:
                                                                             0.7)),
                                                         onPressed: () {
                                                           ref
@@ -311,7 +317,9 @@ class SyncScreen extends ConsumerWidget {
                                     },
                               icon: Icon(
                                 Icons.cloud_download_outlined,
-                                color: !isLogged ? context.secondaryColor : context.primaryColor,
+                                color: !isLogged
+                                    ? context.secondaryColor
+                                    : context.primaryColor,
                               )),
                           Text(l10n.sync_button_download),
                         ],

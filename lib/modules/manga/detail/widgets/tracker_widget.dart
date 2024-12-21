@@ -462,7 +462,8 @@ Widget _elevatedButton(BuildContext context,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
               side: BorderSide(
-                  width: 0, color: context.secondaryColor.withValues(alpha: 0.1)),
+                  width: 0,
+                  color: context.secondaryColor.withValues(alpha: 0.1)),
               borderRadius: borderRadius ?? BorderRadius.circular(0))),
       onPressed: onPressed,
       child: child ??

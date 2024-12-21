@@ -260,7 +260,9 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                   onHover: (_) => onHover(),
                   onEnter: (_) => onEnter(),
                   onExit: (_) => onExit(),
-                  cursor: cursorVisible ? SystemMouseCursors.basic : SystemMouseCursors.none,
+                  cursor: cursorVisible
+                      ? SystemMouseCursors.basic
+                      : SystemMouseCursors.none,
                   child: Stack(
                     children: [
                       AnimatedOpacity(

@@ -51,8 +51,8 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     List<XFile> files = [];
 
     final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
-    final mp4File = File(
-        p.join(mangaDir.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
+    final mp4File = File(p.join(mangaDir.path,
+        "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
     if (cbzFile.existsSync()) {
       files = [XFile(cbzFile.path)];
     } else if (mp4File.existsSync()) {
@@ -73,14 +73,15 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
 
     try {
       try {
-        final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
+        final cbzFile =
+            File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
         if (cbzFile.existsSync()) {
           cbzFile.deleteSync();
         }
       } catch (_) {}
       try {
-        final mp4File = File(
-            p.join(mangaDir!.path, "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
+        final mp4File = File(p.join(mangaDir!.path,
+            "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
         if (mp4File.existsSync()) {
           mp4File.deleteSync();
         }
@@ -123,8 +124,10 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
                       child: Icon(
                         size: 25,
                         Icons.check_circle,
-                        color:
-                            Theme.of(context).iconTheme.color!.withValues(alpha: 0.7),
+                        color: Theme.of(context)
+                            .iconTheme
+                            .color!
+                            .withValues(alpha: 0.7),
                       ),
                       onSelected: (value) {
                         if (value == 0) {
