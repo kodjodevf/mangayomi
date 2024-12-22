@@ -171,7 +171,7 @@ class Source {
         'isAdded': isAdded,
         'isFullData': isFullData,
         'isManga': isManga,
-        'itemType': itemType,
+        'itemType': itemType.index,
         'isNsfw': isNsfw,
         'isPinned': isPinned,
         'lang': lang,

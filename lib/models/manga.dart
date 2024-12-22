@@ -87,7 +87,7 @@ class Manga {
     id = json['id'];
     imageUrl = json['imageUrl'];
     isLocalArchive = json['isLocalArchive'];
-    itemType = ItemType.values[json['itemType']];
+    itemType = ItemType.values[json['itemType'] ?? 0];
     lang = json['lang'];
     lastRead = json['lastRead'];
     lastUpdate = json['lastUpdate'];

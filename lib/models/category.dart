@@ -19,7 +19,7 @@ class Category {
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    forItemType = json['forItemType'];
+    forItemType = ItemType.values[json['forItemType'] ?? 0];
   }
 
   Category.fromJsonV1(Map<String, dynamic> json) {
@@ -33,5 +33,5 @@ class Category {
   }
 
   Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'forItemType': forItemType};
+      {'id': id, 'name': name, 'forItemType': forItemType.index};
 }

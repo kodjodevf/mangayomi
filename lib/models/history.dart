@@ -34,7 +34,7 @@ class History {
     chapterId = json['chapterId'];
     date = json['date'];
     id = json['id'];
-    itemType = json['itemType'];
+    itemType = ItemType.values[json['itemType'] ?? 0];
     mangaId = json['mangaId'];
   }
 
@@ -54,7 +54,7 @@ class History {
         'chapterId': chapterId,
         'date': date,
         'id': id,
-        'itemType': itemType,
+        'itemType': itemType.index,
         'mangaId': mangaId
       };
 }
