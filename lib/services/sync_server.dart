@@ -122,7 +122,7 @@ class SyncServer extends _$SyncServer {
 
   Map<String, dynamic> _getData() {
     Map<String, dynamic> datas = {};
-    datas.addAll({"version": "1"});
+    datas.addAll({"version": "2"});
     final mangas = isar.mangas
         .filter()
         .idIsNotNull()
