@@ -215,6 +215,12 @@ class Settings {
   @enumerated
   late DisplayType novelDisplayType;
 
+  bool? hideManga;
+
+  bool? hideAnime;
+
+  bool? hideNovel;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -309,7 +315,10 @@ class Settings {
       this.novelLibraryShowContinueReadingButton = false,
       this.novelLibraryLocalSource,
       this.sortLibraryNovel,
-      this.novelDisplayType = DisplayType.comfortableGrid});
+      this.novelDisplayType = DisplayType.comfortableGrid,
+      this.hideManga = false,
+      this.hideAnime = false,
+      this.hideNovel = false});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -479,6 +488,9 @@ class Settings {
         : null;
     novelDisplayType = DisplayType
         .values[json['novelDisplayType'] ?? DisplayType.compactGrid.index];
+    hideManga = json['hideManga'];
+    hideAnime = json['hideAnime'];
+    hideNovel = json['hideNovel'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -591,6 +603,9 @@ class Settings {
         'novelLibraryLocalSource': novelLibraryLocalSource,
         'sortLibraryNovel': sortLibraryNovel?.toJson(),
         'novelDisplayType': novelDisplayType.index,
+        'hideManga': hideManga,
+        'hideAnime': hideAnime,
+        'hideNovel': hideNovel
       };
 }
 

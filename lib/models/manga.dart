@@ -22,6 +22,8 @@ class Manga {
   @enumerated
   late Status status;
 
+  bool? isManga;
+
   @enumerated
   late ItemType itemType;
 
@@ -63,6 +65,7 @@ class Manga {
       required this.name,
       required this.status,
       required this.description,
+      this.isManga = true,
       this.itemType = ItemType.manga,
       this.dateAdded,
       this.lastUpdate,
@@ -85,6 +88,33 @@ class Manga {
     imageUrl = json['imageUrl'];
     isLocalArchive = json['isLocalArchive'];
     itemType = ItemType.values[json['itemType']];
+    lang = json['lang'];
+    lastRead = json['lastRead'];
+    lastUpdate = json['lastUpdate'];
+    link = json['link'];
+    name = json['name'];
+    source = json['source'];
+    status = Status.values[json['status']];
+    customCoverFromTracker = json['customCoverFromTracker'];
+  }
+
+  Manga.fromJsonV1(Map<String, dynamic> json) {
+    author = json['author'];
+    artist = json['artist'];
+    categories = json['categories']?.cast<int>();
+    customCoverImage = json['customCoverImage']?.cast<int>();
+    dateAdded = json['dateAdded'];
+    description = json['description'];
+    favorite = json['favorite']!;
+    genre = json['genre']?.cast<String>();
+    id = json['id'];
+    imageUrl = json['imageUrl'];
+    isLocalArchive = json['isLocalArchive'];
+    itemType = json['isManga'] is bool
+        ? json['isManga'] == true
+            ? ItemType.manga
+            : ItemType.anime
+        : ItemType.manga;
     lang = json['lang'];
     lastRead = json['lastRead'];
     lastUpdate = json['lastUpdate'];
@@ -128,8 +158,4 @@ enum Status {
   publishingFinished
 }
 
-enum ItemType {
-  manga,
-  anime,
-  novel
-}
+enum ItemType { manga, anime, novel }

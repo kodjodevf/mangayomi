@@ -5,6 +5,7 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/categories/widgets/custom_textfield.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -19,9 +20,10 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
+  int tabs = 3;
   @override
   void initState() {
-    _tabBarController = TabController(length: 3, vsync: this);
+    _tabBarController = TabController(length: tabs, vsync: this);
     _tabBarController.animateTo(widget.data.$2);
 
     super.initState();
@@ -29,10 +31,25 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
 
   @override
   Widget build(BuildContext context) {
+    int newTabs = 0;
+    final hideManga = ref.watch(hideMangaStateProvider);
+    final hideAnime = ref.watch(hideAnimeStateProvider);
+    final hideNovel = ref.watch(hideNovelStateProvider);
+    if (!hideManga) newTabs++;
+    if (!hideAnime) newTabs++;
+    if (!hideNovel) newTabs++;
+    if (tabs != newTabs) {
+      _tabBarController.dispose();
+      _tabBarController = TabController(length: newTabs, vsync: this);
+      _tabBarController.animateTo(0);
+      setState(() {
+        tabs = newTabs;
+      });
+    }
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 2,
+      length: newTabs,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -45,22 +62,25 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              Tab(text: l10n.manga),
-              Tab(text: l10n.anime),
-              Tab(text: l10n.novel),
+              if (!hideManga) Tab(text: l10n.manga),
+              if (!hideAnime) Tab(text: l10n.anime),
+              if (!hideNovel) Tab(text: l10n.novel),
             ],
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children: const [
-          CategoriesTab(
-            itemType: ItemType.manga,
-          ),
-          CategoriesTab(
-            itemType: ItemType.anime,
-          ),
-          CategoriesTab(
-            itemType: ItemType.novel,
-          )
+        body: TabBarView(controller: _tabBarController, children: [
+          if (!hideManga)
+            CategoriesTab(
+              itemType: ItemType.manga,
+            ),
+          if (!hideAnime)
+            CategoriesTab(
+              itemType: ItemType.anime,
+            ),
+          if (!hideNovel)
+            CategoriesTab(
+              itemType: ItemType.novel,
+            )
         ]),
       ),
     );

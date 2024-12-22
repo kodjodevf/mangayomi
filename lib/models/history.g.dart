@@ -27,14 +27,19 @@ const HistorySchema = CollectionSchema(
       name: r'date',
       type: IsarType.string,
     ),
-    r'itemType': PropertySchema(
+    r'isManga': PropertySchema(
       id: 2,
+      name: r'isManga',
+      type: IsarType.bool,
+    ),
+    r'itemType': PropertySchema(
+      id: 3,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _HistoryitemTypeEnumValueMap,
     ),
     r'mangaId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'mangaId',
       type: IsarType.long,
     )
@@ -83,8 +88,9 @@ void _historySerialize(
 ) {
   writer.writeLong(offsets[0], object.chapterId);
   writer.writeString(offsets[1], object.date);
-  writer.writeByte(offsets[2], object.itemType.index);
-  writer.writeLong(offsets[3], object.mangaId);
+  writer.writeBool(offsets[2], object.isManga);
+  writer.writeByte(offsets[3], object.itemType.index);
+  writer.writeLong(offsets[4], object.mangaId);
 }
 
 History _historyDeserialize(
@@ -97,9 +103,10 @@ History _historyDeserialize(
     chapterId: reader.readLongOrNull(offsets[0]),
     date: reader.readStringOrNull(offsets[1]),
     id: id,
-    itemType: _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+    isManga: reader.readBoolOrNull(offsets[2]),
+    itemType: _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
         ItemType.manga,
-    mangaId: reader.readLongOrNull(offsets[3]),
+    mangaId: reader.readLongOrNull(offsets[4]),
   );
   return object;
 }
@@ -116,9 +123,11 @@ P _historyDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (_HistoryitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ItemType.manga) as P;
-    case 3:
+    case 4:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -509,6 +518,32 @@ extension HistoryQueryFilter
     });
   }
 
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isManga',
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> isMangaEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isManga',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<History, History, QAfterFilterCondition> itemTypeEqualTo(
       ItemType value) {
     return QueryBuilder.apply(this, (query) {
@@ -676,6 +711,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> sortByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> sortByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemType', Sort.asc);
@@ -739,6 +786,18 @@ extension HistoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> thenByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByIsMangaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isManga', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> thenByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itemType', Sort.asc);
@@ -779,6 +838,12 @@ extension HistoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<History, History, QDistinct> distinctByIsManga() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isManga');
+    });
+  }
+
   QueryBuilder<History, History, QDistinct> distinctByItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'itemType');
@@ -809,6 +874,12 @@ extension HistoryQueryProperty
   QueryBuilder<History, String?, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
+    });
+  }
+
+  QueryBuilder<History, bool?, QQueryOperations> isMangaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isManga');
     });
   }
 

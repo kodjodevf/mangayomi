@@ -12,6 +12,8 @@ class History {
 
   int? chapterId;
 
+  bool? isManga;
+
   @enumerated
   late ItemType itemType;
 
@@ -21,6 +23,7 @@ class History {
 
   History({
     this.id = Isar.autoIncrement,
+    this.isManga = true,
     required this.itemType,
     required this.chapterId,
     required this.mangaId,
@@ -32,6 +35,18 @@ class History {
     date = json['date'];
     id = json['id'];
     itemType = json['itemType'];
+    mangaId = json['mangaId'];
+  }
+
+  History.fromJsonV1(Map<String, dynamic> json) {
+    chapterId = json['chapterId'];
+    date = json['date'];
+    id = json['id'];
+    itemType = json['isManga'] is bool
+        ? json['isManga'] == true
+            ? ItemType.manga
+            : ItemType.anime
+        : ItemType.manga;
     mangaId = json['mangaId'];
   }
 

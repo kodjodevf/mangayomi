@@ -11,6 +11,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/backup_and_restore/providers/restore.dart';
 import 'package:mangayomi/modules/more/settings/sync/models/jwt.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
@@ -195,113 +196,9 @@ class SyncServer extends _$SyncServer {
 
   void _restore(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
-      try {
-        final manga =
-            (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-        final chapters = (backup["chapters"] as List?)
-            ?.map((e) => Chapter.fromJson(e))
-            .toList();
-        final categories = (backup["categories"] as List?)
-            ?.map((e) => Category.fromJson(e))
-            .toList();
-        final track =
-            (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-        final history = (backup["history"] as List?)
-            ?.map((e) => History.fromJson(e))
-            .toList();
-        final settings = (backup["settings"] as List?)
-            ?.map((e) => Settings.fromJson(e))
-            .toList();
-        final extensions = (backup["extensions"] as List?)
-            ?.map((e) => Source.fromJson(e))
-            .toList();
-        final extensionsPref = (backup["extensions_preferences"] as List?)
-            ?.map((e) => SourcePreference.fromJson(e))
-            .toList();
-        final updates = (backup["updates"] as List?)
-            ?.map((e) => Update.fromJson(e))
-            .toList();
-
-        isar.writeTxnSync(() {
-          isar.mangas.clearSync();
-          if (manga != null) {
-            isar.mangas.putAllSync(manga);
-            if (chapters != null) {
-              isar.chapters.clearSync();
-              for (var chapter in chapters) {
-                final manga = isar.mangas.getSync(chapter.mangaId!);
-                if (manga != null) {
-                  isar.chapters.putSync(chapter..manga.value = manga);
-                  chapter.manga.saveSync();
-                }
-              }
-
-              isar.historys.clearSync();
-              if (history != null) {
-                for (var element in history) {
-                  final chapter = isar.chapters.getSync(element.chapterId!);
-                  if (chapter != null) {
-                    isar.historys.putSync(element..chapter.value = chapter);
-                    element.chapter.saveSync();
-                  }
-                }
-              }
-
-              isar.updates.clearSync();
-              if (updates != null) {
-                final tempChapters =
-                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
-                for (var update in updates) {
-                  final matchingChapter = tempChapters
-                      .where((chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName)
-                      .firstOrNull;
-                  if (matchingChapter != null) {
-                    isar.updates
-                        .putSync(update..chapter.value = matchingChapter);
-                    update.chapter.saveSync();
-                  }
-                }
-              }
-            }
-
-            isar.categorys.clearSync();
-            if (categories != null) {
-              isar.categorys.putAllSync(categories);
-            }
-          }
-
-          isar.tracks.clearSync();
-          if (track != null) {
-            isar.tracks.putAllSync(track);
-          }
-
-          isar.sources.clearSync();
-          if (extensions != null) {
-            isar.sources.putAllSync(extensions);
-          }
-
-          isar.sourcePreferences.clearSync();
-          if (extensionsPref != null) {
-            isar.sourcePreferences.putAllSync(extensionsPref);
-          }
-          isar.settings.clearSync();
-          if (settings != null) {
-            isar.settings.putAllSync(settings);
-          }
-          if (isar.settings.getSync(227) == null) {
-            isar.settings.putSync(Settings(id: 227));
-          }
-          ref.invalidate(themeModeStateProvider);
-          ref.invalidate(blendLevelStateProvider);
-          ref.invalidate(flexSchemeColorStateProvider);
-          ref.invalidate(pureBlackDarkModeStateProvider);
-          ref.invalidate(l10nLocaleStateProvider);
-        });
-      } catch (e) {
-        botToast(e.toString(), second: 5);
-      }
+      ref.watch(restoreV1Provider(backup));
+    } else if (backup['version'] == "2") {
+      ref.watch(restoreV2Provider(backup));
     }
   }
 

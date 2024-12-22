@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -20,6 +21,7 @@ class PlayerScreen extends ConsumerWidget {
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
     final useLibass = ref.watch(useLibassStateProvider);
+    final hideAnime = ref.watch(hideAnimeStateProvider);
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
     return Scaffold(
       appBar: AppBar(
@@ -28,6 +30,12 @@ class PlayerScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SwitchListTile(
+                value: hideAnime,
+                title: Text(context.l10n.hide_anime),
+                onChanged: (value) {
+                  ref.read(hideAnimeStateProvider.notifier).set(value);
+                }),
             ListTile(
               onTap: () {
                 final values = [100, 95, 90, 85, 80, 75, 70];

@@ -20,6 +20,8 @@ class ReaderScreen extends ConsumerWidget {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    final hideManga = ref.watch(hideMangaStateProvider);
+    final hideNovel = ref.watch(hideNovelStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
     return Scaffold(
       appBar: AppBar(
@@ -328,6 +330,18 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+            SwitchListTile(
+                value: hideManga,
+                title: Text(context.l10n.hide_manga),
+                onChanged: (value) {
+                  ref.read(hideMangaStateProvider.notifier).set(value);
+                }),
+            SwitchListTile(
+                value: hideNovel,
+                title: Text(context.l10n.hide_novel),
+                onChanged: (value) {
+                  ref.read(hideNovelStateProvider.notifier).set(value);
+                }),
             SwitchListTile(
                 value: fullScreenReader,
                 title: Text(context.l10n.fullscreen),

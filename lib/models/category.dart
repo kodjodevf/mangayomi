@@ -7,17 +7,29 @@ part 'category.g.dart';
 class Category {
   Id? id;
   String? name;
+  bool? forManga;
   @enumerated
   late ItemType forItemType;
   Category(
       {this.id = Isar.autoIncrement,
       required this.name,
+      this.forManga = true,
       required this.forItemType});
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     forItemType = json['forItemType'];
+  }
+
+  Category.fromJsonV1(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    forItemType = json['forManga'] is bool
+        ? json['forManga'] == true
+            ? ItemType.manga
+            : ItemType.anime
+        : ItemType.manga;
   }
 
   Map<String, dynamic> toJson() =>
