@@ -97,7 +97,10 @@ class ChapterListTileWidget extends ConsumerWidget {
                                       int.parse(chapter.lastPageRead!))
                               .toString()
                               .substringBefore("."))
-                          : l10n.page(chapter.lastPageRead!),
+                          : l10n.page(chapter.manga.value!.itemType ==
+                                  ItemType.manga
+                              ? chapter.lastPageRead!
+                              : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %"),
                       style: TextStyle(
                           fontSize: 11,
                           color: context.isLight

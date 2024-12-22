@@ -217,72 +217,86 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             child: SingleChildScrollView(
                               controller: _scrollController,
                               physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  HtmlWidget(
-                                    htmlContent,
-                                    customStylesBuilder: (element) {
-                                      switch (backgroundColor) {
-                                        case BackgroundColor.black:
-                                          return {
-                                            'background-color': 'black',
-                                          };
-                                        default:
-                                          return {
-                                            'background-color': '#F0F0F0',
-                                          };
-                                      }
-                                    },
-                                    onTapUrl: (url) {
-                                      context.push("/mangawebview",
-                                          extra: {'url': url, 'title': url});
-                                      return true;
-                                    },
-                                    renderMode: RenderMode.column,
-                                    textStyle: TextStyle(
-                                        color: backgroundColor ==
-                                                BackgroundColor.white
-                                            ? Colors.black
-                                            : Colors.white,
-                                        fontSize: 14),
-                                  ),
-                                  Center(
-                                    child: IconButton(
-                                      padding: const EdgeInsets.all(5),
-                                      onPressed: () =>
-                                          pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter:
-                                            _readerController.getPrevChapter(),
-                                      ),
-                                      icon: Icon(
-                                        Icons.arrow_back,
-                                        color: backgroundColor ==
-                                                BackgroundColor.white
-                                            ? Colors.black
-                                            : Colors.white,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.translucent,
+                                onTap: () {
+                                  _isViewFunction();
+                                },
+                                child: Column(
+                                  children: [
+                                    HtmlWidget(
+                                      htmlContent,
+                                      customStylesBuilder: (element) {
+                                        switch (backgroundColor) {
+                                          case BackgroundColor.black:
+                                            return {
+                                              'background-color': 'black',
+                                            };
+                                          default:
+                                            return {
+                                              'background-color': '#F0F0F0',
+                                            };
+                                        }
+                                      },
+                                      onTapUrl: (url) {
+                                        context.push("/mangawebview",
+                                            extra: {'url': url, 'title': url});
+                                        return true;
+                                      },
+                                      renderMode: RenderMode.column,
+                                      textStyle: TextStyle(
+                                          color: backgroundColor ==
+                                                  BackgroundColor.white
+                                              ? Colors.black
+                                              : Colors.white,
+                                          fontSize: 14),
+                                    ),
+                                    Center(
+                                      heightFactor: 2,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        spacing: 5,
+                                        children: [
+                                          IconButton(
+                                            padding: const EdgeInsets.all(5),
+                                            onPressed: () =>
+                                                pushReplacementMangaReaderView(
+                                              context: context,
+                                              chapter: _readerController
+                                                  .getPrevChapter(),
+                                            ),
+                                            icon: Icon(
+                                              size: 32,
+                                              Icons.arrow_back,
+                                              color: backgroundColor ==
+                                                      BackgroundColor.white
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            padding: const EdgeInsets.all(5),
+                                            onPressed: () =>
+                                                pushReplacementMangaReaderView(
+                                              context: context,
+                                              chapter: _readerController
+                                                  .getNextChapter(),
+                                            ),
+                                            icon: Icon(
+                                              size: 32,
+                                              Icons.arrow_forward,
+                                              color: backgroundColor ==
+                                                      BackgroundColor.white
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  Center(
-                                    child: IconButton(
-                                      padding: const EdgeInsets.all(5),
-                                      onPressed: () =>
-                                          pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter:
-                                            _readerController.getNextChapter(),
-                                      ),
-                                      icon: Icon(
-                                        Icons.arrow_forward,
-                                        color: backgroundColor ==
-                                                BackgroundColor.white
-                                            ? Colors.black
-                                            : Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -296,8 +310,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             )),
                   ],
                 ),
-                _gestureRightLeft(),
-                _gestureTopBottom(),
+                //_gestureRightLeft(),
+                //_gestureTopBottom(),
                 _appBar(),
               ],
             ),

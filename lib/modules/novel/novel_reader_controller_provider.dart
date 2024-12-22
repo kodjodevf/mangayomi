@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -7,24 +5,8 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
-import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'novel_reader_controller_provider.g.dart';
-
-BoxFit getBoxFit(ScaleType scaleType) {
-  return switch (scaleType) {
-    ScaleType.fitHeight => BoxFit.fitHeight,
-    ScaleType.fitWidth => BoxFit.fitWidth,
-    ScaleType.fitScreen => BoxFit.contain,
-    ScaleType.originalSize => BoxFit.cover,
-    ScaleType.smartFit => BoxFit.contain,
-    _ => BoxFit.cover
-  };
-}
 
 @riverpod
 class NovelReaderController extends _$NovelReaderController {
@@ -115,7 +97,7 @@ class NovelReaderController extends _$NovelReaderController {
       }
     }
     if (index == null) {
-      final chapters = getManga().chapters.toList().reversed.toList();
+      final chapters = getManga().chapters.toList().toList();
       for (var i = 0; i < chapters.length; i++) {
         if (chapters[i].id == chapter.id) {
           index = i + 1;
@@ -135,7 +117,7 @@ class NovelReaderController extends _$NovelReaderController {
       }
     }
     if (index == null) {
-      final chapters = getManga().chapters.toList().reversed.toList();
+      final chapters = getManga().chapters.toList().toList();
       for (var i = 0; i < chapters.length; i++) {
         if (chapters[i].id == chapter.id) {
           index = i - 1;
@@ -155,7 +137,7 @@ class NovelReaderController extends _$NovelReaderController {
       }
     }
     if (index == null) {
-      final chapters = getManga().chapters.toList().reversed.toList();
+      final chapters = getManga().chapters.toList().toList();
       for (var i = 0; i < chapters.length; i++) {
         if (chapters[i].id == chapter.id) {
           index = i;
@@ -170,14 +152,14 @@ class NovelReaderController extends _$NovelReaderController {
     final prevChapIdx = getPrevChapterIndex();
     return prevChapIdx.$2
         ? getManga().getFilteredChapterList()[prevChapIdx.$1]
-        : getManga().chapters.toList().reversed.toList()[prevChapIdx.$1];
+        : getManga().chapters.toList().toList()[prevChapIdx.$1];
   }
 
   Chapter getNextChapter() {
     final nextChapIdx = getNextChapterIndex();
     return nextChapIdx.$2
         ? getManga().getFilteredChapterList()[nextChapIdx.$1]
-        : getManga().chapters.toList().reversed.toList()[nextChapIdx.$1];
+        : getManga().chapters.toList().toList()[nextChapIdx.$1];
   }
 
   int getChaptersLength(bool isInFilterList) {
@@ -199,59 +181,9 @@ class NovelReaderController extends _$NovelReaderController {
   }
 }
 
-extension ChapterExtensions on Chapter {
-  void updateTrackChapterRead(dynamic ref) {
-    if (!(ref is WidgetRef || ref is Ref)) return;
-    final updateProgressAfterReading =
-        ref.watch(updateProgressAfterReadingStateProvider);
-    if (!updateProgressAfterReading) return;
-    final manga = this.manga.value!;
-    final chapterNumber =
-        ChapterRecognition().parseChapterNumber(manga.name!, name!);
-
-    final tracks = isar.tracks
-        .filter()
-        .idIsNotNull()
-        .isMangaEqualTo(manga.itemType == ItemType.manga)
-        .mangaIdEqualTo(manga.id!)
-        .findAllSync();
-
-    if (tracks.isEmpty) return;
-    for (var track in tracks) {
-      final service = isar.trackPreferences
-          .filter()
-          .syncIdIsNotNull()
-          .syncIdEqualTo(track.syncId)
-          .findFirstSync();
-      if (!(service == null || chapterNumber <= (track.lastChapterRead ?? 0))) {
-        if (track.status != TrackStatus.completed) {
-          track.lastChapterRead = chapterNumber;
-          if (track.lastChapterRead == track.totalChapter &&
-              (track.totalChapter ?? 0) > 0) {
-            track.status = TrackStatus.completed;
-            track.finishedReadingDate = DateTime.now().millisecondsSinceEpoch;
-          } else {
-            track.status = manga.itemType == ItemType.manga
-                ? TrackStatus.reading
-                : TrackStatus.watching;
-            if (track.lastChapterRead == 1) {
-              track.startedReadingDate = DateTime.now().millisecondsSinceEpoch;
-            }
-          }
-        }
-        ref
-            .read(trackStateProvider(
-                    track: track, isManga: manga.itemType == ItemType.manga)
-                .notifier)
-            .updateManga();
-      }
-    }
-  }
-}
-
 extension MangaExtensions on Manga {
   List<Chapter> getFilteredChapterList() {
-    final data = this.chapters.toList().reversed.toList();
+    final data = this.chapters.toList().toList();
     final filterUnread = (isar.settings
                 .getSync(227)!
                 .chapterFilterUnreadList!

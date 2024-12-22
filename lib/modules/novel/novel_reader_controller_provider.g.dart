@@ -7,7 +7,7 @@ part of 'novel_reader_controller_provider.dart';
 // **************************************************************************
 
 String _$novelReaderControllerHash() =>
-    r'9ac937ab7fcc82a99088128f0f12f1aaad7fa1e8';
+    r'2eec885b858de8195e31a2d0b70feb56c1dc4268';
 
 /// Copied from Dart SDK
 class _SystemHash {

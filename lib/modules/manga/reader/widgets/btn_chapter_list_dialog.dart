@@ -137,7 +137,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
             if (!chapter.isRead!)
               if (chapter.lastPageRead!.isNotEmpty &&
                   chapter.lastPageRead != "1")
-                if (chapter.scanlator!.isNotEmpty)
+                if (chapter.scanlator != null && chapter.scanlator!.isNotEmpty)
                   Row(
                     children: [
                       const Text(' • '),
