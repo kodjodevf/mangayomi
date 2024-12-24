@@ -37,7 +37,7 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
     Settings appSettings = Settings();
 
     state = displayType;
-    
+
     switch (itemType) {
       case ItemType.manga:
         appSettings = settings..displayType = displayType;
@@ -671,7 +671,8 @@ class LibraryShowContinueReadingButtonState
 @riverpod
 class SortLibraryMangaState extends _$SortLibraryMangaState {
   @override
-  SortLibraryManga build({required ItemType itemType, required Settings settings}) {
+  SortLibraryManga build(
+      {required ItemType itemType, required Settings settings}) {
     switch (itemType) {
       case ItemType.manga:
         return settings.sortLibraryManga ?? SortLibraryManga();

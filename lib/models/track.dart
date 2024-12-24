@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:mangayomi/models/manga.dart';
 part 'track.g.dart';
 
 @collection
@@ -33,6 +34,9 @@ class Track {
 
   bool? isManga;
 
+  @enumerated
+  late ItemType itemType;
+
   Track(
       {this.id = Isar.autoIncrement,
       this.libraryId,
@@ -47,7 +51,8 @@ class Track {
       this.startedReadingDate,
       this.finishedReadingDate,
       this.trackingUrl,
-      this.isManga});
+      this.isManga,
+      this.itemType = ItemType.manga});
   Track.fromJson(Map<String, dynamic> json) {
     finishedReadingDate = json['finishedReadingDate'];
     id = json['id'];

@@ -98,8 +98,8 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                                 } else {
                                   context.push('/globalSearch',
                                       extra: _tabBarController.index == 0
-                                          ? true
-                                          : false);
+                                          ? ItemType.manga
+                                          : ItemType.anime);
                                 }
                               },
                               icon: Icon(
@@ -116,24 +116,26 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                 splashRadius: 20,
                 onPressed: () {
                   if (_tabBarController.index == 0) {
-                    context.push('/sourceFilter', extra: true);
+                    context.push('/sourceFilter', extra: ItemType.manga);
                   } else if (_tabBarController.index == 1) {
-                    context.push('/sourceFilter', extra: false);
+                    context.push('/sourceFilter', extra: ItemType.anime);
                   } else if (_tabBarController.index == 2) {
-                    context.push('/sourceFilter', extra: false);
+                    context.push('/sourceFilter', extra: ItemType.anime);
                   } else if (_tabBarController.index == 3) {
                     _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: false);
+                    context.push('/ExtensionLang', extra: ItemType.anime);
                   } else if (_tabBarController.index == 4) {
                     _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: false);
+                    context.push('/ExtensionLang', extra: ItemType.anime);
                   } else if (_tabBarController.index == 5) {
                     _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: false);
+                    context.push('/ExtensionLang', extra: ItemType.anime);
                   } else {}
                 },
                 icon: Icon(
-                    _tabBarController.index == 0 || _tabBarController.index == 1 || _tabBarController.index == 2
+                    _tabBarController.index == 0 ||
+                            _tabBarController.index == 1 ||
+                            _tabBarController.index == 2
                         ? Icons.filter_list_sharp
                         : _tabBarController.index == 3 ||
                                 _tabBarController.index == 4 ||

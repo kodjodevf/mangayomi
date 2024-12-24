@@ -39,7 +39,8 @@ Future importArchivesFromFile(Ref ref, Manga? mManga,
           artist: '',
         );
     for (var file in result.files.reversed.toList()) {
-      (String, LocalExtensionType, Uint8List, String)? data = itemType == ItemType.manga
+      (String, LocalExtensionType, Uint8List, String)? data = itemType ==
+              ItemType.manga
           ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future)
           : null;
       String name = _getName(file.path!);

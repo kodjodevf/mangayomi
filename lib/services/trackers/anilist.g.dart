@@ -6,7 +6,7 @@ part of 'anilist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'd3a8852d689b13c3bde46ec05b464e7779149e58';
+String _$anilistHash() => r'ddd07acc8d28d2aa95c942566109e9393ca9e5ed';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,11 +31,11 @@ class _SystemHash {
 
 abstract class _$Anilist extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
-  late final bool? isManga;
+  late final ItemType? itemType;
 
   void build({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   });
 }
 
@@ -51,11 +51,11 @@ class AnilistFamily extends Family<void> {
   /// See also [Anilist].
   AnilistProvider call({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   }) {
     return AnilistProvider(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -65,7 +65,7 @@ class AnilistFamily extends Family<void> {
   ) {
     return call(
       syncId: provider.syncId,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -89,11 +89,11 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   /// See also [Anilist].
   AnilistProvider({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   }) : this._internal(
           () => Anilist()
             ..syncId = syncId
-            ..isManga = isManga,
+            ..itemType = itemType,
           from: anilistProvider,
           name: r'anilistProvider',
           debugGetCreateSourceHash:
@@ -103,7 +103,7 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
           dependencies: AnilistFamily._dependencies,
           allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
           syncId: syncId,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   AnilistProvider._internal(
@@ -114,11 +114,11 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.syncId,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
   final int syncId;
-  final bool? isManga;
+  final ItemType? itemType;
 
   @override
   void runNotifierBuild(
@@ -126,7 +126,7 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   ) {
     return notifier.build(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -137,14 +137,14 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
       override: AnilistProvider._internal(
         () => create()
           ..syncId = syncId
-          ..isManga = isManga,
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         syncId: syncId,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -158,14 +158,14 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   bool operator ==(Object other) {
     return other is AnilistProvider &&
         other.syncId == syncId &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, syncId.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -177,8 +177,8 @@ mixin AnilistRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType? get itemType;
 }
 
 class _AnilistProviderElement
@@ -188,7 +188,7 @@ class _AnilistProviderElement
   @override
   int get syncId => (origin as AnilistProvider).syncId;
   @override
-  bool? get isManga => (origin as AnilistProvider).isManga;
+  ItemType? get itemType => (origin as AnilistProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -364,7 +364,7 @@ extension ChapterExtensions on Chapter {
     final tracks = isar.tracks
         .filter()
         .idIsNotNull()
-        .isMangaEqualTo(manga.itemType == ItemType.manga)
+        .itemTypeEqualTo(manga.itemType)
         .mangaIdEqualTo(manga.id!)
         .findAllSync();
 
@@ -392,8 +392,7 @@ extension ChapterExtensions on Chapter {
           }
         }
         ref
-            .read(trackStateProvider(
-                    track: track, isManga: manga.itemType == ItemType.manga)
+            .read(trackStateProvider(track: track, itemType: manga.itemType)
                 .notifier)
             .updateManga();
       }

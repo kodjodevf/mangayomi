@@ -118,7 +118,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   Size get size => View.of(context).physicalSize / pixelRatio;
 
   Color _backgroundColor(BuildContext context) =>
-      Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9);
+      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9);
 
   void _setFullScreen({bool? value}) async {
     if (isDesktop) {
@@ -599,7 +599,7 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
                           .textTheme
                           .bodyLarge!
                           .color!
-                          .withOpacity(0.9)),
+                          .withValues(alpha: 0.9)),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),

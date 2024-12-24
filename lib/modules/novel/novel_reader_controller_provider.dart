@@ -68,7 +68,8 @@ class NovelReaderController extends _$NovelReaderController {
       final ch = chapter;
       isar.writeTxnSync(() {
         ch.isRead = isRead;
-        ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0).toString();
+        ch.lastPageRead =
+            (maxOffset != 0 ? newOffset / maxOffset : 0).toString();
         isar.chapters.putSync(ch);
       });
     }

@@ -1656,8 +1656,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             final trackSearch =
                                                 await trackersSearchraggableMenu(
                                               context,
-                                              isManga: widget.manga!.itemType !=
-                                                  ItemType.anime,
+                                              itemType: widget.manga!.itemType,
                                               track: Track(
                                                   status:
                                                       TrackStatus.planToRead,
@@ -1980,16 +1979,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 mangaId: widget.manga!.id!,
                                 syncId: entries[index].syncId!,
                                 trackRes: trackRes.first,
-                                isManga:
-                                    widget.manga!.itemType == ItemType.manga)
+                                itemType: widget.manga!.itemType)
                             : TrackListile(
                                 text: l10nLocalizations(context)!.add_tracker,
                                 onTap: () async {
                                   final trackSearch =
                                       await trackersSearchraggableMenu(
                                     context,
-                                    isManga: widget.manga!.itemType !=
-                                        ItemType.anime,
+                                    itemType: widget.manga!.itemType,
                                     track: Track(
                                         status: TrackStatus.planToRead,
                                         syncId: entries[index].syncId!,
@@ -1999,9 +1996,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     await ref
                                         .read(trackStateProvider(
                                                 track: null,
-                                                isManga:
-                                                    widget.manga!.itemType !=
-                                                        ItemType.anime)
+                                                itemType:
+                                                    widget.manga!.itemType)
                                             .notifier)
                                         .setTrackSearch(
                                             trackSearch,

@@ -259,17 +259,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/ExtensionLang",
           name: "ExtensionLang",
           builder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return ExtensionsLang(
-              isManga: isManga,
+              itemType: itemType,
             );
           },
           pageBuilder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return transitionPage(
               key: state.pageKey,
               child: ExtensionsLang(
-                isManga: isManga,
+                itemType: itemType,
               ),
             );
           },
@@ -323,17 +323,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/globalSearch",
           name: "globalSearch",
           builder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return GlobalSearchScreen(
-              isManga: isManga,
+              itemType: itemType,
             );
           },
           pageBuilder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return transitionPage(
               key: state.pageKey,
               child: GlobalSearchScreen(
-                isManga: isManga,
+                itemType: itemType,
               ),
             );
           },
@@ -381,17 +381,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/sourceFilter",
           name: "sourceFilter",
           builder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return SourcesFilterScreen(
-              isManga: isManga,
+              itemType: itemType,
             );
           },
           pageBuilder: (context, state) {
-            final isManga = state.extra as bool;
+            final itemType = state.extra as ItemType;
             return transitionPage(
               key: state.pageKey,
               child: SourcesFilterScreen(
-                isManga: isManga,
+                itemType: itemType,
               ),
             );
           },

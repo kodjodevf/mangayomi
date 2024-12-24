@@ -184,7 +184,8 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   apiUrl: _apiUrl,
                                   iconUrl: _iconUrl,
                                   typeSource: _sourceTypes[_sourceTypeIndex],
-                                  itemType: ItemType.values.elementAt(_itemTypeIndex),
+                                  itemType:
+                                      ItemType.values.elementAt(_itemTypeIndex),
                                   isAdded: true,
                                   isActive: true,
                                   version: "0.0.1",

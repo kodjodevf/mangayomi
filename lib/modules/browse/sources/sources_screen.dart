@@ -53,7 +53,11 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton.icon(
                           onPressed: () =>
-                              widget.tabIndex(widget.itemType == ItemType.manga ? 3 : widget.itemType == ItemType.anime ? 4 : 5),
+                              widget.tabIndex(widget.itemType == ItemType.manga
+                                  ? 3
+                                  : widget.itemType == ItemType.anime
+                                      ? 4
+                                      : 5),
                           icon: const Icon(Icons.extension_rounded),
                           label: Text(context.l10n.show_extensions)),
                     )

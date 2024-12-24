@@ -6,7 +6,7 @@ part of 'migration.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$migrationHash() => r'403da626b6a797854dde7ae77b4ea452300c40e6';
+String _$migrationHash() => r'748a99069dd212f5eacce8185e414d80fefeaae9';
 
 /// See also [migration].
 @ProviderFor(migration)

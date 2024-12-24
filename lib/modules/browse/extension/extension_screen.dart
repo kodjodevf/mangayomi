@@ -41,11 +41,12 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       onRefresh: () => widget.itemType == ItemType.manga
           ? ref.refresh(
               fetchMangaSourcesListProvider(id: null, reFresh: true).future)
-          : widget.itemType == ItemType.anime 
-          ? ref.refresh(
-              fetchAnimeSourcesListProvider(id: null, reFresh: true).future) :
-            ref.refresh(
-              fetchNovelSourcesListProvider(id: null, reFresh: true).future),
+          : widget.itemType == ItemType.anime
+              ? ref.refresh(
+                  fetchAnimeSourcesListProvider(id: null, reFresh: true).future)
+              : ref.refresh(
+                  fetchNovelSourcesListProvider(id: null, reFresh: true)
+                      .future),
       child: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: streamExtensions.when(
@@ -99,15 +100,17 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
                                           fetchMangaSourcesListProvider(
                                                   id: source.id, reFresh: true)
                                               .future)
-                                      : source.itemType == ItemType.anime ? 
-                                      await ref.watch(
-                                          fetchAnimeSourcesListProvider(
-                                                  id: source.id, reFresh: true)
-                                              .future) :
-                                      await ref.watch(
-                                          fetchNovelSourcesListProvider(
-                                                  id: source.id, reFresh: true)
-                                              .future);
+                                      : source.itemType == ItemType.anime
+                                          ? await ref.watch(
+                                              fetchAnimeSourcesListProvider(
+                                                      id: source.id,
+                                                      reFresh: true)
+                                                  .future)
+                                          : await ref.watch(
+                                              fetchNovelSourcesListProvider(
+                                                      id: source.id,
+                                                      reFresh: true)
+                                                  .future);
                                 }
                               },
                               child: Text(l10n.update_all))

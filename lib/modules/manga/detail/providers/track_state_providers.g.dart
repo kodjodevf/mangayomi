@@ -6,7 +6,7 @@ part of 'track_state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'8b3b72900d3f0c39834cabd942200814099b4106';
+String _$trackStateHash() => r'996bec4204e84eb74a2b818410788e5fbf81fec2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,11 +31,11 @@ class _SystemHash {
 
 abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
   late final Track? track;
-  late final bool? isManga;
+  late final ItemType? itemType;
 
   Track build({
     Track? track,
-    required bool? isManga,
+    required ItemType? itemType,
   });
 }
 
@@ -51,11 +51,11 @@ class TrackStateFamily extends Family<Track> {
   /// See also [TrackState].
   TrackStateProvider call({
     Track? track,
-    required bool? isManga,
+    required ItemType? itemType,
   }) {
     return TrackStateProvider(
       track: track,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -65,7 +65,7 @@ class TrackStateFamily extends Family<Track> {
   ) {
     return call(
       track: provider.track,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -90,11 +90,11 @@ class TrackStateProvider
   /// See also [TrackState].
   TrackStateProvider({
     Track? track,
-    required bool? isManga,
+    required ItemType? itemType,
   }) : this._internal(
           () => TrackState()
             ..track = track
-            ..isManga = isManga,
+            ..itemType = itemType,
           from: trackStateProvider,
           name: r'trackStateProvider',
           debugGetCreateSourceHash:
@@ -105,7 +105,7 @@ class TrackStateProvider
           allTransitiveDependencies:
               TrackStateFamily._allTransitiveDependencies,
           track: track,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   TrackStateProvider._internal(
@@ -116,11 +116,11 @@ class TrackStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.track,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
   final Track? track;
-  final bool? isManga;
+  final ItemType? itemType;
 
   @override
   Track runNotifierBuild(
@@ -128,7 +128,7 @@ class TrackStateProvider
   ) {
     return notifier.build(
       track: track,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -139,14 +139,14 @@ class TrackStateProvider
       override: TrackStateProvider._internal(
         () => create()
           ..track = track
-          ..isManga = isManga,
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         track: track,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -160,14 +160,14 @@ class TrackStateProvider
   bool operator ==(Object other) {
     return other is TrackStateProvider &&
         other.track == track &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, track.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -179,8 +179,8 @@ mixin TrackStateRef on AutoDisposeNotifierProviderRef<Track> {
   /// The parameter `track` of this provider.
   Track? get track;
 
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType? get itemType;
 }
 
 class _TrackStateProviderElement
@@ -191,7 +191,7 @@ class _TrackStateProviderElement
   @override
   Track? get track => (origin as TrackStateProvider).track;
   @override
-  bool? get isManga => (origin as TrackStateProvider).isManga;
+  ItemType? get itemType => (origin as TrackStateProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
