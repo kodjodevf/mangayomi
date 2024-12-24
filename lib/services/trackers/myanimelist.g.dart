@@ -6,7 +6,7 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'd69a03e6f385688047c13771528c086542e03218';
+String _$myAnimeListHash() => r'607fd673cf3cf2382874b9a413472129043589d5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,11 +31,11 @@ class _SystemHash {
 
 abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
-  late final bool? isManga;
+  late final ItemType? itemType;
 
   void build({
     required int syncId,
-    required bool? isManga,
+    required ItemType? itemType,
   });
 }
 
@@ -51,11 +51,11 @@ class MyAnimeListFamily extends Family<void> {
   /// See also [MyAnimeList].
   MyAnimeListProvider call({
     required int syncId,
-    required bool? isManga,
+    required ItemType? itemType,
   }) {
     return MyAnimeListProvider(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -65,7 +65,7 @@ class MyAnimeListFamily extends Family<void> {
   ) {
     return call(
       syncId: provider.syncId,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -90,11 +90,11 @@ class MyAnimeListProvider
   /// See also [MyAnimeList].
   MyAnimeListProvider({
     required int syncId,
-    required bool? isManga,
+    required ItemType? itemType,
   }) : this._internal(
           () => MyAnimeList()
             ..syncId = syncId
-            ..isManga = isManga,
+            ..itemType = itemType,
           from: myAnimeListProvider,
           name: r'myAnimeListProvider',
           debugGetCreateSourceHash:
@@ -105,7 +105,7 @@ class MyAnimeListProvider
           allTransitiveDependencies:
               MyAnimeListFamily._allTransitiveDependencies,
           syncId: syncId,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   MyAnimeListProvider._internal(
@@ -116,11 +116,11 @@ class MyAnimeListProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.syncId,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
   final int syncId;
-  final bool? isManga;
+  final ItemType? itemType;
 
   @override
   void runNotifierBuild(
@@ -128,7 +128,7 @@ class MyAnimeListProvider
   ) {
     return notifier.build(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -139,14 +139,14 @@ class MyAnimeListProvider
       override: MyAnimeListProvider._internal(
         () => create()
           ..syncId = syncId
-          ..isManga = isManga,
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         syncId: syncId,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -160,14 +160,14 @@ class MyAnimeListProvider
   bool operator ==(Object other) {
     return other is MyAnimeListProvider &&
         other.syncId == syncId &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, syncId.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -179,8 +179,8 @@ mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType? get itemType;
 }
 
 class _MyAnimeListProviderElement
@@ -191,7 +191,7 @@ class _MyAnimeListProviderElement
   @override
   int get syncId => (origin as MyAnimeListProvider).syncId;
   @override
-  bool? get isManga => (origin as MyAnimeListProvider).isManga;
+  ItemType? get itemType => (origin as MyAnimeListProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

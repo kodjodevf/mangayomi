@@ -1,6 +1,7 @@
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
@@ -10,10 +11,10 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
-  final bool isManga;
+  final ItemType itemType;
   final Track track;
   const TrackerWidgetSearch(
-      {required this.isManga, required this.track, super.key});
+      {required this.itemType, required this.track, super.key});
 
   @override
   ConsumerState<TrackerWidgetSearch> createState() =>
@@ -32,7 +33,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   _init() async {
     await Future.delayed(const Duration(microseconds: 100));
     tracks = await ref
-        .read(trackStateProvider(track: widget.track, isManga: widget.isManga)
+        .read(trackStateProvider(track: widget.track, itemType: widget.itemType)
             .notifier)
         .search(query);
     if (mounted) {
@@ -176,7 +177,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                           tracks = await ref
                               .read(trackStateProvider(
                                       track: widget.track,
-                                      isManga: widget.isManga)
+                                      itemType: widget.itemType)
                                   .notifier)
                               .search(d.trim());
                           if (mounted) {
@@ -219,7 +220,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
 }
 
 trackersSearchraggableMenu(BuildContext context,
-    {required Track track, required bool isManga}) async {
+    {required Track track, required ItemType itemType}) async {
   return await DraggableMenu.open(
       context,
       DraggableMenu(
@@ -257,6 +258,6 @@ trackersSearchraggableMenu(BuildContext context,
           minimizeBeforeFastDrag: true,
           child: TrackerWidgetSearch(
             track: track,
-            isManga: isManga,
+            itemType: itemType,
           )));
 }

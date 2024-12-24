@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'dart:convert';
@@ -39,7 +40,7 @@ class Kitsu extends _$Kitsu {
   }
 
   @override
-  void build({required int syncId, bool? isManga}) {}
+  void build({required int syncId, ItemType? itemType}) {}
 
   Future<(bool, String)> login(String username, String password) async {
     try {

@@ -1,9 +1,7 @@
-import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed_items.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
@@ -13,13 +11,9 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/backup_and_restore/providers/restore.dart';
 import 'package:mangayomi/modules/more/settings/sync/models/jwt.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
 import 'dart:convert';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,8 +24,6 @@ part 'sync_server.g.dart';
 class SyncServer extends _$SyncServer {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _loginUrl = '/login';
-  final String _checkUrl = '/check';
-  final String _syncUrl = '/sync';
   final String _uploadUrl = '/upload/full';
   final String _downloadUrl = '/download';
 
@@ -67,78 +59,6 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> checkForSync(bool silent) async {
-    if (!silent) {
-      botToast("Checking for sync...", second: 2);
-    }
-    try {
-      final datas = _getData();
-      final accessToken = _getAccessToken();
-      final localHash = _getDataHash(datas);
-
-      var response = await http.get(
-        Uri.parse('${_getServer()}$_checkUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
-      );
-      if (response.statusCode != 200) {
-        botToast("Check failed", second: 5);
-        return;
-      }
-      var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final remoteHash = jsonData["hash"];
-      if (localHash != remoteHash) {
-        syncToServer(silent);
-      } else if (!silent) {
-        botToast("Sync up to date", second: 2);
-      }
-    } catch (error) {
-      botToast(error.toString(), second: 5);
-    }
-  }
-
-  Future<void> syncToServer(bool silent) async {
-    if (!silent) {
-      botToast("Sync started...", second: 2);
-    }
-    try {
-      final datas = _getData();
-      final accessToken = _getAccessToken();
-
-      var response = await http.post(
-        Uri.parse('${_getServer()}$_syncUrl'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken'
-        },
-        body: jsonEncode(
-            {'backupData': datas, 'changedItems': _getChangedData()}),
-      );
-      if (response.statusCode != 200) {
-        botToast("Sync failed", second: 5);
-        return;
-      }
-      var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final decodedBackupData = jsonData["backupData"] is String
-          ? jsonDecode(jsonData["backupData"])
-          : jsonData["backupData"];
-      _restoreMerge(decodedBackupData);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastSync(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
-      if (!silent) {
-        botToast("Sync finished", second: 2);
-      }
-    } catch (error) {
-      botToast(error.toString(), second: 5);
-    }
-  }
-
   Future<void> uploadToServer(AppLocalizations l10n) async {
     botToast(l10n.sync_uploading, second: 2);
     try {
@@ -160,9 +80,6 @@ class SyncServer extends _$SyncServer {
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastUpload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
       botToast(l10n.sync_upload_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
@@ -192,52 +109,15 @@ class SyncServer extends _$SyncServer {
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastDownload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(changedItemsManagerProvider(managerId: 1).notifier)
-          .cleanChangedItems(true);
       botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
     }
   }
 
-  String _getDataHash(Map<String, dynamic> data) {
-    Map<String, dynamic> datas = {};
-    datas["version"] = data["version"];
-    datas["manga"] = data["manga"];
-    datas["categories"] = data["categories"];
-    datas["chapters"] = data["chapters"];
-    datas["tracks"] = data["tracks"];
-    datas["history"] = data["history"];
-    datas["updates"] = data["updates"];
-    var encodedJson = jsonEncode(datas);
-    return sha256.convert(utf8.encode(encodedJson)).toString();
-  }
-
-  Map<String, dynamic> _getChangedData() {
-    Map<String, dynamic> data = {};
-    final changedItems = isar.changedItems.getSync(1);
-    if (changedItems != null) {
-      data.addAll({
-        "deletedMangas":
-            changedItems.deletedMangas?.map((e) => e.toJson()).toList() ?? []
-      });
-      data.addAll({
-        "updatedChapters":
-            changedItems.updatedChapters?.map((e) => e.toJson()).toList() ?? []
-      });
-      data.addAll({
-        "deletedCategories":
-            changedItems.deletedCategories?.map((e) => e.toJson()).toList() ??
-                []
-      });
-    }
-    return data;
-  }
-
   Map<String, dynamic> _getData() {
     Map<String, dynamic> datas = {};
-    datas.addAll({"version": "1"});
+    datas.addAll({"version": "2"});
     final mangas = isar.mangas
         .filter()
         .idIsNotNull()
@@ -309,208 +189,11 @@ class SyncServer extends _$SyncServer {
     return datas;
   }
 
-  void _restoreMerge(Map<String, dynamic> backup) {
-    if (backup['version'] == "1") {
-      try {
-        final manga =
-            (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-        final chapters = (backup["chapters"] as List?)
-            ?.map((e) => Chapter.fromJson(e))
-            .toList();
-        final categories = (backup["categories"] as List?)
-            ?.map((e) => Category.fromJson(e))
-            .toList();
-        final track =
-            (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-        final history = (backup["history"] as List?)
-            ?.map((e) => History.fromJson(e))
-            .toList();
-        final updates = (backup["updates"] as List?)
-            ?.map((e) => Update.fromJson(e))
-            .toList();
-
-        isar.writeTxnSync(() {
-          isar.mangas.clearSync();
-          if (manga != null) {
-            isar.mangas.putAllSync(manga);
-            if (chapters != null) {
-              isar.chapters.clearSync();
-              for (var chapter in chapters) {
-                final manga = isar.mangas.getSync(chapter.mangaId!);
-                if (manga != null) {
-                  isar.chapters.putSync(chapter..manga.value = manga);
-                  chapter.manga.saveSync();
-                }
-              }
-
-              isar.historys.clearSync();
-              if (history != null) {
-                for (var element in history) {
-                  final chapter = isar.chapters.getSync(element.chapterId!);
-                  if (chapter != null) {
-                    isar.historys.putSync(element..chapter.value = chapter);
-                    element.chapter.saveSync();
-                  }
-                }
-              }
-
-              isar.updates.clearSync();
-              if (updates != null) {
-                final tempChapters =
-                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
-                for (var update in updates) {
-                  final matchingChapter = tempChapters
-                      .where((chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName)
-                      .firstOrNull;
-                  if (matchingChapter != null) {
-                    isar.updates
-                        .putSync(update..chapter.value = matchingChapter);
-                    update.chapter.saveSync();
-                  }
-                }
-              }
-            }
-
-            isar.categorys.clearSync();
-            if (categories != null) {
-              isar.categorys.putAllSync(categories);
-            }
-          }
-
-          isar.tracks.clearSync();
-          if (track != null) {
-            isar.tracks.putAllSync(track);
-          }
-
-          ref.invalidate(themeModeStateProvider);
-          ref.invalidate(blendLevelStateProvider);
-          ref.invalidate(flexSchemeColorStateProvider);
-          ref.invalidate(pureBlackDarkModeStateProvider);
-          ref.invalidate(l10nLocaleStateProvider);
-        });
-      } catch (e) {
-        botToast(e.toString());
-      }
-    }
-  }
-
   void _restore(Map<String, dynamic> backup) {
     if (backup['version'] == "1") {
-      try {
-        final manga =
-            (backup["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList();
-        final chapters = (backup["chapters"] as List?)
-            ?.map((e) => Chapter.fromJson(e))
-            .toList();
-        final categories = (backup["categories"] as List?)
-            ?.map((e) => Category.fromJson(e))
-            .toList();
-        final track =
-            (backup["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList();
-        final history = (backup["history"] as List?)
-            ?.map((e) => History.fromJson(e))
-            .toList();
-        final settings = (backup["settings"] as List?)
-            ?.map((e) => Settings.fromJson(e))
-            .toList();
-        final extensions = (backup["extensions"] as List?)
-            ?.map((e) => Source.fromJson(e))
-            .toList();
-        final extensionsPref = (backup["extensions_preferences"] as List?)
-            ?.map((e) => SourcePreference.fromJson(e))
-            .toList();
-        final updates = (backup["updates"] as List?)
-            ?.map((e) => Update.fromJson(e))
-            .toList();
-
-        isar.writeTxnSync(() {
-          isar.mangas.clearSync();
-          if (manga != null) {
-            isar.mangas.putAllSync(manga);
-            if (chapters != null) {
-              isar.chapters.clearSync();
-              for (var chapter in chapters) {
-                final manga = isar.mangas.getSync(chapter.mangaId!);
-                if (manga != null) {
-                  isar.chapters.putSync(chapter..manga.value = manga);
-                  chapter.manga.saveSync();
-                }
-              }
-
-              isar.historys.clearSync();
-              if (history != null) {
-                for (var element in history) {
-                  final chapter = isar.chapters.getSync(element.chapterId!);
-                  if (chapter != null) {
-                    isar.historys.putSync(element..chapter.value = chapter);
-                    element.chapter.saveSync();
-                  }
-                }
-              }
-
-              isar.updates.clearSync();
-              if (updates != null) {
-                final tempChapters =
-                    isar.chapters.filter().idIsNotNull().findAllSync().toList();
-                for (var update in updates) {
-                  final matchingChapter = tempChapters
-                      .where((chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName)
-                      .firstOrNull;
-                  if (matchingChapter != null) {
-                    isar.updates
-                        .putSync(update..chapter.value = matchingChapter);
-                    update.chapter.saveSync();
-                  }
-                }
-              }
-            }
-
-            isar.categorys.clearSync();
-            if (categories != null) {
-              isar.categorys.putAllSync(categories);
-            }
-          }
-
-          isar.tracks.clearSync();
-          if (track != null) {
-            isar.tracks.putAllSync(track);
-          }
-
-          isar.sources.clearSync();
-          if (extensions != null) {
-            isar.sources.putAllSync(extensions);
-          }
-
-          isar.sourcePreferences.clearSync();
-          if (extensionsPref != null) {
-            isar.sourcePreferences.putAllSync(extensionsPref);
-          }
-          final syncAfterReading = isar.settings.getSync(227)!.syncAfterReading;
-          final syncOnAppLaunch = isar.settings.getSync(227)!.syncOnAppLaunch;
-          isar.settings.clearSync();
-          if (settings != null) {
-            isar.settings.putAllSync(settings);
-          }
-          if (isar.settings.getSync(227) == null) {
-            isar.settings.putSync(Settings(id: 227));
-          }
-          isar.settings.putSync(
-              isar.settings.getSync(227)!..syncAfterReading = syncAfterReading);
-          isar.settings.putSync(
-              isar.settings.getSync(227)!..syncOnAppLaunch = syncOnAppLaunch);
-          ref.invalidate(themeModeStateProvider);
-          ref.invalidate(blendLevelStateProvider);
-          ref.invalidate(flexSchemeColorStateProvider);
-          ref.invalidate(pureBlackDarkModeStateProvider);
-          ref.invalidate(l10nLocaleStateProvider);
-        });
-      } catch (e) {
-        botToast(e.toString(), second: 5);
-      }
+      ref.watch(restoreV1Provider(backup));
+    } else if (backup['version'] == "2") {
+      ref.watch(restoreV2Provider(backup));
     }
   }
 

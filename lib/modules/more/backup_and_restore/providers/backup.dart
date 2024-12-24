@@ -15,6 +15,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +29,7 @@ void doBackUp(Ref ref,
     required String path,
     required BuildContext? context}) {
   Map<String, dynamic> datas = {};
-  datas.addAll({"version": "1"});
+  datas.addAll({"version": "2"});
   if (list.contains(0)) {
     final res = isar.mangas
         .filter()
@@ -115,6 +116,15 @@ void doBackUp(Ref ref,
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions_preferences": resSourePref});
+  }
+  if (list.contains(7)) {
+    final res = isar.updates
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"updates": res});
   }
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =

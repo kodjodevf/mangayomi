@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -25,7 +26,7 @@ class Tracks extends _$Tracks {
     });
   }
 
-  void updateTrackManga(Track track, bool? isManga) {
+  void updateTrackManga(Track track, ItemType itemType) {
     final tra = isar.tracks
         .filter()
         .syncIdEqualTo(syncId)
@@ -39,7 +40,7 @@ class Tracks extends _$Tracks {
 
     isar.writeTxnSync(() => isar.tracks.putSync(track
       ..syncId = syncId
-      ..isManga = isManga));
+      ..itemType = itemType));
   }
 
   void deleteTrackManga(Track track) {

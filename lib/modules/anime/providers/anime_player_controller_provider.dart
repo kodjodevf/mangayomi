@@ -7,9 +7,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
-import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anime_player_controller_provider.g.dart';
@@ -133,7 +131,7 @@ class AnimeStreamController extends _$AnimeStreamController {
       history = History(
           mangaId: getAnime().id,
           date: DateTime.now().millisecondsSinceEpoch.toString(),
-          isManga: getAnime().isManga,
+          itemType: getAnime().itemType,
           chapterId: episode.id)
         ..chapter.value = episode;
     } else {
@@ -149,13 +147,6 @@ class AnimeStreamController extends _$AnimeStreamController {
       isar.historys.putSync(history!);
       history.chapter.saveSync();
     });
-  }
-
-  void checkAndSyncProgress() {
-    final syncAfterReading = ref.watch(syncAfterReadingStateProvider);
-    if (syncAfterReading) {
-      ref.read(syncServerProvider(syncId: 1).notifier).checkForSync(true);
-    }
   }
 
   void setCurrentPosition(Duration duration, Duration? totalDuration,
@@ -174,9 +165,6 @@ class AnimeStreamController extends _$AnimeStreamController {
       isar.writeTxnSync(() {
         ep.isRead = isWatch;
         ep.lastPageRead = (duration.inMilliseconds).toString();
-        ref
-            .read(changedItemsManagerProvider(managerId: 1).notifier)
-            .addUpdatedChapter(ep, false, false);
         isar.chapters.putSync(ep);
       });
       if (isWatch) {

@@ -99,6 +99,13 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
+        'getHtmlContent': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(
+                CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
+            params: [
+              BridgeParameter('url',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
         'getFilterList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
@@ -1139,6 +1146,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
 
     return list.map((e) => (e is $Value ? e.$reified : e) as Video).toList();
   }
+
+  @override
+  Future<String> getHtmlContent(String url) async =>
+      await $_invoke('getHtmlContent', [$String(url)]);
 
   @override
   Map<String, String> get headers {

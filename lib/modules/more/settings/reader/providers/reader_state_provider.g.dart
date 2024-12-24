@@ -157,5 +157,53 @@ final fullScreenReaderStateProvider =
 );
 
 typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
+String _$hideMangaStateHash() => r'fd24207581798fd1634ff6df2c85b8895053d14c';
+
+/// See also [HideMangaState].
+@ProviderFor(HideMangaState)
+final hideMangaStateProvider =
+    AutoDisposeNotifierProvider<HideMangaState, bool>.internal(
+  HideMangaState.new,
+  name: r'hideMangaStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hideMangaStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$HideMangaState = AutoDisposeNotifier<bool>;
+String _$hideAnimeStateHash() => r'3e8748d9312b9ea84364959b7de17fed2204d303';
+
+/// See also [HideAnimeState].
+@ProviderFor(HideAnimeState)
+final hideAnimeStateProvider =
+    AutoDisposeNotifierProvider<HideAnimeState, bool>.internal(
+  HideAnimeState.new,
+  name: r'hideAnimeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hideAnimeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$HideAnimeState = AutoDisposeNotifier<bool>;
+String _$hideNovelStateHash() => r'697efab85819783a7c1982797927feb397770191';
+
+/// See also [HideNovelState].
+@ProviderFor(HideNovelState)
+final hideNovelStateProvider =
+    AutoDisposeNotifierProvider<HideNovelState, bool>.internal(
+  HideNovelState.new,
+  name: r'hideNovelStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hideNovelStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$HideNovelState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -143,7 +143,6 @@ class _MangaChapterPageGalleryState
   @override
   void dispose() {
     _readerController.setMangaHistoryUpdate();
-    _readerController.checkAndSyncProgress();
     _readerController.setPageIndex(
         _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!), true);
     _rebuildDetail.close();
