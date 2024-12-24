@@ -57,9 +57,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     final hideManga = ref.watch(hideMangaStateProvider);
     final hideAnime = ref.watch(hideAnimeStateProvider);
     final hideNovel = ref.watch(hideNovelStateProvider);
+
     if (!hideManga) newTabs++;
     if (!hideAnime) newTabs++;
     if (!hideNovel) newTabs++;
+    if (newTabs == 0) {
+      return SizedBox.shrink();
+    }
     if (tabs != newTabs) {
       _tabBarController.removeListener(tabListener);
       _tabBarController.dispose();

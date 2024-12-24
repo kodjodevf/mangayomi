@@ -80,6 +80,7 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
 }
 
 class RouterNotifier extends ChangeNotifier {
+  
   List<RouteBase> get _routes => [
         ShellRoute(
             builder: (context, state, child) => MainScreen(child: child),

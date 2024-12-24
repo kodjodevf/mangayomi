@@ -99,6 +99,9 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     if (!hideManga) newTabs++;
     if (!hideAnime) newTabs++;
     if (!hideNovel) newTabs++;
+    if (newTabs == 0) {
+      return SizedBox.shrink();
+    }
     if (tabs != newTabs) {
       _tabBarController.removeListener(tabListener);
       _tabBarController.dispose();

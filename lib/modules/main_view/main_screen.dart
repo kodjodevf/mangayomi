@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,11 +23,16 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
 
   final Widget child;
 
+  @override
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
   String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
     switch (languageCode) {
       case 'de':
@@ -43,23 +49,45 @@ class MainScreen extends ConsumerWidget {
     }
   }
 
+  late bool hideManga = ref.watch(hideMangaStateProvider);
+  late bool hideAnime = ref.watch(hideAnimeStateProvider);
+  late bool hideNovel = ref.watch(hideNovelStateProvider);
+  late String? location =
+      ref.watch(routerCurrentLocationStateProvider(context));
+  late String defaultLocation = hideManga
+      ? hideAnime
+          ? hideNovel
+              ? '/more'
+              : '/NovelLibrary'
+          : '/AnimeLibrary'
+      : '/MangaLibrary';
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
+  initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.go(defaultLocation);
+
+      Timer.periodic(Duration(minutes: 5), (timer) {
+        ref.read(checkAndBackupProvider);
+      });
+      ref.watch(checkForUpdateProvider(context: context));
+      ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
+      ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
+      ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final route = GoRouter.of(context);
-    ref.read(checkAndBackupProvider);
-    ref.watch(checkForUpdateProvider(context: context));
-    ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
-    ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
-    ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
+    location = ref.watch(routerCurrentLocationStateProvider(context));
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
-        final location = ref.watch(
-          routerCurrentLocationStateProvider(context),
-        );
-        final hideManga = ref.watch(hideMangaStateProvider);
-        final hideAnime = ref.watch(hideAnimeStateProvider);
-        final hideNovel = ref.watch(hideNovelStateProvider);
+        hideManga = ref.watch(hideMangaStateProvider);
+        hideAnime = ref.watch(hideAnimeStateProvider);
+        hideNovel = ref.watch(hideNovelStateProvider);
         bool isReadingScreen = location == '/mangaReaderView' ||
             location == '/animePlayerView' ||
             location == '/novelReaderView';
@@ -81,7 +109,7 @@ class MainScreen extends ConsumerWidget {
         if (hideNovel) {
           dest.removeWhere((d) => d == "/NovelLibrary");
         }
-        int currentIndex = location == null ? 0 : dest.indexOf(location);
+        int currentIndex = dest.indexOf(location ?? defaultLocation);
         if (currentIndex == -1) {
           currentIndex = dest.length - 1;
         }
@@ -195,23 +223,19 @@ class MainScreen extends ConsumerWidget {
                                                 Icon(Icons
                                                     .new_releases_outlined)),
                                             label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Stack(
-                                                  children: [
-                                                    Text(
-                                                      getHyphenatedUpdatesLabel(
-                                                        ref
-                                                            .watch(
-                                                                l10nLocaleStateProvider)
-                                                            .languageCode,
-                                                        l10n.updates,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ],
-                                                ))),
+                                              padding:
+                                                  const EdgeInsets.only(top: 5),
+                                              child: Text(
+                                                getHyphenatedUpdatesLabel(
+                                                  ref
+                                                      .watch(
+                                                          l10nLocaleStateProvider)
+                                                      .languageCode,
+                                                  l10n.updates,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            )),
                                         NavigationRailDestination(
                                             selectedIcon:
                                                 const Icon(Icons.history),
@@ -244,30 +268,7 @@ class MainScreen extends ConsumerWidget {
                                       ],
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
-                                        final dest = [
-                                          '/MangaLibrary',
-                                          '/AnimeLibrary',
-                                          '/NovelLibrary',
-                                          '/updates',
-                                          '/history',
-                                          '/browse',
-                                          '/more'
-                                        ];
-                                        if (hideManga) {
-                                          dest.removeWhere(
-                                              (d) => d == "/MangaLibrary");
-                                        }
-                                        if (hideAnime) {
-                                          dest.removeWhere(
-                                              (d) => d == "/AnimeLibrary");
-                                        }
-                                        if (hideNovel) {
-                                          dest.removeWhere(
-                                              (d) => d == "/NovelLibrary");
-                                        }
-                                        route.go(dest[newIndex >= dest.length
-                                            ? dest.length - 1
-                                            : newIndex]);
+                                        route.go(dest[newIndex]);
                                       },
                                     );
                                   }),
@@ -275,10 +276,10 @@ class MainScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          Expanded(child: child)
+                          Expanded(child: widget.child)
                         ],
                       )
-                    : child,
+                    : widget.child,
                 bottomNavigationBar: context.isTablet
                     ? null
                     : AnimatedContainer(
@@ -352,27 +353,7 @@ class MainScreen extends ConsumerWidget {
                                   label: l10n.more),
                             ],
                             onDestinationSelected: (newIndex) {
-                              final dest = [
-                                '/MangaLibrary',
-                                '/AnimeLibrary',
-                                '/NovelLibrary',
-                                '/updates',
-                                '/history',
-                                '/browse',
-                                '/more'
-                              ];
-                              if (hideManga) {
-                                dest.removeWhere((d) => d == "/MangaLibrary");
-                              }
-                              if (hideAnime) {
-                                dest.removeWhere((d) => d == "/AnimeLibrary");
-                              }
-                              if (hideNovel) {
-                                dest.removeWhere((d) => d == "/NovelLibrary");
-                              }
-                              route.go(dest[newIndex >= dest.length
-                                  ? dest.length - 1
-                                  : newIndex]);
+                              route.go(dest[newIndex]);
                             },
                           ),
                         ),

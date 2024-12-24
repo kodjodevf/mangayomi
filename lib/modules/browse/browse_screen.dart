@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
@@ -21,11 +22,24 @@ class BrowseScreen extends ConsumerStatefulWidget {
 
 class _BrowseScreenState extends ConsumerState<BrowseScreen>
     with TickerProviderStateMixin {
+  late final hideManga = ref.watch(hideMangaStateProvider);
+  late final hideAnime = ref.watch(hideAnimeStateProvider);
+  late final hideNovel = ref.watch(hideNovelStateProvider);
   late TabController _tabBarController;
 
+  late final _tabList = [
+    if (!hideManga) 'manga',
+    if (!hideAnime) 'anime',
+    if (!hideNovel) 'novel',
+    if (!hideManga) 'mangaExtension',
+    if (!hideAnime) 'animeExtension',
+    if (!hideNovel) 'novelExtension',
+  ];
+
   @override
-  void initState() {
-    _tabBarController = TabController(length: 6, vsync: this);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _tabBarController = TabController(length: _tabList.length, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -34,7 +48,6 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
         _isSearch = false;
       });
     });
-    super.initState();
   }
 
   _chekPermission() async {
@@ -45,6 +58,15 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
+    if (_tabList.isEmpty) {
+      return SizedBox.shrink();
+    }
+    final containsExtensionTab = [
+      "mangaExtension",
+      "animeExtension",
+      "novelExtension"
+    ].any((element) => _tabList[_tabBarController.index] == element);
+
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
@@ -53,10 +75,8 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Text(
-            l10n.browse,
-            style: TextStyle(color: Theme.of(context).hintColor),
-          ),
+          title: Text(l10n.browse,
+              style: TextStyle(color: Theme.of(context).hintColor)),
           actions: [
             _isSearch
                 ? SeachFormTextField(
@@ -85,136 +105,118 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                             },
                             icon: Icon(Icons.add_outlined,
                                 color: Theme.of(context).hintColor)),
-                      _tabBarController.index != 4
-                          ? IconButton(
-                              splashRadius: 20,
-                              onPressed: () {
-                                if (_tabBarController.index != 0 &&
-                                    _tabBarController.index != 1 &&
-                                    _tabBarController.index != 2) {
-                                  setState(() {
-                                    _isSearch = true;
+                      IconButton(
+                          splashRadius: 20,
+                          onPressed: () {
+                            if (containsExtensionTab) {
+                              setState(() {
+                                _isSearch = true;
+                              });
+                            } else {
+                              context.push('/globalSearch',
+                                  extra: switch (
+                                      _tabList[_tabBarController.index]) {
+                                    "manga" => ItemType.manga,
+                                    "anime" => ItemType.anime,
+                                    _ => ItemType.novel,
                                   });
-                                } else {
-                                  context.push('/globalSearch',
-                                      extra: _tabBarController.index == 0
-                                          ? ItemType.manga
-                                          : ItemType.anime);
-                                }
-                              },
-                              icon: Icon(
-                                  _tabBarController.index == 0 ||
-                                          _tabBarController.index == 1 ||
-                                          _tabBarController.index == 2
-                                      ? Icons.travel_explore_rounded
-                                      : Icons.search_rounded,
-                                  color: Theme.of(context).hintColor))
-                          : Container(),
+                            }
+                          },
+                          icon: Icon(
+                              !containsExtensionTab
+                                  ? Icons.travel_explore_rounded
+                                  : Icons.search_rounded,
+                              color: Theme.of(context).hintColor)),
                     ],
                   ),
             IconButton(
                 splashRadius: 20,
                 onPressed: () {
-                  if (_tabBarController.index == 0) {
-                    context.push('/sourceFilter', extra: ItemType.manga);
-                  } else if (_tabBarController.index == 1) {
-                    context.push('/sourceFilter', extra: ItemType.anime);
-                  } else if (_tabBarController.index == 2) {
-                    context.push('/sourceFilter', extra: ItemType.anime);
-                  } else if (_tabBarController.index == 3) {
-                    _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: ItemType.anime);
-                  } else if (_tabBarController.index == 4) {
-                    _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: ItemType.anime);
-                  } else if (_tabBarController.index == 5) {
-                    _textEditingController.clear();
-                    context.push('/ExtensionLang', extra: ItemType.anime);
-                  } else {}
+                  context.push(
+                      containsExtensionTab ? '/ExtensionLang' : '/sourceFilter',
+                      extra: switch (_tabList[_tabBarController.index]) {
+                        "manga" || "mangaExtension" => ItemType.manga,
+                        "anime" || "animeExtension" => ItemType.anime,
+                        _ => ItemType.novel,
+                      });
                 },
                 icon: Icon(
-                    _tabBarController.index == 0 ||
-                            _tabBarController.index == 1 ||
-                            _tabBarController.index == 2
+                    !containsExtensionTab
                         ? Icons.filter_list_sharp
-                        : _tabBarController.index == 3 ||
-                                _tabBarController.index == 4 ||
-                                _tabBarController.index == 5
-                            ? Icons.translate_rounded
-                            : Icons.help_outline_outlined,
+                        : Icons.translate_rounded,
                     color: Theme.of(context).hintColor)),
           ],
           bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.label,
-            isScrollable: true,
-            controller: _tabBarController,
-            tabs: [
-              Tab(text: l10n.manga_sources),
-              Tab(text: l10n.anime_sources),
-              Tab(text: l10n.novel_sources),
-              Tab(
-                child: Row(
-                  children: [
-                    Text(l10n.manga_extensions),
-                    const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, ItemType.manga)
-                  ],
-                ),
-              ),
-              Tab(
-                child: Row(
-                  children: [
-                    Text(l10n.anime_extensions),
-                    const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, ItemType.anime)
-                  ],
-                ),
-              ),
-              Tab(
-                child: Row(
-                  children: [
-                    Text(l10n.novel_extensions),
-                    const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, ItemType.novel)
-                  ],
-                ),
-              ),
-              // Tab(text: l10n.migrate),
-            ],
-          ),
+              indicatorSize: TabBarIndicatorSize.label,
+              isScrollable: true,
+              controller: _tabBarController,
+              tabs: [
+                if (!hideManga) Tab(text: l10n.manga_sources),
+                if (!hideAnime) Tab(text: l10n.anime_sources),
+                if (!hideNovel) Tab(text: l10n.novel_sources),
+                if (!hideManga)
+                  Tab(
+                    child: Row(
+                      children: [
+                        Text(l10n.manga_extensions),
+                        const SizedBox(width: 8),
+                        _extensionUpdateNumbers(ref, ItemType.manga)
+                      ],
+                    ),
+                  ),
+                if (!hideAnime)
+                  Tab(
+                    child: Row(
+                      children: [
+                        Text(l10n.anime_extensions),
+                        const SizedBox(width: 8),
+                        _extensionUpdateNumbers(ref, ItemType.anime)
+                      ],
+                    ),
+                  ),
+                if (!hideNovel)
+                  Tab(
+                    child: Row(
+                      children: [
+                        Text(l10n.novel_extensions),
+                        const SizedBox(width: 8),
+                        _extensionUpdateNumbers(ref, ItemType.novel)
+                      ],
+                    ),
+                  ),
+              ]),
         ),
         body: TabBarView(controller: _tabBarController, children: [
-          SourcesScreen(
-            itemType: ItemType.manga,
-            tabIndex: (index) {
-              _tabBarController.animateTo(index);
-            },
-          ),
-          SourcesScreen(
-            itemType: ItemType.anime,
-            tabIndex: (index) {
-              _tabBarController.animateTo(index);
-            },
-          ),
-          SourcesScreen(
-            itemType: ItemType.novel,
-            tabIndex: (index) {
-              _tabBarController.animateTo(index);
-            },
-          ),
-          ExtensionScreen(
-            query: _textEditingController.text,
-            itemType: ItemType.manga,
-          ),
-          ExtensionScreen(
-            query: _textEditingController.text,
-            itemType: ItemType.anime,
-          ),
-          ExtensionScreen(
-            query: _textEditingController.text,
-            itemType: ItemType.novel,
-          ),
-          // const MigrateScreen()
+          if (!hideManga)
+            SourcesScreen(
+              itemType: ItemType.manga,
+              tabIndex: (index) {
+                _tabBarController.animateTo(index);
+              },
+            ),
+          if (!hideAnime)
+            SourcesScreen(
+              itemType: ItemType.anime,
+              tabIndex: (index) {
+                _tabBarController.animateTo(index);
+              },
+            ),
+          if (!hideNovel)
+            SourcesScreen(
+              itemType: ItemType.novel,
+              tabIndex: (index) {
+                _tabBarController.animateTo(index);
+              },
+            ),
+          if (!hideManga)
+            ExtensionScreen(
+                query: _textEditingController.text, itemType: ItemType.manga),
+          if (!hideAnime)
+            ExtensionScreen(
+                query: _textEditingController.text, itemType: ItemType.anime),
+          if (!hideNovel)
+            ExtensionScreen(
+                query: _textEditingController.text, itemType: ItemType.novel),
         ]),
       ),
     );
