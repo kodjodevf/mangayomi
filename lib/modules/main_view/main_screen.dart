@@ -81,7 +81,7 @@ class MainScreen extends ConsumerWidget {
         if (hideNovel) {
           dest.removeWhere((d) => d == "/NovelLibrary");
         }
-        int currentIndex = dest.indexOf(location ?? "/more");
+        int currentIndex = location == null ? 0 : dest.indexOf(location);
         if (currentIndex == -1) {
           currentIndex = dest.length - 1;
         }
@@ -188,16 +188,12 @@ class MainScreen extends ConsumerWidget {
                                                           top: 5),
                                                   child: Text(l10n.novel))),
                                         NavigationRailDestination(
-                                            selectedIcon: Badge(
-                                              label: _updatesTotalNumbers(ref),
-                                              child: const Icon(
-                                                  Icons.new_releases),
-                                            ),
-                                            icon: Badge(
-                                              label: _updatesTotalNumbers(ref),
-                                              child: const Icon(
-                                                  Icons.new_releases_outlined),
-                                            ),
+                                            selectedIcon: _updatesTotalNumbers(
+                                                ref, Icon(Icons.new_releases)),
+                                            icon: _updatesTotalNumbers(
+                                                ref,
+                                                Icon(Icons
+                                                    .new_releases_outlined)),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -226,19 +222,12 @@ class MainScreen extends ConsumerWidget {
                                                     top: 5),
                                                 child: Text(l10n.history))),
                                         NavigationRailDestination(
-                                            selectedIcon: Badge(
-                                              label:
-                                                  _extensionUpdateTotalNumbers(
-                                                      ref),
-                                              child: const Icon(Icons.explore),
-                                            ),
-                                            icon: Badge(
-                                              label:
-                                                  _extensionUpdateTotalNumbers(
-                                                      ref),
-                                              child: const Icon(
-                                                  Icons.explore_outlined),
-                                            ),
+                                            selectedIcon:
+                                                _extensionUpdateTotalNumbers(
+                                                    ref, Icon(Icons.explore)),
+                                            icon: _extensionUpdateTotalNumbers(
+                                                ref,
+                                                Icon(Icons.explore_outlined)),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -342,26 +331,20 @@ class MainScreen extends ConsumerWidget {
                                         Icons.local_library_outlined),
                                     label: l10n.novel),
                               NavigationDestination(
-                                  selectedIcon: Badge(
-                                    label: _updatesTotalNumbers(ref),
-                                    child: const Icon(Icons.new_releases),
-                                  ),
-                                  icon: Badge(
-                                    label: _updatesTotalNumbers(ref),
-                                    child: const Icon(Icons.new_releases),
-                                  ),
+                                  selectedIcon: _updatesTotalNumbers(
+                                      ref, Icon(Icons.new_releases)),
+                                  icon: _updatesTotalNumbers(
+                                      ref, Icon(Icons.new_releases_outlined)),
                                   label: l10n.updates),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.history),
                                   icon: const Icon(Icons.history_outlined),
                                   label: l10n.history),
                               NavigationDestination(
-                                  selectedIcon: Badge(
-                                      label: _extensionUpdateTotalNumbers(ref),
-                                      child: const Icon(Icons.explore)),
-                                  icon: Badge(
-                                      label: _extensionUpdateTotalNumbers(ref),
-                                      child: const Icon(Icons.explore)),
+                                  selectedIcon: _extensionUpdateTotalNumbers(
+                                      ref, Icon(Icons.explore)),
+                                  icon: _extensionUpdateTotalNumbers(
+                                      ref, Icon(Icons.explore_outlined)),
                                   label: l10n.browse),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.more_horiz),
@@ -407,7 +390,7 @@ class MainScreen extends ConsumerWidget {
   }
 }
 
-Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
+Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
@@ -421,13 +404,16 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
-          return entries.isEmpty ? Text("0") : Text("${entries.length}");
+          if (entries.isEmpty) {
+            return widget;
+          }
+          return Badge(label: Text("${entries.length}"), child: widget);
         }
-        return Text("0");
+        return widget;
       });
 }
 
-Widget _updatesTotalNumbers(WidgetRef ref) {
+Widget _updatesTotalNumbers(WidgetRef ref, Widget widget) {
   return StreamBuilder(
       stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
       builder: (context, snapshot) {
@@ -438,8 +424,11 @@ Widget _updatesTotalNumbers(WidgetRef ref) {
             }
             return !(element.chapter.value?.isRead ?? false);
           }).toList();
-          return entries.isEmpty ? Text("0") : Text("${entries.length}");
+          if (entries.isEmpty) {
+            return widget;
+          }
+          return Badge(label: Text("${entries.length}"), child: widget);
         }
-        return Text("0");
+        return widget;
       });
 }
