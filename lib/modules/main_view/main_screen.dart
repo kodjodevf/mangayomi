@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
@@ -50,6 +51,7 @@ class MainScreen extends ConsumerWidget {
     ref.watch(checkForUpdateProvider(context: context));
     ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
     ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
+    ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
         final location = ref.watch(

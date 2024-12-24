@@ -100,6 +100,7 @@ Future<dynamic> updateMangaDetail(Ref ref,
         final newChap = chaps[i];
         oldChap.name = newChap.name;
         oldChap.url = newChap.url;
+        oldChap.dateUpload = newChap.dateUpload;
         oldChap.scanlator = newChap.scanlator;
         isar.chapters.putSync(oldChap);
         oldChap.manga.saveSync();
