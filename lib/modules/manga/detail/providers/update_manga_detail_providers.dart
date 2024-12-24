@@ -4,7 +4,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -49,7 +48,7 @@ Future<dynamic> updateMangaDetail(Ref ref,
     ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
     ..source = manga.source
     ..lang = manga.lang
-    ..isManga = source.isManga
+    ..itemType = source.itemType
     ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
   final checkManga = isar.mangas.getSync(mangaId);
   if (checkManga!.chapters.isNotEmpty && isInit) {
@@ -80,9 +79,6 @@ Future<dynamic> updateMangaDetail(Ref ref,
     }
     if (chapters.isNotEmpty) {
       for (var chap in chapters.reversed.toList()) {
-        ref
-            .read(changedItemsManagerProvider(managerId: 1).notifier)
-            .addUpdatedChapter(chap, false, false);
         isar.chapters.putSync(chap);
         chap.manga.saveSync();
         if (manga.chapters.isNotEmpty) {
@@ -105,9 +101,6 @@ Future<dynamic> updateMangaDetail(Ref ref,
         oldChap.name = newChap.name;
         oldChap.url = newChap.url;
         oldChap.scanlator = newChap.scanlator;
-        ref
-            .read(changedItemsManagerProvider(managerId: 1).notifier)
-            .addUpdatedChapter(oldChap, false, false);
         isar.chapters.putSync(oldChap);
         oldChap.manga.saveSync();
       }

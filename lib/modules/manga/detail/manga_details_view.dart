@@ -69,11 +69,13 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           .idIsNotNull()
                           .and()
                           .chapter((q) => q.manga(
-                              (q) => q.isMangaEqualTo(widget.manga.isManga!)))
+                              (q) => q.itemTypeEqualTo(widget.manga.itemType)))
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
                         String buttonLabel =
-                            widget.manga.isManga! ? l10n.read : l10n.watch;
+                            widget.manga.itemType != ItemType.anime
+                                ? l10n.read
+                                : l10n.watch;
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                           final incognitoMode =
                               ref.watch(incognitoModeStateProvider);
@@ -224,7 +226,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       .filter()
                       .idIsNotNull()
                       .and()
-                      .forMangaEqualTo(widget.manga.isManga)
+                      .forItemTypeEqualTo(widget.manga.itemType)
                       .isNotEmptySync();
                   if (checkCategoryList) {
                     _openCategory(widget.manga);
@@ -262,7 +264,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         },
         sourceExist: widget.sourceExist,
         checkForUpdate: widget.checkForUpdate,
-        isManga: widget.manga.isManga!,
+        itemType: widget.manga.itemType,
       ),
     );
   }
@@ -286,7 +288,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           .filter()
                           .idIsNotNull()
                           .and()
-                          .forMangaEqualTo(widget.manga.isManga)
+                          .forItemTypeEqualTo(widget.manga.itemType)
                           .watch(fireImmediately: true),
                       builder: (context, snapshot) {
                         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -323,8 +325,14 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     children: [
                       TextButton(
                           onPressed: () {
-                            context.push("/categories",
-                                extra: (true, widget.manga.isManga! ? 0 : 1));
+                            context.push("/categories", extra: (
+                              true,
+                              widget.manga.itemType == ItemType.manga
+                                  ? 0
+                                  : widget.manga.itemType == ItemType.anime
+                                      ? 1
+                                      : 2
+                            ));
                             Navigator.pop(context);
                           },
                           child: Text(l10n.edit)),

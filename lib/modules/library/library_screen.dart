@@ -21,7 +21,6 @@ import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -40,8 +39,8 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/global_style.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
-  final bool isManga;
-  const LibraryScreen({required this.isManga, super.key});
+  final ItemType itemType;
+  const LibraryScreen({required this.itemType, super.key});
 
   @override
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
@@ -83,13 +82,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       final settings = settingsList.first;
 
       final categories =
-          ref.watch(getMangaCategorieStreamProvider(isManga: widget.isManga));
+          ref.watch(getMangaCategorieStreamProvider(itemType: widget.itemType));
       final withoutCategories = ref.watch(
-          getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga));
+          getAllMangaWithoutCategoriesStreamProvider(
+              itemType: widget.itemType));
       final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider(
-          isManga: widget.isManga, settings: settings));
-      final mangaAll = ref.watch(
-          getAllMangaStreamProvider(categoryId: null, isManga: widget.isManga));
+          itemType: widget.itemType, settings: settings));
+      final mangaAll = ref.watch(getAllMangaStreamProvider(
+          categoryId: null, itemType: widget.itemType));
       final l10n = l10nLocalizations(context)!;
       return Scaffold(
           body: mangaAll.when(
@@ -113,55 +113,63 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         return Consumer(builder: (context, ref, child) {
                           bool reverse = ref
                               .watch(sortLibraryMangaStateProvider(
-                                  isManga: widget.isManga, settings: settings))
+                                  itemType: widget.itemType,
+                                  settings: settings))
                               .reverse!;
 
                           final continueReaderBtn = ref.watch(
                               libraryShowContinueReadingButtonStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final showNumbersOfItems = ref.watch(
                               libraryShowNumbersOfItemsStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final localSource = ref.watch(
                               libraryLocalSourceStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final downloadedChapter = ref.watch(
                               libraryDownloadedChaptersStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final language = ref.watch(
                               libraryLanguageStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final displayType = ref.watch(
                               libraryDisplayTypeStateProvider(
-                                  isManga: widget.isManga, settings: settings));
+                                  itemType: widget.itemType,
+                                  settings: settings));
                           final isNotFiltering = ref.watch(
                               mangasFilterResultStateProvider(
-                                  isManga: widget.isManga,
+                                  itemType: widget.itemType,
                                   mangaList: _entries,
                                   settings: settings));
                           final downloadFilterType = ref.watch(
                               mangaFilterDownloadedStateProvider(
-                                  isManga: widget.isManga,
+                                  itemType: widget.itemType,
                                   mangaList: _entries,
                                   settings: settings));
                           final unreadFilterType = ref.watch(
                               mangaFilterUnreadStateProvider(
-                                  isManga: widget.isManga,
+                                  itemType: widget.itemType,
                                   mangaList: _entries,
                                   settings: settings));
                           final startedFilterType = ref.watch(
                               mangaFilterStartedStateProvider(
-                                  isManga: widget.isManga,
+                                  itemType: widget.itemType,
                                   mangaList: _entries,
                                   settings: settings));
                           final bookmarkedFilterType = ref.watch(
                               mangaFilterBookmarkedStateProvider(
-                                  isManga: widget.isManga,
+                                  itemType: widget.itemType,
                                   mangaList: _entries,
                                   settings: settings));
                           final sortType = ref
                               .watch(sortLibraryMangaStateProvider(
-                                  isManga: widget.isManga, settings: settings))
+                                  itemType: widget.itemType,
+                                  settings: settings))
                               .index as int;
                           final numberOfItemsList = _filterAndSortManga(
                               data: man,
@@ -364,53 +372,53 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       return Consumer(builder: (context, ref, child) {
                         bool reverse = ref
                             .watch(sortLibraryMangaStateProvider(
-                                isManga: widget.isManga, settings: settings))
+                                itemType: widget.itemType, settings: settings))
                             .reverse!;
                         final continueReaderBtn = ref.watch(
                             libraryShowContinueReadingButtonStateProvider(
-                                isManga: widget.isManga, settings: settings));
+                                itemType: widget.itemType, settings: settings));
                         final showNumbersOfItems = ref.watch(
                             libraryShowNumbersOfItemsStateProvider(
-                                isManga: widget.isManga, settings: settings));
+                                itemType: widget.itemType, settings: settings));
                         final localSource = ref.watch(
                             libraryLocalSourceStateProvider(
-                                isManga: widget.isManga, settings: settings));
+                                itemType: widget.itemType, settings: settings));
                         final downloadedChapter = ref.watch(
                             libraryDownloadedChaptersStateProvider(
-                                isManga: widget.isManga, settings: settings));
+                                itemType: widget.itemType, settings: settings));
                         final language = ref.watch(libraryLanguageStateProvider(
-                            isManga: widget.isManga, settings: settings));
+                            itemType: widget.itemType, settings: settings));
                         final displayType = ref.watch(
                             libraryDisplayTypeStateProvider(
-                                isManga: widget.isManga, settings: settings));
+                                itemType: widget.itemType, settings: settings));
                         final isNotFiltering = ref.watch(
                             mangasFilterResultStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings));
                         final downloadFilterType = ref.watch(
                             mangaFilterDownloadedStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings));
                         final unreadFilterType = ref.watch(
                             mangaFilterUnreadStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings));
                         final startedFilterType = ref.watch(
                             mangaFilterStartedStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings));
                         final bookmarkedFilterType = ref.watch(
                             mangaFilterBookmarkedStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings));
                         final sortType = ref
                             .watch(sortLibraryMangaStateProvider(
-                                isManga: widget.isManga, settings: settings))
+                                itemType: widget.itemType, settings: settings))
                             .index;
                         final numberOfItemsList = _filterAndSortManga(
                             data: man,
@@ -518,9 +526,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 .set();
                             ref.invalidate(
                                 getAllMangaWithoutCategoriesStreamProvider(
-                                    isManga: widget.isManga));
+                                    itemType: widget.itemType));
                             ref.invalidate(getAllMangaStreamProvider(
-                                categoryId: null, isManga: widget.isManga));
+                                categoryId: null, itemType: widget.itemType));
                           },
                           child: Icon(
                             Icons.done_all_sharp,
@@ -545,9 +553,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 .set();
                             ref.invalidate(
                                 getAllMangaWithoutCategoriesStreamProvider(
-                                    isManga: widget.isManga));
+                                    itemType: widget.itemType));
                             ref.invalidate(getAllMangaStreamProvider(
-                                categoryId: null, isManga: widget.isManga));
+                                categoryId: null, itemType: widget.itemType));
                           },
                           child: Icon(
                             Icons.remove_done_sharp,
@@ -611,10 +619,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required int categoryId,
       required Settings settings}) {
     final mangas = ref.watch(getAllMangaStreamProvider(
-        categoryId: categoryId, isManga: widget.isManga));
+        categoryId: categoryId, itemType: widget.itemType));
     final sortType = ref
         .watch(sortLibraryMangaStateProvider(
-            isManga: widget.isManga, settings: settings))
+            itemType: widget.itemType, settings: settings))
         .index;
     return mangas.when(
       data: (data) {
@@ -661,10 +669,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required Settings settings}) {
     final l10n = l10nLocalizations(context)!;
     final mangas = ref.watch(getAllMangaStreamProvider(
-        categoryId: categoryId, isManga: widget.isManga));
+        categoryId: categoryId, itemType: widget.itemType));
     final sortType = ref
         .watch(sortLibraryMangaStateProvider(
-            isManga: widget.isManga, settings: settings))
+            itemType: widget.itemType, settings: settings))
         .index;
     final mangaIdsList = ref.watch(mangasListStateProvider);
     return Scaffold(
@@ -702,7 +710,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     language: language,
                     mangaIdsList: mangaIdsList,
                     localSource: localSource,
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                   ),
           );
         }
@@ -733,13 +741,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       required Settings settings}) {
     final sortType = ref
         .watch(sortLibraryMangaStateProvider(
-            isManga: widget.isManga, settings: settings))
+            itemType: widget.itemType, settings: settings))
         .index;
     final manga = withouCategories
-        ? ref.watch(
-            getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga))
+        ? ref.watch(getAllMangaWithoutCategoriesStreamProvider(
+            itemType: widget.itemType))
         : ref.watch(getAllMangaStreamProvider(
-            categoryId: null, isManga: widget.isManga));
+            categoryId: null, itemType: widget.itemType));
     final mangaIdsList = ref.watch(mangasListStateProvider);
     final l10n = l10nLocalizations(context)!;
     return manga.when(
@@ -776,7 +784,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     language: language,
                     mangaIdsList: mangaIdsList,
                     localSource: localSource,
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                   ),
           );
         }
@@ -954,7 +962,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         .filter()
                         .idIsNotNull()
                         .and()
-                        .forMangaEqualTo(widget.isManga)
+                        .forItemTypeEqualTo(widget.itemType)
                         .watch(fireImmediately: true),
                     builder: (context, snapshot) {
                       return AlertDialog(
@@ -1004,10 +1012,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   children: [
                                     TextButton(
                                         onPressed: () {
-                                          context.push("/categories", extra: (
-                                            true,
-                                            widget.isManga ? 0 : 1
-                                          ));
+                                          context.push("/categories",
+                                              extra: (true, widget.itemType));
                                           Navigator.pop(context);
                                         },
                                         child: Text(l10n.edit)),
@@ -1057,10 +1063,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   children: [
                                     TextButton(
                                         onPressed: () {
-                                          context.push("/categories", extra: (
-                                            true,
-                                            widget.isManga ? 0 : 1
-                                          ));
+                                          context.push("/categories",
+                                              extra: (true, widget.itemType));
                                           Navigator.pop(context);
                                         },
                                         child: Text(
@@ -1115,7 +1119,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             type: fromLibList.isNotEmpty ? 1 : 0,
                           ),
                           ListTileChapterFilter(
-                            label: widget.isManga
+                            label: widget.itemType != ItemType.anime
                                 ? l10n.downloaded_chapters
                                 : l10n.downloaded_episodes,
                             onTap: () {
@@ -1158,12 +1162,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                       }
 
                                       for (var chapter in manga.chapters) {
-                                        ref
-                                            .read(changedItemsManagerProvider(
-                                                    managerId: 1)
-                                                .notifier)
-                                            .addUpdatedChapter(
-                                                chapter, true, false);
                                         isar.updates
                                             .filter()
                                             .mangaIdEqualTo(chapter.mangaId)
@@ -1171,11 +1169,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                             .deleteAllSync();
                                         isar.chapters.deleteSync(chapter.id!);
                                       }
-                                      ref
-                                          .read(changedItemsManagerProvider(
-                                                  managerId: 1)
-                                              .notifier)
-                                          .addDeletedManga(manga, false);
                                       isar.mangas.deleteSync(manga.id!);
                                     } else {
                                       manga.favorite = false;
@@ -1272,28 +1265,30 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             ListTileChapterFilter(
                 label: l10n.downloaded,
                 type: ref.watch(mangaFilterDownloadedStateProvider(
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                     mangaList: _entries,
                     settings: settings)),
                 onTap: () {
                   ref
                       .read(mangaFilterDownloadedStateProvider(
-                              isManga: widget.isManga,
+                              itemType: widget.itemType,
                               mangaList: _entries,
                               settings: settings)
                           .notifier)
                       .update();
                 }),
             ListTileChapterFilter(
-                label: widget.isManga ? l10n.unread : l10n.unwatched,
+                label: widget.itemType != ItemType.anime
+                    ? l10n.unread
+                    : l10n.unwatched,
                 type: ref.watch(mangaFilterUnreadStateProvider(
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                     mangaList: _entries,
                     settings: settings)),
                 onTap: () {
                   ref
                       .read(mangaFilterUnreadStateProvider(
-                              isManga: widget.isManga,
+                              itemType: widget.itemType,
                               mangaList: _entries,
                               settings: settings)
                           .notifier)
@@ -1302,13 +1297,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             ListTileChapterFilter(
                 label: l10n.started,
                 type: ref.watch(mangaFilterStartedStateProvider(
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                     mangaList: _entries,
                     settings: settings)),
                 onTap: () {
                   ref
                       .read(mangaFilterStartedStateProvider(
-                              isManga: widget.isManga,
+                              itemType: widget.itemType,
                               mangaList: _entries,
                               settings: settings)
                           .notifier)
@@ -1317,14 +1312,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             ListTileChapterFilter(
                 label: l10n.bookmarked,
                 type: ref.watch(mangaFilterBookmarkedStateProvider(
-                    isManga: widget.isManga,
+                    itemType: widget.itemType,
                     mangaList: _entries,
                     settings: settings)),
                 onTap: () {
                   setState(() {
                     ref
                         .read(mangaFilterBookmarkedStateProvider(
-                                isManga: widget.isManga,
+                                itemType: widget.itemType,
                                 mangaList: _entries,
                                 settings: settings)
                             .notifier)
@@ -1337,11 +1332,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       Consumer(builder: (context, ref, chil) {
         final reverse = ref
             .read(sortLibraryMangaStateProvider(
-                    isManga: widget.isManga, settings: settings)
+                    itemType: widget.itemType, settings: settings)
                 .notifier)
             .isReverse();
         final reverseChapter = ref.watch(sortLibraryMangaStateProvider(
-            isManga: widget.isManga, settings: settings));
+            itemType: widget.itemType, settings: settings));
         return Column(
           children: [
             for (var i = 0; i < 7; i++)
@@ -1351,7 +1346,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 onTap: () {
                   ref
                       .read(sortLibraryMangaStateProvider(
-                              isManga: widget.isManga, settings: settings)
+                              itemType: widget.itemType, settings: settings)
                           .notifier)
                       .set(i);
                 },
@@ -1362,25 +1357,25 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       }),
       Consumer(builder: (context, ref, chil) {
         final display = ref.watch(libraryDisplayTypeStateProvider(
-            isManga: widget.isManga, settings: settings));
+            itemType: widget.itemType, settings: settings));
         final displayV = ref.read(libraryDisplayTypeStateProvider(
-                isManga: widget.isManga, settings: settings)
+                itemType: widget.itemType, settings: settings)
             .notifier);
         final showCategoryTabs = ref.watch(libraryShowCategoryTabsStateProvider(
-            isManga: widget.isManga, settings: settings));
+            itemType: widget.itemType, settings: settings));
         final continueReaderBtn = ref.watch(
             libraryShowContinueReadingButtonStateProvider(
-                isManga: widget.isManga, settings: settings));
+                itemType: widget.itemType, settings: settings));
         final showNumbersOfItems = ref.watch(
             libraryShowNumbersOfItemsStateProvider(
-                isManga: widget.isManga, settings: settings));
+                itemType: widget.itemType, settings: settings));
         final downloadedChapter = ref.watch(
             libraryDownloadedChaptersStateProvider(
-                isManga: widget.isManga, settings: settings));
+                itemType: widget.itemType, settings: settings));
         final language = ref.watch(libraryLanguageStateProvider(
-            isManga: widget.isManga, settings: settings));
+            itemType: widget.itemType, settings: settings));
         final localSource = ref.watch(libraryLocalSourceStateProvider(
-            isManga: widget.isManga, settings: settings));
+            itemType: widget.itemType, settings: settings));
         return SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
@@ -1453,7 +1448,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               Consumer(
                 builder: (context, ref, child) {
                   final gridSize = ref.watch(libraryGridSizeStateProvider(
-                          isManga: widget.isManga)) ??
+                          itemType: widget.itemType)) ??
                       0;
                   return Padding(
                     padding: const EdgeInsets.only(left: 8, right: 8, top: 10),
@@ -1486,14 +1481,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 HapticFeedback.vibrate();
                                 ref
                                     .read(libraryGridSizeStateProvider(
-                                            isManga: widget.isManga)
+                                            itemType: widget.itemType)
                                         .notifier)
                                     .set(value.toInt());
                               },
                               onChangeEnd: (value) {
                                 ref
                                     .read(libraryGridSizeStateProvider(
-                                            isManga: widget.isManga)
+                                            itemType: widget.itemType)
                                         .notifier)
                                     .set(value.toInt(), end: true);
                               },
@@ -1518,14 +1513,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 child: Column(
                   children: [
                     ListTileChapterFilter(
-                        label: widget.isManga
+                        label: widget.itemType != ItemType.anime
                             ? l10n.downloaded_chapters
                             : l10n.downloaded_episodes,
                         type: downloadedChapter ? 1 : 0,
                         onTap: () {
                           ref
                               .read(libraryDownloadedChaptersStateProvider(
-                                      isManga: widget.isManga,
+                                      itemType: widget.itemType,
                                       settings: settings)
                                   .notifier)
                               .set(!downloadedChapter);
@@ -1536,7 +1531,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         onTap: () {
                           ref
                               .read(libraryLanguageStateProvider(
-                                      isManga: widget.isManga,
+                                      itemType: widget.itemType,
                                       settings: settings)
                                   .notifier)
                               .set(!language);
@@ -1547,13 +1542,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         onTap: () {
                           ref
                               .read(libraryLocalSourceStateProvider(
-                                      isManga: widget.isManga,
+                                      itemType: widget.itemType,
                                       settings: settings)
                                   .notifier)
                               .set(!localSource);
                         }),
                     ListTileChapterFilter(
-                        label: widget.isManga
+                        label: widget.itemType != ItemType.anime
                             ? l10n.show_continue_reading_buttons
                             : l10n.show_continue_watching_buttons,
                         type: continueReaderBtn ? 1 : 0,
@@ -1561,7 +1556,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           ref
                               .read(
                                   libraryShowContinueReadingButtonStateProvider(
-                                          isManga: widget.isManga,
+                                          itemType: widget.itemType,
                                           settings: settings)
                                       .notifier)
                               .set(!continueReaderBtn);
@@ -1585,7 +1580,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         onTap: () {
                           ref
                               .read(libraryShowCategoryTabsStateProvider(
-                                      isManga: widget.isManga,
+                                      itemType: widget.itemType,
                                       settings: settings)
                                   .notifier)
                               .set(!showCategoryTabs);
@@ -1596,7 +1591,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         onTap: () {
                           ref
                               .read(libraryShowNumbersOfItemsStateProvider(
-                                      isManga: widget.isManga,
+                                      itemType: widget.itemType,
                                       settings: settings)
                                   .notifier)
                               .set(!showNumbersOfItems);
@@ -1616,15 +1611,23 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     if (index == 0) {
       return l10n.alphabetically;
     } else if (index == 1) {
-      return widget.isManga ? l10n.last_read : l10n.last_watched;
+      return widget.itemType != ItemType.anime
+          ? l10n.last_read
+          : l10n.last_watched;
     } else if (index == 2) {
       return l10n.last_update_check;
     } else if (index == 3) {
-      return widget.isManga ? l10n.unread_count : l10n.unwatched_count;
+      return widget.itemType != ItemType.anime
+          ? l10n.unread_count
+          : l10n.unwatched_count;
     } else if (index == 4) {
-      return widget.isManga ? l10n.total_chapters : l10n.total_episodes;
+      return widget.itemType != ItemType.anime
+          ? l10n.total_chapters
+          : l10n.total_episodes;
     } else if (index == 5) {
-      return widget.isManga ? l10n.latest_chapter : l10n.latest_episode;
+      return widget.itemType != ItemType.anime
+          ? l10n.latest_chapter
+          : l10n.latest_episode;
     }
     return l10n.date_added;
   }
@@ -1641,10 +1644,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
     final mangaIdsList = ref.watch(mangasListStateProvider);
     final manga = categoryId == null
-        ? ref.watch(
-            getAllMangaWithoutCategoriesStreamProvider(isManga: widget.isManga))
+        ? ref.watch(getAllMangaWithoutCategoriesStreamProvider(
+            itemType: widget.itemType))
         : ref.watch(getAllMangaStreamProvider(
-            categoryId: categoryId, isManga: widget.isManga));
+            categoryId: categoryId, itemType: widget.itemType));
     final l10n = l10nLocalizations(context)!;
     return PreferredSize(
         preferredSize: Size.fromHeight(AppBar().preferredSize.height),
@@ -1714,7 +1717,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     : Row(
                         children: [
                           Text(
-                            widget.isManga ? l10n.manga : l10n.anime,
+                            widget.itemType == ItemType.manga
+                                ? l10n.manga
+                                : widget.itemType == ItemType.anime
+                                    ? l10n.anime
+                                    : l10n.novel,
                             style:
                                 TextStyle(color: Theme.of(context).hintColor),
                           ),
@@ -1790,7 +1797,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               value: 1, child: Text(l10n.open_random_entry)),
                           PopupMenuItem<int>(
                               value: 2, child: Text(l10n.import)),
-                          if (!widget.isManga)
+                          if (widget.itemType == ItemType.anime)
                             PopupMenuItem<int>(
                                 value: 3, child: Text(l10n.torrent_stream)),
                         ];
@@ -1813,8 +1820,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 source: randomManga.source!);
                           });
                         } else if (value == 2) {
-                          _importLocal(context, widget.isManga);
-                        } else if (value == 3 && !widget.isManga) {
+                          _importLocal(context, widget.itemType);
+                        } else if (value == 3 &&
+                            widget.itemType == ItemType.anime) {
                           addTorrent(context);
                         }
                       }),
@@ -1823,7 +1831,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 }
 
-void _importLocal(BuildContext context, bool isManga) {
+void _importLocal(BuildContext context, ItemType itemType) {
   final l10n = l10nLocalizations(context)!;
   bool isLoading = false;
   showDialog(
@@ -1857,7 +1865,7 @@ void _importLocal(BuildContext context, bool isManga) {
                                   });
                                   await ref.watch(
                                       importArchivesFromFileProvider(
-                                              isManga: isManga,
+                                              itemType: itemType,
                                               null,
                                               init: true)
                                           .future);
@@ -1872,7 +1880,7 @@ void _importLocal(BuildContext context, bool isManga) {
                                   children: [
                                     const Icon(Icons.archive_outlined),
                                     Text(
-                                        "${l10n.import_files} ( ${isManga ? ".zip, .cbz" : ".mp4, .mkv, .avi, and more"} )",
+                                        "${l10n.import_files} ( ${itemType == ItemType.manga ? ".zip, .cbz" : ".mp4, .mkv, .avi, and more"} )",
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .textTheme

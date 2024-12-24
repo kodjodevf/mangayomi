@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'fetch_anime_sources.dart';
+part of 'fetch_novel_sources.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchAnimeSourcesListHash() =>
-    r'75185e008e90491987fabb55851c536de89653a4';
+String _$fetchNovelSourcesListHash() =>
+    r'cc4b989c0248c3b16155444c0c429d1ed0025ecb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,29 +30,29 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchAnimeSourcesList].
-@ProviderFor(fetchAnimeSourcesList)
-const fetchAnimeSourcesListProvider = FetchAnimeSourcesListFamily();
+/// See also [fetchNovelSourcesList].
+@ProviderFor(fetchNovelSourcesList)
+const fetchNovelSourcesListProvider = FetchNovelSourcesListFamily();
 
-/// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListFamily extends Family<AsyncValue> {
-  /// See also [fetchAnimeSourcesList].
-  const FetchAnimeSourcesListFamily();
+/// See also [fetchNovelSourcesList].
+class FetchNovelSourcesListFamily extends Family<AsyncValue> {
+  /// See also [fetchNovelSourcesList].
+  const FetchNovelSourcesListFamily();
 
-  /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider call({
+  /// See also [fetchNovelSourcesList].
+  FetchNovelSourcesListProvider call({
     int? id,
-    required bool reFresh,
+    required dynamic reFresh,
   }) {
-    return FetchAnimeSourcesListProvider(
+    return FetchNovelSourcesListProvider(
       id: id,
       reFresh: reFresh,
     );
   }
 
   @override
-  FetchAnimeSourcesListProvider getProviderOverride(
-    covariant FetchAnimeSourcesListProvider provider,
+  FetchNovelSourcesListProvider getProviderOverride(
+    covariant FetchNovelSourcesListProvider provider,
   ) {
     return call(
       id: provider.id,
@@ -72,35 +72,35 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchAnimeSourcesListProvider';
+  String? get name => r'fetchNovelSourcesListProvider';
 }
 
-/// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
-  /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider({
+/// See also [fetchNovelSourcesList].
+class FetchNovelSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
+  /// See also [fetchNovelSourcesList].
+  FetchNovelSourcesListProvider({
     int? id,
-    required bool reFresh,
+    required dynamic reFresh,
   }) : this._internal(
-          (ref) => fetchAnimeSourcesList(
-            ref as FetchAnimeSourcesListRef,
+          (ref) => fetchNovelSourcesList(
+            ref as FetchNovelSourcesListRef,
             id: id,
             reFresh: reFresh,
           ),
-          from: fetchAnimeSourcesListProvider,
-          name: r'fetchAnimeSourcesListProvider',
+          from: fetchNovelSourcesListProvider,
+          name: r'fetchNovelSourcesListProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchAnimeSourcesListHash,
-          dependencies: FetchAnimeSourcesListFamily._dependencies,
+                  : _$fetchNovelSourcesListHash,
+          dependencies: FetchNovelSourcesListFamily._dependencies,
           allTransitiveDependencies:
-              FetchAnimeSourcesListFamily._allTransitiveDependencies,
+              FetchNovelSourcesListFamily._allTransitiveDependencies,
           id: id,
           reFresh: reFresh,
         );
 
-  FetchAnimeSourcesListProvider._internal(
+  FetchNovelSourcesListProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -112,16 +112,16 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   }) : super.internal();
 
   final int? id;
-  final bool reFresh;
+  final dynamic reFresh;
 
   @override
   Override overrideWith(
-    FutureOr<Object?> Function(FetchAnimeSourcesListRef provider) create,
+    FutureOr<Object?> Function(FetchNovelSourcesListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchAnimeSourcesListProvider._internal(
-        (ref) => create(ref as FetchAnimeSourcesListRef),
+      override: FetchNovelSourcesListProvider._internal(
+        (ref) => create(ref as FetchNovelSourcesListRef),
         from: from,
         name: null,
         dependencies: null,
@@ -135,12 +135,12 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
 
   @override
   AutoDisposeFutureProviderElement<Object?> createElement() {
-    return _FetchAnimeSourcesListProviderElement(this);
+    return _FetchNovelSourcesListProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchAnimeSourcesListProvider &&
+    return other is FetchNovelSourcesListProvider &&
         other.id == id &&
         other.reFresh == reFresh;
   }
@@ -157,23 +157,23 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchAnimeSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
+mixin FetchNovelSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
 
   /// The parameter `reFresh` of this provider.
-  bool get reFresh;
+  dynamic get reFresh;
 }
 
-class _FetchAnimeSourcesListProviderElement
+class _FetchNovelSourcesListProviderElement
     extends AutoDisposeFutureProviderElement<Object?>
-    with FetchAnimeSourcesListRef {
-  _FetchAnimeSourcesListProviderElement(super.provider);
+    with FetchNovelSourcesListRef {
+  _FetchNovelSourcesListProviderElement(super.provider);
 
   @override
-  int? get id => (origin as FetchAnimeSourcesListProvider).id;
+  int? get id => (origin as FetchNovelSourcesListProvider).id;
   @override
-  bool get reFresh => (origin as FetchAnimeSourcesListProvider).reFresh;
+  dynamic get reFresh => (origin as FetchNovelSourcesListProvider).reFresh;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

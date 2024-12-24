@@ -5,7 +5,6 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
 
@@ -310,9 +309,6 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
     isar.writeTxnSync(() {
       for (var chapter in chapters) {
         chapter.isBookmarked = !chapter.isBookmarked!;
-        ref
-            .read(changedItemsManagerProvider(managerId: 1).notifier)
-            .addUpdatedChapter(chapter, false, false);
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
       }
@@ -332,9 +328,6 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
     isar.writeTxnSync(() {
       for (var chapter in chapters) {
         chapter.isRead = !chapter.isRead!;
-        ref
-            .read(changedItemsManagerProvider(managerId: 1).notifier)
-            .addUpdatedChapter(chapter, false, false);
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
       }

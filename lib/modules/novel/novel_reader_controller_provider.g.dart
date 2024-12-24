@@ -1,12 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'get_chapter_pages.dart';
+part of 'novel_reader_controller_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getChapterPagesHash() => r'5b18b20360abecf1125f27c32b10977dd18f1831';
+String _$novelReaderControllerHash() =>
+    r'2eec885b858de8195e31a2d0b70feb56c1dc4268';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,27 +30,36 @@ class _SystemHash {
   }
 }
 
-/// See also [getChapterPages].
-@ProviderFor(getChapterPages)
-const getChapterPagesProvider = GetChapterPagesFamily();
+abstract class _$NovelReaderController
+    extends BuildlessAutoDisposeNotifier<void> {
+  late final Chapter chapter;
 
-/// See also [getChapterPages].
-class GetChapterPagesFamily extends Family<AsyncValue<GetChapterPagesModel>> {
-  /// See also [getChapterPages].
-  const GetChapterPagesFamily();
+  void build({
+    required Chapter chapter,
+  });
+}
 
-  /// See also [getChapterPages].
-  GetChapterPagesProvider call({
+/// See also [NovelReaderController].
+@ProviderFor(NovelReaderController)
+const novelReaderControllerProvider = NovelReaderControllerFamily();
+
+/// See also [NovelReaderController].
+class NovelReaderControllerFamily extends Family<void> {
+  /// See also [NovelReaderController].
+  const NovelReaderControllerFamily();
+
+  /// See also [NovelReaderController].
+  NovelReaderControllerProvider call({
     required Chapter chapter,
   }) {
-    return GetChapterPagesProvider(
+    return NovelReaderControllerProvider(
       chapter: chapter,
     );
   }
 
   @override
-  GetChapterPagesProvider getProviderOverride(
-    covariant GetChapterPagesProvider provider,
+  NovelReaderControllerProvider getProviderOverride(
+    covariant NovelReaderControllerProvider provider,
   ) {
     return call(
       chapter: provider.chapter,
@@ -68,33 +78,30 @@ class GetChapterPagesFamily extends Family<AsyncValue<GetChapterPagesModel>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'getChapterPagesProvider';
+  String? get name => r'novelReaderControllerProvider';
 }
 
-/// See also [getChapterPages].
-class GetChapterPagesProvider
-    extends AutoDisposeFutureProvider<GetChapterPagesModel> {
-  /// See also [getChapterPages].
-  GetChapterPagesProvider({
+/// See also [NovelReaderController].
+class NovelReaderControllerProvider
+    extends AutoDisposeNotifierProviderImpl<NovelReaderController, void> {
+  /// See also [NovelReaderController].
+  NovelReaderControllerProvider({
     required Chapter chapter,
   }) : this._internal(
-          (ref) => getChapterPages(
-            ref as GetChapterPagesRef,
-            chapter: chapter,
-          ),
-          from: getChapterPagesProvider,
-          name: r'getChapterPagesProvider',
+          () => NovelReaderController()..chapter = chapter,
+          from: novelReaderControllerProvider,
+          name: r'novelReaderControllerProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$getChapterPagesHash,
-          dependencies: GetChapterPagesFamily._dependencies,
+                  : _$novelReaderControllerHash,
+          dependencies: NovelReaderControllerFamily._dependencies,
           allTransitiveDependencies:
-              GetChapterPagesFamily._allTransitiveDependencies,
+              NovelReaderControllerFamily._allTransitiveDependencies,
           chapter: chapter,
         );
 
-  GetChapterPagesProvider._internal(
+  NovelReaderControllerProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,13 +114,20 @@ class GetChapterPagesProvider
   final Chapter chapter;
 
   @override
-  Override overrideWith(
-    FutureOr<GetChapterPagesModel> Function(GetChapterPagesRef provider) create,
+  void runNotifierBuild(
+    covariant NovelReaderController notifier,
   ) {
+    return notifier.build(
+      chapter: chapter,
+    );
+  }
+
+  @override
+  Override overrideWith(NovelReaderController Function() create) {
     return ProviderOverride(
       origin: this,
-      override: GetChapterPagesProvider._internal(
-        (ref) => create(ref as GetChapterPagesRef),
+      override: NovelReaderControllerProvider._internal(
+        () => create()..chapter = chapter,
         from: from,
         name: null,
         dependencies: null,
@@ -125,13 +139,14 @@ class GetChapterPagesProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<GetChapterPagesModel> createElement() {
-    return _GetChapterPagesProviderElement(this);
+  AutoDisposeNotifierProviderElement<NovelReaderController, void>
+      createElement() {
+    return _NovelReaderControllerProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetChapterPagesProvider && other.chapter == chapter;
+    return other is NovelReaderControllerProvider && other.chapter == chapter;
   }
 
   @override
@@ -145,18 +160,18 @@ class GetChapterPagesProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetChapterPagesRef on AutoDisposeFutureProviderRef<GetChapterPagesModel> {
+mixin NovelReaderControllerRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
 }
 
-class _GetChapterPagesProviderElement
-    extends AutoDisposeFutureProviderElement<GetChapterPagesModel>
-    with GetChapterPagesRef {
-  _GetChapterPagesProviderElement(super.provider);
+class _NovelReaderControllerProviderElement
+    extends AutoDisposeNotifierProviderElement<NovelReaderController, void>
+    with NovelReaderControllerRef {
+  _NovelReaderControllerProviderElement(super.provider);
 
   @override
-  Chapter get chapter => (origin as GetChapterPagesProvider).chapter;
+  Chapter get chapter => (origin as NovelReaderControllerProvider).chapter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

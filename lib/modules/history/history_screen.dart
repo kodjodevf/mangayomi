@@ -10,7 +10,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -31,17 +31,20 @@ class HistoryScreen extends ConsumerStatefulWidget {
 class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
+  int tabs = 3;
+
+  void tabListener() {
+    setState(() {
+      _textEditingController.clear();
+      _isSearch = false;
+    });
+  }
 
   @override
   void initState() {
-    _tabBarController = TabController(length: 2, vsync: this);
+    _tabBarController = TabController(length: tabs, vsync: this);
     _tabBarController.animateTo(0);
-    _tabBarController.addListener(() {
-      setState(() {
-        _textEditingController.clear();
-        _isSearch = false;
-      });
-    });
+    _tabBarController.addListener(tabListener);
     super.initState();
   }
 
@@ -50,10 +53,27 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
+    int newTabs = 0;
+    final hideManga = ref.watch(hideMangaStateProvider);
+    final hideAnime = ref.watch(hideAnimeStateProvider);
+    final hideNovel = ref.watch(hideNovelStateProvider);
+    if (!hideManga) newTabs++;
+    if (!hideAnime) newTabs++;
+    if (!hideNovel) newTabs++;
+    if (tabs != newTabs) {
+      _tabBarController.removeListener(tabListener);
+      _tabBarController.dispose();
+      _tabBarController = TabController(length: newTabs, vsync: this);
+      _tabBarController.animateTo(0);
+      _tabBarController.addListener(tabListener);
+      setState(() {
+        tabs = newTabs;
+      });
+    }
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 2,
+      length: newTabs,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -119,10 +139,20 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                       List<History> histories = isar.historys
                                           .filter()
                                           .idIsNotNull()
-                                          .chapter((q) => q.manga((q) =>
-                                              q.isMangaEqualTo(
-                                                  _tabBarController.index ==
-                                                      0)))
+                                          .chapter((q) => q.manga((q) => q
+                                              .itemTypeEqualTo(_tabBarController
+                                                              .index ==
+                                                          0 &&
+                                                      !hideManga
+                                                  ? ItemType.manga
+                                                  : _tabBarController.index ==
+                                                              1 -
+                                                                  (hideManga
+                                                                      ? 1
+                                                                      : 0) &&
+                                                          !hideAnime
+                                                      ? ItemType.anime
+                                                      : ItemType.novel)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -148,22 +178,30 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              Tab(text: l10n.manga),
-              Tab(text: l10n.anime),
+              if (!hideManga) Tab(text: l10n.manga),
+              if (!hideAnime) Tab(text: l10n.anime),
+              if (!hideNovel) Tab(text: l10n.novel),
             ],
           ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: TabBarView(controller: _tabBarController, children: [
-            HistoryTab(
-              isManga: true,
-              query: _textEditingController.text,
-            ),
-            HistoryTab(
-              isManga: false,
-              query: _textEditingController.text,
-            )
+            if (!hideManga)
+              HistoryTab(
+                itemType: ItemType.manga,
+                query: _textEditingController.text,
+              ),
+            if (!hideAnime)
+              HistoryTab(
+                itemType: ItemType.anime,
+                query: _textEditingController.text,
+              ),
+            if (!hideNovel)
+              HistoryTab(
+                itemType: ItemType.novel,
+                query: _textEditingController.text,
+              )
           ]),
         ),
       ),
@@ -173,8 +211,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
 class HistoryTab extends ConsumerStatefulWidget {
   final String query;
-  final bool isManga;
-  const HistoryTab({required this.isManga, required this.query, super.key});
+  final ItemType itemType;
+  const HistoryTab({required this.itemType, required this.query, super.key});
 
   @override
   ConsumerState<HistoryTab> createState() => _HistoryTabState();
@@ -185,7 +223,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final history =
-        ref.watch(getAllHistoryStreamProvider(isManga: widget.isManga));
+        ref.watch(getAllHistoryStreamProvider(itemType: widget.itemType));
     return Scaffold(
         body: history.when(
       data: (data) {
@@ -371,29 +409,12 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                                           .id!);
                                                               for (var chapter
                                                                   in chapters) {
-                                                                await ref
-                                                                    .read(changedItemsManagerProvider(
-                                                                            managerId:
-                                                                                1)
-                                                                        .notifier)
-                                                                    .addUpdatedChapterAsync(
-                                                                        chapter,
-                                                                        true,
-                                                                        false);
                                                                 await isar
                                                                     .chapters
                                                                     .delete(
                                                                         chapter
                                                                             .id!);
                                                               }
-                                                              await ref
-                                                                  .read(changedItemsManagerProvider(
-                                                                          managerId:
-                                                                              1)
-                                                                      .notifier)
-                                                                  .addDeletedMangaAsync(
-                                                                      manga,
-                                                                      false);
                                                               await isar.mangas
                                                                   .delete(manga
                                                                       .id!);

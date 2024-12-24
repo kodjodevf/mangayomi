@@ -7,6 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
@@ -54,16 +55,34 @@ class MainScreen extends ConsumerWidget {
         final location = ref.watch(
           routerCurrentLocationStateProvider(context),
         );
-        bool isReadingScreen =
-            location == '/mangareaderview' || location == '/animePlayerView';
-        int currentIndex = switch (location) {
-          null || '/MangaLibrary' => 0,
-          '/AnimeLibrary' => 1,
-          '/updates' => 2,
-          '/history' => 3,
-          '/browse' => 4,
-          _ => 5,
-        };
+        final hideManga = ref.watch(hideMangaStateProvider);
+        final hideAnime = ref.watch(hideAnimeStateProvider);
+        final hideNovel = ref.watch(hideNovelStateProvider);
+        bool isReadingScreen = location == '/mangaReaderView' ||
+            location == '/animePlayerView' ||
+            location == '/novelReaderView';
+        final dest = [
+          '/MangaLibrary',
+          '/AnimeLibrary',
+          '/NovelLibrary',
+          '/updates',
+          '/history',
+          '/browse',
+          '/more'
+        ];
+        if (hideManga) {
+          dest.removeWhere((d) => d == "/MangaLibrary");
+        }
+        if (hideAnime) {
+          dest.removeWhere((d) => d == "/AnimeLibrary");
+        }
+        if (hideNovel) {
+          dest.removeWhere((d) => d == "/NovelLibrary");
+        }
+        int currentIndex = dest.indexOf(location ?? "/more");
+        if (currentIndex == -1) {
+          currentIndex = dest.length - 1;
+        }
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
         final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
@@ -111,6 +130,7 @@ class MainScreen extends ConsumerWidget {
                                   null => 100,
                                   != '/MangaLibrary' &&
                                         != '/AnimeLibrary' &&
+                                        != '/NovelLibrary' &&
                                         != '/history' &&
                                         != '/updates' &&
                                         != '/browse' &&
@@ -132,29 +152,50 @@ class MainScreen extends ConsumerWidget {
                                       labelType: NavigationRailLabelType.all,
                                       useIndicator: true,
                                       destinations: [
+                                        if (!hideManga)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.collections_bookmark),
+                                              icon: const Icon(Icons
+                                                  .collections_bookmark_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.manga))),
+                                        if (!hideAnime)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.video_collection),
+                                              icon: const Icon(Icons
+                                                  .video_collection_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.anime))),
+                                        if (!hideNovel)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.local_library),
+                                              icon: const Icon(
+                                                  Icons.local_library_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.novel))),
                                         NavigationRailDestination(
-                                            selectedIcon: const Icon(
-                                                Icons.collections_bookmark),
-                                            icon: const Icon(Icons
-                                                .collections_bookmark_outlined),
-                                            label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(l10n.manga))),
-                                        NavigationRailDestination(
-                                            selectedIcon: const Icon(
-                                                Icons.video_collection),
-                                            icon: const Icon(Icons
-                                                .video_collection_outlined),
-                                            label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(l10n.anime))),
-                                        NavigationRailDestination(
-                                            selectedIcon:
-                                                const Icon(Icons.new_releases),
-                                            icon: const Icon(
-                                                Icons.new_releases_outlined),
+                                            selectedIcon: Badge(
+                                              label: _updatesTotalNumbers(ref),
+                                              child: const Icon(
+                                                  Icons.new_releases),
+                                            ),
+                                            icon: Badge(
+                                              label: _updatesTotalNumbers(ref),
+                                              child: const Icon(
+                                                  Icons.new_releases_outlined),
+                                            ),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -183,10 +224,19 @@ class MainScreen extends ConsumerWidget {
                                                     top: 5),
                                                 child: Text(l10n.history))),
                                         NavigationRailDestination(
-                                            selectedIcon:
-                                                const Icon(Icons.explore),
-                                            icon: const Icon(
-                                                Icons.explore_outlined),
+                                            selectedIcon: Badge(
+                                              label:
+                                                  _extensionUpdateTotalNumbers(
+                                                      ref),
+                                              child: const Icon(Icons.explore),
+                                            ),
+                                            icon: Badge(
+                                              label:
+                                                  _extensionUpdateTotalNumbers(
+                                                      ref),
+                                              child: const Icon(
+                                                  Icons.explore_outlined),
+                                            ),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
@@ -203,27 +253,34 @@ class MainScreen extends ConsumerWidget {
                                       ],
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
-                                        final fn = switch (newIndex) {
-                                          0 => route.go('/MangaLibrary'),
-                                          1 => route.go('/AnimeLibrary'),
-                                          2 => route.go('/updates'),
-                                          3 => route.go('/history'),
-                                          4 => route.go('/browse'),
-                                          _ => route.go('/more'),
-                                        };
-                                        fn;
+                                        final dest = [
+                                          '/MangaLibrary',
+                                          '/AnimeLibrary',
+                                          '/NovelLibrary',
+                                          '/updates',
+                                          '/history',
+                                          '/browse',
+                                          '/more'
+                                        ];
+                                        if (hideManga) {
+                                          dest.removeWhere(
+                                              (d) => d == "/MangaLibrary");
+                                        }
+                                        if (hideAnime) {
+                                          dest.removeWhere(
+                                              (d) => d == "/AnimeLibrary");
+                                        }
+                                        if (hideNovel) {
+                                          dest.removeWhere(
+                                              (d) => d == "/NovelLibrary");
+                                        }
+                                        route.go(dest[newIndex >= dest.length
+                                            ? dest.length - 1
+                                            : newIndex]);
                                       },
                                     );
                                   }),
                                 ),
-                                Positioned(
-                                    right: 18,
-                                    top: 140,
-                                    child: _updatesTotalNumbers(ref)),
-                                Positioned(
-                                    right: 18,
-                                    top: 275,
-                                    child: _extensionUpdateTotalNumbers(ref)),
                               ],
                             ),
                           ),
@@ -242,6 +299,7 @@ class MainScreen extends ConsumerWidget {
                               null => null,
                               != '/MangaLibrary' &&
                                     != '/AnimeLibrary' &&
+                                    != '/NovelLibrary' &&
                                     != '/history' &&
                                     != '/updates' &&
                                     != '/browse' &&
@@ -260,63 +318,76 @@ class MainScreen extends ConsumerWidget {
                                 const Duration(milliseconds: 500),
                             selectedIndex: currentIndex,
                             destinations: [
+                              if (!hideManga)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.collections_bookmark),
+                                    icon: const Icon(
+                                        Icons.collections_bookmark_outlined),
+                                    label: l10n.manga),
+                              if (!hideAnime)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.video_collection),
+                                    icon: const Icon(
+                                        Icons.video_collection_outlined),
+                                    label: l10n.anime),
+                              if (!hideNovel)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.local_library),
+                                    icon: const Icon(
+                                        Icons.local_library_outlined),
+                                    label: l10n.novel),
                               NavigationDestination(
-                                  selectedIcon:
-                                      const Icon(Icons.collections_bookmark),
-                                  icon: const Icon(
-                                      Icons.collections_bookmark_outlined),
-                                  label: l10n.manga),
-                              NavigationDestination(
-                                  selectedIcon:
-                                      const Icon(Icons.video_collection),
-                                  icon: const Icon(
-                                      Icons.video_collection_outlined),
-                                  label: l10n.anime),
-                              Stack(
-                                children: [
-                                  NavigationDestination(
-                                      selectedIcon:
-                                          const Icon(Icons.new_releases),
-                                      icon: const Icon(
-                                          Icons.new_releases_outlined),
-                                      label: l10n.updates),
-                                  Positioned(
-                                      right: 14,
-                                      top: 3,
-                                      child: _updatesTotalNumbers(ref)),
-                                ],
-                              ),
+                                  selectedIcon: Badge(
+                                    label: _updatesTotalNumbers(ref),
+                                    child: const Icon(Icons.new_releases),
+                                  ),
+                                  icon: Badge(
+                                    label: _updatesTotalNumbers(ref),
+                                    child: const Icon(Icons.new_releases),
+                                  ),
+                                  label: l10n.updates),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.history),
                                   icon: const Icon(Icons.history_outlined),
                                   label: l10n.history),
-                              Stack(
-                                children: [
-                                  NavigationDestination(
-                                      selectedIcon: const Icon(Icons.explore),
-                                      icon: const Icon(Icons.explore_outlined),
-                                      label: l10n.browse),
-                                  Positioned(
-                                      right: 14,
-                                      top: 3,
-                                      child: _extensionUpdateTotalNumbers(ref)),
-                                ],
-                              ),
+                              NavigationDestination(
+                                  selectedIcon: Badge(
+                                      label: _extensionUpdateTotalNumbers(ref),
+                                      child: const Icon(Icons.explore)),
+                                  icon: Badge(
+                                      label: _extensionUpdateTotalNumbers(ref),
+                                      child: const Icon(Icons.explore)),
+                                  label: l10n.browse),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.more_horiz),
                                   icon: const Icon(Icons.more_horiz_outlined),
                                   label: l10n.more),
                             ],
                             onDestinationSelected: (newIndex) {
-                              final fn = switch (newIndex) {
-                                0 => route.go('/MangaLibrary'),
-                                1 => route.go('/AnimeLibrary'),
-                                2 => route.go('/updates'),
-                                3 => route.go('/history'),
-                                4 => route.go('/browse'),
-                                _ => route.go('/more'),
-                              };
-                              fn;
+                              final dest = [
+                                '/MangaLibrary',
+                                '/AnimeLibrary',
+                                '/NovelLibrary',
+                                '/updates',
+                                '/history',
+                                '/browse',
+                                '/more'
+                              ];
+                              if (hideManga) {
+                                dest.removeWhere((d) => d == "/MangaLibrary");
+                              }
+                              if (hideAnime) {
+                                dest.removeWhere((d) => d == "/AnimeLibrary");
+                              }
+                              if (hideNovel) {
+                                dest.removeWhere((d) => d == "/NovelLibrary");
+                              }
+                              route.go(dest[newIndex >= dest.length
+                                  ? dest.length - 1
+                                  : newIndex]);
                             },
                           ),
                         ),
@@ -348,25 +419,9 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
-          return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 176, 46, 37)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
+          return entries.isEmpty ? Text("0") : Text("${entries.length}");
         }
-        return Container();
+        return Text("0");
       });
 }
 
@@ -381,24 +436,8 @@ Widget _updatesTotalNumbers(WidgetRef ref) {
             }
             return !(element.chapter.value?.isRead ?? false);
           }).toList();
-          return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 176, 46, 37)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
+          return entries.isEmpty ? Text("0") : Text("${entries.length}");
         }
-        return Container();
+        return Text("0");
       });
 }

@@ -385,7 +385,8 @@ List<String> _getList(BuildContext context) {
     l10n.tracking,
     l10n.history,
     l10n.settings,
-    l10n.extensions
+    l10n.extensions,
+    l10n.updates
   ];
 }
 

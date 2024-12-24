@@ -10,22 +10,22 @@ part 'isar_providers.g.dart';
 
 @riverpod
 Stream<List<History>> getAllHistoryStream(Ref ref,
-    {required bool isManga}) async* {
+    {required ItemType itemType}) async* {
   yield* isar.historys
       .filter()
       .idIsNotNull()
       .and()
-      .chapter((q) => q.manga((q) => q.isMangaEqualTo(isManga)))
+      .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
       .watch(fireImmediately: true);
 }
 
 @riverpod
 Stream<List<Update>> getAllUpdateStream(Ref ref,
-    {required bool isManga}) async* {
+    {required ItemType itemType}) async* {
   yield* isar.updates
       .filter()
       .idIsNotNull()
       .and()
-      .chapter((q) => q.manga((q) => q.isMangaEqualTo(isManga)))
+      .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
       .watch(fireImmediately: true);
 }
