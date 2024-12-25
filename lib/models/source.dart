@@ -125,38 +125,6 @@ class Source {
         SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
   }
 
-  Source.fromJsonV1(Map<String, dynamic> json) {
-    apiUrl = json['apiUrl'];
-    appMinVerReq = json['appMinVerReq'];
-    baseUrl = json['baseUrl'];
-    dateFormat = json['dateFormat'];
-    dateFormatLocale = json['dateFormatLocale'];
-    hasCloudflare = json['hasCloudflare'];
-    headers = json['headers'];
-    iconUrl = json['iconUrl'];
-    id = json['id'];
-    isActive = json['isActive'];
-    isAdded = json['isAdded'];
-    isFullData = json['isFullData'];
-    isManga = json['isManga'];
-    itemType = isManga == true ? ItemType.manga : ItemType.anime;
-    isNsfw = json['isNsfw'];
-    isPinned = json['isPinned'];
-    lang = json['lang'];
-    lastUsed = json['lastUsed'];
-    name = json['name'];
-    sourceCode = json['sourceCode'];
-    sourceCodeUrl = json['sourceCodeUrl'];
-    typeSource = json['typeSource'];
-    version = json['version'];
-    versionLast = json['versionLast'];
-    additionalParams = json['additionalParams'] ?? "";
-    isObsolete = json['isObsolete'];
-    isLocal = json['isLocal'];
-    sourceCodeLanguage =
-        SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
-  }
-
   Map<String, dynamic> toJson() => {
         'apiUrl': apiUrl,
         'appMinVerReq': appMinVerReq,

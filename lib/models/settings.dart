@@ -459,8 +459,8 @@ class Settings {
         ? CustomColorFilter.fromJson(json['customColorFilter'])
         : null;
     enableCustomColorFilter = json['enableCustomColorFilter'];
-    colorFilterBlendMode = ColorFilterBlendMode
-        .values[json['colorFilterBlendMode'] ?? ColorFilterBlendMode.none];
+    colorFilterBlendMode = ColorFilterBlendMode.values[
+        json['colorFilterBlendMode'] ?? ColorFilterBlendMode.none.index];
     playerSubtitleSettings = json['playerSubtitleSettings'] != null
         ? PlayerSubtitleSettings.fromJson(json['playerSubtitleSettings'])
         : null;
@@ -470,7 +470,7 @@ class Settings {
     mangaGridSize = json['mangaGridSize'];
     animeGridSize = json['animeGridSize'];
     disableSectionType =
-        SectionType.values[json['disableSectionType'] ?? SectionType.all];
+        SectionType.values[json['disableSectionType'] ?? SectionType.all.index];
     useLibass = json['useLibass'];
     libraryFilterNovelBookMarkedType = json['libraryFilterNovelBookMarkedType'];
     libraryFilterNovelDownloadType = json['libraryFilterNovelDownloadType'];
@@ -487,7 +487,7 @@ class Settings {
         ? SortLibraryManga.fromJson(json['sortLibraryNovel'])
         : null;
     novelDisplayType = DisplayType
-        .values[json['novelDisplayType'] ?? DisplayType.compactGrid.index];
+        .values[json['novelDisplayType'] ?? DisplayType.comfortableGrid.index];
     hideManga = json['hideManga'];
     hideAnime = json['hideAnime'];
     hideNovel = json['hideNovel'];

@@ -24,10 +24,10 @@ import 'package:path/path.dart' as p;
 part 'backup.g.dart';
 
 @riverpod
-void doBackUp(Ref ref,
+Future<void> doBackUp(Ref ref,
     {required List<int> list,
     required String path,
-    required BuildContext? context}) {
+    required BuildContext? context}) async {
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
   if (list.contains(0)) {
@@ -132,17 +132,17 @@ void doBackUp(Ref ref,
   final backupFilePath = p.join(path, "$name.backup.db");
   final file = File(backupFilePath);
 
-  file.writeAsStringSync(jsonEncode(datas));
+  await file.writeAsString(jsonEncode(datas));
   var encoder = ZipFileEncoder();
   encoder.create(p.join(path, "$name.backup"));
-  encoder.addFile(File(backupFilePath));
-  encoder.close();
-  Directory(backupFilePath).deleteSync(recursive: true);
+  await encoder.addFile(File(backupFilePath));
+  await encoder.close();
+  await Directory(backupFilePath).delete(recursive: true);
   final assets = [
     'assets/app_icons/icon-black.png',
     'assets/app_icons/icon-red.png'
   ];
-  if (context != null) {
+  if (context != null && context.mounted) {
     Navigator.pop(context);
     BotToast.showNotification(
         animationDuration: const Duration(milliseconds: 200),
