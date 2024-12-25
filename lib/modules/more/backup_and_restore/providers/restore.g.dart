@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'508725e75a03ac5f561c2cf8bf4943052d605d5b';
+String _$doRestoreHash() => r'e3236bf60efbd24cc07281927ffd0ca3d43d0a9c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -173,29 +173,29 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 
-String _$restoreV1Hash() => r'4dca1ac4cec79fdc78bec4d71367e77caf696f17';
+String _$restoreBackupHash() => r'cde06db62878869fe086453e1c7de57238650909';
 
-/// See also [restoreV1].
-@ProviderFor(restoreV1)
-const restoreV1Provider = RestoreV1Family();
+/// See also [restoreBackup].
+@ProviderFor(restoreBackup)
+const restoreBackupProvider = RestoreBackupFamily();
 
-/// See also [restoreV1].
-class RestoreV1Family extends Family<void> {
-  /// See also [restoreV1].
-  const RestoreV1Family();
+/// See also [restoreBackup].
+class RestoreBackupFamily extends Family<void> {
+  /// See also [restoreBackup].
+  const RestoreBackupFamily();
 
-  /// See also [restoreV1].
-  RestoreV1Provider call(
+  /// See also [restoreBackup].
+  RestoreBackupProvider call(
     Map<String, dynamic> backup,
   ) {
-    return RestoreV1Provider(
+    return RestoreBackupProvider(
       backup,
     );
   }
 
   @override
-  RestoreV1Provider getProviderOverride(
-    covariant RestoreV1Provider provider,
+  RestoreBackupProvider getProviderOverride(
+    covariant RestoreBackupProvider provider,
   ) {
     return call(
       provider.backup,
@@ -214,31 +214,32 @@ class RestoreV1Family extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'restoreV1Provider';
+  String? get name => r'restoreBackupProvider';
 }
 
-/// See also [restoreV1].
-class RestoreV1Provider extends AutoDisposeProvider<void> {
-  /// See also [restoreV1].
-  RestoreV1Provider(
+/// See also [restoreBackup].
+class RestoreBackupProvider extends AutoDisposeProvider<void> {
+  /// See also [restoreBackup].
+  RestoreBackupProvider(
     Map<String, dynamic> backup,
   ) : this._internal(
-          (ref) => restoreV1(
-            ref as RestoreV1Ref,
+          (ref) => restoreBackup(
+            ref as RestoreBackupRef,
             backup,
           ),
-          from: restoreV1Provider,
-          name: r'restoreV1Provider',
+          from: restoreBackupProvider,
+          name: r'restoreBackupProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$restoreV1Hash,
-          dependencies: RestoreV1Family._dependencies,
-          allTransitiveDependencies: RestoreV1Family._allTransitiveDependencies,
+                  : _$restoreBackupHash,
+          dependencies: RestoreBackupFamily._dependencies,
+          allTransitiveDependencies:
+              RestoreBackupFamily._allTransitiveDependencies,
           backup: backup,
         );
 
-  RestoreV1Provider._internal(
+  RestoreBackupProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -252,12 +253,12 @@ class RestoreV1Provider extends AutoDisposeProvider<void> {
 
   @override
   Override overrideWith(
-    void Function(RestoreV1Ref provider) create,
+    void Function(RestoreBackupRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: RestoreV1Provider._internal(
-        (ref) => create(ref as RestoreV1Ref),
+      override: RestoreBackupProvider._internal(
+        (ref) => create(ref as RestoreBackupRef),
         from: from,
         name: null,
         dependencies: null,
@@ -270,12 +271,12 @@ class RestoreV1Provider extends AutoDisposeProvider<void> {
 
   @override
   AutoDisposeProviderElement<void> createElement() {
-    return _RestoreV1ProviderElement(this);
+    return _RestoreBackupProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is RestoreV1Provider && other.backup == backup;
+    return other is RestoreBackupProvider && other.backup == backup;
   }
 
   @override
@@ -289,146 +290,17 @@ class RestoreV1Provider extends AutoDisposeProvider<void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin RestoreV1Ref on AutoDisposeProviderRef<void> {
+mixin RestoreBackupRef on AutoDisposeProviderRef<void> {
   /// The parameter `backup` of this provider.
   Map<String, dynamic> get backup;
 }
 
-class _RestoreV1ProviderElement extends AutoDisposeProviderElement<void>
-    with RestoreV1Ref {
-  _RestoreV1ProviderElement(super.provider);
+class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
+    with RestoreBackupRef {
+  _RestoreBackupProviderElement(super.provider);
 
   @override
-  Map<String, dynamic> get backup => (origin as RestoreV1Provider).backup;
-}
-
-String _$restoreV2Hash() => r'fbdd1978f8be7512277620e351b9a0eee1827bfc';
-
-/// See also [restoreV2].
-@ProviderFor(restoreV2)
-const restoreV2Provider = RestoreV2Family();
-
-/// See also [restoreV2].
-class RestoreV2Family extends Family<void> {
-  /// See also [restoreV2].
-  const RestoreV2Family();
-
-  /// See also [restoreV2].
-  RestoreV2Provider call(
-    Map<String, dynamic> backup,
-  ) {
-    return RestoreV2Provider(
-      backup,
-    );
-  }
-
-  @override
-  RestoreV2Provider getProviderOverride(
-    covariant RestoreV2Provider provider,
-  ) {
-    return call(
-      provider.backup,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'restoreV2Provider';
-}
-
-/// See also [restoreV2].
-class RestoreV2Provider extends AutoDisposeProvider<void> {
-  /// See also [restoreV2].
-  RestoreV2Provider(
-    Map<String, dynamic> backup,
-  ) : this._internal(
-          (ref) => restoreV2(
-            ref as RestoreV2Ref,
-            backup,
-          ),
-          from: restoreV2Provider,
-          name: r'restoreV2Provider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$restoreV2Hash,
-          dependencies: RestoreV2Family._dependencies,
-          allTransitiveDependencies: RestoreV2Family._allTransitiveDependencies,
-          backup: backup,
-        );
-
-  RestoreV2Provider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.backup,
-  }) : super.internal();
-
-  final Map<String, dynamic> backup;
-
-  @override
-  Override overrideWith(
-    void Function(RestoreV2Ref provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: RestoreV2Provider._internal(
-        (ref) => create(ref as RestoreV2Ref),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        backup: backup,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<void> createElement() {
-    return _RestoreV2ProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is RestoreV2Provider && other.backup == backup;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, backup.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin RestoreV2Ref on AutoDisposeProviderRef<void> {
-  /// The parameter `backup` of this provider.
-  Map<String, dynamic> get backup;
-}
-
-class _RestoreV2ProviderElement extends AutoDisposeProviderElement<void>
-    with RestoreV2Ref {
-  _RestoreV2ProviderElement(super.provider);
-
-  @override
-  Map<String, dynamic> get backup => (origin as RestoreV2Provider).backup;
+  Map<String, dynamic> get backup => (origin as RestoreBackupProvider).backup;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

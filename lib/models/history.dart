@@ -34,19 +34,8 @@ class History {
     chapterId = json['chapterId'];
     date = json['date'];
     id = json['id'];
+    isManga = json['isManga'];
     itemType = ItemType.values[json['itemType'] ?? 0];
-    mangaId = json['mangaId'];
-  }
-
-  History.fromJsonV1(Map<String, dynamic> json) {
-    chapterId = json['chapterId'];
-    date = json['date'];
-    id = json['id'];
-    itemType = json['isManga'] is bool
-        ? json['isManga'] == true
-            ? ItemType.manga
-            : ItemType.anime
-        : ItemType.manga;
     mangaId = json['mangaId'];
   }
 

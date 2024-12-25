@@ -190,11 +190,7 @@ class SyncServer extends _$SyncServer {
   }
 
   void _restore(Map<String, dynamic> backup) {
-    if (backup['version'] == "1") {
-      ref.watch(restoreV1Provider(backup));
-    } else if (backup['version'] == "2") {
-      ref.watch(restoreV2Provider(backup));
-    }
+    ref.read(restoreBackupProvider(backup));
   }
 
   String _getAccessToken() {

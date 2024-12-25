@@ -158,10 +158,8 @@ class BackupAndRestore extends ConsumerWidget {
                                   onPressed: () async {
                                     try {
                                       FilePickerResult? result =
-                                          await FilePicker.platform.pickFiles(
-                                              allowMultiple: false,
-                                              type: FileType.custom,
-                                              allowedExtensions: ["backup"]);
+                                          await FilePicker.platform
+                                              .pickFiles(allowMultiple: false);
 
                                       if (result != null && context.mounted) {
                                         ref.watch(doRestoreProvider(
