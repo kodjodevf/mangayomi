@@ -6,7 +6,7 @@ part of 'backup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doBackUpHash() => r'98c1eb56bd4937033c82accf71beb84c85a2acc6';
+String _$doBackUpHash() => r'50189cb247f37cadd4d64ddc0377774987859681';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const doBackUpProvider = DoBackUpFamily();
 
 /// See also [doBackUp].
-class DoBackUpFamily extends Family<void> {
+class DoBackUpFamily extends Family<AsyncValue<void>> {
   /// See also [doBackUp].
   const DoBackUpFamily();
 
@@ -78,7 +78,7 @@ class DoBackUpFamily extends Family<void> {
 }
 
 /// See also [doBackUp].
-class DoBackUpProvider extends AutoDisposeProvider<void> {
+class DoBackUpProvider extends AutoDisposeFutureProvider<void> {
   /// See also [doBackUp].
   DoBackUpProvider({
     required List<int> list,
@@ -122,7 +122,7 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
 
   @override
   Override overrideWith(
-    void Function(DoBackUpRef provider) create,
+    FutureOr<void> Function(DoBackUpRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -141,7 +141,7 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
   }
 
   @override
-  AutoDisposeProviderElement<void> createElement() {
+  AutoDisposeFutureProviderElement<void> createElement() {
     return _DoBackUpProviderElement(this);
   }
 
@@ -166,7 +166,7 @@ class DoBackUpProvider extends AutoDisposeProvider<void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DoBackUpRef on AutoDisposeProviderRef<void> {
+mixin DoBackUpRef on AutoDisposeFutureProviderRef<void> {
   /// The parameter `list` of this provider.
   List<int> get list;
 
@@ -177,7 +177,7 @@ mixin DoBackUpRef on AutoDisposeProviderRef<void> {
   BuildContext? get context;
 }
 
-class _DoBackUpProviderElement extends AutoDisposeProviderElement<void>
+class _DoBackUpProviderElement extends AutoDisposeFutureProviderElement<void>
     with DoBackUpRef {
   _DoBackUpProviderElement(super.provider);
 

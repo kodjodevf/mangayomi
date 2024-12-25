@@ -189,8 +189,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
 
 ItemType _convertToItemType(Map<String, dynamic> backup) {
   final isManga = backup['isManga'];
-  final version = backup['version'];
-  return version == "2"
+  return isManga == null
       ? ItemType.values[backup['itemType'] ?? 0]
       : isManga
           ? ItemType.manga

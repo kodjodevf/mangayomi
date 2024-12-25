@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'e3236bf60efbd24cc07281927ffd0ca3d43d0a9c';
+String _$doRestoreHash() => r'ff5b1cbb192ec7f0da82d79c5ac90e15dd28c1de';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -173,7 +173,7 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 
-String _$restoreBackupHash() => r'cde06db62878869fe086453e1c7de57238650909';
+String _$restoreBackupHash() => r'834ba688f122cabe7969752ce8be06552c2e70c5';
 
 /// See also [restoreBackup].
 @ProviderFor(restoreBackup)
