@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
@@ -85,34 +84,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     location = ref.watch(routerCurrentLocationStateProvider(context));
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
-        hideManga = ref.watch(hideMangaStateProvider);
-        hideAnime = ref.watch(hideAnimeStateProvider);
-        hideNovel = ref.watch(hideNovelStateProvider);
-        bool isReadingScreen = location == '/mangaReaderView' ||
-            location == '/animePlayerView' ||
-            location == '/novelReaderView';
-        final dest = [
-          '/MangaLibrary',
-          '/AnimeLibrary',
-          '/NovelLibrary',
-          '/updates',
-          '/history',
-          '/browse',
-          '/more'
-        ];
-        if (hideManga) {
-          dest.removeWhere((d) => d == "/MangaLibrary");
-        }
-        if (hideAnime) {
-          dest.removeWhere((d) => d == "/AnimeLibrary");
-        }
-        if (hideNovel) {
-          dest.removeWhere((d) => d == "/NovelLibrary");
-        }
-        int currentIndex = dest.indexOf(location ?? defaultLocation);
-        if (currentIndex == -1) {
-          currentIndex = dest.length - 1;
-        }
+        final location = ref.watch(
+          routerCurrentLocationStateProvider(context),
+        );
+        bool isReadingScreen =
+            location == '/mangareaderview' || location == '/animePlayerView';
+        int currentIndex = switch (location) {
+          null || '/browse/manga' => 0,
+          '/browse/anime' => 1,
+          '/extensions' => 2,
+          _ => 3,
+        };
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
         final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
@@ -158,12 +140,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               true => 0,
                               _ => switch (location) {
                                   null => 100,
-                                  != '/MangaLibrary' &&
-                                        != '/AnimeLibrary' &&
-                                        != '/NovelLibrary' &&
-                                        != '/history' &&
-                                        != '/updates' &&
-                                        != '/browse' &&
+                                  != '/browse/manga' &&
+                                        != '/browse/anime' &&
+                                        != '/extensions' &&
                                         != '/more' =>
                                     0,
                                   _ => 100,
@@ -216,46 +195,32 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                                           top: 5),
                                                   child: Text(l10n.novel))),
                                         NavigationRailDestination(
-                                            selectedIcon: _updatesTotalNumbers(
-                                                ref, Icon(Icons.new_releases)),
-                                            icon: _updatesTotalNumbers(
-                                                ref,
-                                                Icon(Icons
-                                                    .new_releases_outlined)),
+                                            selectedIcon: const Icon(
+                                                Icons.collections_bookmark),
+                                            icon: const Icon(Icons
+                                                .collections_bookmark_outlined),
                                             label: Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                getHyphenatedUpdatesLabel(
-                                                  ref
-                                                      .watch(
-                                                          l10nLocaleStateProvider)
-                                                      .languageCode,
-                                                  l10n.updates,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            )),
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.manga))),
+                                        NavigationRailDestination(
+                                            selectedIcon: const Icon(
+                                                Icons.video_collection),
+                                            icon: const Icon(Icons
+                                                .video_collection_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.anime))),
                                         NavigationRailDestination(
                                             selectedIcon:
-                                                const Icon(Icons.history),
+                                                const Icon(Icons.explore),
                                             icon: const Icon(
-                                                Icons.history_outlined),
+                                                Icons.explore_outlined),
                                             label: Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
-                                                child: Text(l10n.history))),
-                                        NavigationRailDestination(
-                                            selectedIcon:
-                                                _extensionUpdateTotalNumbers(
-                                                    ref, Icon(Icons.explore)),
-                                            icon: _extensionUpdateTotalNumbers(
-                                                ref,
-                                                Icon(Icons.explore_outlined)),
-                                            label: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 5),
-                                                child: Text(l10n.browse))),
+                                                child: Text(l10n.extensions))),
                                         NavigationRailDestination(
                                             selectedIcon:
                                                 const Icon(Icons.more_horiz),
@@ -268,11 +233,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                       ],
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
-                                        route.go(dest[newIndex]);
+                                        final fn = switch (newIndex) {
+                                          0 => route.go('/browse/manga'),
+                                          1 => route.go('/browse/anime'),
+                                          2 => route.go('/extensions'),
+                                          _ => route.go('/more'),
+                                        };
+                                        fn;
                                       },
                                     );
                                   }),
                                 ),
+                                Positioned(
+                                    right: 18,
+                                    top: 275,
+                                    child: _extensionUpdateTotalNumbers(ref)),
                               ],
                             ),
                           ),
@@ -289,12 +264,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           true => 0,
                           _ => switch (location) {
                               null => null,
-                              != '/MangaLibrary' &&
-                                    != '/AnimeLibrary' &&
-                                    != '/NovelLibrary' &&
-                                    != '/history' &&
-                                    != '/updates' &&
-                                    != '/browse' &&
+                              != '/browse/manga' &&
+                                    != '/browse/anime' &&
+                                    != '/extensions' &&
                                     != '/more' =>
                                 0,
                               _ => null,
@@ -332,28 +304,44 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                         Icons.local_library_outlined),
                                     label: l10n.novel),
                               NavigationDestination(
-                                  selectedIcon: _updatesTotalNumbers(
-                                      ref, Icon(Icons.new_releases)),
-                                  icon: _updatesTotalNumbers(
-                                      ref, Icon(Icons.new_releases_outlined)),
-                                  label: l10n.updates),
+                                  selectedIcon:
+                                      const Icon(Icons.collections_bookmark),
+                                  icon: const Icon(
+                                      Icons.collections_bookmark_outlined),
+                                  label: l10n.manga),
                               NavigationDestination(
-                                  selectedIcon: const Icon(Icons.history),
-                                  icon: const Icon(Icons.history_outlined),
-                                  label: l10n.history),
+                                  selectedIcon:
+                                      const Icon(Icons.video_collection),
+                                  icon: const Icon(
+                                      Icons.video_collection_outlined),
+                                  label: l10n.anime),
                               NavigationDestination(
-                                  selectedIcon: _extensionUpdateTotalNumbers(
-                                      ref, Icon(Icons.explore)),
-                                  icon: _extensionUpdateTotalNumbers(
-                                      ref, Icon(Icons.explore_outlined)),
-                                  label: l10n.browse),
-                              NavigationDestination(
-                                  selectedIcon: const Icon(Icons.more_horiz),
-                                  icon: const Icon(Icons.more_horiz_outlined),
-                                  label: l10n.more),
+                                  selectedIcon: const Icon(Icons.explore),
+                                  icon: const Icon(Icons.explore_outlined),
+                                  label: l10n.extensions),
+                              Stack(
+                                children: [
+                                  NavigationDestination(
+                                      selectedIcon:
+                                          const Icon(Icons.more_horiz),
+                                      icon:
+                                          const Icon(Icons.more_horiz_outlined),
+                                      label: l10n.more),
+                                  Positioned(
+                                      right: 14,
+                                      top: 3,
+                                      child: _extensionUpdateTotalNumbers(ref)),
+                                ],
+                              ),
                             ],
                             onDestinationSelected: (newIndex) {
-                              route.go(dest[newIndex]);
+                              final fn = switch (newIndex) {
+                                0 => route.go('/browse/manga'),
+                                1 => route.go('/browse/anime'),
+                                2 => route.go('/extensions'),
+                                _ => route.go('/more'),
+                              };
+                              fn;
                             },
                           ),
                         ),
@@ -385,26 +373,6 @@ Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
-          if (entries.isEmpty) {
-            return widget;
-          }
-          return Badge(label: Text("${entries.length}"), child: widget);
-        }
-        return widget;
-      });
-}
-
-Widget _updatesTotalNumbers(WidgetRef ref, Widget widget) {
-  return StreamBuilder(
-      stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!.where((element) {
-            if (!element.chapter.isLoaded) {
-              element.chapter.loadSync();
-            }
-            return !(element.chapter.value?.isRead ?? false);
-          }).toList();
           if (entries.isEmpty) {
             return widget;
           }

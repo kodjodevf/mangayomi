@@ -22,7 +22,8 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
-  const HistoryScreen({super.key});
+  final bool isManga;
+  const HistoryScreen({required this.isManga, super.key});
 
   @override
   ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
@@ -30,24 +31,6 @@ class HistoryScreen extends ConsumerStatefulWidget {
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with TickerProviderStateMixin {
-  late TabController _tabBarController;
-  int tabs = 3;
-
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
-  }
-
-  @override
-  void initState() {
-    _tabBarController = TabController(length: tabs, vsync: this);
-    _tabBarController.animateTo(0);
-    _tabBarController.addListener(tabListener);
-    super.initState();
-  }
-
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   List<History> entriesData = [];
@@ -75,138 +58,102 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       });
     }
     final l10n = l10nLocalizations(context)!;
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: newTabs,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: _isSearch
-              ? null
-              : Text(
-                  l10n.history,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
-          actions: [
-            _isSearch
-                ? SeachFormTextField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    onSuffixPressed: () {
-                      _textEditingController.clear();
-                      setState(() {});
-                    },
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = false;
-                      });
-                      _textEditingController.clear();
-                    },
-                    controller: _textEditingController,
-                  )
-                : IconButton(
-                    splashRadius: 20,
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = true;
-                      });
-                    },
-                    icon:
-                        Icon(Icons.search, color: Theme.of(context).hintColor)),
-            IconButton(
-                splashRadius: 20,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                            l10n.remove_everything,
-                          ),
-                          content: Text(l10n.remove_everything_msg),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(l10n.cancel)),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                TextButton(
-                                    onPressed: () {
-                                      List<History> histories = isar.historys
-                                          .filter()
-                                          .idIsNotNull()
-                                          .chapter((q) => q.manga((q) => q
-                                              .itemTypeEqualTo(_tabBarController
-                                                              .index ==
-                                                          0 &&
-                                                      !hideManga
-                                                  ? ItemType.manga
-                                                  : _tabBarController.index ==
-                                                              1 -
-                                                                  (hideManga
-                                                                      ? 1
-                                                                      : 0) &&
-                                                          !hideAnime
-                                                      ? ItemType.anime
-                                                      : ItemType.novel)))
-                                          .findAllSync()
-                                          .toList();
-                                      isar.writeTxnSync(() {
-                                        for (var history in histories) {
-                                          isar.historys.deleteSync(history.id!);
-                                        }
-                                      });
-                                      if (mounted) {
-                                        Navigator.pop(context);
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackButton(
+            onPressed: () =>
+                context.go(widget.isManga ? '/browse/manga' : '/browse/anime')),
+        title: _isSearch
+            ? null
+            : Text(
+                l10n.history,
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
+        actions: [
+          _isSearch
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                    _textEditingController.clear();
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor)),
+          IconButton(
+              splashRadius: 20,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(
+                          l10n.remove_everything,
+                        ),
+                        content: Text(l10n.remove_everything_msg),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(l10n.cancel)),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    List<History> histories = isar.historys
+                                        .filter()
+                                        .idIsNotNull()
+                                        .chapter((q) => q.manga((q) =>
+                                            q.isMangaEqualTo(widget.isManga)))
+                                        .findAllSync()
+                                        .toList();
+                                    isar.writeTxnSync(() {
+                                      for (var history in histories) {
+                                        isar.historys.deleteSync(history.id!);
                                       }
-                                    },
-                                    child: Text(l10n.ok)),
-                              ],
-                            )
-                          ],
-                        );
-                      });
-                },
-                icon: Icon(Icons.delete_sweep_outlined,
-                    color: Theme.of(context).hintColor)),
-          ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabBarController,
-            tabs: [
-              if (!hideManga) Tab(text: l10n.manga),
-              if (!hideAnime) Tab(text: l10n.anime),
-              if (!hideNovel) Tab(text: l10n.novel),
-            ],
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(controller: _tabBarController, children: [
-            if (!hideManga)
-              HistoryTab(
-                itemType: ItemType.manga,
-                query: _textEditingController.text,
-              ),
-            if (!hideAnime)
-              HistoryTab(
-                itemType: ItemType.anime,
-                query: _textEditingController.text,
-              ),
-            if (!hideNovel)
-              HistoryTab(
-                itemType: ItemType.novel,
-                query: _textEditingController.text,
-              )
-          ]),
+                                    });
+                                    if (mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                                  child: Text(l10n.ok)),
+                            ],
+                          )
+                        ],
+                      );
+                    });
+              },
+              icon: Icon(Icons.delete_sweep_outlined,
+                  color: Theme.of(context).hintColor)),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: HistoryTab(
+          itemType: widget.itemType,
+          query: _textEditingController.text,
         ),
       ),
     );
