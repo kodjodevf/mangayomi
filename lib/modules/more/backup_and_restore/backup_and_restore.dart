@@ -162,9 +162,14 @@ class BackupAndRestore extends ConsumerWidget {
                                               .pickFiles(allowMultiple: false);
 
                                       if (result != null && context.mounted) {
-                                        ref.watch(doRestoreProvider(
+                                        String? filePath = result.files.single.path;
+                                        if (filePath != null && filePath.endsWith(".backup")) {
+                                          ref.watch(doRestoreProvider(
                                             path: result.files.first.path!,
                                             context: context));
+                                        } else {
+                                          throw Exception;
+                                        }
                                       }
                                       if (!context.mounted) return;
                                       Navigator.pop(context);
