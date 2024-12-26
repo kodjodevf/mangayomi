@@ -205,5 +205,39 @@ final hideNovelStateProvider =
 );
 
 typedef _$HideNovelState = AutoDisposeNotifier<bool>;
+String _$novelFontSizeStateHash() =>
+    r'fd104e358203d3f86e14d933518f2dbd067cec13';
+
+/// See also [NovelFontSizeState].
+@ProviderFor(NovelFontSizeState)
+final novelFontSizeStateProvider =
+    AutoDisposeNotifierProvider<NovelFontSizeState, int>.internal(
+  NovelFontSizeState.new,
+  name: r'novelFontSizeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$novelFontSizeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$NovelFontSizeState = AutoDisposeNotifier<int>;
+String _$novelTextAlignStateHash() =>
+    r'87664160c3962b96b8582a7581cf1e4ebb870363';
+
+/// See also [NovelTextAlignState].
+@ProviderFor(NovelTextAlignState)
+final novelTextAlignStateProvider =
+    AutoDisposeNotifierProvider<NovelTextAlignState, NovelTextAlign>.internal(
+  NovelTextAlignState.new,
+  name: r'novelTextAlignStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$novelTextAlignStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$NovelTextAlignState = AutoDisposeNotifier<NovelTextAlign>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
