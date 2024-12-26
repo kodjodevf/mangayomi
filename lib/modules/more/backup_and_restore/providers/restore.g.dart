@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'15a02b8de4cc4c7f5185a9f645b734a75f5950ca';
+String _$doRestoreHash() => r'ff5b1cbb192ec7f0da82d79c5ac90e15dd28c1de';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -171,6 +171,136 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   String get path => (origin as DoRestoreProvider).path;
   @override
   BuildContext get context => (origin as DoRestoreProvider).context;
+}
+
+String _$restoreBackupHash() => r'834ba688f122cabe7969752ce8be06552c2e70c5';
+
+/// See also [restoreBackup].
+@ProviderFor(restoreBackup)
+const restoreBackupProvider = RestoreBackupFamily();
+
+/// See also [restoreBackup].
+class RestoreBackupFamily extends Family<void> {
+  /// See also [restoreBackup].
+  const RestoreBackupFamily();
+
+  /// See also [restoreBackup].
+  RestoreBackupProvider call(
+    Map<String, dynamic> backup,
+  ) {
+    return RestoreBackupProvider(
+      backup,
+    );
+  }
+
+  @override
+  RestoreBackupProvider getProviderOverride(
+    covariant RestoreBackupProvider provider,
+  ) {
+    return call(
+      provider.backup,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'restoreBackupProvider';
+}
+
+/// See also [restoreBackup].
+class RestoreBackupProvider extends AutoDisposeProvider<void> {
+  /// See also [restoreBackup].
+  RestoreBackupProvider(
+    Map<String, dynamic> backup,
+  ) : this._internal(
+          (ref) => restoreBackup(
+            ref as RestoreBackupRef,
+            backup,
+          ),
+          from: restoreBackupProvider,
+          name: r'restoreBackupProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$restoreBackupHash,
+          dependencies: RestoreBackupFamily._dependencies,
+          allTransitiveDependencies:
+              RestoreBackupFamily._allTransitiveDependencies,
+          backup: backup,
+        );
+
+  RestoreBackupProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.backup,
+  }) : super.internal();
+
+  final Map<String, dynamic> backup;
+
+  @override
+  Override overrideWith(
+    void Function(RestoreBackupRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RestoreBackupProvider._internal(
+        (ref) => create(ref as RestoreBackupRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        backup: backup,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _RestoreBackupProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RestoreBackupProvider && other.backup == backup;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, backup.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RestoreBackupRef on AutoDisposeProviderRef<void> {
+  /// The parameter `backup` of this provider.
+  Map<String, dynamic> get backup;
+}
+
+class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
+    with RestoreBackupRef {
+  _RestoreBackupProviderElement(super.provider);
+
+  @override
+  Map<String, dynamic> get backup => (origin as RestoreBackupProvider).backup;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

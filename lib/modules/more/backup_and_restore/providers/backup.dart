@@ -15,6 +15,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,12 +24,12 @@ import 'package:path/path.dart' as p;
 part 'backup.g.dart';
 
 @riverpod
-void doBackUp(Ref ref,
+Future<void> doBackUp(Ref ref,
     {required List<int> list,
     required String path,
-    required BuildContext? context}) {
+    required BuildContext? context}) async {
   Map<String, dynamic> datas = {};
-  datas.addAll({"version": "1"});
+  datas.addAll({"version": "2"});
   if (list.contains(0)) {
     final res = isar.mangas
         .filter()
@@ -116,23 +117,32 @@ void doBackUp(Ref ref,
         .toList();
     datas.addAll({"extensions_preferences": resSourePref});
   }
+  if (list.contains(7)) {
+    final res = isar.updates
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"updates": res});
+  }
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =
       'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
   final backupFilePath = p.join(path, "$name.backup.db");
   final file = File(backupFilePath);
 
-  file.writeAsStringSync(jsonEncode(datas));
+  await file.writeAsString(jsonEncode(datas));
   var encoder = ZipFileEncoder();
   encoder.create(p.join(path, "$name.backup"));
-  encoder.addFile(File(backupFilePath));
-  encoder.close();
-  Directory(backupFilePath).deleteSync(recursive: true);
+  await encoder.addFile(File(backupFilePath));
+  await encoder.close();
+  await Directory(backupFilePath).delete(recursive: true);
   final assets = [
     'assets/app_icons/icon-black.png',
     'assets/app_icons/icon-red.png'
   ];
-  if (context != null) {
+  if (context != null && context.mounted) {
     Navigator.pop(context);
     BotToast.showNotification(
         animationDuration: const Duration(milliseconds: 200),

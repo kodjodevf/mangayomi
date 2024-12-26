@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 
 Future<void> pushMangaReaderView({
@@ -23,19 +24,31 @@ Future<void> pushMangaReaderView({
       .findAllSync()
       .isNotEmpty;
   if (sourceExist || chapter.manga.value!.isLocalArchive!) {
-    if (chapter.manga.value!.isManga!) {
-      await context.push('/mangareaderview', extra: chapter);
-    } else {
-      await context.push('/animePlayerView', extra: chapter);
+    switch (chapter.manga.value!.itemType) {
+      case ItemType.manga:
+        await context.push('/mangaReaderView', extra: chapter);
+        break;
+      case ItemType.anime:
+        await context.push('/animePlayerView', extra: chapter);
+        break;
+      case ItemType.novel:
+        await context.push('/novelReaderView', extra: chapter);
+        break;
     }
   }
 }
 
 void pushReplacementMangaReaderView(
     {required BuildContext context, required Chapter chapter}) {
-  if (chapter.manga.value!.isManga!) {
-    context.pushReplacement('/mangareaderview', extra: chapter);
-  } else {
-    context.pushReplacement('/animePlayerView', extra: chapter);
+  switch (chapter.manga.value!.itemType) {
+    case ItemType.manga:
+      context.pushReplacement('/mangaReaderView', extra: chapter);
+      break;
+    case ItemType.anime:
+      context.pushReplacement('/animePlayerView', extra: chapter);
+      break;
+    case ItemType.novel:
+      context.pushReplacement('/novelReaderView', extra: chapter);
+      break;
   }
 }

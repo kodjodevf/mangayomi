@@ -73,7 +73,7 @@ class TrackScreen extends ConsumerWidget {
                   TrackListile(
                       onTap: () async {
                         await ref
-                            .read(myAnimeListProvider(syncId: 1, isManga: null)
+                            .read(myAnimeListProvider(syncId: 1, itemType: null)
                                 .notifier)
                             .login();
                       },

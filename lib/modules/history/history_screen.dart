@@ -10,7 +10,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -36,6 +36,27 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
+    int newTabs = 0;
+    final hideManga = ref.watch(hideMangaStateProvider);
+    final hideAnime = ref.watch(hideAnimeStateProvider);
+    final hideNovel = ref.watch(hideNovelStateProvider);
+
+    if (!hideManga) newTabs++;
+    if (!hideAnime) newTabs++;
+    if (!hideNovel) newTabs++;
+    if (newTabs == 0) {
+      return SizedBox.shrink();
+    }
+    if (tabs != newTabs) {
+      _tabBarController.removeListener(tabListener);
+      _tabBarController.dispose();
+      _tabBarController = TabController(length: newTabs, vsync: this);
+      _tabBarController.animateTo(0);
+      _tabBarController.addListener(tabListener);
+      setState(() {
+        tabs = newTabs;
+      });
+    }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
@@ -131,7 +152,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: HistoryTab(
-          isManga: widget.isManga,
+          itemType: widget.itemType,
           query: _textEditingController.text,
         ),
       ),
@@ -141,8 +162,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
 class HistoryTab extends ConsumerStatefulWidget {
   final String query;
-  final bool isManga;
-  const HistoryTab({required this.isManga, required this.query, super.key});
+  final ItemType itemType;
+  const HistoryTab({required this.itemType, required this.query, super.key});
 
   @override
   ConsumerState<HistoryTab> createState() => _HistoryTabState();
@@ -153,7 +174,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final history =
-        ref.watch(getAllHistoryStreamProvider(isManga: widget.isManga));
+        ref.watch(getAllHistoryStreamProvider(itemType: widget.itemType));
     return Scaffold(
         body: history.when(
       data: (data) {
@@ -339,29 +360,12 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                                           .id!);
                                                               for (var chapter
                                                                   in chapters) {
-                                                                await ref
-                                                                    .read(changedItemsManagerProvider(
-                                                                            managerId:
-                                                                                1)
-                                                                        .notifier)
-                                                                    .addUpdatedChapterAsync(
-                                                                        chapter,
-                                                                        true,
-                                                                        false);
                                                                 await isar
                                                                     .chapters
                                                                     .delete(
                                                                         chapter
                                                                             .id!);
                                                               }
-                                                              await ref
-                                                                  .read(changedItemsManagerProvider(
-                                                                          managerId:
-                                                                              1)
-                                                                      .notifier)
-                                                                  .addDeletedMangaAsync(
-                                                                      manga,
-                                                                      false);
                                                               await isar.mangas
                                                                   .delete(manga
                                                                       .id!);

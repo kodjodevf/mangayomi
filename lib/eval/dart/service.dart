@@ -116,6 +116,11 @@ class DartExtensionService implements ExtensionService {
   }
 
   @override
+  Future<String> getHtmlContent(String url) async {
+    return await _executeLib().getHtmlContent(url);
+  }
+
+  @override
   FilterList getFilterList() {
     List<dynamic> list;
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -90,13 +91,16 @@ class ChapterListTileWidget extends ConsumerWidget {
                   children: [
                     const Text(' • '),
                     Text(
-                      !chapter.manga.value!.isManga!
+                      chapter.manga.value!.itemType == ItemType.anime
                           ? l10n.episode_progress(Duration(
                                   milliseconds:
                                       int.parse(chapter.lastPageRead!))
                               .toString()
                               .substringBefore("."))
-                          : l10n.page(chapter.lastPageRead!),
+                          : l10n.page(chapter.manga.value!.itemType ==
+                                  ItemType.manga
+                              ? chapter.lastPageRead!
+                              : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %"),
                       style: TextStyle(
                           fontSize: 11,
                           color: context.isLight

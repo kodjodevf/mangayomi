@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -48,13 +50,17 @@ class _ExtensionListTileWidgetState
             setState(() {
               _isLoading = true;
             });
-            widget.source.isManga!
+            widget.source.itemType == ItemType.manga
                 ? await ref.watch(fetchMangaSourcesListProvider(
                         id: widget.source.id, reFresh: true)
                     .future)
-                : await ref.watch(fetchAnimeSourcesListProvider(
-                        id: widget.source.id, reFresh: true)
-                    .future);
+                : widget.source.itemType == ItemType.anime
+                    ? await ref.watch(fetchAnimeSourcesListProvider(
+                            id: widget.source.id, reFresh: true)
+                        .future)
+                    : await ref.watch(fetchNovelSourcesListProvider(
+                            id: widget.source.id, reFresh: true)
+                        .future);
             if (mounted) {
               setState(() {
                 _isLoading = false;
@@ -116,13 +122,17 @@ class _ExtensionListTileWidgetState
                   setState(() {
                     _isLoading = true;
                   });
-                  widget.source.isManga!
+                  widget.source.itemType == ItemType.manga
                       ? await ref.watch(fetchMangaSourcesListProvider(
                               id: widget.source.id, reFresh: true)
                           .future)
-                      : await ref.watch(fetchAnimeSourcesListProvider(
-                              id: widget.source.id, reFresh: true)
-                          .future);
+                      : widget.source.itemType == ItemType.anime
+                          ? await ref.watch(fetchAnimeSourcesListProvider(
+                                  id: widget.source.id, reFresh: true)
+                              .future)
+                          : await ref.watch(fetchNovelSourcesListProvider(
+                                  id: widget.source.id, reFresh: true)
+                              .future);
                   if (mounted) {
                     setState(() {
                       _isLoading = false;

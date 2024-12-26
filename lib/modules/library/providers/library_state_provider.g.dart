@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'9756e17b70fcb76aa6bac2a50e0927c2ad28717f';
+    r'bcc3757a2aec544a3282776536a14e50cfafd03d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -32,11 +32,11 @@ class _SystemHash {
 
 abstract class _$LibraryDisplayTypeState
     extends BuildlessAutoDisposeNotifier<DisplayType> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   DisplayType build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -52,11 +52,11 @@ class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
 
   /// See also [LibraryDisplayTypeState].
   LibraryDisplayTypeStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryDisplayTypeStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -66,7 +66,7 @@ class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
     covariant LibraryDisplayTypeStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -91,11 +91,11 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
     LibraryDisplayTypeState, DisplayType> {
   /// See also [LibraryDisplayTypeState].
   LibraryDisplayTypeStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryDisplayTypeState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryDisplayTypeStateProvider,
           name: r'libraryDisplayTypeStateProvider',
@@ -106,7 +106,7 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: LibraryDisplayTypeStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryDisplayTypeStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -117,11 +117,11 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -129,7 +129,7 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
     covariant LibraryDisplayTypeState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -140,14 +140,14 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
       origin: this,
       override: LibraryDisplayTypeStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -162,14 +162,14 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
   @override
   bool operator ==(Object other) {
     return other is LibraryDisplayTypeStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -180,8 +180,8 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
 // ignore: unused_element
 mixin LibraryDisplayTypeStateRef
     on AutoDisposeNotifierProviderRef<DisplayType> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -193,20 +193,20 @@ class _LibraryDisplayTypeStateProviderElement
   _LibraryDisplayTypeStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as LibraryDisplayTypeStateProvider).isManga;
+  ItemType get itemType => (origin as LibraryDisplayTypeStateProvider).itemType;
   @override
   Settings get settings => (origin as LibraryDisplayTypeStateProvider).settings;
 }
 
 String _$libraryGridSizeStateHash() =>
-    r'a4e55ef92f9387c2588679c5e2f23ef689e5d593';
+    r'2b41e0dfd5fbc1b01ffc9ee4b5d3a99bce12df18';
 
 abstract class _$LibraryGridSizeState
     extends BuildlessAutoDisposeNotifier<int?> {
-  late final bool isManga;
+  late final ItemType itemType;
 
   int? build({
-    required bool isManga,
+    required ItemType itemType,
   });
 }
 
@@ -221,10 +221,10 @@ class LibraryGridSizeStateFamily extends Family<int?> {
 
   /// See also [LibraryGridSizeState].
   LibraryGridSizeStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
   }) {
     return LibraryGridSizeStateProvider(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -233,7 +233,7 @@ class LibraryGridSizeStateFamily extends Family<int?> {
     covariant LibraryGridSizeStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -257,9 +257,9 @@ class LibraryGridSizeStateProvider
     extends AutoDisposeNotifierProviderImpl<LibraryGridSizeState, int?> {
   /// See also [LibraryGridSizeState].
   LibraryGridSizeStateProvider({
-    required bool isManga,
+    required ItemType itemType,
   }) : this._internal(
-          () => LibraryGridSizeState()..isManga = isManga,
+          () => LibraryGridSizeState()..itemType = itemType,
           from: libraryGridSizeStateProvider,
           name: r'libraryGridSizeStateProvider',
           debugGetCreateSourceHash:
@@ -269,7 +269,7 @@ class LibraryGridSizeStateProvider
           dependencies: LibraryGridSizeStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryGridSizeStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   LibraryGridSizeStateProvider._internal(
@@ -279,17 +279,17 @@ class LibraryGridSizeStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
 
   @override
   int? runNotifierBuild(
     covariant LibraryGridSizeState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -298,13 +298,13 @@ class LibraryGridSizeStateProvider
     return ProviderOverride(
       origin: this,
       override: LibraryGridSizeStateProvider._internal(
-        () => create()..isManga = isManga,
+        () => create()..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -317,13 +317,13 @@ class LibraryGridSizeStateProvider
 
   @override
   bool operator ==(Object other) {
-    return other is LibraryGridSizeStateProvider && other.isManga == isManga;
+    return other is LibraryGridSizeStateProvider && other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -332,8 +332,8 @@ class LibraryGridSizeStateProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin LibraryGridSizeStateRef on AutoDisposeNotifierProviderRef<int?> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
 class _LibraryGridSizeStateProviderElement
@@ -342,21 +342,21 @@ class _LibraryGridSizeStateProviderElement
   _LibraryGridSizeStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as LibraryGridSizeStateProvider).isManga;
+  ItemType get itemType => (origin as LibraryGridSizeStateProvider).itemType;
 }
 
 String _$mangaFilterDownloadedStateHash() =>
-    r'9c07e64580061bf2cbf892ef679274913aaa3b20';
+    r'455eb734a87b1d3be3e5684902734a9c8c98a330';
 
 abstract class _$MangaFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final List<Manga> mangaList;
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   int build({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -373,12 +373,12 @@ class MangaFilterDownloadedStateFamily extends Family<int> {
   /// See also [MangaFilterDownloadedState].
   MangaFilterDownloadedStateProvider call({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return MangaFilterDownloadedStateProvider(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -389,7 +389,7 @@ class MangaFilterDownloadedStateFamily extends Family<int> {
   ) {
     return call(
       mangaList: provider.mangaList,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -415,12 +415,12 @@ class MangaFilterDownloadedStateProvider
   /// See also [MangaFilterDownloadedState].
   MangaFilterDownloadedStateProvider({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => MangaFilterDownloadedState()
             ..mangaList = mangaList
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: mangaFilterDownloadedStateProvider,
           name: r'mangaFilterDownloadedStateProvider',
@@ -432,7 +432,7 @@ class MangaFilterDownloadedStateProvider
           allTransitiveDependencies:
               MangaFilterDownloadedStateFamily._allTransitiveDependencies,
           mangaList: mangaList,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -444,12 +444,12 @@ class MangaFilterDownloadedStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaList,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
   final List<Manga> mangaList;
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -458,7 +458,7 @@ class MangaFilterDownloadedStateProvider
   ) {
     return notifier.build(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -470,7 +470,7 @@ class MangaFilterDownloadedStateProvider
       override: MangaFilterDownloadedStateProvider._internal(
         () => create()
           ..mangaList = mangaList
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
@@ -478,7 +478,7 @@ class MangaFilterDownloadedStateProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaList: mangaList,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -494,7 +494,7 @@ class MangaFilterDownloadedStateProvider
   bool operator ==(Object other) {
     return other is MangaFilterDownloadedStateProvider &&
         other.mangaList == mangaList &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
@@ -502,7 +502,7 @@ class MangaFilterDownloadedStateProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -515,8 +515,8 @@ mixin MangaFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -531,24 +531,25 @@ class _MangaFilterDownloadedStateProviderElement
   List<Manga> get mangaList =>
       (origin as MangaFilterDownloadedStateProvider).mangaList;
   @override
-  bool get isManga => (origin as MangaFilterDownloadedStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as MangaFilterDownloadedStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as MangaFilterDownloadedStateProvider).settings;
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'ede01032c9a0a4e97028eb23c7bd91fa91b24a59';
+    r'd48b9b0a5752befdab56601a1c8e2b36d797aeee';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
   late final List<Manga> mangaList;
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   int build({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -565,12 +566,12 @@ class MangaFilterUnreadStateFamily extends Family<int> {
   /// See also [MangaFilterUnreadState].
   MangaFilterUnreadStateProvider call({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return MangaFilterUnreadStateProvider(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -581,7 +582,7 @@ class MangaFilterUnreadStateFamily extends Family<int> {
   ) {
     return call(
       mangaList: provider.mangaList,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -607,12 +608,12 @@ class MangaFilterUnreadStateProvider
   /// See also [MangaFilterUnreadState].
   MangaFilterUnreadStateProvider({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => MangaFilterUnreadState()
             ..mangaList = mangaList
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: mangaFilterUnreadStateProvider,
           name: r'mangaFilterUnreadStateProvider',
@@ -624,7 +625,7 @@ class MangaFilterUnreadStateProvider
           allTransitiveDependencies:
               MangaFilterUnreadStateFamily._allTransitiveDependencies,
           mangaList: mangaList,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -636,12 +637,12 @@ class MangaFilterUnreadStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaList,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
   final List<Manga> mangaList;
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -650,7 +651,7 @@ class MangaFilterUnreadStateProvider
   ) {
     return notifier.build(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -662,7 +663,7 @@ class MangaFilterUnreadStateProvider
       override: MangaFilterUnreadStateProvider._internal(
         () => create()
           ..mangaList = mangaList
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
@@ -670,7 +671,7 @@ class MangaFilterUnreadStateProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaList: mangaList,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -686,7 +687,7 @@ class MangaFilterUnreadStateProvider
   bool operator ==(Object other) {
     return other is MangaFilterUnreadStateProvider &&
         other.mangaList == mangaList &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
@@ -694,7 +695,7 @@ class MangaFilterUnreadStateProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -707,8 +708,8 @@ mixin MangaFilterUnreadStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -723,23 +724,23 @@ class _MangaFilterUnreadStateProviderElement
   List<Manga> get mangaList =>
       (origin as MangaFilterUnreadStateProvider).mangaList;
   @override
-  bool get isManga => (origin as MangaFilterUnreadStateProvider).isManga;
+  ItemType get itemType => (origin as MangaFilterUnreadStateProvider).itemType;
   @override
   Settings get settings => (origin as MangaFilterUnreadStateProvider).settings;
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'455594ef7515307787a136872090218f67102fbd';
+    r'fc6c919aa27bf338825cd8c252927ae78b8da36c';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final List<Manga> mangaList;
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   int build({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -756,12 +757,12 @@ class MangaFilterStartedStateFamily extends Family<int> {
   /// See also [MangaFilterStartedState].
   MangaFilterStartedStateProvider call({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return MangaFilterStartedStateProvider(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -772,7 +773,7 @@ class MangaFilterStartedStateFamily extends Family<int> {
   ) {
     return call(
       mangaList: provider.mangaList,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -798,12 +799,12 @@ class MangaFilterStartedStateProvider
   /// See also [MangaFilterStartedState].
   MangaFilterStartedStateProvider({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => MangaFilterStartedState()
             ..mangaList = mangaList
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: mangaFilterStartedStateProvider,
           name: r'mangaFilterStartedStateProvider',
@@ -815,7 +816,7 @@ class MangaFilterStartedStateProvider
           allTransitiveDependencies:
               MangaFilterStartedStateFamily._allTransitiveDependencies,
           mangaList: mangaList,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -827,12 +828,12 @@ class MangaFilterStartedStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaList,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
   final List<Manga> mangaList;
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -841,7 +842,7 @@ class MangaFilterStartedStateProvider
   ) {
     return notifier.build(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -853,7 +854,7 @@ class MangaFilterStartedStateProvider
       override: MangaFilterStartedStateProvider._internal(
         () => create()
           ..mangaList = mangaList
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
@@ -861,7 +862,7 @@ class MangaFilterStartedStateProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaList: mangaList,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -877,7 +878,7 @@ class MangaFilterStartedStateProvider
   bool operator ==(Object other) {
     return other is MangaFilterStartedStateProvider &&
         other.mangaList == mangaList &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
@@ -885,7 +886,7 @@ class MangaFilterStartedStateProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -898,8 +899,8 @@ mixin MangaFilterStartedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -914,23 +915,23 @@ class _MangaFilterStartedStateProviderElement
   List<Manga> get mangaList =>
       (origin as MangaFilterStartedStateProvider).mangaList;
   @override
-  bool get isManga => (origin as MangaFilterStartedStateProvider).isManga;
+  ItemType get itemType => (origin as MangaFilterStartedStateProvider).itemType;
   @override
   Settings get settings => (origin as MangaFilterStartedStateProvider).settings;
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'7761c3ab84367f165ed378992c904e13b590efed';
+    r'b013800ec4e42ede752c7cbcb00575678444e8b5';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final List<Manga> mangaList;
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   int build({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -947,12 +948,12 @@ class MangaFilterBookmarkedStateFamily extends Family<int> {
   /// See also [MangaFilterBookmarkedState].
   MangaFilterBookmarkedStateProvider call({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return MangaFilterBookmarkedStateProvider(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -963,7 +964,7 @@ class MangaFilterBookmarkedStateFamily extends Family<int> {
   ) {
     return call(
       mangaList: provider.mangaList,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -989,12 +990,12 @@ class MangaFilterBookmarkedStateProvider
   /// See also [MangaFilterBookmarkedState].
   MangaFilterBookmarkedStateProvider({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => MangaFilterBookmarkedState()
             ..mangaList = mangaList
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: mangaFilterBookmarkedStateProvider,
           name: r'mangaFilterBookmarkedStateProvider',
@@ -1006,7 +1007,7 @@ class MangaFilterBookmarkedStateProvider
           allTransitiveDependencies:
               MangaFilterBookmarkedStateFamily._allTransitiveDependencies,
           mangaList: mangaList,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1018,12 +1019,12 @@ class MangaFilterBookmarkedStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaList,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
   final List<Manga> mangaList;
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1032,7 +1033,7 @@ class MangaFilterBookmarkedStateProvider
   ) {
     return notifier.build(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1044,7 +1045,7 @@ class MangaFilterBookmarkedStateProvider
       override: MangaFilterBookmarkedStateProvider._internal(
         () => create()
           ..mangaList = mangaList
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
@@ -1052,7 +1053,7 @@ class MangaFilterBookmarkedStateProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaList: mangaList,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1068,7 +1069,7 @@ class MangaFilterBookmarkedStateProvider
   bool operator ==(Object other) {
     return other is MangaFilterBookmarkedStateProvider &&
         other.mangaList == mangaList &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
@@ -1076,7 +1077,7 @@ class MangaFilterBookmarkedStateProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1089,8 +1090,8 @@ mixin MangaFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1105,24 +1106,25 @@ class _MangaFilterBookmarkedStateProviderElement
   List<Manga> get mangaList =>
       (origin as MangaFilterBookmarkedStateProvider).mangaList;
   @override
-  bool get isManga => (origin as MangaFilterBookmarkedStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as MangaFilterBookmarkedStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as MangaFilterBookmarkedStateProvider).settings;
 }
 
 String _$mangasFilterResultStateHash() =>
-    r'059fbe356805144bb533d4827d2c91b82aa3be10';
+    r'c6f916c35e9b7125ba073d09aa6838605b933b20';
 
 abstract class _$MangasFilterResultState
     extends BuildlessAutoDisposeNotifier<bool> {
   late final List<Manga> mangaList;
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -1139,12 +1141,12 @@ class MangasFilterResultStateFamily extends Family<bool> {
   /// See also [MangasFilterResultState].
   MangasFilterResultStateProvider call({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return MangasFilterResultStateProvider(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1155,7 +1157,7 @@ class MangasFilterResultStateFamily extends Family<bool> {
   ) {
     return call(
       mangaList: provider.mangaList,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -1181,12 +1183,12 @@ class MangasFilterResultStateProvider
   /// See also [MangasFilterResultState].
   MangasFilterResultStateProvider({
     required List<Manga> mangaList,
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => MangasFilterResultState()
             ..mangaList = mangaList
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: mangasFilterResultStateProvider,
           name: r'mangasFilterResultStateProvider',
@@ -1198,7 +1200,7 @@ class MangasFilterResultStateProvider
           allTransitiveDependencies:
               MangasFilterResultStateFamily._allTransitiveDependencies,
           mangaList: mangaList,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1210,12 +1212,12 @@ class MangasFilterResultStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaList,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
   final List<Manga> mangaList;
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1224,7 +1226,7 @@ class MangasFilterResultStateProvider
   ) {
     return notifier.build(
       mangaList: mangaList,
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1236,7 +1238,7 @@ class MangasFilterResultStateProvider
       override: MangasFilterResultStateProvider._internal(
         () => create()
           ..mangaList = mangaList
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
@@ -1244,7 +1246,7 @@ class MangasFilterResultStateProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaList: mangaList,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1260,7 +1262,7 @@ class MangasFilterResultStateProvider
   bool operator ==(Object other) {
     return other is MangasFilterResultStateProvider &&
         other.mangaList == mangaList &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
@@ -1268,7 +1270,7 @@ class MangasFilterResultStateProvider
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1281,8 +1283,8 @@ mixin MangasFilterResultStateRef on AutoDisposeNotifierProviderRef<bool> {
   /// The parameter `mangaList` of this provider.
   List<Manga> get mangaList;
 
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1297,21 +1299,21 @@ class _MangasFilterResultStateProviderElement
   List<Manga> get mangaList =>
       (origin as MangasFilterResultStateProvider).mangaList;
   @override
-  bool get isManga => (origin as MangasFilterResultStateProvider).isManga;
+  ItemType get itemType => (origin as MangasFilterResultStateProvider).itemType;
   @override
   Settings get settings => (origin as MangasFilterResultStateProvider).settings;
 }
 
 String _$libraryShowCategoryTabsStateHash() =>
-    r'd141fb5f427f1054aff3a33a34d89b7aec354935';
+    r'f8136c8e7b343e50a4fd4884bc9874d888d08901';
 
 abstract class _$LibraryShowCategoryTabsState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -1328,11 +1330,11 @@ class LibraryShowCategoryTabsStateFamily extends Family<bool> {
 
   /// See also [LibraryShowCategoryTabsState].
   LibraryShowCategoryTabsStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryShowCategoryTabsStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1342,7 +1344,7 @@ class LibraryShowCategoryTabsStateFamily extends Family<bool> {
     covariant LibraryShowCategoryTabsStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -1368,11 +1370,11 @@ class LibraryShowCategoryTabsStateProvider
         bool> {
   /// See also [LibraryShowCategoryTabsState].
   LibraryShowCategoryTabsStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryShowCategoryTabsState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryShowCategoryTabsStateProvider,
           name: r'libraryShowCategoryTabsStateProvider',
@@ -1383,7 +1385,7 @@ class LibraryShowCategoryTabsStateProvider
           dependencies: LibraryShowCategoryTabsStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryShowCategoryTabsStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1394,11 +1396,11 @@ class LibraryShowCategoryTabsStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1406,7 +1408,7 @@ class LibraryShowCategoryTabsStateProvider
     covariant LibraryShowCategoryTabsState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1417,14 +1419,14 @@ class LibraryShowCategoryTabsStateProvider
       origin: this,
       override: LibraryShowCategoryTabsStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1439,14 +1441,14 @@ class LibraryShowCategoryTabsStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryShowCategoryTabsStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1456,8 +1458,8 @@ class LibraryShowCategoryTabsStateProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin LibraryShowCategoryTabsStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1469,22 +1471,23 @@ class _LibraryShowCategoryTabsStateProviderElement
   _LibraryShowCategoryTabsStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as LibraryShowCategoryTabsStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as LibraryShowCategoryTabsStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as LibraryShowCategoryTabsStateProvider).settings;
 }
 
 String _$libraryDownloadedChaptersStateHash() =>
-    r'00930ece1c84079525a2d73b03cd87f290184d36';
+    r'1c93c624dfaa46ccd56de1841233d04fc63e18af';
 
 abstract class _$LibraryDownloadedChaptersState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -1501,11 +1504,11 @@ class LibraryDownloadedChaptersStateFamily extends Family<bool> {
 
   /// See also [LibraryDownloadedChaptersState].
   LibraryDownloadedChaptersStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryDownloadedChaptersStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1515,7 +1518,7 @@ class LibraryDownloadedChaptersStateFamily extends Family<bool> {
     covariant LibraryDownloadedChaptersStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -1541,11 +1544,11 @@ class LibraryDownloadedChaptersStateProvider
         bool> {
   /// See also [LibraryDownloadedChaptersState].
   LibraryDownloadedChaptersStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryDownloadedChaptersState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryDownloadedChaptersStateProvider,
           name: r'libraryDownloadedChaptersStateProvider',
@@ -1556,7 +1559,7 @@ class LibraryDownloadedChaptersStateProvider
           dependencies: LibraryDownloadedChaptersStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryDownloadedChaptersStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1567,11 +1570,11 @@ class LibraryDownloadedChaptersStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1579,7 +1582,7 @@ class LibraryDownloadedChaptersStateProvider
     covariant LibraryDownloadedChaptersState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1590,14 +1593,14 @@ class LibraryDownloadedChaptersStateProvider
       origin: this,
       override: LibraryDownloadedChaptersStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1612,14 +1615,14 @@ class LibraryDownloadedChaptersStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryDownloadedChaptersStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1630,8 +1633,8 @@ class LibraryDownloadedChaptersStateProvider
 // ignore: unused_element
 mixin LibraryDownloadedChaptersStateRef
     on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1643,23 +1646,23 @@ class _LibraryDownloadedChaptersStateProviderElement
   _LibraryDownloadedChaptersStateProviderElement(super.provider);
 
   @override
-  bool get isManga =>
-      (origin as LibraryDownloadedChaptersStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as LibraryDownloadedChaptersStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as LibraryDownloadedChaptersStateProvider).settings;
 }
 
 String _$libraryLanguageStateHash() =>
-    r'fea084aa32fa415c32aa2b93a9a1ba7c50d0fd41';
+    r'83045a8db5fbad972fc1b956bbc8225f97fc03b4';
 
 abstract class _$LibraryLanguageState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -1675,11 +1678,11 @@ class LibraryLanguageStateFamily extends Family<bool> {
 
   /// See also [LibraryLanguageState].
   LibraryLanguageStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryLanguageStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1689,7 +1692,7 @@ class LibraryLanguageStateFamily extends Family<bool> {
     covariant LibraryLanguageStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -1714,11 +1717,11 @@ class LibraryLanguageStateProvider
     extends AutoDisposeNotifierProviderImpl<LibraryLanguageState, bool> {
   /// See also [LibraryLanguageState].
   LibraryLanguageStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryLanguageState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryLanguageStateProvider,
           name: r'libraryLanguageStateProvider',
@@ -1729,7 +1732,7 @@ class LibraryLanguageStateProvider
           dependencies: LibraryLanguageStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryLanguageStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1740,11 +1743,11 @@ class LibraryLanguageStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1752,7 +1755,7 @@ class LibraryLanguageStateProvider
     covariant LibraryLanguageState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1763,14 +1766,14 @@ class LibraryLanguageStateProvider
       origin: this,
       override: LibraryLanguageStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1785,14 +1788,14 @@ class LibraryLanguageStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryLanguageStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1802,8 +1805,8 @@ class LibraryLanguageStateProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin LibraryLanguageStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1815,21 +1818,21 @@ class _LibraryLanguageStateProviderElement
   _LibraryLanguageStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as LibraryLanguageStateProvider).isManga;
+  ItemType get itemType => (origin as LibraryLanguageStateProvider).itemType;
   @override
   Settings get settings => (origin as LibraryLanguageStateProvider).settings;
 }
 
 String _$libraryLocalSourceStateHash() =>
-    r'9c180d682d0b653bbfc5788e189ee8f4bebd77ec';
+    r'f3a442394bd9ecbe9be574f6843b9aca4310bdf3';
 
 abstract class _$LibraryLocalSourceState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -1845,11 +1848,11 @@ class LibraryLocalSourceStateFamily extends Family<bool> {
 
   /// See also [LibraryLocalSourceState].
   LibraryLocalSourceStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryLocalSourceStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1859,7 +1862,7 @@ class LibraryLocalSourceStateFamily extends Family<bool> {
     covariant LibraryLocalSourceStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -1884,11 +1887,11 @@ class LibraryLocalSourceStateProvider
     extends AutoDisposeNotifierProviderImpl<LibraryLocalSourceState, bool> {
   /// See also [LibraryLocalSourceState].
   LibraryLocalSourceStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryLocalSourceState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryLocalSourceStateProvider,
           name: r'libraryLocalSourceStateProvider',
@@ -1899,7 +1902,7 @@ class LibraryLocalSourceStateProvider
           dependencies: LibraryLocalSourceStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryLocalSourceStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -1910,11 +1913,11 @@ class LibraryLocalSourceStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -1922,7 +1925,7 @@ class LibraryLocalSourceStateProvider
     covariant LibraryLocalSourceState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -1933,14 +1936,14 @@ class LibraryLocalSourceStateProvider
       origin: this,
       override: LibraryLocalSourceStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -1955,14 +1958,14 @@ class LibraryLocalSourceStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryLocalSourceStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -1972,8 +1975,8 @@ class LibraryLocalSourceStateProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin LibraryLocalSourceStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -1985,21 +1988,21 @@ class _LibraryLocalSourceStateProviderElement
   _LibraryLocalSourceStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as LibraryLocalSourceStateProvider).isManga;
+  ItemType get itemType => (origin as LibraryLocalSourceStateProvider).itemType;
   @override
   Settings get settings => (origin as LibraryLocalSourceStateProvider).settings;
 }
 
 String _$libraryShowNumbersOfItemsStateHash() =>
-    r'fdef7a85fe68594e548f5affa40c72bf25fba2cf';
+    r'8261b0ee660d36d284c53c45debfca7ceb7cbfd3';
 
 abstract class _$LibraryShowNumbersOfItemsState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -2016,11 +2019,11 @@ class LibraryShowNumbersOfItemsStateFamily extends Family<bool> {
 
   /// See also [LibraryShowNumbersOfItemsState].
   LibraryShowNumbersOfItemsStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryShowNumbersOfItemsStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2030,7 +2033,7 @@ class LibraryShowNumbersOfItemsStateFamily extends Family<bool> {
     covariant LibraryShowNumbersOfItemsStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -2056,11 +2059,11 @@ class LibraryShowNumbersOfItemsStateProvider
         bool> {
   /// See also [LibraryShowNumbersOfItemsState].
   LibraryShowNumbersOfItemsStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryShowNumbersOfItemsState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryShowNumbersOfItemsStateProvider,
           name: r'libraryShowNumbersOfItemsStateProvider',
@@ -2071,7 +2074,7 @@ class LibraryShowNumbersOfItemsStateProvider
           dependencies: LibraryShowNumbersOfItemsStateFamily._dependencies,
           allTransitiveDependencies:
               LibraryShowNumbersOfItemsStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -2082,11 +2085,11 @@ class LibraryShowNumbersOfItemsStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -2094,7 +2097,7 @@ class LibraryShowNumbersOfItemsStateProvider
     covariant LibraryShowNumbersOfItemsState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2105,14 +2108,14 @@ class LibraryShowNumbersOfItemsStateProvider
       origin: this,
       override: LibraryShowNumbersOfItemsStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -2127,14 +2130,14 @@ class LibraryShowNumbersOfItemsStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryShowNumbersOfItemsStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -2145,8 +2148,8 @@ class LibraryShowNumbersOfItemsStateProvider
 // ignore: unused_element
 mixin LibraryShowNumbersOfItemsStateRef
     on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -2158,23 +2161,23 @@ class _LibraryShowNumbersOfItemsStateProviderElement
   _LibraryShowNumbersOfItemsStateProviderElement(super.provider);
 
   @override
-  bool get isManga =>
-      (origin as LibraryShowNumbersOfItemsStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as LibraryShowNumbersOfItemsStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as LibraryShowNumbersOfItemsStateProvider).settings;
 }
 
 String _$libraryShowContinueReadingButtonStateHash() =>
-    r'28b1d4c45a55f5325903161b8fc4282cb6f4290e';
+    r'a346c04b41c448c145107f862bbfa86f119edba1';
 
 abstract class _$LibraryShowContinueReadingButtonState
     extends BuildlessAutoDisposeNotifier<bool> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   bool build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -2191,11 +2194,11 @@ class LibraryShowContinueReadingButtonStateFamily extends Family<bool> {
 
   /// See also [LibraryShowContinueReadingButtonState].
   LibraryShowContinueReadingButtonStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return LibraryShowContinueReadingButtonStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2205,7 +2208,7 @@ class LibraryShowContinueReadingButtonStateFamily extends Family<bool> {
     covariant LibraryShowContinueReadingButtonStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -2231,11 +2234,11 @@ class LibraryShowContinueReadingButtonStateProvider
         LibraryShowContinueReadingButtonState, bool> {
   /// See also [LibraryShowContinueReadingButtonState].
   LibraryShowContinueReadingButtonStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => LibraryShowContinueReadingButtonState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: libraryShowContinueReadingButtonStateProvider,
           name: r'libraryShowContinueReadingButtonStateProvider',
@@ -2247,7 +2250,7 @@ class LibraryShowContinueReadingButtonStateProvider
               LibraryShowContinueReadingButtonStateFamily._dependencies,
           allTransitiveDependencies: LibraryShowContinueReadingButtonStateFamily
               ._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -2258,11 +2261,11 @@ class LibraryShowContinueReadingButtonStateProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -2270,7 +2273,7 @@ class LibraryShowContinueReadingButtonStateProvider
     covariant LibraryShowContinueReadingButtonState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2282,14 +2285,14 @@ class LibraryShowContinueReadingButtonStateProvider
       origin: this,
       override: LibraryShowContinueReadingButtonStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -2304,14 +2307,14 @@ class LibraryShowContinueReadingButtonStateProvider
   @override
   bool operator ==(Object other) {
     return other is LibraryShowContinueReadingButtonStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -2322,8 +2325,8 @@ class LibraryShowContinueReadingButtonStateProvider
 // ignore: unused_element
 mixin LibraryShowContinueReadingButtonStateRef
     on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -2336,23 +2339,23 @@ class _LibraryShowContinueReadingButtonStateProviderElement
   _LibraryShowContinueReadingButtonStateProviderElement(super.provider);
 
   @override
-  bool get isManga =>
-      (origin as LibraryShowContinueReadingButtonStateProvider).isManga;
+  ItemType get itemType =>
+      (origin as LibraryShowContinueReadingButtonStateProvider).itemType;
   @override
   Settings get settings =>
       (origin as LibraryShowContinueReadingButtonStateProvider).settings;
 }
 
 String _$sortLibraryMangaStateHash() =>
-    r'0e18c577b3b88a6dede7533393c9b8f744b32a33';
+    r'5454965fd1c6c027e5a2dfc93c2570e800bf18c0';
 
 abstract class _$SortLibraryMangaState
     extends BuildlessAutoDisposeNotifier<SortLibraryManga> {
-  late final bool isManga;
+  late final ItemType itemType;
   late final Settings settings;
 
   SortLibraryManga build({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   });
 }
@@ -2368,11 +2371,11 @@ class SortLibraryMangaStateFamily extends Family<SortLibraryManga> {
 
   /// See also [SortLibraryMangaState].
   SortLibraryMangaStateProvider call({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) {
     return SortLibraryMangaStateProvider(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2382,7 +2385,7 @@ class SortLibraryMangaStateFamily extends Family<SortLibraryManga> {
     covariant SortLibraryMangaStateProvider provider,
   ) {
     return call(
-      isManga: provider.isManga,
+      itemType: provider.itemType,
       settings: provider.settings,
     );
   }
@@ -2407,11 +2410,11 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
     SortLibraryMangaState, SortLibraryManga> {
   /// See also [SortLibraryMangaState].
   SortLibraryMangaStateProvider({
-    required bool isManga,
+    required ItemType itemType,
     required Settings settings,
   }) : this._internal(
           () => SortLibraryMangaState()
-            ..isManga = isManga
+            ..itemType = itemType
             ..settings = settings,
           from: sortLibraryMangaStateProvider,
           name: r'sortLibraryMangaStateProvider',
@@ -2422,7 +2425,7 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
           dependencies: SortLibraryMangaStateFamily._dependencies,
           allTransitiveDependencies:
               SortLibraryMangaStateFamily._allTransitiveDependencies,
-          isManga: isManga,
+          itemType: itemType,
           settings: settings,
         );
 
@@ -2433,11 +2436,11 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.isManga,
+    required this.itemType,
     required this.settings,
   }) : super.internal();
 
-  final bool isManga;
+  final ItemType itemType;
   final Settings settings;
 
   @override
@@ -2445,7 +2448,7 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
     covariant SortLibraryMangaState notifier,
   ) {
     return notifier.build(
-      isManga: isManga,
+      itemType: itemType,
       settings: settings,
     );
   }
@@ -2456,14 +2459,14 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
       origin: this,
       override: SortLibraryMangaStateProvider._internal(
         () => create()
-          ..isManga = isManga
+          ..itemType = itemType
           ..settings = settings,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        isManga: isManga,
+        itemType: itemType,
         settings: settings,
       ),
     );
@@ -2478,14 +2481,14 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
   @override
   bool operator ==(Object other) {
     return other is SortLibraryMangaStateProvider &&
-        other.isManga == isManga &&
+        other.itemType == itemType &&
         other.settings == settings;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
     hash = _SystemHash.combine(hash, settings.hashCode);
 
     return _SystemHash.finish(hash);
@@ -2496,8 +2499,8 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
 // ignore: unused_element
 mixin SortLibraryMangaStateRef
     on AutoDisposeNotifierProviderRef<SortLibraryManga> {
-  /// The parameter `isManga` of this provider.
-  bool get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 
   /// The parameter `settings` of this provider.
   Settings get settings;
@@ -2509,7 +2512,7 @@ class _SortLibraryMangaStateProviderElement
   _SortLibraryMangaStateProviderElement(super.provider);
 
   @override
-  bool get isManga => (origin as SortLibraryMangaStateProvider).isManga;
+  ItemType get itemType => (origin as SortLibraryMangaStateProvider).itemType;
   @override
   Settings get settings => (origin as SortLibraryMangaStateProvider).settings;
 }
@@ -2548,7 +2551,7 @@ final isLongPressedMangaStateProvider =
 
 typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
 String _$mangasSetIsReadStateHash() =>
-    r'cb88914fe1c47c1e3a29d43c23a6652b0e8f2ac1';
+    r'8f86296f588a48747de625e0471048978ee9bdeb';
 
 abstract class _$MangasSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {
@@ -2695,7 +2698,7 @@ class _MangasSetIsReadStateProviderElement
 }
 
 String _$mangasSetUnReadStateHash() =>
-    r'7b2f4c579f9cb392830ed4d70aff9ccc3e7952a0';
+    r'3413e731b2fd8476a4032d3e47b943ca12f25090';
 
 abstract class _$MangasSetUnReadState
     extends BuildlessAutoDisposeNotifier<void> {

@@ -11,6 +11,7 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -31,6 +32,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
   bool _isLoading = false;
+  int tabs = 3;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
@@ -42,7 +44,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         .idIsNotNull()
         .favoriteEqualTo(true)
         .and()
-        .isMangaEqualTo(widget.isManga)
+        .itemTypeEqualTo(widget.itemType)
         .findAllSync();
     int numbers = 0;
 
@@ -66,6 +68,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     });
   }
 
+  void tabListener() {
+    setState(() {
+      _textEditingController.clear();
+      _isSearch = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,6 +85,26 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
+    int newTabs = 0;
+    final hideManga = ref.watch(hideMangaStateProvider);
+    final hideAnime = ref.watch(hideAnimeStateProvider);
+    final hideNovel = ref.watch(hideNovelStateProvider);
+    if (!hideManga) newTabs++;
+    if (!hideAnime) newTabs++;
+    if (!hideNovel) newTabs++;
+    if (newTabs == 0) {
+      return SizedBox.shrink();
+    }
+    if (tabs != newTabs) {
+      _tabBarController.removeListener(tabListener);
+      _tabBarController.dispose();
+      _tabBarController = TabController(length: newTabs, vsync: this);
+      _tabBarController.animateTo(0);
+      _tabBarController.addListener(tabListener);
+      setState(() {
+        tabs = newTabs;
+      });
+    }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
         appBar: AppBar(
@@ -153,7 +182,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                                           .filter()
                                           .idIsNotNull()
                                           .chapter((q) => q.manga((q) =>
-                                              q.isMangaEqualTo(widget.isManga)))
+                                              q.itemTypeEqualTo(widget.itemType)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -179,20 +208,20 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: UpdateTab(
-              isManga: widget.isManga,
-              textEditingController: _textEditingController,
+              itemType: widget.itemType,
+              query: _textEditingController.text,
               isLoading: _isLoading),
         ));
   }
 }
 
 class UpdateTab extends ConsumerStatefulWidget {
-  final bool isManga;
-  final TextEditingController textEditingController;
+  final String query;
+  final ItemType itemType;
   final bool isLoading;
   const UpdateTab(
-      {required this.isManga,
-      required this.textEditingController,
+      {required this.itemType,
+      required this.query,
       required this.isLoading,
       super.key});
 
@@ -205,7 +234,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final update =
-        ref.watch(getAllUpdateStreamProvider(isManga: widget.isManga));
+        ref.watch(getAllUpdateStreamProvider(itemType: widget.itemType));
     return Scaffold(
         body: Stack(
       children: [

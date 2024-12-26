@@ -6,7 +6,7 @@ part of 'kitsu.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$kitsuHash() => r'6953b7520cc144f42992bbecc0d5306841c2382f';
+String _$kitsuHash() => r'9a123ca11d2b9e01d7d78b75d408a9f7a7b9b4e6';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -31,11 +31,11 @@ class _SystemHash {
 
 abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
-  late final bool? isManga;
+  late final ItemType? itemType;
 
   void build({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   });
 }
 
@@ -51,11 +51,11 @@ class KitsuFamily extends Family<void> {
   /// See also [Kitsu].
   KitsuProvider call({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   }) {
     return KitsuProvider(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -65,7 +65,7 @@ class KitsuFamily extends Family<void> {
   ) {
     return call(
       syncId: provider.syncId,
-      isManga: provider.isManga,
+      itemType: provider.itemType,
     );
   }
 
@@ -89,11 +89,11 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   /// See also [Kitsu].
   KitsuProvider({
     required int syncId,
-    bool? isManga,
+    ItemType? itemType,
   }) : this._internal(
           () => Kitsu()
             ..syncId = syncId
-            ..isManga = isManga,
+            ..itemType = itemType,
           from: kitsuProvider,
           name: r'kitsuProvider',
           debugGetCreateSourceHash:
@@ -103,7 +103,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
           dependencies: KitsuFamily._dependencies,
           allTransitiveDependencies: KitsuFamily._allTransitiveDependencies,
           syncId: syncId,
-          isManga: isManga,
+          itemType: itemType,
         );
 
   KitsuProvider._internal(
@@ -114,11 +114,11 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.syncId,
-    required this.isManga,
+    required this.itemType,
   }) : super.internal();
 
   final int syncId;
-  final bool? isManga;
+  final ItemType? itemType;
 
   @override
   void runNotifierBuild(
@@ -126,7 +126,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   ) {
     return notifier.build(
       syncId: syncId,
-      isManga: isManga,
+      itemType: itemType,
     );
   }
 
@@ -137,14 +137,14 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
       override: KitsuProvider._internal(
         () => create()
           ..syncId = syncId
-          ..isManga = isManga,
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         syncId: syncId,
-        isManga: isManga,
+        itemType: itemType,
       ),
     );
   }
@@ -158,14 +158,14 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   bool operator ==(Object other) {
     return other is KitsuProvider &&
         other.syncId == syncId &&
-        other.isManga == isManga;
+        other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, syncId.hashCode);
-    hash = _SystemHash.combine(hash, isManga.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -177,8 +177,8 @@ mixin KitsuRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
-  /// The parameter `isManga` of this provider.
-  bool? get isManga;
+  /// The parameter `itemType` of this provider.
+  ItemType? get itemType;
 }
 
 class _KitsuProviderElement
@@ -188,7 +188,7 @@ class _KitsuProviderElement
   @override
   int get syncId => (origin as KitsuProvider).syncId;
   @override
-  bool? get isManga => (origin as KitsuProvider).isManga;
+  ItemType? get itemType => (origin as KitsuProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

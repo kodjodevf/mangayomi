@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
 
 class ExtensionsLang extends ConsumerWidget {
-  final bool isManga;
-  const ExtensionsLang({required this.isManga, super.key});
+  final ItemType itemType;
+  const ExtensionsLang({required this.itemType, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +44,7 @@ class ExtensionsLang extends ConsumerWidget {
                       .filter()
                       .idIsNotNull()
                       .and()
-                      .isMangaEqualTo(isManga)
+                      .itemTypeEqualTo(itemType)
                       .findAllSync();
                   for (var source in sources) {
                     isar.sources.putSync(source..isActive = enable);
@@ -57,7 +58,7 @@ class ExtensionsLang extends ConsumerWidget {
               .filter()
               .idIsNotNull()
               .and()
-              .isMangaEqualTo(isManga)
+              .itemTypeEqualTo(itemType)
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             List<Source>? entries = snapshot.hasData ? snapshot.data : [];

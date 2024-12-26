@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
@@ -14,16 +16,22 @@ import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
 
   final Widget child;
 
+  @override
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
   String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
     switch (languageCode) {
       case 'de':
@@ -40,14 +48,40 @@ class MainScreen extends ConsumerWidget {
     }
   }
 
+  late bool hideManga = ref.watch(hideMangaStateProvider);
+  late bool hideAnime = ref.watch(hideAnimeStateProvider);
+  late bool hideNovel = ref.watch(hideNovelStateProvider);
+  late String? location =
+      ref.watch(routerCurrentLocationStateProvider(context));
+  late String defaultLocation = hideManga
+      ? hideAnime
+          ? hideNovel
+              ? '/more'
+              : '/NovelLibrary'
+          : '/AnimeLibrary'
+      : '/MangaLibrary';
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
+  initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.go(defaultLocation);
+
+      Timer.periodic(Duration(minutes: 5), (timer) {
+        ref.read(checkAndBackupProvider);
+      });
+      ref.watch(checkForUpdateProvider(context: context));
+      ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
+      ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
+      ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final route = GoRouter.of(context);
-    ref.read(checkAndBackupProvider);
-    ref.watch(checkForUpdateProvider(context: context));
-    ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
-    ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
+    location = ref.watch(routerCurrentLocationStateProvider(context));
     return ref.watch(migrationProvider).when(data: (_) {
       return Consumer(builder: (context, ref, chuld) {
         final location = ref.watch(
@@ -127,6 +161,39 @@ class MainScreen extends ConsumerWidget {
                                       labelType: NavigationRailLabelType.all,
                                       useIndicator: true,
                                       destinations: [
+                                        if (!hideManga)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.collections_bookmark),
+                                              icon: const Icon(Icons
+                                                  .collections_bookmark_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.manga))),
+                                        if (!hideAnime)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.video_collection),
+                                              icon: const Icon(Icons
+                                                  .video_collection_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.anime))),
+                                        if (!hideNovel)
+                                          NavigationRailDestination(
+                                              selectedIcon: const Icon(
+                                                  Icons.local_library),
+                                              icon: const Icon(
+                                                  Icons.local_library_outlined),
+                                              label: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5),
+                                                  child: Text(l10n.novel))),
                                         NavigationRailDestination(
                                             selectedIcon: const Icon(
                                                 Icons.collections_bookmark),
@@ -184,10 +251,10 @@ class MainScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
-                          Expanded(child: child)
+                          Expanded(child: widget.child)
                         ],
                       )
-                    : child,
+                    : widget.child,
                 bottomNavigationBar: context.isTablet
                     ? null
                     : AnimatedContainer(
@@ -215,6 +282,27 @@ class MainScreen extends ConsumerWidget {
                                 const Duration(milliseconds: 500),
                             selectedIndex: currentIndex,
                             destinations: [
+                              if (!hideManga)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.collections_bookmark),
+                                    icon: const Icon(
+                                        Icons.collections_bookmark_outlined),
+                                    label: l10n.manga),
+                              if (!hideAnime)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.video_collection),
+                                    icon: const Icon(
+                                        Icons.video_collection_outlined),
+                                    label: l10n.anime),
+                              if (!hideNovel)
+                                NavigationDestination(
+                                    selectedIcon:
+                                        const Icon(Icons.local_library),
+                                    icon: const Icon(
+                                        Icons.local_library_outlined),
+                                    label: l10n.novel),
                               NavigationDestination(
                                   selectedIcon:
                                       const Icon(Icons.collections_bookmark),
@@ -271,7 +359,7 @@ class MainScreen extends ConsumerWidget {
   }
 }
 
-Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
+Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
@@ -285,24 +373,11 @@ Widget _extensionUpdateTotalNumbers(WidgetRef ref) {
               .where((element) =>
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
-          return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(255, 176, 46, 37)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 10,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
+          if (entries.isEmpty) {
+            return widget;
+          }
+          return Badge(label: Text("${entries.length}"), child: widget);
         }
-        return Container();
+        return widget;
       });
 }

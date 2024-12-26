@@ -32,8 +32,14 @@ const HistorySchema = CollectionSchema(
       name: r'isManga',
       type: IsarType.bool,
     ),
-    r'mangaId': PropertySchema(
+    r'itemType': PropertySchema(
       id: 3,
+      name: r'itemType',
+      type: IsarType.byte,
+      enumMap: _HistoryitemTypeEnumValueMap,
+    ),
+    r'mangaId': PropertySchema(
+      id: 4,
       name: r'mangaId',
       type: IsarType.long,
     )
@@ -83,7 +89,8 @@ void _historySerialize(
   writer.writeLong(offsets[0], object.chapterId);
   writer.writeString(offsets[1], object.date);
   writer.writeBool(offsets[2], object.isManga);
-  writer.writeLong(offsets[3], object.mangaId);
+  writer.writeByte(offsets[3], object.itemType.index);
+  writer.writeLong(offsets[4], object.mangaId);
 }
 
 History _historyDeserialize(
@@ -97,7 +104,9 @@ History _historyDeserialize(
     date: reader.readStringOrNull(offsets[1]),
     id: id,
     isManga: reader.readBoolOrNull(offsets[2]),
-    mangaId: reader.readLongOrNull(offsets[3]),
+    itemType: _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+        ItemType.manga,
+    mangaId: reader.readLongOrNull(offsets[4]),
   );
   return object;
 }
@@ -116,11 +125,25 @@ P _historyDeserializeProp<P>(
     case 2:
       return (reader.readBoolOrNull(offset)) as P;
     case 3:
+      return (_HistoryitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ItemType.manga) as P;
+    case 4:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _HistoryitemTypeEnumValueMap = {
+  'manga': 0,
+  'anime': 1,
+  'novel': 2,
+};
+const _HistoryitemTypeValueEnumMap = {
+  0: ItemType.manga,
+  1: ItemType.anime,
+  2: ItemType.novel,
+};
 
 Id _historyGetId(History object) {
   return object.id ?? Isar.autoIncrement;
@@ -521,6 +544,59 @@ extension HistoryQueryFilter
     });
   }
 
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeEqualTo(
+      ItemType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeGreaterThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeLessThan(
+    ItemType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'itemType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> itemTypeBetween(
+    ItemType lower,
+    ItemType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'itemType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<History, History, QAfterFilterCondition> mangaIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -647,6 +723,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> sortByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByItemTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> sortByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mangaId', Sort.asc);
@@ -710,6 +798,18 @@ extension HistoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> thenByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByItemTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'itemType', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> thenByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mangaId', Sort.asc);
@@ -744,6 +844,12 @@ extension HistoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<History, History, QDistinct> distinctByItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'itemType');
+    });
+  }
+
   QueryBuilder<History, History, QDistinct> distinctByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mangaId');
@@ -774,6 +880,12 @@ extension HistoryQueryProperty
   QueryBuilder<History, bool?, QQueryOperations> isMangaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isManga');
+    });
+  }
+
+  QueryBuilder<History, ItemType, QQueryOperations> itemTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'itemType');
     });
   }
 

@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
 
 class ExtensionScreen extends ConsumerStatefulWidget {
-  final bool isManga;
+  final ItemType itemType;
   final String query;
   const ExtensionScreen(
-      {required this.query, required this.isManga, super.key});
+      {required this.query, required this.itemType, super.key});
 
   @override
   ConsumerState<ExtensionScreen> createState() => _ExtensionScreenState();
@@ -26,19 +28,25 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   @override
   Widget build(BuildContext context) {
     final streamExtensions =
-        ref.watch(getExtensionsStreamProvider(widget.isManga));
-    if (widget.isManga) {
+        ref.watch(getExtensionsStreamProvider(widget.itemType));
+    if (widget.itemType == ItemType.manga) {
       ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
-    } else {
+    } else if (widget.itemType == ItemType.anime) {
       ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
+    } else {
+      ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
     }
     final l10n = l10nLocalizations(context)!;
     return RefreshIndicator(
-      onRefresh: () => widget.isManga
+      onRefresh: () => widget.itemType == ItemType.manga
           ? ref.refresh(
               fetchMangaSourcesListProvider(id: null, reFresh: true).future)
-          : ref.refresh(
-              fetchAnimeSourcesListProvider(id: null, reFresh: true).future),
+          : widget.itemType == ItemType.anime
+              ? ref.refresh(
+                  fetchAnimeSourcesListProvider(id: null, reFresh: true).future)
+              : ref.refresh(
+                  fetchNovelSourcesListProvider(id: null, reFresh: true)
+                      .future),
       child: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: streamExtensions.when(
@@ -87,15 +95,22 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
                           ElevatedButton(
                               onPressed: () async {
                                 for (var source in updateEntries) {
-                                  source.isManga!
+                                  source.itemType == ItemType.manga
                                       ? await ref.watch(
                                           fetchMangaSourcesListProvider(
                                                   id: source.id, reFresh: true)
                                               .future)
-                                      : await ref.watch(
-                                          fetchAnimeSourcesListProvider(
-                                                  id: source.id, reFresh: true)
-                                              .future);
+                                      : source.itemType == ItemType.anime
+                                          ? await ref.watch(
+                                              fetchAnimeSourcesListProvider(
+                                                      id: source.id,
+                                                      reFresh: true)
+                                                  .future)
+                                          : await ref.watch(
+                                              fetchNovelSourcesListProvider(
+                                                      id: source.id,
+                                                      reFresh: true)
+                                                  .future);
                                 }
                               },
                               child: Text(l10n.update_all))
@@ -167,12 +182,15 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
           error: (error, _) => Center(
             child: ElevatedButton(
                 onPressed: () {
-                  if (widget.isManga) {
+                  if (widget.itemType == ItemType.manga) {
                     ref.invalidate(
                         fetchMangaSourcesListProvider(id: null, reFresh: true));
-                  } else {
+                  } else if (widget.itemType == ItemType.anime) {
                     ref.invalidate(
                         fetchAnimeSourcesListProvider(id: null, reFresh: true));
+                  } else {
+                    ref.invalidate(
+                        fetchNovelSourcesListProvider(id: null, reFresh: true));
                   }
                 },
                 child: Text(context.l10n.refresh)),
