@@ -6,10 +6,11 @@ import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/main.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/models/manga.dart';
 
 class BrowseSourcesScreen extends ConsumerStatefulWidget {
-  final bool isManga;
-  const BrowseSourcesScreen({super.key, required this.isManga});
+  final ItemType itemType;
+  const BrowseSourcesScreen({super.key, required this.itemType});
 
   @override
   ConsumerState<BrowseSourcesScreen> createState() =>
@@ -34,7 +35,12 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
           IconButton(
             splashRadius: 20,
             onPressed: () {
-              context.push('/globalSearch', extra: widget.isManga);
+              context.push('/globalSearch',
+                  extra: switch (widget.itemType) {
+                    ItemType.manga => ItemType.manga,
+                    ItemType.anime => ItemType.anime,
+                    ItemType.novel => ItemType.novel,
+                  });
             },
             icon: Icon(Icons.travel_explore_rounded,
                 color: Theme.of(context).hintColor),
@@ -42,7 +48,11 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
           IconButton(
             splashRadius: 20,
             onPressed: () {
-              context.push(widget.isManga ? '/MangaLibrary' : '/AnimeLibrary');
+              context.push(switch (widget.itemType) {
+                ItemType.manga => '/MangaLibrary',
+                ItemType.anime => '/AnimeLibrary',
+                ItemType.novel => '/NovelLibrary',
+              });
             },
             icon: Icon(Icons.favorite_outline_rounded,
                 color: Theme.of(context).hintColor),
@@ -50,10 +60,13 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
           IconButton(
             splashRadius: 20,
             onPressed: () {
-              context.push('/history/${widget.isManga ? 'manga' : 'anime'}');
+              context.push(switch (widget.itemType) {
+                ItemType.manga => '/MangaHistory',
+                ItemType.anime => '/AnimeHistory',
+                ItemType.novel => '/NovelHistory',
+              });
             },
-            icon: Icon(Icons.history,
-                color: Theme.of(context).hintColor),
+            icon: Icon(Icons.history, color: Theme.of(context).hintColor),
             tooltip: l10n.history,
           ),
           Stack(
@@ -64,8 +77,11 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
                 icon: Icon(Icons.new_releases_outlined,
                     color: Theme.of(context).hintColor),
                 onPressed: () {
-                  context
-                      .push(widget.isManga ? '/mangaUpdates' : '/animeUpdates');
+                  context.push(switch (widget.itemType) {
+                    ItemType.manga => '/MangaUpdates',
+                    ItemType.anime => '/AnimeUpdates',
+                    ItemType.novel => '/NovelUpdates',
+                  });
                 },
                 tooltip: l10n.updates,
               ),
@@ -79,7 +95,12 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
           IconButton(
             splashRadius: 20,
             onPressed: () {
-              context.push('/sourceFilter', extra: widget.isManga);
+              context.push('/sourceFilter',
+                  extra: switch (widget.itemType) {
+                    ItemType.manga => ItemType.manga,
+                    ItemType.anime => ItemType.anime,
+                    ItemType.novel => ItemType.novel,
+                  });
             },
             icon: Icon(Icons.filter_list_sharp,
                 color: Theme.of(context).hintColor),
@@ -87,7 +108,7 @@ class _BrowseSourcesScreenState extends ConsumerState<BrowseSourcesScreen>
         ],
       ),
       body: SourcesScreen(
-        isManga: widget.isManga,
+        itemType: widget.itemType,
         tabIndex: (_) {},
       ),
     );

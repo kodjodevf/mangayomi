@@ -52,7 +52,7 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
       observers: [BotToastNavigatorObserver()],
-      initialLocation: '/browse/manga',
+      initialLocation: '/MangaBrowse',
       debugLogDiagnostics: kDebugMode,
       refreshListenable: router,
       routes: router._routes,
@@ -125,69 +125,111 @@ class RouterNotifier extends ChangeNotifier {
                 ),
               ),
               GoRoute(
-                name: "History",
-                path: '/history/:type',
+                name: "MangaHistory",
+                path: '/MangaHistory',
                 builder: (context, state) => HistoryScreen(
-                  isManga: state.pathParameters['type'] == 'manga',
+                  itemType: ItemType.manga,
                 ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: HistoryScreen(
-                    isManga: state.pathParameters['type'] == 'manga',
+                    itemType: ItemType.manga,
                   ),
                 ),
               ),
-              // GoRoute(
-              //   name: "history",
-              //   path: '/history',
-              //   builder: (context, state) => const HistoryScreen(),
-              //   pageBuilder: (context, state) => transitionPage(
-              //     key: state.pageKey,
-              //     child: const HistoryScreen(),
-              //   ),
-              // ),
               GoRoute(
-                name: "mangaUpdates",
-                path: '/mangaUpdates',
-                builder: (context, state) => const UpdatesScreen(isManga: true),
+                name: "AnimeHistory",
+                path: '/AnimeHistory',
+                builder: (context, state) => HistoryScreen(
+                  itemType: ItemType.anime,
+                ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const UpdatesScreen(
-                    isManga: true,
+                  child: HistoryScreen(
+                    itemType: ItemType.anime,
                   ),
                 ),
               ),
               GoRoute(
-                name: "animeUpdates",
-                path: '/animeUpdates',
+                name: "NovelHistory",
+                path: '/NovelHistory',
+                builder: (context, state) => HistoryScreen(
+                  itemType: ItemType.novel,
+                ),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: HistoryScreen(
+                    itemType: ItemType.novel,
+                  ),
+                ),
+              ),
+              GoRoute(
+                name: "MangaUpdates",
+                path: '/MangaUpdates',
                 builder: (context, state) => const UpdatesScreen(
-                  isManga: false,
+                  itemType: ItemType.manga,
                 ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
                   child: const UpdatesScreen(
-                    isManga: false,
+                    itemType: ItemType.manga,
                   ),
                 ),
               ),
               GoRoute(
-                name: "mangaBrowse",
-                path: '/browse/manga',
-                builder: (context, state) =>
-                    const BrowseSourcesScreen(isManga: true),
+                name: "AnimeUpdates",
+                path: '/AnimeUpdates',
+                builder: (context, state) => const UpdatesScreen(
+                  itemType: ItemType.anime,
+                ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const BrowseSourcesScreen(isManga: true),
+                  child: const UpdatesScreen(
+                    itemType: ItemType.anime,
+                  ),
                 ),
               ),
               GoRoute(
-                name: "animeBrowse",
-                path: '/browse/anime',
-                builder: (context, state) =>
-                    const BrowseSourcesScreen(isManga: false),
+                name: "NovelUpdates",
+                path: '/NovelUpdates',
+                builder: (context, state) => const UpdatesScreen(
+                  itemType: ItemType.novel,
+                ),
                 pageBuilder: (context, state) => transitionPage(
                   key: state.pageKey,
-                  child: const BrowseSourcesScreen(isManga: false),
+                  child: const UpdatesScreen(
+                    itemType: ItemType.novel,
+                  ),
+                ),
+              ),
+              GoRoute(
+                name: "MangaBrowse",
+                path: '/MangaBrowse',
+                builder: (context, state) =>
+                    const BrowseSourcesScreen(itemType: ItemType.manga),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const BrowseSourcesScreen(itemType: ItemType.manga),
+                ),
+              ),
+              GoRoute(
+                name: "AnimeBrowse",
+                path: '/AnimeBrowse',
+                builder: (context, state) =>
+                    const BrowseSourcesScreen(itemType: ItemType.anime),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const BrowseSourcesScreen(itemType: ItemType.anime),
+                ),
+              ),
+              GoRoute(
+                name: "NovelBrowse",
+                path: '/NovelBrowse',
+                builder: (context, state) =>
+                    const BrowseSourcesScreen(itemType: ItemType.novel),
+                pageBuilder: (context, state) => transitionPage(
+                  key: state.pageKey,
+                  child: const BrowseSourcesScreen(itemType: ItemType.novel),
                 ),
               ),
               GoRoute(

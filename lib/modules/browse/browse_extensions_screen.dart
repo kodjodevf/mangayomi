@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -21,12 +23,11 @@ class BrowseExtensionsScreen extends ConsumerStatefulWidget {
 class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
-  final _textEditingController = TextEditingController();
-  bool _isSearch = false;
 
   @override
-  void initState() {
-    _tabBarController = TabController(length: 2, vsync: this);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _tabBarController = TabController(length: 3, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
@@ -35,12 +36,14 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
         _isSearch = false;
       });
     });
-    super.initState();
   }
 
   _chekPermission() async {
     await StorageProvider().requestPermission();
   }
+
+  final _textEditingController = TextEditingController();
+  bool _isSearch = false;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +100,11 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
                 onPressed: () {
                   _textEditingController.clear();
                   context.push('/ExtensionLang',
-                      extra: _tabBarController.index == 0 ? true : false);
+                      extra: switch (_tabBarController.index) {
+                        0 => ItemType.manga,
+                        1 => ItemType.anime,
+                        _ => ItemType.novel,
+                      });
                 },
                 icon: Icon(Icons.translate_rounded,
                     color: Theme.of(context).hintColor)),
@@ -112,7 +119,7 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
                   children: [
                     Text(l10n.manga_extensions),
                     const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, true)
+                    _extensionUpdateNumbers(ref, ItemType.manga)
                   ],
                 ),
               ),
@@ -121,7 +128,16 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
                   children: [
                     Text(l10n.anime_extensions),
                     const SizedBox(width: 8),
-                    _extensionUpdateNumbers(ref, false)
+                    _extensionUpdateNumbers(ref, ItemType.anime)
+                  ],
+                ),
+              ),
+              Tab(
+                child: Row(
+                  children: [
+                    Text(l10n.novel_extensions),
+                    const SizedBox(width: 8),
+                    _extensionUpdateNumbers(ref, ItemType.novel)
                   ],
                 ),
               ),
@@ -132,13 +148,11 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
           controller: _tabBarController,
           children: [
             ExtensionScreen(
-              query: _textEditingController.text,
-              isManga: true,
-            ),
+                query: _textEditingController.text, itemType: ItemType.manga),
             ExtensionScreen(
-              query: _textEditingController.text,
-              isManga: false,
-            ),
+                query: _textEditingController.text, itemType: ItemType.anime),
+            ExtensionScreen(
+                query: _textEditingController.text, itemType: ItemType.novel),
           ],
         ),
       ),
@@ -146,14 +160,14 @@ class _BrowseExtensionsScreenState extends ConsumerState<BrowseExtensionsScreen>
   }
 }
 
-Widget _extensionUpdateNumbers(WidgetRef ref, bool isManga) {
+Widget _extensionUpdateNumbers(WidgetRef ref, ItemType itemType) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
           .idIsNotNull()
           .and()
           .isActiveEqualTo(true)
-          .isMangaEqualTo(isManga)
+          .itemTypeEqualTo(itemType)
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {

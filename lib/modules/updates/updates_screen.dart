@@ -22,8 +22,8 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class UpdatesScreen extends ConsumerStatefulWidget {
-  final bool isManga;
-  const UpdatesScreen({required this.isManga, super.key});
+  final ItemType itemType;
+  const UpdatesScreen({required this.itemType, super.key});
 
   @override
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
@@ -32,7 +32,6 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
   bool _isLoading = false;
-  int tabs = 3;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
@@ -68,12 +67,12 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     });
   }
 
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
-  }
+  // void tabListener() {
+  //   setState(() {
+  //     _textEditingController.clear();
+  //     _isSearch = false;
+  //   });
+  // }
 
   @override
   void initState() {
@@ -85,34 +84,17 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
-    if (!hideManga) newTabs++;
-    if (!hideAnime) newTabs++;
-    if (!hideNovel) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
           leading: BackButton(
-              onPressed: () => context
-                  .go(widget.isManga ? '/browse/manga' : '/browse/anime')),
+              onPressed: () => context.go(switch (widget.itemType) {
+                    ItemType.manga => '/MangaBrowse',
+                    ItemType.anime => '/AnimeBrowse',
+                    ItemType.novel => '/NovelBrowse',
+                  })),
           title: _isSearch
               ? null
               : Text(
@@ -182,7 +164,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                                           .filter()
                                           .idIsNotNull()
                                           .chapter((q) => q.manga((q) =>
-                                              q.itemTypeEqualTo(widget.itemType)))
+                                              q.itemTypeEqualTo(
+                                                  widget.itemType)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -241,11 +224,10 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
         update.when(
           data: (data) {
             final entries = data
-                .where((element) => widget.textEditingController.text.isNotEmpty
+                .where((element) => widget.query.isNotEmpty
                     ? element.chapter.value!.manga.value!.name!
                         .toLowerCase()
-                        .contains(
-                            widget.textEditingController.text.toLowerCase())
+                        .contains(widget.query.toLowerCase())
                     : true)
                 .toList();
             final lastUpdatedList = data

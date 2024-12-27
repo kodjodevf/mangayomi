@@ -1713,8 +1713,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 elevation: 0,
                 backgroundColor: Colors.transparent,
                 leading: BackButton(
-                    onPressed: () => context.go(
-                        widget.isManga ? '/browse/manga' : '/browse/anime')),
+                    onPressed: () => context.go(switch (widget.itemType) {
+                          ItemType.manga => '/MangaBrowse',
+                          ItemType.anime => '/AnimeBrowse',
+                          ItemType.novel => '/NovelBrowse',
+                        })),
                 title: _isSearch
                     ? null
                     : Row(

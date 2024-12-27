@@ -32,39 +32,12 @@ class MainScreen extends ConsumerStatefulWidget {
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
-  String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
-    switch (languageCode) {
-      case 'de':
-        return "Aktuali-\nsierungen";
-      case 'es':
-      case 'es_419':
-        return "Actuali-\nzaciones";
-      case 'it':
-        return "Aggiorna-\nmenti";
-      case 'tr':
-        return "Güncel-\nlemeler";
-      default:
-        return defaultLabel;
-    }
-  }
-
-  late bool hideManga = ref.watch(hideMangaStateProvider);
-  late bool hideAnime = ref.watch(hideAnimeStateProvider);
-  late bool hideNovel = ref.watch(hideNovelStateProvider);
   late String? location =
       ref.watch(routerCurrentLocationStateProvider(context));
-  late String defaultLocation = hideManga
-      ? hideAnime
-          ? hideNovel
-              ? '/more'
-              : '/NovelLibrary'
-          : '/AnimeLibrary'
-      : '/MangaLibrary';
+
   @override
   initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.go(defaultLocation);
-
       Timer.periodic(Duration(minutes: 5), (timer) {
         ref.read(checkAndBackupProvider);
       });
@@ -90,10 +63,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         bool isReadingScreen =
             location == '/mangareaderview' || location == '/animePlayerView';
         int currentIndex = switch (location) {
-          null || '/browse/manga' => 0,
-          '/browse/anime' => 1,
-          '/extensions' => 2,
-          _ => 3,
+          null || '/MangaBrowse' => 0,
+          '/AnimeBrowse' => 1,
+          '/NovelBrowse' => 2,
+          '/extensions' => 3,
+          _ => 4,
         };
 
         final incognitoMode = ref.watch(incognitoModeStateProvider);
@@ -140,8 +114,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               true => 0,
                               _ => switch (location) {
                                   null => 100,
-                                  != '/browse/manga' &&
-                                        != '/browse/anime' &&
+                                  != '/MangaBrowse' &&
+                                        != '/AnimeBrowse' &&
+                                        != '/NovelBrowse' &&
                                         != '/extensions' &&
                                         != '/more' =>
                                     0,
@@ -161,39 +136,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                       labelType: NavigationRailLabelType.all,
                                       useIndicator: true,
                                       destinations: [
-                                        if (!hideManga)
-                                          NavigationRailDestination(
-                                              selectedIcon: const Icon(
-                                                  Icons.collections_bookmark),
-                                              icon: const Icon(Icons
-                                                  .collections_bookmark_outlined),
-                                              label: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5),
-                                                  child: Text(l10n.manga))),
-                                        if (!hideAnime)
-                                          NavigationRailDestination(
-                                              selectedIcon: const Icon(
-                                                  Icons.video_collection),
-                                              icon: const Icon(Icons
-                                                  .video_collection_outlined),
-                                              label: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5),
-                                                  child: Text(l10n.anime))),
-                                        if (!hideNovel)
-                                          NavigationRailDestination(
-                                              selectedIcon: const Icon(
-                                                  Icons.local_library),
-                                              icon: const Icon(
-                                                  Icons.local_library_outlined),
-                                              label: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5),
-                                                  child: Text(l10n.novel))),
                                         NavigationRailDestination(
                                             selectedIcon: const Icon(
                                                 Icons.collections_bookmark),
@@ -212,6 +154,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                                 padding: const EdgeInsets.only(
                                                     top: 5),
                                                 child: Text(l10n.anime))),
+                                        NavigationRailDestination(
+                                            selectedIcon:
+                                                const Icon(Icons.local_library),
+                                            icon: const Icon(
+                                                Icons.local_library_outlined),
+                                            label: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5),
+                                                child: Text(l10n.novel))),
                                         NavigationRailDestination(
                                             selectedIcon:
                                                 const Icon(Icons.explore),
@@ -234,9 +185,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                       selectedIndex: currentIndex,
                                       onDestinationSelected: (newIndex) {
                                         final fn = switch (newIndex) {
-                                          0 => route.go('/browse/manga'),
-                                          1 => route.go('/browse/anime'),
-                                          2 => route.go('/extensions'),
+                                          0 => route.go('/MangaBrowse'),
+                                          1 => route.go('/AnimeBrowse'),
+                                          2 => route.go('/NovelBrowse'),
+                                          3 => route.go('/extensions'),
                                           _ => route.go('/more'),
                                         };
                                         fn;
@@ -244,10 +196,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                     );
                                   }),
                                 ),
-                                Positioned(
-                                    right: 18,
-                                    top: 275,
-                                    child: _extensionUpdateTotalNumbers(ref)),
                               ],
                             ),
                           ),
@@ -264,8 +212,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           true => 0,
                           _ => switch (location) {
                               null => null,
-                              != '/browse/manga' &&
-                                    != '/browse/anime' &&
+                              != '/MangaBrowse' &&
+                                    != '/AnimeBrowse' &&
+                                    != '/NovelBrowse' &&
                                     != '/extensions' &&
                                     != '/more' =>
                                 0,
@@ -282,27 +231,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 const Duration(milliseconds: 500),
                             selectedIndex: currentIndex,
                             destinations: [
-                              if (!hideManga)
-                                NavigationDestination(
-                                    selectedIcon:
-                                        const Icon(Icons.collections_bookmark),
-                                    icon: const Icon(
-                                        Icons.collections_bookmark_outlined),
-                                    label: l10n.manga),
-                              if (!hideAnime)
-                                NavigationDestination(
-                                    selectedIcon:
-                                        const Icon(Icons.video_collection),
-                                    icon: const Icon(
-                                        Icons.video_collection_outlined),
-                                    label: l10n.anime),
-                              if (!hideNovel)
-                                NavigationDestination(
-                                    selectedIcon:
-                                        const Icon(Icons.local_library),
-                                    icon: const Icon(
-                                        Icons.local_library_outlined),
-                                    label: l10n.novel),
                               NavigationDestination(
                                   selectedIcon:
                                       const Icon(Icons.collections_bookmark),
@@ -316,29 +244,27 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                       Icons.video_collection_outlined),
                                   label: l10n.anime),
                               NavigationDestination(
-                                  selectedIcon: const Icon(Icons.explore),
-                                  icon: const Icon(Icons.explore_outlined),
-                                  label: l10n.extensions),
-                              Stack(
-                                children: [
-                                  NavigationDestination(
-                                      selectedIcon:
-                                          const Icon(Icons.more_horiz),
-                                      icon:
-                                          const Icon(Icons.more_horiz_outlined),
-                                      label: l10n.more),
-                                  Positioned(
-                                      right: 14,
-                                      top: 3,
-                                      child: _extensionUpdateTotalNumbers(ref)),
-                                ],
-                              ),
+                                  selectedIcon: const Icon(Icons.local_library),
+                                  icon:
+                                      const Icon(Icons.local_library_outlined),
+                                  label: l10n.novel),
+                              NavigationDestination(
+                                  selectedIcon: _extensionUpdateTotalNumbers(
+                                      ref, Icon(Icons.explore)),
+                                  icon: _extensionUpdateTotalNumbers(
+                                      ref, Icon(Icons.explore_outlined)),
+                                  label: l10n.browse),
+                              NavigationDestination(
+                                  selectedIcon: const Icon(Icons.more_horiz),
+                                  icon: const Icon(Icons.more_horiz_outlined),
+                                  label: l10n.more),
                             ],
                             onDestinationSelected: (newIndex) {
                               final fn = switch (newIndex) {
-                                0 => route.go('/browse/manga'),
-                                1 => route.go('/browse/anime'),
-                                2 => route.go('/extensions'),
+                                0 => route.go('/MangaBrowse'),
+                                1 => route.go('/AnimeBrowse'),
+                                2 => route.go('/NovelBrowse'),
+                                3 => route.go('/Extensions'),
                                 _ => route.go('/more'),
                               };
                               fn;

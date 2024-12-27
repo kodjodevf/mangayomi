@@ -22,8 +22,8 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
-  final bool isManga;
-  const HistoryScreen({required this.isManga, super.key});
+  final ItemType itemType;
+  const HistoryScreen({required this.itemType, super.key});
 
   @override
   ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
@@ -36,35 +36,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
-
-    if (!hideManga) newTabs++;
-    if (!hideAnime) newTabs++;
-    if (!hideNovel) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: BackButton(
-            onPressed: () =>
-                context.go(widget.isManga ? '/browse/manga' : '/browse/anime')),
+            onPressed: () => context.go(switch (widget.itemType) {
+                  ItemType.manga => '/MangaBrowse',
+                  ItemType.anime => '/AnimeBrowse',
+                  ItemType.novel => '/NovelBrowse',
+                })),
         title: _isSearch
             ? null
             : Text(
@@ -126,7 +108,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                         .filter()
                                         .idIsNotNull()
                                         .chapter((q) => q.manga((q) =>
-                                            q.isMangaEqualTo(widget.isManga)))
+                                            q.itemTypeEqualTo(widget.itemType)))
                                         .findAllSync()
                                         .toList();
                                     isar.writeTxnSync(() {
