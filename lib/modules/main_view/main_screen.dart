@@ -253,7 +253,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                       ref, Icon(Icons.explore)),
                                   icon: _extensionUpdateTotalNumbers(
                                       ref, Icon(Icons.explore_outlined)),
-                                  label: l10n.browse),
+                                  label: l10n.extensions),
                               NavigationDestination(
                                   selectedIcon: const Icon(Icons.more_horiz),
                                   icon: const Icon(Icons.more_horiz_outlined),
