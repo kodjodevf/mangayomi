@@ -264,7 +264,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 0 => route.go('/MangaBrowse'),
                                 1 => route.go('/AnimeBrowse'),
                                 2 => route.go('/NovelBrowse'),
-                                3 => route.go('/Extensions'),
+                                3 => route.go('/extensions'),
                                 _ => route.go('/more'),
                               };
                               fn;
