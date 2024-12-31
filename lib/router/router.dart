@@ -11,9 +11,10 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
+import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
-import 'package:mangayomi/modules/more/backup_and_restore/backup_and_restore.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/player/player_screen.dart';
@@ -500,15 +501,15 @@ class RouterNotifier extends ChangeNotifier {
           },
         ),
         GoRoute(
-          path: "/backupAndRestore",
-          name: "backupAndRestore",
+          path: "/dataAndStorage",
+          name: "dataAndStorage",
           builder: (context, state) {
-            return const BackupAndRestore();
+            return const DataAndStorage();
           },
           pageBuilder: (context, state) {
             return transitionPage(
               key: state.pageKey,
-              child: const BackupAndRestore(),
+              child: const DataAndStorage(),
             );
           },
         ),
@@ -578,6 +579,19 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: const CreateExtension(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/createBackup",
+          name: "createBackup",
+          builder: (context, state) {
+            return const CreateBackup();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const CreateBackup(),
             );
           },
         ),

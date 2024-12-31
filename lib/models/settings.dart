@@ -133,7 +133,7 @@ class Settings {
 
   int? backupFrequency;
 
-  List<int>? backupFrequencyOptions;
+  List<int>? backupListOptions;
 
   String? autoBackupLocation;
 
@@ -221,6 +221,8 @@ class Settings {
 
   bool? hideNovel;
 
+  bool? clearChapterCacheOnAppLaunch;
+
   Settings(
       {this.id = 227,
       this.displayType = DisplayType.compactGrid,
@@ -277,7 +279,7 @@ class Settings {
       this.backgroundColor = BackgroundColor.black,
       this.personalPageModeList,
       this.backupFrequency,
-      this.backupFrequencyOptions,
+      this.backupListOptions,
       this.autoBackupLocation,
       this.startDatebackup,
       this.usePageTapZones = true,
@@ -318,7 +320,8 @@ class Settings {
       this.novelDisplayType = DisplayType.comfortableGrid,
       this.hideManga = false,
       this.hideAnime = false,
-      this.hideNovel = false});
+      this.hideNovel = false,
+      this.clearChapterCacheOnAppLaunch = false});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -438,7 +441,7 @@ class Settings {
     themeIsDark = json['themeIsDark'];
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
-    backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
+    backupListOptions = json['backupListOptions']?.cast<int>();
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
@@ -491,6 +494,7 @@ class Settings {
     hideManga = json['hideManga'];
     hideAnime = json['hideAnime'];
     hideNovel = json['hideNovel'];
+    clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -562,7 +566,7 @@ class Settings {
         'themeIsDark': themeIsDark,
         'userAgent': userAgent,
         'backupFrequency': backupFrequency,
-        'backupFrequencyOptions': backupFrequencyOptions,
+        'backupListOptions': backupListOptions,
         'autoBackupLocation': autoBackupLocation,
         'startDatebackup': startDatebackup,
         'usePageTapZones': usePageTapZones,
@@ -605,7 +609,8 @@ class Settings {
         'novelDisplayType': novelDisplayType.index,
         'hideManga': hideManga,
         'hideAnime': hideAnime,
-        'hideNovel': hideNovel
+        'hideNovel': hideNovel,
+        'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch
       };
 }
 

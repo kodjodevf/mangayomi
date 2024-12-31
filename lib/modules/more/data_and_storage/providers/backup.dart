@@ -74,13 +74,6 @@ Future<void> doBackUp(Ref ref,
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"tracks": res});
-    final res_ = isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"trackPreferences": res_});
   }
   if (list.contains(4)) {
     final res = isar.historys
@@ -92,6 +85,15 @@ Future<void> doBackUp(Ref ref,
     datas.addAll({"history": res});
   }
   if (list.contains(5)) {
+    final res = isar.updates
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"updates": res});
+  }
+  if (list.contains(6)) {
     final res = isar.settings
         .filter()
         .idIsNotNull()
@@ -100,7 +102,25 @@ Future<void> doBackUp(Ref ref,
         .toList();
     datas.addAll({"settings": res});
   }
-  if (list.contains(6)) {
+  if (list.contains(7)) {
+    final res = isar.sourcePreferences
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"extensions_preferences": res});
+  }
+  if (list.contains(8)) {
+    final res_ = isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"trackPreferences": res_});
+  }
+  if (list.contains(9)) {
     final res = isar.sources
         .filter()
         .idIsNotNull()
@@ -108,23 +128,6 @@ Future<void> doBackUp(Ref ref,
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions": res});
-    final resSourePref = isar.sourcePreferences
-        .filter()
-        .idIsNotNull()
-        .keyIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"extensions_preferences": resSourePref});
-  }
-  if (list.contains(7)) {
-    final res = isar.updates
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"updates": res});
   }
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =

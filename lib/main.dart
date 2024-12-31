@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -75,6 +76,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     iniDateFormatting();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
+        ref
+            .read(totalChapterCacheSizeStateProvider.notifier)
+            .clearCache(showToast: false);
+      }
+    });
     super.initState();
   }
 
