@@ -84,7 +84,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
       final extensions = (backup["extensions"] as List?)
           ?.map((e) => Source.fromJson(e)..itemType = _convertToItemType(e))
           .toList();
-      final extensionsPref = (backup["extensions_preferences"] as List?)
+      final sourcesPrefs = (backup["extensions_preferences"] as List?)
           ?.map((e) => SourcePreference.fromJson(e))
           .toList();
       final updates =
@@ -166,8 +166,8 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
         }
 
         isar.sourcePreferences.clearSync();
-        if (extensionsPref != null) {
-          isar.sourcePreferences.putAllSync(extensionsPref);
+        if (sourcesPrefs != null) {
+          isar.sourcePreferences.putAllSync(sourcesPrefs);
         }
         isar.settings.clearSync();
         if (settings != null) {

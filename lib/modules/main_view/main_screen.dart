@@ -14,7 +14,7 @@ import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
-import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_novel_sources.dart';

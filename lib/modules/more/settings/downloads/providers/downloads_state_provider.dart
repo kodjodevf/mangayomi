@@ -40,6 +40,7 @@ class SaveAsCBZArchiveState extends _$SaveAsCBZArchiveState {
 class DownloadLocationState extends _$DownloadLocationState {
   @override
   (String, String) build() {
+    _refresh();
     return ("", isar.settings.getSync(227)!.downloadLocation ?? "");
   }
 
@@ -52,7 +53,7 @@ class DownloadLocationState extends _$DownloadLocationState {
 
   Directory? _storageProvider;
 
-  Future refresh() async {
+  Future _refresh() async {
     _storageProvider = await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
     state = (

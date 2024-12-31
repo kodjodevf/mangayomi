@@ -23,7 +23,7 @@ class History {
 
   History({
     this.id = Isar.autoIncrement,
-    this.isManga = true,
+    this.isManga,
     required this.itemType,
     required this.chapterId,
     required this.mangaId,
