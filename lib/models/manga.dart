@@ -65,7 +65,7 @@ class Manga {
       required this.name,
       required this.status,
       required this.description,
-      this.isManga = true,
+      this.isManga,
       this.itemType = ItemType.manga,
       this.dateAdded,
       this.lastUpdate,
