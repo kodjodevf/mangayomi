@@ -7,7 +7,9 @@ const _keepBaseUrl = '__rhttp_keep__';
 const _keepDuration = Duration(microseconds: -9999);
 const _keepProxySettings = ProxySettings.noProxy();
 const _keepRedirectSettings = RedirectSettings.limited(-9999);
+const _keepDnsSettings = DnsSettings.static();
 const _keepTlsSettings = TlsSettings();
+const _keepTimeoutSettings = TimeoutSettings();
 
 class ClientSettings {
   /// Base URL to be prefixed to all requests.
@@ -16,9 +18,8 @@ class ClientSettings {
   /// The timeout for the request including time to establish a connection.
   final Duration? timeout;
 
-  /// The timeout for establishing a connection.
-  /// See [timeout] for the total timeout.
-  final Duration? connectTimeout;
+  /// Timeout and keep alive settings.
+  final TimeoutSettings? timeoutSettings;
 
   /// Throws an exception if the status code is 4xx or 5xx.
   final bool throwOnStatusCode;
@@ -34,31 +35,36 @@ class ClientSettings {
   /// TLS settings.
   final TlsSettings? tlsSettings;
 
+  /// DNS settings and resolver overrides.
+  final DnsSettings? dnsSettings;
+
   const ClientSettings({
     this.baseUrl,
     this.timeout,
-    this.connectTimeout,
+    this.timeoutSettings,
     this.throwOnStatusCode = true,
     this.proxySettings,
     this.redirectSettings,
     this.tlsSettings,
+    this.dnsSettings,
   });
 
   ClientSettings copyWith({
     String? baseUrl = _keepBaseUrl,
     Duration? timeout = _keepDuration,
-    Duration? connectTimeout = _keepDuration,
+    TimeoutSettings? timeoutSettings = _keepTimeoutSettings,
     bool? throwOnStatusCode,
     ProxySettings? proxySettings = _keepProxySettings,
     RedirectSettings? redirectSettings = _keepRedirectSettings,
     TlsSettings? tlsSettings = _keepTlsSettings,
+    DnsSettings? dnsSettings = _keepDnsSettings,
   }) {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
-      connectTimeout: identical(connectTimeout, _keepDuration)
-          ? this.connectTimeout
-          : connectTimeout,
+      timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
+          ? this.timeoutSettings
+          : timeoutSettings,
       throwOnStatusCode: throwOnStatusCode ?? this.throwOnStatusCode,
       proxySettings: identical(proxySettings, _keepProxySettings)
           ? this.proxySettings
@@ -69,6 +75,9 @@ class ClientSettings {
       tlsSettings: identical(tlsSettings, _keepTlsSettings)
           ? this.tlsSettings
           : tlsSettings,
+      dnsSettings: identical(dnsSettings, _keepDnsSettings)
+          ? this.dnsSettings
+          : dnsSettings,
     );
   }
 }
@@ -158,15 +167,149 @@ class ClientCertificate {
   });
 }
 
+sealed class CustomProxy extends ProxySettings {
+  const CustomProxy._();
+}
+
+class StaticProxy extends CustomProxy {
+  /// The URL of the proxy server.
+  final String url;
+
+  /// Which requests to proxy.
+  final ProxyCondition condition;
+
+  const StaticProxy({
+    required this.url,
+    required this.condition,
+  }) : super._();
+
+  const StaticProxy.http(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.onlyHttp,
+        );
+
+  const StaticProxy.https(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.onlyHttps,
+        );
+
+  const StaticProxy.all(String url)
+      : this(
+          url: url,
+          condition: ProxyCondition.all,
+        );
+}
+
+class CustomProxyList extends ProxySettings {
+  /// A list of custom proxies.
+  /// The first proxy that matches the request will be used.
+  final List<CustomProxy> proxies;
+
+  const CustomProxyList(this.proxies);
+}
+
+enum ProxyCondition {
+  /// Proxy only HTTP requests.
+  onlyHttp,
+
+  /// Proxy only HTTPS requests.
+  onlyHttps,
+
+  /// Proxy all requests.
+  all,
+}
+
+/// General timeout settings for the client.
+class TimeoutSettings {
+  /// The timeout for the request including time to establish a connection.
+  final Duration? timeout;
+
+  /// The timeout for establishing a connection.
+  /// See [timeout] for the total timeout.
+  final Duration? connectTimeout;
+
+  /// Keep alive idle timeout. If not set, keep alive is disabled.
+  final Duration? keepAliveTimeout;
+
+  /// Keep alive ping interval.
+  /// Only valid if keepAliveTimeout is set and HTTP/2 is used.
+  final Duration keepAlivePing;
+
+  const TimeoutSettings({
+    this.timeout,
+    this.connectTimeout,
+    this.keepAliveTimeout,
+    this.keepAlivePing = const Duration(seconds: 30),
+  });
+
+  TimeoutSettings copyWith({
+    Duration? timeout,
+    Duration? connectTimeout,
+    Duration? keepAliveTimeout,
+    Duration? keepAlivePing,
+  }) {
+    return TimeoutSettings(
+      timeout: timeout ?? this.timeout,
+      connectTimeout: connectTimeout ?? this.connectTimeout,
+      keepAliveTimeout: keepAliveTimeout ?? this.keepAliveTimeout,
+      keepAlivePing: keepAlivePing ?? this.keepAlivePing,
+    );
+  }
+}
+
+sealed class DnsSettings {
+  const DnsSettings();
+
+  /// Static DNS settings and resolver overrides
+  /// for simple use cases.
+  const factory DnsSettings.static({
+    Map<String, List<String>> overrides,
+    String? fallback,
+  }) = StaticDnsSettings._;
+
+  /// Dynamic DNS settings and resolver for more complex use cases.
+  const factory DnsSettings.dynamic({
+    required Future<List<String>> Function(String host) resolver,
+  }) = DynamicDnsSettings._;
+}
+
+/// Static DNS settings and resolver overrides.
+class StaticDnsSettings extends DnsSettings {
+  /// Overrides the DNS resolver for specific hosts.
+  /// The key is the host and the value is a list of IP addresses.
+  final Map<String, List<String>> overrides;
+
+  /// If set, the client will use this IP address for
+  /// all requests that don't match any override.
+  final String? fallback;
+
+  const StaticDnsSettings._({
+    this.overrides = const {},
+    this.fallback,
+  });
+}
+
+/// Dynamic DNS settings and resolver.
+class DynamicDnsSettings extends DnsSettings {
+  /// The function to resolve the IP address for a host.
+  final Future<List<String>> Function(String host) resolver;
+
+  const DynamicDnsSettings._({
+    required this.resolver,
+  });
+}
+
 extension ClientSettingsExt on ClientSettings {
   rust_client.ClientSettings toRustType() {
     return rust_client.ClientSettings(
-      timeout: timeout,
-      connectTimeout: connectTimeout,
+      timeoutSettings: timeoutSettings?._toRustType(),
       throwOnStatusCode: throwOnStatusCode,
       proxySettings: proxySettings?._toRustType(),
       redirectSettings: redirectSettings?._toRustType(),
       tlsSettings: tlsSettings?._toRustType(),
+      dnsSettings: dnsSettings?._toRustType(),
     );
   }
 }
@@ -174,8 +317,40 @@ extension ClientSettingsExt on ClientSettings {
 extension on ProxySettings {
   rust_client.ProxySettings _toRustType() {
     return switch (this) {
-      NoProxy() => rust_client.ProxySettings.noProxy,
+      NoProxy() => const rust_client.ProxySettings.noProxy(),
+      CustomProxy proxy => rust_client.ProxySettings.customProxyList([
+          proxy._toRustType(),
+        ]),
+      CustomProxyList list => rust_client.ProxySettings.customProxyList(
+          list.proxies.map((e) => e._toRustType()).toList(),
+        ),
     };
+  }
+}
+
+extension on CustomProxy {
+  rust_client.CustomProxy _toRustType() {
+    return switch (this) {
+      StaticProxy s => rust_client.CustomProxy(
+          url: s.url,
+          condition: switch (s.condition) {
+            ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
+            ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
+            ProxyCondition.all => rust_client.ProxyCondition.all,
+          },
+        ),
+    };
+  }
+}
+
+extension on TimeoutSettings {
+  rust_client.TimeoutSettings _toRustType() {
+    return rust_client.TimeoutSettings(
+      timeout: timeout,
+      connectTimeout: connectTimeout,
+      keepAliveTimeout: keepAliveTimeout,
+      keepAlivePing: keepAlivePing,
+    );
   }
 }
 
@@ -210,5 +385,21 @@ extension on ClientCertificate {
       certificate: Uint8List.fromList(certificate.codeUnits),
       privateKey: Uint8List.fromList(privateKey.codeUnits),
     );
+  }
+}
+
+extension on DnsSettings {
+  rust_client.DnsSettings _toRustType() {
+    return switch (this) {
+      StaticDnsSettings s => rust_client.createStaticResolverSync(
+          settings: rust_client.StaticDnsSettings(
+            overrides: s.overrides,
+            fallback: s.fallback,
+          ),
+        ),
+      DynamicDnsSettings d => rust_client.createDynamicResolverSync(
+          resolver: d.resolver,
+        ),
+    };
   }
 }
