@@ -9,6 +9,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:mangayomi/models/settings.dart';
 import 'package:http/io_client.dart';
+import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/utils/log/log.dart';
 import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
 
@@ -26,9 +27,10 @@ class MClient {
             timeout: reqcopyWith?["timeout"] != null
                 ? Duration(seconds: reqcopyWith?["timeout"])
                 : null,
-            connectTimeout: reqcopyWith?["connectTimeout"] != null
-                ? Duration(seconds: reqcopyWith?["connectTimeout"])
-                : null,
+            timeoutSettings: TimeoutSettings(
+                connectTimeout: reqcopyWith?["connectTimeout"] != null
+                    ? Duration(seconds: reqcopyWith?["connectTimeout"])
+                    : null),
             tlsSettings: rhttp.TlsSettings(
                 verifyCertificates:
                     reqcopyWith?["verifyCertificates"] ?? false));

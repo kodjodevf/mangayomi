@@ -91,7 +91,13 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                       final res = await showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text(pref.title!),
+                          title: Text.rich(TextSpan(children: [
+                            TextSpan(text: pref.title!),
+                            if (pref.summary?.isNotEmpty ?? false)
+                              TextSpan(
+                                  text: "\n\n${pref.summary!}",
+                                  style: TextStyle(fontSize: 13))
+                          ])),
                           content: SizedBox(
                               width: context.width(0.8),
                               child: ListView.builder(
