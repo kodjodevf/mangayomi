@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
 import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' hide Text;
 import 'package:intl/date_symbol_data_local.dart';
@@ -11,6 +12,7 @@ import 'package:js_packer/js_packer.dart';
 import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/model/document.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';
@@ -624,6 +626,51 @@ class MBridge {
     } catch (_) {
       return text;
     }
+  }
+
+  static Future<String> evaluateJavascriptViaWebview(
+      String url, Map<String, String> headers, List<String> scripts,
+      {int time = 30}) async {
+    int t = 0;
+    bool timeOut = false;
+    bool isOk = false;
+    String response = "";
+    HeadlessInAppWebView? headlessWebView;
+    headlessWebView = HeadlessInAppWebView(
+      webViewEnvironment: webViewEnvironment,
+      onWebViewCreated: (controller) {
+        controller.addJavaScriptHandler(
+          handlerName: 'setResponse',
+          callback: (args) {
+            response = args[0] as String;
+            isOk = true;
+          },
+        );
+      },
+      initialUrlRequest: URLRequest(url: WebUri(url), headers: headers),
+      onLoadStop: (controller, url) async {
+        for (var script in scripts) {
+          await controller.platform.evaluateJavascript(source: script);
+        }
+      },
+    );
+
+    headlessWebView.run();
+
+    await Future.doWhile(() async {
+      timeOut = time == t;
+      if (timeOut || isOk) {
+        return false;
+      }
+      await Future.delayed(const Duration(seconds: 1));
+      t++;
+      return true;
+    });
+    try {
+      headlessWebView.dispose();
+    } catch (_) {}
+
+    return response;
   }
 }
 
