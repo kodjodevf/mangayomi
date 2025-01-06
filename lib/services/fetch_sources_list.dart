@@ -26,12 +26,7 @@ Future<void> fetchSourcesList(
     for (var source in sourceList) {
       if (source.appMinVerReq != null) {
         if (compareVersions(info.version, source.appMinVerReq!) > -1) {
-          final itm = source.isManga == null
-              ? source.itemType
-              : source.isManga!
-                  ? ItemType.manga
-                  : ItemType.anime;
-          if (itm == itemType) {
+          if (source.itemType == itemType) {
             if (id != null) {
               if (id == source.id) {
                 final sourc = isar.sources.getSync(id)!;
