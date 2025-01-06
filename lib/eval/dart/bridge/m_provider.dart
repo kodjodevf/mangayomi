@@ -841,6 +841,32 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 ],
                 namedParams: []),
             isStatic: true),
+        'evaluateJavascriptViaWebview': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                BridgeTypeRef(
+                  CoreTypes.string,
+                )
+              ])),
+              params: [
+                BridgeParameter(
+                    'url',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+                BridgeParameter(
+                    'headers',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map, [
+                      BridgeTypeRef(CoreTypes.string),
+                      BridgeTypeRef(CoreTypes.string)
+                    ])),
+                    false),
+                BridgeParameter(
+                    'scripts',
+                    BridgeTypeAnnotation(BridgeTypeRef(
+                        CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                    false),
+              ]),
+        ),
       },
       bridge: true);
 
@@ -1008,6 +1034,17 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                       $String('url'): $String(e['url'] ?? ''),
                     }))
                 .toList());
+          }))),
+      "evaluateJavascriptViaWebview" => $Function((_, __, List<$Value?> args) =>
+          $Future.wrap(MBridge.evaluateJavascriptViaWebview(
+                  args[0]!.$value,
+                  (args[1]!.$value as Map).map((key, value) => MapEntry(
+                      key.$reified.toString(), value.$reified.toString())),
+                  (args[2]!.$value as List)
+                      .map((e) => e.$reified.toString())
+                      .toList())
+              .then((value) {
+            return $String(value);
           }))),
       "toVideo" => $Function((_, __, List<$Value?> args) {
           final value = MBridge.toVideo(
