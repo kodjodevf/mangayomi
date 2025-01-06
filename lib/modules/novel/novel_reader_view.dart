@@ -625,7 +625,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 ),
               ),
             ),
-            Flexible(
+            /*Flexible(
               child: Container(
                 height: 65,
                 color: _backgroundColor(context),
@@ -636,7 +636,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                       popUpAnimationStyle: popupAnimationStyle,
                       color: Colors.black,
                       child: const Icon(
-                        Icons.app_settings_alt_outlined,
+                        Icons.format_align_center_outlined,
                       ),
                       onSelected: (value) {
                         ref
@@ -680,7 +680,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                   ],
                 ),
               ),
-            ),
+            ),*/
           ],
         ),
       ),
