@@ -215,6 +215,11 @@ class Settings {
   @enumerated
   late DisplayType novelDisplayType;
 
+  int? novelFontSize;
+
+  @enumerated
+  late NovelTextAlign novelTextAlign;
+
   bool? hideManga;
 
   bool? hideAnime;
@@ -318,6 +323,8 @@ class Settings {
       this.novelLibraryLocalSource,
       this.sortLibraryNovel,
       this.novelDisplayType = DisplayType.comfortableGrid,
+      this.novelFontSize = 14,
+      this.novelTextAlign = NovelTextAlign.left,
       this.hideManga = false,
       this.hideAnime = false,
       this.hideNovel = false,
@@ -491,6 +498,11 @@ class Settings {
         : null;
     novelDisplayType = DisplayType
         .values[json['novelDisplayType'] ?? DisplayType.comfortableGrid.index];
+    if (json['novelFontSize'] != null) {
+      novelFontSize = json['novelFontSize'];
+    }
+    novelTextAlign = NovelTextAlign
+        .values[json['novelTextAlign'] ?? NovelTextAlign.left.index];
     hideManga = json['hideManga'];
     hideAnime = json['hideAnime'];
     hideNovel = json['hideNovel'];
@@ -607,6 +619,8 @@ class Settings {
         'novelLibraryLocalSource': novelLibraryLocalSource,
         'sortLibraryNovel': sortLibraryNovel?.toJson(),
         'novelDisplayType': novelDisplayType.index,
+        'novelFontSize': novelFontSize,
+        'novelTextAlign': novelTextAlign.index,
         'hideManga': hideManga,
         'hideAnime': hideAnime,
         'hideNovel': hideNovel,
@@ -808,6 +822,8 @@ enum ReaderMode {
   webtoon,
   horizontalContinuous
 }
+
+enum NovelTextAlign { left, center, right, block }
 
 enum PageMode { onePage, doublePage }
 
