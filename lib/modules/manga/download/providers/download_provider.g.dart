@@ -6,7 +6,7 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$downloadChapterHash() => r'de8e2d5b952071bc0d014fc3aa5c9b0714fbcee0';
+String _$downloadChapterHash() => r'2873b00f9f4d0fd91bc90a28e2700a6c0d187a46';
 
 /// Copied from Dart SDK
 class _SystemHash {

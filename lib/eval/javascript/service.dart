@@ -63,6 +63,9 @@ class MProvider {
     async getHtmlContent(url) {
         throw new Error("getHtmlContent not implemented");
     }
+    async cleanHtmlContent(html) {
+        throw new Error("cleanHtmlContent not implemented");
+    }
     getFilterList() {
         throw new Error("getFilterList not implemented");
     }
@@ -143,6 +146,15 @@ var extention = new DefaultExtension();
     _init();
     final res = (await runtime.handlePromise(await runtime.evaluateAsync(
             'jsonStringify(() => extention.getHtmlContent(`$url`))')))
+        .stringResult;
+    return res;
+  }
+
+  @override
+  Future<String> cleanHtmlContent(String html) async {
+    _init();
+    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
+            'jsonStringify(() => extention.cleanHtmlContent(`$html`))')))
         .stringResult;
     return res;
   }

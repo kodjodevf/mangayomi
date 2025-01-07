@@ -51,13 +51,15 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
         ("getDetail", 3),
         ("getPageList", 4),
         ("getVideoList", 5),
-        ("getHtmlContent", 6)
+        ("getHtmlContent", 6),
+        ("cleanHtmlContent", 7)
       ];
 
   int _serviceIndex = 0;
   int _page = 1;
   String _query = "";
   String _url = "";
+  String _html = "";
   bool _isLoading = false;
   String _errorText = "";
   bool _error = false;
@@ -226,6 +228,10 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                               (v) {
                             _url = v;
                           }),
+                        if (_serviceIndex == 7)
+                          _textEditing("Html", context, "ex. <p>Text</p>", (v) {
+                            _html = v;
+                          }),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Wrap(
@@ -293,9 +299,12 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                               (await service.getVideoList(_url))
                                                   .map((e) => e.toJson())
                                                   .toList();
-                                        } else {
+                                        } else if (_serviceIndex == 6) {
                                           result = (await service
                                               .getHtmlContent(_url));
+                                        } else {
+                                          result = (await service
+                                              .cleanHtmlContent(_html));
                                         }
                                         if (mounted) {
                                           setState(() {

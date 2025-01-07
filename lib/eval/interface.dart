@@ -31,6 +31,8 @@ abstract interface class ExtensionService {
 
   Future<String> getHtmlContent(String url);
 
+  Future<String> cleanHtmlContent(String html);
+
   FilterList getFilterList();
 
   List<SourcePreference> getSourcePreferences();
