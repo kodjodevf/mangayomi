@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -371,11 +373,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
-Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
+Widget _extensionUpdateTotalNumbers(WidgetRef ref, Widget widget) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
           .idIsNotNull()
+          .optional(ref.watch(hideMangaStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.manga))
+          .optional(ref.watch(hideAnimeStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.anime))
+          .optional(ref.watch(hideNovelStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.novel))
           .and()
           .isActiveEqualTo(true)
           .watch(fireImmediately: true),
@@ -396,7 +404,28 @@ Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
 
 Widget _updatesTotalNumbers(WidgetRef ref, Widget widget) {
   return StreamBuilder(
-      stream: isar.updates.filter().idIsNotNull().watch(fireImmediately: true),
+      stream: isar.updates
+          .filter()
+          .idIsNotNull()
+          .optional(
+              ref.watch(hideMangaStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.manga)),
+                  ))
+          .optional(
+              ref.watch(hideAnimeStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.anime)),
+                  ))
+          .optional(
+              ref.watch(hideNovelStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.novel)),
+                  ))
+          .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           final entries = snapshot.data!.where((element) {
