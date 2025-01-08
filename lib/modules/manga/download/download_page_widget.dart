@@ -53,10 +53,13 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
     final cbzFile = File(p.join(mangaDir!.path, "${widget.chapter.name}.cbz"));
     final mp4File = File(p.join(mangaDir.path,
         "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
+    final htmlFile = File(p.join(mangaDir.path, "${widget.chapter.name}.html"));
     if (cbzFile.existsSync()) {
       files = [XFile(cbzFile.path)];
     } else if (mp4File.existsSync()) {
       files = [XFile(mp4File.path)];
+    } else if (htmlFile.existsSync()) {
+      files = [XFile(htmlFile.path)];
     } else {
       files = path!.listSync().map((e) => XFile(e.path)).toList();
     }
@@ -84,6 +87,13 @@ class _ChapterPageDownloadState extends ConsumerState<ChapterPageDownload>
             "${widget.chapter.name!.replaceForbiddenCharacters(' ')}.mp4"));
         if (mp4File.existsSync()) {
           mp4File.deleteSync();
+        }
+      } catch (_) {}
+      try {
+        final htmlFile =
+            File(p.join(mangaDir!.path, "${widget.chapter.name}.html"));
+        if (htmlFile.existsSync()) {
+          htmlFile.deleteSync();
         }
       } catch (_) {}
       path!.deleteSync(recursive: true);

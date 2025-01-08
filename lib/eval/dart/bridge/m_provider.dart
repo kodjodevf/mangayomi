@@ -106,6 +106,13 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
+        'cleanHtmlContent': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(
+                CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
+            params: [
+              BridgeParameter('html',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
         'getFilterList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
@@ -1187,6 +1194,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   Future<String> getHtmlContent(String url) async =>
       await $_invoke('getHtmlContent', [$String(url)]);
+
+  @override
+  Future<String> cleanHtmlContent(String html) async =>
+      await $_invoke('cleanHtmlContent', [$String(html)]);
 
   @override
   Map<String, String> get headers {
