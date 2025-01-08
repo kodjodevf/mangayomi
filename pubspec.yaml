@@ -11,14 +11,14 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.2.0
+  go_router: ^14.6.3
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   html: ^0.15.5
   font_awesome_flutter: ^10.8.0
   expandable_text: ^2.3.0
-  flex_color_scheme: ^7.3.1
-  extended_image: ^9.0.7
+  flex_color_scheme: ^8.1.0
+  extended_image: ^9.1.0
   photo_view: ^0.15.0
   grouped_list: ^6.0.0
   intl: ^0.19.0
@@ -61,9 +61,8 @@ dependencies:
       url: https://github.com/kodjodevf/flutter_qjs.git
       ref: main
   http: ^1.2.2
-  flutter_code_editor: ^0.3.1
-  flutter_highlight: ^0.7.0
-  highlight: ^0.7.0
+  re_editor: ^0.6.0
+  re_highlight: ^0.0.3
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
   flutter_rust_bridge: 2.7.0
@@ -83,7 +82,6 @@ dependencies:
 dependency_overrides:
   http: ^1.2.2
   ffi: ^2.1.3
-  flex_seed_scheme: ^2.0.0
   analyzer: ">=5.2.0 <7.0.0"
   html: ^0.15.4
   media_kit_libs_windows_video:

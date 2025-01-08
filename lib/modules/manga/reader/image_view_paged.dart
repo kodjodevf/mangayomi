@@ -34,7 +34,6 @@ class ImageViewPaged extends ConsumerWidget {
             image: image,
             fit: getBoxFit(scaleType),
             filterQuality: FilterQuality.medium,
-            enableMemoryCache: true,
             mode: ExtendedImageMode.gesture,
             handleLoadingProgress: true,
             loadStateChanged: loadStateChanged,

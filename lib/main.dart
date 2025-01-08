@@ -42,12 +42,12 @@ void main(List<String> args) async {
   }
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
     final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    assert(availableVersion != null,
-        'Failed to find an installed WebView2 runtime or non-stable Microsoft Edge installation.');
-    final document = await getApplicationDocumentsDirectory();
-    webViewEnvironment = await WebViewEnvironment.create(
-        settings: WebViewEnvironmentSettings(
-            userDataFolder: p.join(document.path, 'flutter_inappwebview')));
+    if (availableVersion != null) {
+      final document = await getApplicationDocumentsDirectory();
+      webViewEnvironment = await WebViewEnvironment.create(
+          settings: WebViewEnvironmentSettings(
+              userDataFolder: p.join(document.path, 'flutter_inappwebview')));
+    }
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await StorageProvider().requestPermission();
@@ -104,7 +104,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         unselectedToggleIsColored: true,
         inputDecoratorRadius: 24.0,
         chipRadius: 24.0,
-        dialogBackgroundSchemeColor: SchemeColor.background,
       ),
       useMaterial3ErrorColors: true,
       visualDensity: FlexColorScheme.comfortablePlatformDensity,
@@ -123,7 +122,6 @@ class _MyAppState extends ConsumerState<MyApp> {
         unselectedToggleIsColored: true,
         inputDecoratorRadius: 24.0,
         chipRadius: 24.0,
-        dialogBackgroundSchemeColor: SchemeColor.background,
       ),
       useMaterial3ErrorColors: true,
       visualDensity: FlexColorScheme.comfortablePlatformDensity,

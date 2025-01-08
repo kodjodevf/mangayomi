@@ -19,7 +19,6 @@ Widget cachedNetworkImage(
     height: height,
     fit: fit,
     filterQuality: FilterQuality.medium,
-    enableMemoryCache: true,
     mode: ExtendedImageMode.gesture,
     handleLoadingProgress: true,
     loadStateChanged: (state) {

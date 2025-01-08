@@ -559,13 +559,13 @@ class RouterNotifier extends ChangeNotifier {
           name: "codeEditor",
           builder: (context, state) {
             final sourceId = state.extra as int?;
-            return CodeEditor(sourceId: sourceId);
+            return CodeEditorPage(sourceId: sourceId);
           },
           pageBuilder: (context, state) {
             final sourceId = state.extra as int?;
             return transitionPage(
               key: state.pageKey,
-              child: CodeEditor(sourceId: sourceId),
+              child: CodeEditorPage(sourceId: sourceId),
             );
           },
         ),
