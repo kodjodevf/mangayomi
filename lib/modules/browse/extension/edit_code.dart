@@ -135,7 +135,8 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filterList = source != null ? getFilterList(source: source!) : [];
+    List<dynamic> filterList =
+        source != null ? getFilterList(source: source!) : [];
     final appFontFamily = ref.watch(appFontFamilyProvider);
     return Scaffold(
       appBar: AppBar(
@@ -351,6 +352,10 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                 ElevatedButton(
                                     onPressed: () async {
                                       if (source != null) {
+                                        setState(() {
+                                          filterList =
+                                              getFilterList(source: source!);
+                                        });
                                         try {
                                           if (filters.isEmpty) {
                                             filters = filterList;

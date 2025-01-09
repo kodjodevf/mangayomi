@@ -83,7 +83,13 @@ class Client {
 Future<String> _toHttpResponse(Client client, String method, List args) async {
   final url = args[2] as String;
   final headers = (args[3] as Map?)?.toMapStringString;
-  final body = args.length >= 5 ? (args[4] as Map?)?.toMapStringDynamic : null;
+  final body = args.length >= 5
+      ? args[4] is List
+          ? args[4] as List
+          : args[4] is String
+              ? args[4] as String
+              : (args[4] as Map?)?.toMapStringDynamic
+      : null;
   var request = http.Request(method, Uri.parse(url));
   request.headers.addAll(headers ?? {});
   if ((request.headers[HttpHeaders.contentTypeHeader]
