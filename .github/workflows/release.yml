@@ -198,12 +198,12 @@ jobs:
       - name: upload artifact windows zip
         uses: actions/upload-artifact@v3
         with:
-          path: Mangayomi-*.zip
+          path: dist/**/Mangayomi-*.zip
 
       - name: release package windows zip
         uses: ncipollo/release-action@v1
         with:
-          artifacts: Mangayomi-*.zip
+          artifacts: dist/**/Mangayomi-*.zip
           allowUpdates: true
 
           
