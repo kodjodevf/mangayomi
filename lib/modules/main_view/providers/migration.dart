@@ -25,7 +25,8 @@ Future<void> migration(Ref ref) async {
 
   final sources =
       isar.sources.filter().idIsNotNull().isMangaIsNotNull().findAllSync();
-  final tracks = isar.tracks.filter().idIsNotNull().findAllSync();
+  final tracks =
+      isar.tracks.filter().idIsNotNull().isMangaIsNotNull().findAllSync();
 
   isar.writeTxnSync(() {
     for (var history in histories) {
