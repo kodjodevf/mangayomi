@@ -86,7 +86,7 @@ class Source {
       this.versionLast = "0.0.1",
       this.sourceCode = '',
       this.headers = '',
-      this.isManga = true,
+      this.isManga,
       this.itemType = ItemType.manga,
       this.appMinVerReq = "",
       this.additionalParams = "",

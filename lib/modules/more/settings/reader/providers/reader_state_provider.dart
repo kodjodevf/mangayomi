@@ -182,3 +182,33 @@ class HideNovelState extends _$HideNovelState {
         () => isar.settings.putSync(settings!..hideNovel = value));
   }
 }
+
+@riverpod
+class NovelFontSizeState extends _$NovelFontSizeState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.novelFontSize ?? 14;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..novelFontSize = value));
+  }
+}
+
+@riverpod
+class NovelTextAlignState extends _$NovelTextAlignState {
+  @override
+  NovelTextAlign build() {
+    return isar.settings.getSync(227)!.novelTextAlign;
+  }
+
+  void set(NovelTextAlign value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..novelTextAlign = value));
+  }
+}

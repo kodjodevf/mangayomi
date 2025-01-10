@@ -31,7 +31,6 @@ class ImageViewVertical extends ConsumerWidget {
         filterQuality: FilterQuality.medium,
         handleLoadingProgress: true,
         fit: getBoxFit(ref.watch(scaleTypeStateProvider)),
-        enableMemoryCache: true,
         enableLoadState: true,
         loadStateChanged: (state) {
           if (state.extendedImageLoadState == LoadState.completed) {

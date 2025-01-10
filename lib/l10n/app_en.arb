@@ -389,5 +389,15 @@
   "n_minutes_ago": "{minutes} minutes ago",
   "n_day_ago": "{day} day ago",
   "now": "now",
-  "library_last_updated": "Library last updated: {lastUpdated}"
+  "library_last_updated": "Library last updated: {lastUpdated}",
+  "data_and_storage": "Data and storage",
+  "download_location_info": "Used for chapter downloads",
+  "storage": "Storage",
+  "clear_chapter_and_episode_cache": "Clear chapter and episode cache",
+  "cache_cleared": "Cache cleared",
+  "clear_chapter_or_episode_cache_on_app_launch": "Clear chapter/episode cache on app launch",
+  "app_settings": "App settings",
+  "sources_settings": "Sources settings",
+  "include_sensitive_settings": "Include sensitive settings (e.g., tracker login tokens)",
+  "create": "Create"
 }

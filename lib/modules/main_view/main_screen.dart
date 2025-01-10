@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
@@ -13,7 +16,7 @@ import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
-import 'package:mangayomi/modules/more/backup_and_restore/providers/auto_backup.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_novel_sources.dart';
@@ -285,11 +288,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
-Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
+Widget _extensionUpdateTotalNumbers(WidgetRef ref, Widget widget) {
   return StreamBuilder(
       stream: isar.sources
           .filter()
           .idIsNotNull()
+          .optional(ref.watch(hideMangaStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.manga))
+          .optional(ref.watch(hideAnimeStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.anime))
+          .optional(ref.watch(hideNovelStateProvider),
+              (q) => q.not().itemTypeEqualTo(ItemType.novel))
           .and()
           .isActiveEqualTo(true)
           .watch(fireImmediately: true),
@@ -307,3 +316,45 @@ Widget _extensionUpdateTotalNumbers(WidgetRef re, Widget widget) {
         return widget;
       });
 }
+
+Widget _updatesTotalNumbers(WidgetRef ref, Widget widget) {
+  return StreamBuilder(
+      stream: isar.updates
+          .filter()
+          .idIsNotNull()
+          .optional(
+              ref.watch(hideMangaStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.manga)),
+                  ))
+          .optional(
+              ref.watch(hideAnimeStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.anime)),
+                  ))
+          .optional(
+              ref.watch(hideNovelStateProvider),
+              (q) => q.chapter(
+                    (c) =>
+                        c.manga((m) => m.not().itemTypeEqualTo(ItemType.novel)),
+                  ))
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final entries = snapshot.data!.where((element) {
+            if (!element.chapter.isLoaded) {
+              element.chapter.loadSync();
+            }
+            return !(element.chapter.value?.isRead ?? false);
+          }).toList();
+          if (entries.isEmpty) {
+            return widget;
+          }
+          return Badge(label: Text("${entries.length}"), child: widget);
+        }
+        return widget;
+      });
+}
+

@@ -106,6 +106,13 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
               BridgeParameter('url',
                   BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
             ])),
+        'cleanHtmlContent': BridgeMethodDef(BridgeFunctionDef(
+            returns: BridgeTypeAnnotation(BridgeTypeRef(
+                CoreTypes.future, [BridgeTypeRef(CoreTypes.string)])),
+            params: [
+              BridgeParameter('html',
+                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
+            ])),
         'getFilterList': BridgeMethodDef(BridgeFunctionDef(
             returns: BridgeTypeAnnotation(BridgeTypeRef(
                 CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
@@ -841,6 +848,32 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                 ],
                 namedParams: []),
             isStatic: true),
+        'evaluateJavascriptViaWebview': BridgeMethodDef(
+          BridgeFunctionDef(
+              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.future, [
+                BridgeTypeRef(
+                  CoreTypes.string,
+                )
+              ])),
+              params: [
+                BridgeParameter(
+                    'url',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+                    false),
+                BridgeParameter(
+                    'headers',
+                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map, [
+                      BridgeTypeRef(CoreTypes.string),
+                      BridgeTypeRef(CoreTypes.string)
+                    ])),
+                    false),
+                BridgeParameter(
+                    'scripts',
+                    BridgeTypeAnnotation(BridgeTypeRef(
+                        CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
+                    false),
+              ]),
+        ),
       },
       bridge: true);
 
@@ -1009,6 +1042,17 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
                     }))
                 .toList());
           }))),
+      "evaluateJavascriptViaWebview" => $Function((_, __, List<$Value?> args) =>
+          $Future.wrap(MBridge.evaluateJavascriptViaWebview(
+                  args[0]!.$value,
+                  (args[1]!.$value as Map).map((key, value) => MapEntry(
+                      key.$reified.toString(), value.$reified.toString())),
+                  (args[2]!.$value as List)
+                      .map((e) => e.$reified.toString())
+                      .toList())
+              .then((value) {
+            return $String(value);
+          }))),
       "toVideo" => $Function((_, __, List<$Value?> args) {
           final value = MBridge.toVideo(
               args[0]!.$value,
@@ -1150,6 +1194,10 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   @override
   Future<String> getHtmlContent(String url) async =>
       await $_invoke('getHtmlContent', [$String(url)]);
+
+  @override
+  Future<String> cleanHtmlContent(String html) async =>
+      await $_invoke('cleanHtmlContent', [$String(html)]);
 
   @override
   Map<String, String> get headers {

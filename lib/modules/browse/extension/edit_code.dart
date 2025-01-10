@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/atom-one-dark.dart';
-import 'package:highlight/highlight.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:highlight/languages/dart.dart';
-import 'package:highlight/languages/javascript.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/services/get_filter_list.dart';
@@ -18,46 +15,41 @@ import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/log.dart';
+import 'package:re_editor/re_editor.dart';
+import 'package:re_highlight/languages/dart.dart';
+import 'package:re_highlight/languages/javascript.dart';
+import 'package:re_highlight/styles/vs2015.dart';
 
-class CodeEditor extends ConsumerStatefulWidget {
+class CodeEditorPage extends ConsumerStatefulWidget {
   final int? sourceId;
-  const CodeEditor({super.key, this.sourceId});
+  const CodeEditorPage({super.key, this.sourceId});
 
   @override
-  ConsumerState<CodeEditor> createState() => _CodeEditorState();
+  ConsumerState<CodeEditorPage> createState() => _CodeEditorPageState();
 }
 
-Mode getSourceMode(Source? source) {
-  return switch (source?.sourceCodeLanguage) {
-    SourceCodeLanguage.dart => dart,
-    SourceCodeLanguage.javascript => javascript,
-    _ => dart,
-  };
-}
-
-class _CodeEditorState extends ConsumerState<CodeEditor> {
+class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   dynamic result;
   late final source =
       widget.sourceId == null ? null : isar.sources.getSync(widget.sourceId!);
-  late final controller = CodeController(
-      text: source?.sourceCode ?? "",
-      language: getSourceMode(source),
-      namedSectionParser: const BracketsStartEndNamedSectionParser());
+  final CodeLineEditingController _controller = CodeLineEditingController();
 
   List<(String, int)> _getServices(BuildContext context) => [
         ("getPopular", 0),
         ("getLatestUpdates", 1),
         ("search", 2),
         ("getDetail", 3),
-        ("getPageList", 4),
-        ("getVideoList", 5),
-        ("getHtmlContent", 6)
+        if (source?.itemType == ItemType.manga) ("getPageList", 4),
+        if (source?.itemType == ItemType.anime) ("getVideoList", 5),
+        if (source?.itemType == ItemType.novel) ("getHtmlContent", 6),
+        if (source?.itemType == ItemType.novel) ("cleanHtmlContent", 7)
       ];
 
   int _serviceIndex = 0;
   int _page = 1;
   String _query = "";
   String _url = "";
+  String _html = "";
   bool _isLoading = false;
   String _errorText = "";
   bool _error = false;
@@ -67,6 +59,7 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
   final _scrollController = ScrollController();
   @override
   void initState() {
+    _controller.text = source?.sourceCode ?? "";
     useLogger = true;
     _logStreamController.stream.asBroadcastStream().listen((event) async {
       _logsNotifier.value.add(event);
@@ -136,12 +129,15 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
     super.dispose();
     _logsNotifier.value.clear();
     _scrollController.dispose();
+    _controller.dispose();
     useLogger = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    final filterList = source != null ? getFilterList(source: source!) : [];
+    List<dynamic> filterList =
+        source != null ? getFilterList(source: source!) : [];
+    final appFontFamily = ref.watch(appFontFamilyProvider);
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () {
@@ -152,35 +148,49 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
       body: Column(
         children: [
           Expanded(
+            flex: 7,
             child: Row(
               children: [
                 Flexible(
                     flex: 7,
-                    child: CodeTheme(
-                      data: CodeThemeData(styles: atomOneDarkTheme),
-                      child: SingleChildScrollView(
-                        child: CodeField(
-                          controller: controller,
-                          gutterStyle: const GutterStyle(
-                            textStyle: TextStyle(
-                              color: Colors.grey,
-                              height:
-                                  1.5, // Issue #307 fix, found in package: flutter-code-editor issue #270
-                            ),
-                            showLineNumbers: true,
-                          ),
-                          onChanged: (a) {
-                            setState(() {
-                              source?.sourceCode = a;
-                            });
-                            if (source != null && mounted) {
-                              isar.writeTxnSync(
-                                  () => isar.sources.putSync(source!));
-                            }
-                          },
+                    child: CodeEditor(
+                        style: CodeEditorStyle(
+                          fontSize: 15,
+                          fontFamily: appFontFamily,
+                          codeTheme: CodeHighlightTheme(languages: {
+                            'dart': CodeHighlightThemeMode(mode: langDart),
+                            'javascript':
+                                CodeHighlightThemeMode(mode: langJavascript),
+                          }, theme: vs2015Theme),
                         ),
-                      ),
-                    )),
+                        controller: _controller,
+                        onChanged: (_) {
+                          source?.sourceCode = _controller.text;
+                          if (source != null && context.mounted) {
+                            isar.writeTxnSync(
+                                () => isar.sources.putSync(source!));
+                          }
+                        },
+                        wordWrap: false,
+                        indicatorBuilder: (context, editingController,
+                            chunkController, notifier) {
+                          return Row(
+                            children: [
+                              DefaultCodeLineNumber(
+                                controller: editingController,
+                                notifier: notifier,
+                              ),
+                              DefaultCodeChunkIndicator(
+                                  width: 20,
+                                  controller: chunkController,
+                                  notifier: notifier)
+                            ],
+                          );
+                        },
+                        sperator: Container(
+                          width: 1,
+                          color: context.dynamicThemeColor,
+                        ))),
                 if (context.isTablet)
                   Flexible(
                     flex: 3,
@@ -188,22 +198,27 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: DropdownButton(
+                          child: DropdownButton<(String, int)>(
                             icon: const Icon(Icons.keyboard_arrow_down),
                             isExpanded: true,
-                            value: _serviceIndex,
-                            hint: Text(_getServices(context)[_serviceIndex].$1,
+                            value: _getServices(context).firstWhere(
+                                (element) => element.$2 == _serviceIndex),
+                            hint: Text(
+                                _getServices(context)
+                                    .firstWhere((element) =>
+                                        element.$2 == _serviceIndex)
+                                    .$1,
                                 style: const TextStyle(fontSize: 13)),
                             items: _getServices(context)
                                 .map((e) => DropdownMenuItem(
-                                      value: e.$2,
+                                      value: e,
                                       child: Text(e.$1,
                                           style: const TextStyle(fontSize: 13)),
                                     ))
                                 .toList(),
                             onChanged: (v) {
                               setState(() {
-                                _serviceIndex = v!;
+                                _serviceIndex = v!.$2;
                               });
                             },
                           ),
@@ -226,6 +241,10 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                               (v) {
                             _url = v;
                           }),
+                        if (_serviceIndex == 7)
+                          _textEditing("Html", context, "ex. <p>Text</p>", (v) {
+                            _html = v;
+                          }),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Wrap(
@@ -233,10 +252,8 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                             children: [
                               ElevatedButton(
                                   onPressed: () async {
-                                    setState(() {
-                                      source?.sourceCode = controller.text;
-                                    });
-                                    if (source != null && mounted) {
+                                    source?.sourceCode = _controller.text;
+                                    if (source != null && context.mounted) {
                                       isar.writeTxnSync(
                                           () => isar.sources.putSync(source!));
                                     }
@@ -293,17 +310,20 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                               (await service.getVideoList(_url))
                                                   .map((e) => e.toJson())
                                                   .toList();
-                                        } else {
+                                        } else if (_serviceIndex == 6) {
                                           result = (await service
                                               .getHtmlContent(_url));
+                                        } else {
+                                          result = (await service
+                                              .cleanHtmlContent(_html));
                                         }
-                                        if (mounted) {
+                                        if (context.mounted) {
                                           setState(() {
                                             _isLoading = false;
                                           });
                                         }
                                       } catch (e) {
-                                        if (mounted) {
+                                        if (context.mounted) {
                                           setState(() {
                                             _error = true;
                                             _errorText = e.toString();
@@ -332,13 +352,18 @@ class _CodeEditorState extends ConsumerState<CodeEditor> {
                                 ElevatedButton(
                                     onPressed: () async {
                                       if (source != null) {
+                                        setState(() {
+                                          filterList =
+                                              getFilterList(source: source!);
+                                        });
                                         try {
                                           if (filters.isEmpty) {
                                             filters = filterList;
                                           }
                                           final res =
                                               await filterDialog(context);
-                                          if (res == 'filter' && mounted) {
+                                          if (res == 'filter' &&
+                                              context.mounted) {
                                             setState(() {
                                               result = null;
                                               _isLoading = true;

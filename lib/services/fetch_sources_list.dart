@@ -26,12 +26,7 @@ Future<void> fetchSourcesList(
     for (var source in sourceList) {
       if (source.appMinVerReq != null) {
         if (compareVersions(info.version, source.appMinVerReq!) > -1) {
-          final itm = source.isManga == null
-              ? source.itemType
-              : source.isManga!
-                  ? ItemType.manga
-                  : ItemType.anime;
-          if (itm == itemType) {
+          if (source.itemType == itemType) {
             if (id != null) {
               if (id == source.id) {
                 final sourc = isar.sources.getSync(id)!;
@@ -59,7 +54,6 @@ Future<void> fetchSourcesList(
                     ..version = source.version
                     ..versionLast = source.version
                     ..itemType = itemType
-                    ..isManga = source.isManga
                     ..isFullData = source.isFullData ?? false
                     ..appMinVerReq = source.appMinVerReq
                     ..sourceCodeLanguage = source.sourceCodeLanguage
@@ -100,7 +94,6 @@ Future<void> fetchSourcesList(
                         ..version = source.version
                         ..versionLast = source.version
                         ..itemType = itemType
-                        ..isManga = source.isManga
                         ..isFullData = source.isFullData ?? false
                         ..appMinVerReq = source.appMinVerReq
                         ..sourceCodeLanguage = source.sourceCodeLanguage
@@ -131,7 +124,6 @@ Future<void> fetchSourcesList(
                 ..version = source.version
                 ..versionLast = source.version
                 ..itemType = itemType
-                ..isManga = source.isManga
                 ..sourceCodeLanguage = source.sourceCodeLanguage
                 ..isFullData = source.isFullData ?? false
                 ..appMinVerReq = source.appMinVerReq

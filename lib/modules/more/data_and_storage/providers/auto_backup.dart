@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/more/backup_and_restore/providers/backup.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,14 +25,15 @@ class BackupFrequencyState extends _$BackupFrequencyState {
 class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
   @override
   List<int> build() {
-    return isar.settings.getSync(227)!.backupFrequencyOptions ?? [0, 1, 2, 3];
+    return isar.settings.getSync(227)!.backupListOptions ??
+        [0, 1, 2, 3, 4, 5, 6, 7];
   }
 
   void set(List<int> values) {
     final settings = isar.settings.getSync(227);
     state = values;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..backupFrequencyOptions = values));
+    isar.writeTxnSync(
+        () => isar.settings.putSync(settings!..backupListOptions = values));
   }
 }
 
@@ -40,6 +41,7 @@ class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
 class AutoBackupLocationState extends _$AutoBackupLocationState {
   @override
   (String, String) build() {
+    _refresh();
     return ("", isar.settings.getSync(227)!.autoBackupLocation ?? "");
   }
 
@@ -52,7 +54,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
 
   Directory? _storageProvider;
 
-  Future refresh() async {
+  Future _refresh() async {
     _storageProvider = Platform.isIOS
         ? await StorageProvider().getIosBackupDirectory()
         : await StorageProvider().getDefaultDirectory();

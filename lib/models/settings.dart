@@ -133,7 +133,7 @@ class Settings {
 
   int? backupFrequency;
 
-  List<int>? backupFrequencyOptions;
+  List<int>? backupListOptions;
 
   String? autoBackupLocation;
 
@@ -215,11 +215,18 @@ class Settings {
   @enumerated
   late DisplayType novelDisplayType;
 
+  int? novelFontSize;
+
+  @enumerated
+  late NovelTextAlign novelTextAlign;
+
   bool? hideManga;
 
   bool? hideAnime;
 
   bool? hideNovel;
+
+  bool? clearChapterCacheOnAppLaunch;
 
   Settings(
       {this.id = 227,
@@ -277,7 +284,7 @@ class Settings {
       this.backgroundColor = BackgroundColor.black,
       this.personalPageModeList,
       this.backupFrequency,
-      this.backupFrequencyOptions,
+      this.backupListOptions,
       this.autoBackupLocation,
       this.startDatebackup,
       this.usePageTapZones = true,
@@ -316,9 +323,12 @@ class Settings {
       this.novelLibraryLocalSource,
       this.sortLibraryNovel,
       this.novelDisplayType = DisplayType.comfortableGrid,
+      this.novelFontSize = 14,
+      this.novelTextAlign = NovelTextAlign.left,
       this.hideManga = false,
       this.hideAnime = false,
-      this.hideNovel = false});
+      this.hideNovel = false,
+      this.clearChapterCacheOnAppLaunch = false});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -438,7 +448,7 @@ class Settings {
     themeIsDark = json['themeIsDark'];
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
-    backupFrequencyOptions = json['backupFrequencyOptions']?.cast<int>();
+    backupListOptions = json['backupListOptions']?.cast<int>();
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
@@ -488,9 +498,15 @@ class Settings {
         : null;
     novelDisplayType = DisplayType
         .values[json['novelDisplayType'] ?? DisplayType.comfortableGrid.index];
+    if (json['novelFontSize'] != null) {
+      novelFontSize = json['novelFontSize'];
+    }
+    novelTextAlign = NovelTextAlign
+        .values[json['novelTextAlign'] ?? NovelTextAlign.left.index];
     hideManga = json['hideManga'];
     hideAnime = json['hideAnime'];
     hideNovel = json['hideNovel'];
+    clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -562,7 +578,7 @@ class Settings {
         'themeIsDark': themeIsDark,
         'userAgent': userAgent,
         'backupFrequency': backupFrequency,
-        'backupFrequencyOptions': backupFrequencyOptions,
+        'backupListOptions': backupListOptions,
         'autoBackupLocation': autoBackupLocation,
         'startDatebackup': startDatebackup,
         'usePageTapZones': usePageTapZones,
@@ -603,9 +619,12 @@ class Settings {
         'novelLibraryLocalSource': novelLibraryLocalSource,
         'sortLibraryNovel': sortLibraryNovel?.toJson(),
         'novelDisplayType': novelDisplayType.index,
+        'novelFontSize': novelFontSize,
+        'novelTextAlign': novelTextAlign.index,
         'hideManga': hideManga,
         'hideAnime': hideAnime,
-        'hideNovel': hideNovel
+        'hideNovel': hideNovel,
+        'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch
       };
 }
 
@@ -803,6 +822,8 @@ enum ReaderMode {
   webtoon,
   horizontalContinuous
 }
+
+enum NovelTextAlign { left, center, right, block }
 
 enum PageMode { onePage, doublePage }
 

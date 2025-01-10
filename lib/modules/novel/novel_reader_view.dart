@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -71,6 +72,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   bool scrolled = false;
   double offset = 0;
   double maxOffset = 0;
+  int fontSize = 14;
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
   void onScroll() {
@@ -106,6 +108,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.addListener(onScroll);
+      final initFontSize = ref.read(novelFontSizeStateProvider);
+      setState(() {
+        fontSize = initFontSize;
+      });
     });
   }
 
@@ -214,88 +220,94 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             }
                           });
                           return Expanded(
-                            child: SingleChildScrollView(
+                            child: Scrollbar(
                               controller: _scrollController,
-                              physics: const BouncingScrollPhysics(),
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  _isViewFunction();
-                                },
-                                child: Column(
-                                  children: [
-                                    HtmlWidget(
-                                      htmlContent,
-                                      customStylesBuilder: (element) {
-                                        switch (backgroundColor) {
-                                          case BackgroundColor.black:
-                                            return {
-                                              'background-color': 'black',
-                                            };
-                                          default:
-                                            return {
-                                              'background-color': '#F0F0F0',
-                                            };
-                                        }
-                                      },
-                                      onTapUrl: (url) {
-                                        context.push("/mangawebview",
-                                            extra: {'url': url, 'title': url});
-                                        return true;
-                                      },
-                                      renderMode: RenderMode.column,
-                                      textStyle: TextStyle(
-                                          color: backgroundColor ==
-                                                  BackgroundColor.white
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontSize: 14),
-                                    ),
-                                    Center(
-                                      heightFactor: 2,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        spacing: 5,
-                                        children: [
-                                          IconButton(
-                                            padding: const EdgeInsets.all(5),
-                                            onPressed: () =>
-                                                pushReplacementMangaReaderView(
-                                              context: context,
-                                              chapter: _readerController
-                                                  .getPrevChapter(),
-                                            ),
-                                            icon: Icon(
-                                              size: 32,
-                                              Icons.arrow_back,
-                                              color: backgroundColor ==
-                                                      BackgroundColor.white
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            padding: const EdgeInsets.all(5),
-                                            onPressed: () =>
-                                                pushReplacementMangaReaderView(
-                                              context: context,
-                                              chapter: _readerController
-                                                  .getNextChapter(),
-                                            ),
-                                            icon: Icon(
-                                              size: 32,
-                                              Icons.arrow_forward,
-                                              color: backgroundColor ==
-                                                      BackgroundColor.white
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ],
+                              interactive: true,
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
+                                  onTap: () {
+                                    _isViewFunction();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      HtmlWidget(
+                                        htmlContent,
+                                        customStylesBuilder: (element) {
+                                          switch (backgroundColor) {
+                                            case BackgroundColor.black:
+                                              return {
+                                                'background-color': 'black',
+                                              };
+                                            default:
+                                              return {
+                                                'background-color': '#F0F0F0',
+                                              };
+                                          }
+                                        },
+                                        onTapUrl: (url) {
+                                          context.push("/mangawebview", extra: {
+                                            'url': url,
+                                            'title': url
+                                          });
+                                          return true;
+                                        },
+                                        renderMode: RenderMode.column,
+                                        textStyle: TextStyle(
+                                            color: backgroundColor ==
+                                                    BackgroundColor.white
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontSize: fontSize.toDouble()),
                                       ),
-                                    ),
-                                  ],
+                                      Center(
+                                        heightFactor: 2,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          spacing: 5,
+                                          children: [
+                                            IconButton(
+                                              padding: const EdgeInsets.all(5),
+                                              onPressed: () =>
+                                                  pushReplacementMangaReaderView(
+                                                context: context,
+                                                chapter: _readerController
+                                                    .getPrevChapter(),
+                                              ),
+                                              icon: Icon(
+                                                size: 32,
+                                                Icons.arrow_back,
+                                                color: backgroundColor ==
+                                                        BackgroundColor.white
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              padding: const EdgeInsets.all(5),
+                                              onPressed: () =>
+                                                  pushReplacementMangaReaderView(
+                                                context: context,
+                                                chapter: _readerController
+                                                    .getNextChapter(),
+                                              ),
+                                              icon: Icon(
+                                                size: 32,
+                                                Icons.arrow_forward,
+                                                color: backgroundColor ==
+                                                        BackgroundColor.white
+                                                    ? Colors.black
+                                                    : Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -310,9 +322,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             )),
                   ],
                 ),
-                //_gestureRightLeft(),
-                //_gestureTopBottom(),
                 _appBar(),
+                _bottomBar(backgroundColor),
               ],
             ),
           ),
@@ -431,6 +442,251 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     );
   }
 
+  Widget _bottomBar(BackgroundColor backgroundColor) {
+    if (!_isView && Platform.isIOS) {
+      return const SizedBox.shrink();
+    }
+    bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
+        _readerController
+            .getChaptersLength(_readerController.getChapterIndex().$2);
+    bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+    final novelTextAlign = ref.watch(novelTextAlignStateProvider);
+
+    return Positioned(
+      bottom: 0,
+      child: AnimatedContainer(
+        curve: Curves.ease,
+        duration: const Duration(milliseconds: 300),
+        width: context.width(1),
+        height: (_isView ? 130 : 0),
+        child: Column(
+          children: [
+            Flexible(
+              child: Transform.scale(
+                scaleX: 1,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                            onPressed: hasPrevChapter
+                                ? () {
+                                    pushReplacementMangaReaderView(
+                                        context: context,
+                                        chapter:
+                                            _readerController.getPrevChapter());
+                                  }
+                                : null,
+                            icon: Transform.scale(
+                              scaleX: 1,
+                              child: Icon(Icons.skip_previous_rounded,
+                                  color: hasPrevChapter
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .color!
+                                          .withValues(alpha: 0.4)),
+                            )),
+                      ),
+                    ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Container(
+                          height: 70,
+                          decoration: BoxDecoration(
+                              color: _backgroundColor(context),
+                              borderRadius: BorderRadius.circular(25)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Transform.scale(
+                                scaleX: 1,
+                                child: SizedBox(
+                                  width: 55,
+                                  child: Center(
+                                    child: IconButton(
+                                        onPressed: () {
+                                          final newFontSize =
+                                              max(4, fontSize - 1);
+                                          ref
+                                              .read(novelFontSizeStateProvider
+                                                  .notifier)
+                                              .set(newFontSize);
+                                          setState(() {
+                                            fontSize = newFontSize;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.text_decrease)),
+                                  ),
+                                ),
+                              ),
+                              if (_isView)
+                                Flexible(
+                                  flex: 14,
+                                  child:
+                                      Consumer(builder: (context, ref, child) {
+                                    final currentFontSize =
+                                        ref.watch(novelFontSizeStateProvider);
+                                    return SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        overlayShape:
+                                            const RoundSliderOverlayShape(
+                                                overlayRadius: 5.0),
+                                      ),
+                                      child: Slider(
+                                        onChanged: (value) {
+                                          ref
+                                              .read(novelFontSizeStateProvider
+                                                  .notifier)
+                                              .set(value.toInt());
+                                        },
+                                        onChangeEnd: (newValue) {
+                                          try {
+                                            setState(() {
+                                              fontSize = newValue.toInt();
+                                            });
+                                          } catch (_) {}
+                                        },
+                                        divisions: 36,
+                                        value: currentFontSize.toDouble(),
+                                        label: "$currentFontSize",
+                                        min: 4,
+                                        max: 40,
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              Transform.scale(
+                                scaleX: 1,
+                                child: SizedBox(
+                                  width: 55,
+                                  child: Center(
+                                    child: IconButton(
+                                        onPressed: () {
+                                          final newFontSize =
+                                              min(40, fontSize + 1);
+                                          ref
+                                              .read(novelFontSizeStateProvider
+                                                  .notifier)
+                                              .set(newFontSize);
+                                          setState(() {
+                                            fontSize = newFontSize;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.text_increase)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 23,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                          onPressed: hasNextChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: _readerController.getNextChapter(),
+                                  );
+                                }
+                              : null,
+                          icon: Transform.scale(
+                            scaleX: 1,
+                            child: Icon(
+                              Icons.skip_next_rounded,
+                              color: hasNextChapter
+                                  ? Theme.of(context).textTheme.bodyLarge!.color
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color!
+                                      .withValues(alpha: 0.4),
+                              // size: 17,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            /*Flexible(
+              child: Container(
+                height: 65,
+                color: _backgroundColor(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    PopupMenuButton(
+                      popUpAnimationStyle: popupAnimationStyle,
+                      color: Colors.black,
+                      child: const Icon(
+                        Icons.format_align_center_outlined,
+                      ),
+                      onSelected: (value) {
+                        ref
+                            .read(novelTextAlignStateProvider.notifier)
+                            .set(value);
+                      },
+                      itemBuilder: (context) => [
+                        for (var mode in NovelTextAlign.values)
+                          PopupMenuItem(
+                              value: mode,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check,
+                                    color: novelTextAlign == mode
+                                        ? Colors.white
+                                        : Colors.transparent,
+                                  ),
+                                  const SizedBox(
+                                    width: 7,
+                                  ),
+                                  Text(
+                                    mode.name,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        // _showModalSettings();
+                      },
+                      icon: const Icon(
+                        Icons.settings_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),*/
+          ],
+        ),
+      ),
+    );
+  }
+
   void _isViewFunction() {
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     if (mounted) {
@@ -446,84 +702,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
     }
-  }
-
-  Widget _gestureRightLeft() {
-    return Consumer(
-      builder: (context, ref, child) {
-        return Row(
-          children: [
-            /// left region
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  _isViewFunction();
-                },
-              ),
-            ),
-
-            /// center region
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  _isViewFunction();
-                },
-              ),
-            ),
-
-            /// right region
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  _isViewFunction();
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _gestureTopBottom() {
-    return Consumer(
-      builder: (context, ref, child) {
-        return Column(
-          children: [
-            /// top region
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  _isViewFunction();
-                },
-              ),
-            ),
-
-            /// center region
-            const Expanded(flex: 5, child: SizedBox.shrink()),
-
-            /// bottom region
-            Expanded(
-              flex: 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTap: () {
-                  _isViewFunction();
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
 

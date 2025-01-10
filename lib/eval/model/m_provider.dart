@@ -26,6 +26,8 @@ abstract class MProvider {
 
   Future<String> getHtmlContent(String url);
 
+  Future<String> cleanHtmlContent(String html);
+
   List<dynamic> getFilterList();
 
   List<dynamic> getSourcePreferences();
