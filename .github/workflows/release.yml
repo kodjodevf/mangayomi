@@ -185,20 +185,25 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: Enable dart_distributor
+        run: dart pub global activate flutter_distributor
+
+      - name: Update PATH
+        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+
       - name: build windows
         run: |
-          flutter build windows
-          Compress-Archive build\windows\x64\runner\Release\mangayomi.exe build\windows\Mangayomi-${{ github.ref_name }}-windows.zip
+          flutter_distributor package --platform windows --targets zip --artifact-name 'Mangayomi-${{ github.ref_name }}-windows.zip'
 
       - name: upload artifact windows zip
         uses: actions/upload-artifact@v3
         with:
-          path: build\windows\Mangayomi-*.zip
+          path: Mangayomi-*.zip
 
       - name: release package windows zip
         uses: ncipollo/release-action@v1
         with:
-          artifacts: build\windows\Mangayomi-*.zip
+          artifacts: Mangayomi-*.zip
           allowUpdates: true
 
           
