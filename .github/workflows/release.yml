@@ -342,6 +342,9 @@ jobs:
       - name: Build AppImage package
         run: flutter_distributor package --platform linux --targets appimage
 
+      - name: Rebuild AppImage package
+        run: flutter_distributor package --platform linux --targets appimage
+
       - name: Move AppImage file
         run: mv $(find dist -type f -name "mangayomi*.AppImage") dist/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
