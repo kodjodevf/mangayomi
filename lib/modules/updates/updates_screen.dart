@@ -2,7 +2,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
-
+import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
@@ -22,7 +22,8 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class UpdatesScreen extends ConsumerStatefulWidget {
-  const UpdatesScreen({super.key});
+  final ItemType itemType;
+  const UpdatesScreen({required this.itemType, super.key});
 
   @override
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
@@ -30,9 +31,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
-  late TabController _tabBarController;
   bool _isLoading = false;
-  int tabs = 3;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
@@ -44,11 +43,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         .idIsNotNull()
         .favoriteEqualTo(true)
         .and()
-        .itemTypeEqualTo(_tabBarController.index == 0
-            ? ItemType.manga
-            : _tabBarController.index == 1
-                ? ItemType.anime
-                : ItemType.novel)
+        .itemTypeEqualTo(widget.itemType)
         .findAllSync();
     int numbers = 0;
 
@@ -72,18 +67,15 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     });
   }
 
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
-  }
+  // void tabListener() {
+  //   setState(() {
+  //     _textEditingController.clear();
+  //     _isSearch = false;
+  //   });
+  // }
 
   @override
   void initState() {
-    _tabBarController = TabController(length: tabs, vsync: this);
-    _tabBarController.animateTo(0);
-    _tabBarController.addListener(tabListener);
     super.initState();
   }
 
@@ -92,34 +84,17 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
-    if (!hideManga) newTabs++;
-    if (!hideAnime) newTabs++;
-    if (!hideNovel) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: newTabs,
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
+          leading: BackButton(
+              onPressed: () => context.go(switch (widget.itemType) {
+                    ItemType.manga => '/MangaBrowse',
+                    ItemType.anime => '/AnimeBrowse',
+                    ItemType.novel => '/NovelBrowse',
+                  })),
           title: _isSearch
               ? null
               : Text(
@@ -188,20 +163,9 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                                       List<Update> updates = isar.updates
                                           .filter()
                                           .idIsNotNull()
-                                          .chapter((q) => q.manga((q) => q
-                                              .itemTypeEqualTo(_tabBarController
-                                                              .index ==
-                                                          0 &&
-                                                      !hideManga
-                                                  ? ItemType.manga
-                                                  : _tabBarController.index ==
-                                                              1 -
-                                                                  (hideManga
-                                                                      ? 1
-                                                                      : 0) &&
-                                                          !hideAnime
-                                                      ? ItemType.anime
-                                                      : ItemType.novel)))
+                                          .chapter((q) => q.manga((q) =>
+                                              q.itemTypeEqualTo(
+                                                  widget.itemType)))
                                           .findAllSync()
                                           .toList();
                                       isar.writeTxnSync(() {
@@ -223,38 +187,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                 icon: Icon(Icons.delete_sweep_outlined,
                     color: Theme.of(context).hintColor)),
           ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabBarController,
-            tabs: [
-              if (!hideManga) Tab(text: l10n.manga),
-              if (!hideAnime) Tab(text: l10n.anime),
-              if (!hideNovel) Tab(text: l10n.novel),
-            ],
-          ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(controller: _tabBarController, children: [
-            if (!hideManga)
-              UpdateTab(
-                  itemType: ItemType.manga,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading),
-            if (!hideAnime)
-              UpdateTab(
-                  itemType: ItemType.anime,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading),
-            if (!hideNovel)
-              UpdateTab(
-                  itemType: ItemType.novel,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading)
-          ]),
-        ),
-      ),
-    );
+          child: UpdateTab(
+              itemType: widget.itemType,
+              query: _textEditingController.text,
+              isLoading: _isLoading),
+        ));
   }
 }
 
