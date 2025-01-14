@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -71,8 +73,15 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
               child: SizedBox(
                 height: context.height(0.8),
                 child: Column(
+                  mainAxisAlignment: _errorMsg != null
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
                   children: [
-                    if (_errorMsg != null) ErrorText(_errorMsg!),
+                    if (_errorMsg != null)
+                      Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: ErrorText(_errorMsg!),
+                      ),
                     if (_errorMsg == null && !hide)
                       Flexible(
                         child: ListView.separated(
@@ -182,9 +191,11 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: TextFormField(
                         onTap: () {
-                          setState(() {
-                            hide = true;
-                          });
+                          if (Platform.isAndroid || Platform.isIOS) {
+                            setState(() {
+                              hide = true;
+                            });
+                          }
                         },
                         controller: _controller,
                         keyboardType: TextInputType.text,
