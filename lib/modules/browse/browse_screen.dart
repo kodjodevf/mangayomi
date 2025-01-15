@@ -239,21 +239,14 @@ Widget _extensionUpdateNumbers(WidgetRef ref, ItemType itemType) {
                   compareVersions(element.version!, element.versionLast!) < 0)
               .toList();
           return entries.isEmpty
-              ? Container()
-              : Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Theme.of(context).focusColor),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Text(
-                      entries.length.toString(),
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall!.color),
-                    ),
-                  ),
-                );
+              ? SizedBox.shrink()
+              : Badge(
+                  backgroundColor: Theme.of(context).focusColor,
+                  label: Text(
+                    entries.length.toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall!.color),
+                  ));
         }
         return Container();
       });

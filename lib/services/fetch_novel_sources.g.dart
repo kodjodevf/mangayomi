@@ -7,7 +7,7 @@ part of 'fetch_novel_sources.dart';
 // **************************************************************************
 
 String _$fetchNovelSourcesListHash() =>
-    r'1444d9ca12204ccf5389efe085c8a20e3498a808';
+    r'9a7afa9c301d2f4be51c074e5a81117f6d01352a';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -76,7 +76,7 @@ class FetchNovelSourcesListFamily extends Family<AsyncValue> {
 }
 
 /// See also [fetchNovelSourcesList].
-class FetchNovelSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
+class FetchNovelSourcesListProvider extends FutureProvider<Object?> {
   /// See also [fetchNovelSourcesList].
   FetchNovelSourcesListProvider({
     int? id,
@@ -134,7 +134,7 @@ class FetchNovelSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<Object?> createElement() {
+  FutureProviderElement<Object?> createElement() {
     return _FetchNovelSourcesListProviderElement(this);
   }
 
@@ -157,7 +157,7 @@ class FetchNovelSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchNovelSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
+mixin FetchNovelSourcesListRef on FutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
 
@@ -166,8 +166,7 @@ mixin FetchNovelSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
 }
 
 class _FetchNovelSourcesListProviderElement
-    extends AutoDisposeFutureProviderElement<Object?>
-    with FetchNovelSourcesListRef {
+    extends FutureProviderElement<Object?> with FetchNovelSourcesListRef {
   _FetchNovelSourcesListProviderElement(super.provider);
 
   @override

@@ -186,7 +186,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
 
-  late final StreamSubscription<Duration> _currentPositionSub =
+  late StreamSubscription<Duration> _currentPositionSub =
       _player.stream.position.listen(
     (position) async {
       _isCompleted.value =
@@ -240,7 +240,29 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
-  bool isFFF = false;
+  void _setCurrentAudSub() {
+    _initSubtitleAndAudio = true;
+    _currentPositionSub = _player.stream.position.listen(
+      (position) async {
+        _isCompleted.value = _player.state.duration.inSeconds -
+                _currentPosition.value.inSeconds <=
+            10;
+        _currentPosition.value = position;
+        if (_initSubtitleAndAudio) {
+          final subtitle = _player.state.track.subtitle;
+          try {
+            _player.setSubtitleTrack(subtitle);
+          } catch (_) {}
+          try {
+            final audio = _player.state.track.audio;
+            _player.setAudioTrack(audio);
+          } catch (_) {}
+        }
+        _initSubtitleAndAudio = false;
+      },
+    );
+  }
+
   @override
   void initState() {
     _currentPositionSub;
@@ -400,6 +422,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     httpHeaders: quality.headers,
                     start: _currentPosition.value));
               }
+              _setCurrentAudSub();
               Navigator.pop(context);
             },
           );

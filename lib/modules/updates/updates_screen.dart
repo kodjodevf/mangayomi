@@ -227,9 +227,33 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              if (!hideManga) Tab(text: l10n.manga),
-              if (!hideAnime) Tab(text: l10n.anime),
-              if (!hideNovel) Tab(text: l10n.novel),
+              if (!hideManga)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Tab(text: l10n.manga),
+                    const SizedBox(width: 8),
+                    _updateNumbers(ref, ItemType.manga)
+                  ],
+                ),
+              if (!hideAnime)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Tab(text: l10n.anime),
+                    const SizedBox(width: 8),
+                    _updateNumbers(ref, ItemType.anime)
+                  ],
+                ),
+              if (!hideNovel)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Tab(text: l10n.novel),
+                    const SizedBox(width: 8),
+                    _updateNumbers(ref, ItemType.novel)
+                  ],
+                ),
             ],
           ),
         ),
@@ -372,4 +396,29 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
       ],
     ));
   }
+}
+
+Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
+  return StreamBuilder(
+      stream: isar.updates
+          .filter()
+          .idIsNotNull()
+          .and()
+          .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+          final entries = snapshot.data!.toList();
+          return entries.isEmpty
+              ? SizedBox.shrink()
+              : Badge(
+                  backgroundColor: Theme.of(context).focusColor,
+                  label: Text(
+                    entries.length.toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall!.color),
+                  ));
+        }
+        return Container();
+      });
 }

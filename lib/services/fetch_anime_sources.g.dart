@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'75185e008e90491987fabb55851c536de89653a4';
+    r'34db8fac67fb2d445645e62adc68b6d13d481897';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -76,7 +76,7 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue> {
 }
 
 /// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
+class FetchAnimeSourcesListProvider extends FutureProvider<Object?> {
   /// See also [fetchAnimeSourcesList].
   FetchAnimeSourcesListProvider({
     int? id,
@@ -134,7 +134,7 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<Object?> createElement() {
+  FutureProviderElement<Object?> createElement() {
     return _FetchAnimeSourcesListProviderElement(this);
   }
 
@@ -157,7 +157,7 @@ class FetchAnimeSourcesListProvider extends AutoDisposeFutureProvider<Object?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchAnimeSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
+mixin FetchAnimeSourcesListRef on FutureProviderRef<Object?> {
   /// The parameter `id` of this provider.
   int? get id;
 
@@ -166,8 +166,7 @@ mixin FetchAnimeSourcesListRef on AutoDisposeFutureProviderRef<Object?> {
 }
 
 class _FetchAnimeSourcesListProviderElement
-    extends AutoDisposeFutureProviderElement<Object?>
-    with FetchAnimeSourcesListRef {
+    extends FutureProviderElement<Object?> with FetchAnimeSourcesListRef {
   _FetchAnimeSourcesListProviderElement(super.provider);
 
   @override
