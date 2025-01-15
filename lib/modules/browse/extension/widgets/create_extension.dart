@@ -325,10 +325,8 @@ const mangayomiSources = [{
     "apiUrl": "${source.apiUrl}",
     "iconUrl": "${source.iconUrl}",
     "typeSource": "${source.typeSource}",
-    "isManga": ${source.isManga},
+    "itemType": ${source.itemType.index},
     "version": "${source.version}",
-    "dateFormat": "",
-    "dateFormatLocale": "",
     "pkgPath": ""
 }];
 
@@ -364,7 +362,7 @@ class DefaultExtension extends MProvider {
         throw new Error("getVideoList not implemented");
     }
     // For manga chapter pages
-    async getPageList() {
+    async getPageList(url) {
         throw new Error("getPageList not implemented");
     }
     getFilterList() {
