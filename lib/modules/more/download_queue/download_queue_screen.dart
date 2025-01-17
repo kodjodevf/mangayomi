@@ -36,20 +36,18 @@ class DownloadQueueScreen extends ConsumerWidget {
                     width: 10,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 3),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Theme.of(context).focusColor),
-                      child: Text(
-                        allQueueLength.toString(),
-                        style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                Theme.of(context).textTheme.bodySmall!.color),
-                      ),
-                    ),
-                  ),
+                      padding: const EdgeInsets.only(bottom: 3),
+                      child: Badge(
+                          backgroundColor: Theme.of(context).focusColor,
+                          label: Text(
+                            allQueueLength.toString(),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall!
+                                    .color),
+                          ))),
                 ],
               ),
             ),

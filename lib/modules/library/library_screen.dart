@@ -1731,10 +1731,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           if (showNumbersOfItems)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 3),
-                              child: CircleAvatar(
+                              child: Badge(
                                 backgroundColor: Theme.of(context).focusColor,
-                                radius: 10,
-                                child: Text(
+                                label: Text(
                                   numberOfItems.toString(),
                                   style: TextStyle(
                                       fontSize: 12,
