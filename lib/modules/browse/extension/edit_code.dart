@@ -19,6 +19,7 @@ import 'package:re_editor/re_editor.dart';
 import 'package:re_highlight/languages/dart.dart';
 import 'package:re_highlight/languages/javascript.dart';
 import 'package:re_highlight/styles/vs2015.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class CodeEditorPage extends ConsumerStatefulWidget {
   final int? sourceId;
@@ -443,7 +444,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
               height: 200,
               child: ValueListenableBuilder(
                 valueListenable: _logsNotifier,
-                builder: (context, logs, child) => ListView.separated(
+                builder: (context, logs, child) => SuperListView.separated(
                   separatorBuilder: (context, index) => const Divider(),
                   controller: _scrollController,
                   padding: const EdgeInsets.all(10),
