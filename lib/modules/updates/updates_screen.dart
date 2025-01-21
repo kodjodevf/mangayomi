@@ -49,6 +49,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
             : _tabBarController.index == 1
                 ? ItemType.anime
                 : ItemType.novel)
+        .and()
+        .isLocalArchiveEqualTo(false)
         .findAllSync();
     int numbers = 0;
 
