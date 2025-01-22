@@ -1269,9 +1269,6 @@ class _MangaChapterPageGalleryState
   }
 
   Widget _appBar() {
-    if (!_isView && Platform.isIOS) {
-      return const SizedBox.shrink();
-    }
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     double height = _isView
         ? Platform.isIOS
@@ -1286,7 +1283,7 @@ class _MangaChapterPageGalleryState
         width: context.width(1),
         height: height,
         curve: Curves.ease,
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 300),
         child: PreferredSize(
           preferredSize: Size.fromHeight(height),
           child: AppBar(
@@ -1383,9 +1380,6 @@ class _MangaChapterPageGalleryState
   }
 
   Widget _bottomBar() {
-    if (!_isView && Platform.isIOS) {
-      return const SizedBox.shrink();
-    }
     bool hasPrevChapter = _readerController.getChapterIndex().$1 + 1 !=
         _readerController
             .getChaptersLength(_readerController.getChapterIndex().$2);
