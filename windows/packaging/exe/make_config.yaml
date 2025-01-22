@@ -3,6 +3,6 @@ publisher: kodjodevf
 publisher_url: https://github.com/kodjodevf/mangayomi/
 display_name: Mangayomi
 create_desktop_icon: true
+script_template: inno_setup.iss
 locales:
   - en
-script_template: inno_setup.iss
