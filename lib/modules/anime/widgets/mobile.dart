@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
@@ -383,7 +384,12 @@ class _MobileControllerWidgetState
                             // Add padding in fullscreen!
                             isFullscreen(context)
                                 ? MediaQuery.of(context).padding
-                                : EdgeInsets.zero),
+                                : Platform.isIOS
+                                    ? EdgeInsets.only(
+                                        bottom: MediaQuery.of(context)
+                                            .padding
+                                            .bottom)
+                                    : EdgeInsets.zero),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
