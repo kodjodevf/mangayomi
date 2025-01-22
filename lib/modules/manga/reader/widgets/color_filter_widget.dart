@@ -6,26 +6,17 @@ import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.d
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-class ColorFilterWidget extends ConsumerWidget {
-  final Widget child;
-  const ColorFilterWidget({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final customColorFilter = ref.watch(customColorFilterStateProvider);
-    final colorFilterBlendMode = ref.watch(colorFilterBlendModeStateProvider);
-    return Container(
-      foregroundDecoration: BoxDecoration(
-        backgroundBlendMode:
-            getColorFilterBlendMode(colorFilterBlendMode, context),
-        color: customColorFilter == null
-            ? Colors.transparent
-            : Color.fromARGB(customColorFilter.a ?? 0, customColorFilter.r ?? 0,
-                customColorFilter.g ?? 0, customColorFilter.b ?? 0),
-      ),
-      child: child,
-    );
-  }
+(BlendMode?, Color?) chapterColorFIlterValues(
+    BuildContext context, WidgetRef ref) {
+  final customColorFilter = ref.watch(customColorFilterStateProvider);
+  final colorFilterBlendMode = ref.watch(colorFilterBlendModeStateProvider);
+  return (
+    getColorFilterBlendMode(colorFilterBlendMode, context),
+    customColorFilter == null
+        ? Colors.transparent
+        : Color.fromARGB(customColorFilter.a ?? 0, customColorFilter.r ?? 0,
+            customColorFilter.g ?? 0, customColorFilter.b ?? 0)
+  );
 }
 
 Widget customColorFilterListTile(String label, int value,

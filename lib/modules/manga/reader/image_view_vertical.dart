@@ -26,7 +26,10 @@ class ImageViewVertical extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final (colorBlendMode, color) = chapterColorFIlterValues(context, ref);
     final imageWidget = ExtendedImage(
+        colorBlendMode: colorBlendMode,
+        color: color,
         image: data.getImageProvider(ref, true),
         filterQuality: FilterQuality.medium,
         handleLoadingProgress: true,
@@ -92,20 +95,18 @@ class ImageViewVertical extends ConsumerWidget {
         });
     return GestureDetector(
       onLongPress: () => onLongPressData.call(data),
-      child: ColorFilterWidget(
-        child: isHorizontal
-            ? imageWidget
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (data.index == 0)
-                    SizedBox(
-                      height: MediaQuery.of(context).padding.top,
-                    ),
-                  imageWidget
-                ],
-              ),
-      ),
+      child: isHorizontal
+          ? imageWidget
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (data.index == 0)
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.top,
+                  ),
+                imageWidget
+              ],
+            ),
     );
   }
 }
