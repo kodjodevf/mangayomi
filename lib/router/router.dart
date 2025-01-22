@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -203,17 +202,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/mangaReaderView",
           name: "mangaReaderView",
           builder: (context, state) {
-            final chapter = state.extra as Chapter;
+            final chapterId = state.extra as int;
             return MangaReaderView(
-              chapter: chapter,
+              chapterId: chapterId,
             );
           },
           pageBuilder: (context, state) {
-            final chapter = state.extra as Chapter;
+            final chapterId = state.extra as int;
             return transitionPage(
               key: state.pageKey,
               child: MangaReaderView(
-                chapter: chapter,
+                chapterId: chapterId,
               ),
             );
           },
@@ -222,17 +221,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/animePlayerView",
           name: "animePlayerView",
           builder: (context, state) {
-            final episode = state.extra as Chapter;
+            final episodeId = state.extra as int;
             return AnimePlayerView(
-              episode: episode,
+              episodeId: episodeId,
             );
           },
           pageBuilder: (context, state) {
-            final episode = state.extra as Chapter;
+            final episodeId = state.extra as int;
             return transitionPage(
               key: state.pageKey,
               child: AnimePlayerView(
-                episode: episode,
+                episodeId: episodeId,
               ),
             );
           },
@@ -241,17 +240,17 @@ class RouterNotifier extends ChangeNotifier {
           path: "/novelReaderView",
           name: "novelReaderView",
           builder: (context, state) {
-            final chapter = state.extra as Chapter;
+            final chapterId = state.extra as int;
             return NovelReaderView(
-              chapter: chapter,
+              chapterId: chapterId,
             );
           },
           pageBuilder: (context, state) {
-            final chapter = state.extra as Chapter;
+            final chapterId = state.extra as int;
             return transitionPage(
               key: state.pageKey,
               child: NovelReaderView(
-                chapter: chapter,
+                chapterId: chapterId,
               ),
             );
           },

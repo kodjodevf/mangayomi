@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -28,12 +29,12 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 typedef DoubleClickAnimationListener = void Function();
 
 class NovelReaderView extends ConsumerWidget {
-  final Chapter chapter;
-  const NovelReaderView({
+  final int chapterId;
+  NovelReaderView({
     super.key,
-    required this.chapter,
+    required this.chapterId,
   });
-
+  late final Chapter chapter = isar.chapters.getSync(chapterId)!;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final htmlContent = ref.watch(getHtmlContentProvider(chapter: chapter));

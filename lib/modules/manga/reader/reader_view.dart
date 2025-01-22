@@ -48,12 +48,12 @@ import 'package:path/path.dart' as p;
 typedef DoubleClickAnimationListener = void Function();
 
 class MangaReaderView extends ConsumerWidget {
-  final Chapter chapter;
-  const MangaReaderView({
+  final int chapterId;
+  MangaReaderView({
     super.key,
-    required this.chapter,
+    required this.chapterId,
   });
-
+  late final Chapter chapter = isar.chapters.getSync(chapterId)!;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chapterData = ref.watch(getChapterPagesProvider(
