@@ -13,7 +13,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
   return (
     getColorFilterBlendMode(colorFilterBlendMode, context),
     customColorFilter == null
-        ? Colors.transparent
+        ? null
         : Color.fromARGB(customColorFilter.a ?? 0, customColorFilter.r ?? 0,
             customColorFilter.g ?? 0, customColorFilter.b ?? 0)
   );
