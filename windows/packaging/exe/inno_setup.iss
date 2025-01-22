@@ -4,40 +4,42 @@
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{6CB26FFA-E72B-42C3-91E8-594940031CA2}
-AppName={#DISPLAY_NAME}
-AppVersion={#APP_VERSION}
-;AppVerName={#DISPLAY_NAME} {#APP_VERSION}
-AppPublisher={#PUBLISHER_NAME}
-AppPublisherURL={#PUBLISHER_URL}
-AppSupportURL={#PUBLISHER_URL}
-AppUpdatesURL={#PUBLISHER_URL}
-DefaultDirName={autopf}\{#DISPLAY_NAME}
+AppId={{APP_ID}}
+AppName={{#DISPLAY_NAME}}
+AppVersion={{#APP_VERSION}}
+AppVerName={{#DISPLAY_NAME}} {{#APP_VERSION}}
+AppPublisher={{#PUBLISHER_NAME}}
+AppPublisherURL={{#PUBLISHER_URL}}
+AppSupportURL={{#PUBLISHER_URL}}
+AppUpdatesURL={{#PUBLISHER_URL}}
+DefaultDirName={{INSTALL_DIR_NAME}}
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=.         
 OutputBaseFilename={{OUTPUT_BASE_FILENAME}}
-SetupIconFile={{SOURCE_DIR}}\windows\runner\resources\app_icon.ico
+SetupIconFile={{SOURCE_DIR}}\\windows\\runner\\resources\\app_icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{{cm:CreateDesktopIcon}}"; GroupDescription: "{{cm:AdditionalIcons}}"; Flags: unchecked
 
 [Files]
-Source: "{{SOURCE_DIR}}\build\windows\x64\runner\Release\{#EXECUTABLE_NAME}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{{SOURCE_DIR}}\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{{{{SOURCE_DIR}}}}\\build\\windows\\x64\\runner\\Release\\{{#EXECUTABLE_NAME}}"; DestDir: "{{app}}"; Flags: ignoreversion
+Source: "{{{{SOURCE_DIR}}}}\\build\\windows\\x64\\runner\\Release\\*"; DestDir: "{{app}}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#DISPLAY_NAME}"; Filename: "{app}\{#EXECUTABLE_NAME}"
-Name: "{autodesktop}\{#DISPLAY_NAME}"; Filename: "{app}\{#EXECUTABLE_NAME}"; Tasks: desktopicon
+Name: "{{autoprograms}}\\{{#DISPLAY_NAME}}"; Filename: "{{app}}\\{{#EXECUTABLE_NAME}}"
+Name: "{{autodesktop}}\\{{#DISPLAY_NAME}}"; Filename: "{{app}}\\{{#EXECUTABLE_NAME}}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#EXECUTABLE_NAME}"; Description: "{cm:LaunchProgram,{#StringChange(DISPLAY_NAME, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{{app}}\\{{#EXECUTABLE_NAME}}"; Description: "{{cm:LaunchProgram,{{#StringChange(DISPLAY_NAME, '&', '&&')}}}}"; Flags: nowait postinstall skipifsilent
 
