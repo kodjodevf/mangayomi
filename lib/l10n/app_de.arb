@@ -384,5 +384,22 @@
     "n_minutes_ago": "Vor {minutes} Minuten",
     "n_day_ago": "Vor {day} Tag",
     "now": "jetzt",
-    "library_last_updated": "Bibliothek zuletzt am {lastUpdated} aktualisiert."
+    "library_last_updated": "Bibliothek zuletzt am {lastUpdated} aktualisiert.",
+    "hide_manga": "Einige Elemente im Zusammenhang mit Mangas ausblenden.",
+    "hide_anime": "Einige Elemente im Zusammenhang mit Animes ausblenden.",
+    "hide_novel": "Einige Elemente im Zusammenhang mit (Light-)Novels ausblenden.",
+    "novel_sources": "Novel-Quellen",
+    "novel_extensions": "Novel-Erweiterungen",
+    "sync_after_reading": "Nach dem Lesen oder Ansehen synchronisieren",
+    "sync_on_app_launch": "Beim Starten der App synchronisieren",
+    "data_and_storage": "Daten und Speicher",
+    "download_location_info": "Wird für Kapitel-Downloads verwendet",
+    "storage": "Speicher",
+    "clear_chapter_and_episode_cache": "Kapitel- und Episoden-Cache löschen",
+    "cache_cleared": "Cache gelöscht",
+    "clear_chapter_or_episode_cache_on_app_launch": "Kapitel-/Episoden-Cache beim Start der App löschen",
+    "app_settings": "App-Einstellungen",
+    "sources_settings": "Quellen-Einstellungen",
+    "include_sensitive_settings": "Sensible Einstellungen einbeziehen (z. B. Tracker-Login-Tokens)",
+    "create": "Erstellen"
 }
