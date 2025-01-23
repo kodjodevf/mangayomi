@@ -215,6 +215,7 @@
   "sync_confirm_download": "A full download will completely replace your current data with the remote one!",
   "dialog_confirm": "Confirm",
   "description": "Description",
+  "reorder_navigation": "Customize the navigation to your needs.",
   "hide_manga": "Hide some elements related to mangas.",
   "hide_anime": "Hide some elements related to animes.",
   "hide_novel": "Hide some elements related to (light) novels.",
