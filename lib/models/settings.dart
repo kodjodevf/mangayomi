@@ -220,11 +220,9 @@ class Settings {
   @enumerated
   late NovelTextAlign novelTextAlign;
 
-  bool? hideManga;
+  List<String>? navigationOrder;
 
-  bool? hideAnime;
-
-  bool? hideNovel;
+  List<String>? hideItems;
 
   bool? clearChapterCacheOnAppLaunch;
 
@@ -325,9 +323,8 @@ class Settings {
       this.novelDisplayType = DisplayType.comfortableGrid,
       this.novelFontSize = 14,
       this.novelTextAlign = NovelTextAlign.left,
-      this.hideManga = false,
-      this.hideAnime = false,
-      this.hideNovel = false,
+      this.navigationOrder,
+      this.hideItems,
       this.clearChapterCacheOnAppLaunch = false});
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -503,9 +500,8 @@ class Settings {
     }
     novelTextAlign = NovelTextAlign
         .values[json['novelTextAlign'] ?? NovelTextAlign.left.index];
-    hideManga = json['hideManga'];
-    hideAnime = json['hideAnime'];
-    hideNovel = json['hideNovel'];
+    navigationOrder = json['navigationOrder']?.cast<String>();
+    hideItems = json['hideItems']?.cast<String>();
     clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
   }
 
@@ -621,9 +617,8 @@ class Settings {
         'novelDisplayType': novelDisplayType.index,
         'novelFontSize': novelFontSize,
         'novelTextAlign': novelTextAlign.index,
-        'hideManga': hideManga,
-        'hideAnime': hideAnime,
-        'hideNovel': hideNovel,
+        'navigationOrder': navigationOrder,
+        'hideItems': hideItems,
         'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch
       };
 }

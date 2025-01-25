@@ -594,6 +594,19 @@ class RouterNotifier extends ChangeNotifier {
             );
           },
         ),
+        GoRoute(
+          path: "/customNavigationSettings",
+          name: "customNavigationSettings",
+          builder: (context, state) {
+            return const CustomNavigationSettings();
+          },
+          pageBuilder: (context, state) {
+            return transitionPage(
+              key: state.pageKey,
+              child: const CustomNavigationSettings(),
+            );
+          },
+        ),
       ];
 }
 
