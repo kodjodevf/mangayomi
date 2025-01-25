@@ -500,8 +500,12 @@ class Settings {
     }
     novelTextAlign = NovelTextAlign
         .values[json['novelTextAlign'] ?? NovelTextAlign.left.index];
-    navigationOrder = json['navigationOrder']?.cast<String>();
-    hideItems = json['hideItems']?.cast<String>();
+    if (json['navigationOrder'] != null) {
+      navigationOrder = (json['navigationOrder'] as List).cast<String>();
+    }
+    if (json['hideItems'] != null) {
+      hideItems = (json['hideItems'] as List).cast<String>();
+    }
     clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
   }
 
