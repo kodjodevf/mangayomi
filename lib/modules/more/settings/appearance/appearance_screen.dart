@@ -21,8 +21,8 @@ final navigationItems = {
   "/MangaLibrary": "Manga",
   "/AnimeLibrary": "Anime",
   "/NovelLibrary": "Novel",
-  "/updates": "updates",
-  "/history": "history",
+  "/updates": "Updates",
+  "/history": "History",
   "/browse": "Browse",
   "/more": "More",
 };
@@ -501,14 +501,14 @@ class _CustomNavigationSettingsState
                 key: Key(navigation),
                 dense: true,
                 contentPadding: const EdgeInsets.only(left: 0, right: 40),
-                value: hideItems.contains(navigation),
+                value: !hideItems.contains(navigation),
                 onChanged: navigation == "/more"
                     ? null
                     : (value) {
                         final temp = hideItems.toList();
-                        if (value && !hideItems.contains(navigation)) {
+                        if (!value && !hideItems.contains(navigation)) {
                           temp.add(navigation);
-                        } else {
+                        } else if (value) {
                           temp.remove(navigation);
                         }
                         ref.read(hideItemsStateProvider.notifier).set(temp);
@@ -530,7 +530,9 @@ class _CustomNavigationSettingsState
                 }
                 navigationOrder[newIndex] = draggedItem;
               }
-              ref.read(navigationOrderStateProvider.notifier).set(navigationOrder);
+              ref
+                  .read(navigationOrderStateProvider.notifier)
+                  .set(navigationOrder);
             },
           ),
         ),
