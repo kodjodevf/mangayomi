@@ -32,12 +32,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   @override
   Widget build(BuildContext context) {
     int newTabs = 0;
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
-    if (!hideManga) newTabs++;
-    if (!hideAnime) newTabs++;
-    if (!hideNovel) newTabs++;
+    final hideItems = ref.watch(hideItemsStateProvider);
+    if (!hideItems.contains("/MangaLibrary")) newTabs++;
+    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
+    if (!hideItems.contains("/NovelLibrary")) newTabs++;
     if (tabs != newTabs) {
       _tabBarController.dispose();
       _tabBarController = TabController(length: newTabs, vsync: this);
@@ -62,22 +60,22 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              if (!hideManga) Tab(text: l10n.manga),
-              if (!hideAnime) Tab(text: l10n.anime),
-              if (!hideNovel) Tab(text: l10n.novel),
+              if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
+              if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
+              if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
             ],
           ),
         ),
         body: TabBarView(controller: _tabBarController, children: [
-          if (!hideManga)
+          if (!hideItems.contains("/MangaLibrary"))
             CategoriesTab(
               itemType: ItemType.manga,
             ),
-          if (!hideAnime)
+          if (!hideItems.contains("/AnimeLibrary"))
             CategoriesTab(
               itemType: ItemType.anime,
             ),
-          if (!hideNovel)
+          if (!hideItems.contains("/NovelLibrary"))
             CategoriesTab(
               itemType: ItemType.novel,
             )

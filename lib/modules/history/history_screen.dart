@@ -54,13 +54,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     int newTabs = 0;
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
+    final hideItems = ref.watch(hideItemsStateProvider);
 
-    if (!hideManga) newTabs++;
-    if (!hideAnime) newTabs++;
-    if (!hideNovel) newTabs++;
+    if (!hideItems.contains("/MangaLibrary")) newTabs++;
+    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
+    if (!hideItems.contains("/NovelLibrary")) newTabs++;
     if (newTabs == 0) {
       return SizedBox.shrink();
     }
@@ -147,14 +145,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                               .itemTypeEqualTo(_tabBarController
                                                               .index ==
                                                           0 &&
-                                                      !hideManga
+                                                      !hideItems.contains(
+                                                          "/MangaLibrary")
                                                   ? ItemType.manga
                                                   : _tabBarController.index ==
                                                               1 -
-                                                                  (hideManga
+                                                                  (hideItems.contains(
+                                                                          "/MangaLibrary")
                                                                       ? 1
                                                                       : 0) &&
-                                                          !hideAnime
+                                                          !hideItems.contains(
+                                                              "/AnimeLibrary")
                                                       ? ItemType.anime
                                                       : ItemType.novel)))
                                           .findAllSync()
@@ -182,26 +183,26 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              if (!hideManga) Tab(text: l10n.manga),
-              if (!hideAnime) Tab(text: l10n.anime),
-              if (!hideNovel) Tab(text: l10n.novel),
+              if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
+              if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
+              if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
             ],
           ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
           child: TabBarView(controller: _tabBarController, children: [
-            if (!hideManga)
+            if (!hideItems.contains("/MangaLibrary"))
               HistoryTab(
                 itemType: ItemType.manga,
                 query: _textEditingController.text,
               ),
-            if (!hideAnime)
+            if (!hideItems.contains("/AnimeLibrary"))
               HistoryTab(
                 itemType: ItemType.anime,
                 query: _textEditingController.text,
               ),
-            if (!hideNovel)
+            if (!hideItems.contains("/NovelLibrary"))
               HistoryTab(
                 itemType: ItemType.novel,
                 query: _textEditingController.text,

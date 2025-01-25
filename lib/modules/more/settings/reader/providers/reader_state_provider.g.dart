@@ -157,54 +157,39 @@ final fullScreenReaderStateProvider =
 );
 
 typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
-String _$hideMangaStateHash() => r'fd24207581798fd1634ff6df2c85b8895053d14c';
+String _$navigationOrderStateHash() =>
+    r'f1da55a7687995d136a6580d3f63f9b1b32a6ae8';
 
-/// See also [HideMangaState].
-@ProviderFor(HideMangaState)
-final hideMangaStateProvider =
-    AutoDisposeNotifierProvider<HideMangaState, bool>.internal(
-  HideMangaState.new,
-  name: r'hideMangaStateProvider',
+/// See also [NavigationOrderState].
+@ProviderFor(NavigationOrderState)
+final navigationOrderStateProvider =
+    AutoDisposeNotifierProvider<NavigationOrderState, List<String>>.internal(
+  NavigationOrderState.new,
+  name: r'navigationOrderStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$hideMangaStateHash,
+      : _$navigationOrderStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$HideMangaState = AutoDisposeNotifier<bool>;
-String _$hideAnimeStateHash() => r'3e8748d9312b9ea84364959b7de17fed2204d303';
+typedef _$NavigationOrderState = AutoDisposeNotifier<List<String>>;
+String _$hideItemsStateHash() => r'b4a467e66f6a1f9b36e4b201a10b771e0dae6a80';
 
-/// See also [HideAnimeState].
-@ProviderFor(HideAnimeState)
-final hideAnimeStateProvider =
-    AutoDisposeNotifierProvider<HideAnimeState, bool>.internal(
-  HideAnimeState.new,
-  name: r'hideAnimeStateProvider',
+/// See also [HideItemsState].
+@ProviderFor(HideItemsState)
+final hideItemsStateProvider =
+    AutoDisposeNotifierProvider<HideItemsState, List<String>>.internal(
+  HideItemsState.new,
+  name: r'hideItemsStateProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$hideAnimeStateHash,
+      : _$hideItemsStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$HideAnimeState = AutoDisposeNotifier<bool>;
-String _$hideNovelStateHash() => r'697efab85819783a7c1982797927feb397770191';
-
-/// See also [HideNovelState].
-@ProviderFor(HideNovelState)
-final hideNovelStateProvider =
-    AutoDisposeNotifierProvider<HideNovelState, bool>.internal(
-  HideNovelState.new,
-  name: r'hideNovelStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hideNovelStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$HideNovelState = AutoDisposeNotifier<bool>;
+typedef _$HideItemsState = AutoDisposeNotifier<List<String>>;
 String _$novelFontSizeStateHash() =>
     r'fd104e358203d3f86e14d933518f2dbd067cec13';
 

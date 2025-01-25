@@ -139,47 +139,41 @@ class FullScreenReaderState extends _$FullScreenReaderState {
 }
 
 @riverpod
-class HideMangaState extends _$HideMangaState {
+class NavigationOrderState extends _$NavigationOrderState {
   @override
-  bool build() {
-    return isar.settings.getSync(227)!.hideManga ?? false;
+  List<String> build() {
+    return isar.settings.getSync(227)!.navigationOrder ??
+        [
+          '/MangaLibrary',
+          '/AnimeLibrary',
+          '/NovelLibrary',
+          '/updates',
+          '/history',
+          '/browse',
+          '/more'
+        ];
   }
 
-  void set(bool value) {
+  void set(List<String> values) {
     final settings = isar.settings.getSync(227);
-    state = value;
+    state = values;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..hideManga = value));
+        () => isar.settings.putSync(settings!..navigationOrder = values));
   }
 }
 
 @riverpod
-class HideAnimeState extends _$HideAnimeState {
+class HideItemsState extends _$HideItemsState {
   @override
-  bool build() {
-    return isar.settings.getSync(227)!.hideAnime ?? false;
+  List<String> build() {
+    return isar.settings.getSync(227)!.hideItems ?? [];
   }
 
-  void set(bool value) {
+  void set(List<String> values) {
     final settings = isar.settings.getSync(227);
-    state = value;
+    state = values;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..hideAnime = value));
-  }
-}
-
-@riverpod
-class HideNovelState extends _$HideNovelState {
-  @override
-  bool build() {
-    return isar.settings.getSync(227)!.hideNovel ?? false;
-  }
-
-  void set(bool value) {
-    final settings = isar.settings.getSync(227);
-    state = value;
-    isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..hideNovel = value));
+        () => isar.settings.putSync(settings!..hideItems = values));
   }
 }
 
