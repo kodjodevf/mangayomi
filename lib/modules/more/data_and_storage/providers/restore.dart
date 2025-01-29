@@ -65,7 +65,8 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
           ?.map((e) => Chapter.fromJson(e))
           .toList();
       final categories = (backup["categories"] as List?)
-          ?.map((e) => Category.fromJson(e))
+          ?.map((e) =>
+              Category.fromJson(e)..forItemType = _convertToItemTypeCategory(e))
           .toList();
       final track = (backup["tracks"] as List?)
           ?.map((e) => Track.fromJson(e)..itemType = _convertToItemType(e))
@@ -195,6 +196,15 @@ ItemType _convertToItemType(Map<String, dynamic> backup) {
   return isManga == null
       ? ItemType.values[backup['itemType'] ?? 0]
       : isManga
+          ? ItemType.manga
+          : ItemType.anime;
+}
+
+ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
+  final forManga = backup['forManga'];
+  return forManga == null
+      ? ItemType.values[backup['itemType'] ?? 0]
+      : forManga
           ? ItemType.manga
           : ItemType.anime;
 }
