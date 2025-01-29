@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
@@ -16,6 +17,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
+final navigationItems = {
+  "/MangaLibrary": "Manga",
+  "/AnimeLibrary": "Anime",
+  "/NovelLibrary": "Novel",
+  "/updates": "Updates",
+  "/history": "History",
+  "/browse": "Browse",
+  "/more": "More",
+};
+
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
 
@@ -28,9 +39,6 @@ class AppearanceScreen extends ConsumerWidget {
     final isDarkTheme = ref.watch(themeModeStateProvider);
     final l10nLocale = ref.watch(l10nLocaleStateProvider);
     final appFontFamily = ref.watch(appFontFamilyProvider);
-    final hideAnime = ref.watch(hideAnimeStateProvider);
-    final hideManga = ref.watch(hideMangaStateProvider);
-    final hideNovel = ref.watch(hideNovelStateProvider);
     final appFontFamilySub = appFontFamily == null
         ? context.l10n.default0
         : GoogleFonts.asMap()
@@ -299,24 +307,16 @@ class AppearanceScreen extends ConsumerWidget {
                           fontSize: 11, color: context.secondaryColor),
                     ),
                   ),
-                  SwitchListTile(
-                      value: hideAnime,
-                      title: Text(context.l10n.hide_anime),
-                      onChanged: (value) {
-                        ref.read(hideAnimeStateProvider.notifier).set(value);
-                      }),
-                  SwitchListTile(
-                      value: hideManga,
-                      title: Text(context.l10n.hide_manga),
-                      onChanged: (value) {
-                        ref.read(hideMangaStateProvider.notifier).set(value);
-                      }),
-                  SwitchListTile(
-                      value: hideNovel,
-                      title: Text(context.l10n.hide_novel),
-                      onChanged: (value) {
-                        ref.read(hideNovelStateProvider.notifier).set(value);
-                      }),
+                  ListTile(
+                      onTap: () {
+                        context.push("/customNavigationSettings");
+                      },
+                      title: Text(l10n.reorder_navigation),
+                      subtitle: Text(
+                        l10n.reorder_navigation_description,
+                        style: TextStyle(
+                            fontSize: 11, color: context.secondaryColor),
+                      )),
                 ],
               ),
             ),
@@ -464,6 +464,77 @@ class AppearanceScreen extends ConsumerWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomNavigationSettings extends ConsumerStatefulWidget {
+  const CustomNavigationSettings({super.key});
+
+  @override
+  ConsumerState<CustomNavigationSettings> createState() =>
+      _CustomNavigationSettingsState();
+}
+
+class _CustomNavigationSettingsState
+    extends ConsumerState<CustomNavigationSettings> {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context);
+    final navigationOrder = ref.watch(navigationOrderStateProvider);
+    final hideItems = ref.watch(hideItemsStateProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n!.reorder_navigation),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ReorderableListView.builder(
+            shrinkWrap: true,
+            itemCount: navigationOrder.length,
+            itemBuilder: (context, index) {
+              final navigation = navigationOrder[index];
+              return SwitchListTile.adaptive(
+                key: Key(navigation),
+                dense: true,
+                contentPadding: const EdgeInsets.only(left: 0, right: 40),
+                value: !hideItems.contains(navigation),
+                onChanged: navigation == "/more"
+                    ? null
+                    : (value) {
+                        final temp = hideItems.toList();
+                        if (!value && !hideItems.contains(navigation)) {
+                          temp.add(navigation);
+                        } else if (value) {
+                          temp.remove(navigation);
+                        }
+                        ref.read(hideItemsStateProvider.notifier).set(temp);
+                      },
+                title: Text(navigationItems[navigation]!),
+              );
+            },
+            onReorder: (oldIndex, newIndex) {
+              if (oldIndex < newIndex) {
+                final draggedItem = navigationOrder[oldIndex];
+                for (var i = oldIndex; i < newIndex - 1; i++) {
+                  navigationOrder[i] = navigationOrder[i + 1];
+                }
+                navigationOrder[newIndex - 1] = draggedItem;
+              } else {
+                final draggedItem = navigationOrder[oldIndex];
+                for (var i = oldIndex; i > newIndex; i--) {
+                  navigationOrder[i] = navigationOrder[i - 1];
+                }
+                navigationOrder[newIndex] = draggedItem;
+              }
+              ref
+                  .read(navigationOrderStateProvider.notifier)
+                  .set(navigationOrder);
+            },
+          ),
         ),
       ),
     );
