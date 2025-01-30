@@ -1,6 +1,9 @@
 PODS:
   - audio_session (0.0.1):
     - FlutterMacOS
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - flutter_inappwebview_macos (0.0.1):
     - FlutterMacOS
     - OrderedSet (~> 6.0.3)
@@ -53,6 +56,7 @@ PODS:
 
 DEPENDENCIES:
   - audio_session (from `Flutter/ephemeral/.symlinks/plugins/audio_session/macos`)
+  - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/darwin`)
   - flutter_inappwebview_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview_macos/macos`)
   - flutter_qjs (from `Flutter/ephemeral/.symlinks/plugins/flutter_qjs/macos`)
   - flutter_web_auth_2 (from `Flutter/ephemeral/.symlinks/plugins/flutter_web_auth_2/macos`)
@@ -83,6 +87,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   audio_session:
     :path: Flutter/ephemeral/.symlinks/plugins/audio_session/macos
+  connectivity_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/darwin
   flutter_inappwebview_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview_macos/macos
   flutter_qjs:
@@ -130,6 +136,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   audio_session: 48ab6500f7a5e7c64363e206565a5dfe5a0c1441
+  connectivity_plus: 2256d3e20624a7749ed21653aafe291a46446fee
   flutter_inappwebview_macos: c2d68649f9f8f1831bfcd98d73fd6256366d9d1d
   flutter_qjs: cb2d0cba9deade1d03b89f6c432eac126f39482a
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65

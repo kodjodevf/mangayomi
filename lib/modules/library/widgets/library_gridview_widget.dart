@@ -170,9 +170,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                 i++) {
                                               final entries = isar.downloads
                                                   .filter()
-                                                  .idIsNotNull()
-                                                  .chapterIdEqualTo(entry
-                                                      .chapters
+                                                  .idEqualTo(entry.chapters
                                                       .toList()[i]
                                                       .id)
                                                   .findAllSync();

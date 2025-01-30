@@ -95,7 +95,7 @@ class StorageProvider {
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
+        "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
             .fixSeparator);
   }
 

@@ -249,7 +249,7 @@ extension MangaExtensions on Manga {
           final modelChapDownload = isar.downloads
               .filter()
               .idIsNotNull()
-              .chapterIdEqualTo(element.id)
+              .idEqualTo(element.id)
               .findAllSync();
           return filterDownloaded == 1
               ? modelChapDownload.isNotEmpty &&

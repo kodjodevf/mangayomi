@@ -398,5 +398,6 @@
   "app_settings": "App settings",
   "sources_settings": "Sources settings",
   "include_sensitive_settings": "Include sensitive settings (e.g., tracker login tokens)",
-  "create": "Create"
+  "create": "Create",
+  "downloads_are_limited_to_wifi": "Downloads are limited to Wi-Fi only"
 }

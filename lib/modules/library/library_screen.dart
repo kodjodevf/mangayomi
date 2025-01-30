@@ -812,11 +812,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           List list = [];
           if (downloadFilterType == 1) {
             for (var chap in element.chapters) {
-              final modelChapDownload = isar.downloads
-                  .filter()
-                  .idIsNotNull()
-                  .chapterIdEqualTo(chap.id)
-                  .findAllSync();
+              final modelChapDownload =
+                  isar.downloads.filter().idEqualTo(chap.id).findAllSync();
 
               if (modelChapDownload.isNotEmpty &&
                   modelChapDownload.first.isDownload == true) {
@@ -826,11 +823,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             return list.isNotEmpty;
           } else if (downloadFilterType == 2) {
             for (var chap in element.chapters) {
-              final modelChapDownload = isar.downloads
-                  .filter()
-                  .idIsNotNull()
-                  .chapterIdEqualTo(chap.id)
-                  .findAllSync();
+              final modelChapDownload =
+                  isar.downloads.filter().idEqualTo(chap.id).findAllSync();
               if (!(modelChapDownload.isNotEmpty &&
                   modelChapDownload.first.isDownload == true)) {
                 list.add(true);
@@ -1214,7 +1208,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                           isar.writeTxnSync(() {
                                             final download = isar.downloads
                                                 .filter()
-                                                .chapterIdEqualTo(chapter.id!)
+                                                .idEqualTo(chapter.id!)
                                                 .findAllSync();
                                             if (download.isNotEmpty) {
                                               isar.downloads.deleteSync(

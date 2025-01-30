@@ -6,6 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import audio_session
+import connectivity_plus
 import flutter_inappwebview_macos
 import flutter_qjs
 import flutter_web_auth_2
@@ -28,6 +29,7 @@ import window_to_front
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AudioSessionPlugin.register(with: registry.registrar(forPlugin: "AudioSessionPlugin"))
+  ConnectivityPlusPlugin.register(with: registry.registrar(forPlugin: "ConnectivityPlusPlugin"))
   InAppWebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "InAppWebViewFlutterPlugin"))
   FlutterQjsPlugin.register(with: registry.registrar(forPlugin: "FlutterQjsPlugin"))
   FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))

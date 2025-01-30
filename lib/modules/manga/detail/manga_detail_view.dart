@@ -168,11 +168,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 ? element.isBookmarked == false
                 : true)
         .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idIsNotNull()
-              .chapterIdEqualTo(element.id)
-              .findAllSync();
+          final modelChapDownload =
+              isar.downloads.filter().idEqualTo(element.id).findAllSync();
           return filterDownloaded == 1
               ? modelChapDownload.isNotEmpty &&
                   modelChapDownload.first.isDownload == true
@@ -432,8 +429,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           final chapter = chapters.first;
                                           final entry = isar.downloads
                                               .filter()
-                                              .idIsNotNull()
-                                              .chapterIdEqualTo(chapter.id)
+                                              .idEqualTo(chapter.id)
                                               .findFirstSync();
                                           if (entry == null ||
                                               !entry.isDownload!) {
@@ -457,8 +453,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                   lastChapterReadIndex + i];
                                               final entry = isar.downloads
                                                   .filter()
-                                                  .idIsNotNull()
-                                                  .chapterIdEqualTo(chapter.id)
+                                                  .idEqualTo(chapter.id)
                                                   .findFirstSync();
                                               if (entry == null ||
                                                   !entry.isDownload!) {
@@ -479,8 +474,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         for (var chapter in unreadChapters) {
                                           final entry = isar.downloads
                                               .filter()
-                                              .idIsNotNull()
-                                              .chapterIdEqualTo(chapter.id)
+                                              .idEqualTo(chapter.id)
                                               .findFirstSync();
                                           if (entry == null ||
                                               !entry.isDownload!) {
@@ -866,8 +860,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       in ref.watch(chaptersListStateProvider)) {
                                     final entries = isar.downloads
                                         .filter()
-                                        .idIsNotNull()
-                                        .chapterIdEqualTo(chapter.id)
+                                        .idEqualTo(chapter.id)
                                         .findAllSync();
                                     if (entries.isEmpty ||
                                         !entries.first.isDownload!) {

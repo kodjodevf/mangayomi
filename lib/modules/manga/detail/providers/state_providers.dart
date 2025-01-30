@@ -346,11 +346,8 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
     ref.read(isLongPressedStateProvider.notifier).update(false);
     isar.txnSync(() {
       for (var chapter in ref.watch(chaptersListStateProvider)) {
-        final entries = isar.downloads
-            .filter()
-            .idIsNotNull()
-            .chapterIdEqualTo(chapter.id)
-            .findAllSync();
+        final entries =
+            isar.downloads.filter().idEqualTo(chapter.id).findAllSync();
         if (entries.isEmpty || !entries.first.isDownload!) {
           ref.watch(downloadChapterProvider(chapter: chapter));
         }

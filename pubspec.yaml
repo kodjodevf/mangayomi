@@ -78,6 +78,8 @@ dependencies:
       ref: main
   screen_brightness: ^2.0.1
   flutter_widget_from_html: ^0.15.3
+  convert: ^3.1.2
+  connectivity_plus: ^6.1.2
 
 dependency_overrides:
   http: ^1.2.2

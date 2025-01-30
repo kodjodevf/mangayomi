@@ -464,11 +464,8 @@ extension MangaExtensions on Manga {
                 ? element.isBookmarked == false
                 : true)
         .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idIsNotNull()
-              .chapterIdEqualTo(element.id)
-              .findAllSync();
+          final modelChapDownload =
+              isar.downloads.filter().idEqualTo(element.id).findAllSync();
           return filterDownloaded == 1
               ? modelChapDownload.isNotEmpty &&
                   modelChapDownload.first.isDownload == true

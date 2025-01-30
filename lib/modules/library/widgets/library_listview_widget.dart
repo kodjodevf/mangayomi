@@ -180,9 +180,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                                 i++) {
                                               final entries = isar.downloads
                                                   .filter()
-                                                  .idIsNotNull()
-                                                  .chapterIdEqualTo(entry
-                                                      .chapters
+                                                  .idEqualTo(entry.chapters
                                                       .toList()[i]
                                                       .id)
                                                   .findAllSync();

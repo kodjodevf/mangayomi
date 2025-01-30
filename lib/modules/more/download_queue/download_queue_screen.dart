@@ -1,12 +1,12 @@
-import 'package:mangayomi/services/background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/global_style.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
@@ -123,70 +123,22 @@ class DownloadQueueScreen extends ConsumerWidget {
                           child: const Icon(Icons.more_vert),
                           onSelected: (value) async {
                             if (value.toString() == 'Cancel') {
-                              final taskIds = (isar.settings
-                                              .getSync(227)!
-                                              .chapterPageUrlsList ??
-                                          [])
-                                      .where((e) =>
-                                          e.chapterId == element.chapterId!)
-                                      .map((e) => e.urls)
-                                      .firstOrNull ??
-                                  [];
-                              FileDownloader()
-                                  .cancelTasksWithIds(taskIds)
-                                  .then((value) async {
-                                await Future.delayed(
-                                    const Duration(seconds: 1));
-                                isar.writeTxnSync(() {
-                                  int id = isar.downloads
-                                      .filter()
-                                      .chapterIdEqualTo(
-                                          element.chapter.value!.id)
-                                      .findFirstSync()!
-                                      .id!;
-                                  isar.downloads.deleteSync(id);
-                                });
-                              });
+                              element.chapter.value
+                                  ?.cancelDownloads(element.id!);
                             } else if (value.toString() == 'CancelAll') {
-                              final chapterIds = entries
+                              final a = entries
                                   .where((e) =>
-                                      e.chapter.value?.manga.value?.name ==
-                                          element.chapter.value?.manga.value
-                                              ?.name &&
-                                      e.chapter.value?.manga.value?.source ==
-                                          element.chapter.value?.manga.value
-                                              ?.source)
-                                  .map((e) => e.chapterId)
+                                      '${e.chapter.value?.manga.value?.name}' ==
+                                          '${element.chapter.value?.manga.value?.name}' &&
+                                      '${e.chapter.value?.manga.value?.source}' ==
+                                          '${element.chapter.value?.manga.value?.source}')
+                                  .map((e) => (e.id, e.chapter.value?.id))
                                   .toList();
-                              for (var chapterId in chapterIds) {
-                                final taskIds = (isar.settings
-                                                .getSync(227)!
-                                                .chapterPageUrlsList ??
-                                            [])
-                                        .where((e) => e.chapterId == chapterId!)
-                                        .map((e) => e.urls)
-                                        .firstOrNull ??
-                                    [];
-                                await FileDownloader()
-                                    .cancelTasksWithIds(taskIds);
-                                Future.delayed(const Duration(seconds: 2)).then(
-                                  (value) {
-                                    final chapterD = isar.downloads
-                                        .filter()
-                                        .chapterIdEqualTo(chapterId)
-                                        .findFirstSync();
-                                    if (chapterD != null) {
-                                      final verifyId =
-                                          isar.downloads.getSync(chapterD.id!);
-                                      isar.writeTxnSync(() {
-                                        if (verifyId != null) {
-                                          isar.downloads
-                                              .deleteSync(chapterD.id!);
-                                        }
-                                      });
-                                    }
-                                  },
-                                );
+                              for (var ids in a) {
+                                final (downloadId, chapterId) = ids;
+                                final chapter =
+                                    isar.chapters.getSync(chapterId!);
+                                chapter?.cancelDownloads(downloadId!);
                               }
                             }
                           },

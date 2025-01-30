@@ -59,7 +59,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         ..launch(widget.url)
         ..onClose.whenComplete(() {
           timer.cancel();
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
         });
     } else {
       browser = MyInAppBrowser(

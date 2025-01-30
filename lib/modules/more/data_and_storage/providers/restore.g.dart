@@ -173,7 +173,7 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 
-String _$restoreBackupHash() => r'1cc45d864473761c65d4ce52074e4bd9c513e91d';
+String _$restoreBackupHash() => r'24405b9be28204324e47d6c1db34495d55a491d2';
 
 /// See also [restoreBackup].
 @ProviderFor(restoreBackup)

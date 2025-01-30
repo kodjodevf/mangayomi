@@ -109,7 +109,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
             isar.downloads.clearSync();
             if (downloads != null) {
               for (var download in downloads) {
-                final chapter = isar.chapters.getSync(download.chapterId!);
+                final chapter = isar.chapters.getSync(download.id!);
                 if (chapter != null) {
                   isar.downloads.putSync(download..chapter.value = chapter);
                   download.chapter.saveSync();
