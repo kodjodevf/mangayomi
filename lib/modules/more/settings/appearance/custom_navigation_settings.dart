@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart';
@@ -21,15 +19,15 @@ class _CustomNavigationSettingsState
     final l10n = context.l10n;
     final navigationOrder = ref.watch(navigationOrderStateProvider);
     final hideItems = ref.watch(hideItemsStateProvider);
-    final isMobile = Platform.isAndroid || Platform.isIOS;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.reorder_navigation),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: ReorderableListView.builder(
+            buildDefaultDragHandles: false,
             shrinkWrap: true,
             itemCount: navigationOrder.length,
             itemBuilder: (context, index) {
@@ -37,14 +35,14 @@ class _CustomNavigationSettingsState
               return Row(
                 key: Key('navigation_$navigation'),
                 children: [
-                  if (isMobile) Icon(Icons.drag_handle),
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: const Icon(Icons.drag_handle),
+                  ),
                   Expanded(
-                    child: SwitchListTile.adaptive(
+                    child: SwitchListTile(
                       key: Key(navigation),
                       dense: true,
-                      contentPadding: isMobile
-                          ? null
-                          : const EdgeInsets.only(left: 0, right: 40),
                       value: !hideItems.contains(navigation),
                       onChanged: ["/more", "/browse", "/history"]
                               .any((element) => element == navigation)
