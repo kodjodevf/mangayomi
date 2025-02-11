@@ -4,42 +4,30 @@
 
 <h1 align="center"> Mangayomi </h1>
 
-<p align="center">
+<div align="center">
 
- [![latest release](https://img.shields.io/github/release/kodjodevf/mangayomi.svg?maxAge=3600&label=download)](https://github.com/kodjodevf/mangayomi/releases)
- [![downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/total)](https://github.com/kodjodevf/mangayomi/releases)
- [![downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/latest/total)](https://github.com/kodjodevf/mangayomi/releases)
+ [![GitHub downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/kodjodevf/mangayomi/releases)
 ![star](https://img.shields.io/github/stars/kodjodevf/mangayomi)
- [![Discord](https://img.shields.io/discord/1157628512077893666.svg?label=discord&labelColor=7289da&color=2c2f33&style=flat)](https://discord.com/invite/EjfBuYahsP) 
+ [![Discord server](https://img.shields.io/discord/1157628512077893666.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.com/invite/EjfBuYahsP) 
 
-</p>
 
-Mangayomi is free an open source manga reader and anime streaming cross-platform app inspired by Tachiyomi and Aniyomi made with Flutter. It allows users to read manga and watch anime from a variety of sources.
+Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms.
+</div>
 
 ## Features
 
+<div align="left">
+
 Features include:
-* [Supports external sources](https://github.com/kodjodevf/mangayomi-extensions), utilizing the capabilities of the [dart_eval](https://pub.dev/packages/dart_eval) package & [flutter_qjs](https://github.com/kodjodevf/flutter_qjs)
-* Online reading from a variety of sources
-* Watching anime from a variety of sources
-* Local reading of downloaded content
-* A configurable reader with multiple viewers, reading directions and other settings..
-* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support
-* Categories to organize your library
-* Light and dark themes
-* Create backups locally to read offline or to your desired cloud service
+* Reading manga, webtoons, comics, novels, animes, movies, and more.
+* Local reading of content.
+* A configurable reader with multiple viewers, reading directions and other settings.
+* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support.
+* Categories to organize your library.
+* Light and dark themes.
+* Create backups locally to read offline or to your desired cloud service.
 
-## Screenshots :camera:
-
-### Mobile Screenshots                                                                                                                
-|          |  Reader                                               |  Player                                               |
-| -------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| Views    |  ![mobile_reader_light](screenshots/mobile_reader.jpg)|  ![mobile_anime_player](screenshots/mobile_player.jpg)|
-
-### Desktop Screenshots                                                                                                                
-|          |  Reader                                           |  Player                                           |
-| -------- | ------------------------------------------------- | ------------------------------------------------- |
-| Views    |  ![desktop_reader](screenshots/desktop_reader.png)|  ![desktop_player](screenshots/desktop_player.png)|
+</div>
 
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
@@ -103,4 +91,4 @@ flutter run
 
 ## Disclaimer
 
-The developer of this application does not have any affiliation with the content providers available.
+Mangayomi is not hosting any kind of content and the developer(s) of this application does not have any affiliation with the content providers / extensions that are freely available in the internet.
