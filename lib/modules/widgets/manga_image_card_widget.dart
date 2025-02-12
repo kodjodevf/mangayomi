@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -64,6 +66,7 @@ class MangaImageCardWidget extends ConsumerWidget {
                       cacheMaxAge: const Duration(days: 7)),
               onTap: () {
                 pushToMangaReaderDetail(
+                    ref: ref,
                     context: context,
                     getManga: getMangaDetail!,
                     lang: source.lang!,
@@ -72,6 +75,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               },
               onLongPress: () {
                 pushToMangaReaderDetail(
+                    ref: ref,
                     context: context,
                     getManga: getMangaDetail!,
                     lang: source.lang!,
@@ -81,6 +85,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               },
               onSecondaryTap: () {
                 pushToMangaReaderDetail(
+                    ref: ref,
                     context: context,
                     getManga: getMangaDetail!,
                     lang: source.lang!,
@@ -162,6 +167,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
               child: InkWell(
                 onTap: () {
                   pushToMangaReaderDetail(
+                      ref: ref,
                       context: context,
                       getManga: getMangaDetail!,
                       lang: source.lang!,
@@ -170,6 +176,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                 },
                 onLongPress: () {
                   pushToMangaReaderDetail(
+                      ref: ref,
                       context: context,
                       getManga: getMangaDetail!,
                       lang: source.lang!,
@@ -179,6 +186,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                 },
                 onSecondaryTap: () {
                   pushToMangaReaderDetail(
+                      ref: ref,
                       context: context,
                       getManga: getMangaDetail!,
                       lang: source.lang!,
@@ -247,6 +255,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
 
 Future<void> pushToMangaReaderDetail(
     {MManga? getManga,
+    required WidgetRef ref,
     required String lang,
     required BuildContext context,
     required String source,
@@ -280,6 +289,9 @@ Future<void> pushToMangaReaderDetail(
     if (empty) {
       isar.writeTxnSync(() {
         isar.mangas.putSync(manga);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(ActionType.addItem, null, manga.toJson(), false);
       });
     }
 
@@ -346,6 +358,8 @@ Future<void> pushToMangaReaderDetail(
     final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
     isar.writeTxnSync(() {
       isar.mangas.putSync(getManga..favorite = !getManga.favorite!);
+      ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+          ActionType.updateItem, getManga.id, getManga.toJson(), false);
     });
   }
 }

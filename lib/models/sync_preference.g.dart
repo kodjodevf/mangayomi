@@ -46,6 +46,11 @@ const SyncPreferenceSchema = CollectionSchema(
       id: 5,
       name: r'server',
       type: IsarType.string,
+    ),
+    r'syncOn': PropertySchema(
+      id: 6,
+      name: r'syncOn',
+      type: IsarType.bool,
     )
   },
   estimateSize: _syncPreferenceEstimateSize,
@@ -101,6 +106,7 @@ void _syncPreferenceSerialize(
   writer.writeLong(offsets[3], object.lastSync);
   writer.writeLong(offsets[4], object.lastUpload);
   writer.writeString(offsets[5], object.server);
+  writer.writeBool(offsets[6], object.syncOn);
 }
 
 SyncPreference _syncPreferenceDeserialize(
@@ -117,6 +123,7 @@ SyncPreference _syncPreferenceDeserialize(
     lastUpload: reader.readLongOrNull(offsets[4]),
     server: reader.readStringOrNull(offsets[5]),
     syncId: id,
+    syncOn: reader.readBoolOrNull(offsets[6]) ?? false,
   );
   return object;
 }
@@ -140,6 +147,8 @@ P _syncPreferenceDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 5:
       return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -996,6 +1005,16 @@ extension SyncPreferenceQueryFilter
       ));
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      syncOnEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncOn',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension SyncPreferenceQueryObject
@@ -1082,6 +1101,19 @@ extension SyncPreferenceQuerySortBy
       sortByServerDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'server', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> sortBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncOnDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.desc);
     });
   }
 }
@@ -1179,6 +1211,19 @@ extension SyncPreferenceQuerySortThenBy
       return query.addSortBy(r'syncId', Sort.desc);
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> thenBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncOnDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.desc);
+    });
+  }
 }
 
 extension SyncPreferenceQueryWhereDistinct
@@ -1221,6 +1266,12 @@ extension SyncPreferenceQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'server', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct> distinctBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncOn');
     });
   }
 }
@@ -1266,6 +1317,12 @@ extension SyncPreferenceQueryProperty
   QueryBuilder<SyncPreference, String?, QQueryOperations> serverProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'server');
+    });
+  }
+
+  QueryBuilder<SyncPreference, bool, QQueryOperations> syncOnProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncOn');
     });
   }
 }

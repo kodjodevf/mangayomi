@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -7,6 +8,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -121,6 +123,8 @@ class AnimeStreamController extends _$AnimeStreamController {
       Manga? anime = episode.manga.value;
       anime!.lastRead = DateTime.now().millisecondsSinceEpoch;
       isar.mangas.putSync(anime);
+      ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+          ActionType.updateItem, anime.id, anime.toJson(), false);
     });
     History? history;
 
@@ -146,6 +150,13 @@ class AnimeStreamController extends _$AnimeStreamController {
     isar.writeTxnSync(() {
       isar.historys.putSync(history!);
       history.chapter.saveSync();
+      if (empty) {
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.addHistory, null, history.toJson(), false);
+      } else {
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateHistory, history.id, history.toJson(), false);
+      }
     });
   }
 
@@ -166,6 +177,8 @@ class AnimeStreamController extends _$AnimeStreamController {
         ep.isRead = isWatch;
         ep.lastPageRead = (duration.inMilliseconds).toString();
         isar.chapters.putSync(ep);
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateChapter, ep.id, ep.toJson(), false);
       });
       if (isWatch) {
         episode.updateTrackChapterRead(ref);

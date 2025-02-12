@@ -18,6 +18,8 @@ class SyncPreference {
 
   String? server;
 
+  bool syncOn = false;
+
   SyncPreference({
     this.syncId,
     this.email,
@@ -26,6 +28,7 @@ class SyncPreference {
     this.lastUpload,
     this.lastDownload,
     this.server,
+    this.syncOn = false,
   });
 
   SyncPreference.fromJson(Map<String, dynamic> json) {
@@ -36,6 +39,7 @@ class SyncPreference {
     lastUpload = json['lastUpload'];
     lastDownload = json['lastDownload'];
     server = json['server'];
+    syncOn = json['syncOn'] ?? false;
   }
 
   Map<String, dynamic> toJson() => {
@@ -45,6 +49,6 @@ class SyncPreference {
         'lastSync': lastSync,
         'lastUpload': lastUpload,
         'lastDownload': lastDownload,
-        'server': server
+        'syncOn': syncOn
       };
 }

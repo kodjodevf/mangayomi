@@ -6,11 +6,13 @@ import 'package:grouped_list/sliver_grouped_list.dart';
 
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -424,6 +426,17 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                                   .delete(manga
                                                                       .id!);
                                                             });
+                                                            await ref
+                                                                .read(synchingProvider(
+                                                                        syncId:
+                                                                            1)
+                                                                    .notifier)
+                                                                .addChangedPartAsync(
+                                                                    ActionType
+                                                                        .removeItem,
+                                                                    manga.id,
+                                                                    "{}",
+                                                                    true);
                                                             if (context
                                                                 .mounted) {
                                                               Navigator.pop(
