@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -48,6 +50,10 @@ class ExtensionsLang extends ConsumerWidget {
                       .findAllSync();
                   for (var source in sources) {
                     isar.sources.putSync(source..isActive = enable);
+                    ref
+                        .read(synchingProvider(syncId: 1).notifier)
+                        .addChangedPart(ActionType.updateExtension, source.id,
+                            source.toJson(), false);
                   }
                 });
               }),
@@ -76,6 +82,10 @@ class ExtensionsLang extends ConsumerWidget {
                       for (var source in entries) {
                         if (source.lang!.toLowerCase() == lang.toLowerCase()) {
                           isar.sources.putSync(source..isActive = val);
+                          ref
+                              .read(synchingProvider(syncId: 1).notifier)
+                              .addChangedPart(ActionType.updateExtension,
+                                  source.id, source.toJson(), false);
                         }
                       }
                     });

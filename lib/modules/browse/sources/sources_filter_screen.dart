@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/sliver_grouped_list.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -53,6 +55,10 @@ class SourcesFilterScreen extends ConsumerWidget {
                               if (source.lang!.toLowerCase() == groupByValue) {
                                 isar.sources
                                     .putSync(source..isActive = val == true);
+                                ref
+                                    .read(synchingProvider(syncId: 1).notifier)
+                                    .addChangedPart(ActionType.updateExtension,
+                                        source.id, source.toJson(), false);
                               }
                             }
                           });
@@ -100,6 +106,10 @@ class SourcesFilterScreen extends ConsumerWidget {
                           onChanged: (bool? value) {
                             isar.writeTxnSync(() {
                               isar.sources.putSync(element..isAdded = value);
+                              ref
+                                  .read(synchingProvider(syncId: 1).notifier)
+                                  .addChangedPart(ActionType.updateExtension,
+                                      element.id, element.toJson(), false);
                             });
                           },
                           value: element.isAdded!,

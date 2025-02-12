@@ -86,7 +86,7 @@ class SyncServer extends _$SyncServer {
           return;
         }
         var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-        final localHash = _getDataHash(_getData());
+        final localHash = _getDataHash(_getData(true));
         final remoteHash = jsonData["hash"];
         if (localHash != remoteHash) {
           await downloadFromServer(l10n, true, false);
@@ -94,12 +94,11 @@ class SyncServer extends _$SyncServer {
       } else {
         await forceCheck(l10n, true);
       }
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastSync(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .clearAllChangedParts();
+
+      final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
+      syncNotifier.setLastSync(DateTime.now().millisecondsSinceEpoch);
+      syncNotifier.clearAllChangedParts();
+
       ref.invalidate(synchingProvider(syncId: syncId));
       botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
@@ -113,7 +112,7 @@ class SyncServer extends _$SyncServer {
     }
     try {
       final accessToken = _getAccessToken();
-      final localHash = _getDataHash(_getData());
+      final localHash = _getDataHash(_getData(true));
       var response = await http.get(
         Uri.parse('${_getServer()}$_checkUrl'),
         headers: {
@@ -190,9 +189,6 @@ class SyncServer extends _$SyncServer {
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastDownload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .clearAllChangedParts();
       ref.invalidate(synchingProvider(syncId: syncId));
       botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
@@ -228,7 +224,7 @@ class SyncServer extends _$SyncServer {
   Future<void> uploadToServer(AppLocalizations l10n) async {
     botToast(l10n.sync_uploading, second: 2);
     try {
-      final datas = _getData();
+      final datas = _getData(false);
       final accessToken = _getAccessToken();
 
       var response = await http.post(
@@ -284,9 +280,6 @@ class SyncServer extends _$SyncServer {
       ref
           .read(synchingProvider(syncId: syncId).notifier)
           .setLastDownload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .clearAllChangedParts();
       ref.invalidate(synchingProvider(syncId: syncId));
       if (!silent) {
         botToast(l10n.sync_download_finished, second: 2);
@@ -305,11 +298,12 @@ class SyncServer extends _$SyncServer {
     datas["tracks"] = data["tracks"];
     datas["history"] = data["history"];
     datas["updates"] = data["updates"];
+    datas["extensions"] = data["extensions"];
     var encodedJson = jsonEncode(datas);
     return sha256.convert(utf8.encode(encodedJson)).toString();
   }
 
-  Map<String, dynamic> _getData() {
+  Map<String, dynamic> _getData(bool hashCheck) {
     Map<String, dynamic> datas = {};
     datas.addAll({"version": "2"});
     final mangas = isar.mangas
@@ -318,21 +312,21 @@ class SyncServer extends _$SyncServer {
         .favoriteEqualTo(true)
         .isLocalArchiveEqualTo(false)
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"manga": mangas});
     final categorys = isar.categorys
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"categories": categorys});
     final chapters = isar.chapters
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"chapters": chapters});
     datas.addAll({"downloads": []});
@@ -340,7 +334,7 @@ class SyncServer extends _$SyncServer {
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"tracks": tracks});
     datas.addAll({"trackPreferences": []});
@@ -348,21 +342,21 @@ class SyncServer extends _$SyncServer {
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"history": historys});
     final settings = isar.settings
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"settings": settings});
     final sources = isar.sources
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"extensions": sources});
     final sourcePreferences = isar.sourcePreferences
@@ -370,14 +364,14 @@ class SyncServer extends _$SyncServer {
         .idIsNotNull()
         .keyIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"extensions_preferences": sourcePreferences});
     final updates = isar.updates
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
         .toList();
     datas.addAll({"updates": updates});
     return datas;

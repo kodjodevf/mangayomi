@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/sync_preference.dart';
+import 'package:mangayomi/services/sync_server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'sync_providers.g.dart';
 
@@ -18,12 +19,16 @@ class Synching extends _$Synching {
     isar.writeTxnSync(() {
       isar.syncPreferences.putSync(syncPreference);
     });
+    ref.invalidate(synchingProvider(syncId: syncId));
+    ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
   void logout() {
     isar.writeTxnSync(() {
       isar.syncPreferences.putSync(state..authToken = null);
     });
+    ref.invalidate(synchingProvider(syncId: syncId));
+    ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
   void setLastUpload(int timestamp) {

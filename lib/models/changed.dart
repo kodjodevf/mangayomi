@@ -42,6 +42,7 @@ enum ActionType {
   updateHistory(name: "UPDATE_HISTORY"),
   clearUpdates(name: "CLEAR_UPDATES"),
   addUpdate(name: "ADD_UPDATE"),
+  clearExtension(name: "CLEAR_EXTENSION"),
   addExtension(name: "ADD_EXTENSION"),
   removeExtension(name: "REMOVE_EXTENSION"),
   updateExtension(name: "UPDATE_EXTENSION"),

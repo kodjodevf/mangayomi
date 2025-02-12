@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -163,53 +166,61 @@ class _CreateExtensionState extends State<CreateExtension> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        if (_name.isNotEmpty &&
-                            _lang.isNotEmpty &&
-                            _baseUrl.isNotEmpty &&
-                            _iconUrl.isNotEmpty) {
-                          try {
-                            final id =
-                                _sourceCodeLanguage == SourceCodeLanguage.dart
-                                    ? 'mangayomi-$_lang.$_name'.hashCode
-                                    : 'mangayomi-js-$_lang.$_name'.hashCode;
-                            final checkIfExist = isar.sources.getSync(id);
-                            if (checkIfExist == null) {
-                              Source source = Source(
-                                  id: id,
-                                  name: _name,
-                                  lang: _lang,
-                                  baseUrl: _baseUrl,
-                                  apiUrl: _apiUrl,
-                                  iconUrl: _iconUrl,
-                                  typeSource: _sourceTypes[_sourceTypeIndex],
-                                  itemType:
-                                      ItemType.values.elementAt(_itemTypeIndex),
-                                  isAdded: true,
-                                  isActive: true,
-                                  version: "0.0.1",
-                                  isNsfw: false)
-                                ..sourceCodeLanguage = _sourceCodeLanguage;
-                              source = source
-                                ..isLocal = true
-                                ..sourceCode = _sourceCodeLanguage ==
-                                        SourceCodeLanguage.dart
-                                    ? _dartTemplate
-                                    : _jsSample(source);
-                              isar.writeTxnSync(
-                                  () => isar.sources.putSync(source));
-                              Navigator.pop(context);
-                              botToast("Source created successfully");
-                            } else {
-                              botToast("Source already exists");
+                  child: Consumer(
+                    builder: (context, ref, child) => ElevatedButton(
+                        onPressed: () {
+                          if (_name.isNotEmpty &&
+                              _lang.isNotEmpty &&
+                              _baseUrl.isNotEmpty &&
+                              _iconUrl.isNotEmpty) {
+                            try {
+                              final id =
+                                  _sourceCodeLanguage == SourceCodeLanguage.dart
+                                      ? 'mangayomi-$_lang.$_name'.hashCode
+                                      : 'mangayomi-js-$_lang.$_name'.hashCode;
+                              final checkIfExist = isar.sources.getSync(id);
+                              if (checkIfExist == null) {
+                                Source source = Source(
+                                    id: id,
+                                    name: _name,
+                                    lang: _lang,
+                                    baseUrl: _baseUrl,
+                                    apiUrl: _apiUrl,
+                                    iconUrl: _iconUrl,
+                                    typeSource: _sourceTypes[_sourceTypeIndex],
+                                    itemType: ItemType.values
+                                        .elementAt(_itemTypeIndex),
+                                    isAdded: true,
+                                    isActive: true,
+                                    version: "0.0.1",
+                                    isNsfw: false)
+                                  ..sourceCodeLanguage = _sourceCodeLanguage;
+                                source = source
+                                  ..isLocal = true
+                                  ..sourceCode = _sourceCodeLanguage ==
+                                          SourceCodeLanguage.dart
+                                      ? _dartTemplate
+                                      : _jsSample(source);
+                                isar.writeTxnSync(() {
+                                  isar.sources.putSync(source);
+                                  ref
+                                      .read(
+                                          synchingProvider(syncId: 1).notifier)
+                                      .addChangedPart(ActionType.addExtension,
+                                          source.id, source.toJson(), false);
+                                });
+                                Navigator.pop(context);
+                                botToast("Source created successfully");
+                              } else {
+                                botToast("Source already exists");
+                              }
+                            } catch (e) {
+                              botToast("Error when creating source");
                             }
-                          } catch (e) {
-                            botToast("Error when creating source");
                           }
-                        }
-                      },
-                      child: Text(context.l10n.save)),
+                        },
+                        child: Text(context.l10n.save)),
+                  ),
                 )
               ],
             ),

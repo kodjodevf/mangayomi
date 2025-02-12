@@ -5,9 +5,11 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -258,11 +260,31 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                             if (source.isObsolete ?? false) {
                                               isar.sources.deleteSync(
                                                   widget.source.id!);
+                                              ref
+                                                  .read(synchingProvider(
+                                                          syncId: 1)
+                                                      .notifier)
+                                                  .addChangedPart(
+                                                      ActionType
+                                                          .removeExtension,
+                                                      source.id,
+                                                      "{}",
+                                                      false);
                                             } else {
                                               isar.sources.putSync(widget.source
                                                 ..sourceCode = ""
                                                 ..isAdded = false
                                                 ..isPinned = false);
+                                              ref
+                                                  .read(synchingProvider(
+                                                          syncId: 1)
+                                                      .notifier)
+                                                  .addChangedPart(
+                                                      ActionType
+                                                          .updateExtension,
+                                                      source.id,
+                                                      source.toJson(),
+                                                      false);
                                             }
                                             isar.sourcePreferences
                                                 .deleteAllSync(sourcePrefsIds);

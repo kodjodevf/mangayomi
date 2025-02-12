@@ -117,6 +117,7 @@ class SyncScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       const SizedBox(width: 20),
@@ -138,94 +139,6 @@ class SyncScreen extends ConsumerWidget {
                                     : context.primaryColor,
                               )),
                           Text(l10n.sync_button_sync),
-                        ],
-                      ),
-                      const SizedBox(width: 20),
-                      Column(
-                        children: [
-                          IconButton(
-                              onPressed: !isLogged
-                                  ? null
-                                  : () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  l10n.sync_confirm_upload),
-                                              actions: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    ElevatedButton(
-                                                        style: ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            shadowColor: Colors
-                                                                .transparent,
-                                                            surfaceTintColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            shape: RoundedRectangleBorder(
-                                                                side: BorderSide(
-                                                                    color: context
-                                                                        .secondaryColor),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            20))),
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          l10n.cancel,
-                                                          style: TextStyle(
-                                                              color: context
-                                                                  .secondaryColor),
-                                                        )),
-                                                    const SizedBox(width: 15),
-                                                    ElevatedButton(
-                                                        style: ElevatedButton
-                                                            .styleFrom(
-                                                                backgroundColor: Colors
-                                                                    .red
-                                                                    .withValues(
-                                                                        alpha:
-                                                                            0.7)),
-                                                        onPressed: () {
-                                                          ref
-                                                              .read(
-                                                                  syncServerProvider(
-                                                                          syncId:
-                                                                              1)
-                                                                      .notifier)
-                                                              .uploadToServer(
-                                                                  l10n);
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text(
-                                                          l10n.dialog_confirm,
-                                                          style: TextStyle(
-                                                              color: context
-                                                                  .secondaryColor),
-                                                        )),
-                                                  ],
-                                                )
-                                              ],
-                                            );
-                                          });
-                                    },
-                              icon: Icon(
-                                Icons.cloud_upload_outlined,
-                                color: !isLogged
-                                    ? context.secondaryColor
-                                    : context.primaryColor,
-                              )),
-                          Text(l10n.sync_button_upload),
                         ],
                       ),
                       const SizedBox(width: 20),
@@ -328,6 +241,94 @@ class SyncScreen extends ConsumerWidget {
                                           builder: (context) {
                                             return AlertDialog(
                                               title: Text(
+                                                  l10n.sync_confirm_upload),
+                                              actions: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            shadowColor: Colors
+                                                                .transparent,
+                                                            surfaceTintColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            shape: RoundedRectangleBorder(
+                                                                side: BorderSide(
+                                                                    color: context
+                                                                        .secondaryColor),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20))),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                          l10n.cancel,
+                                                          style: TextStyle(
+                                                              color: context
+                                                                  .secondaryColor),
+                                                        )),
+                                                    const SizedBox(width: 15),
+                                                    ElevatedButton(
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                                backgroundColor: Colors
+                                                                    .red
+                                                                    .withValues(
+                                                                        alpha:
+                                                                            0.7)),
+                                                        onPressed: () {
+                                                          ref
+                                                              .read(
+                                                                  syncServerProvider(
+                                                                          syncId:
+                                                                              1)
+                                                                      .notifier)
+                                                              .uploadToServer(
+                                                                  l10n);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                          l10n.dialog_confirm,
+                                                          style: TextStyle(
+                                                              color: context
+                                                                  .secondaryColor),
+                                                        )),
+                                                  ],
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    },
+                              icon: Icon(
+                                Icons.cloud_upload_outlined,
+                                color: !isLogged
+                                    ? context.secondaryColor
+                                    : context.primaryColor,
+                              )),
+                          Text(l10n.sync_button_upload),
+                        ],
+                      ),
+                      const SizedBox(width: 20),
+                      Column(
+                        children: [
+                          IconButton(
+                              onPressed: !isLogged
+                                  ? null
+                                  : () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(
                                                   l10n.sync_confirm_download),
                                               actions: [
                                                 Row(
@@ -408,7 +409,7 @@ class SyncScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   buildChangedItemWidget(
                       l10n.sync_pending_manga,
                       changedParts.getChangedParts([
@@ -416,7 +417,7 @@ class SyncScreen extends ConsumerWidget {
                         ActionType.removeItem,
                         ActionType.updateItem
                       ])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_chapter,
                       changedParts.getChangedParts([
@@ -424,7 +425,7 @@ class SyncScreen extends ConsumerWidget {
                         ActionType.removeChapter,
                         ActionType.updateChapter
                       ])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_category,
                       changedParts.getChangedParts([
@@ -432,7 +433,7 @@ class SyncScreen extends ConsumerWidget {
                         ActionType.removeCategory,
                         ActionType.renameCategory
                       ])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_history,
                       changedParts.getChangedParts([
@@ -440,12 +441,12 @@ class SyncScreen extends ConsumerWidget {
                         ActionType.clearHistory,
                         ActionType.removeHistory
                       ])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_update,
                       changedParts.getChangedParts(
                           [ActionType.addUpdate, ActionType.clearUpdates])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_extension,
                       changedParts.getChangedParts([
@@ -453,7 +454,7 @@ class SyncScreen extends ConsumerWidget {
                         ActionType.removeExtension,
                         ActionType.updateExtension
                       ])),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   buildChangedItemWidget(
                       l10n.sync_pending_track,
                       changedParts.getChangedParts([
@@ -468,15 +469,19 @@ class SyncScreen extends ConsumerWidget {
                     child: Row(
                       children: [
                         ElevatedButton(
-                            onPressed: () {
-                              ref
-                                  .read(syncServerProvider(syncId: 1).notifier)
-                                  .getSnapshots(l10n);
-                            },
+                            onPressed: !isLogged
+                                ? null
+                                : () {
+                                    ref
+                                        .read(syncServerProvider(syncId: 1)
+                                            .notifier)
+                                        .getSnapshots(l10n);
+                                  },
                             child: Text("Browse / Download older backups")),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               );
             }),

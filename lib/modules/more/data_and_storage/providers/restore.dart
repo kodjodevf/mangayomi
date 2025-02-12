@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -185,6 +186,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           }
         }
         if (full) {
+          ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts();
           ref.invalidate(themeModeStateProvider);
           ref.invalidate(blendLevelStateProvider);
           ref.invalidate(flexSchemeColorStateProvider);

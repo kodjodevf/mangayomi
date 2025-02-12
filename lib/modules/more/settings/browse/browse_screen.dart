@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -173,16 +175,22 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
                 const SizedBox(
                   width: 15,
                 ),
-                TextButton(
-                    onPressed: () {
-                      isar.writeTxnSync(() {
-                        isar.sources.clearSync();
-                      });
+                Consumer(
+                  builder: (context, ref, child) => TextButton(
+                      onPressed: () {
+                        isar.writeTxnSync(() {
+                          isar.sources.clearSync();
+                          ref
+                              .read(synchingProvider(syncId: 1).notifier)
+                              .addChangedPart(
+                                  ActionType.clearHistory, null, "{}", false);
+                        });
 
-                      Navigator.pop(ctx);
-                      botToast(l10n.sources_cleared);
-                    },
-                    child: Text(l10n.ok)),
+                        Navigator.pop(ctx);
+                        botToast(l10n.sources_cleared);
+                      },
+                      child: Text(l10n.ok)),
+                ),
               ],
             )
           ],
