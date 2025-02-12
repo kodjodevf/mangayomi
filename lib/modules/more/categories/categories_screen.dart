@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/categories/widgets/custom_textfield.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -206,6 +208,19 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                                           index]
                                                                       .id!);
                                                             });
+                                                            await ref
+                                                                .read(synchingProvider(
+                                                                        syncId:
+                                                                            1)
+                                                                    .notifier)
+                                                                .addChangedPartAsync(
+                                                                    ActionType
+                                                                        .removeCategory,
+                                                                    _entries[
+                                                                            index]
+                                                                        .id,
+                                                                    "{}",
+                                                                    true);
                                                             if (context
                                                                 .mounted) {
                                                               Navigator.pop(
@@ -291,12 +306,23 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                             isExist
                                         ? null
                                         : () async {
+                                            final category = Category(
+                                              forItemType: widget.itemType,
+                                              name: controller.text,
+                                            );
                                             await isar.writeTxn(() async {
-                                              await isar.categorys.put(Category(
-                                                forItemType: widget.itemType,
-                                                name: controller.text,
-                                              ));
+                                              await isar.categorys
+                                                  .put(category);
                                             });
+                                            await ref
+                                                .read(
+                                                    synchingProvider(syncId: 1)
+                                                        .notifier)
+                                                .addChangedPartAsync(
+                                                    ActionType.addCategory,
+                                                    category.id,
+                                                    category.toJson(),
+                                                    true);
                                             if (context.mounted) {
                                               Navigator.pop(context);
                                             }
@@ -375,18 +401,27 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                         width: 15,
                       ),
                       TextButton(
-                          onPressed:
-                              controller.text.isEmpty || isExist || isSameName
-                                  ? null
-                                  : () async {
-                                      await isar.writeTxn(() async {
-                                        category.name = controller.text;
-                                        await isar.categorys.put(category);
-                                      });
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
+                          onPressed: controller.text.isEmpty ||
+                                  isExist ||
+                                  isSameName
+                              ? null
+                              : () async {
+                                  await isar.writeTxn(() async {
+                                    category.name = controller.text;
+                                    await isar.categorys.put(category);
+                                  });
+                                  await ref
+                                      .read(
+                                          synchingProvider(syncId: 1).notifier)
+                                      .addChangedPartAsync(
+                                          ActionType.renameCategory,
+                                          category.id,
+                                          category.toJson(),
+                                          true);
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
                           child: Text(
                             l10n.ok,
                             style: TextStyle(

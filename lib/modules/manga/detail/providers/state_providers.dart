@@ -1,10 +1,12 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_providers.g.dart';
 
@@ -311,6 +313,8 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
         chapter.isBookmarked = !chapter.isBookmarked!;
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateChapter, chapter.id, chapter.toJson(), false);
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);
@@ -330,6 +334,8 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
         chapter.isRead = !chapter.isRead!;
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateChapter, chapter.id, chapter.toJson(), false);
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);

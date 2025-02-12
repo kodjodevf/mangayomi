@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -22,6 +23,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dar
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -729,6 +731,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   isar.chapters.putSync(
                                       chapter..manga.value = widget.manga);
                                   chapter.manga.saveSync();
+                                  ref
+                                      .read(
+                                          synchingProvider(syncId: 1).notifier)
+                                      .addChangedPart(ActionType.updateChapter,
+                                          chapter.id, chapter.toJson(), false);
                                 }
                               });
                               ref
@@ -772,6 +779,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   if (chapter.isRead!) {
                                     chapter.updateTrackChapterRead(ref);
                                   }
+                                  ref
+                                      .read(
+                                          synchingProvider(syncId: 1).notifier)
+                                      .addChangedPart(ActionType.updateChapter,
+                                          chapter.id, chapter.toJson(), false);
                                 }
                               });
                               ref
@@ -814,6 +826,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       isar.chapters.putSync(chapters[i]
                                         ..manga.value = widget.manga);
                                       chapters[i].manga.saveSync();
+                                      ref
+                                          .read(synchingProvider(syncId: 1)
+                                              .notifier)
+                                          .addChangedPart(
+                                              ActionType.updateChapter,
+                                              chapters[i].id,
+                                              chapters[i].toJson(),
+                                              false);
                                     }
                                   }
                                   ref
@@ -1666,6 +1686,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                       ..customCoverImage = null
                                                       ..customCoverFromTracker =
                                                           trackSearch.coverUrl);
+                                                ref
+                                                    .read(synchingProvider(
+                                                            syncId: 1)
+                                                        .notifier)
+                                                    .addChangedPart(
+                                                        ActionType.updateItem,
+                                                        widget.manga!.id,
+                                                        widget.manga!.toJson(),
+                                                        false);
                                               });
                                               if (context.mounted) {
                                                 Navigator.pop(context);
@@ -1791,6 +1820,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             isar.mangas.putSync(manga
                                               ..customCoverImage = null
                                               ..customCoverFromTracker = null);
+                                            ref
+                                                .read(
+                                                    synchingProvider(syncId: 1)
+                                                        .notifier)
+                                                .addChangedPart(
+                                                    ActionType.updateItem,
+                                                    manga.id,
+                                                    manga.toJson(),
+                                                    false);
                                           });
                                           Navigator.pop(context);
                                         } else if (value == 1) {
@@ -1814,6 +1852,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                 isar.mangas.putSync(manga
                                                   ..customCoverImage =
                                                       customCoverImage);
+                                                ref
+                                                    .read(synchingProvider(
+                                                            syncId: 1)
+                                                        .notifier)
+                                                    .addChangedPart(
+                                                        ActionType.updateItem,
+                                                        manga.id,
+                                                        manga.toJson(),
+                                                        false);
                                               });
                                               botToast(
                                                   context.l10n.cover_updated,
@@ -1920,6 +1967,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           manga.description = description.text;
                           manga.name = name.text;
                           isar.mangas.putSync(manga);
+                          ref
+                              .read(synchingProvider(syncId: 1).notifier)
+                              .addChangedPart(ActionType.updateItem, manga.id,
+                                  manga.toJson(), false);
                         });
                         Navigator.pop(context);
                       },

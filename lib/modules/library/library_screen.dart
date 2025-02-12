@@ -11,6 +11,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
@@ -21,6 +22,7 @@ import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -1030,6 +1032,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                   manga!.categories =
                                                       categoryIds;
                                                   isar.mangas.putSync(manga);
+                                                  ref
+                                                      .read(synchingProvider(
+                                                              syncId: 1)
+                                                          .notifier)
+                                                      .addChangedPart(
+                                                          ActionType.updateItem,
+                                                          manga.id,
+                                                          manga.toJson(),
+                                                          false);
                                                 }
                                               });
                                               ref
@@ -1041,6 +1052,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                       isLongPressedMangaStateProvider
                                                           .notifier)
                                                   .update(false);
+                                              
                                               if (mounted) {
                                                 Navigator.pop(context);
                                               }
@@ -1164,9 +1176,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         isar.chapters.deleteSync(chapter.id!);
                                       }
                                       isar.mangas.deleteSync(manga.id!);
+                                      ref
+                                          .read(synchingProvider(syncId: 1)
+                                              .notifier)
+                                          .addChangedPart(ActionType.removeItem,
+                                              manga.id, "{}", false);
                                     } else {
                                       manga.favorite = false;
                                       isar.mangas.putSync(manga);
+                                      ref
+                                          .read(synchingProvider(syncId: 1)
+                                              .notifier)
+                                          .addChangedPart(ActionType.updateItem,
+                                              manga.id, manga.toJson(), false);
                                     }
                                   }
                                 });
@@ -1804,6 +1826,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           manga.whenData((value) {
                             var randomManga = (value..shuffle()).first;
                             pushToMangaReaderDetail(
+                                ref: ref,
                                 archiveId: randomManga.isLocalArchive ?? false
                                     ? randomManga.id
                                     : null,

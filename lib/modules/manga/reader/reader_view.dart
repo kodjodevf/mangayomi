@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/changed.dart' as changed;
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -22,6 +23,7 @@ import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -335,6 +337,16 @@ class _MangaChapterPageGalleryState
                                                 isar.mangas.putSync(manga
                                                   ..customCoverImage =
                                                       imageBytes);
+                                                ref
+                                                    .read(synchingProvider(
+                                                            syncId: 1)
+                                                        .notifier)
+                                                    .addChangedPart(
+                                                        changed.ActionType
+                                                            .updateItem,
+                                                        manga.id,
+                                                        manga.toJson(),
+                                                        false);
                                               });
                                               if (mounted) {
                                                 Navigator.pop(context, "ok");
