@@ -128,34 +128,40 @@ const SourceSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'sourceCode': PropertySchema(
+    r'repo': PropertySchema(
       id: 22,
+      name: r'repo',
+      type: IsarType.object,
+      target: r'Repo',
+    ),
+    r'sourceCode': PropertySchema(
+      id: 23,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeLanguage': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'sourceCodeLanguage',
       type: IsarType.byte,
       enumMap: _SourcesourceCodeLanguageEnumValueMap,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -167,7 +173,7 @@ const SourceSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {},
+  embeddedSchemas: {r'Repo': RepoSchema},
   getId: _sourceGetId,
   getLinks: _sourceGetLinks,
   attach: _sourceAttach,
@@ -241,6 +247,13 @@ int _sourceEstimateSize(
     }
   }
   {
+    final value = object.repo;
+    if (value != null) {
+      bytesCount +=
+          3 + RepoSchema.estimateSize(value, allOffsets[Repo]!, allOffsets);
+    }
+  }
+  {
     final value = object.sourceCode;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -301,12 +314,18 @@ void _sourceSerialize(
   writer.writeString(offsets[19], object.lang);
   writer.writeBool(offsets[20], object.lastUsed);
   writer.writeString(offsets[21], object.name);
-  writer.writeString(offsets[22], object.sourceCode);
-  writer.writeByte(offsets[23], object.sourceCodeLanguage.index);
-  writer.writeString(offsets[24], object.sourceCodeUrl);
-  writer.writeString(offsets[25], object.typeSource);
-  writer.writeString(offsets[26], object.version);
-  writer.writeString(offsets[27], object.versionLast);
+  writer.writeObject<Repo>(
+    offsets[22],
+    allOffsets,
+    RepoSchema.serialize,
+    object.repo,
+  );
+  writer.writeString(offsets[23], object.sourceCode);
+  writer.writeByte(offsets[24], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[25], object.sourceCodeUrl);
+  writer.writeString(offsets[26], object.typeSource);
+  writer.writeString(offsets[27], object.version);
+  writer.writeString(offsets[28], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -339,14 +358,19 @@ Source _sourceDeserialize(
     lang: reader.readStringOrNull(offsets[19]),
     lastUsed: reader.readBoolOrNull(offsets[20]),
     name: reader.readStringOrNull(offsets[21]),
-    sourceCode: reader.readStringOrNull(offsets[22]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[24]),
-    typeSource: reader.readStringOrNull(offsets[25]),
-    version: reader.readStringOrNull(offsets[26]),
-    versionLast: reader.readStringOrNull(offsets[27]),
+    repo: reader.readObjectOrNull<Repo>(
+      offsets[22],
+      RepoSchema.deserialize,
+      allOffsets,
+    ),
+    sourceCode: reader.readStringOrNull(offsets[23]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[25]),
+    typeSource: reader.readStringOrNull(offsets[26]),
+    version: reader.readStringOrNull(offsets[27]),
+    versionLast: reader.readStringOrNull(offsets[28]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
-          reader.readByteOrNull(offsets[23])] ??
+          reader.readByteOrNull(offsets[24])] ??
       SourceCodeLanguage.dart;
   return object;
 }
@@ -404,18 +428,24 @@ P _sourceDeserializeProp<P>(
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readObjectOrNull<Repo>(
+        offset,
+        RepoSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 23:
+      return (reader.readStringOrNull(offset)) as P;
+    case 24:
       return (_SourcesourceCodeLanguageValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SourceCodeLanguage.dart) as P;
-    case 24:
-      return (reader.readStringOrNull(offset)) as P;
     case 25:
       return (reader.readStringOrNull(offset)) as P;
     case 26:
       return (reader.readStringOrNull(offset)) as P;
     case 27:
+      return (reader.readStringOrNull(offset)) as P;
+    case 28:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2388,6 +2418,22 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> repoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'repo',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> repoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'repo',
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> sourceCodeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3175,7 +3221,14 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
   }
 }
 
-extension SourceQueryObject on QueryBuilder<Source, Source, QFilterCondition> {}
+extension SourceQueryObject on QueryBuilder<Source, Source, QFilterCondition> {
+  QueryBuilder<Source, Source, QAfterFilterCondition> repo(
+      FilterQuery<Repo> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'repo');
+    });
+  }
+}
 
 extension SourceQueryLinks on QueryBuilder<Source, Source, QFilterCondition> {}
 
@@ -4191,6 +4244,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Source, Repo?, QQueryOperations> repoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'repo');
     });
   }
 

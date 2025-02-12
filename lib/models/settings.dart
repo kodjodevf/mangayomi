@@ -185,6 +185,12 @@ class Settings {
 
   int? novelGridSize;
 
+  List<Repo>? mangaExtensionsRepo;
+
+  List<Repo>? animeExtensionsRepo;
+
+  List<Repo>? novelExtensionsRepo;
+
   @enumerated
   late SectionType disableSectionType;
 
@@ -325,7 +331,10 @@ class Settings {
       this.novelTextAlign = NovelTextAlign.left,
       this.navigationOrder,
       this.hideItems,
-      this.clearChapterCacheOnAppLaunch = false});
+      this.clearChapterCacheOnAppLaunch = false,
+      this.mangaExtensionsRepo,
+      this.animeExtensionsRepo,
+      this.novelExtensionsRepo});
 
   Settings.fromJson(Map<String, dynamic> json) {
     animatePageTransitions = json['animatePageTransitions'];
@@ -507,6 +516,21 @@ class Settings {
       hideItems = (json['hideItems'] as List).cast<String>();
     }
     clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
+    if (json['mangaExtensionsRepo'] != null) {
+      mangaExtensionsRepo = (json['mangaExtensionsRepo'] as List)
+          .map((e) => Repo.fromJson(json))
+          .toList();
+    }
+    if (json['animeExtensionsRepo'] != null) {
+      animeExtensionsRepo = (json['animeExtensionsRepo'] as List)
+          .map((e) => Repo.fromJson(json))
+          .toList();
+    }
+    if (json['novelExtensionsRepo'] != null) {
+      novelExtensionsRepo = (json['novelExtensionsRepo'] as List)
+          .map((e) => Repo.fromJson(json))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() => {
@@ -623,7 +647,13 @@ class Settings {
         'novelTextAlign': novelTextAlign.index,
         'navigationOrder': navigationOrder,
         'hideItems': hideItems,
-        'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch
+        'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch,
+        'mangaExtensionsRepo':
+            mangaExtensionsRepo?.map((e) => e.toJson()).toList(),
+        'animeExtensionsRepo':
+            animeExtensionsRepo?.map((e) => e.toJson()).toList(),
+        'novelExtensionsRepo':
+            novelExtensionsRepo?.map((e) => e.toJson()).toList()
       };
 }
 
@@ -794,6 +824,24 @@ class AutoScrollPages {
 
   Map<String, dynamic> toJson() =>
       {'mangaId': mangaId, 'pageOffset': pageOffset, 'autoScroll': autoScroll};
+}
+
+@embedded
+class Repo {
+  String? name;
+  String? website;
+  String? jsonUrl;
+
+  Repo({this.name, this.website, this.jsonUrl});
+
+  Repo.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    website = json['website'];
+    jsonUrl = json['jsonUrl'];
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'website': website, 'jsonUrl': jsonUrl};
 }
 
 @embedded

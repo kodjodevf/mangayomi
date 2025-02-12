@@ -7,7 +7,7 @@ part of 'fetch_anime_sources.dart';
 // **************************************************************************
 
 String _$fetchAnimeSourcesListHash() =>
-    r'34db8fac67fb2d445645e62adc68b6d13d481897';
+    r'e7f673d37239c74f3403de3a234bbc1d6e171332';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,7 +35,7 @@ class _SystemHash {
 const fetchAnimeSourcesListProvider = FetchAnimeSourcesListFamily();
 
 /// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListFamily extends Family<AsyncValue> {
+class FetchAnimeSourcesListFamily extends Family<AsyncValue<void>> {
   /// See also [fetchAnimeSourcesList].
   const FetchAnimeSourcesListFamily();
 
@@ -76,7 +76,7 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue> {
 }
 
 /// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListProvider extends FutureProvider<Object?> {
+class FetchAnimeSourcesListProvider extends FutureProvider<void> {
   /// See also [fetchAnimeSourcesList].
   FetchAnimeSourcesListProvider({
     int? id,
@@ -116,7 +116,7 @@ class FetchAnimeSourcesListProvider extends FutureProvider<Object?> {
 
   @override
   Override overrideWith(
-    FutureOr<Object?> Function(FetchAnimeSourcesListRef provider) create,
+    FutureOr<void> Function(FetchAnimeSourcesListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -134,7 +134,7 @@ class FetchAnimeSourcesListProvider extends FutureProvider<Object?> {
   }
 
   @override
-  FutureProviderElement<Object?> createElement() {
+  FutureProviderElement<void> createElement() {
     return _FetchAnimeSourcesListProviderElement(this);
   }
 
@@ -157,7 +157,7 @@ class FetchAnimeSourcesListProvider extends FutureProvider<Object?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchAnimeSourcesListRef on FutureProviderRef<Object?> {
+mixin FetchAnimeSourcesListRef on FutureProviderRef<void> {
   /// The parameter `id` of this provider.
   int? get id;
 
@@ -165,8 +165,8 @@ mixin FetchAnimeSourcesListRef on FutureProviderRef<Object?> {
   bool get reFresh;
 }
 
-class _FetchAnimeSourcesListProviderElement
-    extends FutureProviderElement<Object?> with FetchAnimeSourcesListRef {
+class _FetchAnimeSourcesListProviderElement extends FutureProviderElement<void>
+    with FetchAnimeSourcesListRef {
   _FetchAnimeSourcesListProviderElement(super.provider);
 
   @override

@@ -7,7 +7,7 @@ part of 'fetch_manga_sources.dart';
 // **************************************************************************
 
 String _$fetchMangaSourcesListHash() =>
-    r'b56d2a229f2d0a2ef4dc93d9f06cc8485dcd2285';
+    r'176206caf5c51a94b100866d5cdb612d2a5c2fb7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,7 +35,7 @@ class _SystemHash {
 const fetchMangaSourcesListProvider = FetchMangaSourcesListFamily();
 
 /// See also [fetchMangaSourcesList].
-class FetchMangaSourcesListFamily extends Family<AsyncValue> {
+class FetchMangaSourcesListFamily extends Family<AsyncValue<void>> {
   /// See also [fetchMangaSourcesList].
   const FetchMangaSourcesListFamily();
 
@@ -76,7 +76,7 @@ class FetchMangaSourcesListFamily extends Family<AsyncValue> {
 }
 
 /// See also [fetchMangaSourcesList].
-class FetchMangaSourcesListProvider extends FutureProvider<Object?> {
+class FetchMangaSourcesListProvider extends FutureProvider<void> {
   /// See also [fetchMangaSourcesList].
   FetchMangaSourcesListProvider({
     int? id,
@@ -116,7 +116,7 @@ class FetchMangaSourcesListProvider extends FutureProvider<Object?> {
 
   @override
   Override overrideWith(
-    FutureOr<Object?> Function(FetchMangaSourcesListRef provider) create,
+    FutureOr<void> Function(FetchMangaSourcesListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -134,7 +134,7 @@ class FetchMangaSourcesListProvider extends FutureProvider<Object?> {
   }
 
   @override
-  FutureProviderElement<Object?> createElement() {
+  FutureProviderElement<void> createElement() {
     return _FetchMangaSourcesListProviderElement(this);
   }
 
@@ -157,7 +157,7 @@ class FetchMangaSourcesListProvider extends FutureProvider<Object?> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchMangaSourcesListRef on FutureProviderRef<Object?> {
+mixin FetchMangaSourcesListRef on FutureProviderRef<void> {
   /// The parameter `id` of this provider.
   int? get id;
 
@@ -165,8 +165,8 @@ mixin FetchMangaSourcesListRef on FutureProviderRef<Object?> {
   dynamic get reFresh;
 }
 
-class _FetchMangaSourcesListProviderElement
-    extends FutureProviderElement<Object?> with FetchMangaSourcesListRef {
+class _FetchMangaSourcesListProviderElement extends FutureProviderElement<void>
+    with FetchMangaSourcesListRef {
   _FetchMangaSourcesListProviderElement(super.provider);
 
   @override

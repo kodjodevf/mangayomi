@@ -13,6 +13,8 @@ import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
+import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -49,10 +51,11 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
 GoRouter router(Ref ref) {
   final router = RouterNotifier();
+  final initLocation = ref.watch(navigationOrderStateProvider).first;
 
   return GoRouter(
       observers: [BotToastNavigatorObserver()],
-      initialLocation: '/MangaLibrary',
+      initialLocation: initLocation,
       debugLogDiagnostics: kDebugMode,
       refreshListenable: router,
       routes: router._routes,
@@ -484,6 +487,25 @@ class RouterNotifier extends ChangeNotifier {
             return transitionPage(
               key: state.pageKey,
               child: const BrowseSScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          path: "/SourceRepositories",
+          name: "SourceRepositories",
+          builder: (context, state) {
+            final itemType = state.extra as ItemType;
+            return SourceRepositories(
+              itemType: itemType,
+            );
+          },
+          pageBuilder: (context, state) {
+            final itemType = state.extra as ItemType;
+            return transitionPage(
+              key: state.pageKey,
+              child: SourceRepositories(
+                itemType: itemType,
+              ),
             );
           },
         ),
