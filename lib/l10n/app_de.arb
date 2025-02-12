@@ -416,5 +416,6 @@
     "remove_extensions_repo": "Repository-Link entfernen",
     "manage_manga_repo_url": "Verwalte Repository-Links für Manga",
     "manage_anime_repo_url": "Verwalte Repository-Links für Anime",
-    "manage_novel_repo_url": "Verwalte Repository-Links für Novellen"
+    "manage_novel_repo_url": "Verwalte Repository-Links für Novellen",
+    "repo_added": "Erweiterungs-Repository hinzugefügt!"
 }

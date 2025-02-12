@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
 import Libmtorrentserver
+import app_links
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -29,6 +30,12 @@ import Libmtorrentserver
               })
 
     GeneratedPluginRegistrant.register(with: self)
+
+    if let url = AppLinks.shared.getLink(launchOptions: launchOptions) {
+      AppLinks.shared.handleLink(url: url)
+      return true
+    }
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

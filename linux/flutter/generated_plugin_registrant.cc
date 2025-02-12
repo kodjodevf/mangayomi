@@ -8,6 +8,7 @@
 
 #include <desktop_webview_window/desktop_webview_window_plugin.h>
 #include <flutter_qjs/flutter_qjs_plugin.h>
+#include <gtk/gtk_plugin.h>
 #include <isar_flutter_libs/isar_flutter_libs_plugin.h>
 #include <media_kit_libs_linux/media_kit_libs_linux_plugin.h>
 #include <media_kit_video/media_kit_video_plugin.h>
@@ -23,6 +24,9 @@ void fl_register_plugins(FlPluginRegistry* registry) {
   g_autoptr(FlPluginRegistrar) flutter_qjs_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "FlutterQjsPlugin");
   flutter_qjs_plugin_register_with_registrar(flutter_qjs_registrar);
+  g_autoptr(FlPluginRegistrar) gtk_registrar =
+      fl_plugin_registry_get_registrar_for_plugin(registry, "GtkPlugin");
+  gtk_plugin_register_with_registrar(gtk_registrar);
   g_autoptr(FlPluginRegistrar) isar_flutter_libs_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "IsarFlutterLibsPlugin");
   isar_flutter_libs_plugin_register_with_registrar(isar_flutter_libs_registrar);
