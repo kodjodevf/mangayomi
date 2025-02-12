@@ -203,7 +203,7 @@ ItemType _convertToItemType(Map<String, dynamic> backup) {
 ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
   final forManga = backup['forManga'];
   return forManga == null
-      ? ItemType.values[backup['itemType'] ?? 0]
+      ? ItemType.values[backup['forItemType'] ?? 0]
       : forManga
           ? ItemType.manga
           : ItemType.anime;

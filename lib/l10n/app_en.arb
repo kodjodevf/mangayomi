@@ -428,5 +428,6 @@
   "invalid_url_format": "Invalid URL format",
   "clear_all_sources": "Clear all sources",
   "clear_all_sources_msg": "This will completely erase all sources of the application. Are you sure you want to continue?",
-  "sources_cleared": "Sources cleared!!!"
+  "sources_cleared": "Sources cleared!!!",
+  "repo_added": "Source repository added!"
 }
