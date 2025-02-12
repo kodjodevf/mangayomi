@@ -91,4 +91,4 @@ flutter run
 
 ## Disclaimer
 
-Mangayomi is not hosting any kind of content and the developer(s) of this application does not have any affiliation with the content providers / extensions that are freely available in the internet.
+Mangayomi is not hosting any kind of content and the developer(s) of this application does not have any affiliation with the content providers that are freely available in the internet.
