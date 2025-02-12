@@ -204,7 +204,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                 .read(extensionsRepoStateProvider(ItemType.novel).notifier)
                 .set(novelRepos);
           }
-          botToast(l10n.repo_added);
+          botToast(l10n?.repo_added ?? "Source repository added!");
           break;
         default:
       }
