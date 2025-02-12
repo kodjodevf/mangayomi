@@ -63,6 +63,7 @@ jobs:
       - name: upload artifact android apks
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-android
           path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
 
       - name: release packages android apks
@@ -109,6 +110,7 @@ jobs:
       - name: upload artifact ios ipa
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-ios
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
 
       - name: release package ios ipa
@@ -152,6 +154,7 @@ jobs:
       - name: upload artifact macos dmg
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-macos
           path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
 
       - name: release package macos dmg
@@ -195,6 +198,7 @@ jobs:
       - name: upload artifact windows zip
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-windows-zip
           path: dist/**/Mangayomi-*.zip
 
       - name: release package windows zip
@@ -243,6 +247,7 @@ jobs:
       - name: upload artifact linux zip
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-limux-zip
           path: build/linux/x64/release/bundle/Mangayomi-*.zip
       - name: release packages linux zip
         uses: ncipollo/release-action@v1
@@ -292,6 +297,7 @@ jobs:
       - name: upload artifact linux deb
         uses: actions/upload-artifact@v4
         with:
+          name: Mangayomi-${{ github.ref_name }}-linux-deb
           path: dist/Mangayomi-*.deb
 
       - name: Release package deb
