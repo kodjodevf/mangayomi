@@ -61,7 +61,7 @@ jobs:
           mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-x86_64.apk
 
       - name: upload artifact android apks
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
 
@@ -107,7 +107,7 @@ jobs:
           mv app-release.ipa Mangayomi-${{ github.ref_name }}-ios.ipa
 
       - name: upload artifact ios ipa
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
 
@@ -150,7 +150,7 @@ jobs:
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
       - name: upload artifact macos dmg
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
 
@@ -178,9 +178,6 @@ jobs:
 
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen'
-        
-      - name: flutter_rust_bridge_codegen
-        run: flutter_rust_bridge_codegen generate
 
       - name: flutter pub get
         run: flutter pub get
@@ -196,7 +193,7 @@ jobs:
           flutter_distributor package --platform windows --targets zip --artifact-name 'Mangayomi-${{ github.ref_name }}-windows.zip'
 
       - name: upload artifact windows zip
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: dist/**/Mangayomi-*.zip
 
@@ -244,7 +241,7 @@ jobs:
           directory: build/linux/x64/release/bundle
       
       - name: upload artifact linux zip
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: build/linux/x64/release/bundle/Mangayomi-*.zip
       - name: release packages linux zip
@@ -293,7 +290,7 @@ jobs:
         run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: dist/Mangayomi-*.deb
 
@@ -349,7 +346,7 @@ jobs:
   #       run: mv $(find dist -type f -name "mangayomi*.AppImage") dist/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
   #     - name: upload artifact linux AppImage
-  #       uses: actions/upload-artifact@v3
+  #       uses: actions/upload-artifact@v4
   #       with:
   #         path: dist/Mangayomi-*.AppImage
 
