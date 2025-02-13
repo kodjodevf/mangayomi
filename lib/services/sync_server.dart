@@ -97,7 +97,7 @@ class SyncServer extends _$SyncServer {
 
       final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
       syncNotifier.setLastSync(DateTime.now().millisecondsSinceEpoch);
-      syncNotifier.clearAllChangedParts();
+      syncNotifier.clearAllChangedParts(true);
 
       ref.invalidate(synchingProvider(syncId: syncId));
       botToast(l10n.sync_download_finished, second: 2);
@@ -136,7 +136,7 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<List> getSnapshots(AppLocalizations l10n) async {
+  Future<List<Snapshot>> getSnapshots(AppLocalizations l10n) async {
     try {
       final accessToken = _getAccessToken();
 
@@ -151,10 +151,10 @@ class SyncServer extends _$SyncServer {
         botToast(l10n.server_error, second: 5);
         return List.empty();
       }
-      var snapshots = jsonDecode(response.body) as List;
-      for (final snapshot in snapshots) {
-        print(
-            "${snapshot["id"]} - ${DateTime.parse(snapshot["dbCreatedAt"]).millisecondsSinceEpoch}");
+      var temp = jsonDecode(response.body) as List;
+      final snapshots = List<Snapshot>.empty(growable: true);
+      for (final snapshot in temp) {
+        snapshots.add(Snapshot.fromJson(snapshot));
       }
       return snapshots;
     } catch (error) {
@@ -221,6 +221,28 @@ class SyncServer extends _$SyncServer {
     }
   }
 
+  Future<void> deleteSnapshot(AppLocalizations l10n, String snapshotId) async {
+    botToast(l10n.sync_snapshot_deleting, second: 2);
+    try {
+      final accessToken = _getAccessToken();
+
+      var response = await http.delete(
+        Uri.parse('${_getServer()}$_snapshotUrl/$snapshotId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken'
+        },
+      );
+      if (response.statusCode != 200) {
+        botToast(l10n.server_error, second: 5);
+        return;
+      }
+      botToast(l10n.sync_snapshot_deleted, second: 2);
+    } catch (error) {
+      botToast(error.toString(), second: 5);
+    }
+  }
+
   Future<void> uploadToServer(AppLocalizations l10n) async {
     botToast(l10n.sync_uploading, second: 2);
     try {
@@ -239,12 +261,11 @@ class SyncServer extends _$SyncServer {
         botToast(l10n.sync_upload_failed, second: 5);
         return;
       }
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .setLastUpload(DateTime.now().millisecondsSinceEpoch);
-      ref
-          .read(synchingProvider(syncId: syncId).notifier)
-          .clearAllChangedParts();
+
+      final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
+      syncNotifier.setLastUpload(DateTime.now().millisecondsSinceEpoch);
+      syncNotifier.clearAllChangedParts(true);
+
       ref.invalidate(synchingProvider(syncId: syncId));
       botToast(l10n.sync_upload_finished, second: 2);
     } catch (error) {
@@ -405,5 +426,16 @@ class SyncServer extends _$SyncServer {
   String _getServer() {
     final syncPrefs = ref.watch(synchingProvider(syncId: syncId));
     return syncPrefs.server ?? "";
+  }
+}
+
+class Snapshot {
+  String? uuid;
+  int? createdAt;
+  Snapshot({required this.uuid, required this.createdAt});
+
+  Snapshot.fromJson(Map<String, dynamic> json) {
+    uuid = json['id'];
+    createdAt = DateTime.parse(json["dbCreatedAt"]).millisecondsSinceEpoch;
   }
 }

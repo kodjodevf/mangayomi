@@ -10,17 +10,29 @@ import 'package:mangayomi/modules/more/settings/sync/widgets/sync_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/language.dart';
 
 class SyncScreen extends ConsumerWidget {
   const SyncScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final autoSyncOptions = [0, 30, 60, 300, 600, 1800, 3600];
     final syncProvider = ref.watch(synchingProvider(syncId: 1));
     final changedParts = ref.watch(synchingProvider(syncId: 1).notifier);
+    final autoSyncFrequency =
+        ref.watch(synchingProvider(syncId: 1)).autoSyncFrequency;
     final l10n = l10nLocalizations(context)!;
+    final autoSyncOptions = {
+      l10n.sync_auto_off: 0,
+      l10n.sync_auto_30_seconds: 30,
+      l10n.sync_auto_1_minute: 60,
+      l10n.sync_auto_5_minutes: 300,
+      l10n.sync_auto_10_minutes: 600,
+      l10n.sync_auto_30_minutes: 1800,
+      l10n.sync_auto_1_hour: 3600,
+      l10n.sync_auto_3_hours: 10800,
+      l10n.sync_auto_6_hours: 21600,
+      l10n.sync_auto_12_hours: 43200,
+    };
     return Scaffold(
       appBar: AppBar(
         title: Text(l10nLocalizations(context)!.syncing),
@@ -56,7 +68,7 @@ class SyncScreen extends ConsumerWidget {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                l10n.app_language,
+                                l10n.sync_auto,
                               ),
                               content: SizedBox(
                                   width: context.width(0.8),
@@ -64,20 +76,23 @@ class SyncScreen extends ConsumerWidget {
                                     shrinkWrap: true,
                                     itemCount: autoSyncOptions.length,
                                     itemBuilder: (context, index) {
-                                      final option = autoSyncOptions[index];
+                                      final optionName =
+                                          autoSyncOptions.keys.elementAt(index);
+                                      final optionValue = autoSyncOptions.values
+                                          .elementAt(index);
                                       return RadioListTile(
                                         dense: true,
                                         contentPadding: const EdgeInsets.all(0),
-                                        value: option,
-                                        groupValue: 0,
+                                        value: optionValue,
+                                        groupValue: autoSyncFrequency,
                                         onChanged: (value) {
-                                          /*ref
-                                              .read(l10nLocaleStateProvider
+                                          ref
+                                              .read(synchingProvider(syncId: 1)
                                                   .notifier)
-                                              .setLocale(locale);*/
+                                              .setAutoSyncFrequency(value!);
                                           Navigator.pop(context);
                                         },
-                                        title: Text(completeLanguageName("")),
+                                        title: Text(optionName),
                                       );
                                     },
                                   )),
@@ -100,11 +115,32 @@ class SyncScreen extends ConsumerWidget {
                             );
                           });
                     },
-                    title: Text(l10n.app_language),
+                    title: Text(l10n.sync_auto),
                     subtitle: Text(
-                      completeLanguageName(""),
+                      autoSyncOptions.entries
+                          .where((o) => o.value == autoSyncFrequency)
+                          .first
+                          .key,
                       style: TextStyle(
                           fontSize: 11, color: context.secondaryColor),
+                    ),
+                  ),
+                  ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_outlined,
+                            color: context.secondaryColor,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(l10n.sync_auto_warning,
+                              softWrap: true,
+                              style: TextStyle(
+                                  fontSize: 11, color: context.secondaryColor))
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -531,13 +567,197 @@ class SyncScreen extends ConsumerWidget {
                         ElevatedButton(
                             onPressed: !isLogged
                                 ? null
-                                : () {
-                                    ref
+                                : () async {
+                                    final snapshots = await ref
                                         .read(syncServerProvider(syncId: 1)
                                             .notifier)
                                         .getSnapshots(l10n);
+                                    if (context.mounted) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                l10n.sync_snapshots,
+                                              ),
+                                              content: SizedBox(
+                                                  width: context.width(0.8),
+                                                  child: ListView.builder(
+                                                    shrinkWrap: true,
+                                                    itemCount: snapshots.length,
+                                                    itemBuilder:
+                                                        (context, index) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 5),
+                                                        child: Card(
+                                                          child: Column(
+                                                            children: [
+                                                              ElevatedButton(
+                                                                  style: ElevatedButton.styleFrom(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      elevation:
+                                                                          0,
+                                                                      shadowColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      shape: const RoundedRectangleBorder(
+                                                                          borderRadius: BorderRadius.only(
+                                                                              bottomLeft: Radius.circular(0),
+                                                                              bottomRight: Radius.circular(0),
+                                                                              topRight: Radius.circular(10),
+                                                                              topLeft: Radius.circular(10)))),
+                                                                  onPressed: () {},
+                                                                  child: Row(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .end,
+                                                                    children: [
+                                                                      const Icon(
+                                                                          Icons
+                                                                              .save),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Expanded(
+                                                                          child:
+                                                                              Text("${dateFormat((snapshots[index].createdAt!).toString(), ref: ref, context: context)} ${dateFormatHour((snapshots[index].createdAt!).toString(), context)}"))
+                                                                    ],
+                                                                  )),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .end,
+                                                                children: [
+                                                                  Row(
+                                                                    children: [
+                                                                      IconButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (context) {
+                                                                                  return StatefulBuilder(
+                                                                                    builder: (context, setState) {
+                                                                                      return AlertDialog(
+                                                                                        title: Text(
+                                                                                          l10n.sync_load_snapshot,
+                                                                                        ),
+                                                                                        actions: [
+                                                                                          Row(
+                                                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                                                            children: [
+                                                                                              TextButton(
+                                                                                                  onPressed: () {
+                                                                                                    Navigator.pop(context);
+                                                                                                  },
+                                                                                                  child: Text(l10n.cancel)),
+                                                                                              const SizedBox(
+                                                                                                width: 15,
+                                                                                              ),
+                                                                                              TextButton(
+                                                                                                  onPressed: () async {
+                                                                                                    await ref.read(SyncServerProvider(syncId: 1).notifier).downloadSnapshot(l10n, snapshots[index].uuid!);
+                                                                                                    if (context.mounted) {
+                                                                                                      Navigator.pop(context);
+                                                                                                    }
+                                                                                                  },
+                                                                                                  child: Text(
+                                                                                                    l10n.ok,
+                                                                                                  )),
+                                                                                            ],
+                                                                                          )
+                                                                                        ],
+                                                                                      );
+                                                                                    },
+                                                                                  );
+                                                                                });
+                                                                          },
+                                                                          icon:
+                                                                              const Icon(Icons.cloud_download_outlined)),
+                                                                      IconButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            showDialog(
+                                                                                context: context,
+                                                                                builder: (context) {
+                                                                                  return StatefulBuilder(
+                                                                                    builder: (context, setState) {
+                                                                                      return AlertDialog(
+                                                                                        title: Text(
+                                                                                          l10n.sync_delete_snapshot,
+                                                                                        ),
+                                                                                        actions: [
+                                                                                          Row(
+                                                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                                                            children: [
+                                                                                              TextButton(
+                                                                                                  onPressed: () {
+                                                                                                    Navigator.pop(context);
+                                                                                                  },
+                                                                                                  child: Text(l10n.cancel)),
+                                                                                              const SizedBox(
+                                                                                                width: 15,
+                                                                                              ),
+                                                                                              TextButton(
+                                                                                                  onPressed: () async {
+                                                                                                    await ref.read(syncServerProvider(syncId: 1).notifier).deleteSnapshot(l10n, snapshots[index].uuid!);
+                                                                                                    if (context.mounted) {
+                                                                                                      Navigator.pop(context);
+                                                                                                    }
+                                                                                                  },
+                                                                                                  child: Text(
+                                                                                                    l10n.ok,
+                                                                                                  )),
+                                                                                            ],
+                                                                                          )
+                                                                                        ],
+                                                                                      );
+                                                                                    },
+                                                                                  );
+                                                                                });
+                                                                          },
+                                                                          icon:
+                                                                              const Icon(Icons.delete_outlined))
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  )),
+                                              actions: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                        onPressed: () async {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                          l10n.cancel,
+                                                          style: TextStyle(
+                                                              color: context
+                                                                  .primaryColor),
+                                                        )),
+                                                  ],
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    }
                                   },
-                            child: Text("Browse / Download older backups")),
+                            child: Text(l10n.sync_browse_snapshots)),
                       ],
                     ),
                   ),

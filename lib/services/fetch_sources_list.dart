@@ -173,9 +173,11 @@ void checkIfSourceIsObsolete(
           sourceList.where((e) => e.id != null).map((e) => e.id).toList();
       if (ids.isNotEmpty) {
         isar.writeTxnSync(() {
+          if (source.isObsolete != !ids.contains(source.id)) {
+            ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+                ActionType.updateExtension, source.id, source.toJson(), false);
+          }
           isar.sources.putSync(source..isObsolete = !ids.contains(source.id));
-          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-              ActionType.updateExtension, source.id, source.toJson(), false);
         });
       }
     }

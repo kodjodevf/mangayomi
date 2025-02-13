@@ -19,7 +19,7 @@ class Synching extends _$Synching {
     isar.writeTxnSync(() {
       isar.syncPreferences.putSync(syncPreference);
     });
-    ref.invalidate(synchingProvider(syncId: syncId));
+    ref.invalidateSelf();
     ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
@@ -27,7 +27,7 @@ class Synching extends _$Synching {
     isar.writeTxnSync(() {
       isar.syncPreferences.putSync(state..authToken = null);
     });
-    ref.invalidate(synchingProvider(syncId: syncId));
+    ref.invalidateSelf();
     ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
@@ -59,6 +59,13 @@ class Synching extends _$Synching {
     isar.writeTxnSync(() {
       isar.syncPreferences.putSync(state..syncOn = value);
     });
+  }
+
+  void setAutoSyncFrequency(int value) {
+    isar.writeTxnSync(() {
+      isar.syncPreferences.putSync(state..autoSyncFrequency = value);
+    });
+    ref.invalidateSelf();
   }
 
   List<ChangedPart> getAllChangedParts() {
@@ -170,9 +177,13 @@ class Synching extends _$Synching {
     });
   }
 
-  void clearAllChangedParts() {
-    isar.writeTxnSync(() {
+  void clearAllChangedParts(bool txn) {
+    if (txn) {
+      isar.writeTxnSync(() {
+        isar.changedParts.clearSync();
+      });
+    } else {
       isar.changedParts.clearSync();
-    });
+    }
   }
 }
