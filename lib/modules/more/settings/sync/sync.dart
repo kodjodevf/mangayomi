@@ -325,7 +325,12 @@ class SyncScreen extends ConsumerWidget {
                           Text(l10n.sync_button_snapshot),
                         ],
                       ),
-                      const SizedBox(width: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const SizedBox(width: 30),
                       Column(
                         children: [
                           IconButton(
@@ -413,7 +418,7 @@ class SyncScreen extends ConsumerWidget {
                           Text(l10n.sync_button_upload),
                         ],
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 30),
                       Column(
                         children: [
                           IconButton(
