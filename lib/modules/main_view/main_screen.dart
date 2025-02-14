@@ -72,7 +72,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         final l10n = l10nLocalizations(context)!;
         Timer.periodic(Duration(seconds: autoSyncFrequency), (timer) {
           try {
-            ref.read(syncServerProvider(syncId: 1).notifier).startSync(l10n);
+            ref.read(syncServerProvider(syncId: 1).notifier).startSync(l10n, true);
           } catch (e) {
             botToast(
                 "Failed to sync! Maybe the sync server is down. Restart the app to resume auto sync.");

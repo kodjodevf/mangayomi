@@ -226,7 +226,7 @@ class SyncScreen extends ConsumerWidget {
                                       ref
                                           .read(syncServerProvider(syncId: 1)
                                               .notifier)
-                                          .startSync(l10n);
+                                          .startSync(l10n, false);
                                     },
                               icon: Icon(
                                 Icons.sync,

@@ -63,7 +63,7 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> startSync(AppLocalizations l10n) async {
+  Future<void> startSync(AppLocalizations l10n, bool silent) async {
     botToast(l10n.sync_checking, second: 2);
     try {
       final changedParts = ref
@@ -92,7 +92,7 @@ class SyncServer extends _$SyncServer {
           await downloadFromServer(l10n, true, false);
         }
       } else {
-        await forceCheck(l10n, true);
+        await forceCheck(l10n, silent);
       }
 
       final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
@@ -100,7 +100,6 @@ class SyncServer extends _$SyncServer {
       syncNotifier.clearAllChangedParts(true);
 
       ref.invalidate(synchingProvider(syncId: syncId));
-      botToast(l10n.sync_download_finished, second: 2);
     } catch (error) {
       botToast(error.toString(), second: 5);
     }
@@ -129,7 +128,7 @@ class SyncServer extends _$SyncServer {
       if (localHash != remoteHash) {
         await downloadFromServer(l10n, silent, false);
       } else if (!silent) {
-        botToast("Sync up to date", second: 2);
+        botToast(l10n.sync_up_to_date, second: 2);
       }
     } catch (error) {
       botToast(error.toString(), second: 5);
