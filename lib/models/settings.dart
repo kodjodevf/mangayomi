@@ -520,21 +520,21 @@ class Settings {
       mangaExtensionsRepo = json['mangaExtensionsRepo'] is String
           ? [Repo(jsonUrl: json['mangaExtensionsRepo'])]
           : (json['mangaExtensionsRepo'] as List)
-              .map((e) => Repo.fromJson(json))
+              .map((e) => Repo.fromJson(e))
               .toList();
     }
     if (json['animeExtensionsRepo'] != null) {
       animeExtensionsRepo = json['animeExtensionsRepo'] is String
           ? [Repo(jsonUrl: json['animeExtensionsRepo'])]
           : (json['animeExtensionsRepo'] as List)
-              .map((e) => Repo.fromJson(json))
+              .map((e) => Repo.fromJson(e))
               .toList();
     }
     if (json['novelExtensionsRepo'] != null) {
       novelExtensionsRepo = json['novelExtensionsRepo'] is String
           ? [Repo(jsonUrl: json['novelExtensionsRepo'])]
           : (json['novelExtensionsRepo'] as List)
-              .map((e) => Repo.fromJson(json))
+              .map((e) => Repo.fromJson(e))
               .toList();
     }
   }
