@@ -5,12 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
@@ -21,6 +23,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
+import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
@@ -52,6 +55,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   late final navigationOrder = ref.watch(navigationOrderStateProvider);
+  late final autoSyncFrequency =
+      ref.watch(synchingProvider(syncId: 1)).autoSyncFrequency;
   late String? location =
       ref.watch(routerCurrentLocationStateProvider(context));
   late String defaultLocation = navigationOrder.first;
@@ -63,6 +68,19 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       Timer.periodic(Duration(minutes: 5), (timer) {
         ref.read(checkAndBackupProvider);
       });
+      if (autoSyncFrequency != 0) {
+        final l10n = l10nLocalizations(context)!;
+        Timer.periodic(Duration(seconds: autoSyncFrequency), (timer) {
+          try {
+            ref.read(syncServerProvider(syncId: 1).notifier).startSync(l10n);
+          } catch (e) {
+            botToast(
+                "Failed to sync! Maybe the sync server is down. Restart the app to resume auto sync.");
+            timer.cancel();
+          }
+        });
+      }
+
       ref.watch(checkForUpdateProvider(context: context));
       ref.watch(fetchMangaSourcesListProvider(id: null, reFresh: false));
       ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));

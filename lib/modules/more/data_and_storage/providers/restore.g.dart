@@ -173,7 +173,7 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 
-String _$restoreBackupHash() => r'24405b9be28204324e47d6c1db34495d55a491d2';
+String _$restoreBackupHash() => r'0b6bdb8eff801da7efa7b3776f80e50bee4d4ad1';
 
 /// See also [restoreBackup].
 @ProviderFor(restoreBackup)
@@ -186,10 +186,12 @@ class RestoreBackupFamily extends Family<void> {
 
   /// See also [restoreBackup].
   RestoreBackupProvider call(
-    Map<String, dynamic> backup,
-  ) {
+    Map<String, dynamic> backup, {
+    bool full = true,
+  }) {
     return RestoreBackupProvider(
       backup,
+      full: full,
     );
   }
 
@@ -199,6 +201,7 @@ class RestoreBackupFamily extends Family<void> {
   ) {
     return call(
       provider.backup,
+      full: provider.full,
     );
   }
 
@@ -221,11 +224,13 @@ class RestoreBackupFamily extends Family<void> {
 class RestoreBackupProvider extends AutoDisposeProvider<void> {
   /// See also [restoreBackup].
   RestoreBackupProvider(
-    Map<String, dynamic> backup,
-  ) : this._internal(
+    Map<String, dynamic> backup, {
+    bool full = true,
+  }) : this._internal(
           (ref) => restoreBackup(
             ref as RestoreBackupRef,
             backup,
+            full: full,
           ),
           from: restoreBackupProvider,
           name: r'restoreBackupProvider',
@@ -237,6 +242,7 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
           allTransitiveDependencies:
               RestoreBackupFamily._allTransitiveDependencies,
           backup: backup,
+          full: full,
         );
 
   RestoreBackupProvider._internal(
@@ -247,9 +253,11 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.backup,
+    required this.full,
   }) : super.internal();
 
   final Map<String, dynamic> backup;
+  final bool full;
 
   @override
   Override overrideWith(
@@ -265,6 +273,7 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         backup: backup,
+        full: full,
       ),
     );
   }
@@ -276,13 +285,16 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
 
   @override
   bool operator ==(Object other) {
-    return other is RestoreBackupProvider && other.backup == backup;
+    return other is RestoreBackupProvider &&
+        other.backup == backup &&
+        other.full == full;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, backup.hashCode);
+    hash = _SystemHash.combine(hash, full.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -293,6 +305,9 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
 mixin RestoreBackupRef on AutoDisposeProviderRef<void> {
   /// The parameter `backup` of this provider.
   Map<String, dynamic> get backup;
+
+  /// The parameter `full` of this provider.
+  bool get full;
 }
 
 class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
@@ -301,6 +316,8 @@ class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
 
   @override
   Map<String, dynamic> get backup => (origin as RestoreBackupProvider).backup;
+  @override
+  bool get full => (origin as RestoreBackupProvider).full;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

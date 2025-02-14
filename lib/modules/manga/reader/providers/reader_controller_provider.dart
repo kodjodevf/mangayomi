@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
@@ -11,6 +12,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -159,6 +161,8 @@ class ReaderController extends _$ReaderController {
       Manga? manga = chapter.manga.value;
       manga!.lastRead = DateTime.now().millisecondsSinceEpoch;
       isar.mangas.putSync(manga);
+      ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+          ActionType.updateItem, manga.id, manga.toJson(), false);
     });
     History? history;
 
@@ -184,6 +188,13 @@ class ReaderController extends _$ReaderController {
     isar.writeTxnSync(() {
       isar.historys.putSync(history!);
       history.chapter.saveSync();
+      if (empty) {
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.addHistory, null, history.toJson(), false);
+      } else {
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateHistory, history.id, history.toJson(), false);
+      }
     });
   }
 
@@ -194,6 +205,8 @@ class ReaderController extends _$ReaderController {
     isar.writeTxnSync(() {
       chap.isBookmarked = !isBookmarked;
       isar.chapters.putSync(chap);
+      ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+          ActionType.updateChapter, chapter.id, chapter.toJson(), false);
     });
   }
 
@@ -331,6 +344,8 @@ class ReaderController extends _$ReaderController {
         chap.isRead = isRead;
         chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
         isar.chapters.putSync(chap);
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.updateChapter, chapter.id, chapter.toJson(), false);
       });
       if (isRead) {
         chapter.updateTrackChapterRead(ref);

@@ -6,7 +6,7 @@ part of 'sync_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$synchingHash() => r'3ab44d9e753f2d4b51fd10af6c98ffac78cbf201';
+String _$synchingHash() => r'8a4f7f408bf0ac26f4a21368620051ecba3adf53';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,11 +29,10 @@ class _SystemHash {
   }
 }
 
-abstract class _$Synching
-    extends BuildlessAutoDisposeNotifier<SyncPreference?> {
+abstract class _$Synching extends BuildlessAutoDisposeNotifier<SyncPreference> {
   late final int? syncId;
 
-  SyncPreference? build({
+  SyncPreference build({
     required int? syncId,
   });
 }
@@ -43,7 +42,7 @@ abstract class _$Synching
 const synchingProvider = SynchingFamily();
 
 /// See also [Synching].
-class SynchingFamily extends Family<SyncPreference?> {
+class SynchingFamily extends Family<SyncPreference> {
   /// See also [Synching].
   const SynchingFamily();
 
@@ -82,7 +81,7 @@ class SynchingFamily extends Family<SyncPreference?> {
 
 /// See also [Synching].
 class SynchingProvider
-    extends AutoDisposeNotifierProviderImpl<Synching, SyncPreference?> {
+    extends AutoDisposeNotifierProviderImpl<Synching, SyncPreference> {
   /// See also [Synching].
   SynchingProvider({
     required int? syncId,
@@ -112,7 +111,7 @@ class SynchingProvider
   final int? syncId;
 
   @override
-  SyncPreference? runNotifierBuild(
+  SyncPreference runNotifierBuild(
     covariant Synching notifier,
   ) {
     return notifier.build(
@@ -137,8 +136,7 @@ class SynchingProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Synching, SyncPreference?>
-      createElement() {
+  AutoDisposeNotifierProviderElement<Synching, SyncPreference> createElement() {
     return _SynchingProviderElement(this);
   }
 
@@ -158,13 +156,13 @@ class SynchingProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin SynchingRef on AutoDisposeNotifierProviderRef<SyncPreference?> {
+mixin SynchingRef on AutoDisposeNotifierProviderRef<SyncPreference> {
   /// The parameter `syncId` of this provider.
   int? get syncId;
 }
 
 class _SynchingProviderElement
-    extends AutoDisposeNotifierProviderElement<Synching, SyncPreference?>
+    extends AutoDisposeNotifierProviderElement<Synching, SyncPreference>
     with SynchingRef {
   _SynchingProviderElement(super.provider);
 

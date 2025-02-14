@@ -91,6 +91,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                     ref.read(mangasListStateProvider.notifier).update(entry);
                   } else {
                     await pushToMangaReaderDetail(
+                        ref: ref,
                         archiveId: isLocalArchive ? entry.id : null,
                         context: context,
                         lang: entry.lang!,

@@ -20,7 +20,9 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,7 +56,7 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
 }
 
 @riverpod
-void restoreBackup(Ref ref, Map<String, dynamic> backup) {
+void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
   final version = backup['version'];
   if (["1", "2"].any((e) => e == version)) {
     try {
@@ -106,13 +108,15 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
               }
             }
 
-            isar.downloads.clearSync();
-            if (downloads != null) {
-              for (var download in downloads) {
-                final chapter = isar.chapters.getSync(download.id!);
-                if (chapter != null) {
-                  isar.downloads.putSync(download..chapter.value = chapter);
-                  download.chapter.saveSync();
+            if (full) {
+              isar.downloads.clearSync();
+              if (downloads != null) {
+                for (var download in downloads) {
+                  final chapter = isar.chapters.getSync(download.id!);
+                  if (chapter != null) {
+                    isar.downloads.putSync(download..chapter.value = chapter);
+                    download.chapter.saveSync();
+                  }
                 }
               }
             }
@@ -157,31 +161,43 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup) {
           isar.tracks.putAllSync(track);
         }
 
-        isar.trackPreferences.clearSync();
-        if (trackPreferences != null) {
-          isar.trackPreferences.putAllSync(trackPreferences);
+        if (full) {
+          isar.trackPreferences.clearSync();
+          if (trackPreferences != null) {
+            isar.trackPreferences.putAllSync(trackPreferences);
+          }
         }
 
-        isar.sources.clearSync();
-        if (extensions != null) {
-          isar.sources.putAllSync(extensions);
+        if (full) {
+          isar.sources.clearSync();
+          if (extensions != null) {
+            isar.sources.putAllSync(extensions);
+          }
         }
 
-        isar.sourcePreferences.clearSync();
-        if (sourcesPrefs != null) {
-          isar.sourcePreferences.putAllSync(sourcesPrefs);
+        if (full) {
+          isar.sourcePreferences.clearSync();
+          if (sourcesPrefs != null) {
+            isar.sourcePreferences.putAllSync(sourcesPrefs);
+          }
+          isar.settings.clearSync();
+          if (settings != null) {
+            isar.settings.putAllSync(settings);
+          }
         }
-        isar.settings.clearSync();
-        if (settings != null) {
-          isar.settings.putAllSync(settings);
+        if (full) {
+          ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
+          ref.invalidate(themeModeStateProvider);
+          ref.invalidate(blendLevelStateProvider);
+          ref.invalidate(flexSchemeColorStateProvider);
+          ref.invalidate(pureBlackDarkModeStateProvider);
+          ref.invalidate(l10nLocaleStateProvider);
+          ref.invalidate(navigationOrderStateProvider);
+          ref.invalidate(hideItemsStateProvider);
+          ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
+          ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
+          ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
         }
-        ref.invalidate(themeModeStateProvider);
-        ref.invalidate(blendLevelStateProvider);
-        ref.invalidate(flexSchemeColorStateProvider);
-        ref.invalidate(pureBlackDarkModeStateProvider);
-        ref.invalidate(l10nLocaleStateProvider);
-        ref.invalidate(navigationOrderStateProvider);
-        ref.invalidate(hideItemsStateProvider);
       });
     } catch (e) {
       rethrow;

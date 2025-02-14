@@ -1,7 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +47,11 @@ Future addTorrentFromUrlOrFromFile(Ref ref, Manga? mManga,
           isLocalArchive: true,
           artist: '',
         );
+
+    ref
+        .read(synchingProvider(syncId: 1).notifier)
+        .addChangedPart(ActionType.addItem, null, manga.toJson(), true);
+
     if (url != null) {
       manga.customCoverImage = null;
       isar.writeTxnSync(() {
@@ -53,6 +60,8 @@ Future addTorrentFromUrlOrFromFile(Ref ref, Manga? mManga,
           ..manga.value = manga;
         isar.chapters.putSync(chapters);
         chapters.manga.saveSync();
+        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+            ActionType.addChapter, null, chapters.toJson(), false);
       });
     } else {
       for (var file in result!.files.reversed.toList()) {
@@ -69,6 +78,8 @@ Future addTorrentFromUrlOrFromFile(Ref ref, Manga? mManga,
                 ..manga.value = manga;
           isar.chapters.putSync(chapters);
           chapters.manga.saveSync();
+          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+              ActionType.addChapter, null, chapters.toJson(), false);
         });
       }
     }

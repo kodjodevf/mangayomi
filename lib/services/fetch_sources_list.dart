@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -66,6 +68,11 @@ Future<void> fetchSourcesList(
                       ..isObsolete = false
                       ..repo = repo,
                   );
+                  ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+                      ActionType.updateExtension,
+                      sourc.id,
+                      sourc.toJson(),
+                      false);
                 });
                 // log("successfully installed or updated");
               }
@@ -107,6 +114,10 @@ Future<void> fetchSourcesList(
                         ..additionalParams = source.additionalParams ?? ""
                         ..isObsolete = false
                         ..repo = repo);
+                      ref
+                          .read(synchingProvider(syncId: 1).notifier)
+                          .addChangedPart(ActionType.updateExtension, sourc.id,
+                              sourc.toJson(), false);
                     });
                   } else {
                     // log("update aivalable");
@@ -115,7 +126,7 @@ Future<void> fetchSourcesList(
                 }
               }
             } else {
-              isar.sources.putSync(Source()
+              final newSource = Source()
                 ..sourceCodeUrl = source.sourceCodeUrl
                 ..id = source.id
                 ..sourceCode = source.sourceCode
@@ -136,7 +147,10 @@ Future<void> fetchSourcesList(
                 ..isFullData = source.isFullData ?? false
                 ..appMinVerReq = source.appMinVerReq
                 ..isObsolete = false
-                ..repo = repo);
+                ..repo = repo;
+              isar.sources.putSync(newSource);
+              ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+                  ActionType.addExtension, null, newSource.toJson(), false);
               // log("new source");
             }
           }
@@ -144,10 +158,11 @@ Future<void> fetchSourcesList(
       }
     }
   });
-  checkIfSourceIsObsolete(sourceList, itemType);
+  checkIfSourceIsObsolete(sourceList, itemType, ref);
 }
 
-void checkIfSourceIsObsolete(List<Source> sourceList, ItemType itemType) {
+void checkIfSourceIsObsolete(
+    List<Source> sourceList, ItemType itemType, Ref ref) {
   for (var source in isar.sources
       .filter()
       .idIsNotNull()
@@ -157,8 +172,13 @@ void checkIfSourceIsObsolete(List<Source> sourceList, ItemType itemType) {
       final ids =
           sourceList.where((e) => e.id != null).map((e) => e.id).toList();
       if (ids.isNotEmpty) {
-        isar.writeTxnSync(() => isar.sources
-            .putSync(source..isObsolete = !ids.contains(source.id)));
+        isar.writeTxnSync(() {
+          if (source.isObsolete != !ids.contains(source.id)) {
+            ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+                ActionType.updateExtension, source.id, source.toJson(), false);
+          }
+          isar.sources.putSync(source..isObsolete = !ids.contains(source.id));
+        });
       }
     }
   }

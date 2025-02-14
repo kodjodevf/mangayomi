@@ -22,30 +22,40 @@ const SyncPreferenceSchema = CollectionSchema(
       name: r'authToken',
       type: IsarType.string,
     ),
-    r'email': PropertySchema(
+    r'autoSyncFrequency': PropertySchema(
       id: 1,
+      name: r'autoSyncFrequency',
+      type: IsarType.long,
+    ),
+    r'email': PropertySchema(
+      id: 2,
       name: r'email',
       type: IsarType.string,
     ),
     r'lastDownload': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'lastDownload',
       type: IsarType.long,
     ),
     r'lastSync': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'lastSync',
       type: IsarType.long,
     ),
     r'lastUpload': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'lastUpload',
       type: IsarType.long,
     ),
     r'server': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'server',
       type: IsarType.string,
+    ),
+    r'syncOn': PropertySchema(
+      id: 7,
+      name: r'syncOn',
+      type: IsarType.bool,
     )
   },
   estimateSize: _syncPreferenceEstimateSize,
@@ -96,11 +106,13 @@ void _syncPreferenceSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.authToken);
-  writer.writeString(offsets[1], object.email);
-  writer.writeLong(offsets[2], object.lastDownload);
-  writer.writeLong(offsets[3], object.lastSync);
-  writer.writeLong(offsets[4], object.lastUpload);
-  writer.writeString(offsets[5], object.server);
+  writer.writeLong(offsets[1], object.autoSyncFrequency);
+  writer.writeString(offsets[2], object.email);
+  writer.writeLong(offsets[3], object.lastDownload);
+  writer.writeLong(offsets[4], object.lastSync);
+  writer.writeLong(offsets[5], object.lastUpload);
+  writer.writeString(offsets[6], object.server);
+  writer.writeBool(offsets[7], object.syncOn);
 }
 
 SyncPreference _syncPreferenceDeserialize(
@@ -111,12 +123,14 @@ SyncPreference _syncPreferenceDeserialize(
 ) {
   final object = SyncPreference(
     authToken: reader.readStringOrNull(offsets[0]),
-    email: reader.readStringOrNull(offsets[1]),
-    lastDownload: reader.readLongOrNull(offsets[2]),
-    lastSync: reader.readLongOrNull(offsets[3]),
-    lastUpload: reader.readLongOrNull(offsets[4]),
-    server: reader.readStringOrNull(offsets[5]),
+    autoSyncFrequency: reader.readLongOrNull(offsets[1]) ?? 0,
+    email: reader.readStringOrNull(offsets[2]),
+    lastDownload: reader.readLongOrNull(offsets[3]),
+    lastSync: reader.readLongOrNull(offsets[4]),
+    lastUpload: reader.readLongOrNull(offsets[5]),
+    server: reader.readStringOrNull(offsets[6]),
     syncId: id,
+    syncOn: reader.readBoolOrNull(offsets[7]) ?? false,
   );
   return object;
 }
@@ -131,15 +145,19 @@ P _syncPreferenceDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readLongOrNull(offset)) as P;
+    case 6:
       return (reader.readStringOrNull(offset)) as P;
+    case 7:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -389,6 +407,62 @@ extension SyncPreferenceQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'authToken',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      autoSyncFrequencyEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'autoSyncFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      autoSyncFrequencyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'autoSyncFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      autoSyncFrequencyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'autoSyncFrequency',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      autoSyncFrequencyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'autoSyncFrequency',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -996,6 +1070,16 @@ extension SyncPreferenceQueryFilter
       ));
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      syncOnEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncOn',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension SyncPreferenceQueryObject
@@ -1016,6 +1100,20 @@ extension SyncPreferenceQuerySortBy
       sortByAuthTokenDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authToken', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortByAutoSyncFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoSyncFrequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortByAutoSyncFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoSyncFrequency', Sort.desc);
     });
   }
 
@@ -1084,6 +1182,19 @@ extension SyncPreferenceQuerySortBy
       return query.addSortBy(r'server', Sort.desc);
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> sortBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncOnDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.desc);
+    });
+  }
 }
 
 extension SyncPreferenceQuerySortThenBy
@@ -1098,6 +1209,20 @@ extension SyncPreferenceQuerySortThenBy
       thenByAuthTokenDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'authToken', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenByAutoSyncFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoSyncFrequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenByAutoSyncFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'autoSyncFrequency', Sort.desc);
     });
   }
 
@@ -1179,6 +1304,19 @@ extension SyncPreferenceQuerySortThenBy
       return query.addSortBy(r'syncId', Sort.desc);
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> thenBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncOnDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOn', Sort.desc);
+    });
+  }
 }
 
 extension SyncPreferenceQueryWhereDistinct
@@ -1187,6 +1325,13 @@ extension SyncPreferenceQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'authToken', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+      distinctByAutoSyncFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'autoSyncFrequency');
     });
   }
 
@@ -1223,6 +1368,12 @@ extension SyncPreferenceQueryWhereDistinct
       return query.addDistinctBy(r'server', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct> distinctBySyncOn() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncOn');
+    });
+  }
 }
 
 extension SyncPreferenceQueryProperty
@@ -1236,6 +1387,13 @@ extension SyncPreferenceQueryProperty
   QueryBuilder<SyncPreference, String?, QQueryOperations> authTokenProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'authToken');
+    });
+  }
+
+  QueryBuilder<SyncPreference, int, QQueryOperations>
+      autoSyncFrequencyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'autoSyncFrequency');
     });
   }
 
@@ -1266,6 +1424,12 @@ extension SyncPreferenceQueryProperty
   QueryBuilder<SyncPreference, String?, QQueryOperations> serverProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'server');
+    });
+  }
+
+  QueryBuilder<SyncPreference, bool, QQueryOperations> syncOnProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncOn');
     });
   }
 }
