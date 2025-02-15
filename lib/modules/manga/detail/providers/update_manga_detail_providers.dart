@@ -107,15 +107,20 @@ Future<dynamic> updateMangaDetail(Ref ref,
       for (var i = 0; i < oldChapers.length; i++) {
         final oldChap = oldChapers[i];
         final newChap = chaps[i];
+        final hasChanged = oldChap.name != newChap.name ||
+            oldChap.url != newChap.url ||
+            oldChap.scanlator != newChap.scanlator;
         oldChap.name = newChap.name;
         oldChap.url = newChap.url;
         oldChap.scanlator = newChap.scanlator;
         isar.chapters.putSync(oldChap);
         oldChap.manga.saveSync();
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.updateItem, manga.id, manga.toJson(), false);
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.updateChapter, oldChap.id, oldChap.toJson(), false);
+        if (!hasChanged) {
+          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+              ActionType.updateItem, manga.id, manga.toJson(), false);
+          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
+              ActionType.updateChapter, oldChap.id, oldChap.toJson(), false);
+        }
       }
     }
   });

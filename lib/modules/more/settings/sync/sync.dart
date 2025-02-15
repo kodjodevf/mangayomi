@@ -540,7 +540,8 @@ class SyncScreen extends ConsumerWidget {
                       changedParts.getChangedParts([
                         ActionType.addHistory,
                         ActionType.clearHistory,
-                        ActionType.removeHistory
+                        ActionType.removeHistory,
+                        ActionType.updateHistory,
                       ])),
                   const SizedBox(height: 15),
                   buildChangedItemWidget(
@@ -552,6 +553,7 @@ class SyncScreen extends ConsumerWidget {
                       l10n.sync_pending_extension,
                       changedParts.getChangedParts([
                         ActionType.addExtension,
+                        ActionType.clearExtension,
                         ActionType.removeExtension,
                         ActionType.updateExtension
                       ])),
