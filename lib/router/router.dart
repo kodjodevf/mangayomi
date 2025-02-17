@@ -59,7 +59,8 @@ GoRouter router(Ref ref) {
       debugLogDiagnostics: kDebugMode,
       refreshListenable: router,
       routes: router._routes,
-      navigatorKey: navigatorKey);
+      navigatorKey: navigatorKey,
+      onException: (context, state, router) => router.go(initLocation),);
 }
 
 @riverpod
