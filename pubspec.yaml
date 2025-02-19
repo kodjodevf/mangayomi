@@ -116,6 +116,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   flutter_lints: ^5.0.0
   freezed: ^2.0.0
+  inno_bundle: ^0.8.0
 
 flutter:
   uses-material-design: true
@@ -138,3 +139,7 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/app_icons/icon-red.png"
+inno_bundle:
+  id: 984c49b9-1c39-58f2-b0bb-8d30a87279e2
+  publisher: Mangayomi
+  name: Mangayomi
