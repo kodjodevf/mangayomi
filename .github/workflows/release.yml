@@ -191,12 +191,12 @@ jobs:
       - name: build windows exe
         run: |
           dart run inno_bundle:build --release
-          cd build/windows/x64/installer/Release
-          Rename-Item -Path "*-Installer.exe" -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
 
       - name: build windows zip
         run: |
-          cd build/windows/x64/runner/Release
+          cd build/windows/x64/installer/Release
+          Rename-Item -Path "*-Installer.exe" -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
+          cd ../../runner/Release
           Compress-Archive -Path * -DestinationPath Mangayomi-Windows.zip
           Rename-Item -Path "Mangayomi-*.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
 
