@@ -140,6 +140,15 @@ flutter_launcher_icons:
     generate: true
     image_path: "assets/app_icons/icon-red.png"
 inno_bundle:
-  id: 984c49b9-1c39-58f2-b0bb-8d30a87279e2
-  publisher: Mangayomi
+  id: 6CB26FFA-E72B-42C3-91E8-594940031CA2
+  publisher: kodjodevf
   name: Mangayomi
+  url: https://github.com/kodjodevf/mangayomi/
+  support_url: https://github.com/kodjodevf/mangayomi/
+  updates_url: https://github.com/kodjodevf/mangayomi/
+  languages:
+    - english
+    - french
+    - german
+  admin: false
+

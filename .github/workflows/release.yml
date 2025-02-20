@@ -160,7 +160,7 @@ jobs:
           artifacts: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
           allowUpdates: true
 
-  build-and-release-windows-zip:
+  build-and-release-windows-exe_zip:
     permissions:
       contents: write
     runs-on: windows-latest
@@ -190,7 +190,7 @@ jobs:
 
       - name: build windows exe
         run: |
-          dart run inno_bundle:build --release
+            dart run inno_bundle:build --release --app-version ${{ github.ref_name }} | ForEach-Object { $_ -replace "[a-z]", "" }
 
       - name: build windows zip
         run: |
@@ -200,7 +200,7 @@ jobs:
           Compress-Archive -Path * -DestinationPath Mangayomi-Windows.zip
           Rename-Item -Path "Mangayomi-*.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
 
-      - name: upload artifact windows zip
+      - name: upload artifact windows exe_zip
         uses: actions/upload-artifact@v4
         with:
           name: Mangayomi-${{ github.ref_name }}-windows-zip
@@ -208,7 +208,7 @@ jobs:
             build/windows/x64/installer/Release/Mangayomi-*.exe
             build/windows/x64/runner/Release/Mangayomi-*.zip
 
-      - name: release package windows zip
+      - name: release package windows exe_zip
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
