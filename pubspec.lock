@@ -674,11 +674,12 @@ packages:
   flutter_web_auth_2:
     dependency: "direct main"
     description:
-      name: flutter_web_auth_2
-      sha256: "4d3d2fd3d26bf1a26b3beafd4b4b899c0ffe10dc99af25abc58ffe24e991133c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
+      path: flutter_web_auth_2
+      ref: "3.x-without-v1"
+      resolved-ref: "48682f19576001e50104a602d891343850adb67f"
+      url: "https://github.com/ThexXTURBOXx/flutter_web_auth_2.git"
+    source: git
+    version: "3.1.2-without-v1"
   flutter_web_auth_2_platform_interface:
     dependency: transitive
     description:
@@ -900,6 +901,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  inno_bundle:
+    dependency: "direct dev"
+    description:
+      name: inno_bundle
+      sha256: e9d0ab41a82157da42ebd4206bda22ed04bf096a6e7d416c79d79201c388d563
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.0"
   intl:
     dependency: "direct main"
     description:

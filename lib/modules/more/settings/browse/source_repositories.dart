@@ -76,7 +76,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              Expanded(child: Text(repo.name ?? repo.jsonUrl!))
+                              Expanded(child: Text(repo.name ?? repo.jsonUrl ?? "Invalid source - remove it"))
                             ],
                           )),
                       Row(

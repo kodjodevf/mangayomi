@@ -93,7 +93,7 @@ dependency_overrides:
       url: https://github.com/media-kit/media-kit.git
       path: libs/windows/media_kit_libs_windows_video
       ref: 652c49e02701bb6bb80953a6fdf650a5c8f002f9
-  media_kit: 
+  media_kit:
     git:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit
@@ -101,7 +101,11 @@ dependency_overrides:
   meta: ^1.15.0
   collection: ^1.19.0
   js: ^0.7.1
-
+  flutter_web_auth_2:
+    git:
+      url: https://github.com/ThexXTURBOXx/flutter_web_auth_2.git
+      ref: 3.x-without-v1
+      path: flutter_web_auth_2
 
 dev_dependencies:
   flutter_test:
@@ -112,6 +116,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   flutter_lints: ^5.0.0
   freezed: ^2.0.0
+  inno_bundle: ^0.8.0
 
 flutter:
   uses-material-design: true
@@ -134,3 +139,7 @@ flutter_launcher_icons:
   macos:
     generate: true
     image_path: "assets/app_icons/icon-red.png"
+inno_bundle:
+  id: 984c49b9-1c39-58f2-b0bb-8d30a87279e2
+  publisher: Mangayomi
+  name: Mangayomi

@@ -158,11 +158,11 @@ Future<void> fetchSourcesList(
       }
     }
   });
-  checkIfSourceIsObsolete(sourceList, itemType, ref);
+  checkIfSourceIsObsolete(sourceList, repo!, itemType, ref);
 }
 
 void checkIfSourceIsObsolete(
-    List<Source> sourceList, ItemType itemType, Ref ref) {
+    List<Source> sourceList, Repo repo, ItemType itemType, Ref ref) {
   for (var source in isar.sources
       .filter()
       .idIsNotNull()
@@ -173,11 +173,15 @@ void checkIfSourceIsObsolete(
           sourceList.where((e) => e.id != null).map((e) => e.id).toList();
       if (ids.isNotEmpty) {
         isar.writeTxnSync(() {
-          if (source.isObsolete != !ids.contains(source.id)) {
+          if (source.isObsolete !=
+              (!ids.contains(source.id) &&
+                  source.repo?.jsonUrl == repo.jsonUrl)) {
             ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
                 ActionType.updateExtension, source.id, source.toJson(), false);
           }
-          isar.sources.putSync(source..isObsolete = !ids.contains(source.id));
+          isar.sources.putSync(source
+            ..isObsolete = !ids.contains(source.id) &&
+                source.repo?.jsonUrl == repo.jsonUrl);
         });
       }
     }

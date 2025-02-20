@@ -226,7 +226,7 @@ class SyncScreen extends ConsumerWidget {
                                       ref
                                           .read(syncServerProvider(syncId: 1)
                                               .notifier)
-                                          .startSync(l10n);
+                                          .startSync(l10n, false);
                                     },
                               icon: Icon(
                                 Icons.sync,
@@ -325,7 +325,12 @@ class SyncScreen extends ConsumerWidget {
                           Text(l10n.sync_button_snapshot),
                         ],
                       ),
-                      const SizedBox(width: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      const SizedBox(width: 30),
                       Column(
                         children: [
                           IconButton(
@@ -413,7 +418,7 @@ class SyncScreen extends ConsumerWidget {
                           Text(l10n.sync_button_upload),
                         ],
                       ),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 30),
                       Column(
                         children: [
                           IconButton(
@@ -535,7 +540,8 @@ class SyncScreen extends ConsumerWidget {
                       changedParts.getChangedParts([
                         ActionType.addHistory,
                         ActionType.clearHistory,
-                        ActionType.removeHistory
+                        ActionType.removeHistory,
+                        ActionType.updateHistory,
                       ])),
                   const SizedBox(height: 15),
                   buildChangedItemWidget(
@@ -547,6 +553,7 @@ class SyncScreen extends ConsumerWidget {
                       l10n.sync_pending_extension,
                       changedParts.getChangedParts([
                         ActionType.addExtension,
+                        ActionType.clearExtension,
                         ActionType.removeExtension,
                         ActionType.updateExtension
                       ])),
