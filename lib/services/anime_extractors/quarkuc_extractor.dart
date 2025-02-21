@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
-import 'package:mangayomi/services/torrent_server.dart';
 
 enum CloudDriveType {
   quark,
@@ -426,7 +425,7 @@ class QuarkUcExtractor {
     String fileToken = parts[2];
     String shareId = parts[3];
     String stoken = parts[4];
-    String type = parts[0];
+    // String type = parts[0];
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 // 获取可用的质量列表
     //List<String> qualities = getPlayFormtList();
