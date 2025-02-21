@@ -46,4 +46,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+/android/app/.cxx
 untranslated_messages.txt
