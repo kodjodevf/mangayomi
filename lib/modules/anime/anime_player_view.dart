@@ -171,6 +171,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       headers: _firstVid.headers));
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
+  final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition =
       ValueNotifier(_streamController.geTCurrentPosition());
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
@@ -977,6 +978,23 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     ),
                   ),
                 ),
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: ValueListenableBuilder<bool>(
+                      valueListenable: _isDoubleSpeed,
+                      builder: (context, snapshot, _) {
+                        return Text.rich(
+                          TextSpan(
+                            children: snapshot
+                                ? [
+                                    WidgetSpan(child: Icon(Icons.fast_forward)),
+                                    TextSpan(text: " 2X"),
+                                  ]
+                                : [],
+                          ),
+                        );
+                      }),
+                ),
                 Row(children: [
                   btnToShowChapterListDialog(
                     context,
@@ -1080,6 +1098,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   tempDuration: (value) {
                     _tempPosition.value = value;
                   },
+                  doubleSpeed: (value) {
+                    _isDoubleSpeed.value = value ?? false;
+                  },
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1087,6 +1108,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   videoStatekey: _key,
                   bottomButtonBarWidget: _mobileBottomButtonBar(context),
                   streamController: _streamController,
+                  doubleSpeed: (value) {
+                    _isDoubleSpeed.value = value ?? false;
+                  },
                 ),
           controller: _controller,
           width: context.width(1),
