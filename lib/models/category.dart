@@ -10,11 +10,11 @@ class Category {
   bool? forManga;
   @enumerated
   late ItemType forItemType;
-  Category(
-      {this.id = Isar.autoIncrement,
-      required this.name,
-      this.forManga = true,
-      required this.forItemType});
+  Category({
+    this.id = Isar.autoIncrement,
+    required this.name,
+    required this.forItemType,
+  });
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -25,13 +25,17 @@ class Category {
   Category.fromJsonV1(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    forItemType = json['forManga'] is bool
-        ? json['forManga'] == true
-            ? ItemType.manga
-            : ItemType.anime
-        : ItemType.manga;
+    forItemType =
+        json['forManga'] is bool
+            ? json['forManga'] == true
+                ? ItemType.manga
+                : ItemType.anime
+            : ItemType.manga;
   }
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'forItemType': forItemType.index};
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'forItemType': forItemType.index,
+  };
 }

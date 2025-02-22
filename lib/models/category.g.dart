@@ -84,10 +84,10 @@ Category _categoryDeserialize(
     forItemType:
         _CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
             ItemType.manga,
-    forManga: reader.readBoolOrNull(offsets[1]),
     id: id,
     name: reader.readStringOrNull(offsets[2]),
   );
+  object.forManga = reader.readBoolOrNull(offsets[1]);
   return object;
 }
 

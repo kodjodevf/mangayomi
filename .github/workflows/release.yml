@@ -216,7 +216,7 @@ jobs:
             build/windows/x64/runner/Release/Mangayomi-*.zip
           allowUpdates: true
 
-  build-and-release-linux-zip:
+  build-and-release-linux-zip_AppImage_RPM:
     permissions:
       contents: write
     runs-on: ubuntu-latest
