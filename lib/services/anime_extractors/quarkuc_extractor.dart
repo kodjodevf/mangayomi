@@ -12,48 +12,62 @@ enum CloudDriveType {
 
 class QuarkUcExtractor {
   late CloudDriveType cloudDriveType;
-  String apiUrl = ""; //"https://drive-pc.quark.cn/1/clouddrive/";
-  String cookie = "";
+  String apiUrl = "";
+  // String cookie = "";
+  String refererUrl = "";
+  String ua = "";
+  String host = "";
   Map<String, dynamic> shareTokenCache = {};
-  String pr = ""; //"pr=ucpro&fr=pc";
+  String pr = "";
   final List<String> subtitleExts = ['.srt', '.ass', '.scc', '.stl', '.ttml'];
   Map<String, String> saveFileIdCaches = {};
   String? saveDirId;
   final String saveDirName = 'TV';
+  String _lastCookie = "";
 
   Future<void> initCloudDrive(
       String cookie, CloudDriveType cloudDriveType) async {
-    this.cookie = cookie;
     this.cloudDriveType = cloudDriveType;
     if (cloudDriveType == CloudDriveType.quark) {
       apiUrl = "https://drive-pc.quark.cn/1/clouddrive/";
       pr = "pr=ucpro&fr=pc";
+      ua =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      refererUrl = "https://pan.quark.cn/";
+      host = "https://quark.cn";
+      _lastCookie = "https://quarkcookie.last";
     } else {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
+      ua =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      refererUrl = "https://drive.uc.cn/";
+      host = "https://uc.cn";
+      _lastCookie = "https://uccookie.last";
+    }
+    if (cookie.isNotEmpty && getLastCookie() != cookie) {
+      MClient.setCookie(host, ua, null, cookie: cookie);
+      MClient.setCookie(_lastCookie, ua, null, cookie: cookie);
     }
   }
 
+  String getLastCookie() {
+    var cookie = MClient.getCookiesPref(_lastCookie);
+    return cookie.isNotEmpty ? cookie.values.first : "";
+  }
+
+  String getCurrentCookie() {
+    var cookie = MClient.getCookiesPref(host);
+    return cookie.isNotEmpty ? cookie.values.first : "";
+  }
+
   Map<String, String> getHeaders() {
-    if (cloudDriveType == CloudDriveType.quark) {
-      return {
-        'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
-        'Referer': 'https://pan.quark.cn/',
-        "Content-Type": "application/json",
-        "Cookie": cookie,
-        "Host": "drive-pc.quark.cn"
-      };
-    } else {
-      return {
-        'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch',
-        'Referer': 'https://drive.uc.cn/',
-        "Content-Type": "application/json",
-        "Cookie": cookie,
-        "Host": "pc-api.uc.cn"
-      };
-    }
+    return {
+      'User-Agent': ua,
+      'Referer': refererUrl,
+      "Content-Type": "application/json",
+      "Cookie": getCurrentCookie(),
+    };
   }
 
   Future<Map<String, dynamic>> api(
@@ -67,18 +81,42 @@ class QuarkUcExtractor {
     } else {
       resp = await client.get(Uri.parse(apiUrl + url), headers: getHeaders());
     }
+    // if (resp.headers['set-cookie'] != null) {
+    //   print('headers: ${resp.headers}');
+    //   final puus = resp.headers['set-cookie']!
+    //       .split(';;;')
+    //       .join()
+    //       .split(';')
+    //       .firstWhere((element) => element.startsWith('__puus='),
+    //           orElse: () => '');
+    //   if (puus.isNotEmpty) {
+    //     final newPuus = puus.split('=')[1];
+    //     var cookie = getCurrentCookie();
+    //     if (cookie != null && cookie.contains('__puus=')) {
+    //       cookie =
+    //           cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
+    //     }
+    //     MClient.setCookie(host, ua, cookie: cookie);
+    //   }
+    // }
+    // 处理 set-cookie
     if (resp.headers['set-cookie'] != null) {
-      final puus = resp.headers['set-cookie']!
-          .split(';;;')
-          .join()
-          .split(';')
-          .firstWhere((element) => element.startsWith('__puus='),
-              orElse: () => '');
-      if (puus.isNotEmpty) {
-        final newPuus = puus.split('=')[1];
+      final cookies = resp.headers['set-cookie']!.split(';;;');
+      for (var cookie in cookies) {
         if (cookie.contains('__puus=')) {
-          cookie =
-              cookie.replaceFirst(RegExp(r'__puus=[^;]+'), '__puus=$newPuus');
+          final newPuus = cookie.split(';')[0]; // 获取新的 __puus
+          var currentCookie = getCurrentCookie();
+          if (currentCookie.isNotEmpty) {
+            // 更新 __puus
+            if (currentCookie.contains('__puus=')) {
+              currentCookie =
+                  currentCookie.replaceFirst(RegExp(r'__puus=[^;]+'), newPuus);
+            } else {
+              currentCookie = '$currentCookie; $newPuus';
+            }
+            MClient.setCookie(host, ua, null, cookie: currentCookie);
+          }
+          break;
         }
       }
     }
@@ -100,10 +138,6 @@ class QuarkUcExtractor {
       };
     }
     return null;
-  }
-
-  List<String> getPlayFormtList() {
-    return ["4k", "2k", "super", "high", "normal", "low", "原画"];
   }
 
   Future<void> getShareToken(Map<String, String> shareData) async {
@@ -305,8 +339,8 @@ class QuarkUcExtractor {
     return null;
   }
 
-  Future<String?> getLiveTranscoding(String shareId, String stoken,
-      String fileId, String fileToken, String quality) async {
+  Future<List<Map<String, String>>?> getLiveTranscoding(
+      String shareId, String stoken, String fileId, String fileToken) async {
     if (!saveFileIdCaches.containsKey(fileId)) {
       final saveFileId = await save(shareId, stoken, fileId, fileToken, true);
       if (saveFileId == null) return null;
@@ -322,13 +356,14 @@ class QuarkUcExtractor {
         'post');
     if (transcoding['data'] != null &&
         transcoding['data']['video_list'] != null) {
+      List<Map<String, String>> qualityOptions = [];
       for (final video in transcoding['data']['video_list']) {
-        if (video['resolution'] == quality) {
-          return video['video_info']['url'];
-        }
+        qualityOptions.add({
+          'url': video['video_info']['url'],
+          'quality': video['resolution']
+        });
       }
-      // 如果没有找到匹配的质量,返回null
-      return null;
+      return qualityOptions;
     }
     return null;
   }
@@ -362,12 +397,6 @@ class QuarkUcExtractor {
       await getFilesByShareUrl(i + 1, shareUrl, videoItems, subItems);
     }
 
-    // if (videoItems.isNotEmpty) {
-    //   print('获取播放链接成功,分享链接为:${shareUrlList.join("\t")}');
-    // } else {
-    //   print('获取播放链接失败,检查分享链接为:${shareUrlList.join("\t")}');
-    // }
-
     return await getVodFile(videoItems, subItems, typeName);
   }
 
@@ -396,48 +425,26 @@ class QuarkUcExtractor {
     String fileToken = parts[2];
     String shareId = parts[3];
     String stoken = parts[4];
-    String type = parts[0];
+    // String type = parts[0];
     List<String> subtitleParts = parts.length > 5 ? parts[5].split('+') : [];
 // 获取可用的质量列表
-    List<String> qualities = getPlayFormtList();
+    //List<String> qualities = getPlayFormtList();
     List<Video> videos = [];
-    if (type == "uc") {
-      var headers = getHeaders();
-      headers.remove('Host');
-      headers.remove('Content-Type');
-      String? url = (await getDownload(
-          shareId, stoken, fileId, fileToken, true))?['download_url'];
-      if (url != null) {
-        videos.add(Video(url, "原画", url, headers: headers));
-      }
-    } else {
-      String? originalUrl = (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, "4k")) ??
-          (await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, 'super'));
-      var headers = getHeaders();
-      headers.remove('Host');
-      headers.remove('Content-Type');
-      for (String quality in qualities) {
-        if (quality == "原画") {
-          String? url = (await getDownload(
-              shareId, stoken, fileId, fileToken, true))?['download_url'];
-          if (url != null) {
-            videos
-                .add(Video(url, quality, originalUrl ?? '', headers: headers));
-          }
-        } else {
-          String? url = await getLiveTranscoding(
-              shareId, stoken, fileId, fileToken, quality);
-          if (url != null) {
-            videos.add(Video(
-              url,
-              quality,
-              originalUrl ?? '',
-              headers: headers,
-            ));
-          }
-        }
+
+    String? originalUrl;
+    List<Map<String, String>>? qualityOptions =
+        await getLiveTranscoding(shareId, stoken, fileId, fileToken);
+    originalUrl = qualityOptions?[0]['url'];
+    var headers = getHeaders();
+    headers.remove('Content-Type');
+    if (qualityOptions != null) {
+      for (Map<String, String> qualityOption in qualityOptions) {
+        videos.add(Video(
+          qualityOption['url'] ?? '',
+          qualityOption['quality'] ?? '',
+          originalUrl ?? '',
+          headers: headers,
+        ));
       }
     }
 
@@ -450,7 +457,7 @@ class QuarkUcExtractor {
           String subName = subParts[0];
           String subFileId = subParts[2];
           var subDownload =
-              await getDownload(shareId, stoken, subFileId, '', true);
+              await getDownload(shareId, stoken, subFileId, '', false);
           String? subUrl = subDownload?['download_url'];
           if (subUrl != null) {
             subtitles.add(Track(file: subUrl, label: subName));

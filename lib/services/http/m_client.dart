@@ -73,12 +73,12 @@ class MClient {
       flutter_inappwebview.InAppWebViewController? webViewController,
       {String? cookie}) async {
     List<String> cookies = [];
-    if (Platform.isLinux) {
+    // if incoming cookie is not empty, use it first
+    if (cookie != null && cookie.isNotEmpty) {
       cookies = cookie
-              ?.split(RegExp('(?<=)(,)(?=[^;]+?=)'))
-              .where((cookie) => cookie.isNotEmpty)
-              .toList() ??
-          [];
+          .split(RegExp('(?<=)(,)(?=[^;]+?=)'))
+          .where((cookie) => cookie.isNotEmpty)
+          .toList();
     } else {
       cookies = (await flutter_inappwebview.CookieManager.instance(
                   webViewEnvironment: webViewEnvironment)
