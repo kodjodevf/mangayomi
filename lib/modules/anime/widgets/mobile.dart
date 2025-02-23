@@ -17,6 +17,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
 class MobileControllerWidget extends ConsumerStatefulWidget {
+  final Function(bool?) doubleSpeed;
   final AnimeStreamController streamController;
   final VideoController videoController;
   final Widget topButtonBarWidget;
@@ -28,7 +29,8 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
       required this.topButtonBarWidget,
       required this.bottomButtonBarWidget,
       required this.streamController,
-      required this.videoStatekey});
+      required this.videoStatekey,
+      required this.doubleSpeed});
 
   @override
   ConsumerState<MobileControllerWidget> createState() =>
@@ -58,6 +60,7 @@ class _MobileControllerWidgetState
       Offset.zero; // Initial position for horizontal drag
   int swipeDuration = 0; // Duration to seek in video
   bool showSwipeDuration = false; // Whether to show the seek duration overlay
+  double previousPlaybackSpeed = -1;
 
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
@@ -344,6 +347,21 @@ class _MobileControllerWidgetState
                             onDoubleTapSeekForward();
                           } else {
                             onDoubleTapSeekBackward();
+                          }
+                        },
+                        onLongPressStart: (e) {
+                          previousPlaybackSpeed =
+                              widget.videoController.player.state.rate;
+                          widget.videoController.player
+                              .setRate(previousPlaybackSpeed * 2);
+                          widget.doubleSpeed(true);
+                        },
+                        onLongPressEnd: (e) {
+                          if (previousPlaybackSpeed != -1) {
+                            widget.videoController.player
+                                .setRate(previousPlaybackSpeed);
+                            previousPlaybackSpeed = -1;
+                            widget.doubleSpeed(false);
                           }
                         },
                         onHorizontalDragUpdate: (details) {

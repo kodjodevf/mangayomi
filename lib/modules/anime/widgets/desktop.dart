@@ -15,6 +15,7 @@ import 'package:window_manager/window_manager.dart';
 
 class DesktopControllerWidget extends StatefulWidget {
   final Function(Duration?) tempDuration;
+  final Function(bool?) doubleSpeed;
   final AnimeStreamController streamController;
   final VideoController videoController;
   final Widget topButtonBarWidget;
@@ -29,7 +30,8 @@ class DesktopControllerWidget extends StatefulWidget {
       required this.streamController,
       required this.videoStatekey,
       required this.seekToWidget,
-      required this.tempDuration});
+      required this.tempDuration,
+      required this.doubleSpeed});
 
   @override
   State<DesktopControllerWidget> createState() =>
@@ -46,6 +48,7 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
 
   int swipeDuration = 0; // Duration to seek in video
   bool showSwipeDuration = false; // Whether to show the seek duration overlay
+  double previousPlaybackSpeed = -1;
 
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
@@ -230,6 +233,21 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                     }
                   : null,
               child: GestureDetector(
+                onLongPressStart: (e) {
+                  previousPlaybackSpeed =
+                      widget.videoController.player.state.rate;
+                  widget.videoController.player
+                      .setRate(previousPlaybackSpeed * 2);
+                  widget.doubleSpeed(true);
+                },
+                onLongPressEnd: (e) {
+                  if (previousPlaybackSpeed != -1) {
+                    widget.videoController.player
+                        .setRate(previousPlaybackSpeed);
+                    previousPlaybackSpeed = -1;
+                    widget.doubleSpeed(false);
+                  }
+                },
                 onTapUp: !toggleFullscreenOnDoublePress
                     ? null
                     : (e) {
