@@ -69,7 +69,7 @@ void main(List<String> args) async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-void iniDateFormatting() {
+void _iniDateFormatting() {
   initializeDateFormatting();
   final supportedLocales = DateFormat.allLocalesWithSymbols();
   for (var locale in supportedLocales) {
@@ -90,8 +90,8 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void initState() {
-    iniDateFormatting();
-    initDeepLinks();
+    _iniDateFormatting();
+    _initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
         ref
@@ -168,8 +168,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.dispose();
   }
 
-  Future<void> initDeepLinks() async {
-    final l10n = l10nLocalizations(context);
+  Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
     _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
       switch (uri.host) {
@@ -179,43 +178,111 @@ class _MyAppState extends ConsumerState<MyApp> {
           final mangaRepoUrls = uri.queryParametersAll["manga_url"];
           final animeRepoUrls = uri.queryParametersAll["anime_url"];
           final novelRepoUrls = uri.queryParametersAll["novel_url"];
-          if (mangaRepoUrls != null) {
-            final mangaRepos =
-                ref.read(extensionsRepoStateProvider(ItemType.manga)).toList();
-            mangaRepos.addAll(
-              mangaRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
-              ),
-            );
-            ref
-                .read(extensionsRepoStateProvider(ItemType.manga).notifier)
-                .set(mangaRepos);
-          }
-          if (animeRepoUrls != null) {
-            final animeRepos =
-                ref.read(extensionsRepoStateProvider(ItemType.anime)).toList();
-            animeRepos.addAll(
-              animeRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
-              ),
-            );
-            ref
-                .read(extensionsRepoStateProvider(ItemType.anime).notifier)
-                .set(animeRepos);
-          }
-          if (novelRepoUrls != null) {
-            final novelRepos =
-                ref.read(extensionsRepoStateProvider(ItemType.novel)).toList();
-            novelRepos.addAll(
-              novelRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
-              ),
-            );
-            ref
-                .read(extensionsRepoStateProvider(ItemType.novel).notifier)
-                .set(novelRepos);
-          }
-          botToast(l10n?.repo_added ?? "Source repository added!");
+          final context = navigatorKey.currentContext;
+          if (!(context?.mounted ?? false)) return;
+          final l10n = context!.l10n;
+          showDialog(
+            context: navigatorKey.currentContext!,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(l10n.add_repo),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${l10n.name}: ${repoName ?? 'Unknown'}"),
+                    const SizedBox(height: 8),
+                    Text("URL: ${repoUrl ?? 'Unknown'}"),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    child: Text(l10n.cancel),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  FilledButton(
+                    child: Text(l10n.add),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (mangaRepoUrls != null) {
+                        final mangaRepos =
+                            ref
+                                .read(
+                                  extensionsRepoStateProvider(ItemType.manga),
+                                )
+                                .toList();
+                        mangaRepos.addAll(
+                          mangaRepoUrls.map(
+                            (e) => Repo(
+                              name: repoName,
+                              jsonUrl: e,
+                              website: repoUrl,
+                            ),
+                          ),
+                        );
+                        ref
+                            .read(
+                              extensionsRepoStateProvider(
+                                ItemType.manga,
+                              ).notifier,
+                            )
+                            .set(mangaRepos);
+                      }
+                      if (animeRepoUrls != null) {
+                        final animeRepos =
+                            ref
+                                .read(
+                                  extensionsRepoStateProvider(ItemType.anime),
+                                )
+                                .toList();
+                        animeRepos.addAll(
+                          animeRepoUrls.map(
+                            (e) => Repo(
+                              name: repoName,
+                              jsonUrl: e,
+                              website: repoUrl,
+                            ),
+                          ),
+                        );
+                        ref
+                            .read(
+                              extensionsRepoStateProvider(
+                                ItemType.anime,
+                              ).notifier,
+                            )
+                            .set(animeRepos);
+                      }
+                      if (novelRepoUrls != null) {
+                        final novelRepos =
+                            ref
+                                .read(
+                                  extensionsRepoStateProvider(ItemType.novel),
+                                )
+                                .toList();
+                        novelRepos.addAll(
+                          novelRepoUrls.map(
+                            (e) => Repo(
+                              name: repoName,
+                              jsonUrl: e,
+                              website: repoUrl,
+                            ),
+                          ),
+                        );
+                        ref
+                            .read(
+                              extensionsRepoStateProvider(
+                                ItemType.novel,
+                              ).notifier,
+                            )
+                            .set(novelRepos);
+                      }
+                      botToast(l10n.repo_added);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
           break;
         default:
       }
